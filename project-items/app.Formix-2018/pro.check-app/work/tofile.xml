@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="app-write">
+<need>(prop,app_key) (prop,isAdd)</need>
+<spirit act="open" id="apps_spirit_tc" xml="(file,apps)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,apps_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,apps_offset),0,(f,sub,(f,len,(prop,apps_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,apps_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="apps_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;app row="(prop,app_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="apps_spirit_tc" where="(prop,apps_offset)app[@row='(prop,app_key)']" attribute="appid" value="(f,vob,prop,app_appid)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="apps_spirit_tc" where="(prop,apps_offset)app[@row='(prop,app_key)']" attribute="explain" value="(f,vob,prop,app_explain)"/>
+<spirit act="close" flag="save pretty" id="apps_spirit_tc"/>
+</job>

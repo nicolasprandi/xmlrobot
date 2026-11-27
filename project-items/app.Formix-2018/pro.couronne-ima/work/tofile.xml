@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ima-write">
+<need>(prop,ima_key) (prop,isAdd)</need>
+<need default="./">(prop,imas_offset)</need>
+<spirit act="open" id="imas_spirit_tc" xml="(file,imas)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,imas_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,imas_offset),0,(f,sub,(f,len,(prop,imas_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,imas_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="imas_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;ima row="(prop,ima_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="cmd" value="(f,vob,prop,ima_cmd)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="type" value="(f,vob,prop,ima_type)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="catch" value="(f,vob,prop,ima_catch)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="on" value="(f,vob,prop,ima_on)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="cond" value="(f,vob,prop,ima_cond)"/>
+<when test="(f,exists,prop,ima_pronto)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="pronto" value="(f,vob,prop,ima_pronto)"/>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="dbms" value="(f,vob,prop,ima_dbms)"/>
+<when test="(f,exists,prop,ima_cust_flag)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="cust_flag" value="(f,vob,prop,ima_cust_flag)"/>
+</when>
+<when test="(f,exists,prop,ima_cust_how)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="cust_how" value="(f,vob,prop,ima_cust_how)"/>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="name" value="(f,vob,prop,ima_name)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="desc" value="(f,vob,prop,ima_desc)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="imas_spirit_tc" where="(prop,imas_offset)ima[@row='(prop,ima_key)']" attribute="work" value="(f,vob,prop,ima_work)"/>
+<spirit act="close" flag="save pretty" id="imas_spirit_tc"/>
+</job>

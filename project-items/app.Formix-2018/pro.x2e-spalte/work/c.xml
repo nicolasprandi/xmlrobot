@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="name" label="Name" tip="Technischer Name" position="1" type="text" add_edit="1" name_flag="1" view_flag="0" name_len="20" nono="0" sel_multi_flag="0" /><field id="expr" label="Ausdruck" tip="()Ein Ausdruck aus der loop in, zb: (loop,in,..,@id) - (loop,in,@id) - (loop,in)()" type="textblock" add_edit="1" view_flag="1" /><field id="desc" label="Beschreibung" type="textblock" /></fields>

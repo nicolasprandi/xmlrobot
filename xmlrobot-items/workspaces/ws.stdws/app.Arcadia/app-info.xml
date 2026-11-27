@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<app-info 
+  role="user" 
+  tip="Github adapter for XmlRobot" 
+  has_static_project="1"
+  flag="has_static_project"
+  sort="3 Arcadia"/>

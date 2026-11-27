@@ -1,0 +1,1 @@
+TRUNCATE int.mig, int.mig_obj;

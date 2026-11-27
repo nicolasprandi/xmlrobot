@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jobs>  
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<include file="(dir,services)recognitions-prolog.lsx" /><job id="View Recognition Files" joblevel="pro" role="hidden" tip="Lists all Recognition Files">
+<prop id="nothing">1</prop>
+<loop id="i" xml="(file,recognitions)" xpath="(prop,recognitions_offset)recognition(prop,recognitions_where)" sort="(prop,recognitions_sort_attribute)" number="(prop,recognitions_sort_number)" ignore_case="(prop,recognitions_sort_ignore_case)" desc="(prop,recognitions_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,recognitions_offset_label)),0)">
+<ti>(f,html,bold,open)(prop,recognitions_offset_label): (f,html,bold,close)</ti>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<warn>hier vor hase</warn>
+<file id="hase">(loop,i,@file)</file><echo type="file" id="hase" label="s2"/><unescape id="hase" type="file"/><translate id="hase" type="file"/><ti type="rec" label="(f,html,bold,open)(f,text,cut_nice,(f,name_of_file,(file,hase)),20)(f,html,bold,close)">
+<ti x=" " span="1" />
+<ti type="call_service" explain="See" job="See Recognition File">
+<prop id="recognition_key">(loop,i,@row)</prop>
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti type="call_service" explain="Edit" job="Edit Recognition File">
+<prop id="recognition_key">(loop,i,@row)</prop>
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti type="call_service" explain="Delete" job="Del Recognition File">
+<prop id="recognition_key">(loop,i,@row)</prop>
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="view" explain="Test" job="compi_recognition_act_test">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">test</prop>
+<prop page="view" id="recognition_key">(loop,i,@row)</prop>
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti>No Recognition Files found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,recognitions_offset),node(e:o)(e:c)))">
+<ti label=" " type="call_service" explain="Add another Recognition File" explain_alt="Add another Recognition File(prop,recognitions_offset_label)" job="Add another Recognition File">
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,info,level))">
+<ti_hr />
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,recognitions)</ti>
+<ti label="Xml-Offset:" test="(f,gt,(f,len,(prop,recognitions_offset)),0)">(prop,recognitions_offset)</ti>
+</ti>
+</when>
+</job><job role="hidden" id="To Memory Recognition File">
+<need>(prop,recognition_key)</need>
+<spirit act="open" id="recognitions_spirit_tc" xml="(file,recognitions)"  
+  flag="nuevo"
+  missing_strategy="empty"/>
+<prop id="recognition_dt_upd">(f,spirit,recognitions_spirit_tc,(prop,recognitions_offset)recognition[@row='(prop,recognition_key)'],@dt_upd)</prop>
+<prop id="recognition_dt_add">(f,spirit,recognitions_spirit_tc,(prop,recognitions_offset)recognition[@row='(prop,recognition_key)'],@dt_add)</prop>
+<file id="recognition_file">(f,spirit,recognitions_spirit_tc,(prop,recognitions_offset)recognition[@row='(prop,recognition_key)'],@file)</file>
+<unescape type="file" id="recognition_file" />
+<translate type="file" id="recognition_file" />
+<spirit act="close" id="recognitions_spirit_tc" />
+</job><job role="hidden" id="See Recognition File">
+<need>(prop,recognition_key)</need>
+<call_service job="To Memory Recognition File" />
+<ti_hr />
+<ti label="[ (file,recognition_file) ]" key="#(prop,recognition_key)" />
+<ti padding_top="0px" laxxbel="(file,recognition_file)(prop,recognitions_offset_label)">
+<ti label="Recognition File:" type="file" test="(f,has,file,recognition_file)">(file,recognition_file)</ti>
+</ti>
+<ti_hr />
+<ti padding_top="6px" label="Actions">
+<ti type="call_service" explain="Edit" job="Edit Recognition File">
+<prop id="recognition_key">(prop,recognition_key)</prop>
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti type="call_service" explain="Delete" job="Del Recognition File">
+<prop id="recognition_key">(prop,recognition_key)</prop>
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="details" explain="Test" job="compi_recognition_act_test">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">test</prop>
+<prop page="details" id="recognition_key">(prop,recognition_key)</prop>
+<file id="recognitions">(file,recognitions)</file>
+<prop id="recognitions_offset">(prop,recognitions_offset)</prop>
+<prop id="recognitions_offset_label">(prop,recognitions_offset_label)</prop>
+<prop id="recognitions_offset_new_key">(prop,recognitions_offset_new_key)</prop>
+<prop id="recognitions_sort_attribute">(prop,recognitions_sort_attribute)</prop>
+<prop id="recognitions_sort_number">(prop,recognitions_sort_number)</prop>
+<prop id="recognitions_where">(prop,recognitions_where)</prop>
+<prop id="recognitions_return_job">(prop,recognitions_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<call_service job="comp_act_home" />
+</try>
+<catch>
+<ti label="Hook must be implemented: recognition-details: end.0">
+<ti> hook_job=comp_act_home hook=end page=details station=0 object=recognition</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!" />
+<throw_again />
+</catch>
+</try_catch>
+</job><job role="hidden" id="Edit Recognition File">
+<need>(prop,recognition_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Recognition File" />
+<prop id="isAdd">0</prop>
+<call_service job="Recognition File Editor" />
+<call_service job="To File Recognition File" />
+<i label="Updated:" x="Recognition File #(prop,recognition_key)" />
+<ti label=" " x="(file,recognition_file)" />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,recognitions_return_job)" />
+</when>
+</job><job role="hidden" id="Del Recognition File">
+<need>(prop,recognition_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Recognition File" />
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting [ (file,recognition_file) (prop,recognitions_offset_label)] ?" x="()Do you really want to delete that?&#xA;If you are not sure, make a backup of the services.()">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()" />
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,recognitions)" where="(prop,recognitions_offset)recognition[@row='(prop,recognition_key)']" />
+<i>Deleted (file,recognition_file) #(prop,recognition_key) (file,recognition_file)</i>
+<ti label="Did delete Recognition File:" x="(f,html,bold,open)(file,recognition_file)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,recognitions_return_job)" />
+</when>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+</job><job role="hidden" id="Recognition File Editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Recognition File(prop,recognitions_offset_label)" />
+<tk label="Recognition File" id="recognition_file" type="file" flag=" nono " />
+<tk label="(prop,label)" flag="sum_only">
+<tk label="Recognition File" id="recognition_file" type="file" flag=" nono " />
+</tk>
+</when>
+<otherwise>
+<need>(prop,recognition_key)</need>
+<prop id="label" x="(file,recognition_file)(prop,recognitions_offset_label)" />
+<tk label="Update: (prop,label)" flag="">
+<tk label="Recognition File" id="recognition_file" type="file" flag=" nono " />
+</tk>
+</otherwise>
+</choose>
+</job><job id="Add another Recognition File" joblevel="pro" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="Recognition File Editor" />
+<prop id="recognition_key">1</prop>
+<when test="(f,not,(f,exists,prop,recognitions_offset_new_key))">
+<prop id="recognitions_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,recognitions)" sort="@row" number="@row" xpath="(prop,recognitions_offset_new_key)recognition">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="recognition_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Recognition File: #(prop,recognition_key)</i>
+<call_service job="To File Recognition File" />
+<ti label="Did add Recognition File:" x="(f,html,bold,open)(file,recognition_file)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,recognitions_return_job)" />
+</when>
+</job><job role="hidden" id="To File Recognition File">
+<need>(prop,recognition_key) (prop,isAdd)</need>
+<spirit act="open" id="recognitions_spirit_tc" xml="(file,recognitions)"  flag="nuevo"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,recognitions_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,recognitions_offset),0,(f,sub,(f,len,(prop,recognitions_offset)),1))" />
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,recognitions_offset)" />
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="recognitions_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;recognition row="(prop,recognition_key)" /&gt;</inline>
+</spirit>
+<spirit act="xml_update" how="set_attribute" attribute="dt_add" id="recognitions_spirit_tc" where="(prop,recognitions_offset)recognition[@row='(prop,recognition_key)']" value="(f,time)" />
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" attribute="dt_upd" id="recognitions_spirit_tc" where="(prop,recognitions_offset)recognition[@row='(prop,recognition_key)']" value="(f,time)" />
+<file id="jack-in" x="(file,recognition_file)" />
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file-srv" flag="silent" />
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<!-- waszutun -->
+<echo type="prop" id="jack-result" label="vor speichern in recog"/>
+<spirit act="xml_update" how="set_attribute" 
+id="recognitions_spirit_tc" 
+where="(prop,recognitions_offset)recognition[@row='(prop,recognition_key)']" 
+attribute="file" 
+value="(prop,jack-result)" />
+<spirit act="close" flag="save" id="recognitions_spirit_tc" />
+</job></jobs>

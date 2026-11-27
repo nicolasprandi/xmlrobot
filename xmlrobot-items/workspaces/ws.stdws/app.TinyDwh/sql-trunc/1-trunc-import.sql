@@ -1,0 +1,1 @@
+TRUNCATE import.bez, import.box, import.obj, import.attr, import.wert, import.qk_attr_wert, import.mehr, import.schlecht;

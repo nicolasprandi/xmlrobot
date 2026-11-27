@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="app-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new App(prop,apps_offset_label)"/>
+<prop x="sum" id="apps_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,app_key)</need>
+<prop id="label" x="App [(prop,app_appid)](prop,apps_offset_label)"/>
+<prop x="sum_only" id="apps_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="app-tk"/>
+</job>

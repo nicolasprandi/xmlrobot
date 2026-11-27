@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="squery-read">
+<need>(prop,squery_key)</need>
+<spirit act="open" missing_strategy="empty" id="squerys_spirit_tc" xml="(file,squerys)"/>
+<prop id="squery_dt_upd">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@dt_upd)</prop>
+<prop id="squery_dt_add">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@dt_add)</prop>
+<prop id="squery_sql">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@sql)</prop>
+<prop id="squery_id">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@id)</prop>
+<prop id="squery_class1">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@class1)</prop>
+<prop id="squery_desc">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@desc)</prop>
+<prop id="squery_limit_typ">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@limit_typ)</prop>
+<prop id="squery_limit_indiv">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@limit_indiv)</prop>
+<prop id="squery_prolog">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@prolog)</prop>
+<prop id="squery_translate">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@translate)</prop>
+<prop id="squery_archify">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@archify)</prop>
+<prop id="squery_trim">(f,spirit,squerys_spirit_tc,(prop,squerys_offset)squery[@row=(f,xpath_string,(prop,squery_key))],@trim)</prop>
+<spirit act="close" id="squerys_spirit_tc"/>
+</job>

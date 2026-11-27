@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="aspect-tk">
+<need default="">(prop,aspects_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,aspects_tk_control) wrap ">
+<tk label="Titel" id="aspect_titel" x="" test_first="1" tip="The aspects title; one or two words" type="text" flag=" nono "/>
+<tk label="Documentation" id="aspect_explain" x="" test_first="0" tip="How is the aspect defined" type="textblock" flag=" "/>
+</tk>
+</job>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+    <!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+    <file id="sqlis">(dir,pro)sqlis.xml</file>
+    <when test="(f,not,(f,exists_file,(file,sqlis)))">
+        <create_file out="(file,sqlis)">&lt;sqlis/&gt;</create_file>
+        <i>Created: (file,sqlis)</i>
+    </when>
+    <prop id="sqlis_offset">./</prop>
+    <prop id="sqlis_offset_label"/>
+    <prop id="sqlis_offset_new_key">//</prop>
+    <prop id="sqlis_sort_attribute"/>
+    <prop id="sqlis_sort_number"/>
+    <prop id="sqlis_sort_ignore_case"/>
+    <prop id="sqlis_sort_desc"/>
+    <prop id="sqlis_where"/>
+    <prop id="sqlis_return_job">sqli-see-all</prop>
+</prolog>

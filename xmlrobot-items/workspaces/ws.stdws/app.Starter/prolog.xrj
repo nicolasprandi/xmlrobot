@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="prolog" role="hidden">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great hibiscus-app</throw>
+  <file id="cob-data" x="(dir,pro)cob-data.xrs"/>
+  <prop id="cob-regex" x="cob_.+"/>
+  
+  <prop id="pk"></prop>
+  <prop id="pk" test="(f,exists_file,(dir,pro)pk.txt)">X</prop>
+    
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

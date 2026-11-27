@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="write last_blurry" file_class="editor" search="&lt;/job&gt;" search_type="text" expectation="1" replace="&lt;prop id=&quot;joe-in-regex&quot; x=&quot;(prop,last_blurry-regex)&quot; /&gt;&#xA;&lt;file id=&quot;joe-in-store&quot; x=&quot;(file,last_blurry)&quot; /&gt;&#xA;&lt;call_job job=&quot;go-joe-write&quot;/&gt;&#xA;&lt;/job&gt;" />
+  <update row="2" titel="write last_blurry" file_class="add" search="&lt;prop id=&quot;isAdd&quot;&gt;1&lt;/prop&gt;" search_type="text" expectation="1" replace="&lt;prop id=&quot;isAdd&quot;&gt;1&lt;/prop&gt;&#xA;&lt;prop id=&quot;joe-in-regex&quot; x=&quot;(prop,last_blurry-regex)&quot; /&gt;&#xA;&lt;file id=&quot;joe-in-store&quot; x=&quot;(file,last_blurry)&quot; /&gt;&#xA;&lt;call_job job=&quot;go-joe-read&quot;/&gt;" />
+</updates>

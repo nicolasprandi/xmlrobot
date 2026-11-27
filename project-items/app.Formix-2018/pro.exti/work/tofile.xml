@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exti-write">
+<need>(prop,exti_key) (prop,isAdd)</need>
+<spirit act="open" id="extis_spirit_tc" xml="(file,extis)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,extis_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,extis_offset),0,(f,sub,(f,len,(prop,extis_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,extis_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="extis_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;exti row="(prop,exti_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="ons" value="(f,vob,prop,exti_ons)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="pro_check_string" value="(f,vob,prop,exti_pro_check_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="pro_load_string" value="(f,vob,prop,exti_pro_load_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="password_string" value="(f,vob,prop,exti_password_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="passwords" value="(f,vob,prop,exti_passwords)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="mediathek_string" value="(f,vob,prop,exti_mediathek_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="runtime_string" value="(f,vob,prop,exti_runtime_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="ext_embedjs_string" value="(f,vob,prop,exti_ext_embedjs_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="mydata_string" value="(f,vob,prop,exti_mydata_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="guiprivs" value="(f,vob,prop,exti_guiprivs)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="file_load_string" value="(f,vob,prop,exti_file_load_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="tk_string" value="(f,vob,prop,exti_tk_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="interpreter_string" value="(f,vob,prop,exti_interpreter_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="ws_string" value="(f,vob,prop,exti_ws_string)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extis_spirit_tc" where="(prop,extis_offset)exti[@row='(prop,exti_key)']" attribute="ebits" value="(f,vob,prop,exti_ebits)"/>
+<spirit act="close" flag="save pretty" id="extis_spirit_tc"/>
+</job>

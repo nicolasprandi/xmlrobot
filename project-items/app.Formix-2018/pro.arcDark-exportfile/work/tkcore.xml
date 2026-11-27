@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exportfile-tk">
+<need default="">(prop,exportfiles_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,exportfiles_tk_control) wrap ">
+<tk label="Zip-File" id="exportfile_file" x="" test_first="1" tip="The zip-File to be exporte" type="file" flag="  save "/>
+<tk label="Description" id="exportfile_desc" x="xxx" test_first="0" tip="Description" type="text" flag=" "/>
+</tk>
+</job>

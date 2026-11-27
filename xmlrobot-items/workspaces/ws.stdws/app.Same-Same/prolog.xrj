@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<jobs>
+
+
+<job id="prolog" role="hidden">
+  <prop id="delete-modern" x="1"/>
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">This is the end of Same-Same</throw>
+  
+  <when test="(f,has,prop,pro)">
+    <file id="coll" x="(dir,pro)collection.xml"/>
+    <file id="list" x="(dir,pro)list.xml"/>
+    <file id="dup" x="(dir,pro)duplicates.xml"/>
+    
+    <file id="newfo-data" x="(dir,pro)newfo-data.xrs"/>
+    <prop id="newfo-regex" x="newfo_.+"/>
+    <dir id="antthings" x="(dir,pro)"/>
+    <mkdir dir="(dir,antthings)"/>
+    
+    <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+    <prop id="conf-regex" x="conf_.+"/>  
+  </when>
+</job>
+
+<!--
+
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+
+-->
+
+
+</jobs>

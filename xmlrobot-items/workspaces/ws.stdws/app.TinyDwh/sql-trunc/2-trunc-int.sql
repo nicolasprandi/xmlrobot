@@ -1,0 +1,1 @@
+TRUNCATE int.box, int.bez, int.obj,  int.attr, int.wert, int.qk_attr_wert, int.mig_obj, int.mehr, int.schlecht;

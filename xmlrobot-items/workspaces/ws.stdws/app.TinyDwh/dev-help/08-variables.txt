@@ -1,0 +1,11 @@
+<prop id="$x">1</prop>
+
+<prop id="$x">(f,add,1,(prop,$x))</prop>
+
+<remove type="prop" id="$x" />
+
+<need default="1">(prop,see-sql-limit)</need>
+
+<prop id="das-query-buch">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</prop>
+
+<dir id="root">(dir,pro)query-runnings(prop,fs)(prop,das-query-buch)(prop,fs)(prop,squery_id)</dir>

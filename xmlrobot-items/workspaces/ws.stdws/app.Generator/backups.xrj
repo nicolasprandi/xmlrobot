@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="backup-excel" role="hidden">
+  <file id="target" x="(dir,excel-backups)(f,name_of_file2,(file,excel))-(f,time).xls"/>
+  <copy file="(file,excel)" tofile="(file,target)"/>
+  <ti label="Backup done">
+  <ti label="Created:" type="file" x="(file,target)"/>
+  </ti>
+</job>
+                                          
+<job id="sys_project_backup" role="hidden">
+  <need>(dir,my-backup-space)</need>
+  
+  <i>hello data generator sys_project_backup to (dir,my-backup-space)</i>
+  <call_job job="check input relaxed"/>
+  <when test="(f,has,file,excel)">
+  <choose>
+    <when test="(f,not,(f,starts_with,(f,can_file,(file,excel)),(f,can_dir,(dir,pro))))">
+      <mkdir dir="(dir,my-backup-space)"/>    
+      <copy file="(file,excel)" intodir="(dir,my-backup-space)"/>
+      <i>Did add spreadsheet to project backup</i>
+    </when>
+    <otherwise>
+      <i>Spreadsheet is in project anyway. No need to copy</i>
+    </otherwise>
+  </choose>
+  </when>
+</job>
+
+
+</jobs>

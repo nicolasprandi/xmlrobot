@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+<job id="build-central" role="hidden">   
+
+
+                
+</job>  
+
+
+<job id="go-build" role="hidden"> 
+  <call_job job="build-central"/>
+</job>
+
+<job id="Build Apache Ant" role="test">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="ant"/>
+  </call_job>
+  <call_job job="go-build"/>
+
+</job>
+
+<job id="Build Panorama" role="test">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="panorama"/>
+  </call_job>
+
+  <call_job job="go-build" role="admin"/>
+</job>
+
+<job id="Build Compare" role="test">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="compare"/>
+  </call_job>
+  <call_job job="go-build"/>
+</job>
+
+<job id="Build Core" role="test">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="core"/>
+  </call_job>
+  <call_job job="go-build"/>
+</job>
+
+
+
+
+</jobs>

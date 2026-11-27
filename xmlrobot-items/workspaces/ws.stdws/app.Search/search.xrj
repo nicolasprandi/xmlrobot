@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+
+<job id="Search-Info-All" role="hidden">
+  <call_job job="read-ic-search"/>
+
+    <ti label="Current argument type:" test="(f,has,prop,search_type)">(f,html,bold,open)(prop,search_type)(f,html,bold,close)</ti>
+    <ti label="Current argument:" test="(f,has,prop,search_for)">(f,html,bold,open)(prop,search_for)(f,html,bold,close)</ti>
+    <ti label="in Files of Dir:" test="(f,has,dir,search_dir)" type="dir">(dir,search_dir)</ti>
+
+  <choose>
+    <when test="(f,has,prop,pro)">
+      <call_job job="do-search-tk-cernel">
+        <prop id="dstc-flag" x=" print_only print_with_tips"/>
+      </call_job>      
+    </when>
+    <otherwise>
+      <call_job job="do-search-tk-cernel">
+        <prop id="dstc-flag" x=" print_only print_tips_only print_all_fields"/>
+      </call_job>    
+    </otherwise>
+  </choose>
+
+    
+</job>
+<job id="Search?">
+
+  
+  
+  <ti label="About: Search">
+    <ti laxbel=" ">Looks for same argument-type like lasttime</ti>
+  </ti>
+  <call_job job="Search-Info-All"/>
+
+  
+</job>
+
+<job id="Search for Regex?">
+  <ti label="About: Search for Regex">
+    <ti>Switches automatically to the Argumenttype REGEX and asks for input</ti>
+  </ti>
+  <call_job job="Search-Info-All"/>
+</job>
+
+<job id="Search for Text?">
+  <ti label="About: Search for Text">
+    <ti>Switches automatically to the Argumenttype TEXT and asks for input</ti>
+  </ti>
+  <call_job job="Search-Info-All"/>
+</job>
+
+
+<job id="Search" tip="Searches again (for last argument-type)">
+  <interpreter watch="0"/>
+  <choose>
+    <when test="(f,exists_file,(file,ic-search))">
+      <!-- search data exist already -->
+      <!-- nothing to do -->
+    </when>
+    <otherwise>
+      <!-- no search-data, request for directory, preselction with jil -->
+      <choose>
+        <when test="(f,implement,online)">
+          <tk id="search_dir" type="dir" flag="nono" 
+              label="Directory to Search" tip="(prop,def_dir_tip)"/>
+          <call_job job="write-ic-search"/> 
+                  
+        </when>
+        <otherwise>
+          <call_service job="go-jil-run" flag="silent">
+            <prop id="jil-question">Preselect Directory for Search ...</prop>
+          </call_service>
+          <global act="get" id="jil-result" as_id="jil-result"/>
+          
+          <dir id="search_dir">(prop,jil-result)</dir>
+          <tk id="search_dir" type="dir" flag="nono" 
+              label="Confirm Directory for Search ..." tip="(prop,def_dir_tip)"/>
+          <call_job job="write-ic-search"/>    
+        </otherwise>
+      </choose>
+    </otherwise>
+  </choose>
+
+
+    
+  <call_job job="search-internal"/>
+</job>
+
+<job id="Search for Text" tip="Searches for a Test argument">
+
+  <call_job job="search-internal">
+    <prop id="must-type" x="text"/>
+  </call_job>
+  
+</job>
+
+<job id="Search for Regex" tip="Searches for a Regular-Expression argument">
+
+  <call_job job="search-internal">
+    <prop id="must-type" x="regex"/>
+  </call_job>
+  
+</job>
+
+<job id="do-search-tk-cernel" role="hidden">
+  <need default="">(prop,dstc-flag)</need>
+
+  <tk label="Search Parameters" 
+      flag="sum (prop,dstc-flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+  
+    <tk type="textblock" 
+        id="search_for" 
+        label="(prop,def_for_label)"
+        tip="()The search argument. it may be a plain text or a regular expression. what type it will finally be is defined by your specification 'How to Search ...'()"
+        flag="nono"/>  
+        
+    <tk type="sel" 
+        id="search_type" 
+        label="How to Search?" 
+        flag="nono" 
+        x="text"
+        tip="()text versus regular expression; text will search for exaclty that defined search text, regex will apply the regular-expression syntax to search for a piece of text in the files()"
+        test_first="0">
+        <sel label="Text">text</sel>
+        <sel label="Regular Expression">regex</sel>    
+    </tk>
+    
+    <tk type="msg"
+         x="File Selection" 
+         msg_type="i" 
+         test_first="0"
+         tip="()before text- or regex-search can be applied a selection of files have to be specified which should be included in that search. This initial of file-search is is done (1) by the specification of a directory, (2) a number of directory-levels and (1) a list of file-extensions. ()"/>       
+       
+    <tk id="search_dir" 
+        type="dir" 
+        test_first="0" 
+        flag="nono" 
+        label="(prop,def_dir_label)" 
+        tip="()A directory which serves as intial directory for the file-search.()"/>
+
+    <tk id="search_levels" test_first="0" type="sel" x="(prop,def_levels_x)" 
+        label="(prop,def_levels_label)" 
+        tip="()the number of directory levels included in the file-search()"
+        flag="nono">
+      <sel>1</sel>
+      <sel>2</sel>
+      <sel>3</sel>
+      <sel>4</sel>
+      <sel>5</sel>
+      <sel>6</sel>
+      <sel>7</sel>
+      <sel>8</sel>
+      <sel>9</sel>
+      <sel label="All">999</sel>    
+    </tk>
+                    
+        
+
+    <tk 
+      id="search_ext" 
+      test_first="0" 
+      label="(prop,def_ext_label)" 
+      x="(prop,def_ext_x)" 
+      tip="(prop,def_ext_tip)" flag="nono"/>
+
+  <tk type="msg" x="Options" msg_type="i"  test_first="0"/>
+  
+    <tk id="search_encoding" 
+        test_first="0" 
+        x="(prop,def_encoding_x)" 
+        label="(prop,def_encoding_label)" 
+        flag="nono" 
+        tip="(prop,def_encoding_tip)"/>
+    
+    <tk type="msg" 
+        x="Reporting Display" 
+        msg_type="i"  
+        test_first="0"/>
+        
+    <tk id="search_len_before" 
+        test_first="0" 
+        x="(prop,def_len_before_x)" 
+        label="(prop,def_len_before_label)" 
+        flag="nono" 
+        tip="(prop,def_len_before_tip)"/>
+        
+    <tk id="search_len_after" 
+        test_first="0" 
+        x="(prop,def_len_after_x)" 
+        label="(prop,def_len_after_label)" 
+        flag="nono" 
+        tip="(prop,def_len_after_tip)"/>
+  </tk>   
+  <!-- 
+  <prop id="search_tester" x="(e:o)test(e:c)"/>
+  <echo>** prop search=[(prop,search_for)]</echo>
+  -->
+
+  
+</job>
+<job id="search-internal" role="hidden">
+  <need default="">(prop,must-type)</need>
+  <!-- read input cache -->
+  <call_job job="read-ic-search"/>
+  
+  <when test="(f,has,prop,must-type)">
+    <prop id="search_type" x="(prop,must-type)"/>
+  </when>
+    
+  <!-- do input --> 
+  <when test="(f,not,(f,exists,prop,search_type))">
+    <tk type="sel" 
+        id="search_type" 
+        label="How to Search?" 
+        flag="nono" 
+        x="text"
+        test_first="0">
+        <sel label="Text">text</sel>
+        <sel label="Regular Expression">regex</sel>    
+    </tk>  
+  </when>
+  <when test="(f,not,(f,role,dev))">
+    <dir id="search_dir">(f,can_dir,(dir,search_dir))</dir>
+  </when>
+  
+  <call_job job="do-search-tk-cernel">
+    <!-- <prop id="dstc-flag" x="print"/> -->
+  </call_job>
+
+  <!-- write input cache -->  
+  <call_job job="write-ic-search"/>
+    
+  <call_job job="perform-search"/>
+  <call_job job="report-internal"/> 
+</job>
+
+<job id="perform-search" role="hidden">
+  <need>(prop,search_type) (prop,search_for) (prop,search_ext) (prop,search_levels) (prop,search_len_before) (prop,search_len_after) </need>  
+  
+  <choose>
+    <when test="(f,eq,text,(prop,search_type))">
+      <prop id="search_regex">(f,text_to_regex,(prop,search_for))</prop>
+      <echo type="prop" id="search_regex" label="Converted from search"/>
+    </when>
+    <otherwise>
+      <prop id="search_regex">(prop,search_for)</prop>
+    </otherwise>
+   </choose>
+   <!-- <ti>search for (prop,search_regex)</ti>  -->   
+     
+  <scan out="(file,scan)" 
+        dir="(dir,search_dir)" 
+        file_extension="(prop,search_ext)" 
+        level_limit="(prop,search_levels)" 
+        field="fn pre post id rpxath"
+        flag="no_output_friend"/>
+   <ti label="Scan" type="file" x="(file,scan)" test="0"/>  
+   <!-- 
+   <call_service job="go-jack-do-dir" flag="silent">
+      <dir id="jack-in" x="(dir,search_dir)" />
+   </call_service>
+   <global act="get" id="jack-result" as_id="jack-result"/>
+   <ti type="file" test="0">(file,result)</ti>
+   -->
+   <spirit id="result" xml="(file,result)" act="open" flag="nuevo">
+    <inline attribute="xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+   <result/>]]></inline>
+   </spirit>
+   
+ 
+  <prop id="sum_times">0</prop>
+  <prop id="sum_files">0</prop>
+  
+  <!-- loop for every file provided by scan -->      
+  <loop id="files" xml="(file,scan)" xpath="//file" >
+  
+    <try_catch>
+      <try> 
+        <prop id="found">(f,file_count_regex,(loop,files,@fn),(prop,search_regex),(prop,search_encoding))</prop>
+        <!-- <ti label="Found: (prop,found)" type="file" x="(loop,files,@fn)"/>   -->
+      </try>
+      <catch class="java.io.UnsupportedEncodingException">
+        <ti>Problem with Encoding '(prop,search_encoding)'(e:s) java.io.UnsupportedEncodingException</ti>
+        <throw_again/>
+      </catch>
+      <catch class="java.util.regex.PatternSyntaxException">
+        <ti>Problem with Regular Expression(e:s) java.util.regex.PatternSyntaxException</ti>
+        <throw_again/>
+      </catch>
+      <catch>
+        <ti>Problem with Regular Expression</ti>
+        <throw_again/>
+      </catch>        
+    </try_catch> 
+    
+    <when test="(f,gt,(prop,found),0)">
+  
+      <prop id="sum_times">(f,add,(prop,sum_times),(prop,found))</prop> 
+      <prop id="sum_files">(f,add,(prop,sum_files),1)</prop>  
+       
+      <prop id="where">(loop,files,..,@ipath)</prop>
+      <!-- 
+      <when test="(f,not,(f,exists,prop,where))">
+        <tk type="msg" x="problemzone"/>
+        <prop id="where"></prop>
+      </when>        
+      <e>where=(prop,where)</e>   -->
+      <tp>found '(prop,search_for)' - Files: (prop,sum_times) - Times (prop,sum_times) - (loop,files)</tp>   
+        
+      <spirit id="result" act="xml_update" 
+        how="append">
+        <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><file
+        file_id="(loop,files,@id)" filename="(x,(loop,files))" fn_rel="(x,(prop,where)(loop,files))" id="(loop,files,@id)" times="(prop,found)"></file>]]></inline>
+      </spirit>
+      
+      <prop id="max">(f,file_info,len,(loop,files,@fn))</prop>
+      
+      <loop id="findings" file="(loop,files,@fn)" regex="(prop,search_regex)" encoding="(prop,search_encoding)">
+
+        <prop id="start2">(f,max,(f,sub,(loop,findings,#start),(prop,search_len_before)),0)</prop>
+        <prop id="end2">(f,min,(f,add,(loop,findings,#end),(prop,search_len_after)),(prop,max))</prop>
+                                          
+        <spirit id="result" act="xml_update" 
+          what="(file,result)" 
+          how="insert_in"
+          where="file[@id=(f,xpath_string,(loop,files,@id))]" >
+          <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <finding id="(loop,findings,#i)" start="(loop,findings,#start)" end="(loop,findings,#end)">
+          <before>(x,(f,substring_file,(loop,files,@fn),(prop,start2),(f,add,0,(loop,findings,#start)),(prop,search_encoding)))</before>
+          <found>(x,(f,substring_file,(loop,files,@fn),(loop,findings,#start),(loop,findings,#end),(prop,search_encoding)))</found>
+          <after>(x,(f,substring_file,(loop,files,@fn),(loop,findings,#end),(prop,end2),(prop,search_encoding)))</after>
+          </finding>]]></inline>
+        </spirit> 
+      
+      </loop>
+
+    
+    </when> 
+  
+  </loop>
+
+  <spirit id="result" act="xml_update" 
+    how="set_attribute"
+    where="."
+    attribute="sum_times"
+    value="(prop,sum_times)"/>
+
+  <spirit id="result" act="xml_update" 
+    how="set_attribute"
+    where="."
+    attribute="sum_files"
+    value="(prop,sum_files)"/>
+      
+  <spirit id="result" act="close" out="(file,result)" flag="save"/>
+  <ti type="file" label="Result:" x="(file,result)" test="0"/>
+      
+
+
+</job>
+
+
+<job id="New Directory" pri="10" tip="Change the directory in which you search" role="hidden">
+
+    <call_job job="read-ic-search"/>
+
+    <call_service job="go-jil-run" flag="silent">
+      <prop id="jil-question">Preselect Directory for Search ...</prop>
+    </call_service>
+    <global act="get" id="jil-result"/>
+    
+    <dir id="search_dir">(prop,jil-result)</dir>
+
+    <tk id="search_dir" type="dir" 
+        test_first="0" flag="nono" 
+        label="(prop,def_dir_label)" tip="(prop,def_dir_tip)"/>
+              
+    <call_job job="write-ic-search"/>
+    
+    <call_job job="Search"/>
+
+</job>
+
+</jobs>

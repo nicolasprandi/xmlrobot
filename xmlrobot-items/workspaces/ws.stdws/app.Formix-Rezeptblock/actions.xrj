@@ -1,0 +1,281 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="check-login"/>
+<call_job job="prolog" />
+
+<job id="order-see" role="hidden">
+  <need>(prop,rez_key) (prop,ord_path) (prop,rez_bez)</need>
+  
+  <file id="order-data" x="(dir,pro)orders/(prop,rez_key)/(prop,ord_path)order-data.xrs"/>
+  <prop id="order-title" x="fuer &apos;(prop,rez_bez)&apos;" />
+  <call_job job="tk_order_print_values"/>  
+  
+  <ti label=" " type="call_job" job="order-edit" explain="Editiere Bestellung"
+    test="(f,role,boss)">
+    <prop id="rez_key" x="(prop,rez_key)"/>
+    <prop id="ord_path" x="(prop,ord_path)"/>
+    <prop id="rez_bez" x="(prop,rez_bez)"/>
+  </ti>
+  
+  <ti_hr/>
+  <ti type="call_job" job="rez-see" explain="Zum gesamten Rezept &apos;(f,xpath,(file,rezs),rez[@row=(prop,rez_key)],@bez)&apos;">
+    <prop id="rez_key" x="(prop,rez_key)"/>
+  </ti> 
+    
+</job>
+
+<job id="order-edit" role="hidden">
+  <need>(prop,rez_key) (prop,ord_path) (prop,rez_bez)</need>
+  
+  <file id="order-data" x="(dir,pro)orders/(prop,rez_key)/(prop,ord_path)order-data.xrs"/>
+  <prop id="order-title" x="fuer &apos;(prop,rez_bez)&apos;" />
+  <call_job job="tk_order_edit"/>  
+  
+  <!-- 
+  <ti_hr/>
+  <call_job job="order-see-all"/>
+  -->
+  
+  <ti_hr/>
+  <ti type="call_job" job="rez-see" explain="Zum gesamten Rezept &apos;(f,xpath,(file,rezs),rez[@row=(prop,rez_key)],@bez)&apos;">
+    <prop id="rez_key" x="(prop,rez_key)"/>
+  </ti>   
+</job>
+
+<job id="order-del" role="hidden">
+  <need>(prop,rez_key) (prop,ord_path) (prop,rez_bez)</need>
+  
+  <file id="order-data" x="(dir,pro)orders/(prop,rez_key)/(prop,ord_path)order-data.xrs"/>
+  <prop id="ms1">(f,unescape,sys,(f,try,()(f,xpath,(file,order-data),p[@id='order_cust_name'])(),-kein-kundenname-),0)</prop>
+  
+  <prop id="ms2">(f,unescape,sys,(f,try,()(f,xpath,(file,order-data),p[@id='order_amount'])(),-keine-menge-),0)</prop>  
+  <tk label="Bestellung loeschen">
+  <tk type="msg">Wollen sie wirklich die Bestellung fuer '(prop,rez_bez)' loeschen?
+  
+Kundenname: (prop,ms1)
+Menge: (prop,ms2)
+</tk>  
+</tk>
+  <rollback path="orders/(prop,rez_key)/(prop,ord_path)"/>
+  <ti>Die Bestellung wurde geloescht</ti>
+  <ti_hr/>
+  <ti type="call_job" job="rez-see" explain="Zum gesamten Rezept &apos;(f,xpath,(file,rezs),rez[@row=(prop,rez_key)],@bez)&apos;">
+    <prop id="rez_key" x="(prop,rez_key)"/>
+  </ti>    
+  
+  <!-- 
+  <prop id="order-title" x="fuer &apos;(prop,rez_bez)&apos;" />
+  <call_job job="tk_order_edit"/>  
+  
+  <ti_hr/>
+  <ti type="call_job" job="rez-see" explain="Zum gesamten Rezept &apos;(f,xpath,(file,rezs),rez[@row=(prop,rez_key)],@bez)&apos;">
+    <prop id="rez_key" x="(prop,rez_key)"/>
+  </ti>   
+  -->
+</job>
+
+<job id="order-see-all" role="hidden">
+  <interpreter watch="0"/>
+  <need>(prop,rez_key) (prop,rez_bez)</need>
+
+  <dir id="order_folder" x="(dir,pro)orders/(prop,rez_key)"/>
+  <file 
+    id="order_index" 
+    x="(dir,cache)order-index/(prop,rez_key)/order_index.xml"/>
+   
+  <call_job job="create-order-index"/> 
+  
+  
+  <prop id="order_count" x="0"/>
+  <loop id="orders" xml="(file,order_index)" xpath="order" missing_strategy="empty">
+  
+    <prop id="order_count" x="(f,add,(prop,order_count),1)"/>
+    <try_catch><try>
+    <ti type="rec">
+      <ti flag="block" type="call_job" explain="(f,html,b,o)(f,text,cut_nice,(loop,orders,steps/p[@id='order_cust_name']),20)(f,html,b,c)"
+          job="order-see">
+          <prop id="rez_key" x="(prop,rez_key)"/>
+          <prop id="rez_bez" x="(prop,rez_bez)"/>
+          <prop id="ord_path" x="(loop,orders,@path)"/>
+      </ti>
+      <!-- 
+      <ti type="call_job" explain="Edit"
+          job="order-edit"
+          test="(f,role,boss)">
+          <prop id="rez_key" x="(prop,rez_key)"/>
+          <prop id="rez_bez" x="(prop,rez_bez)"/>
+          <prop id="ord_path" x="(loop,orders,@path)"/>
+      </ti>
+       -->     
+      <ti>(loop,orders,steps/p[@id='order_amount']) Stueck</ti>
+      <ti></ti>
+      <ti></ti>
+      <ti type="call_job" explain="Delete"
+          job="order-del"
+          test="(f,role,boss)">
+          <prop id="rez_key" x="(prop,rez_key)"/>
+          <prop id="rez_bez" x="(prop,rez_bez)"/>
+          <prop id="ord_path" x="(loop,orders,@path)"/>
+      </ti>
+            
+    </ti>
+    </try>
+    <catch>
+      <ti>the problem is (prop,catched_msg)</ti>
+    </catch>
+    </try_catch>
+  </loop> 
+  
+  <when test="(f,eq_num,0,(prop,order_count))">
+    <ti>No orders found</ti>
+  </when> 
+  
+  <ti type="call_job" job="add-order" label=" " explain="[ + Neue Bestellung ]">
+    <prop id="rez_key">(prop,rez_key)</prop>
+    <prop id="rez_bez" x="(prop,rez_bez)"/>
+    <prop id="order_id">(f,text,fill_left,(f,add,1,(prop,order_count)),3,0)-(f,random_text,3)</prop>
+  </ti> 
+    
+
+    
+
+</job>
+
+<job id="add-order" role="hidden">
+  <need>(prop,rez_key) (prop,order_id) (prop,rez_bez)</need>
+  <interpreter watch="0"/>
+  
+  <file id="order-data" x="(dir,pro)orders/(prop,rez_key)/(prop,order_id)/order-data.xrs"/>
+  <prop id="order-title" x="fuer &apos;(prop,rez_bez)&apos;" />
+  <call_job job="tk_order_edit"/>
+  
+  <!-- 
+  <tk label="Sure to order ?" 
+    type="accept" 
+    id="delete-pro-1" 
+    x="sure to place this order.&#xA;Its the file &#xA;xxx&#xA;Some things will happen to that item ..." 
+    label_accept="Order" 
+    label_decline="Forget it" 
+    width="300" height="150">
+    <q id="delete-pro-2" label="()Yes, I know that the existing file will be gone forever()"/>
+  </tk>
+  
+  
+  <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+    <delete dir="(dir,pro)orders/(prop,rez_key)/(prop,order_id)"/>
+    <throw>Bestellung terminated on request.</throw>
+  </when>
+  -->
+  <tk type="msg" x="Bestellung wirklich absetzen?"/>
+  <commit path="orders/(prop,rez_key)/(prop,order_id)" />
+  <call_service job="remove-empty-dirs" flag="catch silent" xflag="silent">
+    <dir id="with">(dir,pro)orders/</dir>
+  </call_service>
+    
+  <prop id="counter" x="(f,dir,count_dirs,(dir,pro)orders/(prop,rez_key))"/>
+
+  <call_job job="tk_conf_read"/>
+  <choose>
+    <when test="(f,gt_num,(prop,counter),(prop,conf_max_orders))">
+      <rollback path="orders/(prop,rez_key)/(prop,order_id)"/>    
+      <ti label="Bad News"/>
+      <prop id="mx">Ihre Bestellung konnte nicht plaziert werden da die maximal Anzahl von Bestellungen mit (prop,conf_max_orders) begrenzt ist.</prop>
+      <tk label="Bestellung abgewiesen">
+      <tk type="msg" msg_type="e">(prop,mx)</tk>
+      </tk>
+      <ti>(prop,mx)</ti>
+
+
+    </when>
+    <otherwise>
+      <ti label="Good News"/>
+      <ti>Danke fuer Ihre Bestellung</ti>
+
+    </otherwise>
+  </choose>
+
+  <ti_hr/>
+      <call_job job="rez-see"/>  
+  
+</job>
+
+<job id="create-order-index" role="hidden">
+  <need>(prop,rez_key) (dir,order_folder) (file,order_index)</need>
+  
+  <mkdir dir="(dir,order_folder)"/>
+  
+  <file 
+    id="scan" 
+    x="(dir,cache)scan.xml"/>
+  
+  <scan 
+    out="(file,scan)" 
+    dir="(dir,order_folder)" 
+    level_limit="1"/>  
+    
+  <print id="oi" out="(file,order_index)" act="open"/> 
+  <print act="print" id="oi"><![CDATA[<?xml version="1.0" ?><orders rez_key="(prop,rez_key)" orders_folder="(dir,order_folder)"]]></print>
+        
+    
+  <prop id="order_count" x="0"/>
+  <loop id="orders" xml="(file,scan)" xpath="dir">
+    <when test="(f,exists_file,(dir,order_folder)(loop,orders,@ipath)order-data.xrs)">
+      <prop id="order_count" x="(f,add,(prop,order_count),1)"/>
+      <when test="(f,eq_num,1,(prop,order_count))">
+        <print act="println" id="oi"><![CDATA[ count="(loop,orders,#max)" >]]></print>
+      </when>
+      <print act="println" id="oi"><![CDATA[<order path="(loop,orders,@ipath)" >]]></print>
+      <file id="conti" x="(dir,order_folder)(loop,orders,@ipath)order-data.xrs"/>
+      <!-- 
+      <ti label="include">(f,file,xml_content,(file,conti))</ti>  -->
+      <print act="println" id="oi">(f,file,xml_content,(file,conti))</print>
+      <print act="println" id="oi"><![CDATA[</order>]]></print>
+    </when>
+  </loop> 
+  
+  <when test="(f,eq_num,0,(prop,order_count))">
+    <print act="println" id="oi"><![CDATA[ count="0" >]]></print>
+  </when>  
+  
+  <print act="println" id="oi"><![CDATA[</orders>]]></print>   
+  <print act="close" id="oi"/>
+  <ti test="0" type="file" label="order-incex" x="(file,order_index)"/>
+  
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

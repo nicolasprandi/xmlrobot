@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="person-edit">
+<need>(prop,person_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="person-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="person-editor"/>
+<call_job job="person-write"/>
+<ti align="right" x="Did update Person '(prop,person_name_nic)'"/>
+<call_job job="person-see-all"/>
+</job>

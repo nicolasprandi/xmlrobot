@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zblock-see">
+<need>(prop,zblock_key)</need>
+<call_job job="zblock-read"/>
+<prop x="print print_only" id="zblocks_tk_control"/>
+<prop id="zblock_default_label" x="ZelixBlock: (f,html,bold,open)(prop,zblock_titel)(f,html,bold,close)(f,when,(f,has,(prop,zblocks_offset_label)), - (prop,zblocks_offset_label),)"/>
+<call_job job="zblock-tk"/>
+<ti_space height="3px"/>
+</job>

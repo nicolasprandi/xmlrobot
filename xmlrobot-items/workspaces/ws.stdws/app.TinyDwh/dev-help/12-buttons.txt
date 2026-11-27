@@ -1,0 +1,32 @@
+<ti_hr_break/>
+
+<!-- two buttons vertically -->
+<ti type="rec">  
+  <ti  type="call_job" job="_search" flag="block button" class="fx justmenu" explain="(prop,_sl_search_again)" />
+</ti>
+
+<ti type="rec">  
+  <ti  type="call_job" job="_searched" flag="block button" class="fx fxAction " explain="(prop,_pl_past)"/>
+</ti>
+
+<!-- back button -->
+<ti_break class_table="tabNavigator"/>
+
+<ti type="rec" >
+  <ti type="call_job" job="_select" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+      align="right" >          
+  </ti>  
+</ti>     
+
+<!-- floating menu buttons -->
+<ti type="rec" label=" ">
+  <ti type="menu">  
+    
+    <ti type="call_job" job="Lingua Conf" flag="button" class="fb fbEdit fbConf" 
+             
+    explain="(prop,_sl_conf_sprache_repo)" />
+    
+    <ti type="call_job" job="Lingua Conf?" explain="(prop,_label_askask)"
+        flag="button" class="fb fbAskAsk" />
+  </ti>    
+</ti>     

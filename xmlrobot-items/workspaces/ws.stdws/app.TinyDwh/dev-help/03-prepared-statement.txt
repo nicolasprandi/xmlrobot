@@ -1,0 +1,35 @@
+<!-- setup -->
+<dbc
+  id="(prop,mydbc)"
+  act="ps_add"
+  ps="del_iobj"
+  sql="delete from i_obj where box_id = ? ;"
+/>
+<prop id="$count-iobj" x="0" />
+
+<!-- usage -->
+<dbc
+  id="(prop,mydbc)"
+  act="ps_set_value"
+  ps="del_iobj"
+  type="int"
+  pos="1"
+  value="(loop,rec,@box_id)"
+/>
+
+<dbc
+  id="(prop,mydbc)"
+  act="update"
+  ps="del_iobj"
+  update_return_prop="$count-iobj-this"
+/>
+
+<prop id="$count-iobj" x="(f,add,(prop,$count-iobj),(prop,$count-iobj-this))" />
+
+<!-- remove definition of prepared statement -->
+<dbc
+  id="(prop,mydbc)"
+  act="ps_remove"
+  ps="del_iobj"
+  flag="catch"
+/>

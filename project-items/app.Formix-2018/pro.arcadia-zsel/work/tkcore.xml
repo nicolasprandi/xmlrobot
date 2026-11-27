@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zsel-tk">
+<need default="">(prop,zsels_tk_control)</need>
+<need default="">(prop,zsel_default_label)</need>
+<tk label="(prop,zsel_default_label)" flag="(prop,zsels_tk_control) wrap ">
+<tk label="Selected zblock" id="zsel_zblock" x="" test_first="1" tip="The selected zblock" type="sel" flag=" " xml="(file,zblock-selector)"/>
+</tk>
+</job>

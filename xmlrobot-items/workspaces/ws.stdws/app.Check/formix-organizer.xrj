@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved.
+dobre den 
+version 19.12.2020 -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="tr_formix_orga" role="hidden">
+  <choose>
+    <when test="(f,implement,online)">
+      <prop id="_org_move_up">       &#8593;       </prop>
+      <prop id="_org_move_down">       &#8595;       </prop>
+    </when>
+    <otherwise>
+      <prop id="_org_move_up">[       &#8593;       ]</prop>
+      <prop id="_org_move_down">[       &#8595;       ]</prop>    
+    </otherwise>
+  </choose>
+  
+  <choose>
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+    
+      <prop id="_org_edit">Bearbeiten</prop>
+      <prop id="_org_delete">L&#246;schen</prop>
+      
+      <prop id="_org_organize">/ Organisieren /</prop>
+      
+      <prop id="_org_del">L&#246;schen</prop>
+      <prop id="_org_sure_del">Wirklich l&#246;schen? </prop>
+      <prop id="_org_del_again">- LOESCHE-</prop>
+      <prop id="_org_del_from">- von -</prop>
+      <prop id="_org_del_at">- auf -</prop>
+      <prop id="_org_del_fin">??
+Dr&#252;cken Sie OK um mit dem L&#246;schen weiterzumachen ...</prop>
+      <prop id="_org_decise">Eine Entscheidung wird erwartet</prop>
+      <prop id="_org_ready">Bereit und Zur&#252;ck</prop>
+            
+      <prop id="_org_finished">Fertig:</prop>
+      
+      <prop id="_org_sicher">Sicher?</prop>
+      <prop id="_org_wirk_loe"> wirklich l&#246;schen?</prop>
+      <prop id="_org_zu_loesch">Zu l&#246;schende Daten: </prop>
+      <prop id="_org_ja_loesch">Ja(e:s) L&#246;schen</prop>
+      <prop id="_org_abbrechen">Abbrechen</prop>
+      <prop id="_org_ja_forever">()Ja, ich bin mir &#252;ber das L&#246;schen der Daten bewusst.()</prop>
+      
+      <prop id="_org_wurde_abgebr">Das L&#246;schen wurde abgebrochen(e:s)</prop>
+      <prop id="_org_bleit">bleibt erhalten!</prop>    
+
+      <prop id="_org_attempt">Versuch zur Ausf&#252;hrung eines</prop>
+      <prop id="_org_attempt_at">auf</prop>
+      <prop id="_org_attempt_pos">Position ist</prop>             
+    </when>
+    <when test="1" lang="en">
+    
+      <prop id="_org_edit">Edit</prop>
+      <prop id="_org_delete">Delete</prop>
+      
+      <prop id="_org_organize">/ Organize /</prop>
+      
+      <prop id="_org_del">Delete</prop>
+      <prop id="_org_sure_del">Sure to remove?</prop>
+      <prop id="_org_del_again">- DELETE -</prop>
+      <prop id="_org_del_from">- from -</prop>
+      <prop id="_org_del_at">- at -</prop>
+      <prop id="_org_del_fin">??
+Press OK to continue with delete ...</prop>
+      <prop id="_org_decise">You have a decision to make</prop>
+      <prop id="_org_ready">Ready and done</prop>
+      <prop id="_org_finished">Finished:</prop>       
+      
+      <prop id="_org_sicher">Sure?</prop>
+      <prop id="_org_wirk_loe"> you want to delete?</prop>
+      <prop id="_org_zu_loesch">Data to delete: </prop>
+      <prop id="_org_ja_loesch">Yes(e:s) Delete</prop>
+      <prop id="_org_abbrechen">Cancel</prop>
+      <prop id="_org_ja_forever">()Yes, I know it, the data will be gone()</prop>
+      <prop id="_org_wurde_abgebr">The delete-process was cancelled(e:s)</prop>
+      <prop id="_org_bleit">will remain!</prop>    
+
+      <prop id="_org_attempt">Attempt to perform a </prop>
+      <prop id="_org_attempt_at">at</prop>
+      <prop id="_org_attempt_pos">Position is</prop>           
+    
+    </when>
+    
+  </choose>
+        
+
+</job>
+                             
+<job id="do-org-me-paste" role="hidden">
+  <call_job job="tr_formix_orga"/>
+  <prop id="updater-xml"></prop>
+  <tk label="Update [(prop,orga_segment_singular_label)] at [(prop,orga_offset)(prop,orga_segment_singular)]" flag="sum">
+
+  <tk type="sel" id="type" label="Where to paste?" flag="nono">
+      <sel label="At the beginning">insert_in_begin</sel>
+      <sel label="At the end">insert_in</sel>
+      
+  </tk>
+  <tk type="textblock" id="content" label="Xml-Content Clipboard" tip="what you took with copy" flag="nono"/>
+  </tk>
+
+  <prop id="privoffset" x="(prop,orga_offset)"/>
+  <prop id="privoffset" 
+        x="(f,substring,(prop,orga_offset),0,(f,sub,(f,len,(prop,orga_offset)),1))"
+        test="(f,ends_with,(prop,privoffset),/)"/>
+  <ti label="offset">(prop,privoffset)</ti>
+   
+            <xml_update
+              what="(file,orga)"
+              act="xml_update"
+              how="(prop,type)"
+              where="(prop,privoffset)">
+              <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+]]>(prop,content)</inline>
+            </xml_update>
+            <ti label="Did Paste">(prop,content)</ti>
+           
+
+   <ti_break_hr/>
+ 
+   
+   <call_job job="do-org-me"/>                
+</job>
+
+<job id="do-org-me-delete" role="hidden">
+  <need>(prop,position) (prop,mode) (prop,orga_where) (prop,orga_row) (prop,orga_name)</need>
+  <call_job job="tr_formix_orga"/>
+  <!-- <ti label="do-org-me-delete++">p=(prop,position) m=(prop,mode) w=(prop,orga_where) r=(prop,orga_row)</ti>   -->
+
+   
+  <!-- <dump_ti /> 
+    <tk type="msg" test="(f,eq,del,(prop,mode))" msg_type="w">(prop,_org_org_sure_del)
+ &quot;(prop,orga_name)&quot;
+ (prop,orga_desc)</tk> 
+    -->
+                               
+  <spirit id="orga" xml="(file,orga)" act="open"/>
+
+   <loop_xml 
+      act="open" 
+      id="orga" 
+      spirit="orga" 
+      xpath="(prop,orga_offset)(prop,orga_segment_singular)"
+      xxpath="(prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(prop,position)]"/> 
+  
+   <loop 
+      id="while-orga" 
+      while="()(f,loop_xml,orga,has_next?)()">
+
+      <loop_xml act="next" id="orga" />
+
+      <when test="(f,eq_text,(f,loop_xml,orga,@row),(prop,orga_row))">
+
+       <!--
+        <ti type="rec" xtest="(f,role,test)"><ti/>
+        <ti xlabel="(f,loop_xml,orga,#i)" align="right">(prop,_org_attempt) [(prop,mode)] (prop,_org_attempt_at) (prop,orga_offset)(prop,orga_segment_singular)[@row='(prop,orga_row)']. (prop,_org_attempt_pos) (f,loop_xml,orga,#i).</ti>
+        </ti>
+
+        
+         in (file,orga)      
+        what
+        (f,loop_xml,orga,xml?)
+        -->
+        
+        <choose>
+        
+         <when  test="(f,eq,up,(prop,mode))">
+
+            <try_catch>
+            <try>
+
+              <tk type="msg" msg_type="w" test="0">[ Going up ]
+            [ (prop,orga_segment_singular_label)]
+                  (f,loop_xml,orga,xml?)
+                  [ FROM ]
+                  (f,name_of_file,(file,orga))
+                  [ AT ] 
+                        (prop,orga_offset)(prop,orga_segment_singular)[@row='(f,loop_xml,orga,@row)']
+                  ??</tk>      
+        
+            <prop id="saved-value">(f,loop_xml,orga,xml?)</prop>
+
+            <spirit
+
+              id="orga"
+              act="xml_update"                                                                                           
+              how="remove"
+              where="(prop,orga_offset)(prop,orga_segment_singular)[@row='(f,loop_xml,orga,@row)']"/>
+           
+            <spirit
+              id="orga"
+              act="xml_update"
+              how="insert_before"
+              where="(prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(f,sub,(f,loop_xml,orga,#i),1)]">
+              <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      ]]>(prop,saved-value)</inline>
+            </spirit>    
+
+               
+          
+                        
+            </try>
+            <catch/>
+            </try_catch>
+          </when>          
+          <when  test="(f,eq,update,(prop,mode))">
+
+            <call_job job="do-org-me-update"/>
+          </when>
+                
+          <when  test="(f,eq,copy,(prop,mode))">
+
+            <prop id="nk-singular" x="(prop,orga_segment_singular)"/>
+            <call_job job="get-new-key"/> 
+
+            <ti label="Next Key"/>
+            <ti>row=&quot;(prop,nk-key)&quot;</ti>
+                                  
+            <ti label="Copy that:"/>
+            
+            <prop id="copy-that" x="(f,loop_xml,orga,xml?)"/>
+        
+            <ti flag="wrap">(prop,copy-that)</ti>
+            <ti_hr/>
+             <ti label="Next Key"/>
+            <ti>row=&quot;(prop,nk-key)&quot;</ti>   
+                 
+         
+            
+            <!--             FEHLER!! DAS WILL ER NICHT 
+
+            <tk type="msg">Thats your clipboard: row=&quot;(prop,nk-key)&quot;</tk>
+            --> 
+            
+            <!--  
+            <tk label="Thats your clipboard: row=&quot;(prop,nk-key)&quot;">
+            <tk type="textblock" id="yourclipboard" x="(f,loop_xml,orga,xml?)"
+            xlabel="[ (prop,orga_segment_singular_label) ]"
+            label="(prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(prop,position)]"
+            tip="New Key: row=&quot;(prop,nk-key)&quot;&#xA;&#xA;class [ (prop,orga_segment_singular) (prop,orga_segment_singular_label)]&#xA; where: &#xA;&#xA;(prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(prop,position)]&#xA;&#xA; in:&#xA;(file,orga)"/>
+            </tk>  
+            -->   
+              
+
+          </when>
+  
+          <when  test="(f,eq,down,(prop,mode))">
+
+            <try_catch>
+            <try>
+            
+              <tk type="msg" msg_type="w" test="0">[ Going down ]
+  [ (prop,orga_segment_singular_label)]
+        (f,loop_xml,orga,xml?)
+        [ FROM ]
+        (f,name_of_file,(file,orga))
+        [ AT ] 
+              (prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(prop,position)]
+        ??</tk>      
+
+        <prop id="saved-value">(f,loop_xml,orga,xml?)</prop>
+
+        <!--
+            <spirit
+
+              id="orga"
+              act="xml_update"                                                                                           
+              how="remove"
+              where="(prop,orga_offset)(prop,orga_segment_singular)[@row='(f,loop_xml,orga,@row)']"/>
+                            
+            <spirit
+              id="orga"
+              act="xml_update"
+              how="insert_before"
+              where="(prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(f,sub,(f,loop_xml,orga,#i),1)]">
+              <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      ]]>(prop,saved-value)</inline>
+            </spirit>            
+        -->
+
+        <spirit
+              id="orga"
+              act="xml_update"                                                                                           
+              how="remove"
+              where="(prop,orga_offset)(prop,orga_segment_singular)[@row='(f,loop_xml,orga,@row)']"/>
+
+              <spirit
+                id="orga"
+                act="xml_update"
+                how="insert_after"
+                where="(prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(f,add,(f,loop_xml,orga,#i),0)]">
+                <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  ]]>(prop,saved-value)</inline>
+              </spirit>        
+
+            </try>
+            <catch/>
+            </try_catch>
+          </when>     
+          
+       
+          
+          <when  test="(f,eq,del,(prop,mode))">
+
+        <prop id="saved-value">(f,loop_xml,orga,xml?)</prop>
+   
+      <!-- 
+     
+       <tk type="msg" test="(f,eq,del,(prop,mode))" msg_type="w">(prop,_org_sure_del)
+     &quot;(prop,orga_name)&quot;          (prop,)                 (f,loop_xml,orga,xml?)  
+     (prop,orga_desc)</tk>                 -->
+
+       <!--  testen      -->
+      <tk label="(prop,_org_sicher)"> 
+			<tk label="(prop,orga_segment_singular_label)(prop,_org_wirk_loe)"            
+					type="accept" 
+					id="delete-confirm-1" 
+					x="&quot;(prop,orga_name)&quot;(prop,_org_wirk_loe)&#xA;(prop,orga_desc)&#xA;(prop,_org_zu_loesch)&#xA;(f,loop_xml,orga,xml?)"
+
+					label_accept="(prop,_org_ja_loesch)" 
+					label_decline="(prop,_org_abbrechen)" 
+					width="300" height="200">
+						<q id="delete-confirm-2" label="(prop,_org_ja_forever)"/>
+			</tk>
+      </tk>
+         
+			<when test="(f,not,(f,and,(prop,delete-confirm-1),(prop,delete-confirm-2)))">
+     
+				<throw>(prop,_org_wurde_abgebr)
+(prop,orga_segment_singular_label) &quot;(prop,orga_name)&quot; (prop,_org_bleit)</throw>
+			</when>          
+             
+      <!--         
+            <tk label="(prop,_org_decise)">
+              <tk type="msg" msg_type="w">(prop,_org_del_again)
+ [ (prop,orga_segment_singular_label)]
+   (f,loop_xml,orga,xml?)
+ (prop,_org_del_from) 
+   (f,name_of_file,(file,orga))
+ (prop,_org_del_at) 
+    (prop,orga_offset)(prop,orga_segment_singular)[@row='(f,loop_xml,orga,@row)']
+ (prop,_org_del_fin)</tk>                                           </tk>             --> 
+
+        <spirit
+              id="orga"
+              act="xml_update"                                                                                           
+              how="remove"
+              where="(prop,orga_offset)(prop,orga_segment_singular)[@row='(f,loop_xml,orga,@row)']"/>
+                      
+          </when>  
+          <otherwise>
+            <throw>unknown (prop,mode) mode</throw>
+          </otherwise>      
+        </choose>      
+      </when>
+
+            
+
+
+                
+   </loop>
+
+   <loop_xml 
+      act="close" 
+      id="orga" />           
+
+   <spirit id="orga" act="close" flag="save pretty"/> 
+
+   <ti_hr test="(f,role,test)"/>
+   <ti_break/>
+
+   <call_job job="do-org-me"/> 
+
+</job>
+
+<job id="do-org-me" role="hidden">
+
+<need>(prop,orga_view_loop_id) (prop,orga_finished_job) (prop,orga_where)</need>
+<call_job job="tr_formix_orga"/>
+
+
+
+
+
+  <!-- <ti>= (prop,orga_view_loop_id)</ti> <spirit id="orga" xml="(file,orga)" act="open" missing_strategy="empty" /> 
+  <prop id="the-xpath">(prop,orga_offset)node(e:o)(e:c)</prop>        (prop,orga_where)
+  <interpreter watch="0"/>
+  <dump_ti/>  
+  
+  -->
+
+  
+  <prop id="the-xpath">(prop,orga_offset)(prop,orga_segment_singular)(prop,orga_where)</prop>
+  <ti xlabel="xpath" align="right" test="(f,role,test)">(prop,orga_offset)(prop,orga_segment_singular) where=(prop,orga_where)</ti>
+ 
+  <ti lxabel="(prop,orga_segment_plural_label) organisieren:" type="rec">
+    <ti>(f,html,b,o)(prop,orga_segment_plural_label) / organisieren /(f,html,b,c)</ti>    
+  </ti>
+  <ti_break/>  
+  <loop id="(prop,orga_view_loop_id)" xml="(file,orga)" xpath="(prop,the-xpath)"  missing_strategy="empty">
+    
+    <prop id="x">(prop,orga_name_expression_loop)</prop>
+    <unescape id="x" type="prop"/>
+    <translate id="x" type="prop" flag="ok"/>
+    
+    
+    <prop id="y">(prop,orga_desc_expression_loop)</prop>
+    <unescape id="y" type="prop"/>
+    <translate id="y" type="prop" flag="ok"/>
+
+    <!-- 
+    <ti key="= (prop,orga_offset)(prop,orga_segment_singular)[@row=(loop,i,@row) | position(e:o)(e:c)=(loop,i,#i)]">  -</ti>
+    -->
+    <ti xlabel="" type="rec">
+    <ti xprefix="  " flag="block">(f,text,cut_nice,(prop,x),25)</ti>
+    <ti type="call_job" job="do-org-me-delete" explain="(prop,_org_move_up)" flag="button obutton" class="orgMoveUp"
+     test="(f,gt_num,(loop,(prop,orga_view_loop_id),#i),1)">      
+      <prop id="mode" x="up"/>
+      <prop id="orga_where" x="(prop,orga_where)"/>
+      <prop id="orga_finished_job" x="(prop,orga_finished_job)"/>
+      <prop id="orga_view_loop_id" x="(prop,orga_view_loop_id)"/>
+      <file id="orga" x="(file,orga)"/>
+      <prop id="orga_segment_singular" x="(prop,orga_segment_singular)"/>
+      <prop id="orga_offset" x="(prop,orga_offset)"/>
+      <prop id="orga_desc" x="(prop,y)"/>
+      <prop id="orga_name" x="(prop,x)"/>
+      <prop id="position" x="(loop,(prop,orga_view_loop_id),#i)"/>
+      <prop id="orga_row" x="(loop,(prop,orga_view_loop_id),@row)"/>
+      <prop id="orga_name_expression_loop" x="(prop,orga_name_expression_loop)"/>
+      <prop id="orga_desc_expression_loop" x="(prop,orga_desc_expression_loop)"/>  
+      <prop id="orga_segment_plural_label" x="(prop,orga_segment_plural_label)"/> 
+      <prop id="orga_segment_singular_label" x="(prop,orga_segment_singular_label)"/>           
+    </ti>   
+    <ti test="(f,not,(f,gt_num,(loop,(prop,orga_view_loop_id),#i),1))"> </ti>  
+    
+    <ti type="call_job" job="do-org-me-delete" explain="(prop,_org_move_down)" flag="button obutton" class="orgMoveDown"
+     test="(f,lt_num,(loop,(prop,orga_view_loop_id),#i),(loop,(prop,orga_view_loop_id),#max))">
+      <prop id="orga_row" x="(loop,(prop,orga_view_loop_id),@row)"/>     
+     <prop id="orga_where" x="(prop,orga_where)"/>
+     <prop id="orga_finished_job" x="(prop,orga_finished_job)"/>
+      <prop id="mode" x="down"/>
+      <prop id="orga_view_loop_id" x="(prop,orga_view_loop_id)"/>
+      <file id="orga" x="(file,orga)"/>
+      <prop id="orga_segment_singular" x="(prop,orga_segment_singular)"/>
+      <prop id="orga_offset" x="(prop,orga_offset)"/>
+      <prop id="orga_desc" x="(prop,y)"/>
+      <prop id="orga_name" x="(prop,x)"/>
+      <prop id="position" x="(loop,(prop,orga_view_loop_id),#i)"/>
+      <prop id="orga_name_expression_loop" x="(prop,orga_name_expression_loop)"/>
+      <prop id="orga_desc_expression_loop" x="(prop,orga_desc_expression_loop)"/>  
+      <prop id="orga_segment_plural_label" x="(prop,orga_segment_plural_label)"/> 
+      <prop id="orga_segment_singular_label" x="(prop,orga_segment_singular_label)"/>           
+    </ti>  
+    
+    <ti test="(f,not,(f,lt_num,(loop,(prop,orga_view_loop_id),#i),(loop,(prop,orga_view_loop_id),#max)))"> </ti>       
+    <ti type="call_job" job="do-org-me-delete" explain="[ (prop,_org_del) ]"  flag="button " class="orgDelete">
+      <prop id="mode" x="del"/>
+      <prop id="orga_row" x="(loop,(prop,orga_view_loop_id),@row)"/>    
+      <prop id="orga_where" x="(prop,orga_where)"/>
+      <prop id="orga_finished_job" x="(prop,orga_finished_job)"/>
+      <prop id="orga_view_loop_id" x="(prop,orga_view_loop_id)"/>
+      
+      <file id="orga" x="(file,orga)"/>
+      <prop id="orga_segment_singular" x="(prop,orga_segment_singular)"/>
+      <prop id="orga_offset" x="(prop,orga_offset)"/>
+      <prop id="orga_desc" x="(prop,y)"/>
+      <prop id="orga_name" x="(prop,x)"/>
+      <prop id="position" x="(loop,(prop,orga_view_loop_id),#i)"/>
+      <prop id="orga_name_expression_loop" x="(prop,orga_name_expression_loop)"/>
+      <prop id="orga_desc_expression_loop" x="(prop,orga_desc_expression_loop)"/>
+      <prop id="orga_segment_plural_label" x="(prop,orga_segment_plural_label)"/> 
+      <prop id="orga_segment_singular_label" x="(prop,orga_segment_singular_label)"/>     
+    </ti>  
+     
+    <ti type="call_job" job="do-org-me-delete" explain="[ Copy ]" test="0">
+      <prop id="mode" x="copy"/>
+      <prop id="orga_row" x="(loop,(prop,orga_view_loop_id),@row)"/>    
+      <prop id="orga_where" x="(prop,orga_where)"/>
+      <prop id="orga_finished_job" x="(prop,orga_finished_job)"/>
+      <prop id="orga_view_loop_id" x="(prop,orga_view_loop_id)"/>
+      
+      <file id="orga" x="(file,orga)"/>
+      <prop id="orga_segment_singular" x="(prop,orga_segment_singular)"/>
+      <prop id="orga_offset" x="(prop,orga_offset)"/>
+      <prop id="orga_desc" x="(prop,y)"/>
+      <prop id="orga_name" x="(prop,x)"/>
+      <prop id="position" x="(loop,(prop,orga_view_loop_id),#i)"/>
+      <prop id="orga_name_expression_loop" x="(prop,orga_name_expression_loop)"/>
+      <prop id="orga_desc_expression_loop" x="(prop,orga_desc_expression_loop)"/>
+      <prop id="orga_segment_plural_label" x="(prop,orga_segment_plural_label)"/> 
+      <prop id="orga_segment_singular_label" x="(prop,orga_segment_singular_label)"/>             
+    </ti>   
+    <!--
+    
+    <ti type="call_job" job="do-org-me-delete" explain="[ Update ]">
+      <prop id="mode" x="update"/>
+      <file id="orga" x="(file,orga)"/>
+      <prop id="orga_segment_singular" x="(prop,orga_segment_singular)"/>
+      <prop id="orga_offset" x="(prop,orga_offset)"/>
+      <prop id="orga_desc" x="(prop,y)"/>
+      <prop id="orga_name" x="(prop,x)"/>
+      <prop id="position" x="(loop,i,#i)"/>
+      <prop id="orga_name_expression_loop" x="(prop,orga_name_expression_loop)"/>
+      <prop id="orga_desc_expression_loop" x="(prop,orga_desc_expression_loop)"/>  
+      <prop id="orga_segment_plural_label" x="(prop,orga_segment_plural_label)"/> 
+      <prop id="orga_segment_singular_label" x="(prop,orga_segment_singular_label)"/>           
+    </ti>  
+    <ti>(prop,orga_offset)(prop,orga_segment_singular)[position(e:o)(e:c)=(loop,(prop,orga_view_loop_id),#i) and @row=(loop,(prop,orga_view_loop_id),@row) ] </ti> 
+    -->
+    
+      
+     
+    
+                  
+    <!--       <ti flag="wrap">(prop,y)</ti>    <ti>(loop,i,#i) / (loop,i,@row)</ti>
+    <ti type="call_job" job="do-org-me-down" explain="DOWN" test=""/> 
+    -->     
+    </ti>
+    
+
+        
+  </loop>
+  <ti type="rec" test="0">
+    <ti/>
+    <ti/>
+    <ti/>
+    <ti/>
+    <ti type="call_job" job="do-org-me-paste" explain="[ Paste ]">
+    
+      <prop id="orga_where" x="(prop,orga_where)"/>
+      <prop id="orga_finished_job" x="(prop,orga_finished_job)"/>
+      <prop id="orga_view_loop_id" x="(prop,orga_view_loop_id)"/>
+      
+      <file id="orga" x="(file,orga)"/>
+      <prop id="orga_segment_singular" x="(prop,orga_segment_singular)"/>
+      <prop id="orga_offset" x="(prop,orga_offset)"/>
+      <prop id="orga_desc" x="(prop,y)"/>
+      <prop id="orga_name" x="(prop,x)"/>
+      <prop id="orga_name_expression_loop" x="(prop,orga_name_expression_loop)"/>
+      <prop id="orga_desc_expression_loop" x="(prop,orga_desc_expression_loop)"/>
+      <prop id="orga_segment_plural_label" x="(prop,orga_segment_plural_label)"/> 
+      <prop id="orga_segment_singular_label" x="(prop,orga_segment_singular_label)"/>             
+    </ti> 
+ </ti>    
+  
+ <!--  <spirit id="orga" xml="(file,orga)" act="close"/> 
+ <dump_ti label="do-org-me"/> -->  
+ <when test="(f,has,prop,orga_finished_job)">
+    <ti_hr/>
+   <ti type="rec"> 
+   <ti>(prop,_org_finished)</ti>
+   </ti>     
+   <ti type="call_job" job="(prop,orga_finished_job)" explain="(prop,_org_ready)" xprefix="(f,when,(f,implement,online),,&gt;&gt; )"
+       flag="button" class="orgFinished">
+       
+      <prop id="orga_where" x="(prop,orga_where)"/>
+
+      <prop id="orga_view_loop_id" x="(prop,orga_view_loop_id)"/>
+
+      <file id="orga" x="(file,orga)"/>
+      <prop id="orga_segment_singular" x="(prop,orga_segment_singular)"/>
+      <prop id="orga_offset" x="(prop,orga_offset)"/>
+      <prop id="orga_desc" x="(f,vob,prop,y)" />
+      <prop id="orga_name" x="(f,vob,prop,x)"/>
+      <prop id="orga_name_expression_loop" x="(prop,orga_name_expression_loop)"/>
+      <prop id="orga_desc_expression_loop" x="(prop,orga_desc_expression_loop)"/>
+      <prop id="orga_segment_plural_label" x="(prop,orga_segment_plural_label)"/> 
+      <prop id="orga_segment_singular_label" x="(prop,orga_segment_singular_label)"/>   
+   </ti>
+ </when>
+</job>
+
+</jobs>

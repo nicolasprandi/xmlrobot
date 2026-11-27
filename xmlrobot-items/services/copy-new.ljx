@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<job id="copy-new-print-header" role="hidden">
+
+  <choose>
+    <when test="(prop,cn-did-print-header)">
+    </when>
+    <otherwise>
+      <prop id="cn-did-print-header" x="1"/>
+      <ti label="(f,html,b,open)Action(f,html,b,close)" key="(f,html,b,open)Reason(f,html,b,close)" type="rec">
+        <ti x="(f,html,b,open)from(f,html,b,close)" />
+        <ti x="(f,html,b,open)to(f,html,b,close)" />
+      </ti>     
+    </otherwise>
+  </choose>
+  
+</job>
+  
+ 
+  
+<job id="copy-new" role="hidden">
+
+  <need>(dir,cn-target)</need>
+  <need>(prop,cn-report)</need>
+  <need default="0">(prop,cn-services)</need>
+  <need default="">(prop,cn-perform-when-copied)</need>
+  <need default="0">(prop,cn-fail-on-difference)</need>
+  <!-- (dir,cn-from-dir) or (file,cn-from-scan)
+  <ti_break/>
+  <tx_style ti_border="1"  /> -->
+  
+  
+  
+  <tp>Searching for updated files ...</tp>
+  <interpreter watch="0"/>
+  <prop id="cn-sum" x="0"/>
+  <choose>
+    <when test="(f,has,dir,cn-from-dir)">
+      <file id="cn-scan" x="(dir,filetemp)cn-scan.xml"/>
+      <quick_scan dir="(dir,cn-from-dir)" out="(file,cn-scan)" field="md5"/>
+    </when>
+    <when test="(f,has,file,cn-from-scan)">
+      <file id="cn-scan" x="(file,cn-from-scan)"/>
+    </when>    
+    <otherwise>
+      <throw>service 'copy-new' needs parameter ()(dir,cn-from-dir) or (file,cn-from-scan)() </throw>
+    </otherwise>  
+  </choose>
+  <ti type="file" label="copy-new" x="(file,cn-scan)" test="0"/>
+  <prop id="cn-did-print-header" x="0"/>
+  
+  <choose>
+    <when test="(f,or,(f,exists_dir,(dir,cn-target)),(f,not,(prop,cn-report)))">
+      <mkdir dir="(dir,cn-target)"/>
+      <spirit id="cn" act="open" xml="(file,cn-scan)"/>
+      
+      <dir id="cn-from-my-dir" x="(f,spirit,cn,@dir)"/>
+      
+      <!-- 
+      <ti label="(f,html,b,open)Action(f,html,b,close)" key="(f,html,b,open)Reason(f,html,b,close)" type="rec">
+        <ti x="(f,html,b,open)from(f,html,b,close)" />
+        <ti x="(f,html,b,open)to(f,html,b,close)" />
+      </ti>  
+      -->
+      
+      <!-- copy if requested -->
+      
+      <loop_xml 
+        act="open" 
+        id="cn-copy" 
+        spirit="cn" 
+        xpath="//file"/>
+     
+      <loop 
+        id="cn-while" 
+        while="()(f,loop_xml,cn-copy,has_next?)()">
+        <loop_xml act="next" id="cn-copy" />
+        <file id="cn-dest" x="(dir,cn-target)(f,loop_xml,cn-copy,..,@ipath)(f,loop_xml,cn-copy)"/>
+        <file id="cn-source" x="(dir,cn-from-my-dir)(f,loop_xml,cn-copy,..,@ipath)(f,loop_xml,cn-copy)"/>
+        <prop id="cn-do-copy" x="0"/>
+        <choose>
+          <when test="(f,not,(f,exists_file,(file,cn-dest)))">
+            <prop id="cn-do-copy" x="1"/>
+            <prop id="cn-reason" x="new"/>
+          </when>      
+          <when test="(f,not,(f,eq_text,(f,file_info,hash,md5,(file,cn-dest)),(f,loop_xml,cn-copy,@md5)))">
+            <prop id="cn-do-copy" x="1"/>
+            <prop id="cn-reason" x="updated"/>
+          </when>               
+        </choose> 
+        <when test="(prop,cn-services)">
+          <when test="(f,matches_regex,(f,loop_xml,cn-copy),computer\-.+\.xrj)">
+            <prop id="cn-do-copy" x="0"/>
+          </when>
+          <when test="(f,matches_regex,(f,loop_xml,cn-copy),computer\-.+\.ljx)">
+            <prop id="cn-do-copy" x="0"/>
+          </when>  
+          <when test="(f,eq_text,(f,loop_xml,cn-copy),startup-computer-check.ljx)">
+            <prop id="cn-do-copy" x="0"/>
+          </when>   
+          <when test="(f,eq_text,(f,loop_xml,cn-copy),startup-computer-check.xrj)">
+            <prop id="cn-do-copy" x="0"/>
+          </when>             
+          <when test="(f,eq_text,(f,loop_xml,cn-copy),check-computers-onstart.ljx)">
+            <prop id="cn-do-copy" x="0"/>
+          </when>  
+          <when test="(f,eq_text,(f,loop_xml,cn-copy),computers.xml)">
+            <prop id="cn-do-copy" x="0"/>
+          </when>             
+          <when test="(f,eq_text,(f,loop_xml,cn-copy),sys_backup_trailer_joe.xml)">
+            <prop id="cn-do-copy" x="0"/>
+          </when>                         
+        </when>
+        
+        <when test="(prop,cn-do-copy)">
+          <call_service job="copy-new-print-header"/>   
+          <throw test="(prop,cn-fail-on-difference)">Concurrency Problem. Save your project</throw>
+          <prop id="cn-sum" x="(f,add,1,(prop,cn-sum))"/>
+          <choose>
+            <when test="(prop,cn-report)">
+              <ti label="Copy" key="(prop,cn-reason)" type="rec">
+                <ti type="file" x="(file,cn-source)" />
+                <ti type="file" x="(file,cn-dest)" />
+                <ti type="call_service" job="Goto-Compare-Files" explain="Compare" xflag="silent"
+                    test="(f,eq_text,updated,(prop,cn-reason))">
+                  <file id="old" x="(file,cn-dest)"/>
+                  <file id="new" x="(file,cn-source)"/>
+                </ti>
+              </ti>
+            </when>      
+            <otherwise>
+              <copy file="(file,cn-source)" tofile="(file,cn-dest)" />
+              <ti label="Did copy" key="(prop,cn-reason)" type="rec">
+                
+                <ti type="file" x="(file,cn-source)" />
+                <ti type="file" x="(file,cn-dest)" />
+              </ti>        
+            </otherwise>                
+          </choose>       
+        </when> 
+      </loop>
+      
+      <loop_xml 
+        act="close" 
+        id="cn-copy"/>    
+        
+      <!-- remove if requested -->  
+      <file id="cn-scan-exist" x="(dir,filetemp)cn-scan-remove.xml"/>
+      <quick_scan dir="(dir,cn-target)" out="(file,cn-scan-exist)"  field="fn"/>
+      <loop xml="(file,cn-scan-exist)" id="remove" xpath="//file">
+        
+        
+        <prop id="cn-do-remove" x="1"/>
+        <when test="(f,spirit,cn,exists?,//file[text(e:o)(e:c)=(f,xpath_string,(loop,remove)) and ../@ipath=(f,xpath_string,(loop,remove,..,@ipath))])">
+          <prop id="cn-do-remove" x="0"/>
+        </when>
+        
+        <when test="(prop,cn-do-remove)">
+          <throw test="(prop,cn-fail-on-difference)">Concurrency Problem. Save your project REMOVE</throw>
+          <call_service job="copy-new-print-header"/>
+          <prop id="cn-sum" x="(f,add,1,(prop,cn-sum))"/>
+          <choose>
+            <when test="(prop,cn-report)">
+              <ti label="Remove" key="deleted" type="rec">
+                <ti/>
+                <ti type="file" x="(loop,remove,@fn)" />
+              </ti>
+            </when>      
+            <otherwise>
+              <delete file="(loop,remove,@fn)"/>
+              <ti label="Did remove" key="deleted" type="rec">
+                <ti/>
+                <ti xtype="file" x="(loop,remove,..,@ipath)(loop,remove)" />
+              </ti>        
+            </otherwise>                
+          </choose>     
+        </when>
+    
+      
+      </loop> 
+      <ti label="Target" type="rec"> 
+        <ti  x="(dir,cn-target)" type="dir" span="3"/>
+      </ti>
+      <spirit id="cn" act="close" />
+    </when>  
+    <otherwise>
+      <ti>(f,html,b,o)The target directory does not exists yet(f,html,b,c)</ti>
+      <ti>(dir,cn-target)</ti>
+
+      <dir id="cn-from-my-dir" x="(f,xpath,(file,cn-scan),.,@dir)"/>
+      <loop id="scan" xml="(file,cn-scan)" xpath="//file">
+        <throw test="(prop,cn-fail-on-difference)">Concurrency Problem. Save your project. NEW</throw>
+        <call_service job="copy-new-print-header"/>   
+        <prop id="cn-sum" x="(f,add,1,(prop,cn-sum))"/>
+        <file id="cn-source" x="(dir,cn-from-my-dir)(loop,scan,..,@ipath)(loop,scan)"/>
+        <ti label="Copy" key="new" type="rec">
+          <ti type="file" x="(file,cn-source)" />
+          <ti></ti>
+        </ti>
+
+              
+      </loop>
+    </otherwise>  
+  </choose>
+    
+
+  
+  <ti x="(f,html,b,open)Summary(f,html,b,close)"/>
+  <choose>
+    <when test="(f,gt_num,(prop,cn-sum),0)">
+      <throw test="(prop,cn-fail-on-difference)">Concurrency Problem. Save your project. SUM</throw>
+      <choose>
+        <when test="(prop,cn-report)">          
+          <ti lxabel="Found Changes" x="(prop,cn-sum) changes found"/>
+          
+          <choose>
+            <when test="(f,has,dir,cn-from-dir)">
+              <ti type="call_service" job="copy-new" explain="Do the updates">
+                <tk type="msg" x="Perform (prop,cn-sum) changes?" msg_type="w"/>
+                <dir id="cn-target" x="(dir,cn-target)" />
+                <prop id="cn-report" x="0" />
+                <prop id="cn-services" x="(prop,cn-services)" />
+                <dir id="cn-from-dir" x="(dir,cn-from-dir)" />
+                <prop id="cn-perform-when-copied" x="(prop,cn-perform-when-copied)"/>
+                
+              </ti>
+            </when>
+            <when test="(f,has,file,cn-from-scan)">
+              <file id="cn-from-scan-on-fs" x="(f,request,dir,cache_system)copy-new-scan-(f,random_text,5).xml"/>
+              <copy file="(file,cn-from-scan)" tofile="(file,cn-from-scan-on-fs)"/>
+              <ti>did copy from file=(file,cn-from-scan) tofile=(file,cn-from-scan-on-fs)</ti>
+              <ti type="call_service" job="copy-new" explain="Do the updates">
+                <tk type="msg" x="Perform (prop,cn-sum) changes?" msg_type="w"/>    
+                <dir id="cn-target" x="(dir,cn-target)" />
+                <prop id="cn-report" x="0" />
+                <prop id="cn-services" x="(prop,cn-services)" />
+                <file id="cn-from-scan" x="(file,cn-from-scan-on-fs)" />
+                <prop id="cn-perform-when-copied" x="(prop,cn-perform-when-copied)"/>
+              </ti>
+            </when>     
+          </choose>          
+        </when>
+        <otherwise>
+          <ti labxel="Performed Change(f,plural,(prop,cn-sum),s)" x="(prop,cn-sum) change(f,plural,(prop,cn-sum),s) performed ...(prop,cn-perform-when-copied)"/>
+          <when test="(f,has,prop,cn-perform-when-copied)">
+            <create_file out="(dir,filetemp)doit.xml">(prop,cn-perform-when-copied)</create_file>
+            <include file="(dir,filetemp)doit.xml"/>
+          </when>
+        </otherwise>
+      
+      </choose>      
+    </when>
+    <otherwise>
+      <ti label="There seems to be nothing to do !! ;-(e:c) we can relax"/>
+      <ti x="No changes found"/>
+    </otherwise>
+  
+  </choose>
+  
+
+</job>  
+  
+
+ 
+</jobs>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsb-read">
+<need>(prop,dsb_key)</need>
+<spirit act="open" missing_strategy="empty" id="dsbs_spirit_tc" xml="(file,dsbs)"/>
+<prop id="dsb_dt_upd">(f,spirit,dsbs_spirit_tc,(prop,dsbs_offset)dsb[@row=(f,xpath_string,(prop,dsb_key))],@dt_upd)</prop>
+<prop id="dsb_dt_add">(f,spirit,dsbs_spirit_tc,(prop,dsbs_offset)dsb[@row=(f,xpath_string,(prop,dsb_key))],@dt_add)</prop>
+<prop id="dsb_beztyp">(f,spirit,dsbs_spirit_tc,(prop,dsbs_offset)dsb[@row=(f,xpath_string,(prop,dsb_key))],@beztyp)</prop>
+<prop id="dsb_dso_from_row">(f,spirit,dsbs_spirit_tc,(prop,dsbs_offset)dsb[@row=(f,xpath_string,(prop,dsb_key))],@dso_from_row)</prop>
+<prop id="dsb_dso_to_row">(f,spirit,dsbs_spirit_tc,(prop,dsbs_offset)dsb[@row=(f,xpath_string,(prop,dsb_key))],@dso_to_row)</prop>
+<prop id="dsb_name">(f,spirit,dsbs_spirit_tc,(prop,dsbs_offset)dsb[@row=(f,xpath_string,(prop,dsb_key))],@name)</prop>
+<spirit act="close" id="dsbs_spirit_tc"/>
+</job>

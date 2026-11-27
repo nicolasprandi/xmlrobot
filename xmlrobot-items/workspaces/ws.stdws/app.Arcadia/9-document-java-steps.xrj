@@ -1,0 +1,169 @@
+<?xml version="1.0" ?>   
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+<job id="docu-java-step" role="hidden">
+  <need>(prop,steps)</need>
+  <need default="0">(prop,scripted)</need>
+
+
+  <when  test="(f,not,(f,exists_file,(file,java-step-docu)))">
+    <excel_table 
+      excel="(file,excel-config)"
+      sheet="java-step-docu"
+      out="(file,java-step-docu)"
+      style="short"
+      filler="step step_name"/>
+  </when>
+  
+  <prop id="exists-anything" x="0"/>
+  
+  <prop id="last_step" x="???"/>
+  <loop id="a" xml="(file,java-step-docu)" xpath="row">
+    <when test="(f,has_flag,(prop,steps),(loop,a,@step))">
+      <choose>
+        <when test="(prop,scripted)">
+        
+          <prop id="say-label" x="(f,not,(f,eq_text,(prop,last_step),(loop,a,@step)))"/>
+     
+          <choose>
+            <when test="(f,eq_text,file,(loop,a,@type))">
+              <prop id="exists" x="(f,exists_file,(f,translate,(loop,a,@value),0,1))"/>
+              <when test="(prop,exists)">
+                <choose>
+                  <when test="(prop,say-label)">
+                    <ti label="(loop,a,@step_name)" /> 
+                    <ti type="file" 
+                        label="(loop,a,@name)" 
+                        x="(f,translate,(loop,a,@value),0,1)"/>                                          
+                  </when>
+                  <otherwise>
+                    <ti type="file" 
+                        label="(loop,a,@name)" 
+                        x="(f,translate,(loop,a,@value),0,1)"/>                   
+                  </otherwise>
+                </choose>
+              </when>  
+
+            </when>
+    
+            <when test="(f,eq_text,dir,(loop,a,@type))">
+              <prop id="exists" x="(f,exists_dir,(f,translate,(loop,a,@value),0,1))"/>
+              
+              <when test="(prop,exists)">
+                <choose>
+                  <when test="(prop,say-label)">
+                    <ti label="(loop,a,@step_name)" /> 
+                    <ti type="dir" 
+                        label="(loop,a,@name)" 
+                        x="(f,translate,(loop,a,@value),0,1)"/>                                          
+                  </when>
+                  <otherwise>
+                    <ti type="dir" 
+                        label="(loop,a,@name)" 
+                        x="(f,translate,(loop,a,@value),0,1)"/>                   
+                  </otherwise>
+                </choose>
+              </when>                
+              
+            </when>
+                  
+          </choose>        
+        </when>
+        <otherwise>
+      <ti label="(loop,a,@step_name)"
+              when="(f,not,(f,eq_text,(prop,last_step),(loop,a,@step)))"/>
+     
+          <choose>
+            <when test="(f,eq_text,file,(loop,a,@type))">
+              <prop id="exists" x="(f,exists_file,(f,translate,(loop,a,@value),0,1))"/>
+              <ti type="file" 
+                  label="(loop,a,@name)" 
+                  x="(f,translate,(loop,a,@value),0,1)"
+                  test="(prop,exists)"/>
+            </when>
+    
+            <when test="(f,eq_text,dir,(loop,a,@type))">
+              <prop id="exists" x="(f,exists_dir,(f,translate,(loop,a,@value),0,1))"/>
+              <ti type="dir" 
+                  label="(loop,a,@name)" 
+                  x="(f,translate,(loop,a,@value),0,1)"
+                  test="(prop,exists)"/>
+            </when>
+                  
+          </choose>        
+        </otherwise>
+      </choose>
+    
+      <prop id="last_step" x="(loop,a,@step)"/>
+      <prop id="exists-anything" x="(f,or,(prop,exists),(prop,exists-anything))"/>
+    </when>  
+  </loop>
+  <dump_ti label="nach java docu" test="0"/>
+  <need>(prop,exists-anything)</need>  
+</job>
+<!-- 
+<job id="print-retry" role="hidden">
+
+  <choose>
+    <when test="(f,xrghub,xr,has_retry)">
+      <xrghub 
+         
+        act="get_retry" 
+        out="(dir,temp)retry.xml"/> 
+      <loop id="r" xml="(dir,temp)retry.xml" xpath="retry" >
+        <ti label="(loop,r,@key)" type="rec">
+          <ti type="file" x="(loop,r,@tofile)"/>        
+          <ti  x="(loop,r,@path)"/>
+
+          <ti  x="(loop,r,@exception)"/>
+        </ti>
+      </loop>    
+      <ti_break/>
+      <ti_hr/>
+    </when>
+    <otherwise>
+      <ti>NO RETRIES pending</ti>
+    </otherwise>
+  </choose>
+      
+</job>
+
+<job id="do-retry" role="hidden">
+<when test="(f,xrghub,xr,has_retry)">
+  <tp>Do Retry for (f,xrghub,xr,count_retry) file(f,plural,(f,xrghub,xr,count_retry),s) ...</tp>
+  <ti label="Retry this"/>
+  <call_job job="print-retry"/>
+  
+  <xrghub 
+     
+    act="retry_hard" 
+    wait_ms="3000"
+    attempts="6"
+    shaky_prob="5"/>   
+     
+  <choose>
+    <when test="(f,xrghub,xr,has_retry)">
+    
+      <ti label="Unsuccessfull retries"/>
+      <call_job job="print-retry"/>
+      
+      <xrghub 
+         
+        act="clear_retry" /> 
+      <throw id="retryproblem">Could not download all retries from github</throw>
+         
+    </when>
+    <otherwise>
+      <ti>All retries performed</ti>
+    </otherwise>
+  </choose>
+      
+   
+</when>    
+</job>
+
+-->
+
+</jobs>

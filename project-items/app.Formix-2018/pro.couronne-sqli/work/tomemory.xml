@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="sqli-read">
+    <need>(prop,sqli_key)</need>
+    <spirit act="open" missing_strategy="empty" id="sqlis_spirit_tc" xml="(file,sqlis)"/>
+    <prop id="sqli_dt_upd">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@dt_upd)</prop>
+    <prop id="sqli_dt_add">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@dt_add)</prop>
+    <prop id="sqli_type">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@type)</prop>
+    <prop id="sqli_name">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@name)</prop>
+    <prop id="sqli_docu">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@docu)</prop>
+    <prop id="sqli_cmt_session">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@cmt_session)</prop>
+    <prop id="sqli_rq_import">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@rq_import)</prop>
+    <prop id="sqli_rq_central">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@rq_central)</prop>
+    <prop id="sqli_max_ids">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@max_ids)</prop>
+    <prop id="sqli_cmt_style">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@cmt_style)</prop>
+    <prop id="sqli_cmt_size">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@cmt_size)</prop>
+    <prop id="sqli_sc_top">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@sc_top)</prop>
+    <prop id="sqli_sc_intro">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@sc_intro)</prop>
+    <prop id="sqli_sc_main">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@sc_main)</prop>
+    <prop id="sqli_sc_extro">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@sc_extro)</prop>
+    <prop id="sqli_sc_fin">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@sc_fin)</prop>
+    <prop id="sqli_close_session">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@close_session)</prop>
+    <prop id="sqli_gb_import">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@gb_import)</prop>
+    <prop id="sqli_gb_central">(f,spirit,sqlis_spirit_tc,(prop,sqlis_offset)sqli[@row=(f,xpath_string,(prop,sqli_key))],@gb_central)</prop>
+    <spirit act="close" id="sqlis_spirit_tc"/>
+</job>

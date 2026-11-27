@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Copyright © 2015 Nicolas Prandstaetter. All rights reserved. 
+
+
+
+
+
+
+ -->
+
+<steps>
+  <ti label="TABLE-CREATOR Application License"/>
+  <ti type="ul">TABLE-CREATOR is part of Ava.</ti>
+  <ti type="ul">Copyright &#xA9; 2015 Nicolas Prandstaetter. All rights reserved. 
+
+
+This application is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+</ti>
+
+</steps>

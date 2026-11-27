@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2015-2019 The Lighthouse company. All rights reserved. -->
+<jobs>
+
+
+
+<job id="Loginx" role="hidden">
+  <ti>SiMuLATiON</ti>
+  <try_catch>
+    <try>
+      <interpreter act="check-login"/>
+      <prop id="logged-in" x="1"/>
+    </try>
+    <catch>
+      <prop id="logged-in" x="0"/>
+    </catch>
+  </try_catch>
+    
+  <when test="(f,not,(prop,logged-in))">
+    <tk label="Login" flag="sum print" >
+      <tk id="login_user" flag="nono" label="User-Nome" />
+      <tk id="login_pwd" flag="nono password" label="Password-Secre" />
+      <tk id="login_role" flag="nono" type="sel" label="Rolle-Function"  x="admin">
+        <tk>user</tk>
+        <tk>expert</tk>        
+        <tk>admin</tk>
+      </tk>
+    </tk>
+
+      <interpreter act="do-login"/> 
+  </when> 
+</job>
+
+<job id="get-app-material" role="hidden">
+   <when test="(f,not,(f,has,dir,app-material))">
+    <choose>
+       <when test="(f,exists_file,(dir,libro)app-material-rezeptblock/idiomas/wr2.xml)">
+         <dir id="app-material" x="(dir,libro)app-material-rezeptblock/"/>
+         <ti test="0">app-material set to libro (dir,app-material)</ti>
+       </when>
+       <otherwise>
+         <dir id="app-material" x="(dir,app)app-material/"/>
+         <ti test="0">app-material set to app (dir,app-material)</ti>
+       
+       </otherwise>
+      </choose>
+      <!-- 
+      <dir test="1" id="app-material" x="(dir,app)app-material/"/>
+      <ti test="1">app-material set to app (dir,app-material)</ti>     --> 
+      
+   </when>
+   
+</job>
+
+<job id="Login" role="hidden">
+
+  <call_job job="get-app-material" />
+  
+  <try_catch>
+    <try>
+      <interpreter act="check-login"/>
+      <prop id="logged-in" x="1"/>
+    </try>
+    <catch>
+      <prop id="logged-in" x="0"/>
+    </catch>
+  </try_catch>
+    
+  <when test="(f,not,(prop,logged-in))">
+    <prop id="idioma" x="jp"/>
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(dir,app-material)idiomas/(prop,idioma).xml" /> 
+      <prop id="joe-in-regex" x="idio.*" /> 
+    </call_job>    
+    <create_file file="(dir,pro)idioma">(prop,idioma)</create_file>    
+    <!-- 
+    <interpreter act="do-login-direct" login_user="Gast55" login_pwd="iss" login_role="user"/>
+   -->
+  </when>
+</job>
+<job id="Idioma3" role="public">
+  <call_job job="Idioma2"/>
+  <call_job job="prolog"/>
+  <call_job job="??"/>
+  
+</job>
+
+<job id="Idioma2" role="hidden">
+  <call_job job="get-app-material" />
+
+    <when test="(f,exists_file,(dir,pro)idioma)">
+      <prop id="idioma" x="(f,file_content,(dir,pro)idioma)"/>
+    </when>
+
+    <tk type="sel" id="idioma" label="Langue-Sprache-Idioma-Jisik" tip="Ihre Sprache - votre langue - la idioma de usted - ti jisik" flag="nono"
+        label_pic="(dir,app-material)sprache.png"
+        label_pic_max_y="90">
+      <sel  label="English" 
+            pic="(dir,app-material)english.png"
+            pic_max_y="40" >en</sel>    
+      <sel  label="Deutsch" 
+            pic="(dir,app-material)deutsch.png"
+            pic_max_y="40" >de</sel>   
+      <sel  label="Espanol" 
+            pic="(dir,app-material)spanish.png"
+            pic_max_y="40" >es</sel>                           
+            
+      <sel  label="Francais" 
+            pic="(dir,app-material)franzoesisch.png"
+            pic_max_y="40">fr</sel>
+      <sel label="Wienerisch" 
+            pic="(dir,app-material)vienna.png"
+            pic_max_y="40">wr</sel>
+      <sel label="Japanese - Nihon no" 
+            pic="(dir,app-material)japan.png"
+            pic_max_y="40">jp</sel>
+    </tk>
+
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(dir,app)idiomas/(prop,idioma).xml" /> 
+      <prop id="joe-in-regex" x="idio.*" /> 
+    </call_job>    
+    <create_file file="(dir,pro)idioma">(prop,idioma)</create_file>
+    
+</job>
+
+<job id="Login2" role="hidden">
+    <!-- <interpreter watch="1"/> -->
+    <choose>
+      <when test="(f,exists_file,(dir,pro)idioma)">
+        <prop id="idioma" x="(f,file_content,(dir,pro)idioma)"/>
+        <call_job job="get-app-material" />
+        <call_job job="go-joe-read">
+          <file id="joe-in-store" x="(dir,app-material)idiomas/(prop,idioma).xml" /> 
+          <prop id="joe-in-regex" x="idio.*" /> 
+        </call_job>           
+      </when>
+      <otherwise>
+        <ti>going to idioama2</ti>
+        <call_job job="Idioma2" />
+      </otherwise>
+    </choose>
+    
+    <when test="(f,not,(f,has,prop,idio_welcome))">
+        <call_job job="Idioma2" />
+        <dump_ti label="after Idioma2"/>
+    </when>
+
+    
+    <tk type="msg">(prop,idio_welcome)</tk>
+
+		<tk label="(prop,idio_accept1)" 
+				type="accept" 
+				id="accept-main" 
+				x="(prop,idio_accept2)" 
+				label_accept="(prop,idio_accept3)" 
+				label_decline="(prop,idio_accept4)" 
+				width="300" height="150">
+			<q id="accept-1" label="(prop,idio_accept5q1)"/>
+      <q id="accept-2" label="(prop,idio_accept5q2)"/>
+      <q id="accept-3" label="(prop,idio_accept5q3)"/>
+      <q id="accept-4" label="(prop,idio_accept5q4)"/>
+    </tk>
+      
+    <throw test="(f,not,(prop,accept-main))">(prop,idio_accept6p0)</throw>
+    <throw test="(f,not,(prop,accept-1))">(prop,idio_accept6p1)</throw>
+    <throw test="(prop,accept-2)">(prop,idio_accept6p2)</throw>
+    <throw test="(f,not,(prop,accept-3))">(prop,idio_accept6p3)</throw>
+    <throw test="(f,not,(prop,accept-4))">(prop,idio_accept6p4)</throw>
+    
+    <tk label="(prop,idio_login1)" flag="sum print" tip="(prop,idio_login2)">
+      <tk id="login_user" flag="nono" label="User-Nomen" tip="(prop,idio_login3)" xtip="Type: Gast1"/>
+      <tk id="login_pwd" flag="nono password" label="Password-Secret" tip="(prop,idio_login4)" xtip="Type: laus"/>
+      <tk id="login_role" flag="nono" type="sel" label="Rolle-Function" tip="(prop,idio_login5)" x="admin">
+        <tk label="(prop,idio_login6)">user</tk>
+        <tk label="(prop,idio_login7)">expert</tk>        
+        <tk label="(prop,idio_login8)">admin</tk>
+      </tk>
+    </tk>
+
+    <try_catch>
+      <try>
+        <interpreter act="do-login"/>  
+        <call_job job="prolog"/>
+        <call_job job="??"/>         
+      </try>
+      <catch>                    
+        <!-- <dump_ti label="login-catched"/> -->
+        <ti label="(prop,idio_msg1)"/>
+        <ti flag="wrap">(prop,idio_msg2)</ti>        
+        <ti_hr/>
+        <call_job job="prolog"/>
+        <call_job job="??"/>         
+        <ti label="Going Easy with lighthouse" xlabel=""/>
+        <ti flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,(f,file_content,(dir,app)login.xml))&lt;font&gt;</ti>              
+        <throw_again/>
+      </catch>
+    </try_catch>
+        
+
+
+</job>
+
+    <!-- 
+    <try_catch>
+      <try>
+           
+      </try>
+      <catch>                    
+        <ti label="(prop,idio_msg1)"/>
+        <ti flag="wrap">(prop,idio_msg2)</ti>        
+        <ti_hr/>
+        <ti label="Going Easy with lighthouse" xlabel=""/>
+        <ti flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,(f,file_content,(dir,app)login.xml))&lt;font&gt;</ti>              
+        <throw_again/>
+      </catch>
+    </try_catch>
+   -->     
+
+   <!-- 
+    <tk type="sel" id="idioma" label="Langue-Sprache-Idioma-Jisik" tip="Ihre Sprache - votre langue - la idioma de usted - ti jisik" flag="nono"
+        label_pic="(dir,libro)thai/thai1/12b.jpg"
+        label_pic_max_y="60">
+      <sel  label="English-Deutsch-Espanol-Slavic" 
+            pic="(dir,libro)thai/thai1/3b.jpg"
+            pic_max_y="112" >mx</sel>    
+      <sel  label="Francais" 
+            pic="(dir,libro)thai/thai1/14b.jpg"
+            pic_max_y="22">fr</sel>
+      <sel label="Wienerisch" 
+            pic="(dir,libro)thai/thai1/10b.jpg"
+            pic_max_y="22">wr</sel>
+      <sel label="Japanese - Nihon no" 
+            pic="(dir,libro)thai/thai1/9b.jpg"
+            pic_max_y="22">jp</sel>
+    </tk>
+
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(dir,app)idiomas/(prop,idioma).xml" /> 
+      <prop id="joe-in-regex" x="idio.*" /> 
+    </call_job>    
+    <create_file file="(dir,pro)idioma">(prop,idioma)</create_file>
+    
+    <tk type="msg">(prop,idio_welcome)</tk>
+
+		<tk label="(prop,idio_accept1)" 
+				type="accept" 
+				id="accept-main" 
+				x="(prop,idio_accept2)" 
+				label_accept="(prop,idio_accept3)" 
+				label_decline="(prop,idio_accept4)" 
+				width="300" height="150">
+			<q id="accept-1" label="(prop,idio_accept5q1)"/>
+      <q id="accept-2" label="(prop,idio_accept5q2)"/>
+      <q id="accept-3" label="(prop,idio_accept5q3)"/>
+      <q id="accept-4" label="(prop,idio_accept5q4)"/>
+    </tk>
+      
+    <throw test="(f,not,(prop,accept-main))">(prop,idio_accept6p0)</throw>
+    <throw test="(f,not,(prop,accept-1))">(prop,idio_accept6p1)</throw>
+    <throw test="(prop,accept-2)">(prop,idio_accept6p2)</throw>
+    <throw test="(f,not,(prop,accept-3))">(prop,idio_accept6p3)</throw>
+    <throw test="(f,not,(prop,accept-4))">(prop,idio_accept6p4)</throw>
+     
+    <tk label="(prop,idio_login1)" flag="sum print" tip="(prop,idio_login2)">
+      <tk id="login_user" flag="nono" label="User-Nomen" tip="(prop,idio_login3) - Type: Gast1" xtip="Type: Gast1"/>
+      <tk id="login_pwd" flag="nono password" label="Password-Secret" tip="(prop,idio_login4) - Type: laus" xtip="Type: laus"/>
+      <tk id="login_role" flag="nono" type="sel" label="Rolle-Function" tip="(prop,idio_login5)" x="admin">
+        <tk label="(prop,idio_login6)">user</tk>
+        <tk label="(prop,idio_login7)">expert</tk>        
+        <tk label="(prop,idio_login8)">admin</tk>
+      </tk>
+    </tk>
+    -->    
+</jobs>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="hint-see-all" level="ws" role="hidden">
+<need default="">(prop,hints_sort_attribute)</need>
+<need default="">(prop,hints_sort_number)</need>
+<need default="">(prop,hints_sort_ignore_case)</need>
+<need default="">(prop,hints_sort_desc)</need>
+<need default="">(prop,hints_where)</need>
+<need default="">(prop,hints_offset_label)</need>
+<need default="./">(prop,hints_offset)</need>
+<need default="">(prop,hints_return_job)</need>
+<need default="//">(prop,hints_offset_new_key)</need>
+<need default="0">(prop,hints_no_header)</need>
+<call_job job="tr_hint"/>
+<call_job job="hook_hint_view_begin"/>
+<prop id="nothing">(f,not,(prop,hints_no_header))</prop>
+<loop missing_strategy="empty" id="hint_loop" xml="(file,hints)" xpath="(prop,hints_offset)hint(prop,hints_where)" sort="(prop,hints_sort_attribute)" number="(prop,hints_sort_number)" ignore_case="(prop,hints_sort_ignore_case)" desc="(prop,hints_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,hints_offset_label)),0)">
+<ti label="(prop,hints_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti flag="block button" type="call_job" class="justmainCompo"  prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,hint_loop,@name),25)(f,html,bold,close)" job="hint-see">
+<prop id="hint_key">(loop,hint_loop,@row)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,hint_loop,@objekt_typ))" type="text" x="(f,tk_sel_translate,(loop,hint_loop,@objekt_typ),(dir,repo)osel-(prop,tip-term-class).xml)"/>
+<ti test="(f,not,(f,has,(loop,hint_loop,@objekt_typ)))"/>
+<ti type="menu">
+<ti isFromAction="1" test="(f,right,import)" type="call_job" page="view" flag="button" class="fb fbAction fbActionHintsend fbGo" explain="(prop,_hint_act_send_l)" job="hook_hint_send_to_db">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">send</prop>
+<prop page="view" id="hint_key">(loop,hint_loop,@row)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti type="rec">
+<ti flag="wrap_word block">(prop,_hint_nohint_l)</ti>
+</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,hints_offset),node(e:o)(e:c)))">
+<ti type="rec">
+<ti type="menu" span="10" flag="block">
+<ti label=" " type="call_job" explain_nix="hint-add" flag="button " class="fb fbAdd fbAddHint" explain="+ (prop,_sl_hint)" job="hint-add">
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+<ti test="(f,not,(prop,nothing))" label=" " type="call_job" flag="button" class="fb fbOrg fbOrgHint" explain="(prop,_x_organize)" job="do-org-me">
+<file id="orga">(file,hints)</file>
+<prop id="orga_where">(prop,hints_where)</prop>
+<prop id="orga_view_loop_id">hint_loop</prop>
+<prop id="orga_finished_job">ready-and-done-hint</prop>
+<prop id="orga_offset">(prop,hints_offset)</prop>
+<prop id="orga_offset_label">(prop,hints_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="orga_segment_plural">hints</prop>
+<prop id="orga_segment_singular">hint</prop>
+<prop id="orga_segment_plural_label">(prop,_pl_hint)</prop>
+<prop id="orga_segment_singular_label">(prop,_sl_hint)</prop>
+<prop id="orga_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,hints_sort_number)</prop>
+<prop id="orga_where">(prop,hints_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,hint_loop,@name),25)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<prop id="orga_tr_job">tr_hint</prop>
+</ti>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,hints)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,hints_offset)),0)">(prop,hints_offset)</ti>
+</ti>
+</when>
+<call_job job="hook_hint_view_end"/>
+</job>

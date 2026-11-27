@@ -1,0 +1,106 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+
+<call_job job="prolog"/>
+
+<job id="extension-jobs" role="hidden">
+   <prop id="extension-job-found" x="0"/>
+   <loop id="ej" xml="(file,extjobs)" xpath="extjob" missing_strategy="empty">
+    <prop id="extension-job-found" x="1"/>
+    <when test="(f,eq_num,1,(loop,ej,#i))">
+      <ti label="List of Jobs to run"/>
+    </when>
+    <ti type="rec" xlabel=" ">
+      <ti type="call_job" job="(loop,ej,@jobid)" explain="(loop,ej,@jobid)"/>
+      <ti>(f,text,cut_nice,(loop,ej,@desc),50)</ti>
+    
+    </ti>
+   </loop>
+   <choose>
+    <when test="(prop,extension-job-found)">
+    
+    </when>
+    <otherwise>
+      <ti label="No Extension-Jobs found"/>
+      <ti type="call_job" job="extjob-see-all" explain="Specify them here (e:o)Configuration(e:c) ..."/>
+    </otherwise>
+  </choose>
+  <ti_hr_break/>
+  <ti type="call_job" job="run-script-file" explain="Run a script-File"/>
+</job>
+
+<job id="run-script-file" role="hidden">
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)run-script-file.xml" />
+    <prop id="joe-in-regex" x="scriptFile" />
+  </call_job>   
+  <tk type="file" id="scriptFile" label="Script to run" tip="*.xrs" flag="nono"/>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)run-script-file.xml" />
+    <prop id="joe-in-regex" x="scriptFile" />
+  </call_job>     
+  <ti label="Running:" type="file" x="(file,scriptFile)"/>
+  <ti_hr_break/>
+  <include file="(file,scriptFile)"/>
+  <ti_hr/>
+  <ti>finished script</ti>
+</job>
+
+<job id="hook-end-of-extension" role="hidden">
+
+  <need>(prop,extension_key)</need>
+  
+  <try_catch> 
+    <try> 
+      <ti_hr/>
+      <ti label="Jobs"/>
+      <prop id="extjobs_offset">extension[@row=(prop,extension_key)]/</prop>
+      <prop id="extjobs_offset_label">(f,try,()(f,xpath,(file,extensions),extension[@row=(prop,extension_key)],@titel)(),?,?)</prop>  
+  
+      <!-- <prop id="xmlfs_offset_label">(f,try,()(f,xpath,(file,finds),//find[@row=(prop,find_key)],@titel)(),?,?) : (f,xpath,(file,finds),//find[@row=(prop,find_key)],@xpath)</prop>    -->
+  
+      <call_job job="extjob-see-all"/> 
+    </try> 
+    <catch> 
+      <dump_ti label="Problem in searching for Jobs ..."/> 
+    </catch> 
+  </try_catch>  
+
+</job>
+<!--
+<job id="Configuration">
+
+
+  <call_job job="tk_conf_print_values"/>
+  <ti type="call_job" job="tk_conf_edit" explain="Edit" label=" "/>
+  <ti type="call_job" job="do-driver-start" 
+    explain="Do start the driver now" label=" "
+    test="(f,not,(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid)))"/>
+  <ti_hr/>
+  <ti label="Colors"/>
+  <ti type="call_job" job="do-change-color" explain="Change highlight-color"/>  
+  <ti_hr/>  
+  <ti label="Extending Jobs for this project"/>
+  <call_job job="extjob-see-all"/>
+</job>
+  -->
+<job id="Configuration?">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>
+</job>
+
+<job id="My-Jobs" role="hidden">
+  <call_job job="extension-jobs"/>
+</job>
+<job id="My-Jobs?">
+  <ti label="Extending Jobs for this project"/>
+  <call_job job="extjob-see-all"/>
+</job>
+</jobs>

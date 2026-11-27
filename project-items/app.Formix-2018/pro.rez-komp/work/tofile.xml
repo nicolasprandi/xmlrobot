@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="komp-write">
+<need>(prop,komp_key) (prop,isAdd)</need>
+<spirit act="open" id="komps_spirit_tc" xml="(file,komps)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,komps_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,komps_offset),0,(f,sub,(f,len,(prop,komps_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,komps_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="komps_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;komp row="(prop,komp_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="komps_spirit_tc" where="(prop,komps_offset)komp[@row='(prop,komp_key)']" attribute="bez" value="(f,vob,prop,komp_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="komps_spirit_tc" where="(prop,komps_offset)komp[@row='(prop,komp_key)']" attribute="beschreibung" value="(f,vob,prop,komp_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="komps_spirit_tc" where="(prop,komps_offset)komp[@row='(prop,komp_key)']" attribute="phasen" value="(f,vob,prop,komp_phasen)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="komps_spirit_tc" where="(prop,komps_offset)komp[@row='(prop,komp_key)']" attribute="kalkulationen" value="(f,vob,prop,komp_kalkulationen)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="komps_spirit_tc" where="(prop,komps_offset)komp[@row='(prop,komp_key)']" attribute="zeiten" value="(f,vob,prop,komp_zeiten)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="komps_spirit_tc" where="(prop,komps_offset)komp[@row='(prop,komp_key)']" attribute="moda_zutaten" value="(f,vob,prop,komp_moda_zutaten)"/>
+<spirit act="close" flag="save pretty" id="komps_spirit_tc"/>
+</job>

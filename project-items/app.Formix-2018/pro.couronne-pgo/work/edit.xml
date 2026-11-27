@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgo-edit">
+    <need>(prop,pgo_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="pgo-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="pgo-editor"/>
+    <call_job job="pgo-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- (prop,_sl_pgo) '(f,tk_sel_translate,(prop,pgo_objekttyp),(dir,repo)osel-(prop,tip-term-class).xml)'"/>
+    </ti>
+    <call_job job="pgo-see"/>
+</job>

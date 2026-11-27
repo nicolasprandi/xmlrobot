@@ -1,0 +1,204 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<!-- 
+<job id="do-driver-start" role="hidden">
+  <prop id="bwd">1</prop>" />
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)start-driver-response.xml" />
+    <prop id="joe-in-regex" x="bwd" />
+  </call_job>    
+  <call_job job="prolog"/>
+  <call_job job="??"/>
+
+</job>
+-->
+
+<job id="prolog" role="hidden">                                     
+
+<prop id="debug" x="0"/>
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+<prop id="wdid">wdk__</prop>
+<prop id="recid">recorderk__</prop>
+
+  <file id="ipx-data" x="(dir,pro)ipx-data.xrs"/>
+  <prop id="ipx-regex" x="ipx_.+"/>
+
+  <prop id="_x_go_back_sys">   &lt;  &lt;   </prop> 
+  <prop id="_x_go_back_sys2">   &lt;  &lt;   </prop>
+
+  <prop id="_x_go_up_sys">   &#8593;  &#8593;   </prop>               
+  <prop id="_x_go_up_sys2">   &lt;  &lt;   </prop>             
+  <prop id="_x_go_up">&#8593;    &#8593;&#8593;    &#8593;</prop>
+  <prop id="_x_go_up_book">&#8593;    &#8593;&#8593;    &#8593;</prop>
+  <prop id="_x_arr_right">&#8594;</prop>
+  
+<when test="(f,has,dir,pro)">
+<file id="srv-orga-cp">(dir,pro)formix-organizer-copypaste.xml</file>
+    
+  <file id="urls">(dir,pro)urls.xml</file>
+  <when test="(f,not,(f,exists_file,(file,urls)))">
+  <create_file out="(file,urls)">&lt;urls/&gt;</create_file>
+  <i>Created: (file,urls)</i>
+  </when>
+  <prop id="urls_offset">./</prop>
+  <prop id="urls_offset_label"/>
+  <prop id="urls_offset_new_key">//</prop>
+  <prop id="urls_sort_attribute"/>
+  <prop id="urls_sort_number"/>
+  <prop id="urls_sort_ignore_case"/>
+  <prop id="urls_sort_desc"/>
+  <prop id="urls_where"/>
+  <prop id="urls_return_job">url-see-all</prop>  
+
+  <dir id="results" x="(dir,pro)results"/>
+  <mkdir dir="(dir,results)"/>
+
+  <file id="genxsl-data" x="(dir,pro)genxsl-data.xrs"/>
+  <prop id="genxsl-regex" x="genxsl_dir"/>
+
+  <file id="scroll-data" x="(dir,pro)scroll-data.xrs"/>
+  <prop id="scroll-regex" x="scroll_x|scroll_y"/>
+  
+  <dir id="recordings" x="(dir,pro)recordings"/>
+  <mkdir dir="(dir,recordings)"/>
+  <file id="reco-data" x="(dir,pro)reco-data.xrs"/>
+  <prop id="reco-regex" x="reco_.+"/>
+  
+  <file id="gourl-data" x="(dir,pro)gourl-data.xrs"/>
+  <prop id="gourl-regex" x="gourl_.+"/>  
+  
+  <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+  <prop id="conf-regex" x="conf_.+"/>
+  
+  <file id="selxpa-data" x="(dir,pro)selxpa-data.xrs"/>
+  <prop id="selxpa-regex" x="selxpa_.+"/>
+
+  <dir id="cache" x="(dir,pro)cache"/>
+  <mkdir dir="(dir,cache)"/>
+  
+  <dir id="screens" x="(dir,pro)screenshots"/>
+  <mkdir dir="(dir,screens)"/>
+  <sequence id="ss" xml="(dir,pro)screenshots-sequence.xml" len="5" act="open" flag="catch"/>
+    
+  <dir id="pages" x="(dir,pro)pages"/>
+  <mkdir dir="(dir,pages)"/>
+  <sequence id="pages" xml="(dir,pro)pages-sequence.xml" len="5" act="open" flag="catch"/>
+  
+  <dir id="smart" x="(dir,pro)smart"/>
+  <mkdir dir="(dir,smart)"/>
+  <sequence id="archives" xml="(dir,pro)archives-sequence.xml" len="3" act="open" flag="catch"/>  
+  
+  <dir id="xsl" x="(dir,pro)xsl"/>
+  <mkdir dir="(dir,xsl)"/>
+  
+  <dir id="extracted" x="(dir,pro)extracted"/>
+  <mkdir dir="(dir,extracted)"/>    
+
+  <dir id="operations" x="(dir,pro)operations"/>
+  <mkdir dir="(dir,operations)"/> 
+  <file id="op1" x="(dir,operations)op1.xml"/>
+  
+  <file id="groups">(dir,pro)groups.xml</file>
+  <when test="(f,not,(f,exists_file,(file,groups)))">
+    <copy file="(dir,app)groups-sample.xml" tofile="(file,groups)"/>
+    <i>Created: (file,groups)</i>
+  </when>
+  <prop id="groups_offset">./</prop>
+  <prop id="groups_offset_label"/>
+  <prop id="groups_offset_new_key">//</prop>
+  <prop id="groups_sort_attribute"/>
+  <prop id="groups_sort_number"/>
+  <prop id="groups_sort_ignore_case"/>
+  <prop id="groups_sort_desc"/>
+  <prop id="groups_where"/>
+  <prop id="groups_return_job">group-see-all</prop>     
+  
+  <file id="finds">(file,groups)</file>
+  <prop id="finds_offset">./</prop>
+  <prop id="finds_offset_label"/>
+  <prop id="finds_offset_new_key">//</prop>
+  <prop id="finds_sort_attribute"/>
+  <prop id="finds_sort_number"/>
+  <prop id="finds_sort_ignore_case"/>
+  <prop id="finds_sort_desc"/>
+  <prop id="finds_where"/>
+  <prop id="finds_return_job">find-see-all</prop> 
+  
+  <file id="xmlfs">(file,finds)</file>
+  <when test="(f,not,(f,exists_file,(file,xmlfs)))">
+  <create_file out="(file,xmlfs)">&lt;xmlfs/&gt;</create_file>
+  <i>Created: (file,xmlfs)</i>
+  </when>
+  <!--The offset defines a node in the xml-data-file under which all the data is found. use eg 'england' or 'country[id='england']-->
+  <prop id="xmlfs_offset">./</prop>
+  <!--The offset label is communicated to the user, it verbalizes the offset-->
+  <prop id="xmlfs_offset_label"/>
+  <!--the offset_new_key is used whenever a new id for an added record is needed. this is a prefix for an xpath-expression-->
+  <prop id="xmlfs_offset_new_key">//</prop>
+  <!--sort_attribute defines the attributes to be used for the view-sort-->
+  <prop id="xmlfs_sort_attribute"/>
+  <!--the numeric attributes in the sort-->
+  <prop id="xmlfs_sort_number"/>
+  <!--the ignore-case attributes in the sort-->
+  <prop id="xmlfs_sort_ignore_case"/>
+  <!--the desc attributes in the sort-->
+  <prop id="xmlfs_sort_desc"/>
+  <!--a where claused, this is a post to the xpath-expression, use for several view-types-->
+  <prop id="xmlfs_where"/>
+  <!--return job to be called after changes (new,delete,edit)-->
+  <prop id="xmlfs_return_job">xmlf-see-all</prop>   
+  
+  <file id="extjobs">(dir,pro)extjobs.xml</file>
+  <when test="(f,not,(f,exists_file,(file,extjobs)))">
+  <create_file out="(file,extjobs)">&lt;extjobs/&gt;</create_file>
+  <i>Created: (file,extjobs)</i>
+  </when>
+
+  <prop id="extjobs_offset">./</prop>
+  <prop id="extjobs_offset_label"/>
+  <prop id="extjobs_offset_new_key">//</prop>
+  <prop id="extjobs_sort_attribute"/>
+  <prop id="extjobs_sort_number"/>
+  <prop id="extjobs_sort_ignore_case"/>
+  <prop id="extjobs_sort_desc"/>
+  <prop id="extjobs_where"/>
+  <prop id="extjobs_return_job">extjob-see-all</prop>   
+  
+  
+
+
+  <call_job job="driver-startup-phase" />     
+
+
+
+</when>
+</job>           
+
+<job id="???" role="hidden">
+  <choose>
+    <when test="(f,has,prop,pro)">
+      <call_job job="prolog"/>
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <call_job job="?"/>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="?">
+
+  <!-- <ti type="file" label="Things to do" x="(dir,app)todo.xls"/>  -->
+  <ti label="Tabs"/>
+  <ti>()Unter Tabs werden die klassischen Tabulatoren, dh. mehrere paralell geöffnete seiten in einem browser verstanden()</ti>
+  <ti label="Frames und iFrames"/>
+  <ti type="ul">()Das sind html-tags &lt;frame/&gt;()</ti>  
+  <ti type="ul">()Bei einer Suche nach Selektoren wird nicht in den darunter-liegenden frames gesucht()</ti> 
+  <ti type="ul">()man muss vorher auf einen konkreten frame wechseln um von dort die tags rausselektieren zu können()</ti>
+  <ti type="ul">()man kann auch wieder zum darüberliegenden 'frame' wechseln()</ti> 
+  <ti type="ul">()Die frame-navigation befindet sich auf der projekt-info-seite()</ti>
+
+</job>
+
+</jobs>

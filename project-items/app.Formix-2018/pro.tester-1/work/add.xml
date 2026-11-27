@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="computer-add" level="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="computer-editor"/>
+<prop id="computer_key">1</prop>
+<when test="(f,not,(f,exists,prop,computers_offset_new_key))">
+<prop id="computers_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,computers)" sort="@row" number="@row" xpath="(prop,computers_offset_new_key)computer">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="computer_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Computer: #(prop,computer_key)</i>
+<call_job job="computer-write"/>
+<ti label="Did add Computer:" x="(f,html,bold,open)(prop,computer_computer)(f,html,bold,close)"/>
+<ti_hr/>
+<when test="(prop,do_return_job)"/>
+<call_job job="Runcomputer-see-all"/>
+</job>

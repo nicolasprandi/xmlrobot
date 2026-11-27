@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="stews">(dir,pro)stews.xml</file>
+<when test="(f,not,(f,exists_file,(file,stews)))">
+<create_file out="(file,stews)">&lt;stews/&gt;</create_file>
+<i>Created: (file,stews)</i>
+</when>
+<prop id="stews_offset">./</prop>
+<prop id="stews_offset_label"/>
+<prop id="stews_offset_new_key">//</prop>
+<prop id="stews_sort_attribute"/>
+<prop id="stews_sort_number"/>
+<prop id="stews_sort_ignore_case"/>
+<prop id="stews_sort_desc"/>
+<prop id="stews_where"/>
+<prop id="stews_return_job">stew-see-all</prop>
+</prolog>

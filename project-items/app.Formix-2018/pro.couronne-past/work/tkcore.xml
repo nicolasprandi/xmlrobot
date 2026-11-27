@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="past-tk">
+    <call_job job="tr_past"/>
+    <need default="">(prop,pasts_tk_control)</need>
+    <when test="(f,has_flag,(prop,pasts_tk_control),print_only)">
+        <choose>
+            <when test="(f,has_flag,(prop,pasts_tk_control),print_all_fields)">
+                <ti label="(prop,past_default_label_class) (prop,past_default_label_name)"/>
+            </when>
+            <otherwise>
+                <ti label=" " x="(f,html,b,o)(prop,past_default_label_class)(f,html,b,c)"/>
+            </otherwise>
+        </choose>
+    </when>
+    <when test="(f,not,(f,has_flag,(prop,pasts_tk_control),print_only))">
+        <when test="(f,not,(prop,isAdd))">
+            <tk label="(prop,_past_for_l)" id="past_for" x="Aus" test_first="1" tip="(prop,_past_for_t)" type="text" cols="35" flag=" nono "/>
+        </when>
+    </when>
+    <tk label="(f,when,(f,has_flag,(prop,pasts_tk_control),print_only),,(prop,past_default_label_class)(f,when,(f,has,prop,past_default_label_name), (prop,past_default_label_name),))" tk_id="31" flag="(prop,pasts_tk_control) wrap ">
+        <tk label="(prop,_past_args)" x="(prop,_past_args)" test_first="0" type="msg" flag=" "/>
+        <tk label="(prop,_past_for_l)" id="past_for" x="Aus" test_first="1" tip="(prop,_past_for_t)" type="text" cols="35" flag=" nono "/>
+        <tk label="(prop,_past_type_l)" id="past_type" x="-contains-" test_first="0" tip="(prop,_past_type_t)" type="sel" flag=" ">
+            <sel label="(prop,_past_s_type_contains)">-contains-</sel>
+            <sel label="(prop,_past_s_type_equals)">-equals-</sel>
+            <sel label="(prop,_past_s_type_numeric)">-numeric-</sel>
+            <sel label="(prop,_past_s_type_objid)">-objid-</sel>
+        </tk>
+        <tk label="(prop,_past_only_in)" x="(prop,_past_only_in)" test_first="0" type="msg" flag=" "/>
+        <tk label="(prop,_past_otyp_l)" id="past_obj_tech_name" x="" test_first="0" tip="(prop,_past_otyp_t)" type="sel" flag="  multi " xml="(dir,repo)osel-(prop,tip-term-class).xml"/>
+        <tk label="(prop,_past_atyp_l)" id="past_attr_tech_name" x="" test_first="0" tip="(prop,_past_atyp_t)" type="sel" flag="  multi " xml="(dir,repo)attr-sel-(prop,tip-term-class).xml"/>
+    </tk>
+</job>

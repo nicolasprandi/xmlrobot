@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="plate-write">
+<need>(prop,plate_key) (prop,isAdd)</need>
+<spirit act="open" id="plates_spirit_tc" xml="(file,plates)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,plates_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,plates_offset),0,(f,sub,(f,len,(prop,plates_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,plates_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="plates_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;plate row="(prop,plate_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="name" value="(f,vob,prop,plate_name)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="category" value="(f,vob,prop,plate_category)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="character" value="(f,vob,prop,plate_character)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="beschreibung" value="(f,vob,prop,plate_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="price_buy" value="(f,vob,prop,plate_price_buy)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="price_sell" value="(f,vob,prop,plate_price_sell)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="parts" value="(f,vob,prop,plate_parts)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="detail" value="(f,vob,prop,plate_detail)"/>
+<when test="(f,exists,file,plate_logo)">
+<file id="jack-in" x="(file,plate_logo)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="logo" value="(prop,jack-result)"/>
+</when>
+<when test="(f,exists,prop,plate_logo_max_x)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="logo_max_x" value="(f,vob,prop,plate_logo_max_x)"/>
+</when>
+<when test="(f,exists,prop,plate_logo_max_y)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="plates_spirit_tc" where="(prop,plates_offset)plate[@row='(prop,plate_key)']" attribute="logo_max_y" value="(f,vob,prop,plate_logo_max_y)"/>
+</when>
+<spirit act="close" flag="save pretty" id="plates_spirit_tc"/>
+</job>

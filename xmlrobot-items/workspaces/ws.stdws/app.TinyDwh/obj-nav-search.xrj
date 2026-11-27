@@ -1,0 +1,447 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+<interpreter jovial="1" />
+
+
+<job id="-final-search-supernew-looper-" role="hidden">
+    <prop id="result-count">(f,add,1,(prop,result-count))</prop> 
+    <when test="(f,gte_num,(prop,sql_limit_search),(prop,result-count))">
+
+      <prop id="switch" x="(f,not,(prop,switch))"/>
+      <prop id="this-obj" x="(loop,erg,@obj_id)"/>
+      <choose>
+        <when test="(f,not,(f,exists,prop,group-obj))">
+          <prop id="new-group" x="1"/>
+        </when>
+        <when test="(f,eq_num,(loop,erg,@obj_id),(prop,group-obj))">
+          <prop id="new-group" x="0"/>
+        </when>
+        <otherwise>
+          <prop id="new-group" x="1"/>
+        </otherwise>
+      </choose>
+      
+      <when test="(prop,new-group)">
+        <prop id="group-obj" x="(loop,erg,@obj_id)"/>
+        <!-- 
+        <ti type="call_job"                                          
+            job="Object" 
+            key="(f,when,(prop,nav_naming_attribute),(loop,erg,@obj_typ_name),(loop,erg,@obj_typ_tech)) (loop,erg,@obj_id) -x-"
+            explain="(loop,erg,@kopf)" flag="no_arrow">
+          <prop id="on-id" x="(loop,erg,@obj_id)"/>
+        </ti>             
+         -->
+        <prop id="search-kopf">(loop,erg,@kopf)</prop>
+        <prop id="search-kopf" test="(f,not,(f,has,prop,search-kopf))">???</prop> 
+        <ti_hr style="2" test="(f,gt_num,(loop,erg,#i),1)"/>
+        
+        <!-- <ti_break class_table="tabNavigator"/>   -->
+        
+        <prop id="mywrap"></prop>
+        <prop id="mywrap" test="(f,gt_num,(f,len,(prop,search-kopf)),17)"> wrap_word </prop>
+        <prop id="object-title">(e:o)(f,spirit,searchr,ots/ot[@tp=(f,xpath_string,(loop,erg,@obj_typ))],@x)(e:c)</prop>
+        
+        <ti type="rec"  key="#(loop,erg,@obj_id)">
+          <ti type="call_job" job="tox1_mox1" explain="(prop,_x_use)"  
+              flag="button block" class="fx fxAdd fxSearchResult"   
+              test="(f,role,user)">
+              <prop id="tox1-obj">(loop,erg,@obj_id)</prop>
+              <prop id="tox1-obj-type">(loop,erg,@obj_typ)</prop>          
+              <prop id="tox1-obj-name">(prop,search-kopf)</prop>
+              <prop id="tox1-style">c</prop>                     
+          </ti>    
+          <ti test="(f,not,(f,role,user))"> </ti>
+                    
+          
+          <ti type="call_job"                                          
+              job="Object" 
+               xclass="justsearched"
+               flag="(prop,mywrap)"
+               postfix=" (prop,object-title)"
+              explain="(prop,search-kopf)">
+            <prop id="on-id" x="(loop,erg,@obj_id)"/>
+          </ti>       
+
+          
+
+
+        </ti>
+        
+        <ti_space height="2px" /> 
+                
+      </when>
+      <!-- 
+      <prop id="sages">(f,when,(prop,nav_naming_attribute),(loop,erg,@attr_typ_name),(loop,erg,@attr_typ_tech))</prop>
+      <prop id="sages" test="(f,not,(f,has,prop,sages))">(loop,erg,@attr_typ_tech)*</prop>
+      -->
+      <prop id="sages">(f,spirit,searchr,ats/at[@tp=(f,xpath_string,(loop,erg,@attr_typ))],@x)</prop>
+ 
+        <prop id="mywrap"></prop>
+        <prop id="mywrap" test="(f,gt_num,(f,len,(loop,erg,@inhalt)),25)"> wrap_word </prop>
+              
+      <ti type="rec" label="(prop,sages)">
+        <ti  flag="(prop,mywrap)" span="2">(f,html,b,o)(loop,erg,@inhalt)(f,html,b,c)</ti>
+
+      </ti>
+ 
+  </when> 
+    
+</job>
+
+
+<job id="_search" role="hidden">
+
+  
+  <call_job job="tk_limit_read"/>
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />
+  
+  <call_job job="tk_search_edit"/>
+  
+  <choose>
+    <when test="(f,eq_text,-objid-,(prop,search_type))">
+      <ti_hr_break/>
+      <prop id="on-id" x="(prop,search_for)"/>
+      <call_job job="Object"/>
+    </when>
+    <otherwise>
+      <prop id="sco_for">(f,vob,prop,search_for)</prop>
+      <remove type="prop" id="search_for"/>
+      
+      <prop id="sco_type">(f,vob,prop,search_type)</prop>
+      <remove type="prop" id="search_type"/>      
+      
+      <prop id="sco_obj_tech_name">(f,vob,prop,search_obj_tech_name)</prop>
+      <remove type="prop" id="search_obj_tech_name"/>  
+      
+      <prop id="sco_attr_tech_name">(f,vob,prop,search_attr_tech_name)</prop>
+      <remove type="prop" id="search_attr_tech_name"/>  
+                                                                             
+      <call_job job="sco" />
+      
+      <!-- an die pasts haengen -->
+      <spirit act="open" missing_strategy="empty" id="pasts" xml="(file,pasts)"/>
+
+      <choose>
+        <when test="(f,spirit,pasts,exists?,//past[@for=(f,xpath_string,(f,vob,prop,sco_for)) and @type=(f,xpath_string,(f,vob,prop,sco_type))(f,when,(f,has,prop,sco_obj_tech_name),and @obj_tech_name=(f,xpath_string,(f,vob,prop,sco_obj_tech_name)),)(f,when,(f,has,prop,sco_attr_tech_name), and @attr_tech_name=(f,xpath_string,(f,vob,prop,sco_attr_tech_name)),)])">
+
+          <spirit act="close" id="pasts"/>
+        </when>
+        <otherwise>
+        
+          <prop id="past_key">1</prop>
+          <loop id="max" limit="1" flag="back" xml="(file,pasts)" sort="@row" number="@row" xpath="//past">
+            <prop id="past_key">(f,add,(loop,max,@row),1)</prop>
+          </loop>
+                                     
+          <spirit act="xml_update" how="insert_in_begin" id="pasts" where=".">
+            <inline attribute="with">&lt;past row=&quot;(prop,past_key)&quot; for=&quot;(f,x,(f,vob,prop,sco_for))&quot; type=&quot;(f,x,(f,vob,prop,sco_type))&quot;(f,when,(f,has,prop,sco_obj_tech_name), obj_tech_name=&quot;(f,x,(f,vob,prop,sco_obj_tech_name))&quot;,) (f,when,(f,has,prop,sco_attr_tech_name), attr_tech_name=&quot;(f,x,(f,vob,prop,sco_attr_tech_name))&quot;,)/&gt;</inline>
+          </spirit>
+                    
+          <spirit act="xml_update" how="remove" id="pasts" where="//past[position(e:o)(e:c) &gt; 200]" flag="any">
+            
+          </spirit>          
+          
+          <spirit act="close" id="pasts" flag="save write"/>
+        </otherwise>
+      </choose>
+                                                 
+            
+ 
+    </otherwise>
+  </choose>                                                                                             
+  <ti_hr_break/>
+  <ti type="rec">
+  <ti type="menu">  
+  <ti  type="call_job" job="_search" flag="block button" class="fb justmenu" explain="(prop,_sl_search_again)" />
+ 
+  <ti  type="call_job" job="_searched" flag="xblock button" class="fb fbAction " explain="(prop,_pl_past)" />
+  </ti></ti>
+  
+</job>
+
+<job id="sco" role="hidden">       
+
+<need default="1">(prop,sco-do-hr)</need>
+      <file id="on-1" x="(dir,filetemp)objekt-suche.sql"/>
+      <file id="on-2" x="(dir,filetemp)objekt-suche.csv"/>
+      <file id="on-3" x="(dir,filetemp)objekt-suche.xml"/>
+      
+      <print id="search" out="(file,on-1)" act="open"/>
+      <print act="println" id="search">()select  
+         n1.inhalt,        
+    	   n1.obj_id,
+         n1.attr_id,
+         n1.wert_id,  
+         n1.von,
+         n1.bis,
+         n1.wann,      
+         n1.obj_typ,
+         n1.attr_typ,
+         n1.kopf
+    from (
+    SELECT
+         obj.obj_id,
+         obj.kopf,
+         attr.attr_id,
+         wert.inhalt,
+         wert.von,
+         wert.bis,
+         wert.wann,
+         wert.wert_id,
+         obj.obj_typ,
+         attr.attr_typ
+    FROM
+         obj as obj,
+         attr as attr,
+         wert as wert       
+    WHERE
+         obj.obj_id = attr.obj_id and
+         wert.attr_id = attr.attr_id and ()</print>
+         
+ 
+      
+      <!-- begrenzen auf attributtyp -->
+      <when test="(f,has,prop,sco_attr_tech_name)">
+        <prop id="soso">(f,trim,(prop,sco_attr_tech_name))</prop>
+    
+        <echo id="soso" type="prop"/>
+         <prop id="debug-me" x="0"/>
+        <ti label="sco_attr_tech_name" test="(prop,debug-me)">(prop,sco_attr_tech_name)</ti>
+        <choose>
+          <when test="(f,contains,(prop,soso), )">  
+                         
+            <interpreter watch="1" test="(prop,debug-me)"/>
+            <prop id="soso">(prop,sco_attr_tech_name)</prop>
+            
+             <!-- <prop id="soso">(f,replace_regex,(prop,soso),(e:o)[^\s]+(e:c),&apos;$1&apos;)</prop> -->
+             <prop id="soso">(f,trim,(prop,soso))</prop>
+             <prop id="soso">(f,replace_regex,(prop,soso), ,(e:s) )</prop>
+            <print act="println" id="search">attr.attr_typ in (e:o)(prop,soso)(e:c) and </print>
+            <interpreter watch="0" test="(prop,debug-me)"/>      
+          </when>
+          <otherwise>
+            <print act="println" id="search">attr.attr_typ=(prop,soso) and </print>
+          </otherwise>
+        
+        </choose>
+    
+      </when>
+      
+      <!-- begrenzen auf objekt-typ -->
+      <when test="(f,has,prop,sco_obj_tech_name)">
+        <prop id="soso2">(f,trim,(prop,sco_obj_tech_name))</prop>
+    
+        <echo id="soso2" type="prop"/>
+         <prop id="debug-me" x="0"/>
+        <ti label="sco_obj_tech_name" test="(prop,debug-me)">(prop,sco_obj_tech_name)</ti>
+        <choose>
+          <when test="(f,contains,(prop,soso2), )">  
+                         
+            <interpreter watch="1" test="(prop,debug-me)"/>
+            <prop id="soso2">(prop,sco_obj_tech_name)</prop>
+            
+             <!-- <prop id="soso">(f,replace_regex,(prop,soso),(e:o)[^\s]+(e:c),&apos;$1&apos;)</prop> -->
+             <prop id="soso2">(f,trim,(prop,soso2))</prop>
+             <prop id="soso2">(f,replace_regex,(prop,soso2), ,(e:s) )</prop>
+            <print act="println" id="search">obj.obj_typ in (e:o)(prop,soso2)(e:c) and </print>
+            <interpreter watch="0" test="(prop,debug-me)"/>      
+          </when>
+          <otherwise>
+            <print act="println" id="search">obj.obj_typ=(prop,soso2) and </print>
+          </otherwise>
+        
+        </choose>
+    
+      </when>      
+      
+      <prop id="sco_for2" x="(prop,sco_for)"/>  
+      
+      <choose>
+      
+        <when test="(f,eq_text,-numeric-,(prop,sco_type))">
+        
+          <try_catch>
+            <try>
+              <prop id="sco_for2" x="(f,format,(prop,sco_for),000000000000000.0000,us)"/>
+              <when test="(f,not,(f,starts_with,(prop,sco_for2),-))">
+                <prop id="sco_for2" x="+(prop,sco_for2)"/>
+              </when>
+              <tk type="msg" msg="(prop,sco_for2)" test="0"/>
+              <ti label="Numeric Search:" test="0">(prop,sco_for2)</ti>
+              <print act="println" id="search">wert.inhalt ='(prop,sco_for2)'</print>
+            </try>
+            <catch>
+              <call_job job="tr_fail" />
+              <call_job job="tr_nav" />
+    <prop id="final-msg">(prop,_fail_number_conv_l): [ (prop,sco_for) ]
+    - (prop,_fail_solution_l) -
+    (prop,_fail_number_conv_solution)</prop>
+              <tk label="(prop,_fail_error_l)">
+              <tk type="msg" msg_type="e">(prop,final-msg)</tk>
+              </tk>
+              <ti>(prop,final-msg)</ti>
+              <throw_again/>
+            </catch>
+          </try_catch>    
+        
+        </when>
+        
+        <otherwise>
+          <prop id="sco_for2" x="(f,replace,(prop,sco_for),','')"/>   
+          <choose>
+
+            
+            <when test="(f,eq_text,-contains-,(prop,sco_type))">
+
+              
+              <print act="println" id="search">wert.inhalt2 LIKE '%(f,upper,(f,replace_regex,(prop,sco_for2),\s,))%'</print>          
+            </when>
+            
+            <when test="(f,eq_text,-equals-,(prop,sco_type))">
+
+           
+    <print act="println" id="search">wert.inhalt2 = '(f,text,fill_right,(f,upper,(f,replace_regex,(prop,sco_for2),\s,)),60, )' </print>                
+            </when>    
+            
+            <when test="(f,eq_text,%ILIKE%,(prop,sco_type))">
+              <print act="println" id="search">upper(e:o)wert.inhalt(e:c) ILIKE '%' || upper(e:o)'(prop,sco_for2)'(e:c) || '%'</print>
+            </when>
+            <when test="(f,eq_text,ILIKE,(prop,sco_type))">
+              <print act="println" id="search">upper(e:o)trim(e:o)both from wert.inhalt(e:c)(e:c) ILIKE upper(e:o)'(prop,sco_for2)'(e:c) </print>
+            </when>  
+            <when test="(f,eq_text,%LIKE%,(prop,sco_type))">
+              <print act="println" id="search">upper(e:o)wert.inhalt(e:c) LIKE '%' || upper(e:o)'(prop,sco_for2)'(e:c) || '%'</print>
+            </when>
+            <when test="(f,eq_text,LIKE,(prop,sco_type))">
+              <print act="println" id="search">upper(e:o)trim(e:o)both from wert.inhalt(e:c)(e:c) LIKE upper(e:o)'(prop,sco_for2)'(e:c) </print>
+            </when>               
+                    
+            <when test="(f,eq_text,%ILIKE%2,(prop,sco_type))">
+              <print act="println" id="search">wert.inhalt ILIKE '%' || '(prop,sco_for2)' || '%'</print>
+            </when>
+            <when test="(f,eq_text,ILIKE2,(prop,sco_type))">
+              <print act="println" id="search">trim(e:o)both from wert.inhalt(e:c) ILIKE '(prop,sco_for2)' </print>
+            </when>  
+            <when test="(f,eq_text,%LIKE%2,(prop,sco_type))">
+              <print act="println" id="search">wert.inhalt LIKE '%' || '(prop,sco_for2)' || '%'</print>
+            </when>
+            <when test="(f,eq_text,LIKE2,(prop,sco_type))">
+              <print act="println" id="search">trim(e:o)both from wert.inhalt(e:c) LIKE '(prop,sco_for2)' </print>
+            </when>               
+          </choose>    
+        </otherwise>
+        
+      </choose>
+      
+      <print act="println" id="search">()ORDER BY
+         obj.obj_typ,
+         obj.obj_id,
+         obj.kopf,
+         attr.attr_id ) n1
+
+    order by n1.obj_typ, n1.obj_id, attr_id;()</print>
+    
+    <!-- so wars vorher, umbau 18.7.2023 wegen kopf 
+      <print act="println" id="search">()ORDER BY
+         obj.obj_typ,
+         obj.obj_id,
+         attr.attr_id ) n1
+    left outer join (
+        select kopf, obj_id from kopf
+    	) n3
+    on
+    (n1.obj_id = n3.obj_id)
+    order by n1.obj_typ, n1.obj_id, attr_id;()</print>    
+    
+    -->
+      <print id="search" act="close"/>
+      
+      <!-- <ti>(f,file_content,(file,on-1))</ti>  -->
+      
+    
+     <call_job job="-db-open-"/>
+
+      <!--              <ti_hr_break/>
+      <ti>sco-do-hr (prop,sco-do-hr)</ti>          -->
+      <ti_hr_break test="(prop,sco-do-hr)"/>
+      <ti_break test="(f,not,(prop,sco-do-hr))"/>         
+    
+     
+      <prop id="switch" x="1"/> 
+      <!-- <ti label="(f,html,bold,open)Objekt(f,html,bold,close)(e:s) " x="(f,html,bold,open)Wert(f,html,bold,close)" align="left"/> 
+      <ti_break/> -->   
+      
+      <!-- repo search -->
+      <choose>
+        <when test="(prop,nav_naming_attribute)">
+          <spirit act="open" id="searchr" xml="(dir,repo)search-nm.xml"/>
+        </when>
+        <otherwise>
+          <spirit act="open" id="searchr" xml="(dir,repo)search-tc.xml"/>
+        </otherwise>
+      </choose>  
+      <prop id="result-count">0</prop>   
+      
+      <!--<tk type="msg">(f,file_content,(file,on-1))</tk>   --> 
+      <ti label="quey" test="(f,role,test)">(f,file_content,(file,on-1))</ti>
+      <choose>
+        <when test="(prop,coding-search-new)">    
+          <loop id="erg"  missing_strategy="empty"
+              select_file="(file,on-1)"    flag="trim" dbc="(prop,mydbc)" limit="(f,add,1,(prop,sql_limit_search))">            
+              <call_job job="-final-search-supernew-looper-"/>         
+          </loop>      
+        </when>
+        
+        <otherwise>
+          <dbc id="(prop,mydbc)"
+            file="(file,on-1)"
+            out="(file,on-3)"
+            style="a"
+            act="select"
+            root_name="ergs"
+            row_name="erg"    
+            flag="trim"/>         
+                
+           
+          <loop id="erg" xml="(file,on-3)" xpath="erg" missing_strategy="empty" limit="(f,add,1,(prop,sql_limit_search))">
+            <call_job job="-final-search-supernew-looper-"/>
+          </loop>    
+        </otherwise>      
+      </choose>  
+      <choose>
+        <when test="(f,eq_num,0,(prop,result-count))">
+        
+          <call_job job="tr_search" test="(f,not,(f,exists,prop,_sl_nothing))" />
+          
+          <ti>(prop,_sl_nothing)</ti>
+        </when>
+        <when test="(f,eq_num,(f,add,1,(prop,sql_limit_search)),(prop,result-count))">
+          <ti>(prop,_sl_limit_of) '(prop,sql_limit_search)' (prop,_sl_reached)</ti>
+        </when>   
+      </choose>
+      
+      
+      <spirit act="close" id="searchr"/>
+      <call_job job="-db-close-"/>
+      <!--   
+      <when test="(f,not,(prop,coding-search-new))">
+        <when test="(prop,nav_datenfiles)">
+        <ti_hr/>  
+        <ti type="file" x="(file,on-3)"/>
+        </when>  
+      </when>  
+      -->       
+      
+</job>
+
+
+
+
+
+
+
+
+</jobs>

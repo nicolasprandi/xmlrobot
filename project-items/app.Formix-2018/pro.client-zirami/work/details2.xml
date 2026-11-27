@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zirami-see-more">
+<need>(prop,zirami_key)</need>
+<call_job job="zirami-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="ziramis_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,zirami_bez)(f,html,bold,close)(f,when,(f,has,(prop,ziramis_offset_label)), - (prop,ziramis_offset_label),)"/>
+<call_job job="zirami-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="[ Edit ]" job="zirami-edit">
+<prop id="zirami_key">(prop,zirami_key)</prop>
+<file id="ziramis">(file,ziramis)</file>
+<prop id="ziramis_offset">(prop,ziramis_offset)</prop>
+<prop id="ziramis_offset_label">(prop,ziramis_offset_label)</prop>
+<prop id="ziramis_offset_new_key">(prop,ziramis_offset_new_key)</prop>
+<prop id="ziramis_sort_attribute">(prop,ziramis_sort_attribute)</prop>
+<prop id="ziramis_sort_number">(prop,ziramis_sort_number)</prop>
+<prop id="ziramis_where">(prop,ziramis_where)</prop>
+<prop id="ziramis_return_job">(prop,ziramis_return_job)</prop>
+</ti>
+</ti>
+</job>

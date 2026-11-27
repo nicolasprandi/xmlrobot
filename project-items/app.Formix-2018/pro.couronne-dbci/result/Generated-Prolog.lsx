@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="dbcis">(dir,pro)dbcis.xml</file>
+<when test="(f,not,(f,exists_file,(file,dbcis)))">
+<create_file out="(file,dbcis)">&lt;dbcis/&gt;</create_file>
+<i>Created: (file,dbcis)</i>
+</when>
+<prop id="dbcis_offset">./</prop>
+<prop id="dbcis_offset_label"/>
+<prop id="dbcis_offset_new_key">//</prop>
+<prop id="dbcis_sort_attribute"/>
+<prop id="dbcis_sort_number"/>
+<prop id="dbcis_sort_ignore_case"/>
+<prop id="dbcis_sort_desc"/>
+<prop id="dbcis_where"/>
+<prop id="dbcis_return_job">dbci-see-all</prop>
+</prolog>

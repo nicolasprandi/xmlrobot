@@ -1,0 +1,203 @@
+<?xml version="1.0" ?><!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+
+<!-- setting the default-values -->
+<job id="tk_echlib_default" role="hidden">
+  <!--
+  <need default="regex">(prop,echlib_type)</need>
+  <need default="(dir,filetemp)">(dir,echlib_dir)</need>
+  -->
+  <need default="0">(prop,echlib_expected_did-timer)</need>
+  <need default="0">(prop,echlib_expected_just-time)</need>
+  <need default="0">(prop,echlib_expected_did-expire)</need>
+  <need default="0">(prop,echlib_expected_did-customer)</need>
+  <need default="2015-2021 Nicolas Prandstaetter">(prop,echlib_sw_copyright)</need>
+                            
+  
+</job>
+
+
+<!-- echlib-core, make your changes here -->
+<job id="tk_echlib_core" role="hidden" tip="echlib_: Tk Internal">
+               
+  <need default="">(prop,tk_echlib_add_flag)</need>
+  <need default="1">(prop,ac-ask-p2-indiv)</need>
+  
+  <tk label="Echnaton Library: (prop,title-of-echlib)" 
+      flag="(prop,tk_echlib_add_flag)"
+      tip="()()"
+      test="(prop,ac-ask-p2-indiv)"> 
+      
+     <tk id="echlib_customer"
+        label="Customer Name" 
+        test_first="0" 
+        tip="()Kunden-Name()"
+        flag="nono"/>   
+        
+    <tk id="echlib_customer_notice"
+        label="Customer Notice" 
+        test_first="0" 
+        tip="()Zusaetzliche Anmerkung fuer print()"/>  
+        
+   <tk id="echlib_ablaufdatum"
+        label="Ablaufdatum YYYYMMDD" 
+        test_first="0" 
+        regex="\d\d\d\d\d\d\d\d"
+        tip="()YYYYMMDD - Ablaufdatum defines the enddate()"
+        flag="nono"/>
+        
+    <tk id="echlib_sw_name"
+        label="Software-Name" 
+        test_first="0" 
+        tip="()Der name der software eg &apos;Das Allheilmittel&apos;()"
+        flag="nono"/>   
+                
+    <tk id="echlib_sw_copyright"
+        label="Copyright" 
+        test_first="0" 
+        tip="()eg: 2001-3000 Robert Sinatra()"
+        flag="nono"/>         
+    <tk type="msg">Anzahl der erwarteten Ersetzungen</tk>  
+   <!-- 
+           <prop id="count-did-timer">0</prop>
+        <prop id="count-just-time">0</prop>        
+        <prop id="count-did-customer">0</prop>
+        <prop id="count-did-expire">0</prop>                   
+   --> 
+   <tk id="echlib_expected_did-timer"
+        label="/*[requo-timer]*/" 
+        test_first="0"                                                             
+        regex="\d*"
+        tip="()Erwartete gefunden anzahl von /*[requo-timer]*/. Bedeutung: Ende der Software; ohne ein well-known-datum ()"
+        flag="nono"/>    
+        
+   <tk id="echlib_expected_just-time"
+        label="&quot;20300101&quot;" 
+        test_first="0" 
+        regex="\d*"
+        tip="()Erwartete gefunden anzahl von &quot;20300101&quot;. Bedeutung: Ende der Software; allerdings mit diesem well-known-datum: &quot;20300101&quot; ist in der software als text enthalten und wird ersetzt durch das ende-datum. ()"
+        flag="nono"/>    
+        
+   <tk id="echlib_expected_did-expire"
+        label="32503676400000L" 
+        test_first="0" 
+        regex="\d*"
+        tip="()Erwartete gefunden anzahl von 32503676400000L. Bedeutung: Ende der Software; allerdings mit diesem well-known-datum. 32503676400000L ist in der software (als long-value) enthalten und wird ersetzt durch das ende-datum welches auch in long-value umgepolt wird. ()"
+        flag="nono"/>  
+        
+   <tk id="echlib_expected_did-customer"
+        label="/*[requo-customer]*/" 
+        test_first="0" 
+        regex="\d*"
+        tip="()Es werden alle vorkommnisse von /*[requo-customer]*/ durch einen java-code ersetzt der die kunden-infos auf sysprint ausgibt.()"
+        flag="nono"/>                         
+                      
+
+                          
+  </tk>   
+</job>
+<!-- 
+<job id="See Values: echlib_" role="dev">
+  <call_job job="tk_echlib_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_echlib_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+ <job id="Clear Data: echlib_">
+  <tk type="msg" x="Sure to clear data of echlib_ ?" msg_type="w"/>
+  <call_job job="tk_echlib_clear"/>
+</job>
+
+<job id="Print Values:  echlib_">
+  <call_job job="tk_echlib_print_values"/>
+</job>
+<job id="Print Help: echlib_" role="dev">
+  <call_job job="tk_echlib_print_help"/>
+</job>
+
+-->
+<!-- edit data: read, userinput, write -->
+<job id="tk_echlib_edit" tip="echlib_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,echlib-data))">
+      <!-- data exists already -->
+      <prop id="tk_echlib_add_flag" x="sum_only print"/>
+      <call_job job="tk_echlib_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_echlib_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_echlib_default"/>
+  <!-- doing input -->
+  <call_job job="tk_echlib_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_echlib_write"/>
+
+</job>
+
+
+
+<job id="tk_echlib_print_values" tip="echlib_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_echlib_read"/>
+  
+  <call_job job="tk_echlib_core">
+    <prop id="tk_echlib_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_echlib_print_values_tips" tip="echlib_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_echlib_read"/>
+  
+  <call_job job="tk_echlib_core">
+    <prop id="tk_echlib_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_echlib_print_help" tip="echlib_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_echlib_core">
+    <prop id="tk_echlib_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_echlib_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,echlib-data)" />
+    <prop id="joe-in-regex" x="(prop,echlib-regex)" />    
+  </call_job>
+  <call_job job="tk_echlib_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_echlib_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,echlib-data)" />
+    <prop id="joe-in-regex" x="(prop,echlib-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_echlib_clear"  tip="echlib_: Clears the data" role="hidden">
+  <delete file="(file,echlib-data)"/>
+</job>
+
+
+</jobs>

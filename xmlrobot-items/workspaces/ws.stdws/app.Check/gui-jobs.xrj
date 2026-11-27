@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+
+<job id="dbCreate">
+  <call_job job="tk_conf_read"/>
+  <prop id="xxx">(f,file_content,(dir,app)create-db-tables-(prop,conf_db).sql)</prop>
+  <when test="(f,eq_text,postgres,(prop,conf_db))">
+    <prop id="xxx">(f,replace,(prop,xxx),##SCHEMA##,(prop,conf_postgres_schema))</prop>    
+  </when>
+  
+  <tk type="textblock" id="xxx" flag="big" label="Result" tip="Create Privileg-Tables for the DATABASE"/>
+</job>
+
+
+
+<job id="Secret">
+  <call_job job="tk_secret_edit"/>
+</job>
+
+<job id="Edit: Secret?">
+  <call_job job="tk_secret_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_secret_clear" explain="Clear this data"/>
+</job>
+
+<job id="Configuration">
+  <call_job job="tk_conf_edit"/>
+</job>
+
+<job id="Configuration?">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>
+</job>
+
+<job id="Tasks">
+<call_job job="task-see-all" flag="catch"/>
+</job>
+
+ 
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

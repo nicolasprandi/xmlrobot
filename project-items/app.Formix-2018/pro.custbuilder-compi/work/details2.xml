@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="compi-see-more">
+<need>(prop,compi_key)</need>
+<call_job job="compi-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="compis_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(f,tk_sel_translate,(prop,compi_compilation),(dir,pro)current-compi-compile-selection.xml),50)(f,html,bold,close)(f,when,(f,has,(prop,compis_offset_label)), - (prop,compis_offset_label),)"/>
+<call_job job="compi-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="[ Edit ]" job="compi-edit">
+<prop id="compi_key">(prop,compi_key)</prop>
+<file id="compis">(file,compis)</file>
+<prop id="compis_offset">(prop,compis_offset)</prop>
+<prop id="compis_offset_label">(prop,compis_offset_label)</prop>
+<prop id="compis_offset_new_key">(prop,compis_offset_new_key)</prop>
+<prop id="compis_sort_attribute">(prop,compis_sort_attribute)</prop>
+<prop id="compis_sort_number">(prop,compis_sort_number)</prop>
+<prop id="compis_where">(prop,compis_where)</prop>
+<prop id="compis_return_job">(prop,compis_return_job)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+<prop id="custset_key">(prop,custset_key)</prop>
+</ti>
+</ti>
+</job>

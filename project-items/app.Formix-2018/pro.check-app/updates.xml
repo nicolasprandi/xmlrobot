@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="app personalisiert" file_class="view" search="explain=&quot;Db:Cmd&quot;" search_type="text" expectation="1" replace="explain=&quot;(f,html,b,o)(loop,app_loop,@appid)(f,html,b,c) &amp;gt; Db&quot;" />
+</updates>

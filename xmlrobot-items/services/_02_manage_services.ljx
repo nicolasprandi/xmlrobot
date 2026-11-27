@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="reflect-services-to-wow" role="hidden">
+
+  <call_service job="go-joe-read">
+    <file id="joe-in-store" x="(dir,status)reflect-service-store-wow.xrs"/>
+  </call_service>
+         
+  <tk label="Update Services WOW" flag="sum">
+    <tk type="dir" id="ref_repo" label="Local WOW-Repo" 
+    test_first="(f,not,(f,has,dir,ref_repo))"/>
+  </tk>
+  <call_service job="go-joe-write">
+    <file id="joe-in-store" x="(dir,status)reflect-service-store-wow.xrs"/>
+    <prop id="joe-in-regex" x="ref_.*"/>
+  </call_service>
+  
+  <dir id="haus" x="(dir,filetemp)SERVICES-(f,random_text,5)"/>
+  
+  <copy uri="(dir,services)" touri="(dir,haus)"/>
+
+  <prop id="ask" x="0"/>
+  <dir id="services-strip" x="(dir,haus)"/>
+  <call_service job="strip-services" role="hidden"/>
+  
+  <tp>Stripping services</tp>
+
+  <call_service job="copy-new">  
+    <dir id="cn-target" x="(dir,ref_repo)xmlrobot-internals/system/services"/>
+    <dir id="cn-from-dir" x="(dir,haus)"/>
+    <prop id="cn-services" x="1"/>
+    <prop id="cn-report" x="1"/>
+  </call_service>
+
+</job>
+
+<job id="reflect-services-to-lgh" role="hidden">
+
+  <call_service job="go-joe-read">
+    <file id="joe-in-store" x="(dir,status)reflect-service-store.xrs"/>
+    <prop id="joe-in-regex" x="ref_.*"/>
+  </call_service>
+         
+  <tk label="Update app Services" flag="sum">
+    <tk type="dir" id="ref_repo" label="Local GH-Repo" 
+    test_first="(f,not,(f,has,dir,ref_repo))"/>
+  </tk>
+  <call_service job="go-joe-write">
+    <file id="joe-in-store" x="(dir,status)reflect-service-store.xrs"/>
+    <prop id="joe-in-regex" x="ref_.*"/>
+  </call_service>
+  
+  <call_service job="copy-new">  
+    <dir id="cn-target" x="(dir,ref_repo)xmlrobot-items(prop,fs)services"/>
+    <dir id="cn-from-dir" x="(dir,services)"/>
+    <prop id="cn-services" x="1"/>
+    <prop id="cn-report" x="1"/>
+  </call_service>
+
+</job>
+
+  <job id="Services?" joblevel="ws" role="user">
+    <ti label="About: Services"/>
+    <ti>(f,html,bold,open)Offers administration for the services(f,html,bold,close)</ti>
+    <ti type="ul">See job-files</ti>
+    <ti type="ul">See jobs sorted by id</ti>
+    <ti type="ul">Make a backup</ti>
+    <ti type="ul">See backups and compare them</ti>
+    <!-- <ti type="call_service" job="Services" explain="Manage Services now"/>  
+    <ti type="call_service" job="reflect-services-to-lgh" explain="Reflect Services to local Github"/> -->
+    
+  </job>
+  <job id="strip-services" role="hidden">
+    <need default="1">(prop,ask)</need>
+    <when test="(prop,ask)">
+      <tk label="Services-Dir to Strip" flag="sum print">
+        <tk id="services-strip" label="Services-Dir" flag="nono" type="dir"
+        tip="computer*files will be removed from here"/>
+      </tk>
+      <tk type="msg" x="The folder will be updated &#xA;(dir,services-strip)"/>
+    </when>
+    <file id="stripscan" x="(dir,filetemp)stripscan.xml"/>
+    
+    <scan
+      out="(file,stripscan)"
+      dir="(dir,services-strip)"
+      field="fn lm ext"
+      level_limit="1"/>
+    <!-- <ti type="file" label="stripscan" x="(file,stripscan)"/>  -->
+    
+    <loop xml="(file,stripscan)" xpath="file" id="sf" missing_strategy="empty">
+      <prop id="weg" x="0"/>
+      <choose>
+        <when test="(f,and,(f,starts_with,(loop,sf),computer-),(f,ends_with,(loop,sf),.ljx))">
+          <prop id="weg" x="1"/>
+        </when>
+        <when test="(f,and,(f,starts_with,(loop,sf),computer-),(f,ends_with,(loop,sf),.xrj))">
+          <prop id="weg" x="1"/>
+        </when>        
+        
+        <when test="(f,eq_text,(loop,sf),startup-computer-check.ljx)">
+          <prop id="weg" x="1"/>
+        </when> 
+        
+        <when test="(f,eq_text,(loop,sf),startup-computer-check.xrj)">
+          <prop id="weg" x="1"/>
+        </when>       
+        
+        <when test="(f,eq_text,(loop,sf),check-computers-onstart.ljx)">
+          <prop id="weg" x="1"/>
+        </when>   
+        
+        <when test="(f,eq_text,(loop,sf),computers.xml)">
+          <prop id="weg" x="1"/>
+        </when>         
+        
+        <when test="(f,eq_text,(loop,sf),sys_backup_trailer_joe.xml)">
+          <prop id="weg" x="1"/>
+        </when>                   
+             
+      </choose>
+      <when test="(prop,weg)">
+        <ti type="file" x="(loop,sf,@fn)" label="delete" />
+        <delete file="(loop,sf,@fn)"/>
+      </when>
+    </loop>
+
+    <ti>removed private info from services</ti>
+  </job>  
+<job id="Services" joblevel="ws" xrole="hidden" tip="Manage Services">
+  <ti label="Services" />
+    <ti type="call_service" 
+        label="Backup:" 
+        job="Backup: Services" 
+        explain="Make a Backup of SERVICES"/>
+    <ti type="call_service" 
+        label=" " 
+        job="See Service Backups" 
+        explain="See Backups"/>
+    <ti type="call_service" 
+        label=" " 
+        job="reflect-services-to-lgh" 
+        explain="Reflect services to local GH-Repo"
+        tesxt="(f,role,admin)"/>     
+    <!-- <ti type="call_service" 
+        label=" " 
+        job="reflect-services-to-wow" 
+        explain="Reflect services to WOW-SERVER TOMCAT XMLROBOT"
+        test="(f,role,admin)"/>     -->          
+    <ti type="call_service" 
+        label="Actions:" 
+        job="list_jobs" 
+        explain="List Jobs sorted by Id">
+      <prop id="list_jobs_type">services</prop>
+    </ti>   
+    <ti type="call_service" 
+        label=" " 
+        job="strip-services" 
+        explain="Strip specific services from private infos"
+        test="(f,role,dev)"/>
+       
+        
+  <!--  -->  
+  <ti_hr/> 
+  <call_service job="Goto-Panorama">
+    <dir id="with">(dir,services)</dir>
+  </call_service>
+        
+</job> 
+  
+ 
+</jobs>

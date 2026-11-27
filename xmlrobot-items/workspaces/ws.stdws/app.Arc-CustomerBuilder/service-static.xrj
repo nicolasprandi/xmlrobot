@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="static" role="hidden">
+  <!-- static -->
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+  <ti>x a</ti>
+  <when test="(f,eq,1,(f,sissi))">
+    <ti>x b</ti>
+    <when test="(f,not,(f,has,dir,pro))"  >
+      <ti>x c</ti>
+      <choose>
+        <when test="(f,ask,app_has_static_pro,(prop,app))"  >
+          <prop id="pro" x="Standard-Project" />
+          <dir id="pro" x="(dir,pro_home)pro_standard" />
+          <when test="(f,not,(f,dir_exists,(dir,pro)))">
+            <mkdir dir="(dir,pro)" />
+            <ti>Created Standard Project</ti>
+            <!-- <restart app="(prop,app)" pro="(prop,pro)"/> -->
+          </when>
+        </when>
+        <otherwise>
+          <i>kein standard-project</i>
+        </otherwise>
+      </choose>
+    </when>
+  </when>
+</job>
+
+</jobs>

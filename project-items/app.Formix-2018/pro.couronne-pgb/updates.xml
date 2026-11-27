@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="translator-tk" file_class="tkcore" search="id=&quot;pgb-tk&quot;&gt;" search_type="text" expectation="1" replace="id=&quot;pgb-tk&quot;&gt;&#xA;&lt;call_job job=&quot;tr_pgb&quot; /&gt;" off="1" />
+  <update row="2" titel="translator-view" file_class="view" search="role=&quot;hidden&quot;&gt;" search_type="text" expectation="1" replace="role=&quot;hidden&quot;&gt;&#xA;&lt;call_job job=&quot;tr_pgb&quot; /&gt;" off="1" />
+  <update row="3" titel="view nach rechts" file_class="view" search="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti flag=&quot;block&quot;" search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot;&gt;&lt;ti/&gt;&#xA;&lt;ti " off="1" />
+  <update row="4" titel="span in liste" file_class="view" search="&lt;ti  type=&quot;call_job&quot; prefix=&quot;  &quot; explain=&quot;(f,html,bold,open)(f,tk_sel_translate," search_type="text" expectation="1" replace="&lt;ti  type=&quot;call_job&quot; prefix=&quot;  &quot; span=&quot;10&quot; explain=&quot;(f,html,bold,open)(f,tk_sel_translate," off="1" />
+  <update row="5" titel="erster auffueller" file_class="view" search="&lt;/ti&gt;&#xA;&lt;/loop&gt;" search_type="text" expectation="1" replace="&lt;ti&gt; &lt;/ti&gt;&lt;/ti&gt;&#xA;&lt;/loop&gt;" off="1" />
+  <update row="6" titel="zweiter auffueller" file_class="view" search="&lt;/prop&gt;&#xA;&lt;/ti&gt;&#xA;&lt;/ti&gt;&#xA;&lt;/when&gt;" search_type="text" expectation="1" replace="&lt;/prop&gt;&#xA;&lt;/ti&gt;&#xA;&lt;ti&gt; &lt;/ti&gt;&lt;ti&gt; &lt;/ti&gt;&lt;ti&gt; &lt;/ti&gt;&#xA;&lt;/ti&gt;&#xA;&lt;/when&gt;" off="1" />
+</updates>

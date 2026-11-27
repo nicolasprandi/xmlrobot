@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<include file="(dir,app)prolog.xrs" />
+
+<job id="O:testing">
+   
+   
+   <call_job job="testing xpath-internal">
+    <prop id="txi" x="//a | //input | //button"/>
+   </call_job>
+   
+
+                                                
+</job>
+
+<job id="O:testing xpath">
+  
+   <tk id="xpath"/>
+   <call_job job="testing xpath-internal">
+    <prop id="txi" x="(prop,xpath)"/>
+   </call_job>
+
+</job>
+
+<job id="testing xpath-internal" role="hidden">
+  <need>(prop,txi)</need>
+  <ti label="Testing Xpath">
+    <ti label="On file" type="file" x="(file,op1)"/>
+    <ti label="Xpath" x="(prop,txi)"/>
+  </ti>
+  <ti_hr/>
+  <loop id="l" xml="(file,op1)" xpath="(prop,txi)">
+    <ti label="(loop,l,#i)" type="rec">
+         
+         <ti>(loop,l,$name)</ti>
+         <ti>(loop,l) </ti>
+    </ti>
+  </loop>  
+
+ </job>
+</jobs>

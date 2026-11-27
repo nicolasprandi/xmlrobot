@@ -1,0 +1,449 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="write-initials" joblevel="app" role="hidden">
+  <need>(dir,with)</need>
+  
+  <!-- apps or services: display different -->      
+  <choose>
+    <when test="(f,or,(f,starts_with,(f,name_of_dir,(dir,with)),app.),(f,starts_with,(f,name_of_dir,(dir,with)),services))">
+      <prop id="et_report_ti_file_highlight">2</prop>
+    </when>
+    <otherwise>
+      <prop id="et_report_ti_file_highlight">1</prop>
+    </otherwise>
+  </choose>              
+  
+  <dir id="jack-in" x="(dir,with)"/>
+  <call_job job="go-jack-do-dir"/>
+      
+          
+    <ti type="file" label="et Goto-Pano" x="(file,et)" test="0"/>  
+  <create_file out="(file,et)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <execution_type nic="bbb">
+    <scan dir="(x,(prop,jack-result))" level_limit="1" policy="life"/>
+    <org type="system" />
+    <offset></offset> 
+    <report_ti  dir_level="1" dirs_types="child" 
+                file_hightlight="(prop,et_report_ti_file_highlight)" 
+                limit_dirs="40" 
+                limit_next_dirs="80" 
+                files_sort="name"/>
+  </execution_type>
+    ]]>
+  </create_file> 
+</job>
+
+<job id="Read Definitions" joblevel="app" role="hidden">
+  
+  <spirit id="et" act="open" xml="(file,et)" 
+    flag="dont_escape_on_read nuevo"
+    missing_strategy="empty"/>
+  <ti type="file" label="Reading ET" x="(file,et)" test="0"/>
+  
+  <!-- scan -->
+  <dir  id="et_scan_dir" flag="cool">(f,spirit,et,scan,@dir)</dir>
+  <translate type="dir" id="et_scan_dir"/>
+   
+  <prop  id="et_scan_path_exclude">(f,spirit,et,scan,@path_exclude)</prop>
+  
+  <prop  id="et_scan_fext_type">(f,spirit,et,scan,@fext_type)</prop>
+  <prop  id="et_scan_fext_type" test="(f,not,(f,has,prop,et_scan_fext_type))">0</prop>
+  
+  <prop  id="et_scan_fext_yes">(f,spirit,et,scan,@fext_yes)</prop>
+  
+  <prop  id="et_scan_fext_no">(f,spirit,et,scan,@fext_no)</prop>      
+  
+  <prop  id="et_scan_computer">(f,spirit,et,scan,@computer)</prop>
+    
+  <prop id="et_scan_level_limit">(f,spirit,et,scan,@level_limit)</prop>
+  <prop id="et_scan_level_limit" test="(f,not,(f,has,prop,et_scan_level_limit))">1</prop>
+  
+  <prop id="et_scan_policy">(f,spirit,et,scan,@policy)</prop>
+  <prop id="et_scan_policy" test="(f,not,(f,has,prop,et_scan_policy))">life</prop>
+    
+  <prop id="et_scan_min_kb">(f,spirit,et,scan,@min_kb)</prop> 
+  <prop id="et_scan_min_kb" test="(f,not,(f,has,prop,et_scan_min_kb))">0</prop>
+   
+  <prop id="redu_cat_type">(f,spirit,et,scan,@cat_type)</prop>
+  <prop id="redu_cat_cats">(f,spirit,et,scan,@cat_cats)</prop>  
+  
+  <!-- system -->
+  <prop id="et_org_type">(f,spirit,et,org,@type)</prop>
+  <prop id="et_org_type" test="(f,not,(f,has,prop,et_org_type))">system</prop>
+  
+  <choose>
+    <when test="(f,eq,system,(prop,et_org_type))">
+      <file id="et_org">(file,app-extension-groups-life)</file>
+    </when>
+    <when test="(f,eq,project,(prop,et_org_type))">
+      <file id="et_org">(file,extension-groups-life)</file>
+    </when>    
+    <otherwise>
+      <throw>Seious prollejrm</throw>
+    </otherwise>
+  </choose>
+
+  <!-- offset -->
+  <prop id="et_offset_ipath">(f,spirit,et,offset,@ipath)</prop>
+  <!-- <unescape type="prop" id="et_offset_ipath"/> -->
+  
+  <!-- report -->
+  <prop id="et_report_ti_dir_level">(f,spirit,et,report_ti,@dir_level)</prop>
+  <prop id="et_report_ti_dir_level" test="(f,not,(f,has,prop,et_report_ti_dir_level))">1</prop>
+    
+  <prop id="et_report_ti_grp_filter_type">(f,spirit,et,report_ti,@grp_filter_type)</prop>
+  <prop id="et_report_ti_grp_filter_system">(f,spirit,et,report_ti,@grp_filter_system)</prop>
+  <prop id="et_report_ti_grp_filter_project">(f,spirit,et,report_ti,@grp_filter_project)</prop>
+
+  <prop id="et_report_ti_file_highlight">(f,spirit,et,report_ti,@file_hightlight)</prop>
+  <prop id="et_report_ti_file_highlight" test="(f,not,(f,has,prop,et_report_ti_file_highlight))">0</prop>
+
+  <choose>
+    <when test="(f,eq,system,(prop,et_org_type))">
+      <file id="et_report_ti_grp_filter_x">(prop,et_report_ti_grp_filter_system)</file>
+    </when>
+    <when test="(f,eq,project,(prop,et_org_type))">
+      <file id="et_report_ti_grp_filter_x">(prop,et_report_ti_grp_filter_project)</file>
+    </when>    
+    <otherwise>
+      <throw>Sehoius bloblm</throw>
+    </otherwise>
+  </choose>
+  
+  <prop id="et_report_ti_limit_dirs">(f,spirit,et,report_ti,@limit_dirs)</prop>
+  <prop id="et_report_ti_limit_next_dirs">(f,spirit,et,report_ti,@limit_next_dirs)</prop>
+  <prop id="et_report_ti_limit_files_per_group">(f,spirit,et,report_ti,@limit_files_per_group)</prop>
+
+  <prop id="et_report_ti_files_flag">(f,spirit,et,report_ti,@files_flag)</prop>
+  <prop id="et_report_ti_files_flag" test="(f,not,(f,has,prop,et_report_ti_files_flag))">1</prop>
+   
+  <prop id="et_report_ti_files_opt">(f,spirit,et,report_ti,@files_opt)</prop>
+  <prop id="et_report_ti_files_opt" test="(f,not,(f,has,prop,et_report_ti_files_opt))">specials</prop>
+  
+  <prop id="et_report_ti_files_sort">(f,spirit,et,report_ti,@files_sort)</prop>
+  
+  <prop id="et_report_ti_cats_use">(f,spirit,et,report_ti,@cats_use)</prop>
+  <prop id="et_report_ti_cats_use" test="(f,not,(f,has,prop,et_report_ti_cats_use))">1</prop>
+  
+  <prop id="et_report_ti_sum_total">(f,spirit,et,report_ti,@sum_total)</prop>
+  
+  <prop id="et_report_ti_sum_cat">(f,spirit,et,report_ti,@sum_cat)</prop>
+  <!-- <prop id="et_report_ti_sum_cat" test="(f,not,(f,has,prop,et_report_ti_sum_cat))">0</prop> -->
+  
+  <prop id="et_report_ti_sum_ext">(f,spirit,et,report_ti,@sum_ext)</prop>
+  <!-- <prop id="et_report_ti_sum_ext" test="(f,not,(f,has,prop,et_report_ti_sum_ext))">0</prop>  -->
+  
+  <prop id="et_report_ti_sum_sort">(f,spirit,et,report_ti,@sum_sort)</prop>
+  
+  <prop id="et_report_ti_dirs_info">(f,spirit,et,report_ti,@dirs_info)</prop>
+  <prop id="et_report_ti_dirs_types">(f,spirit,et,report_ti,@dirs_types)</prop>  
+  
+  <prop id="correct_scan_level_limit">(prop,et_scan_level_limit)</prop>
+  <spirit id="et" act="close"/> 
+  <dump label="nach read"/>
+  
+</job>
+
+<job id="Write Computer" joblevel="pro" role="hidden">
+  <when test="(f,exists,prop,computer)">
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="scan"
+      attribute="computer" 
+      value="(f,escape,(prop,computer))" />
+  </when>
+</job>
+                    
+<job id="Write Definitions-Source" joblevel="app" role="hidden">
+    <dir id="jack-in">(dir,et_scan_dir)</dir>
+    <call_job job="go-jack-do-dir"/>
+    <ti type="file" label="from Making project" x="(file,et)" test="0"/>
+    <spirit id="et" act="open" xml="(file,et)" flag="nuevo"/>
+    
+    <spirit id="et" act="xml_update" 
+      how="set_attribute"
+      where="scan"
+      attribute="path_exclude" 
+      value="(f,escape,(prop,et_scan_path_exclude))"
+      flag="remove"/>           
+  
+    <spirit id="et" act="xml_update" 
+      how="set_attribute"
+      where="scan"
+      attribute="fext_type" 
+      value="(f,escape,(prop,et_scan_fext_type))" />
+
+    <spirit id="et" act="xml_update" 
+      how="set_attribute"
+      where="scan"
+      attribute="fext_yes" 
+      value="(f,escape,(prop,et_scan_fext_yes))" 
+      flag="remove"/>
+      
+    <spirit id="et" act="xml_update" 
+      how="set_attribute"
+      where="scan"
+      attribute="fext_no" 
+      value="(f,escape,(prop,et_scan_fext_no))" 
+      flag="remove"/>              
+      
+    <spirit id="et" act="xml_update" 
+      what="(file,et)"
+      how="set_attribute"
+      where="scan"
+      attribute="dir" 
+      value="(prop,jack-result)"/>
+
+    <spirit id="et" act="xml_update"
+      how="set_attribute"
+      where="scan"
+      attribute="level_limit" 
+      value="(f,escape,(prop,et_scan_level_limit))" />
+      
+    <spirit id="et" act="xml_update"
+      how="set_attribute"
+      where="scan"
+      attribute="policy" 
+      value="(f,escape,(prop,et_scan_policy))" />
+      
+    <spirit id="et" act="xml_update"
+      how="set_attribute"
+      where="scan"
+      attribute="min_kb" 
+      value="(f,escape,(prop,et_scan_min_kb))" />
+
+    <spirit id="et" act="xml_update"
+      how="set_attribute"
+      where="scan"
+      attribute="cat_type" 
+      value="(f,escape,(prop,redu_cat_type))" 
+      flag="remove"/>
+      
+    <spirit id="et" act="xml_update"
+      how="set_attribute"
+      where="scan"
+      attribute="cat_cats" 
+      value="(f,escape,(prop,redu_cat_cats))" 
+      flag="remove"/>
+                   
+    <spirit id="et" act="close" flag="save"/>    
+</job>
+
+<job id="Write Definitions-Offset" joblevel="app" role="hidden">
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="offset"
+      attribute="ipath" 
+      value="(f,escape,(prop,et_offset_ipath))" />
+
+</job>
+
+<job id="Write Definitions-OrgType" joblevel="app" role="hidden">
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="org"
+      attribute="type" 
+      value="(f,escape,(prop,et_org_type))" /> 
+
+</job>
+
+<job id="Write Definitions-Report" joblevel="app" role="hidden">
+
+    <choose>
+      <when test="(f,eq,life,(prop,et_scan_policy))">
+        
+        <call_job job="go-jack-do-dir">
+          <dir id="jack-in">(dir,et_scan_dir)</dir>
+        </call_job>
+        <!-- <ti_hr/> 
+        <ti type="file" label="et HISI" x="(file,et)" test="0"/>          -->
+                    
+        <xml_update 
+          what="(file,et)"
+          how="set_attribute"
+          where="scan"
+          attribute="dir" 
+          value="(prop,jack-result)"/>
+        <xml_update 
+          what="(file,et)"
+          how="set_attribute"
+          where="scan"
+          attribute="level_limit" 
+          value="(f,escape,(prop,et_report_ti_dir_level))" />
+
+      </when>
+      <when test="(f,eq,image,(prop,et_scan_policy))">
+        <xml_update 
+          what="(file,et)"
+          how="set_attribute"
+          where="offset"
+          attribute="ipath" 
+          value="(f,escape,(prop,et_offset_ipath))" 
+          flag="remove"/>      
+      </when>
+    </choose>
+            
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="dir_level" 
+      value="(f,escape,(prop,et_report_ti_dir_level))" />
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="grp_filter_type" 
+      value="(f,escape,(prop,et_report_ti_grp_filter_type))"
+      flag="remove" />
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="grp_filter_system" 
+      value="(f,escape,(prop,et_report_ti_grp_filter_system))"
+      flag="remove" />
+      
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="grp_filter_project" 
+      value="(f,escape,(prop,et_report_ti_grp_filter_project))" 
+      flag="remove"/>   
+           
+      <xml_update 
+        what="(file,et)"
+        how="set_attribute"
+        where="report_ti"
+        attribute="limit_dirs" 
+        value="(f,escape,(prop,et_report_ti_limit_dirs))" 
+        flag="remove"/>
+
+      <xml_update 
+        what="(file,et)"
+        how="set_attribute"
+        where="report_ti"
+        attribute="limit_next_dirs" 
+        value="(f,escape,(prop,et_report_ti_limit_next_dirs))" 
+        flag="remove"/>
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="limit_files_per_group" 
+      value="(f,escape,(prop,et_report_ti_limit_files_per_group))" 
+      flag="remove"/>    
+      
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="files_flag" 
+      value="(f,escape,(prop,et_report_ti_files_flag))"/>        
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="files_opt" 
+      value="(f,escape,(prop,et_report_ti_files_opt))" 
+      flag="remove"/>  
+      
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="files_sort" 
+      value="(f,escape,(prop,et_report_ti_files_sort))" 
+      flag="remove"/>       
+      
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="files_sort" 
+      value="(f,escape,(prop,et_report_ti_files_sort))" 
+      flag="remove"/>  
+      
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="cats_use" 
+      value="(f,escape,(prop,et_report_ti_cats_use))" 
+      flag="remove"/>    
+      
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="sum_total" 
+      value="(f,escape,(prop,et_report_ti_sum_total))" 
+      flag="remove"/>    
+      
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="sum_cat" 
+      value="(f,escape,(prop,et_report_ti_sum_cat))" 
+      flag="remove"/>    
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="sum_ext" 
+      value="(f,escape,(prop,et_report_ti_sum_ext))" />
+            
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="sum_sort" 
+      value="(f,escape,(prop,et_report_ti_sum_sort))" 
+      flag="remove"/>             
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="dirs_info" 
+      value="(f,escape,(prop,et_report_ti_dirs_info))" 
+      flag="remove"/>   
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="dirs_types" 
+      value="(f,escape,(prop,et_report_ti_dirs_types))" 
+      flag="remove"/>       
+
+    <xml_update 
+      what="(file,et)"
+      how="set_attribute"
+      where="report_ti"
+      attribute="file_hightlight" 
+      value="(f,escape,(prop,et_report_ti_file_highlight))" 
+      flag="remove"/>      
+                          
+                    
+</job>
+
+
+</jobs>

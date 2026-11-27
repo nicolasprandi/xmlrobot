@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<sels>
+      <sel>slim</sel>
+      <sel>slim_numbers</sel>
+      <sel>analyzer</sel>
+      <sel>temp_test</sel>
+      <sel>temp_test_2</sel>
+      <sel>statistic1</sel>
+</sels>

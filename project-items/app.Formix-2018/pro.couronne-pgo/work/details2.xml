@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgo-see-more">
+    <prop x="print_only print_with_tips print_all_fields" id="pgos_tk_control"/>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,pgos_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="pgo-see">
+                    <prop id="pgo_key">(prop,pgo_key)</prop>
+                    <file id="pgos">(file,pgos)</file>
+                    <prop id="pgos_offset">(prop,pgos_offset)</prop>
+                    <prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+                    <prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+                    <prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+                    <prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+                    <prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+                    <prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+                    <prop id="pgos_where">(prop,pgos_where)</prop>
+                    <prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="pgo-see-all">
+                    <file id="pgos">(file,pgos)</file>
+                    <prop id="pgos_offset">(prop,pgos_offset)</prop>
+                    <prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+                    <prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+                    <prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+                    <prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+                    <prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+                    <prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+                    <prop id="pgos_where">(prop,pgos_where)</prop>
+                    <prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+    <need>(prop,pgo_key)</need>
+    <call_job job="pgo-read"/>
+    <prop id="pgo_default_label_class" x="(prop,_sl_pgo)"/>
+    <prop id="pgo_default_label_name" x="(f,tk_sel_translate,(prop,pgo_objekttyp),(dir,repo)osel-(prop,tip-term-class).xml)(f,when,(f,has,(prop,pgos_offset_label)), - (prop,pgos_offset_label),)"/>
+    <call_job job="pgo-tk"/>
+    <ti_hr/>
+    <ti type="rec" info="an-edit-button-just" label=" ">
+        <ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailPgo" explain="(prop,_x_edit)" job="pgo-edit">
+            <prop id="pgo_key">(prop,pgo_key)</prop>
+            <file id="pgos">(file,pgos)</file>
+            <prop id="pgos_offset">(prop,pgos_offset)</prop>
+            <prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+            <prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+            <prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+            <prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+            <prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+            <prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+            <prop id="pgos_where">(prop,pgos_where)</prop>
+            <prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+        </ti>
+    </ti>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,pgos_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="pgo-see">
+                    <prop id="pgo_key">(prop,pgo_key)</prop>
+                    <file id="pgos">(file,pgos)</file>
+                    <prop id="pgos_offset">(prop,pgos_offset)</prop>
+                    <prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+                    <prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+                    <prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+                    <prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+                    <prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+                    <prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+                    <prop id="pgos_where">(prop,pgos_where)</prop>
+                    <prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="pgo-see-all">
+                    <file id="pgos">(file,pgos)</file>
+                    <prop id="pgos_offset">(prop,pgos_offset)</prop>
+                    <prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+                    <prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+                    <prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+                    <prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+                    <prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+                    <prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+                    <prop id="pgos_where">(prop,pgos_where)</prop>
+                    <prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+</job>

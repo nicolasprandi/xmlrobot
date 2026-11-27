@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+
+  <job id="open_dir" os="linux">
+    <exe>
+    	<arg>nautilus</arg>
+    	<arg>(dir,with)</arg>
+    </exe>
+  </job>   
+
+  <job id="open_file" os="linux">
+
+    <exe>
+    	<arg>nautilus</arg>
+    	<arg>(file,with)</arg>
+    </exe>
+  </job>   
+  
+  <job id="sel_open_file_typical" os="linux">
+    <call_service job="sel_open_file_memo_in"/>
+    <call_service job="sel_open_file_exe" /> 
+  </job>
+
+ <job id="sel_open_file" os="linux">
+    <need>(file,with)</need>
+    <call_service job="sel_open_file_memo_in"/>  
+    <tk label="open: (f,name_of_file,(file,with))">
+      <tk type="sel" id="sel" label="select a programm" x="default">
+	      <option label="System Default Programm">default</option>        
+        <option label="Firefox">browser</option>        
+        <option label="Gedit Texteditor">editor</option>
+	      <option label="Open Folder ...">openfolder</option>
+      </tk>
+    </tk>
+
+    <call_service job="sel_open_file_memo_out"/>    
+    <call_service job="sel_open_file_exe" />
+
+  </job> 
+
+<job id="sel_open_file_exe" os="linux">
+    <need default="nothing">(prop,sel)</need>
+    <choose>
+      <when test="(f,eq,(prop,sel),openfolder)">       
+  	    <exe>
+      		<arg>nautilus</arg>
+      		<arg>(file,with)</arg>
+  	    </exe>
+      </when>
+      <when test="(f,eq,(prop,sel),browser)">
+  	    <exe>
+      		<arg>firefox</arg>
+      		<arg>(file,with)</arg>
+  	    </exe>
+      </when>
+      <when test="(f,eq,(prop,sel),editor)">
+  	    <exe>
+      		<arg>gedit</arg>
+      		<arg>(file,with)</arg>
+  	    </exe>
+      </when>  
+      <otherwise>
+	    <!-- default os -->
+  	    <exe>
+      		<arg>xdg-open</arg>
+      		<arg>(file,with)</arg>
+  	    </exe>
+      </otherwise>
+    </choose>      
+</job>  
+
+</jobs>

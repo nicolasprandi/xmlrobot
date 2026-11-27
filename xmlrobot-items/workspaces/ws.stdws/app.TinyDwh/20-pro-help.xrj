@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+
+
+<job id="|| Programming?" lang="en">
+  <when test="(f,has,prop,pro)">
+
+  <ti label="Infos"/>
+
+  <ti type="dir" x="(dir,app)pdi" label="Locations of App-Jobs"/>
+  </when>
+</job>  
+
+
+
+
+
+
+
+ 
+</jobs>

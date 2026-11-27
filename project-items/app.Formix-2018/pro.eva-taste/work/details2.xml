@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="taste-see-more">
+<need>(prop,taste_key)</need>
+<call_job job="taste-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="tastes_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,tk_sel_translate,(prop,taste_was),(dir,pro)plate-selector-gui.xml)(f,html,bold,close)(f,when,(f,has,(prop,tastes_offset_label)), - (prop,tastes_offset_label),)"/>
+<call_job job="taste-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="Edit" job="taste-edit">
+<prop id="taste_key">(prop,taste_key)</prop>
+<file id="tastes">(file,tastes)</file>
+<prop id="tastes_offset">(prop,tastes_offset)</prop>
+<prop id="tastes_offset_label">(prop,tastes_offset_label)</prop>
+<prop id="tastes_offset_new_key">(prop,tastes_offset_new_key)</prop>
+<prop id="tastes_sort_attribute">(prop,tastes_sort_attribute)</prop>
+<prop id="tastes_sort_number">(prop,tastes_sort_number)</prop>
+<prop id="tastes_where">(prop,tastes_where)</prop>
+<prop id="tastes_return_job">(prop,tastes_return_job)</prop>
+</ti>
+</ti>
+</job>

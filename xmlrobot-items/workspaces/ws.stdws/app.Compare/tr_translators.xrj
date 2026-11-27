@@ -1,0 +1,299 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="tr_trace" role="hidden">
+ <!--
+ (prop,) (prop,_trace_) (prop,_trace__) 
+ <call_service job="tr_trace"/> 
+ <call_job job="tr_trace"/>
+  eigentlich fuer trace-file-print
+Ue &#220;
+ue &#252;
+Oe &#214;
+oe &#246;
+Ae &#196;
+ae &#228; -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_trace_tracing">Verfolgen</prop>
+      <prop id="_trace_doesnt_exist">existiert nicht</prop>      
+      <prop id="_trace_compare">Vergleiche</prop>
+      <prop id="_trace_with">mit</prop>
+      <prop id="_trace_same">gleich</prop>
+      <prop id="_trace_one_nexist">eines existiert nicht</prop>      
+      <prop id="_trace_change_visi">&#196;ndere Sichtbarkeit</prop>
+      <prop id="_trace_curr_rep">Aktueller Bericht</prop>
+      <prop id="_trace_same_files">Gleich Dateien</prop>
+      <prop id="_trace_non_ex_files">Nicht existierende Dateien</prop>      
+      <prop id="_trace_change_to">Wechsle zu</prop>
+      <prop id="_trace_see_file">Datei sehen</prop>     
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_trace_tracing">Tracing</prop>
+      <prop id="_trace_doesnt_exist">doesn't exist</prop>      
+      <prop id="_trace_compare">Compare</prop>
+      <prop id="_trace_with">with</prop>
+      <prop id="_trace_same">same</prop>
+      <prop id="_trace_one_nexist">one doesn't exist</prop>      
+      <prop id="_trace_change_visi">Change visibility</prop>
+      <prop id="_trace_curr_rep">Current Report</prop>
+      <prop id="_trace_same_files">Same files</prop>
+      <prop id="_trace_non_ex_files">Non-existing files</prop>      
+      <prop id="_trace_change_to">Change to</prop>
+      <prop id="_trace_see_file">See File</prop>        
+
+    </when>
+  </choose>
+</job>
+
+<job id="tr_c2fi" role="hidden">
+ <!--
+ (prop,) (prop,_c2fi_) (prop,_c2fi__) 
+ <call_service job="tr_c2fi"/> 
+ <call_job job="tr_c2fi"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_c2fi_comp2files">Vergleiche 2 Dateien</prop>
+      <prop id="_c2fi_leftold">Links/Alt</prop>      
+      <prop id="_c2fi_rightnew">Rechts/Neu</prop>
+      <prop id="_c2fi_delta">Differenz</prop>
+      <prop id="_c2fi_next">Als N&#228;chstes</prop>
+      <prop id="_c2fi_ressum">Ergebnis</prop>      
+      <prop id="_c2fi_changes">&#196;nderungen</prop>
+      <prop id="_c2fi_inserts">Einsch&#252;be</prop>
+      <prop id="_c2fi_deletes">L&#246;schungen</prop>
+      <prop id="_c2fi_type">Typ</prop>      
+      <prop id="_c2fi_content">Inhalt</prop>
+      <prop id="_c2fi_change">&#196;nderung</prop>
+      <prop id="_c2fi_from">von</prop>
+      <prop id="_c2fi_to">nach</prop>      
+      <prop id="_c2fi_insert">Einschub</prop>
+      <prop id="_c2fi_delete">L&#246;schung</prop>     
+      <prop id="_c2fi_unknown">Unbekannger Typ ???</prop>
+      <prop id="_c2fi_total">gesamt</prop>
+      <prop id="_c2fi_visual_compare">Visueller Vergleich</prop> 
+      <prop id="_c2fi_pos_head">()(pos-alt,pos-neu)()</prop>       
+
+     
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      
+      
+      <prop id="_c2fi_comp2files">Comparing 2 Files</prop>
+      <prop id="_c2fi_leftold">Left/Old</prop>      
+      <prop id="_c2fi_rightnew">Right/New</prop>
+      <prop id="_c2fi_delta">Delta</prop>
+      <prop id="_c2fi_next">Next</prop>
+      <prop id="_c2fi_ressum">Result Summary</prop>      
+      <prop id="_c2fi_changes">Changes</prop>
+      <prop id="_c2fi_inserts">Inserts</prop>
+      <prop id="_c2fi_deletes">Deletes</prop>
+      <prop id="_c2fi_type">Type</prop>      
+      <prop id="_c2fi_content">Content</prop>
+      <prop id="_c2fi_change">Change</prop>
+      <prop id="_c2fi_from">from</prop>
+      <prop id="_c2fi_to">to</prop>      
+      <prop id="_c2fi_insert">Insert</prop>
+      <prop id="_c2fi_delete">Delete</prop>     
+      <prop id="_c2fi_unknown">Unknown Type ???</prop>
+      <prop id="_c2fi_total">total</prop> 
+      <prop id="_c2fi_visual_compare">Visual Compare</prop>  
+      <prop id="_c2fi_pos_head">()(pos-old,pos-new)()</prop> 
+
+    </when>
+  </choose>
+</job>
+
+<job id="tr_seeb" role="hidden">
+ <!--
+ (prop,) (prop,_seeb_) (prop,_seeb__) 
+ <call_service job="tr_seeb"/> 
+ <call_job job="tr_seeb"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_seeb_pos">Pos</prop>
+      <prop id="_seeb_left">Linke/Alte Datei</prop>      
+      <prop id="_seeb_last">Letzte Ver&#228;nderung</prop>
+      <prop id="_seeb_file">Datei</prop>
+      <prop id="_seeb_right">Rechte/Neue DAtei</prop> 
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_seeb_pos">Pos</prop>
+      <prop id="_seeb_left">Left/Old File</prop>      
+      <prop id="_seeb_last">Last Modification</prop>
+      <prop id="_seeb_file">File</prop>
+      <prop id="_seeb_right">Right/New File</prop> 
+    </when>
+  </choose>
+</job>
+
+
+<job id="tr_cdir" role="hidden">
+ <!--
+ (prop,) (prop,_cdir_) (prop,_cdir__) 
+ <call_service job="tr_cdir"/> -->
+ <when test="(f,not,(f,exists,prop,_cdir_sel_left_msg))">
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_cdir_sel_left_msg">W&#228;hlen Sie jetzt das [ LINKE = ALTE ] Verzeichnis f&#252;r den Vergleich</prop>
+      <prop id="_cdir_sel_left">Auswahl: Linkes/Altes Verzeichnis</prop>
+      <prop id="_cdir_sel_right_msg">W&#228;hlen Sie jetzt das [ RECHTE = NEUE ] Verzeichnis f&#252;r den Vergleich</prop>
+      <prop id="_cdir_sel_right">Auswahl: Rechtes/Neues Verzeichnis</prop>
+      <prop id="_cdir_tk_label">Parameter: Verzeichnisse vergleichen</prop>
+      <prop id="_cdir_tk_left_l">Linkes/Altes Verzeichnis</prop>
+      <prop id="_cdir_tk_left_t">Das linke/alte Verzeichnis f&#252;r den Vergleich</prop>
+      <prop id="_cdir_tk_right_l">Rechtes/Neues Verzeichnis</prop>
+      <prop id="_cdir_tk_right_t">Das rechte/neue Verzeichnis f&#252;r den Vergleich</prop>
+      <prop id="_cdir_tk_limit_l">Limit der Verzeichnis-Ebenen</prop>
+      <prop id="_cdir_tk_limit_t">Die Anzahl der Verzeichnis-Ebenen(e:s) die in den Vergleich mit einbezogen werden sollen.</prop>
+      <prop id="_cdir_tk_unlimited">Unbegrenzt</prop>
+      <prop id="_cdir_differences">Unterschiede</prop> 
+     
+      <prop id="_cdir_scanning">Dursuchen des Datei-Systems ...</prop>
+      <prop id="_cdir_dirs2comp">Verzeichnise zum Vergleichen</prop>      
+      <prop id="_cdir_oldleft">Alt/Links</prop>
+      <prop id="_cdir_newright">Neu/Rechts</prop>
+
+      <prop id="_cdir_summary">Zusammenfassung</prop>
+      <prop id="_cdir_only_left">Nur Alt/Links</prop>
+      <prop id="_cdir_in_both">in Beiden</prop>
+      <prop id="_cdir_only_right">Nur Neu/Rechts</prop>
+      <prop id="_cdir_changes">&#196;nderungen</prop>
+      <prop id="_cdir_only_left_right">Nur Links oder Rechts</prop>      
+      <prop id="_cdir_equal">Gleich</prop>
+      <prop id="_cdir_file">Datei</prop>
+      <prop id="_cdir_file_pl">en</prop>
+      <prop id="_cdir_only_in_left">Nur im Alten/Linken</prop>      
+      <prop id="_cdir_trace">Verfolgen</prop>
+      <prop id="_cdir_see_file">Datei sehen</prop>
+      <prop id="_cdir_see_files">Dateien sehen</prop>
+      <!-- <prop id="_cdir_only_in_right">Only in New/Right</prop> -->
+      <prop id="_cdir_equals">Gleich</prop>
+      <prop id="_cdir_comparing_file">Datei vergleichen</prop>
+                 
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      
+      <prop id="_cdir_sel_left_msg">Select now the [ LEFT = OLD ] Directory for the compare</prop>
+      <prop id="_cdir_sel_left">Preselect: Left/Old Directory</prop>
+      <prop id="_cdir_sel_right_msg">Select now the [ RIGHT = NEW ] Directory for the compare</prop>
+      <prop id="_cdir_sel_right">Select: Right/New Directory</prop>
+      <prop id="_cdir_tk_label">Parameters: Compare Directories</prop>
+      <prop id="_cdir_tk_left_l">Left/Old Directory</prop>
+      <prop id="_cdir_tk_left_t">The left/old directory to compare</prop>
+      <prop id="_cdir_tk_right_l">Right/New Directory</prop>
+      <prop id="_cdir_tk_right_t">The right/new directory to compare</prop>
+      <prop id="_cdir_tk_limit_l">Dir Level Limit</prop>
+      <prop id="_cdir_tk_limit_t">The number of directory-levels to include in the compare</prop>
+      <prop id="_cdir_tk_unlimited">Unlimited</prop>
+      <prop id="_cdir_differences">Differences</prop> 
+     
+      <prop id="_cdir_scanning">Scanning filesystem ...</prop>
+      <prop id="_cdir_dirs2comp">Directories to Compare</prop>      
+      <prop id="_cdir_oldleft">Old/Left</prop>
+      <prop id="_cdir_newright">New/Rigth</prop>
+
+      <prop id="_cdir_summary">Summary</prop>
+      <prop id="_cdir_only_left">Only Old/Left</prop>
+      <prop id="_cdir_in_both">in Both</prop>
+      <prop id="_cdir_only_right">Only New/Right</prop>
+      <prop id="_cdir_changes">Changes</prop>
+      <prop id="_cdir_only_left_right">Only Left or Right</prop>      
+      <prop id="_cdir_equal">Equal</prop>
+      <prop id="_cdir_file">File</prop>
+      <prop id="_cdir_file_pl">s</prop>
+      <prop id="_cdir_only_in_left">Only in Old/Left</prop>      
+      <prop id="_cdir_trace">Trace</prop>
+      <prop id="_cdir_see_file">See File</prop>
+      <prop id="_cdir_see_files">See Files</prop>
+      <!-- <prop id="_cdir_only_in_right">Only in New/Right</prop> -->
+      <prop id="_cdir_equals">Equals</prop>
+      <prop id="_cdir_comparing_file">comparing file</prop>      
+
+    </when>
+  </choose>
+  </when>
+  
+</job>
+
+<job id="tr_kjob" role="hidden">
+ <!--
+ (prop,) (prop,_kjob_) (prop,_kjob__) 
+ <call_service job="tr_kjob"/> 
+ <call_job job="tr_kjob"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>      
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>      
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>      
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>      
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>                  
+            
+      <prop id="_kjob_xx_l"></prop>
+      <prop id="_kjob_xx_t"></prop>      
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+
+    </when>
+  </choose>
+</job>
+
+
+</jobs>

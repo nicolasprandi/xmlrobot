@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="vi-tk">
+    <need default="">(prop,vis_tk_control)</need>
+    <when test="(f,has_flag,(prop,vis_tk_control),print_only)">
+        <choose>
+            <when test="(f,has_flag,(prop,vis_tk_control),print_all_fields)">
+                <ti label="(prop,vi_default_label_class) (prop,vi_default_label_name)"/>
+            </when>
+            <otherwise>
+                <ti flag="label_right" label="(prop,vi_default_label_class)" x="(f,html,b,o)(prop,vi_default_label_name)(f,html,b,c)"/>
+            </otherwise>
+        </choose>
+    </when>
+    <tk label="(f,when,(f,has_flag,(prop,vis_tk_control),print_only),,(prop,vi_default_label_class)(f,when,(f,has,prop,vi_default_label_name), (prop,vi_default_label_name),))" flag="(prop,vis_tk_control) wrap ">
+        <tk label="First Name" id="vi_firstname" x="" test_first="1" tip="Peter" type="text" flag=" "/>
+        <tk label="Last Name" id="vi_lastname" x="" test_first="1" tip="Anderson" type="text" flag=" "/>
+        <tk label="Contact Information" x="Contact Information" test_first="0" type="msg" flag=" "/>
+        <tk label="Area" id="vi_area" x="" test_first="0" tip="Area Code / Vorwahl" type="text" flag=" "/>
+        <tk label="Phone" id="vi_phone" x="" test_first="0" tip="Phone Number / Hauptwahl" type="text" flag=" "/>
+        <tk label="eMail" id="vi_email" x="" test_first="0" tip="Email Adress" type="text" flag=" "/>
+        <tk label="Adress" x="Adress" test_first="0" type="msg" flag=" "/>
+        <tk label="Street" id="vi_street" x="" test_first="0" tip="Street" type="text" flag=" "/>
+        <tk label="House" id="vi_house" x="" test_first="0" tip="House Number" type="text" flag=" "/>
+        <tk label="Door" id="vi_door" x="" test_first="0" tip="Door Number" type="text" flag=" "/>
+        <tk label="Zip" id="vi_zip" x="" test_first="0" tip="Zip Code / Postleitzahl" type="text" flag=" "/>
+        <tk label="Academit Titles" x="Academit Titles" test_first="0" type="msg" flag=" "/>
+        <tk label="Title 1" id="vi_tit1" x="" test_first="0" type="text" flag=" "/>
+        <tk label="Title 2" id="vi_tit2" x="" test_first="0" type="text" flag=" "/>
+    </tk>
+</job>

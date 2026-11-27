@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kompzut-write">
+<need>(prop,kompzut_key) (prop,isAdd)</need>
+<spirit act="open" id="kompzuts_spirit_tc" xml="(file,kompzuts)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,kompzuts_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,kompzuts_offset),0,(f,sub,(f,len,(prop,kompzuts_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,kompzuts_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="kompzuts_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;kompzut row="(prop,kompzut_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kompzuts_spirit_tc" where="(prop,kompzuts_offset)kompzut[@row='(prop,kompzut_key)']" attribute="zut_key" value="(f,vob,prop,kompzut_zut_key)"/>
+<when test="(f,exists,prop,kompzut_komp_key)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kompzuts_spirit_tc" where="(prop,kompzuts_offset)kompzut[@row='(prop,kompzut_key)']" attribute="komp_key" value="(f,vob,prop,kompzut_komp_key)"/>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kompzuts_spirit_tc" where="(prop,kompzuts_offset)kompzut[@row='(prop,kompzut_key)']" attribute="anteil" value="(f,vob,prop,kompzut_anteil)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kompzuts_spirit_tc" where="(prop,kompzuts_offset)kompzut[@row='(prop,kompzut_key)']" attribute="besch" value="(f,vob,prop,kompzut_besch)"/>
+<spirit act="close" flag="save pretty" id="kompzuts_spirit_tc"/>
+</job>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="folder-see-all" level="ws" role="hidden" tip="Lists all Folders">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="folder_loop" xml="(file,folders)" xpath="(prop,folders_offset)folder(prop,folders_where)" sort="(prop,folders_sort_attribute)" number="(prop,folders_sort_number)" ignore_case="(prop,folders_sort_ignore_case)" desc="(prop,folders_sort_desc)">
+<when test="(prop,nothing)">
+<ti>
+<ti/>
+</ti>
+<when test="(f,gt,(f,len,(prop,folders_offset_label)),0)">
+<ti label="(prop,folders_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="From Folder"/>
+<ti x="To Folder"/>
+<ti/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<dir flag="cool" z="b" id="folder_from_temp_var_formix" x="(loop,folder_loop,@from)"/>
+<unescape id="folder_from_temp_var_formix" type="dir"/>
+<translate id="folder_from_temp_var_formix" type="dir"/>
+<dir flag="cool" z="b" id="folder_to_temp_var_formix" x="(loop,folder_loop,@to)"/>
+<unescape id="folder_to_temp_var_formix" type="dir"/>
+<translate id="folder_to_temp_var_formix" type="dir"/>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,folder_loop,@name)(f,html,bold,close)" job="folder-see">
+<prop id="folder_key">(loop,folder_loop,@row)</prop>
+<file id="folders">(file,folders)</file>
+<prop id="folders_offset">(prop,folders_offset)</prop>
+<prop id="folders_offset_label">(prop,folders_offset_label)</prop>
+<prop id="folders_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="folders_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="folders_sort_number">(prop,folders_sort_number)</prop>
+<prop id="folders_where">(prop,folders_where)</prop>
+<prop id="folders_return_job">(prop,folders_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,folder_loop,@from))" type="dir" x="(dir,folder_from_temp_var_formix)"/>
+<ti test="(f,not,(f,has,(loop,folder_loop,@from)))"/>
+<ti test="(f,has,(loop,folder_loop,@to))" type="dir" x="(dir,folder_to_temp_var_formix)"/>
+<ti test="(f,not,(f,has,(loop,folder_loop,@to)))"/>
+<ti test="(f,role,user)" type="call_job" explain="Edit" job="folder-edit">
+<prop id="folder_key">(loop,folder_loop,@row)</prop>
+<file id="folders">(file,folders)</file>
+<prop id="folders_offset">(prop,folders_offset)</prop>
+<prop id="folders_offset_label">(prop,folders_offset_label)</prop>
+<prop id="folders_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="folders_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="folders_sort_number">(prop,folders_sort_number)</prop>
+<prop id="folders_where">(prop,folders_where)</prop>
+<prop id="folders_return_job">(prop,folders_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_job" page="view" explain="Copy" job="action_copy_folder">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">copy</prop>
+<prop page="view" id="folder_key">(loop,folder_loop,@row)</prop>
+<file id="folders">(file,folders)</file>
+<prop id="folders_offset">(prop,folders_offset)</prop>
+<prop id="folders_offset_label">(prop,folders_offset_label)</prop>
+<prop id="folders_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="folders_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="folders_sort_number">(prop,folders_sort_number)</prop>
+<prop id="folders_where">(prop,folders_where)</prop>
+<prop id="folders_return_job">(prop,folders_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keinen Folder gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,folders_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,user)" label=" " type="call_job" explain_nix="folder-add" explain="[ + New ]" job="folder-add">
+<file id="folders">(file,folders)</file>
+<prop id="folders_offset">(prop,folders_offset)</prop>
+<prop id="folders_offset_label">(prop,folders_offset_label)</prop>
+<prop id="folders_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="folders_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="folders_sort_number">(prop,folders_sort_number)</prop>
+<prop id="folders_where">(prop,folders_where)</prop>
+<prop id="folders_return_job">(prop,folders_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,user)" label=" " type="call_job" explain="/ Org /" job="do-org-me">
+<file id="orga">(file,folders)</file>
+<prop id="orga_where">(prop,folders_where)</prop>
+<prop id="orga_view_loop_id">folder_loop</prop>
+<prop id="orga_finished_job">folder-see-all</prop>
+<prop id="orga_offset">(prop,folders_offset)</prop>
+<prop id="orga_offset_label">(prop,folders_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="orga_segment_plural">folders</prop>
+<prop id="orga_segment_singular">folder</prop>
+<prop id="orga_segment_plural_label">Folders</prop>
+<prop id="orga_segment_singular_label">Folder</prop>
+<prop id="orga_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,folders_sort_number)</prop>
+<prop id="orga_where">(prop,folders_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,folder_loop,@name)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,folders)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,folders_offset)),0)">(prop,folders_offset)</ti>
+</ti>
+</when>
+</job>

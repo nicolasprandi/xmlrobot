@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2018-2023 Nicolas Prandstaetter. All Rights reserved. 
+ -->
+<app-info 
+  role="public" 
+  tip="Starter" 
+  sort="3 Starter"
+  cache="cache/"
+  flag="has_static_project">
+
+</app-info>

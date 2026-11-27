@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="selects">(dir,pro)selects.xml</file>
+<when test="(f,not,(f,exists_file,(file,selects)))">
+<create_file out="(file,selects)">&lt;selects/&gt;</create_file>
+<i>Created: (file,selects)</i>
+</when>
+<prop id="selects_offset">./</prop>
+<prop id="selects_offset_label"/>
+<prop id="selects_offset_new_key">//</prop>
+<prop id="selects_sort_attribute"/>
+<prop id="selects_sort_number"/>
+<prop id="selects_sort_ignore_case"/>
+<prop id="selects_sort_desc"/>
+<prop id="selects_where"/>
+<prop id="selects_return_job">select-see-all</prop>
+</prolog>

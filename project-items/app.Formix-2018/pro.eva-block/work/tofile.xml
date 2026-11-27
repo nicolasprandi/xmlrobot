@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="block-write">
+<need>(prop,block_key) (prop,isAdd)</need>
+<spirit act="open" id="blocks_spirit_tc" xml="(file,blocks)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,blocks_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,blocks_offset),0,(f,sub,(f,len,(prop,blocks_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,blocks_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="blocks_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;block row="(prop,block_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="blocks_spirit_tc" where="(prop,blocks_offset)block[@row='(prop,block_key)']" attribute="name" value="(f,vob,prop,block_name)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="blocks_spirit_tc" where="(prop,blocks_offset)block[@row='(prop,block_key)']" attribute="docu" value="(f,vob,prop,block_docu)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="blocks_spirit_tc" where="(prop,blocks_offset)block[@row='(prop,block_key)']" attribute="blockid" value="(f,vob,prop,block_blockid)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="blocks_spirit_tc" where="(prop,blocks_offset)block[@row='(prop,block_key)']" attribute="type" value="(f,vob,prop,block_type)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="blocks_spirit_tc" where="(prop,blocks_offset)block[@row='(prop,block_key)']" attribute="lokal" value="(f,vob,prop,block_lokal)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="blocks_spirit_tc" where="(prop,blocks_offset)block[@row='(prop,block_key)']" attribute="topic" value="(f,vob,prop,block_topic)"/>
+<spirit act="close" flag="save pretty" id="blocks_spirit_tc"/>
+</job>

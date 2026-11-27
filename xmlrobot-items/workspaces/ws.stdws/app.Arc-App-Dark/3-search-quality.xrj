@@ -1,0 +1,275 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+<job id="create-all-test" role="test">
+  <interpreter watch="1"/>
+  <call_job job="tk_appi_read"/>
+  <file id="all" x="(dir,filetemp)all.xml"/>
+  <call_job job="create-all"/>
+
+</job>
+
+<job id="create-all" role="hidden">
+  <need>(file,all)</need>
+
+ 
+  <file id="track-scan" x="(dir,filetemp)track-scan.xml"/> 
+  <file id="track-compo" x="(file,all)"/>
+  <file id="track-prep" x="(dir,filetemp)track-prep.xml"/>
+  
+  <quick_scan                         
+    dir="(dir,appi_from_app)" out="(file,track-scan)" 
+    field="fn post" level_limit="1"/> 
+  <create_file out="(file,track-compo)">&lt;files/&gt;</create_file>
+
+  <spirit act="open" file="(file,track-compo)" id="compo"/>
+
+  <loop xml="(file,track-scan)" id="f" xpath="//file">
+    <when test="(f,or,(f,eq_text,.ljx,(loop,f,@post)),(f,eq_text,.xrj,(loop,f,@post)))">
+      
+      <create_file out="(file,track-prep)">&lt;file name=&quot;(x,(loop,f))&quot;/&gt;</create_file>
+      <xml_update
+        what="(file,track-prep)"
+        how="append"
+        with="(loop,f,@fn)"
+        with_what="childs"/>
+      <spirit
+        act="xml_update"
+        id="compo"
+        how="append"
+        with="(file,track-prep)"
+        with_what="root"/>                
+    </when>
+  </loop>
+  <spirit act="close" flag="save" id="compo"/>
+</job>
+
+<job id="quality-tracker" role="hidden">
+  <!-- <interpreter watch="1"/>        -->
+
+  <call_job job="tk_appi_read"/>
+ 
+  <file id="track-scan" x="(dir,filetemp)track-scan.xml"/> 
+  <file id="track-compo" x="(dir,filetemp)track-compo.xml"/>
+  <file id="track-prep" x="(dir,filetemp)track-prep.xml"/>
+  <file id="track-graph0" x="(dir,filetemp)track-graph0.xml"/>
+  <file id="track-graph1" x="(dir,filetemp)track-graph1.xml"/>
+  <file id="track-files" x="(dir,filetemp)track-files.xml"/>
+  
+  <quick_scan                         
+    dir="(dir,appi_from_app)" out="(file,track-scan)" 
+    field="fn post" level_limit="1"/> 
+  <create_file out="(file,track-compo)">&lt;jobfiles/&gt;</create_file>
+  <create_file out="(file,track-files)">&lt;jobfiles/&gt;</create_file>
+  <spirit act="open" file="(file,track-compo)" id="compo"/>
+  <spirit act="open" file="(file,track-files)" id="files"/>
+  <loop xml="(file,track-scan)" id="f" xpath="//file">
+    <when test="(f,or,(f,eq_text,.ljx,(loop,f,@post)),(f,eq_text,.xrj,(loop,f,@post)))">
+      <ti type="file" test="1">(loop,f,@fn)</ti>
+      <create_file out="(file,track-prep)">&lt;jobfile name=&quot;(x,(loop,f))&quot;/&gt;</create_file>
+      <xml_update
+        what="(file,track-prep)"
+        how="append"
+        with="(loop,f,@fn)"
+        with_what="childs"/>
+      <spirit
+        act="xml_update"
+        id="compo"
+        how="append"
+        with="(file,track-prep)"
+        with_what="root"/>   
+      <spirit
+        act="xml_update"
+        id="files"
+        how="append"
+        with_what="root">
+        <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+            <file name="(x,(loop,f))"/>]]></inline></spirit>              
+    </when>
+  </loop>
+  <spirit act="close" flag="save" id="compo"/>
+  <spirit act="close" flag="save" id="files"/>
+  
+  <xslt 
+    xml="(file,track-compo)" 
+    xsl="(dir,app)quality-tracker.xsl" 
+    out="(file,track-graph0)"> 
+ </xslt>  
+  <xslt 
+    xml="(file,track-graph0)" 
+    xsl="(dir,app)quality-tracker-statistics.xsl" 
+    out="(file,track-graph1)"> 
+ </xslt>   
+ <create_file out="(file,track)">&lt;track/&gt;</create_file>
+ 
+  <xml_update
+
+    what="(file,track)"
+    how="append"
+    with="(file,track-files)"
+    with_what="root"/>  
+    
+  <xml_update
+    what="(file,track)"
+    how="append"
+    with="(file,track-graph1)"
+    with_what="root"/>    
+    
+  <ti label="Build Tracker"/>
+  <ti type="file" x="(file,track)"/>  
+    
+
+  <xslt 
+    xml="(file,track)" 
+    xsl="(dir,app)quality-tracker-html.xsl" 
+    out="(file,track-html)">
+    <params>title='(f,xslp,(prop,pro))' apphome='(f,xslp,(dir,appi_from_app))'</params> 
+    
+ </xslt>     
+ <ti type="file" x="(file,track-html)"/>
+</job>
+
+<job id="quality-menu" role="hidden">
+  <file id="searches">(file,searches-app)</file>
+  <when test="(f,not,(f,exists_file,(file,searches)))">
+  <create_file out="(file,searches)">&lt;searches/&gt;</create_file>
+  <i>Created: (file,searches)</i>
+  </when>
+  <call_job job="search-see-all"/>
+  
+  <file id="searches">(file,searches-pro)</file>
+  <when test="(f,not,(f,exists_file,(file,searches)))">
+  <create_file out="(file,searches)">&lt;searches/&gt;</create_file>
+  <i>Created: (file,searches)</i>
+  </when>
+  <call_job job="search-see-all"/>  
+  <ti_hr/>
+  <when test="(f,exists_file,(file,track-html))">
+    <ti label="Tracker information"/>
+    <ti type="file" x="(file,track-html)"/>  
+    <ti type="file" x="(file,track)"/> 
+  </when>
+  
+  <ti type="call_job" job="quality-tracker" explain="Build Tracker Information"/>
+
+</job>
+
+<job id="quality-get-appid-search" role="hidden">
+
+  <try_catch>
+    <try>
+      <prop id="search-app">_Search</prop>
+      <prop id="unwichtig">(f,ask,app_dir,_Search)</prop>
+      <remove id="unwichtig" type="prop" />
+    </try>
+    <catch>
+      <prop id="search-app">Search</prop>
+    </catch>
+  
+  </try_catch>
+
+</job>
+
+<job id="hook_search_view_begin" role="hidden">
+  <ti label="(f,when,(f,eq_text,(file,searches-app),(file,searches)),Quality-Searches,Obfuriscation ideas &apos;(prop,pro)&apos;)"/>
+</job>
+
+<job id="hook_search_action_test" role="hidden">
+  <call_job job="search-read" />
+  
+  <ti label="Suche nach: (prop,search_techname)"/>
+  <ti>(prop,search_desc)</ti>
+  <ti_hr/>
+  
+  <call_job job="quality-get-appid-search"/>
+  <call_job job="tk_appi_read"/>
+  
+  <dir id="pro_search" x="(f,request,dir,new_temp_pro)"/>
+  
+  <call_app     app="(prop,search-app)" 
+                job="api3" 
+                pro_dir="(dir,pro_search)" 
+                pro_id="Your Search"
+                flag="silent">       
+     
+     <prop id="search_for">(prop,search_search)</prop> 
+     <prop id="search_type">(prop,search_type)</prop>
+     <prop id="search_len_before">(prop,search_before)</prop>
+     <prop id="search_len_after">(prop,search_after)</prop>
+                                                    
+     <dir id="search_dir">(dir,appi_from_app)</dir>
+
+     <prop id="search_encoding">UTF-8</prop>     
+     <prop id="search_levels">1</prop>
+     <prop id="search_ext">.xrj .xrs .xrt .ltx .lsx .ljx</prop>     
+                
+  </call_app>  
+    
+  <dump_ti flag="asdf" test="0"/>
+</job>
+
+<job id="quality-test" role="hidden">
+  <call_job job="quality-get-appid-search"/>
+  <call_job job="tk_appi_read"/>
+  
+  <dir id="pro_search" x="(f,request,dir,new_temp_pro)"/>
+  
+  <call_app     app="(prop,search-app)" 
+                job="api3" 
+                pro_dir="(dir,pro_search)" 
+                pro_id="Your Search"
+                flag="silent">       
+     
+     <prop id="search_for">code=</prop> 
+     <prop id="search_type">text</prop>
+     <prop id="search_len_before">100</prop>
+     <prop id="search_len_after">300</prop>
+     
+     <dir id="search_dir">(dir,appi_from_app)</dir>
+
+     <prop id="search_encoding">UTF-8</prop>     
+     <prop id="search_levels">1</prop>
+     <prop id="search_ext">.xrj .xrs .xrt .ltx .lsx .ljx</prop>     
+                
+  </call_app>    
+
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<!-- 
+<job id="License?">
+  <ti label="About: License">
+  <ti>(f,html,bold,open)Informs about licenses(f,html,bold,open)</ti>
+  <ti type="ul">Displays the license of [[pdname]]</ti>
+  <ti type="ul">Offers links to licenses of the applications of the current workspace</ti>
+  </ti>
+</job>     -->
+  
+<job id="License" joblevel="ws" role="hidden">
+
+  <ti>Welcome to the test-version of the software entitled &quot;[[pdname]]&quot;</ti>
+  <ti label="Copyright (e:o)c(e:c)">2010-2026 Nicolas Prandstaetter. All rights reserved.</ti>
+  
+  <ti label="AS-IS BASIS">()TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS BEING PROVIDED ON AN &quot;AS IS&quot; BASIS WITHOUT ANY WARRANTIES OF ANY KIND RESPECTING THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY OF DESIGN, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. THE ENTIRE RISK ARISING OUT OF THE USE OR PERFORMANCE OF SOFTWARE REMAINS WITH TESTER. IN NO EVENT SHALL OWNER BE LIABLE FOR ANY DAMAGE WHATSOEVER ARISING OUT OF THE USE OF OR INABILITY TO USE SOFTWARE, EVEN IF OWNER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. THE FOREGOING EXCLUSIONS AND LIMITATIONS WILL APPLY TO ALL CLAIMS AND ACTIONS OF ANY KIND, WHETHER BASED ON CONTRACT, TORT (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE), OR ANY OTHER GROUNDS. FOR THE SAKE OF CLARITY: INTENTIONAL DAMAGE OR HEALTH DAMAGES ARE NOT LIMITED BY THIS PROVISION.()</ti>
+
+   <ti label="Included 3rd party software" /> 
+   <ti type="ul">()This software includes software provided by 3rd parties()</ti>  
+   <ti type="ul">()They often request to display their licenses and notices()</ti> 
+  <ti type="ul">()See licenses and notices of included 3rd-party-software in the following folder:()</ti>  
+  <ti label="3rd-party infos:" type="dir" x="(dir,system)third-party-licenses"/>
+ 
+  <!-- 
+  <ti_break/>
+  <ti_space height="5px"/>
+  <ti label="3(e:c) Installed Applications"/>
+
+  <ti>Service-applications and applications of the workspace (f,upper,(prop,workspace)):</ti>
+  <ti_space height="2px"/> 
+  <file id="ask" x="(dir,filetemp)manage-apps-ask.xml"/>
+  <ask out="(file,ask)" what="apps" style="natural"/>
+  <prop id="fapp" x="0"/>
+  <loop id="a" xml="(file,ask)" xpath="apps/app" sort="@id" missing_strategy="empty">
+    <when test="1" xtest="(f,not,(f,or,(f,eq,Panorama,(loop,a,@id)),(f,eq,Backup,(loop,a,@id)),(f,eq,Compare,(loop,a,@id))))">
+      <prop id="fapp" x="1"/>
+      <file id="liclsx" x="(loop,a,@dir)LICENSE.XML"/>
+      <prop id="liclsx-exists" x="(f,file_exists,(file,liclsx))"/>
+      
+    
+      <ti type="rec" label="(f,html,bold,open)(loop,a,@id)(f,html,bold,close)" >
+    
+        <ti type="call_service" 
+            test="(prop,liclsx-exists)" 
+            job="run-an-lsx" 
+            explain="See License">
+            <file id="with" x="(file,liclsx)"/>
+        </ti>    
+        <ti test="(f,not,(prop,liclsx-exists))" 
+            type="dir" 
+            x="(loop,a,@dir)"
+            explain="See Folder"/>
+        <ti flag="wrap" span="7">(f,html,i,open)(loop,a,@tip)(f,html,i,close)</ti>     
+      </ti>
+
+    </when>
+  </loop>
+  
+  <when test="(f,not,(prop,fapp))">
+  <ti label=" " x="Currently there are no applications installed."/>
+  </when>
+  --> 
+</job>
+<ti></ti>
+<ti></ti>
+<ti></ti>
+ 
+</jobs>

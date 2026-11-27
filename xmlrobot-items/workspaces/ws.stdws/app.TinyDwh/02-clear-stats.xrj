@@ -1,0 +1,859 @@
+<?xml version="1.0" ?>
+<jobs>                  <!-- CREATE INDEX idx_obj_typ ON obj (obj_typ); -->
+<call_job job="prolog"/>
+
+<job id="_dwh" role="hidden">
+
+  <need default="1">(prop,comes-from-post)</need>
+  <call_job job="tr_dba"/>
+  <prop id="clear-this">running</prop>
+  <prop id="clear-this-explain">(prop,_dba_di_lab)</prop>  
+  
+  <call_job job="count-tables"/>
+
+</job>
+<job id="count-table" role="hidden">
+
+  <throw test="(f,not,(f,right,stat))">No privileg to do statistics. right stat.</throw>
+  <need default="0">(prop,this-table-solo)</need>
+  <need>(prop,this-table)</need>
+  <tp>(prop,this-table)</tp>
+  <file id="count-table-result">(dir,filetemp)count-table-result.xml</file>
+   <!-- <ti>  countless=(prop,gpref_countless)</ti>  -->
+   
+   <choose>
+    <when test="(f,or,(f,not,(prop,gpref_countless)),(f,ends_with,(prop,this-table),_running))">
+    
+      <dbc id="(prop,mydbc)"
+        out="(file,count-table-result)"
+        style="a"
+        root_name="root"
+        row_name="detail"    
+        act="select"
+        flag="trim">()select count(*) as anzahl from ()(prop,this-table);</dbc>
+                                                        
+       <!-- <ti>(f,file_content,(file,count-table-result))</ti> -->
+        <prop id="anzahl">(f,xpath,(file,count-table-result),detail,@anzahl)</prop>
+        
+    </when>
+    
+    <otherwise>
+        <prop id="anzahl">-1</prop>
+    </otherwise>
+   
+   </choose>
+    <prop id="hat-anzahl">(f,or,(f,gt_num,(prop,anzahl),0),(f,eq_num,-1,(prop,anzahl)))</prop>
+    <prop id="hat-truncer">(f,and,(f,right,clear),(prop,hat-anzahl),(prop,gpref_dwhclear))</prop>
+    <ti type="rec">
+      <ti type="call_job" job="truncate-table" explain="(prop,_dba_truncate)"
+        testx="(f,and,(f,right,clear),(f,not,(f,eq_num,(prop,anzahl),0)),(prop,gpref_dwhclear))"
+        test="(prop,hat-truncer)" flag="block">
+        <prop id="this-table">(prop,this-table)</prop>
+        <prop id="this-table-solo">1</prop>
+      </ti>   
+      <ti test="(f,not,(prop,hat-truncer))"> </ti>
+      <!--     
+      <ti test="(f,and,(f,not,(f,and,(f,right,clear),(f,gt_num,(prop,anzahl),0))),(f,not,(prop,gpref_dwhclear)))"> </ti>     -->
+      <ti flag="block">(f,html,b,o)(prop,this-table)(f,html,b,c)</ti>
+      <ti align="right" test="(f,gt_num,(prop,anzahl),-1)">(f,format,(prop,anzahl),(e:s)##0,de)</ti>
+      <ti align="right" test="(f,eq_num,(prop,anzahl),-1)"
+          type="call_job" job="count-this-table" explain="count">
+          <prop id="this-table">(prop,this-table)</prop>
+      </ti>
+      
+      <ti type="call_job" job="index-table" explain="Index" test="(f,right,index)">
+        <prop id="this-table">(prop,this-table)</prop>
+        <prop id="this-table-solo">1</prop>
+        <prop id="this-table-backjob">(prop,job)</prop>
+        <prop id="clear-this">(f,vob,prop,clear-this)</prop>
+        <prop id="clear-this-explain">(f,vob,prop,clear-this-explain)</prop>
+        
+        
+      </ti>  
+      <ti test="(f,not,(f,right,index))"> </ti>            
+    
+      <ti type="call_job" job="view-table" explain="(prop,_dba_view)"
+        xtest="(f,not,(f,gt_num,(prop,anzahl),0))">
+        <prop id="this-table">(prop,this-table)</prop>
+        <prop id="this-table-solo">1</prop>
+        <prop id="this-table-backjob">(prop,job)</prop>
+        <prop id="clear-this">(f,vob,prop,clear-this)</prop>
+        <prop id="clear-this-explain">(f,vob,prop,clear-this-explain)</prop>
+        
+        
+      </ti>     <!-- 
+      <ti test="(f,not,(f,gt_num,(prop,anzahl),0)),(f,gt_num,(prop,anzahl),-1)))"> </ti>
+      
+
+            
+      
+      <ti test="(f,not,(f,gt_num,(prop,anzahl),0))"> </ti>  
+      <ti> </ti>        -->
+    </ti>
+  <when test="(prop,this-table-solo)">
+    <call_job job="_admin_db_post"/>
+  </when>   
+</job>
+<job id="count-this-table" role="hidden">
+<call_job job="-db-open-"/>
+<ti label="count table" x="(f,html,b,o)(prop,this-table)(f,html,b,c)" />
+      <file id="count-table-result">(dir,filetemp)count-table-result.xml</file>
+      <dbc id="(prop,mydbc)"
+        out="(file,count-table-result)"
+        style="a"
+        root_name="root"
+        row_name="detail"    
+        act="select"
+        flag="trim">()select count(*) as anzahl from ()(prop,this-table);</dbc>
+                                                        
+       <!-- <ti>(f,file_content,(file,count-table-result))</ti> -->
+        <prop id="anzahl">(f,xpath,(file,count-table-result),detail,@anzahl)</prop>
+       <ti label="counted">(prop,anzahl)</ti> 
+</job>
+
+
+<job id="count-tables" role="hidden">
+  <throw test="(f,not,(f,right,stat))">No privileg to do statistics. bpSta.</throw>
+  <need>(prop,clear-this)</need>
+  <need>(prop,clear-this-explain)</need>
+  <call_job job="tr_dba"/>
+  <call_job job="tk_gpref_read" />
+  <ti_break/>    
+  <file id="tables">(dir,app)tables.xml</file>
+  <call_job job="-db-open-"/>
+  
+  <!--
+<ti type="rec">                          
+<ti type="menu" span="10">       
+          
+  <ti explain="(prop,_dba_di_count)"
+      type="call_job"
+      job="count-tables"
+      test="(f,right,stat)"
+      flag="button" class="fb fbEdit" >
+        <prop id="clear-this">all</prop>
+        <prop id="clear-this-explain">(prop,_dba_di_lab)</prop>
+  </ti>            
+        
+  <ti explain="Zentrale" xxxx="(prop,_dba_d_count)"
+      type="call_job"
+      job="count-tables"
+      test="(f,right,stat)"
+      flag="button"
+      class="fb fbEdit" >
+        <prop id="clear-this">int</prop>
+        <prop id="clear-this-explain">(prop,_dba_d_lab)</prop>
+  </ti>         
+    <ti explain="Import" xxx="(prop,_dba_i_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="button"
+      class="fb fbEdit">
+          <prop id="clear-this">imp</prop>
+          <prop id="clear-this-explain">(prop,_dba_i_lab)</prop>
+    </ti>
+</ti>
+</ti>  
+-->
+<prop id="span-oben">(f,add,2,(f,and,(f,right,clear),(prop,gpref_dwhclear)))</prop>
+<ti_break class_table="tabLinklist" />
+      
+<ti_space height="2px" />  
+  
+    <ti type="rec" >
+      <ti xflag="block">(f,html,b,o)(prop,_dba_tabellen)(f,html,b,c)</ti>      
+
+    </ti>  
+    
+  
+  
+  <choose>
+
+    <when test="(f,eq_text,running,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="count-table" test="(f,ends_with,(loop,tables),_running)"/>
+      </loop>
+    </when>
+      
+    <when test="(f,eq_text,vok,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="count-table" test="(f,starts_with,(loop,tables),t_)"/>
+      </loop>
+    </when>
+      
+    <when test="(f,eq_text,all,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="count-table" test="(f,not,(f,starts_with,(loop,tables),t_))"/>
+      </loop>
+    </when>
+    
+    <when test="(f,eq_text,imp,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="count-table" test="(f,or,(f,starts_with,(loop,tables),i_),(f,starts_with,(loop,tables),import_))"/>
+      </loop>
+    </when>                                                                            
+    
+    <when test="(f,eq_text,int,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="count-table" test="(f,not,(f,or,(f,starts_with,(loop,tables),t_),(f,starts_with,(loop,tables),import_),(f,starts_with,(loop,tables),i_)))"/>
+      </loop>
+    </when>    
+    
+    <otherwise>
+      <throw>count-tables wurde mit unbekanntem paraemter clear-this aufgerufen: (prop,clear-this)</throw>
+    </otherwise>
+  </choose>
+  
+  <call_job job="-db-close-"/>
+  <call_job job="_admin_db_post"/>
+
+</job>
+
+<job id="_new_stat" role="hidden">
+  <throw test="(f,not,(f,right,stat))">No privileg to new stats. right: stat.</throw>
+
+  
+  <when test="(f,right,stat)">
+
+    <call_job job="_statistics"/>
+    <!-- <prop id="did-admin-db">1</prop>  -->
+  </when>  
+
+
+</job>
+
+<job id="_admin_db_post" role="hidden">
+  <ti_hr_break/>
+  <prop id="comes-from-post">1</prop>
+  <call_job job="_admin_db"/>
+</job>
+
+<job id="_admin_db" role="hidden">
+  <need default="0">(prop,comes-from-post)</need>
+                                                   
+  <when test="(f,not,(f,has,prop,gpref_dwhclear))">
+    <call_job job="tk_gpref_read" />
+  </when>
+
+  <throw test="(f,not,(f,or,(f,right,stat),(f,right,clear)))">No privileg to administrate tables. bpClr. bpMat. bpClr.</throw>
+  <call_job job="tr_dba" test="(f,not,(f,exists,prop,_dba_stats))"/>
+  <ti_break/>
+  
+  <ti label="Auflisten und Anzeigen"/>
+  
+  <ti type="rec">
+     <ti explain="(prop,_dba_di_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag=" button block"
+        class="fx">
+          <prop id="clear-this">all</prop>
+          <prop id="clear-this-explain">(prop,_dba_di_lab)</prop>
+    </ti> 
+
+    <ti explain="(prop,_dba_d_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="  button" class="fx" >
+          <prop id="clear-this">int</prop>
+          <prop id="clear-this-explain">(prop,_dba_d_lab)</prop>
+    </ti>            
+  </ti>
+
+    <ti type="rec">
+    <ti explain="(prop,_dba_i_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"    class="fx"
+        flag="button block">
+          <prop id="clear-this">imp</prop>
+          <prop id="clear-this-explain">(prop,_dba_i_lab)</prop>
+    </ti>    
+
+  </ti>   
+  <ti type="rec">
+    <ti explain="(prop,_dba_v_count)"
+        type="call_job"
+        job="count-tables"          class="fx"
+        test="(f,right,stat)"
+        flag="block button">
+          <prop id="clear-this">vok</prop>
+          <prop id="clear-this-explain">(prop,_dba_v_lab)</prop>
+    </ti>     
+    </ti>   
+
+  <when test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+  
+    <ti label="Leeren und Löschen"/>  
+    
+
+    
+    <ti type="rec">
+       <ti explain="(prop,_dba_di_trunc)"      flag="block button"
+          type="call_job"
+          job="clear-tables"             class="fx redButton"
+          test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+            <prop id="clear-this">all</prop>
+            <prop id="clear-this-explain">(prop,_dba_di_lab)</prop>
+      </ti>      
+      <ti explain="(prop,_dba_d_trunc)"
+          flag=" button" class="fx redButton"
+          type="call_job"
+          job="clear-tables"
+          test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+            <prop id="clear-this">int</prop>
+            <prop id="clear-this-explain">(prop,_dba_d_lab)</prop>
+      </ti>         
+            
+    </ti>  
+    
+    <ti type="rec">
+   
+      <ti explain="(prop,_dba_i_trunc)"  flag="block button"
+          type="call_job"
+          job="clear-tables"         class="fx redButton"
+          test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+            <prop id="clear-this">imp</prop>
+            <prop id="clear-this-explain">(prop,_dba_i_lab)</prop>
+      </ti>   
+            
+    </ti>      
+    
+    <ti type="rec">
+  
+      <ti explain="(prop,_dba_v_trunc)"          flag="block  button"
+          type="call_job"
+          job="clear-tables"             class="fx redButton"
+          test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+            <prop id="clear-this">vok</prop>
+            <prop id="clear-this-explain">(prop,_dba_v_lab)</prop>
+      </ti>       
+            
+    </ti>              
+  
+  </when>
+  
+  <!--
+  <ti_hr/>  
+  <ti_hr_break/>
+  <ti label="(prop,_dba_data_content)"/>
+   
+  <ti xlabel="(prop,_dba_d_lab)" type="rec">
+    <ti explain="(prop,_dba_d_trunc)"
+        flag="block button" class="fx"
+        type="call_job"
+        job="clear-tables"
+        test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+          <prop id="clear-this">int</prop>
+          <prop id="clear-this-explain">(prop,_dba_d_lab)</prop>
+    </ti>   
+    <ti explain="(prop,_dba_d_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="block" >
+          <prop id="clear-this">int</prop>
+          <prop id="clear-this-explain">(prop,_dba_d_lab)</prop>
+    </ti>  
+    
+       
+  </ti>
+  
+  <ti_space height="3px" xtest="(f,not,(prop,comes-from-post))"/>
+  <ti xlabel="(prop,_dba_i_lab)" type="rec">
+    <ti explain="(prop,_dba_i_trunc)"  flag="block"
+        type="call_job"
+        job="clear-tables"
+        test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+          <prop id="clear-this">imp</prop>
+          <prop id="clear-this-explain">(prop,_dba_i_lab)</prop>
+    </ti>      
+    <ti explain="(prop,_dba_i_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="block">
+          <prop id="clear-this">imp</prop>
+          <prop id="clear-this-explain">(prop,_dba_i_lab)</prop>
+    </ti>  
+    
+    
+        
+  </ti>
+  
+  <ti_space height="3px" xtest="(f,not,(prop,comes-from-post))"/>
+  
+  
+  <ti xxlabel=" " xlabel="(prop,_dba_di_lab)" type="rec">
+    <ti explain="(prop,_dba_di_trunc)"      flag="block"
+        type="call_job"
+        job="clear-tables"
+        test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+          <prop id="clear-this">all</prop>
+          <prop id="clear-this-explain">(prop,_dba_di_lab)</prop>
+    </ti> 
+    <ti explain="(prop,_dba_di_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="block">
+          <prop id="clear-this">all</prop>
+          <prop id="clear-this-explain">(prop,_dba_di_lab)</prop>
+    </ti> 
+              
+  </ti> 
+  
+  -->
+  <!-- 
+  <ti_space height="3px" />
+  <ti_hr/>     
+  <ti_hr xtest="(f,not,(prop,comes-from-post))"/>     -->
+  <!--
+  <ti_space height="3px"  xtest="(f,not,(prop,comes-from-post))"/>
+  <ti label="(prop,_dba_v_lab)" />
+  <ti xxlabel=" " xlabel="(prop,_dba_v_lab)" type="rec">
+    <ti explain="(prop,_dba_v_trunc)"          flag="block"
+        type="call_job"
+        job="clear-tables"
+        test="(f,and,(f,right,clear),(prop,gpref_dwhclear))">
+          <prop id="clear-this">vok</prop>
+          <prop id="clear-this-explain">(prop,_dba_v_lab)</prop>
+    </ti>      
+    <ti explain="(prop,_dba_v_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="block">
+          <prop id="clear-this">vok</prop>
+          <prop id="clear-this-explain">(prop,_dba_v_lab)</prop>
+    </ti>    
+    
+  
+  </ti>    
+  -->
+  
+  
+  <ti_hr_break/>
+                          <!--   <ti>susu</ti>  <ti>kukuk</ti>       -->
+<call_job job="tk_gpref_show_button" >
+  <prop id="what_gpref">dwhclear</prop>
+  <prop id="ready_job">_dwh</prop>
+  <prop id="do_break">0</prop>
+  <prop id="do_block">1</prop>
+  
+</call_job>        
+                                       
+<call_job job="tk_gpref_show_button" >
+  <prop id="what_gpref">countless</prop>
+  <prop id="ready_job">_dwh</prop>
+  <prop id="do_break">0</prop>
+  <prop id="do_block">1</prop>
+  
+</call_job>
+  
+  <ti_space height="3px" />
+  <when test="(prop,comes-from-post)">
+  </when>   
+    <!--
+    <ti type="rec">
+      <ti explain="(prop,_dba_d_count_all)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="button  block"                                               
+        xalign="right" >
+          <prop id="clear-this">all</prop>
+          <prop id="clear-this-explain">(prop,_dba_d_lab)</prop>
+      </ti>     
+      <ti explain="(prop,_dba_d_count)"
+        type="call_job"
+        job="count-tables"
+        test="(f,right,stat)"
+        flag="button "
+         >
+          <prop id="clear-this">int</prop>
+          <prop id="clear-this-explain">(prop,_dba_d_lab)</prop>
+      </ti>  
+      <ti_space height="3px" />
+    </ti>
+    -->
+    
+    
+   
+    <!-- <ti_space height="3px" />        <ti_hr/>
+    
+    <ti type="rec" >
+      <ti type="call_job" job="_select"  flag="button" explain="Abfragen"
+           class="fx fxEdit fxEditDetail fxEditDetailConf fxEditDetailConfNav" align="right"/>
+    </ti>          -->
+    
+
+            
+    
+
+
+               
+         
+
+  
+                                       
+</job>
+
+<job id="clear-tables" role="hidden">
+  <throw test="(f,not,(f,right,clear))">No privileg to truncate tables. bpClr.</throw> 
+        
+  <need>(prop,clear-this)</need>
+  <need>(prop,clear-this-explain)</need>
+  <call_job job="tr_dba"/>
+  
+  <file id="tables">(dir,app)tables.xml</file>
+  
+  <!-- 
+  <tk type="msg" msg="(prop,_dba_trunc_tables): (f,substring_before,(prop,clear-this-explain),:) ?" msg_type="w"/>
+  -->
+  
+   <prop id="delete-confirm-2">1</prop>
+
+	 <tk label="(prop,_dba_trunc_sure)">	
+    	<tk label="(f,substring_before,(prop,clear-this-explain),:)" 
+					type="accept" 
+					id="delete-confirm-1" 
+					x="(prop,_dba_trunc_tables): (f,substring_before,(prop,clear-this-explain),:) ?" 
+					label_accept="Ok" 
+					label_decline="(prop,_dba_trunc_cancel)" 
+					width="600" height="300">
+          
+          <q id="delete-confirm-2" label="(prop,_dba_trunc_iknow)" flag="load"/>
+			</tk>
+    </tk>
+   <throw test="(f,not,(f,and,(prop,delete-confirm-1),(prop,delete-confirm-2)))">(prop,_dba_trunc_stopped)</throw>
+ 
+  <call_job job="-db-prepare-operations-">
+    <prop id="prepare-reason">(prop,_dba_trunc_thistables): (f,substring_before,(prop,clear-this-explain),:)</prop>
+  </call_job>
+  <call_job job="-db-open-"/>
+  <choose>
+  
+    <when test="(f,eq_text,vok,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="truncate-table" test="(f,starts_with,(loop,tables),t_)"/>
+      </loop>
+    </when>
+      
+    <when test="(f,eq_text,all,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="truncate-table" test="(f,not,(f,starts_with,(loop,tables),t_))"/>
+      </loop>
+    </when>
+    
+    <when test="(f,eq_text,imp,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="truncate-table" test="(f,or,(f,starts_with,(loop,tables),i_),(f,starts_with,(loop,tables),import_))"/>
+      </loop>
+    </when>    
+    
+    <when test="(f,eq_text,int,(prop,clear-this))">
+      <loop id="tables" xml="(file,tables)" xpath="t">
+        <prop id="this-table">(loop,tables)</prop>
+        <call_job job="truncate-table" test="(f,not,(f,or,(f,starts_with,(loop,tables),t_),(f,starts_with,(loop,tables),import_),(f,starts_with,(loop,tables),i_)))"/>
+      </loop>
+    </when>    
+    
+    <otherwise>
+      <throw>(prop,_dba_trunc_problem): (prop,clear-this)</throw>
+    </otherwise>
+  </choose>
+  
+  <call_job job="-db-close-"/>
+  <call_job job="_admin_db_post"/>
+
+</job>
+
+
+
+<job id="truncate-table" role="hidden">
+  <throw test="(f,not,(f,right,clear))">No privileg to truncate a table</throw> 
+  <need>(prop,this-table)</need>
+  <need default="0">(prop,this-table-solo)</need>
+  <when test="(prop,this-table-solo)">
+    <call_job job="tr_dba"/>
+
+    <!-- <tk type="msg" msg="(prop,_dba_trunc_really): (prop,this-table) ?" msg_type="w"/>  -->
+     <prop id="delete-confirm-2">1</prop>
+  	 <tk label="(prop,_dba_trunc_sure)">	
+      	<tk label="(prop,this-table)" 
+  					type="accept" 
+  					id="delete-confirm-1" 
+  					x="(prop,_dba_trunc_really): (prop,this-table) ?" 
+  					label_accept="Ok" 
+  					label_decline="(prop,_dba_trunc_cancel)" 
+  					width="600" height="300">
+            
+            <q id="delete-confirm-2" label="(prop,_dba_trunc_iknow)" flag="load"/>
+  			</tk>
+      </tk>
+     <throw test="(f,not,(f,and,(prop,delete-confirm-1),(prop,delete-confirm-2)))">(prop,_dba_trunc_stopped)</throw> 
+   
+    
+    <call_job job="-db-prepare-operations-">
+      <prop id="prepare-reason">(prop,_dba_trunc_thistables): (prop,this-table)</prop>
+    </call_job>
+    <call_job job="-db-open-"/>
+    
+    
+  </when>
+  
+  <tp>(prop,this-table)</tp>
+  <dbc id="(prop,mydbc)"
+  update_return_prop="return-value"    
+  act="update">TRUNCATE (prop,this-table);</dbc> 
+  <call_job job="-db-commit-"/>
+  <ti label="OK"/>
+  <ti label="(prop,_dba_did_trunc):">(f,html,b,o)(prop,this-table)(f,html,b,c)</ti>
+  <ti label="(prop,_dba_did_dbstate):">(prop,return-value)</ti>
+  
+
+  <when test="(prop,this-table-solo)">
+    <call_job job="_admin_db_post"/>
+  </when>  
+  
+</job>
+
+<job id="index-drop" role="hidden">
+<throw test="(f,not,(f,right,clear))">no right clear</throw>
+
+
+
+ <tk type="msg" msg_type="w">Drop Index (prop,this-index) of (prop,this-table) ?</tk>
+<ti label="Drop Index"/>
+<ti label="Index: " x="(f,html,b,o)(prop,this-index)(f,html,b,c)"/> 
+<ti label="of Table: " x="(prop,this-table)"/>   
+<call_job job="-db-open-"/>
+<prop id="cmd">drop index (prop,this-index) on (prop,this-table);</prop>
+
+<ti label="Command: " x="(prop,cmd)"/> 
+
+  <try_catch><try>
+    <dbc id="(prop,mydbc)"
+    update_return_prop="return-value"    
+    act="update">(prop,cmd)</dbc> 
+    <call_job job="-db-commit-" flag="catch"/>
+
+      <ti label="(f,html,b,o)Ok(f,html,b,c)(e:s) Returns:">(prop,return-value)</ti>    
+     
+  </try>
+  <catch>
+      <ti label="Error"/>
+      <ti label="Msg:">(prop,catched_msg)</ti>  
+  </catch>
+  </try_catch>
+  
+ <ti_hr /> 
+  <call_job job="(prop,this-table-backjob)" />
+
+
+
+
+</job>
+
+<job id="index-table" role="hidden">
+
+  
+  <ti_break class_table="tabNavigator"/>
+  <try_catch><try>
+  <ti type="rec">
+    <ti type="call_job" job="(prop,this-table-backjob)" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" >          
+        <prop id="clear-this">(f,vob,prop,clear-this)</prop>
+        <prop id="clear-this-explain">(f,vob,prop,clear-this-explain)</prop>
+        
+    </ti>  
+  </ti>     
+  </try><catch/></try_catch>
+  
+  <ti_break/>    
+  
+  <need default="0">(prop,this-table-solo)</need>
+  <when test="(prop,this-table-solo)">
+    <call_job job="-db-open-"/>
+    <call_job job="tr_dba"/>
+  </when>
+    
+  <need>(prop,this-table)</need>
+  <tp>(prop,this-table)</tp>
+  <file id="count-table-result">(dir,pro)cache/index-table-result.xml</file>
+  <call_job job="tk_limit_read"/>  
+  <dbc id="(prop,mydbc)"
+    out="(file,count-table-result)"
+    style="c"    
+    act="select"
+    flag="trim">()show index  from ()(prop,this-table);</dbc>      
+                     
+   <ti label="Table: (prop,this-table)"/>   
+   <ti_hr/>
+   <ti label="1(e:c) Index"/>
+   <ti_space height="5px" />
+   <!-- fps                   
+   <ti>(f,file_content,(file,count-table-result))</ti>  -->     
+   
+  
+  <call_service job="fps">
+    <file id="fps-file">(file,count-table-result)</file>   
+    <prop id="fps-regex">\n</prop>
+    <prop id="fps-limit">(f,add,1,(prop,sql_limit_print))</prop>
+    <prop id="fps-header">1</prop>      
+      
+  </call_service>
+  <when test="(f,right,clear)">
+    <file id="count-table-result2">(dir,pro)cache/index-table-result2.xml</file> 
+    <dbc id="(prop,mydbc)"
+      out="(file,count-table-result2)"
+      style="a"    
+      act="select"
+      flag="trim">()show index  from ()(prop,this-table);</dbc>     
+
+    <prop id="last"></prop>
+    <prop id="did-drop-head">0</prop>
+    
+    
+    <call_job job="tk_db_read_dbms" />
+    
+      <choose>
+        <when test="(f,not,(f,has,prop,db_dbms))">
+          <throw>unbekanntes dbms</throw>
+        </when>  
+        <when test="(f,eq_text,(prop,db_dbms),maria)">
+          <prop id="idx-col-name">INDEX_NAME</prop>
+        </when>
+        <when test="(f,eq_text,(prop,db_dbms),mysql)">
+          <prop id="idx-col-name">Key_name</prop>
+        </when>    
+        <when test="(f,eq_text,(prop,db_dbms),postgres)">
+          <throw>fuer postges noch nicht implementiert</throw>
+        </when>       
+        <otherwise>
+          <throw>unbekanntes dbms: (prop,db_dbms)</throw>
+        </otherwise>
+      </choose>    
+    
+    <loop id="show" xml="(file,count-table-result2)" xpath="node(e:o)(e:c)"  >  
+      <prop id="ixn">(loop,show,@(prop,idx-col-name))</prop> 
+     
+      <when test="(f,not,(f,eq_text,(prop,last),(prop,ixn)))"> 
+                                                                     
+        <when test="(f,not,(f,eq_text,PRIMARY,(prop,ixn)))"> 
+          <when test="(f,not,(prop,did-drop-head))">   
+            <ti x="(f,html,bold,o)Drop(f,html,bold,c)"/>       
+            <prop id="did-drop-head">1</prop>
+          </when>             
+          <ti type="call_job" job="index-drop" explain="Drop: (f,html,bold,o)(prop,ixn)(f,html,bold,c)" >
+              
+              <prop id="this-index" x="(prop,ixn)"/>
+              <prop id="this-table" x="(prop,this-table)"/>
+              <prop id="clear-this">(f,vob,prop,clear-this)</prop>
+              <prop id="clear-this-explain">(f,vob,prop,clear-this-explain)</prop>     
+              <prop id="this-table-backjob">(prop,this-table-backjob)</prop>            
+              
+              
+            </ti>
+        </when>
+      </when>
+      <prop id="last">(prop,ixn)</prop>                                              
+  
+    </loop>   
+  </when>
+  
+  <file id="count-table-result2">(dir,pro)cache/cols-table-result.xml</file>
+   
+  <dbc id="(prop,mydbc)"
+    out="(file,count-table-result2)"
+    style="c"    
+    act="select"
+    flag="trim">()show columns  from ()(prop,this-table);</dbc>                       
+   
+  <ti_hr/>  <ti_space height="5px" /> <ti_hr/>
+  <ti label="2(e:c) Columns"/>  
+  <call_service job="fps">
+    <file id="fps-file">(file,count-table-result2)</file>   
+    <prop id="fps-regex">\n</prop>
+    <prop id="fps-limit">(f,add,1,(prop,sql_limit_print))</prop>
+    <prop id="fps-header">1</prop>      
+      
+  </call_service>  
+  <ti_hr_break/>
+  <ti label="3(e:c) This information as Xml-Files"/> 
+  <ti label="Index" type="file">(file,count-table-result)</ti>   
+  <ti label="Cols" type="file">(file,count-table-result2)</ti>              
+
+   <call_job job="-db-close-"/>
+    
+</job>
+
+<job id="view-table" role="hidden">
+
+  
+  <ti_break class_table="tabNavigator"/>
+  <try_catch><try>
+  <ti type="rec">
+    <ti type="call_job" job="(prop,this-table-backjob)" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" >          
+        <prop id="clear-this">(f,vob,prop,clear-this)</prop>
+        <prop id="clear-this-explain">(f,vob,prop,clear-this-explain)</prop>
+        
+    </ti>  
+  </ti>     
+  </try><catch/></try_catch>
+  
+  <ti_break/>    
+  
+  <need default="0">(prop,this-table-solo)</need>
+  <when test="(prop,this-table-solo)">
+    <call_job job="-db-open-"/>
+    <call_job job="tr_dba"/>
+  </when>
+    
+  <need>(prop,this-table)</need>
+  <tp>(prop,this-table)</tp>
+  <file id="count-table-result">(dir,filetemp)count-table-result.xml</file>
+  <file id="count-table-fields">(dir,filetemp)count-table-fields.xml</file>
+  <call_job job="tk_limit_read"/>  
+  <dbc id="(prop,mydbc)"
+    out="(file,count-table-result)"
+    xfields="(file,count-table-fields)"
+    style="c"    
+    act="select"
+    limit="(prop,sql_limit_dwh)"
+    flag="trim">()select *  from ()(prop,this-table);</dbc>                       
+   <ti label="(prop,_dba_tabelle): (prop,this-table)"/>   
+   <!-- fps 
+   <ti>(f,file_content,(file,count-table-result))</ti>      -->
+   
+  
+  <call_service job="fps">
+    <file id="fps-file">(file,count-table-result)</file>   
+    <prop id="fps-regex">\n</prop>
+    <prop id="fps-limit">(f,add,1,(prop,sql_limit_print))</prop>
+    <prop id="fps-header">1</prop>      
+      
+  </call_service>
+                   
+
+   <call_job job="-db-close-"/>
+    
+</job>
+
+
+
+
+</jobs>

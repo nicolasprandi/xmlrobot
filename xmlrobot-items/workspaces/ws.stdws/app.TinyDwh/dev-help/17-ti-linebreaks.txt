@@ -1,0 +1,11 @@
+<!-- line, gridbreak, line & gridbreak -->
+<ti_hr />
+<ti_break />
+<ti_hr_break />
+
+<!-- break and gridbreak with full stretching -->
+<ti_break class_table="tabNavigator"/>
+<ti_hr_break class_table="tabNavigator"/>
+
+<!-- just a space-area -->
+<ti_space heigth="2px"/>

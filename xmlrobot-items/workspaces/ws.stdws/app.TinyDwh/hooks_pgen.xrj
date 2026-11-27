@@ -1,0 +1,250 @@
+<?xml version="1.0" ?>
+                                        
+<jobs>
+<call_job job="prolog"/>
+<job id="pgo-insert-done" role="hidden">
+
+    <call_job job="mm-op-pgens">
+        <prop id="mm-what">all</prop>
+        <file id="mm-liste">(file,pgos)</file>
+        <file id="mm-info">(f,dir_of_file,(file,pgos))importGen-info.xml</file>
+  
+    </call_job>
+    
+</job>
+
+<job id="pgb-done-some" role="hidden">
+
+    <call_job job="mm-op-pgens">
+        <prop id="mm-what">all</prop>
+        <file id="mm-liste">(file,pgbs)</file>
+        <file id="mm-info">(f,dir_of_file,(file,pgbs))importGen-info.xml</file>
+  
+    </call_job>
+    
+</job>
+
+<job id="hook_pgo_details_end" role="hidden">
+ 
+                                                                                                                            
+  <!-- attribute unter objekte dsa unter dso -->
+  <try_catch>
+  <try>
+    <ti type="rec">
+      <ti x="(f,html,i,o)(prop,_pl_pga):(f,html,i,c)" xalign="right"/>
+      <ti/>
+    </ti>
+    <file id="pgas">(file,pgos)</file>
+    <prop id="pgas_offset">pgo[@row='(prop,pgo_key)']/</prop>
+      
+    <prop id="pgas_offset_label"/>
+    <prop id="pgas_offset_new_key">//</prop>
+    <prop id="pgas_sort_attribute"/>
+    <prop id="pgas_sort_number"/>
+    <prop id="pgas_sort_ignore_case"/>
+    <prop id="pgas_sort_desc"/>
+    <prop id="pgas_where"/>
+    
+    <prop id="pgas_return_job">pga-see-all</prop>
+    
+    <prop id="greetings-pgo-overwiew"/>
+
+    <call_job job="pga-see-all"/>
+    <ti_hr/>
+    
+    <ti type="rec" label=" ">
+    <ti type="call_job" job="mm-op-pgens" explain="(prop,_x_go_up)" xalign="right" flag="button obutton" class="hibGoUp" >
+        <prop id="mm-what">all</prop>
+        <file id="mm-liste">(file,pgos)</file>
+        <file id="mm-info">(f,dir_of_file,(file,pgos))importGen-info.xml</file>
+  
+    </ti>
+    </ti>  
+    
+  
+  </try>
+  <catch>
+    <dump_ti label="fehler im aufruf pga-see-all"/>
+  </catch>
+  </try_catch>    
+
+</job>
+
+<job id="ready-and-done-pgb" role="hidden">
+  <file id="pgbs">(file,orga)</file>
+  <call_job job="pgb-see-all"/>
+</job>
+
+<job id="ready-and-done-pgo" role="hidden">
+  <file id="pgos">(file,orga)</file>
+  <call_job job="pgo-see-all"/>
+
+</job>
+
+<job id="ready-and-done-pga" role="hidden">
+      
+  <prop id="pgo_key">(f,substring_after,(prop,orga_offset),pgo[@row=')</prop> 
+  <prop id="pgo_key">(f,substring_before,(prop,pgo_key),')</prop>   
+  
+    <file id="pgos">(file,orga)</file>                               
+
+   
+    <call_job job="pgo-see"/>  
+
+</job>
+
+ 
+<job id="hook_pga_view_end" role="hidden">
+
+  <when test="(f,not,(f,exists,prop,greetings-pgo-overwiew))">
+    <ti_hr/>
+    <ti type="rec" label=" ">
+    <ti type="call_job" job="pgo-see" explain="(prop,_x_go_up)"  flag="button obutton" class="hibGoUp" >
+        <file id="pgos">(file,pgas)</file>
+        <prop id="pgo_key">(prop,pgo_key)</prop> 
+    </ti>
+    </ti>    
+  
+  </when>
+</job>
+ 
+<job id="hook_pga_details_end" role="hidden">
+
+  
+  <ti_hr/>
+  <ti type="rec" label=" ">
+  <ti type="call_job" job="pgo-see" explain="(prop,_x_go_up)"  flag="button obutton" class="hibGoUp" >
+      <file id="pgos">(file,pgas)</file>
+      <prop id="pgo_key">(prop,pgo_key)</prop> 
+  </ti>
+  </ti>  
+
+</job>
+
+
+ 
+<job id="pgen-see" role="hidden">
+  <ti>job: pgen-see</ti>
+
+</job>
+
+<job id="hook_pgo_view_begin" role="hidden">
+  <ti label="(prop,_pl_pgo)" />
+
+</job>
+
+
+
+<job id="hook_pgb_view_begin" role="hidden">
+  <ti label="(prop,_pl_pgb)" />
+  
+
+
+</job>
+<job id="hook_pgb_details_end" role="hidden">
+
+    <ti_hr/>
+    
+    <ti type="rec" label=" ">
+    <ti type="call_job" job="mm-op-pgens" explain="(prop,_x_go_up)" label=" " xalign="right" flag="button obutton" class="hibGoUp" >
+        <prop id="mm-what">all</prop>
+        <file id="mm-liste">(file,pgbs)</file>
+        <file id="mm-info">(f,dir_of_file,(file,pgbs))importGen-info.xml</file>
+  
+    </ti>
+    </ti> 
+    <!--                   
+    <ti_hr/>
+    
+    <ti type="rec">
+    <ti type="call_job" job="pgb-see-all" explain="(prop,_x_go_up)" align="right" flag="button" class="hibGoUp" >
+        <file id="pgbs">(file,pgbs)</file>
+  
+    </ti>
+    </ti> 
+    --> 
+
+</job>
+
+<job id="hook_pgb_view_end" role="hidden">
+                  
+  <when test="(f,not,(f,has,prop,greetings-mm-op-pgens))">
+    <ti_hr/>
+    <ti type="rec">
+    <ti type="call_job" job="mm-op-pgens" explain="(prop,_x_go_up)" label=" " xalign="right" flag="button obutton" class="hibGoUp" >
+        <prop id="mm-what">all</prop>
+        <file id="mm-liste">(file,pgbs)</file>
+        <file id="mm-info">(f,dir_of_file,(file,pgbs))importGen-info.xml</file>
+    </ti>
+    </ti>   
+  </when>   
+
+</job>
+<job id="hook_pgo_view_end" role="hidden">
+  <when test="(f,not,(f,has,prop,greetings-mm-op-pgens))">
+    <ti_hr/>
+    <ti type="rec">
+    <ti type="call_job" job="mm-op-pgens" explain="(prop,_x_go_up)" label=" " xalign="right" flag="button obutton" class="hibGoUp" >
+        <prop id="mm-what">all</prop>
+        <file id="mm-liste">(file,pgos)</file>
+        <file id="mm-info">(f,dir_of_file,(file,pgos))importGen-info.xml</file>
+    </ti>
+    </ti>   
+  </when>  
+
+</job>
+
+<job id="pgen-create-pdi-temlate" role="hidden">
+  
+  <need>(file,mm-liste)</need>
+  <need>(file,mm-info)</need>
+  <prop id="filename">(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))</prop>
+
+
+  <call_job job="tr_pgen"/>
+  <file id="total" x="(dir,filetemp)template-paras-total.xml"/>
+  <create_file out="(file,total)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> <all/>]]></create_file>
+  <xml_update
+    what="(file,total)"
+    how="append"
+    with="(file,mm-info)"/>   
+  <xml_update
+    what="(file,total)"
+    how="append"
+    with="(file,mm-liste)"/>
+   
+  <xml_update
+    what="(file,total)"
+    how="append"
+    with="(dir,repo)vok.xml"/>    
+    
+  <ti type="file" label="total:" x="(file,total)" test="0"/>
+  <call_job job="tk_pgen_read">
+    <file id="pgen-data">(file,mm-info)</file>
+  </call_job>
+  
+  <throw test="(f,not,(f,has,file,pgen_created-ktr))">(prop,_pgen_gen_define)</throw>
+  <file id="dosi_out">(file,pgen_created-ktr)</file>
+  <!-- 
+  <mkdir dir="(dir,pro)created-pdi/"/>
+  <call_job job="tk_dosi_edit"/>
+  
+  <dump_ti_all/>
+  <asdf/>
+  
+  <need>(file,dosi_out)</need>        -->
+  <tk type="msg" test="(f,exists_file,(file,dosi_out))">(prop,_pgen_gen_goingoverwrite) (file,dosi_out)</tk>
+  
+  
+  <xslt  
+    xml="(file,total)" 
+    xsl="(dir,app)pdi-converter1.xsl" 
+    out="(file,dosi_out)" >
+    <params>filename='(prop,filename)'</params>
+  </xslt>
+  <ti type="file" label="(prop,_pgen_gen_created)">(file,dosi_out)</ti>
+  
+</job>
+
+
+</jobs>

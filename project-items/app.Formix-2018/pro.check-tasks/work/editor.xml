@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="task-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Task(prop,tasks_offset_label)"/>
+<prop x="sum" id="tasks_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,task_key)</need>
+<prop id="label" x="Task [(f,text,cut_nice,(prop,task_name),32)](prop,tasks_offset_label)"/>
+<prop x="sum_only" id="tasks_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="task-tk"/>
+</job>

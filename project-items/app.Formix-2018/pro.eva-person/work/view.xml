@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="person-see-all" level="ws" role="hidden" tip="Lists all Persons">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-person-view-begin</trace>
+<call_job job="hook-person-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: person-view: begin.0">
+<ti> hook_job=hook-person-view-begin hook=begin page=view station=0 object=person</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="person_loop" xml="(file,persons)" xpath="(prop,persons_offset)person(prop,persons_where)" sort="(prop,persons_sort_attribute)" number="(prop,persons_sort_number)" ignore_case="(prop,persons_sort_ignore_case)" desc="(prop,persons_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,persons_offset_label)),0)">
+<ti label="(prop,persons_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Full Name"/>
+<ti x="Privilegs"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,person_loop,@name_nic)(f,html,bold,close)" job="person-see">
+<prop id="person_key">(loop,person_loop,@row)</prop>
+<file id="persons">(file,persons)</file>
+<prop id="persons_offset">(prop,persons_offset)</prop>
+<prop id="persons_offset_label">(prop,persons_offset_label)</prop>
+<prop id="persons_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="persons_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="persons_sort_number">(prop,persons_sort_number)</prop>
+<prop id="persons_where">(prop,persons_where)</prop>
+<prop id="persons_return_job">(prop,persons_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,person_loop,@name_full))" type="text" x="(loop,person_loop,@name_full)"/>
+<ti test="(f,not,(f,has,(loop,person_loop,@name_full)))"/>
+<ti test="(f,has,(loop,person_loop,@privs))" type="text" x="(loop,person_loop,@privs)"/>
+<ti test="(f,not,(f,has,(loop,person_loop,@privs)))"/>
+<ti test="(f,role,expert)" type="call_job" explain="Edit" job="person-edit">
+<prop id="person_key">(loop,person_loop,@row)</prop>
+<file id="persons">(file,persons)</file>
+<prop id="persons_offset">(prop,persons_offset)</prop>
+<prop id="persons_offset_label">(prop,persons_offset_label)</prop>
+<prop id="persons_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="persons_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="persons_sort_number">(prop,persons_sort_number)</prop>
+<prop id="persons_where">(prop,persons_where)</prop>
+<prop id="persons_return_job">(prop,persons_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Persons found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,persons_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="person-add" explain="Hello" job="person-add">
+<file id="persons">(file,persons)</file>
+<prop id="persons_offset">(prop,persons_offset)</prop>
+<prop id="persons_offset_label">(prop,persons_offset_label)</prop>
+<prop id="persons_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="persons_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="persons_sort_number">(prop,persons_sort_number)</prop>
+<prop id="persons_where">(prop,persons_where)</prop>
+<prop id="persons_return_job">(prop,persons_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,persons)</file>
+<prop id="orga_where">(prop,persons_where)</prop>
+<prop id="orga_view_loop_id">person_loop</prop>
+<prop id="orga_finished_job">(f,role,business)</prop>
+<prop id="orga_offset">(prop,persons_offset)</prop>
+<prop id="orga_offset_label">(prop,persons_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="orga_segment_plural">persons</prop>
+<prop id="orga_segment_singular">person</prop>
+<prop id="orga_segment_plural_label">Persons</prop>
+<prop id="orga_segment_singular_label">Person</prop>
+<prop id="orga_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,persons_sort_number)</prop>
+<prop id="orga_where">(prop,persons_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,person_loop,@name_nic)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,persons)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,persons_offset)),0)">(prop,persons_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-person-view-end</trace>
+<call_job job="hook-person-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: person-view: end.0">
+<ti> hook_job=hook-person-view-end hook=end page=view station=0 object=person</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

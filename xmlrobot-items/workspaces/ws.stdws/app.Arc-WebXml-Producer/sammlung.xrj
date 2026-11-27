@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="prolog" role="hidden">
+
+
+
+<when test="(f,has,prop,pro)">  
+  <file id="selector" x="(dir,pro)selector.xml"/>
+  
+  <file id="para-data" x="(dir,pro)para-data.xrs"/>
+  <prop id="para-regex" x="para_.+"/>
+
+  <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+  <prop id="conf-regex" x="conf_.+"/>
+  
+  <file id="stat-data" x="(dir,pro)stat-data.xrs"/>
+  <prop id="stat-regex" x="stat_.+"/> 
+  
+  <file id="ext-data" x="(dir,pro)ext-data.xrs"/>
+  <prop id="ext-regex" x="ext_.+"/>
+  
+  <file id="fut-data" x="(dir,pro)fut-data.xrs"/>
+  <prop id="fut-regex" x="fut_.+"/>
+  
+  <file id="run-data" x="(dir,pro)run-data.xrs"/>
+  <prop id="run-regex" x="run_.+"/>       
+    
+  <file id="project-exists" x="(dir,pro)project-exists.txt"/>
+  
+  <file id="appconfs">(dir,pro)appconfs.xml</file>
+  <when test="(f,not,(f,exists_file,(file,appconfs)))">
+  <create_file out="(file,appconfs)">&lt;appconfs/&gt;</create_file>
+  <i>Created: (file,appconfs)</i>
+  </when>
+  
+  
+  <!--The offset defines a node in the xml-data-file under which all the data is found. use eg 'england' or 'country[id='england']-->
+  <prop id="appconfs_offset">./</prop>
+  <!--The offset label is communicated to the user, it verbalizes the offset-->
+  <prop id="appconfs_offset_label"/>
+  <!--the offset_new_key is used whenever a new id for an added record is needed. this is a prefix for an xpath-expression-->
+  <prop id="appconfs_offset_new_key">//</prop>
+  <!--sort_attribute defines the attributes to be used for the view-sort-->
+  <prop id="appconfs_sort_attribute"/>
+  <!--the numeric attributes in the sort-->
+  <prop id="appconfs_sort_number"/>
+  <!--the ignore-case attributes in the sort-->
+  <prop id="appconfs_sort_ignore_case"/>
+  <!--the desc attributes in the sort-->
+  <prop id="appconfs_sort_desc"/>
+  <!--a where claused, this is a post to the xpath-expression, use for several view-types-->
+  <prop id="appconfs_where"/>
+  <!--return job to be called after changes (new,delete,edit)-->
+  <prop id="appconfs_return_job">appconf-see</prop>  
+  
+  
+  <file id="extis">(file,appconfs)</file>
+  <!--The offset defines a node in the xml-data-file under which all the data is found. use eg 'england' or 'country[id='england']-->
+  <prop id="extis_offset">./</prop>
+  <!--The offset label is communicated to the user, it verbalizes the offset-->
+  <prop id="extis_offset_label"/>
+  <!--the offset_new_key is used whenever a new id for an added record is needed. this is a prefix for an xpath-expression-->
+  <prop id="extis_offset_new_key">//</prop>
+  <!--sort_attribute defines the attributes to be used for the view-sort-->
+  <prop id="extis_sort_attribute"/>
+  <!--the numeric attributes in the sort-->
+  <prop id="extis_sort_number"/>
+  <!--the ignore-case attributes in the sort-->
+  <prop id="extis_sort_ignore_case"/>
+  <!--the desc attributes in the sort-->
+  <prop id="extis_sort_desc"/>
+  <!--a where claused, this is a post to the xpath-expression, use for several view-types-->
+  <prop id="extis_where"/>
+  <!--return job to be called after changes (new,delete,edit)-->
+  <prop id="extis_return_job">exti-see-all</prop>  
+
+</when>
+
+</job>
+
+</jobs>

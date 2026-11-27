@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="source-see-all" level="ws" role="hidden" tip="Lists all Sources">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="source_loop" xml="(file,sources)" xpath="(prop,sources_offset)source(prop,sources_where)" sort="(prop,sources_sort_attribute)" number="(prop,sources_sort_number)" ignore_case="(prop,sources_sort_ignore_case)" desc="(prop,sources_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,sources_offset_label)),0)">
+<ti label="(prop,sources_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Folder to Backup"/>
+<ti x="Include"/>
+<ti x="Exclude"/>
+<ti/>
+<ti x=" "/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<dir flag="cool" z="b" id="source_dir_rel_temp_var_formix" x="(loop,source_loop,@dir_rel)"/>
+<unescape id="source_dir_rel_temp_var_formix" type="dir"/>
+<translate id="source_dir_rel_temp_var_formix" type="dir"/>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,source_loop,@name),20)(f,html,bold,close)" job="source-see">
+<prop id="source_key">(loop,source_loop,@row)</prop>
+<file id="sources">(file,sources)</file>
+<prop id="sources_offset">(prop,sources_offset)</prop>
+<prop id="sources_offset_label">(prop,sources_offset_label)</prop>
+<prop id="sources_offset_new_key">(prop,sources_offset_new_key)</prop>
+<prop id="sources_sort_attribute">(prop,sources_sort_attribute)</prop>
+<prop id="sources_sort_number">(prop,sources_sort_number)</prop>
+<prop id="sources_where">(prop,sources_where)</prop>
+<prop id="sources_return_job">(prop,sources_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,source_loop,@dir_rel))" type="dir" x="(dir,source_dir_rel_temp_var_formix)" flag=""/>
+<ti test="(f,not,(f,has,(loop,source_loop,@dir_rel)))"/>
+<ti test="(f,has,(loop,source_loop,@includes))" type="text" x="(loop,source_loop,@includes)" flag=""/>
+<ti test="(f,not,(f,has,(loop,source_loop,@includes)))"/>
+<ti test="(f,has,(loop,source_loop,@excludes))" type="text" x="(loop,source_loop,@excludes)" flag=""/>
+<ti test="(f,not,(f,has,(loop,source_loop,@excludes)))"/>
+<ti type="call_job" explain="Edit" job="source-edit">
+<prop id="source_key">(loop,source_loop,@row)</prop>
+<file id="sources">(file,sources)</file>
+<prop id="sources_offset">(prop,sources_offset)</prop>
+<prop id="sources_offset_label">(prop,sources_offset_label)</prop>
+<prop id="sources_offset_new_key">(prop,sources_offset_new_key)</prop>
+<prop id="sources_sort_attribute">(prop,sources_sort_attribute)</prop>
+<prop id="sources_sort_number">(prop,sources_sort_number)</prop>
+<prop id="sources_where">(prop,sources_where)</prop>
+<prop id="sources_return_job">(prop,sources_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Delete" job="source-del">
+<prop id="source_key">(loop,source_loop,@row)</prop>
+<file id="sources">(file,sources)</file>
+<prop id="sources_offset">(prop,sources_offset)</prop>
+<prop id="sources_offset_label">(prop,sources_offset_label)</prop>
+<prop id="sources_offset_new_key">(prop,sources_offset_new_key)</prop>
+<prop id="sources_sort_attribute">(prop,sources_sort_attribute)</prop>
+<prop id="sources_sort_number">(prop,sources_sort_number)</prop>
+<prop id="sources_where">(prop,sources_where)</prop>
+<prop id="sources_return_job">(prop,sources_return_job)</prop>
+</ti>
+<ti isFromAction="1" label=" " type="call_job" page="view" explain="Test" job="source_act_run">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">test</prop>
+<prop page="view" id="source_key">(loop,source_loop,@row)</prop>
+<file id="sources">(file,sources)</file>
+<prop id="sources_offset">(prop,sources_offset)</prop>
+<prop id="sources_offset_label">(prop,sources_offset_label)</prop>
+<prop id="sources_offset_new_key">(prop,sources_offset_new_key)</prop>
+<prop id="sources_sort_attribute">(prop,sources_sort_attribute)</prop>
+<prop id="sources_sort_number">(prop,sources_sort_number)</prop>
+<prop id="sources_where">(prop,sources_where)</prop>
+<prop id="sources_return_job">(prop,sources_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Sources found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,sources_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="source-add" explain="[ Add another Source ]" job="source-add">
+<file id="sources">(file,sources)</file>
+<prop id="sources_offset">(prop,sources_offset)</prop>
+<prop id="sources_offset_label">(prop,sources_offset_label)</prop>
+<prop id="sources_offset_new_key">(prop,sources_offset_new_key)</prop>
+<prop id="sources_sort_attribute">(prop,sources_sort_attribute)</prop>
+<prop id="sources_sort_number">(prop,sources_sort_number)</prop>
+<prop id="sources_where">(prop,sources_where)</prop>
+<prop id="sources_return_job">(prop,sources_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,sources)</file>
+<prop id="orga_where">(prop,sources_where)</prop>
+<prop id="orga_view_loop_id">source_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,sources_offset)</prop>
+<prop id="orga_offset_label">(prop,sources_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,sources_offset_new_key)</prop>
+<prop id="orga_segment_plural">sources</prop>
+<prop id="orga_segment_singular">source</prop>
+<prop id="orga_segment_plural_label">Sources</prop>
+<prop id="orga_segment_singular_label">Source</prop>
+<prop id="orga_sort_attribute">(prop,sources_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,sources_sort_number)</prop>
+<prop id="orga_where">(prop,sources_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,source_loop,@name),20)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,sources)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,sources_offset)),0)">(prop,sources_offset)</ti>
+</ti>
+</when>
+</job>

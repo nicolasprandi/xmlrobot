@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo-see-more">
+<need>(prop,modo_key)</need>
+<call_job job="modo-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="modos_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,modo_how)(f,html,bold,close)(f,when,(f,has,(prop,modos_offset_label)), - (prop,modos_offset_label),)"/>
+<call_job job="modo-tk"/>
+<ti_hr/>
+<ti type="rec">
+<ti type="call_job" explain="Edit" job="modo-edit">
+<prop id="modo_key">(prop,modo_key)</prop>
+<file id="modos">(file,modos)</file>
+<prop id="modos_offset">(prop,modos_offset)</prop>
+<prop id="modos_offset_label">(prop,modos_offset_label)</prop>
+<prop id="modos_offset_new_key">(prop,modos_offset_new_key)</prop>
+<prop id="modos_sort_attribute">(prop,modos_sort_attribute)</prop>
+<prop id="modos_sort_number">(prop,modos_sort_number)</prop>
+<prop id="modos_where">(prop,modos_where)</prop>
+<prop id="modos_return_job">(prop,modos_return_job)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="files">(file,files)</file>
+<prop id="files_offset">(prop,files_offset)</prop>
+<prop id="files_offset_label">(prop,files_offset_label)</prop>
+<prop id="files_offset_new_key">(prop,files_offset_new_key)</prop>
+<prop id="files_sort_attribute">(prop,files_sort_attribute)</prop>
+<prop id="files_sort_number">(prop,files_sort_number)</prop>
+<prop id="files_where">(prop,files_where)</prop>
+<prop id="files_return_job">(prop,files_return_job)</prop>
+<prop id="file_key">(prop,file_key)</prop>
+</ti>
+</ti>
+</job>

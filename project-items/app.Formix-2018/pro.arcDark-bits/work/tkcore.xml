@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bit-tk">
+<need default="">(prop,bits_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,bits_tk_control) wrap ">
+<tk label="Bit Pos" id="bit_bit" x="0" test_first="1" tip="Bit-Position eg 0 1 2 3" type="sel" flag=" nono ">
+<sel label="0">0</sel>
+<sel label="1">1</sel>
+<sel label="2">2</sel>
+<sel label="3">3</sel>
+<sel label="4">4</sel>
+<sel label="5">5</sel>
+<sel label="6">6</sel>
+<sel label="7">7</sel>
+<sel label="8">8</sel>
+<sel label="9">9</sel>
+</tk>
+<tk label="Off" id="bit_off" x="" test_first="0" tip="Turns this definition off" type="bool" flag=" "/>
+</tk>
+</job>

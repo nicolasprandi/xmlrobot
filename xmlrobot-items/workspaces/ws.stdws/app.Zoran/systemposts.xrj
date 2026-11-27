@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Systempost 1">
+
+  <systempost postid="(f,time)" channel="registrations" >
+     <file file="(file,ziramis)" name="ziramis.xml" maxsize="100000"/>
+     <file file="(file,ziramis)" name="../../ziramis2.xml" maxsize="100000"/>
+     <!-- <file file="(dir,app)systemposts.xrj" name="file:////hassi/../../ziramis2.xml" maxsize="100000"/>  -->
+  </systempost>
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

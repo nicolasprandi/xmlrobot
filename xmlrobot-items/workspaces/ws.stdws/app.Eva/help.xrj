@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="???" >
+ 
+  <choose>
+    <when test="(f,exists_file,(file,project-exists))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <ti label="Welcome to (prop,app) s Application">
+        <ti type="call_job" job="Run" explain="Go &amp; do i ..."/>
+      </ti>
+      <ti_hr/>
+      <call_job job="?"/>
+    </otherwise>
+  </choose>     
+</job>
+
+<job id="??" >
+<!-- 
+<call_job job="tk_para_print_values_tips" flag="catch"/>
+<call_job job="tk_conf_print_values_tips" flag="catch"/>
+<call_job job="tk_stat_print_values_tips" flag="catch"/>
+   -->
+   
+<call_job job="taste-see-all" flag="catch"/>  
+<ti_break/> 
+<call_job job="block-see-all" flag="catch"/>
+<call_job job="person-see-all" flag="catch"/> 
+<ti_break/> 
+<call_job job="task-see-all" flag="catch"/>  
+
+ 
+
+
+
+
+ <!--   
+ <call_job job="see-check-app" flag="catch"/>
+<call_job job="user-see-all" flag="catch"/>
+<call_job job="task-see-all" flag="catch"/>    
+<call_job job="app-see-all" flag="catch"/>
+<call_job job="see-rezept-app" flag="catch"/>     
+    -->
+
+  
+</job>
+
+
+<job id="?">
+  <ti label="When to use Application (f,html,i,open)(prop,app)(f,html,i,close) :">
+    <ti xtype="ul">1(e:c) (f,html,bold,open)You want to do this(f,html,bold,close)</ti>
+	  <ti xtype="ul">2(e:c) (f,html,bold,open)You want to do that(f,html,bold,close)</ti>
+   <ti label="xxx:">alskdj aksdfj akdjf a
+asdfköa akdjf </ti> 
+    <ti label="More help online:" type="web" x="https://www.xmlrobot.net/data-generator-help"/>
+  </ti>
+  <ti_break/>
+  <ti_space height="5px" />
+  <ti label="Overview"/>
+  
+
+   
+
+</job>
+
+
+</jobs>

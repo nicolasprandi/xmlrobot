@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Search by Id?" lang="en">
+
+  <ti label="Job &apos;Search by Id&apos;"/>
+  <ti type="ul">Enter an Object-Id</ti>
+  <ti type="ul">Display the object</ti>
+    
+
+</job>
+
+<job id="Suche mit Id?" lang="de">
+
+  <ti label="Job &apos;Suche mit Id&apos;"/>
+  <ti type="ul">Eingabe einer Objekt-Id</ti>
+  <ti type="ul">Darstellung des Objekts</ti>
+    
+  <ti_hr/>
+  <call_job job="?objekt-navigator-de?"/>
+</job>
+
+
+</jobs>

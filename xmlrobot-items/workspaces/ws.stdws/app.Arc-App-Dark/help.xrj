@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+
+
+<job id="??">
+  <call_job job="tk_appi_read"/>
+  <call_job job="tk_prod_read"/>
+  
+  
+  <call_job job="tk_noxsl_read"/>
+  
+  <call_job job="tk_appi_print_values"/>
+  <ti type="call_job" job="tk_appi_edit" explain="&gt;&gt; Edit the source of app" label=" "/>
+  <ti_hr/>
+  <call_job job="tk_prod_print_values"/>
+  <ti type="call_job" job="tk_prod_edit" explain="&gt;&gt; Edit the production-parameters" label=" "/>
+  
+  <call_job job="tk_dirig_read"/>
+  <call_job job="tk_fileig_read"/>  
+  <!-- 
+  <ti label="Tip FinalDate">Zu implementieren ist: &lt;throw test=&quot;()(f,gt_num,(f,time,yyyyMMdd),30000101)()&quot;&gt;This app is out of service&lt;/throw&gt;</ti>       -->
+  <ti_hr/>
+
+  
+  <call_job job="tk_fileig_print_values"/>
+  <ti type="call_job" job="tk_fileig_edit" explain="&gt;&gt; Edit the files of the application to be ignored" label=" "/> 
+  <call_job job="tk_dirig_print_values"/>  
+   <ti type="call_job" job="tk_dirig_edit" explain="&gt;&gt; Edit the directors of the application to be ignored" label=" "/> 
+ 
+  <call_job job="tk_noxsl_print_values"/>
+ <ti type="call_job" job="tk_noxsl_edit" explain="&gt;&gt; Edit the xsl-files which should not be encrypted" label=" "/>   
+  
+  <ti type="call_job" job="build-file-selectors" explain="&gt;&gt; Build the file-Selectors for the following specifications" laxbel=" "/>  
+  <ti_hr/>
+  <ti_break/>
+  <ti label="Signation Rules"/>
+  <call_job job="see-full-list"/>
+  
+  <call_job job="bit-see-all"/>
+<ti_hr/>
+  <call_job job="Edit Blurries"/>
+  <call_job job="Edit Prod-Conf"/>
+  <ti_hr/>
+  <ti label="Export Zips"/>
+  <call_job job="exportfile-see-all"/>
+   <ti_hr/>
+  <ti label="Tips zum Final Date"/>
+  <ti type="ul" labexl=" ">Das Datum ist der Tag an dem die app das letzte mal funktioniert.</ti>  
+  <ti txype="ul" label="Gesucht wird nach:">()(f,gt_num,(f,time,yyyyMMdd),30000101)()</ti> 
+  
+  <ti label="Beispiel: ">&lt;throw test=&quot;()(f,gt_num,(f,time,yyyyMMdd),30000101)()&quot;&gt;This app is out of service&lt;/throw&gt;</ti>  
+  
+  <!-- 
+  <ti_hr/>
+  
+  <call_job job="tk_prod_read"/>
+  <call_job job="tk_prod_print_values"/>  
+  -->
+
+</job>
+
+
+</jobs>

@@ -1,0 +1,1 @@
+select mig_obj_id,uk,uk_attr_usg_id,trim(both from uk_inhalt) as uk_inhalt ,master_obj_id,slave_obj_id from int.mig_obj LIMIT 30000;

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zirami-tk">
+<need default="">(prop,ziramis_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="Ein Ziram ist ..." flag="(prop,ziramis_tk_control) wrap ">
+<tk label="Name" id="zirami_bez" x="" test_first="1" tip="Titel" type="text" flag=" nono "/>
+<tk label="Charakter" id="zirami_character" x="" test_first="1" tip="Geschmaecker und Besonderheiten die das Rezept einzigartig machen" type="text" flag=" "/>
+<tk label="Doku" id="zirami_beschreibung" x="" test_first="0" tip="Beschreibung die publiziert wird" type="textblock" flag=" "/>
+<tk label="Portionen" id="zirami_portionen" x="" test_first="0" tip="Anzahl der Portionen auf das die Mengenangaben gemuenzt sind" type="text" flag=" "/>
+<tk label="Logo" x="Logo" test_first="0" type="msg" flag=" "/>
+<tk label="Bild to read" id="zirami_bild_read" x="" test_first="0" tip="ein Bild" type="file" flag=" "/>
+<tk label="Bild to write" id="zirami_bild_write" x="" test_first="0" tip="ein Bild" type="file" flag="  save write "/>
+<tk label="Folder to read" id="zirami_folders_read" x="" test_first="0" tip="ein Bild" type="dir" flag=" "/>
+<tk label="Folder to write" id="zirami_folders_write" x="" test_first="0" tip="ein Bild" type="dir" flag="  save write "/>
+<tk label="List-Max Breite/Px" id="zirami_logo_max_x" x="" test_first="0" tip="in pixel" type="text" flag=" "/>
+<tk label="List-Max Höhe/px" id="zirami_logo_max_y" x="" test_first="0" tip="in pixel" test="(f,role,expert)" type="text" flag=" "/>
+<tk label="Detail-Max Höhe/px" id="zirami_logo_max_x_main" x="" test_first="0" tip="in pixel" test="(f,role,admin)" type="text" flag=" "/>
+<tk label="Detail-Max Höhe/px" id="zirami_logo_max_y_main" x="" test_first="0" tip="in pixel" test="(f,role,admin)" type="text" flag=" "/>
+<tk label="Bewertungen" x="Bewertungen" test_first="0" type="msg" flag=" "/>
+<tk label="Status" id="zirami_rezeptstatus" x="" test_first="0" tip="Metainformation bezueglich der Qualitaet dieser Rezeptbeschreibung" type="sel" flag=" ">
+<sel label="Idee">idee</sel>
+<sel label="inBeareitung">inBeareitung</sel>
+<sel label="bisAufWeiteresZurueckgelegt">bisAufWeiteresZurueckgelegt</sel>
+<sel label="fertig">fertig</sel>
+</tk>
+<tk label="Klasse" id="zirami_bewertung" x="" test_first="0" tip="Klassifikationen und Kategorien" type="sel" flag="multi ">
+<sel label="Vorspeise">Vorspeise</sel>
+<sel label="Nachspeise">Nachspeise</sel>
+<sel label="Vegetarisch">Vegetarisch</sel>
+<sel label="Vegan">Vegan</sel>
+<sel label="Antihistamin">Antihistamin</sel>
+<sel label="Fleischlos">Fleischlos</sel>
+<sel label="Fischgericht">Fischgericht</sel>
+<sel label="billig">billig</sel>
+<sel label="teuer">teuer</sel>
+<sel label="SchnelleZubereitung">SchnelleZubereitung</sel>
+<sel label="geheimtipp">geheimtipp</sel>
+</tk>
+<tk label="Internes" x="Internes" test_first="0" type="msg" flag=" "/>
+<tk label="Text" id="zirami_detail" x="" test_first="0" tip="Beschreibung fuer die interne verwendung; wird nicht publiziert" type="textblock" flag=" "/>
+</tk>
+</job>

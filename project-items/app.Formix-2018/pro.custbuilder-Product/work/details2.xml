@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="product-see-more">
+    <prop x="print_only print_with_tips print_all_fields" id="products_tk_control"/>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,products_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" align="right" class="justback2" flag="button" job="product-see">
+                    <prop id="product_key">(prop,product_key)</prop>
+                    <file id="products">(file,products)</file>
+                    <prop id="products_offset">(prop,products_offset)</prop>
+                    <prop id="products_offset_label">(prop,products_offset_label)</prop>
+                    <prop id="products_offset_new_key">(prop,products_offset_new_key)</prop>
+                    <prop id="products_sort_attribute">(prop,products_sort_attribute)</prop>
+                    <prop id="products_sort_number">(prop,products_sort_number)</prop>
+                    <prop id="products_sort_ignore_case">(prop,products_sort_ignore_case)</prop>
+                    <prop id="products_sort_desc">(prop,products_sort_desc)</prop>
+                    <prop id="products_where">(prop,products_where)</prop>
+                    <prop id="products_return_job">(prop,products_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" align="right" class="justup" flag="button" job="product-see-all">
+                    <file id="products">(file,products)</file>
+                    <prop id="products_offset">(prop,products_offset)</prop>
+                    <prop id="products_offset_label">(prop,products_offset_label)</prop>
+                    <prop id="products_offset_new_key">(prop,products_offset_new_key)</prop>
+                    <prop id="products_sort_attribute">(prop,products_sort_attribute)</prop>
+                    <prop id="products_sort_number">(prop,products_sort_number)</prop>
+                    <prop id="products_sort_ignore_case">(prop,products_sort_ignore_case)</prop>
+                    <prop id="products_sort_desc">(prop,products_sort_desc)</prop>
+                    <prop id="products_where">(prop,products_where)</prop>
+                    <prop id="products_return_job">(prop,products_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+    <need>(prop,product_key)</need>
+    <call_job job="product-read"/>
+    <prop id="product_default_label_class" x="Product"/>
+    <prop id="product_default_label_name" x="(prop,product_name)(f,when,(f,has,(prop,products_offset_label)), - (prop,products_offset_label),)"/>
+    <call_job job="product-tk"/>
+    <ti_hr/>
+    <ti type="rec" info="an-edit-button-just">
+        <ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailProduct" explain="[ Edit ]" job="product-edit">
+            <prop id="product_key">(prop,product_key)</prop>
+            <file id="products">(file,products)</file>
+            <prop id="products_offset">(prop,products_offset)</prop>
+            <prop id="products_offset_label">(prop,products_offset_label)</prop>
+            <prop id="products_offset_new_key">(prop,products_offset_new_key)</prop>
+            <prop id="products_sort_attribute">(prop,products_sort_attribute)</prop>
+            <prop id="products_sort_number">(prop,products_sort_number)</prop>
+            <prop id="products_sort_ignore_case">(prop,products_sort_ignore_case)</prop>
+            <prop id="products_sort_desc">(prop,products_sort_desc)</prop>
+            <prop id="products_where">(prop,products_where)</prop>
+            <prop id="products_return_job">(prop,products_return_job)</prop>
+        </ti>
+    </ti>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,products_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" align="right" class="justback2" flag="button" job="product-see">
+                    <prop id="product_key">(prop,product_key)</prop>
+                    <file id="products">(file,products)</file>
+                    <prop id="products_offset">(prop,products_offset)</prop>
+                    <prop id="products_offset_label">(prop,products_offset_label)</prop>
+                    <prop id="products_offset_new_key">(prop,products_offset_new_key)</prop>
+                    <prop id="products_sort_attribute">(prop,products_sort_attribute)</prop>
+                    <prop id="products_sort_number">(prop,products_sort_number)</prop>
+                    <prop id="products_sort_ignore_case">(prop,products_sort_ignore_case)</prop>
+                    <prop id="products_sort_desc">(prop,products_sort_desc)</prop>
+                    <prop id="products_where">(prop,products_where)</prop>
+                    <prop id="products_return_job">(prop,products_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" align="right" class="justup" flag="button" job="product-see-all">
+                    <file id="products">(file,products)</file>
+                    <prop id="products_offset">(prop,products_offset)</prop>
+                    <prop id="products_offset_label">(prop,products_offset_label)</prop>
+                    <prop id="products_offset_new_key">(prop,products_offset_new_key)</prop>
+                    <prop id="products_sort_attribute">(prop,products_sort_attribute)</prop>
+                    <prop id="products_sort_number">(prop,products_sort_number)</prop>
+                    <prop id="products_sort_ignore_case">(prop,products_sort_ignore_case)</prop>
+                    <prop id="products_sort_desc">(prop,products_sort_desc)</prop>
+                    <prop id="products_where">(prop,products_where)</prop>
+                    <prop id="products_return_job">(prop,products_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+</job>

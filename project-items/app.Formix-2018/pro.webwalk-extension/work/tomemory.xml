@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extension-read">
+<need>(prop,extension_key)</need>
+<spirit act="open" missing_strategy="empty" id="extensions_spirit_tc" xml="(file,extensions)"/>
+<prop id="extension_dt_upd">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@row=(f,xpath_string,(prop,extension_key))],@dt_upd)</prop>
+<prop id="extension_dt_add">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@row=(f,xpath_string,(prop,extension_key))],@dt_add)</prop>
+<prop id="extension_titel">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@row=(f,xpath_string,(prop,extension_key))],@titel)</prop>
+<prop id="extension_pk">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@row=(f,xpath_string,(prop,extension_key))],@pk)</prop>
+<prop id="extension_desc">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@row=(f,xpath_string,(prop,extension_key))],@desc)</prop>
+<spirit act="close" id="extensions_spirit_tc"/>
+</job>

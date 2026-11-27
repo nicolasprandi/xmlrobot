@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="zirami-see-all" level="ws" role="hidden" tip="Lists all Ziramis">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-zirami-list-begin</trace>
+<call_job job="hook-zirami-list-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zirami-view: begin.0">
+<ti> hook_job=hook-zirami-list-begin hook=begin page=view station=0 object=zirami</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="zirami_loop" xml="(file,ziramis)" xpath="(prop,ziramis_offset)zirami(prop,ziramis_where)" sort="(prop,ziramis_sort_attribute)" number="(prop,ziramis_sort_number)" ignore_case="(prop,ziramis_sort_ignore_case)" desc="(prop,ziramis_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,ziramis_offset_label)),0)">
+<ti label="(prop,ziramis_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,zirami_loop,@bez)(f,html,bold,close)" job="zirami-see">
+<prop id="zirami_key">(loop,zirami_loop,@row)</prop>
+<file id="ziramis">(file,ziramis)</file>
+<prop id="ziramis_offset">(prop,ziramis_offset)</prop>
+<prop id="ziramis_offset_label">(prop,ziramis_offset_label)</prop>
+<prop id="ziramis_offset_new_key">(prop,ziramis_offset_new_key)</prop>
+<prop id="ziramis_sort_attribute">(prop,ziramis_sort_attribute)</prop>
+<prop id="ziramis_sort_number">(prop,ziramis_sort_number)</prop>
+<prop id="ziramis_where">(prop,ziramis_where)</prop>
+<prop id="ziramis_return_job">(prop,ziramis_return_job)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,zirami_loop,@character),30).(f,text,cut_nice,(loop,zirami_loop,@beschreibung),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Vorspeise),Vorspeise(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Nachspeise),Nachspeise(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Vegetarisch),Vegetarisch(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Vegan),Vegan(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Antihistamin),Antihistamin(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Fleischlos),Fleischlos(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Fischgericht),Fischgericht(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),billig),billig(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),teuer),teuer(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),SchnelleZubereitung),SchnelleZubereitung(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),geheimtipp),geheimtipp(e:s),),50)</ti>
+<ti test="(f,role,user)" type="call_job" explain="Edit" job="zirami-edit">
+<prop id="zirami_key">(loop,zirami_loop,@row)</prop>
+<file id="ziramis">(file,ziramis)</file>
+<prop id="ziramis_offset">(prop,ziramis_offset)</prop>
+<prop id="ziramis_offset_label">(prop,ziramis_offset_label)</prop>
+<prop id="ziramis_offset_new_key">(prop,ziramis_offset_new_key)</prop>
+<prop id="ziramis_sort_attribute">(prop,ziramis_sort_attribute)</prop>
+<prop id="ziramis_sort_number">(prop,ziramis_sort_number)</prop>
+<prop id="ziramis_where">(prop,ziramis_where)</prop>
+<prop id="ziramis_return_job">(prop,ziramis_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine Ziramis gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,ziramis_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain_nix="zirami-add" explain="[ + Neues Zirami ]" job="zirami-add">
+<file id="ziramis">(file,ziramis)</file>
+<prop id="ziramis_offset">(prop,ziramis_offset)</prop>
+<prop id="ziramis_offset_label">(prop,ziramis_offset_label)</prop>
+<prop id="ziramis_offset_new_key">(prop,ziramis_offset_new_key)</prop>
+<prop id="ziramis_sort_attribute">(prop,ziramis_sort_attribute)</prop>
+<prop id="ziramis_sort_number">(prop,ziramis_sort_number)</prop>
+<prop id="ziramis_where">(prop,ziramis_where)</prop>
+<prop id="ziramis_return_job">(prop,ziramis_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,boss)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,ziramis)</file>
+<prop id="orga_where">(prop,ziramis_where)</prop>
+<prop id="orga_view_loop_id">zirami_loop</prop>
+<prop id="orga_finished_job">zirami-see-all</prop>
+<prop id="orga_offset">(prop,ziramis_offset)</prop>
+<prop id="orga_offset_label">(prop,ziramis_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,ziramis_offset_new_key)</prop>
+<prop id="orga_segment_plural">ziramis</prop>
+<prop id="orga_segment_singular">zirami</prop>
+<prop id="orga_segment_plural_label">Ziramis</prop>
+<prop id="orga_segment_singular_label">Zirami</prop>
+<prop id="orga_sort_attribute">(prop,ziramis_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,ziramis_sort_number)</prop>
+<prop id="orga_where">(prop,ziramis_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,zirami_loop,@bez)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,zirami_loop,@character),30).(f,text,cut_nice,(loop,zirami_loop,@beschreibung),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Vorspeise),Vorspeise(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Nachspeise),Nachspeise(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Vegetarisch),Vegetarisch(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Vegan),Vegan(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Antihistamin),Antihistamin(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Fleischlos),Fleischlos(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),Fischgericht),Fischgericht(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),billig),billig(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),teuer),teuer(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),SchnelleZubereitung),SchnelleZubereitung(e:s),)(f,when,(f,has_flag,(loop,zirami_loop,@bewertung),geheimtipp),geheimtipp(e:s),),50)()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,ziramis)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,ziramis_offset)),0)">(prop,ziramis_offset)</ti>
+</ti>
+</when>
+</job>

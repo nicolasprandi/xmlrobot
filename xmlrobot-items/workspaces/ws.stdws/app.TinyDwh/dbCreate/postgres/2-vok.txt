@@ -1,0 +1,36 @@
+-- Copyright © 2018-2021 Nicolas Prandstaetter. All rights reserved.
+-- postgres
+-- beziehungstypen
+CREATE TABLE t_b (
+                bez_typ smallint NOT NULL
+);
+
+-- objekttypen
+CREATE TABLE t_o (
+                obj_typ smallint NOT NULL,
+                kopf_attr_typ smallint
+);
+
+-- attributtypen
+CREATE TABLE t_a (
+                attr_typ smallint NOT NULL,
+                format char(100),
+                flag_klasse smallint,   
+                final_typ smallint, 
+                final_p1 smallint           
+);
+
+-- attribute usage    object x attribute
+CREATE SEQUENCE t_u_seq;      
+CREATE TABLE t_u (
+                attr_usg_id INTEGER NOT NULL DEFAULT nextval('t_u_seq'),
+                attr_typ smallint NOT NULL,
+                obj_typ smallint NOT NULL,
+                varianz smallint,
+                varianz_text char(20),
+                ident smallint,
+                ident_text char(20),
+                ident_mehr smallint,
+                ident_club char(20)
+);
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dbci-read">
+<need>(prop,dbci_key)</need>
+<spirit act="open" missing_strategy="empty" id="dbcis_spirit_tc" xml="(file,dbcis)"/>
+<prop id="dbci_dt_upd">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@dt_upd)</prop>
+<prop id="dbci_dt_add">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@dt_add)</prop>
+<prop id="dbci_id">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@id)</prop>
+<prop id="dbci_app">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@app)</prop>
+<prop id="dbci_titel">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@titel)</prop>
+<prop id="dbci_db">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@db)</prop>
+<prop id="dbci_url">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@url)</prop>
+<prop id="dbci_user">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@user)</prop>
+<prop id="dbci_password">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@password)</prop>
+<prop id="dbci_autocommit">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@autocommit)</prop>
+<prop id="dbci_doku">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@doku)</prop>
+<prop id="dbci_off">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@off)</prop>
+<prop id="dbci_crypto">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@crypto)</prop>
+<prop id="dbci_request">(f,spirit,dbcis_spirit_tc,(prop,dbcis_offset)dbci[@row=(f,xpath_string,(prop,dbci_key))],@request)</prop>
+<spirit act="close" id="dbcis_spirit_tc"/>
+</job>

@@ -1,0 +1,828 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+
+<job id="hook_hint_details_top" role="hidden">
+
+    <ti type="rec" >
+      <ti >(prop,_sl_hint) </ti>
+      <ti x="(f,html,b,o)(prop,hint_name)(f,html,b,c)"/>
+    </ti>  
+    
+
+   <ti type="rec" label="in (prop,_sl_buch): " flaxg="label_right">
+
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,hints)))</ti>
+   </ti>  
+   <ti_hr style="2"/>
+    
+</job>
+
+
+<job id="hook_namaste_details_top" role="hidden">
+
+    <ti type="rec" >
+      <ti>(prop,_sl_namaste)</ti>
+      <ti x="(f,html,b,o)(f,tk_sel_translate,(prop,namaste_attributtyp),(file,pdi-sel-attr))(f,html,b,c)"/>
+    </ti>  
+    
+    <ti label="in (prop,_sl_hint): " >(f,xpath,(file,namastes),hint[@row=(f,xpath_string,(prop,hint_key))],@name)</ti>
+   
+   <ti type="rec" label="in (prop,_sl_buch): ">
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,namastes)))</ti>
+   </ti>  
+   
+   <ti_hr style="2"/>
+    
+</job>
+
+
+
+
+<job id="hint-event-post-insert" role="hidden">
+
+  <call_job 
+    job="hint-see"
+    test="(f,not,(f,exists,prop,tox1-obj))" />
+    
+</job>
+
+<job id="write-last-hint-file" role="hidden"> 
+
+
+  <!-- 
+  <file id="last">(f,dir_of_dir,(f,dir_of_file,(file,hints)))last.txt</file>
+  <create_file file="(file,last)">(f,name_of_dir,(f,dir_of_file,(file,hints)))</create_file>
+    -->
+
+</job>
+
+<job id="hook_hint_view_end" role="hidden">   
+  <!--
+  <ti_hr/>            
+  <ti type="rec" label=" ">           
+
+
+    <ti type="call_job" job="list-collections-of-compositions" explain="(prop,_x_go_up)"  flag="button" class="hibGoUp" >
+  
+    </ti>
+  </ti>  
+  <ti_space height="5px" /> 
+  -->
+  
+  <ti type="rec" test="(f,right,int)">
+    
+ 
+    <ti type="call_job" job="hook_hint_send_to_db_internal"
+        test="(f,right,import)" 
+        explain="(prop,_hint_sendall_l)" flag="button obutton block" class="fx fxAction justgo"> 
+      <tk type="msg" msg_type="w">(prop,_hint_sendall_t)</tk>
+      <file id="sh-file">(file,hints)</file>
+    </ti>
+  </ti>      
+  
+
+              
+  
+ 
+   
+</job>
+                                                        
+<job id="hook_hint_add_object" role="hidden">
+
+   <call_job job="hook_hint_add_object_internal">
+    <file id="ha-file">(file,hints)</file>
+    <prop id="ha-hint-key">(prop,hint_key)</prop>
+   </call_job>
+   
+</job>
+
+<job id="hook_hint_add_object_internal" role="hidden">
+   <need>(file,ha-file)</need>
+   <need>(prop,ha-hint-key)</need>
+   <!-- ?? (prop,hg-obj-id) -->
+   
+   <when test="(f,not,(f,has,prop,ha-titel))">
+    <prop id="ha-titel" >(f,xpath,(file,ha-file),//hint[@row=(prop,ha-hint-key)],@name)</prop>
+   </when>
+
+   <call_job job="tr_hints" />
+   <call_job job="tr_hint" />
+   
+   <when test="(f,not,(f,has,prop,hg-obj-id))">
+      <tk id="hg-obj-id" label="(prop,_hints_sendall_objid)" 
+      tip="(prop,_hints_sendall_objtobe)" flag="nono" cols="15"
+          regex="\d+" regex_msg="(prop,_hints_sendall_numeric)"/>
+   </when>
+   
+  
+
+    
+  <file id="hg-explore-result">(dir,filetemp)explore-result.xml</file> 
+  <file id="hg-ident-selector">(dir,filetemp)hg-ident-selector.xml</file> 
+  <file id="hg-printer">(dir,filetemp)hint-xml-printer.txt</file>
+  
+  <!-- 
+  <file id="hg-explore-result">(dir,pro)temp-explore-result.xml</file>  
+  <file id="hg-ident-selector">(dir,pro)hg-ident-selector.xml</file>   
+  <file id="hg-printer">(dir,pro)hint-xml-printer.txt</file>            -->
+  <call_job job="-db-open-"/>
+  
+  <dbc id="(prop,mydbc)"
+    out="(file,hg-explore-result)"
+    style="a"
+    act="select"
+    root_name="attrs"
+    row_name="attr"    
+    flag="trim">()select 
+obj.obj_id,
+obj.obj_typ,
+attr.attr_typ,
+wert.inhalt,
+wert.wert_id
+from
+obj as obj,
+attr as attr,                                             
+wert as wert,
+t_u as attr_usg,
+t_a as ta
+where
+obj.obj_id = ()(prop,hg-obj-id)()
+and
+attr.obj_id = obj.obj_id and
+wert.attr_id = attr.attr_id and
+attr_usg.attr_typ = attr.attr_typ and
+attr_usg.obj_typ = obj.obj_typ and
+attr_usg.ident = 1 and
+ta.attr_typ = attr.attr_typ
+;()</dbc>  
+
+ 
+  <!--   
+  <ti type="file" test="1">(file,hg-explore-result)</ti>  
+  <ti type="file" test="1">(file,tip-attr-sel)</ti>
+  -->
+    
+    <xslt 
+        xml="(file,hg-explore-result)" 
+        xsl="(dir,app)hint-ident-selector.xsl" 
+        out="(file,hg-ident-selector)"
+        home="(dir,repo)">
+        <params>sel='(f,name_of_file,(file,tip-attr-sel))' </params>
+    </xslt>  
+      
+  <ti type="file" test="0">(file,hg-ident-selector)</ti>    
+  
+  <prop id="hg-ident-by" flag="catch">(f,xpath,(file,hg-ident-selector),//sel[position(e:o)(e:c)=1])</prop>
+  
+
+    
+    <tk label="(prop,_hints_sendall_parameters): (prop,ha-titel)" 
+        flag="(f,when,(f,exists,prop,hack-namasteadd-process),sum_only,sum)">
+      <tk id="hg-ident-by" 
+          type="sel"
+          label="(prop,_hints_sendall_identify)" 
+          tip="(prop,_hints_sendall_specifies)" 
+          flag="nono multi" xml="(file,hg-ident-selector)"/>
+                
+    </tk>
+
+
+    
+    <spirit act="open" id="hgh" xml="(file,ha-file)" />
+    
+
+    
+    <prop id="new_namaste_key">1</prop>
+    <loop id="max" limit="1" flag="back" spirit="hgh" sort="@row" number="@row" xpath="//namaste">
+      <prop id="new_namaste_key">(f,add,(loop,max,@row),1)</prop>
+    </loop>
+    <ti test="0">new_namaste_key = (prop,new_namaste_key)</ti>    
+                                                     
+                                                         
+
+                                                           
+  
+  <print id="hgh" out="(file,hg-printer)" act="open"/>  
+  <print act="println" id="hgh">&lt;hint&gt;</print>
+  
+    <loop id="allatts" xml="(file,hg-explore-result)"  xpath="attr">
+      
+      <when test="(f,has_flag,(prop,hg-ident-by),(loop,allatts,@wert_id))">
+          <print act="println" id="hgh">&lt;namaste row=&quot;(x,(prop,new_namaste_key))&quot; attributtyp=&quot;(x,(loop,allatts,@attr_typ))&quot; value=&quot;(x,(loop,allatts,@inhalt))&quot; /&gt;</print>
+          <prop id="new_namaste_key">(f,add,(prop,new_namaste_key),1)</prop>
+      </when>
+      
+    </loop>  
+ 
+  <print act="println" id="hgh">&lt;/hint&gt;</print>
+  
+  <print id="hgh" act="close"/>   
+  <tk type="msg" test="0">(f,file_content,(file,hg-printer))</tk>
+    
+  <spirit act="xml_update" how="insert_in" id="hgh" where="hint[@row=(f,xpath_string,(prop,ha-hint-key))] " with="(file,hg-printer)" with_what="childs"/>
+        
+  <spirit act="close" id="hgh" flag="save" />
+  <!-- 
+  <ti x="(f,html,b,o)(prop,_hints_sendall_didupdate)(f,html,b,c)" flag="wrap"/>
+
+  <ti_hr/>                  -->
+  <prop id="hack-no-hint-break">1</prop>
+
+  <call_job job="hint-see">
+  
+      <file id="hints">(file,ha-file)</file>
+      <prop id="hint_key">(prop,ha-hint-key)</prop>
+      <prop id="hints_offset">./</prop>
+      <prop id="hints_offset_label"></prop>
+      <prop id="hints_offset_new_key">//</prop>
+      <prop id="hints_sort_attribute"/>
+      <prop id="hints_sort_number"/>
+      <prop id="hints_sort_ignore_case"/>
+      <prop id="hints_sort_desc"/>
+      <prop id="hints_where"/>
+      <prop id="hints_return_job">hint-see-all</prop>   
+  
+  </call_job>
+  
+  
+   
+</job>
+
+<job id="hg-hint-generator" role="hidden">
+
+  <when test="(f,not,(f,has,prop,hg-obj-id))">
+  <!--
+    <call_job job="go-joe-read">
+      <prop id="joe-in-regex" x="(prop,hg-regex)" />
+      <file id="joe-in-store" x="(file,hg-data)" />
+    </call_job>          -->
+    
+      <call_job job="tk_surf_read"/>
+  <prop id="hg-obj-id" x="(prop,surf_id)" test="(f,has,prop,surf_id)"/>
+  
+    <tk id="hg-obj-id" label="Object-Id" tip="The object-id for which you want to make a hint" flag="nono" regex="\d+" regex_msg="Numeric"/>   <!-- 
+    <call_job job="go-joe-write">
+      <prop id="joe-in-regex" x="(prop,hg-regex)" />
+      <file id="joe-in-store" x="(file,hg-data)" />
+    </call_job>   --> 
+  </when>
+ 
+  
+  
+
+  <file id="hg-otyp-result">(dir,filetemp)objekt-typ.xml</file> 
+  <file id="hg-kopf-result">(dir,filetemp)explore-kopf.xml</file> 
+  <file id="hg-explore-result">(dir,filetemp)explore-result.xml</file>
+  <file id="hg-ident-selector">(dir,filetemp)hg-ident-selector.xml</file>
+  <file id="hg-printer">(dir,filetemp)hint-xml-printer.txt</file>
+   
+  <!-- 
+  <file id="hg-otyp-result">(dir,pro)temp-objekt-typ.xml</file>  
+  <file id="hg-kopf-result">(dir,pro)temp-explore-kopf.xml</file>   
+  <file id="hg-explore-result">(dir,pro)temp-explore-result.xml</file>   
+  <file id="hg-ident-selector">(dir,pro)hg-ident-selector.xml</file>  
+  <file id="hg-printer">(dir,pro)hint-xml-printer.txt</file>       -->
+  <call_job job="-db-open-"/>
+
+  
+  <dbc id="(prop,mydbc)"
+    out="(file,hg-otyp-result)"
+    style="a"
+    act="select"
+    root_name="otyps"
+    row_name="otyp"    
+    flag="trim">()select 
+obj.obj_typ as obj_typ,
+obj.kopf as kopf
+from
+obj as obj
+where
+obj.obj_id = ()(prop,hg-obj-id);</dbc>  
+
+  
+    
+
+      
+<!-- 
+  <dbc id="(prop,mydbc)"
+    out="(file,hg-kopf-result)"
+    style="a"
+    act="select"
+    root_name="ks"
+    row_name="k"    
+    flag="trim">()select 
+kopf.kopf
+from
+kopf as kopf
+where
+kopf.obj_id = ()(prop,hg-obj-id);</dbc>  
+    
+    <ti type="file" test="0">(file,hg-kopf-result)</ti>      -->  
+    
+  <tk type="msg" test="0">zum testen aendern (file,hg-kopf-result)</tk>  
+  
+  <try_catch>
+    <try>
+      <prop id="hg-details">(f,xpath,(file,hg-kopf-result),k,@kopf)</prop>
+    </try>
+    <catch>
+      <prop id="hg-details">(prop,unbekannt)</prop>
+    </catch>
+   </try_catch>     
+    
+
+  
+  <dbc id="(prop,mydbc)"
+    out="(file,hg-explore-result)"
+    style="a"
+    act="select"
+    root_name="attrs"
+    row_name="attr"    
+    flag="trim">()select 
+obj.obj_id,
+obj.obj_typ,
+attr.attr_typ,
+wert.inhalt,
+ta.tech_name,
+wert.wert_id
+from
+obj as obj,
+attr as attr,
+wert as wert,
+t_u as attr_usg,
+t_a as ta
+where
+obj.obj_id = ()(prop,hg-obj-id)()
+and
+attr.obj_id = obj.obj_id and
+wert.attr_id = attr.attr_id and
+attr_usg.attr_typ = attr.attr_typ and
+attr_usg.obj_typ = obj.obj_typ and
+attr_usg.ident = 1 and
+ta.attr_typ = attr.attr_typ
+;()</dbc>  
+
+  <call_job job="-db-close-"/>  
+    
+  <ti type="file" test="0">(file,hg-explore-result)</ti>
+  <!-- tobd kopf -->
+  <when test="(f,eq_text,(prop,hg-details),(prop,unbekannt))">
+    <tk type="msg" test="0">zum testen aendern (file,hg-explore-result)</tk>  
+    <try_catch>
+      <try>
+        <prop id="hg-details">(f,xpath,(file,hg-explore-result),attr[1],@inhalt)</prop>
+      </try>
+      <catch>
+        <prop id="hg-details">(prop,unbekannt)</prop>
+      </catch>
+     </try_catch>      
+  </when>
+  
+    <xslt 
+        xml="(file,hg-explore-result)" 
+        xsl="(dir,app)hint-ident-selector.xsl" 
+        out="(file,hg-ident-selector)">
+    
+    </xslt>  
+      
+  <ti type="file" test="0">(file,hg-ident-selector)</ti>    
+    <choose>
+      <when test="(f,eq_text,(prop,hg-details),(prop,unbekannt))">
+        <call_job job="go-joe-read">
+          <prop id="joe-in-regex" x="(prop,hgp-regex)" />
+          <file id="joe-in-store" x="(file,hgp-data)" />
+        </call_job>      
+      </when>
+      <otherwise>
+        <call_job job="go-joe-read">
+          <prop id="joe-in-regex" x="(prop,hgp-regex2)" />
+          <file id="joe-in-store" x="(file,hgp-data)" />
+        </call_job>            
+      </otherwise>
+    </choose>
+    
+
+
+    <tk label="Parameters Hint-Generator" flag="sum">
+      <tk id="hg-ident-by" 
+          type="sel"
+          label="Identify Object by" 
+          tip="Specifies how the object will be identified. This results in predefined attributes." 
+          flag="nono multi" xml="(file,hg-ident-selector)"/>
+          
+      <tk id="hg-ident-collection" 
+          type="sel"
+          label="Hint-Collection" 
+          tip="The generated hint will be stored in that hint-collection." 
+          flag="nono multi" xml="(file,sel-hint-collections)"/>     
+          
+      <tk id="hg-details"
+          type="textblock"
+          label="Headline"
+           tip="An idea about the topic"
+          flag="nono" />          
+    </tk>
+    <call_job job="go-joe-write">
+      <prop id="joe-in-regex" x="(prop,hgp-regex)" />
+      <file id="joe-in-store" x="(file,hgp-data)" />
+    </call_job>    
+    
+    <spirit act="open" id="hgh" xml="(dir,hints)(prop,hg-ident-collection)" />
+    
+    
+    <prop id="new_hint_key">1</prop>
+    <loop id="max" limit="1" flag="back" spirit="hgh" sort="@row" number="@row" xpath="//hint">
+      <prop id="new_hint_key">(f,add,(loop,max,@row),1)</prop>
+    </loop>
+    <ti test="0">new_hint_key = (prop,new_hint_key)</ti>
+    
+    <prop id="new_namaste_key">1</prop>
+    <loop id="max" limit="1" flag="back" spirit="hgh" sort="@row" number="@row" xpath="//namaste">
+      <prop id="new_namaste_key">(f,add,(loop,max,@row),1)</prop>
+    </loop>
+    <ti test="0">new_namaste_key = (prop,new_namaste_key)</ti>    
+                                                     
+                                                         
+
+                                                           
+  
+  <print id="hgh" out="(file,hg-printer)" act="open"/>  
+  <print act="println" id="hgh">&lt;hint row=&quot;(x,(prop,new_hint_key))&quot; detail=&quot;(x,(prop,hg-details))&quot; objekt_typ=&quot;(x,(f,xpath,(file,hg-otyp-result),otyp[1],@obj_typ))&quot; &gt;</print>
+  
+    <loop id="allatts" xml="(file,hg-explore-result)"  xpath="attr">
+      
+      <when test="(f,has_flag,(prop,hg-ident-by),(loop,allatts,@wert_id))">
+          <print act="println" id="hgh">&lt;namaste row=&quot;(x,(prop,new_namaste_key))&quot; attributtyp=&quot;(x,(loop,allatts,@attr_typ))&quot; value=&quot;(x,(loop,allatts,@inhalt))&quot; /&gt;</print>
+          <prop id="new_namaste_key">(f,add,(prop,new_namaste_key),1)</prop>
+      </when>
+      
+    </loop>  
+ 
+  <print act="println" id="hgh">&lt;/hint&gt;</print>
+  
+  <print id="hgh" act="close"/>   
+  <tk type="msg" test="0">(f,file_content,(file,hg-printer))</tk>
+    
+  <spirit act="xml_update" how="append" id="hgh" with="(file,hg-printer)"/>
+        
+  <spirit act="close" id="hgh" flag="save" />
+  <ti label="We created the following hint for you:" />
+  <ti>Press [ + Attribut ] to define the &apos;new(e:s) all-connecting value&apos; ...</ti>
+  <ti_hr/>
+  <call_job job="hint-see">
+  
+      <file id="hints">(dir,hints)(prop,hg-ident-collection)</file>
+      <prop id="hint_key">(prop,new_hint_key)</prop>
+      <prop id="hints_offset">./</prop>
+      <prop id="hints_offset_label"></prop>
+      <prop id="hints_offset_new_key">//</prop>
+      <prop id="hints_sort_attribute"/>
+      <prop id="hints_sort_number"/>
+      <prop id="hints_sort_ignore_case"/>
+      <prop id="hints_sort_desc"/>
+      <prop id="hints_where"/>
+      <prop id="hints_return_job">hint-see-all</prop>   
+  
+  </call_job>
+       
+</job>
+
+
+
+<!-- 
+<job id="_connect-ALT2" role="hidden">
+  <call_job job="mm-tester-hints"/>
+</job>
+         -->
+
+
+<job id="list-collections-of-compositions" role="hidden">
+
+  <call_job job="mm-tester-hints" />
+
+</job>
+
+<job id="hint-new-hintfile" role="hidden">
+  <call_job job="tr_hints"/>
+  <tk id="hint-filen-name" label="(prop,_hints_intro_name)" 
+      tip="(prop,_hints_intro_ruletip)" flag="nono" rule="filename" cols="35"/>
+  
+  <file id="hints">(dir,hints)(prop,hint-filen-name).xml</file>
+  <choose>
+    <when test="(f,not,(f,exists_file,(file,hints)))">
+    <create_file out="(file,hints)">&lt;hints/&gt;</create_file>
+    </when>
+    <otherwise>
+      <throw>(prop,_hints_exists_already): (prop,hint-filen-name)</throw>
+    </otherwise>
+  </choose>
+  
+  <call_job job="build-event">
+    <prop id="build-event-type">updated_hint_collections</prop>
+  </call_job>
+  
+  <prop id="hints_offset">./</prop>
+  <prop id="hints_offset_label"/>
+  <prop id="hints_offset_new_key">//</prop>
+  <prop id="hints_sort_attribute"/>
+  <prop id="hints_sort_number"/>
+  <prop id="hints_sort_ignore_case"/>
+  <prop id="hints_sort_desc"/>
+  <prop id="hints_where"/>
+  <prop id="hints_return_job">hint-see-all</prop>
+  
+  <call_job job="hint-see-all"/>  
+
+</job>
+                                                     
+<job id="hook_hint_view_begin" role="hidden">
+
+<prop id="book-name">(f,name_of_dir,(f,dir_of_file,(file,hints)))</prop>       
+ 
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec" >
+    <ti flag="wrap_word" x="(f,html,b,o)(prop,book-name)(f,html,b,c) (e:o)(prop,_hint_intro_coll)(e:c)" />
+    <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button obutton" align="right" class="fx fxAction justup" job="mm-tester-hints"/>  
+  </ti>  
+  
+  <create_file out="(dir,ghome)last-books/compos_last.txt">(prop,book-name)</create_file>
+  
+  <call_job job="tk_bd_intro">
+      <dir id="book-master">(dir,goCompos)</dir>
+      <prop id="book-type">compos</prop>
+      <prop id="book-type-name">(prop,_hint_intro_coll)</prop>
+      <!-- book name schon oben festgelegt -->
+      <prop id="book-home-job">_connect</prop>  
+  </call_job>
+    
+  <ti_hr_break/>
+    
+  <ti_space heigth="5px"/>
+
+</job>
+
+<job id="hook_hint_details_begin" role="hidden">
+
+  <ti type="rec" label=" ">         
+      <ti 
+        type="call_job" job="hint-see-all"  align="right"
+        explain="(prop,_x_go_up)" flag="button" class="fx fxAction justblack">
+    
+      <file id="hints">(file,hints)</file>
+      <prop id="hints_offset">(prop,hints_offset)</prop>
+      <prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+      <prop id="hints_return_job">(prop,hints_return_job)</prop>
+    
+    </ti>
+  </ti>
+  
+     <prop id="remember_hook_hint_details_begin">1</prop>
+     <!-- <call_job job="write-last-hint-file"/>  -->
+     <call_job job="tr_hint"/>
+     
+
+</job>
+
+<job id="hook_hint_details_end" role="hidden">
+
+<!-- 
+  <ti_hr style="2"/>     -->
+
+  
+
+
+<try_catch>
+<try> 
+
+
+  <ti type="rec">
+    <ti >(prop,_pl_namaste)</ti>
+  </ti>
+  
+    <file id="namastes">(file,hints)</file>
+    <prop id="namastes_offset">hint[@row='(prop,hint_key)']/</prop>
+    <prop id="namastes_offset_label"></prop>                          <!-- (f,text,cut_nice,(prop,hint_detail),40) -->
+
+    <prop id="namastes_return_job">namaste-see-all</prop>
+    <call_job job="namaste-see-all"/>
+    <!-- 
+    <ti type="rec" label=" ">
+      <ti type="call_job" page="details" flag="button" class="fx fxAdd" explain="+ (prop,_hint_act_add_l)" job="hook_hint_add_object">
+      <prop id="greetings_from_page">details</prop>
+      <prop id="greetings_from_action">add</prop>
+      <prop page="details" id="hint_key">(prop,hint_key)</prop>
+      <file id="hints">(file,hints)</file>
+      <prop id="hints_offset">(prop,hints_offset)</prop>
+      <prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+      <prop id="hints_return_job">(prop,hints_return_job)</prop>
+      </ti>
+    </ti>    -->
+    
+<ti type="rec" test="(f,right,import)" label=" ">
+  <ti type="call_job" page="details" flag="button" class="fx fxAction justgo" explain="(prop,_hint_act_send_l)" job="hook_hint_send_to_db">
+  <prop id="greetings_from_page">details</prop>
+  <prop id="greetings_from_action">send</prop>
+  <prop page="details" id="hint_key">(prop,hint_key)</prop>
+  <file id="hints">(file,hints)</file>
+  <prop id="hints_offset">(prop,hints_offset)</prop>
+  <prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+
+  <prop id="hints_return_job">(prop,hints_return_job)</prop>
+  </ti>
+  <ti />
+</ti>
+
+      
+  <!--         <ti_hr/>
+  <ti_hr/>
+  <ti type="rec" label=" ">         
+      <ti 
+        type="call_job" job="hint-see-all"  align="right"
+        explain="(prop,_x_go_up)" flag="button" class="fx fxAction justblack">
+    
+      <file id="hints">(file,hints)</file>
+      <prop id="hints_offset">(prop,hints_offset)</prop>
+      <prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+      <prop id="hints_return_job">(prop,hints_return_job)</prop>
+    
+    </ti>
+  </ti>
+      
+  
+  
+  <ti type="rec">
+  <ti type="call_job" job="hint-see-all" explain="See all hints of '(f,name_of_file2,(file,hints))'">
+  
+    <file id="hints">(file,hints)</file>
+    <prop id="hints_offset">(prop,hints_offset)</prop>
+    <prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+    <prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+    <prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+    <prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+    <prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+    <prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+    <prop id="hints_where">(prop,hints_where)</prop>
+    <prop id="hints_return_job">(prop,hints_return_job)</prop>
+  
+  </ti>
+  </ti>
+  -->
+  
+</try>
+<catch>
+  <ti>msg=(prop,catched_msg)</ti>
+</catch>
+</try_catch>
+  
+</job>
+
+<job id="hook_namaste_details_begin" role="hidden">
+
+<ti type="rec" label=" ">   
+ <ti type="call_job" job="hint-see" explain="(prop,_x_go_up)" flag="button obutton" align="right" class="fx fxAction justblack">
+
+
+  <file id="namastes">(file,namastes)</file>
+  <prop id="namastes_offset">(prop,namastes_offset)</prop>
+  <prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+
+  <prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+  
+  <file id="hints">(file,namastes)</file>
+  <prop id="hints_offset"></prop>
+  <prop id="hints_offset_label"></prop>
+  <prop id="hints_return_job">(prop,hints_return_job)</prop>  
+  <prop id="hint_key">(prop,hint_key)</prop>  
+
+  </ti>   
+</ti>  
+</job>
+          
+<job id="hook_namaste_details_end" role="hidden">
+<ti_hr/>
+
+
+<ti type="rec" label=" ">   
+ <ti type="call_job" job="hint-see" explain="(prop,_x_go_up)" flag="button obutton" align="right" class="fx fxAction justblack">
+
+
+  <file id="namastes">(file,namastes)</file>
+  <prop id="namastes_offset">(prop,namastes_offset)</prop>
+  <prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+
+  <prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+  
+  <file id="hints">(file,namastes)</file>
+  <prop id="hints_offset"></prop>
+  <prop id="hints_offset_label"></prop>
+  <prop id="hints_return_job">(prop,hints_return_job)</prop>  
+  <prop id="hint_key">(prop,hint_key)</prop>  
+
+  </ti>   
+</ti>  
+
+  
+
+</job>
+
+
+<job id="hook_namaste_view_end" role="hidden">
+  <when test="(f,not,(f,has,prop,remember_hook_hint_details_begin))"> 
+    <!-- <ti_break/>        
+
+    <ti_space height="5px" />     -->
+     <ti type="rec" label=" ">   
+   
+   <ti type="call_job" job="hint-see" explain="(prop,_x_go_up)" xalign="right" flag="button" class="fx fxAction justblack">
+    
+  
+      
+      <file id="hints">(file,namastes)</file>
+      <prop id="hints_offset"></prop>
+      <prop id="hints_offset_label"></prop>
+      <!-- 
+      <prop id="hints_offset_new_key"></prop>
+      <prop id="hints_sort_attribute"></prop>
+      <prop id="hints_sort_number"></prop>
+      <prop id="hints_sort_ignore_case"></prop>
+      <prop id="hints_sort_desc"></prop>
+      <prop id="hints_where"></prop>           -->
+      <prop id="hints_return_job">(prop,hints_return_job)</prop>  
+      <prop id="hint_key">(prop,hint_key)</prop>  
+    
+    
+    </ti>
+   </ti>
+         
+   </when>  
+  
+
+</job>
+
+<job id="ready-and-done-hint-attributes" role="hidden">
+
+  <prop id="hint_key">(f,substring_after,(prop,orga_offset),hint[@row=')</prop> 
+  <prop id="hint_key">(f,substring_before,(prop,hint_key),')</prop>   
+  
+    <file id="hints">(file,orga)</file>
+      <prop id="hints_offset">./</prop>
+      <prop id="hints_offset_label"></prop>
+      <prop id="hints_offset_new_key"></prop>
+      <prop id="hints_sort_attribute"></prop>
+      <prop id="hints_sort_number"></prop>
+      <prop id="hints_sort_ignore_case"></prop>
+      <prop id="hints_sort_desc"></prop>
+      <prop id="hints_where"></prop>
+    <prop id="hints_return_job">hint-see-all</prop>  
+    
+    <call_job job="hint-see"/>
+      
+</job>
+
+<job id="ready-and-done-hint" role="hidden">
+
+
+  
+    <file id="hints">(file,orga)</file>
+      <prop id="hints_offset">./</prop>
+      <prop id="hints_offset_label"></prop>
+      <prop id="hints_offset_new_key"></prop>
+      <prop id="hints_sort_attribute"></prop>
+      <prop id="hints_sort_number"></prop>
+      <prop id="hints_sort_ignore_case"></prop>
+      <prop id="hints_sort_desc"></prop>
+      <prop id="hints_where"></prop>
+    <prop id="hints_return_job">hint-see-all</prop>  
+    
+    <call_job job="hint-see-all"/>
+      
+</job>
+<!--
+
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+
+-->
+
+
+</jobs>

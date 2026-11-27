@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<job id="generate-app-selektor" role="hidden">
+      
+      <file id="appask" x="(dir,filetemp)psi-ask.xml"/>
+      <ask what="apps" out="(file,appask)" style="natural"/>
+      <ti type="file">(file,appask)</ti>
+      
+      <call_job job="tk_jvcp_read"/>
+    
+      <xslt 
+          xml="(file,appask)" 
+          out="(file,app-selektor)">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//apps/app[@id='(prop,jvcp_appid_appdark)']/pro"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="pro">
+  <xsl:if test="()string-length(substring-after(@id,'-')) &gt; 0 ()">
+  <xsl:if test="()not ( contains(@id,'Services'))  ()">
+   <sel><xsl:value-of select="()substring-after(@id,'-')()"/></sel>
+  </xsl:if></xsl:if>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+      <ti label="Did Create App-Selektor"/>
+       <ti type="file">(file,app-selektor)</ti>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

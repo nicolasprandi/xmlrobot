@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ima-tk">
+<need default="">(prop,imas_tk_control)</need>
+<call_job job="event_squery_editor"/>
+<when test="(f,has_flag,(prop,imas_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,imas_tk_control),print_all_fields)">
+<ti label="(prop,ima_default_label_class) (prop,ima_default_label_name)"/>
+</when>
+<otherwise>
+<ti flag="label_right" label="(prop,ima_default_label_class)" x="(f,html,b,o)(prop,ima_default_label_name)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,imas_tk_control),print_only),,(prop,ima_default_label_class)(f,when,(f,has,prop,ima_default_label_name), (prop,ima_default_label_name),))" tip="Der Tip Index Manipu Action" tk_id="36" flag="(prop,imas_tk_control) wrap ">
+<tk label="Command" id="ima_cmd" x="" test_first="1" tip="The dbms-specific operation to perform; just one ;-(e:c)" type="textblock" flag="  wrap "/>
+<tk label="Type of Action" id="ima_type" x="cmd" test_first_dyn="()(f,or,(f,not,(prop,isAdd)),(f,not,(f,has,prop,ima_cmd)))()" tip="'Command' will a DBMS-specific statement for eg. indizies or filling-statistics;&#10;'Commit' will perform a commit afterwards;&#10;'Breakpoint' will wait until the breakpoint-file is deleted and run THEN the command;" type="sel" flag=" nono ">
+<sel label="Command">cmd</sel>
+<sel label="Query">sel</sel>
+<sel label="Breakpoint">break</sel>
+<sel label="Commit">commit</sel>
+</tk>
+<tk label="Catch Exception" id="ima_catch" x="1" test_first="0" tip="Catch a possible exception during execution and continue" type="bool" flag=" nono "/>
+<tk label="On" id="ima_on" x="1" test_first="0" tip="Eingeschaltet ?" type="bool" flag=" nono "/>
+<tk label="Builtin Conditions" x="Builtin Conditions" test_first="0" type="msg" flag=" "/>
+<tk label="Statistics Only" id="ima_cond" x="" test_first="0" tip="'Statistics' will only be performed if the Integration-Parameter 'RunsStats/Statistics' is set;" type="sel" flag="  multi ">
+<sel label="Yes">stat</sel>
+</tk>
+<tk label="Pronto" id="ima_pronto" x="" test_first="0" tip="Pronto level" test="0" type="sel" flag=" ">
+<sel label="pronto=0">i0</sel>
+<sel label="pronto=1">i1</sel>
+<sel label="pronto&lt;2">l2</sel>
+<sel label="pronto=2">i2</sel>
+</tk>
+<tk label="Special Dbms" id="ima_dbms" x="" test_first="0" tip="Do this only for the given DBMS. If not specified the current DBMS will be ignored." type="sel" flag="  multi ">
+<sel label="MariaDb">maria</sel>
+<sel label="MySql">mysql</sel>
+<sel label="Postgres">postgres</sel>
+</tk>
+<tk label="Custom Conditions" x="Custom Conditions" test_first="0" test="(f,right,cust)" type="msg" flag=" "/>
+<tk label="Flag(e:o)s(e:c)" id="ima_cust_flag" x="" test_first="0" tip="Flag/s from the Integration-Parameters to be present and requested." test="(f,right,cust)" type="text" cols="50" flag=" "/>
+<tk label="Treatment of Flag(e:o)s(e:c)" id="ima_cust_how" x="" test_first="0" tip="How should the flags be interpreted(e:s) especially if there are more of them definied." test="(f,right,cust)" type="sel" flag=" ">
+<sel label="ONE: It‘s just one flag">one</sel>
+<sel label="AND: Number of flags combined by AND">and</sel>
+<sel label="OR: Number of flags combined by ORBreakpoint (e:o)Before(e:c)">or</sel>
+</tk>
+<tk label="Documentation" x="Documentation" test_first="0" type="msg" flag=" "/>
+<tk label="Name" id="ima_name" x="" test_first="0" tip="Name" type="text" flag=" "/>
+<tk label="Description" id="ima_desc" x="" test_first="0" tip="Description visible in the Integration Report" type="textblock" flag="  wrap "/>
+<tk label="Work-Docu" id="ima_work" x="" test_first="0" tip="Working-Documentation(e:s)stays private" type="textblock" flag="  wrap "/>
+</tk>
+</job>

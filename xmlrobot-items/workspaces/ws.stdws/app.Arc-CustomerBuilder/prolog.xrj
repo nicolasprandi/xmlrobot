@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<job id="prolog" role="hidden">
+  <prop id="_x_go_back_sys">   &lt;  &lt;   </prop> 
+  <prop id="_x_go_back_sys2">   &lt;  &lt;   </prop>
+
+  <prop id="_x_go_up_sys">   &#8593;  &#8593;   </prop>               
+  <prop id="_x_go_up_sys2">   &lt;  &lt;   </prop>             
+
+<when test="(f,has,prop,pro)">  
+
+  
+  <prop id="aska-regex" x="aska_.+"/>
+
+  <file id="products">(dir,pro)products.xml</file>
+  <when test="(f,not,(f,exists_file,(file,products)))">
+  <create_file out="(file,products)">&lt;products/&gt;</create_file>
+  <i>Created: (file,products)</i>
+  </when>
+  <prop id="products_offset">./</prop>
+  <prop id="products_offset_label"/>
+  <prop id="products_offset_new_key">//</prop>
+  <prop id="products_sort_attribute"/>
+  <prop id="products_sort_number"/>
+  <prop id="products_sort_ignore_case"/>
+  <prop id="products_sort_desc"/>
+  <prop id="products_where"/>
+  <prop id="products_return_job">product-see-all</prop>
+
+
+   <sequence id="serial" file="(dir,app)serial-sequence.xml" len="5" act="open"/>
+    
+  <file id="base-data" x="(dir,pro)base-data.xrs"/>
+  <prop id="base-regex" x="base_.+"/>
+      
+
+    
+  <file id="anser-data" x="(dir,pro)anser-data.xrs"/>
+  <prop id="anser-regex" x="anser_.+"/>
+  
+  <file id="custsets">(dir,pro)custsets.xml</file>
+  <when test="(f,not,(f,exists_file,(file,custsets)))">
+  <create_file out="(file,custsets)">&lt;custsets/&gt;</create_file>
+  <i>Created: (file,custsets)</i>
+  </when>
+  <prop id="custsets_offset">./</prop>
+  <prop id="custsets_offset_label"/>
+  <prop id="custsets_offset_new_key">//</prop>
+  <prop id="custsets_sort_attribute"/>
+  <prop id="custsets_sort_number"/>
+  <prop id="custsets_sort_ignore_case"/>
+  <prop id="custsets_sort_desc"/>
+  <prop id="custsets_where"/>
+  <prop id="custsets_return_job">custset-see-all</prop>    
+  
+<file id="compis">(file,custsets)</file>
+<prop id="compis_offset">./</prop>
+<prop id="compis_offset_label"/>
+<prop id="compis_offset_new_key">//</prop>
+<prop id="compis_sort_attribute"/>
+<prop id="compis_sort_number"/>
+<prop id="compis_sort_ignore_case"/>
+<prop id="compis_sort_desc"/>
+<prop id="compis_where"/>
+<prop id="compis_return_job">compi-see-all</prop>    
+  
+  </when> 
+</job>
+
+</jobs>
+

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+
+<types>
+<group id="1" title="Loxodrom Jobs" sort="0">
+<extension group="Loxodrom Jobs" name="jobs.xml" extension="jobs.xml"/>
+</group>
+<group id="2" title="Loxodrom Steps" sort="10">
+<extension group="Loxodrom Steps" name="steps.xml" extension="steps.xml"/>
+</group>
+<group id="3" title="Xsl" sort="15">
+<extension group="Xsl" name=".xsl" extension="xsl"/>
+</group>
+<group id="4" title="Java" sort="20">
+<extension group="Java" name=".jar" extension="jar"/>
+<extension group="Java" name=".java" extension="java"/>
+<extension group="Java" name=".war" extension="war"/>
+<extension group="Java" name=".class" extension="class"/>
+<extension group="Java" name=".mf" extension="mf"/>
+</group>
+<group id="5" title="Windows-Executable" sort="30">
+<extension group="Windows-Executable" name=".exe" extension="exe"/>
+<extension group="Windows-Executable" name=".bat" extension="bat"/>
+</group>
+<group id="6" title="Xml" sort="40">
+<extension group="Xml" name=".xml" extension="xml"/>
+<extension group="Xml" name=".dtd" extension="dtd"/>
+</group>
+<group id="7" title="Html Css Php Js" sort="50">
+<extension group="Html Css Php Js" name=".html" extension="html"/>
+<extension group="Html Css Php Js" name=".htm" extension="htm"/>
+<extension group="Html Css Php Js" name=".css" extension="css"/>
+<extension group="Html Css Php Js" name=".php" extension="php"/>
+<extension group="Html Css Php Js" name=".js" extension="js"/>
+</group>
+<group id="8" title="Excel" sort="60">
+<extension group="Excel" name=".xls" extension="xls"/>
+</group>
+<group id="9" title="Text, Pdf" sort="66">
+<extension group="Text, Pdf" name=".txt" extension="txt"/>
+<extension group="Text, Pdf" name=".pdf" extension="pdf"/>
+<extension group="Text, Pdf" name=".rtf" extension="rtf"/>
+</group>
+<group id="10" title="Layoutet Documents" sort="70">
+<extension group="Layoutet Documents" name=".doc" extension="doc"/>
+<extension group="Layoutet Documents" name=".docx" extension="docx"/>
+<extension group="Layoutet Documents" name=".odt" extension="odt"/>
+<extension group="Layoutet Documents" name=".ai" extension="ai"/>
+<extension group="Layoutet Documents" name=".psd" extension="psd"/>
+<extension group="Layoutet Documents" name=".dia" extension="dia"/>
+<extension group="Layoutet Documents" name=".ppt" extension="ppt"/>
+</group>
+<group id="11" title="Movies Media" sort="90">
+<extension group="Movies Media" name=".mov" extension="mov"/>
+<extension group="Movies Media" name=".avi" extension="avi"/>
+<extension group="Movies Media" name=".flv" extension="flv"/>
+</group>
+<group id="12" title="Media Pictures" sort="110">
+<extension group="Media Pictures" name=".mpg" extension="mpg"/>
+<extension group="Media Pictures" name=".jpg" extension="jpg"/>
+<extension group="Media Pictures" name=".swf" extension="swf"/>
+<extension group="Media Pictures" name=".png" extension="png"/>
+<extension group="Media Pictures" name=".bmp" extension="bmp"/>
+<extension group="Media Pictures" name=".gif" extension="gif"/>
+</group>
+<group id="13" title="Archives" sort="300">
+<extension group="Archives" name=".zip" extension="zip"/>
+<extension group="Archives" name=".t3x" extension="t3x"/>
+<extension group="Archives" name=".iso" extension="iso"/>
+</group>
+<group id="14" title="Links" sort="400">
+<extension group="Links" name=".lnk" extension="lnk"/>
+<extension group="Links" name=".url" extension="url"/>
+</group>
+</types>

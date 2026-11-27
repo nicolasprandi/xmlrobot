@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="attributtyp" label="(prop,_namaste_attributtyp_l)" tip="(prop,_namaste_attributtyp_t)" add_edit="1" name_flag="1" type="sel" nono="1" sel_file="(file,pdi-sel-attr)" /><field id="value" label="(prop,_namaste_value_l)" tip="(prop,_namaste_value_t)" add_edit="1" update="1" type="text" cols="30" nono="1" /></fields>

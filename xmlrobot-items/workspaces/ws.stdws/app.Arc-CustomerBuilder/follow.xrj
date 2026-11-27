@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<!-- <call_job job="prolog" />   <call_job job="tk_base_read"/> -->
+
+<job id="follow_job_name" role="hidden">
+  
+  <file id="base-data" x="(dir,pro)base-data.xrs"/>
+  <prop id="base-regex" x="base_.+"/>
+ 
+  
+  <dir id="the-customer-dd">(dir,base_delivery)</dir>
+  <choose>
+    <when test="(f,has,prop,custset_serial)">             
+      <!-- nicht neu -->
+      <dir id="the-customer-dd">(dir,the-customer-dd)(f,text,fill_left,(prop,custset_serial),5,0)-(f,text,filename,(prop,custset_name))</dir>
+    </when>
+    <otherwise>
+      <!-- neu -->
+      <dir id="the-customer-dd">(dir,the-customer-dd)(f,text,fill_left,(f,add,0,(f,sequence,serial)),5,0)-(f,text,filename,(prop,custset_name))</dir>      
+    </otherwise>
+  </choose>
+
+
+  <when test="(f,not,(f,exists_dir,(dir,the-customer-dd)))">
+    <mkdir dir="(dir,the-customer-dd)" />
+    <ti label="CREATED" type="dir">(dir,the-customer-dd)</ti>
+  </when>
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

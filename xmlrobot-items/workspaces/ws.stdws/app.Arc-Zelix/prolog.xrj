@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="prolog" role="hidden">
+ 
+  <when test="(f,has,prop,pro)">  
+    <file id="advice" x="(dir,pro)zelix-advice.txt"/>  
+    <file id="advice2" x="(dir,pro)zelix-advice2.txt"/> 
+    <file id="para-data" x="(dir,pro)para-data.xrs"/>
+    <prop id="para-regex" x="para_.+"/>
+  
+    <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+    <prop id="conf-regex" x="conf_.+"/>
+    
+    <file id="stat-data" x="(dir,pro)stat-data.xrs"/>
+    <prop id="stat-regex" x="stat_.+"/>  
+      
+    <file id="project-exists" x="(dir,pro)project-exists.txt"/>
+  
+  </when>
+
+</job>
+
+</jobs>

@@ -1,0 +1,33 @@
+<!-- specify the select in a variable with parameters [prop on-id] -->
+<prop id="select-werte">()SELECT
+     obj.obj_id,
+     attr.attr_id,
+     -- regexp_replace(wert.inhalt, '\r|\n', '','g') as inhalt,
+     wert.inhalt as inhalt,
+     wert.inhalt2,
+     wert.hat_mehr,
+     wert.ist_top,
+     wert.von,
+     wert.bis,
+     wert.wann,
+     wert.wert_id,
+     obj.obj_typ,
+     attr.attr_typ
+FROM
+     obj as obj,
+     attr as attr,
+     wert as wert,
+     t_u as t_u       
+WHERE
+     obj.obj_id = ()(prop,on-id)() and
+     obj.obj_id = attr.obj_id and
+     t_u.obj_typ = obj.obj_typ and
+     t_u.attr_typ = attr.attr_typ and
+     wert.attr_id = attr.attr_id
+     ()(prop,sql-filter-lastest-values)()
+ORDER BY
+     t_u.attr_usg_id;()</prop>    
+     
+<loop id="wert" select="(prop,select-werte)" dbc="(prop,mydbc)" missing_strategy="empty" flag="trim">
+      <ti>(loop,wert,@attr_typ) </ti>
+</loop>     

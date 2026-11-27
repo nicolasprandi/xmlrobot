@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="person-write">
+<need>(prop,person_key) (prop,isAdd)</need>
+<spirit act="open" id="persons_spirit_tc" xml="(file,persons)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,persons_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,persons_offset),0,(f,sub,(f,len,(prop,persons_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,persons_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="persons_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;person row="(prop,person_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="name_full" value="(f,vob,prop,person_name_full)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="name_nic" value="(f,vob,prop,person_name_nic)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="name_add" value="(f,vob,prop,person_name_add)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="type" value="(f,vob,prop,person_type)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="cat" value="(f,vob,prop,person_cat)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="privs" value="(f,vob,prop,person_privs)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="country" value="(f,vob,prop,person_country)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="city" value="(f,vob,prop,person_city)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="province" value="(f,vob,prop,person_province)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="street" value="(f,vob,prop,person_street)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="zip" value="(f,vob,prop,person_zip)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="email" value="(f,vob,prop,person_email)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="phone" value="(f,vob,prop,person_phone)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="web" value="(f,vob,prop,person_web)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="persons_spirit_tc" where="(prop,persons_offset)person[@row='(prop,person_key)']" attribute="elec" value="(f,vob,prop,person_elec)"/>
+<spirit act="close" flag="save pretty" id="persons_spirit_tc"/>
+</job>

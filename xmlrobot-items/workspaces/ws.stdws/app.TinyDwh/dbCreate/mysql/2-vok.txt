@@ -1,0 +1,38 @@
+-- Copyright © 2018-2021 Nicolas Prandstaetter. All rights reserved.
+-- beziehungstypen
+--  jdbc:mysql://mariadb2.svc.bsa.oriented.ch:3306/formixat001
+--  INSERT INTO t_a (attr_typ,format) VALUES(1,'hasi');
+
+CREATE TABLE t_b (
+                bez_typ smallint NOT NULL
+);
+
+-- objekttypen
+CREATE TABLE t_o (
+                obj_typ smallint NOT NULL,
+                kopf_attr_typ smallint
+);
+
+-- attributtypen
+CREATE TABLE t_a (
+                attr_typ smallint NOT NULL,
+                format char(100),
+                flag_klasse smallint,   
+                final_typ smallint, 
+                final_p1 smallint           
+);
+
+-- attribute usage    object x attribute
+CREATE TABLE t_u (
+                attr_usg_id INTEGER NOT NULL AUTO_INCREMENT,
+                attr_typ smallint NOT NULL,
+                obj_typ smallint NOT NULL,
+                varianz smallint,
+                varianz_text char(20),
+                ident smallint,
+                ident_text char(20),
+                ident_mehr smallint,
+                ident_club char(20),
+                PRIMARY KEY (attr_usg_id)
+);
+

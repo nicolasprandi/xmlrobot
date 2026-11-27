@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015 Nicolas Prandstaetter. All rights reserved. 
+
+
+
+
+
+
+ -->
+
+<jobliste>
+
+<job id="?" joblevel="pro">
+  <ti>Information about application TABLE-CREATOR</ti>
+  <call_service job="app-info-final" flag="silent">
+    <prop id="aif-app" x="(prop,app)"/>
+  </call_service>
+</job>
+
+<job id="??" joblevel="pro">
+  <ti>Information about the Project '(prop,pro)'</ti>
+  <call_service job="project-info-final" flag="silent">
+    <prop id="from-app">(prop,app)</prop>
+    <prop id="from-pro">(prop,pro)</prop>
+    <dir id="from-pro" x="(dir,pro)"/>      
+  </call_service>
+</job>
+
+
+</jobliste>

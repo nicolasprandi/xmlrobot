@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bit-read">
+<need>(prop,bit_key)</need>
+<spirit act="open" missing_strategy="empty" id="bits_spirit_tc" xml="(file,bits)"/>
+<prop id="bit_dt_upd">(f,spirit,bits_spirit_tc,(prop,bits_offset)bit[@row=(f,xpath_string,(prop,bit_key))],@dt_upd)</prop>
+<prop id="bit_dt_add">(f,spirit,bits_spirit_tc,(prop,bits_offset)bit[@row=(f,xpath_string,(prop,bit_key))],@dt_add)</prop>
+<prop id="bit_bit">(f,spirit,bits_spirit_tc,(prop,bits_offset)bit[@row=(f,xpath_string,(prop,bit_key))],@bit)</prop>
+<prop id="bit_off">(f,spirit,bits_spirit_tc,(prop,bits_offset)bit[@row=(f,xpath_string,(prop,bit_key))],@off)</prop>
+<spirit act="close" id="bits_spirit_tc"/>
+</job>

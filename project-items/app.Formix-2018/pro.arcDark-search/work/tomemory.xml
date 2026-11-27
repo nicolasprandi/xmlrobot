@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="search-read">
+<need>(prop,search_key)</need>
+<spirit act="open" missing_strategy="empty" id="searches_spirit_tc" xml="(file,searches)"/>
+<prop id="search_dt_upd">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@dt_upd)</prop>
+<prop id="search_dt_add">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@dt_add)</prop>
+<prop id="search_search">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@search)</prop>
+<prop id="search_type">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@type)</prop>
+<prop id="search_desc">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@desc)</prop>
+<prop id="search_techname">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@techname)</prop>
+<prop id="search_before">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@before)</prop>
+<prop id="search_after">(f,spirit,searches_spirit_tc,(prop,searches_offset)search[@row=(f,xpath_string,(prop,search_key))],@after)</prop>
+<spirit act="close" id="searches_spirit_tc"/>
+</job>

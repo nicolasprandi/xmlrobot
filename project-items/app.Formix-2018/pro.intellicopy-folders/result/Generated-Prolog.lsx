@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="folders">(dir,pro)folders.xml</file>
+<when test="(f,not,(f,exists_file,(file,folders)))">
+<create_file out="(file,folders)">&lt;folders/&gt;</create_file>
+<i>Created: (file,folders)</i>
+</when>
+<prop id="folders_offset">./</prop>
+<prop id="folders_offset_label"/>
+<prop id="folders_offset_new_key">//</prop>
+<prop id="folders_sort_attribute"/>
+<prop id="folders_sort_number"/>
+<prop id="folders_sort_ignore_case"/>
+<prop id="folders_sort_desc"/>
+<prop id="folders_where"/>
+<prop id="folders_return_job">folder-see-all</prop>
+</prolog>

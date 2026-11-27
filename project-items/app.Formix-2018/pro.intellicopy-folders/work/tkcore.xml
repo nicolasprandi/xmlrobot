@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="folder-tk">
+<need default="">(prop,folders_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="Ein Rezept ist ein Beschreibung eines Kochvorganges dervin einem Endresultat muendet. &#10;Zum einen gibt es Grund-Zutaten fuer das gesamte Rezept. &#10;Weiters kann ein Rezept in Teilprodukte gegliedert werden - diese werden Komponenten genannt;&#10;Innerhalb jeder Komponente kann aus den Grund-Zutaten auswgewaet werden um diese zu verarbeiten. ie Verarbeitungsschritte &#10;Wwerden dokumentiert. " flag="(prop,folders_tk_control) wrap ">
+<tk label="From Folder" id="folder_from" x="" test_first="1" tip="Source" type="dir" flag=" nono "/>
+<tk label="To Folder" id="folder_to" x="" test_first="1" tip="Target" type="dir" flag=" nono "/>
+<tk label="Name" id="folder_name" x="" test_first="1" type="text" flag=" "/>
+</tk>
+</job>

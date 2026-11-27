@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="Work on Zelix-Script">
+  <call_job job="do-work-on-zelix-script"/>
+
+
+</job>
+
+<job id="Edit Jar-File-Name">
+  <call_job job="do-edit-product-name"/>
+
+
+</job>
+
+<job id="Edit Product-Name?">
+  <choose>
+    <when test="(f,exists_file,(file,prodfn))">
+      <prop id="produktname">(f,file_content,(file,prodfn))</prop>
+    </when>
+    <otherwise>
+      <prop id="produktname">Nicht definiert(e:s)
+Default is [(prop,default-produktname)]</prop>
+    </otherwise>
+  </choose>
+  <ti label="Produktname:">(prop,produktname)</ti>
+  <ti label=" " type="file">(file,prodfn)</ti>
+
+
+</job>
+
+<job id="do-edit-product-name" role="hidden">
+  <choose>
+    <when test="(f,exists_file,(file,prodfn))">
+      <prop id="produktname">(f,file_content,(file,prodfn))</prop>
+    </when>
+    <otherwise>
+      <prop id="produktname">(prop,default-produktname)</prop>
+    </otherwise>
+  </choose>
+  
+  <prop id="old-produktname">(prop,produktname)</prop>
+  
+  <tk id="produktname" label="Produktname" flag="nono"
+      tip="ist fuer reco nicht notwendig(e:s) da in reco enthalten"/>
+      
+  <choose>
+    <when test="(f,eq_text,(prop,produktname),(prop,old-produktname))">
+      <tk type="msg">Der Produktname wurde nicht veraendert.
+es wird nichts geaendert.</tk>
+    </when>
+    <otherwise>
+      <tk type="msg">Produktname wird geaendert....</tk>
+       <create_file out="(file,prodfn)">(prop,produktname)</create_file>
+       <ti>produktname geaendert</ti>
+       <ti type="file" label="File-Produktname" x="(file,prodfn)"/> 
+    </otherwise>
+  </choose>      
+      
+    
+
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

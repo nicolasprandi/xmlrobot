@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bit-edit">
+<need>(prop,bit_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="bit-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="bit-editor"/>
+<call_job job="bit-write"/>
+<ti align="right" x="Did update Bit '(prop,bit_bit)'"/>
+<call_job job="bit-see"/>
+</job>

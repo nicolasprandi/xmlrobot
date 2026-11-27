@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="custset-read">
+<need>(prop,custset_key)</need>
+<spirit act="open" missing_strategy="empty" id="custsets_spirit_tc" xml="(file,custsets)"/>
+<prop id="custset_dt_upd">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@dt_upd)</prop>
+<prop id="custset_dt_add">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@dt_add)</prop>
+<prop id="custset_name">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@name)</prop>
+<prop id="custset_remarks">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@remarks)</prop>
+<dir flag="cool" id="custset_result">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@result)</dir>
+<unescape type="dir" id="custset_result"/>
+<translate type="dir" id="custset_result"/>
+<prop id="custset_randomize">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@randomize)</prop>
+<prop id="custset_randomize_len">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@randomize_len)</prop>
+<prop id="custset_product">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@product)</prop>
+<prop id="custset_password">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@password)</prop>
+<prop id="custset_ablaufdatum">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@ablaufdatum)</prop>
+<prop id="custset_encryptor">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@encryptor)</prop>
+<prop id="custset_encryptor_xsl">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@encryptor_xsl)</prop>
+<prop id="custset_serial">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@serial)</prop>
+<prop id="custset_prodconf">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@prodconf)</prop>
+<prop id="custset_firma">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@firma)</prop>
+<prop id="custset_tel">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@tel)</prop>
+<prop id="custset_email">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@email)</prop>
+<prop id="custset_web">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@web)</prop>
+<prop id="custset_notiz">(f,spirit,custsets_spirit_tc,(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))],@notiz)</prop>
+<spirit act="close" id="custsets_spirit_tc"/>
+</job>

@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Integra?" lang="de">
+  <ti label="Job &apos;Integration&apos;"/>
+<ti type="rec"><ti flag="wrap">Die sogenannte 'Integration' stellt den Kern-Prozess der Hibiscus-Datenbank dar.</ti></ti>    
+
+  <ti type="ul">Dabei werden zum einen Daten aus dem import-Schema in das int-Schema 'kopiert'.</ti>
+  <ti type="ul">Zum anderen werden aber auch gleiche Objekte erkannt und zusammengefasst.</ti>
+  <ti type="ul">Dies erfolgt auf Basis von Attributen(e:s) welche eindeutig und somit 'identit&#228;tsstiftend' sind.</ti>
+  <ti type="ul">Diese Attribute werden als solche im 'Vokabular' gekennzeichnet.</ti>
+  <ti type="ul">Kommt es zu einer solchen &#220;berfuehrung von 2 Objekten(e:s) so sprechen wir von 'Migration'.</ti>
+  <ti type="ul">Migrationen werden im System dokumentiert und k&#246;nnen mit der Statistik 'Bericht der Objekt-Migrationen' nachvollzogen werden.</ti>
+ 
+</job>  
+
+<job id="Integra?" lang="en">
+  <ti label="Job &apos;Integration&apos;"/>
+ <ti>(f,html,b,o)1(e:c) (prop,_pl_kjob)(f,html,b,o)</ti>
+  <ti type="ul">yyyyyyyyyyyytnavigation.</ti>
+</job>
+
+
+</jobs>

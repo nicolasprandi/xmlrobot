@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="perform-xsl" role="hidden">
+<file id="output">(dir,pro)xsl-output.xml</file>
+
+<xslt xml="(file,ziramis)" 
+xsl="(dir,app)perform.xsl" 
+out="(file,output)" />
+
+<ti label="result" type="file">(file,output)</ti>
+
+</job>
+
+<job id="create-folder-in-app" role="hidden">
+  <prop id="name">(f,random_text,6)</prop>
+  <dir id="tocreate">(dir,app)(prop,name)</dir>
+  <ti label="creating" type="dir">(dir,tocreate)</ti>
+  <mkdir dir="(dir,tocreate)"/>
+  <ti>done</ti>
+  
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

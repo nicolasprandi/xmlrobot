@@ -1,0 +1,1324 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<job id="go-production" role="hidden">
+
+
+
+  <dir id="mfiletemp">(dir,status)appdark-(f,time)/</dir>
+  <file id="messages">(dir,mfiletemp)messages.txt</file>
+  <print id="messages" out="(file,messages)" act="open"/>
+  <ti_hr/>
+  <call_job job="tk_appi_read"/>
+  
+  <!-- files scannen -->
+  <call_job job="create-all">
+    <file id="all" x="(dir,filetemp)all.xml"/>
+  </call_job>
+  <spirit id="all" act="open" file="(file,all)"/>
+  
+  <call_job job="tk_prod_read"/>
+  <call_job job="tk_conf_read"/>
+  <call_job job="tk_noxsl_read"/>
+  <call_job job="tk_dirig_read"/>
+  <call_job job="tk_fileig_read"/>
+  <call_job job="tk_filepd_read"/>
+  
+  <ti label="Result in" type="dir">(dir,prod_target)</ti>
+  
+  <prop id="count-timed">0</prop>
+
+  
+  <when test="(f,not,(f,exists_dir,(dir,prod_target)))">
+    <mkdir dir="(dir,prod_target)"/>
+    <ti label="Created:" type="dir" x="(dir,prod_target)" />    
+  </when>
+  
+  <delete content_of_dir="(dir,prod_target)"/>
+  <tk type="msg" x="Removed all from: (dir,prod_target)" test="(prop,conf_debug)"/>  
+  
+  <!-- 
+  <when test="(prop,prod_target_clear)">
+    <when test="(f,has,dir,prod_target)">
+
+    </when>
+  </when>   -->
+ 
+ 
+  <taskdef id="read_write" jar="(dir,app)xml_read_write.jar" class="at.nicolas.x.xml_read_write.TaskXmlReadWrite" />
+  <interpreter watch="0"/>
+
+  <choose>
+    <when test="(f,and,0,(f,has,dir,prod_alt_doku))">     
+      <choose>
+        <when test="(f,not,(f,exists_dir,(dir,prod_alt_doku)))">
+          <mkdir dir="(dir,prod_alt_doku)"/>
+        </when>
+        <otherwise>
+          <call_job job="clear-alt-doku"/>     
+        </otherwise>
+      </choose>     
+      <dir id="doku-st" x="(dir,prod_alt_doku)"/> 
+    </when>
+    <otherwise>
+      <dir id="doku-st" x="(dir,mfiletemp)doku"/>
+      <mkdir dir="(dir,doku-st)"/>
+      <!-- 
+      <sequence id="doku" file="(dir,pro)seq-doku-lfd.xml" act="open" len="5"/>
+      
+      <sequence id="doku" act="next" />    
+      <dir id="doku-st" x="(dir,doku)(f,sequence,doku)-(f,time)"/>
+      
+      <sequence id="doku" act="close" />    --> 
+    </otherwise>
+  </choose> 
+ 
+  <dir id="doku-f" x="(dir,doku-st)files"/>
+  <mkdir dir="(dir,doku-f)"/>
+  <dir id="doku-c" x="(dir,doku-st)conf"/>
+  <mkdir dir="(dir,doku-c)"/>
+  <!-- 
+  <dir id="doku-s" x="(dir,doku-st)conf"/>
+  <mkdir dir="(dir,doku-s)"/>        -->
+  <ti type="dir" label="Darken" x="(dir,appi_from_app)" test="1"/> 
+  
+      <ti label="done" type="rec">
+        <ti txype="file">original</ti>
+        <ti tyxpe="file">reformated</ti>
+        <ti tyxpe="file">modified</ti>
+        <ti typxe="file">blurry</ti>
+        <ti typxe="file">prodconf</ti>
+        <ti typxe="file">final</ti>
+        <ti typxe="file">prodname</ti>
+        <ti typxe="file">encrypted</ti>
+        <ti tyxpe="file" x="(f,html,b,o)produced(f,html,b,c)"/>
+        
+      </ti>
+      <ti_hr/>
+  <prop id="do-scramble" x="(f,has_flag,(prop,prod_type),sc)"/>
+  
+
+  
+  <prop id="do-sign" x="(f,and,(f,has_flag,(prop,prod_type),s),(f,has,prop,prod_serial_nbr))"/>
+  <tk type="msg" msg_type="w" test="(f,and,(f,has_flag,(prop,prod_type),s),(f,not,(f,has,prop,prod_serial_nbr)))">No Serial-Number specified. Continue without creating a serial-number ...
+(prop,pro)</tk>
+
+  <!-- job ecryption 
+  <tk type="msg">prod_pwd=[(f,vob,prop,prod_pwd)]  (prop,pro)</tk>    -->
+  <prop id="do-encrypt" x="(f,and,(f,has_flag,(prop,prod_type),e),(f,has,prop,prod_pwd))"/>
+  <tk type="msg" msg_type="w" test="(f,and,(f,has_flag,(prop,prod_type),e),(f,not,(f,has,prop,prod_pwd)))">NO Enryption-KEY for JOBS specified. Continue without encrypting job-files ...
+(prop,pro)</tk>
+  <ti label="Encrypt Jobs" x="(prop,do-encrypt)" test="0"/>
+  
+  <when test="(prop,do-encrypt)">
+    <crypto id="scrypt" act="open" type="(prop,prod_pwd)"/>
+  </when>
+  
+  
+  <!-- xsl ecryption -->
+  <prop id="do-encrypt-xsl" x="(f,and,(f,has_flag,(prop,prod_type),x),(f,has,prop,prod_pwd_xsl))"/>
+  <tk type="msg" msg_type="w" test="(f,and,(f,has_flag,(prop,prod_type),x),(f,not,(f,has,prop,prod_pwd_xsl)))">NO Enryption-KEY for XSL specified. Continue without encrypting xsl-files...
+(prop,pro)</tk>
+  <ti label="Encrypt Xsl" x="(prop,do-encrypt-xsl)" test="0"/>
+  
+  <when test="(prop,do-encrypt-xsl)">
+    <ti>[(prop,prod_pwd_xsl)]</ti>
+    <crypto id="scrypt_xsl" act="open" type="(prop,prod_pwd_xsl)"/>
+  </when>  
+  
+  
+    
+  <choose>
+    <when test="(f,has,file,prod_alt_sig_def)">
+      <ti label="Reusing foreign Signation-Rules"/>
+      <ti type="file" label="External Signation" x="(file,prod_alt_sig_def)"/>
+      <file id="sig1" x="(file,prod_alt_sig_def)"/>
+      <tp flag="ok">External Signation</tp>
+      <ti_hr/>               
+    </when>
+    <otherwise>
+      <file id="sig1" x="(file,updater)"/>    
+    </otherwise>
+  </choose>
+  
+  <copy file="(file,sig1)" tofile="(dir,doku-c)signator-1.xml"/>
+  
+  
+  <!-- prolog -->
+  <choose>
+    <when test="(f,has,file,prod_alt_prolog_def)">
+
+      <ti type="file" label="External Prolog-Steps" x="(file,prod_alt_prolog_def)"/>
+      <include file="(file,prod_alt_prolog_def)"/>
+      <tp flag="ok">External Prolog</tp>
+      <ti_hr/>               
+    </when>
+    <when test="(f,exists_file,(file,prolog-steps))">
+      <ti type="file" label="Individual Prolog-Steps" x="(file,prolog-steps)"/>
+      <include file="(file,prolog-steps)"/>
+      <tp flag="ok">Individual Prolog</tp>
+      <ti_hr/>      
+    </when>
+    <otherwise>
+      <ti>No Prolog-Steps at all - Ok</ti>    
+    </otherwise>
+  </choose>  
+             
+  <!-- 0 preperation -->
+  <when test="(f,not,(prop,do-sign))">
+    <ti x=" " key="NO Signation ..."/>
+  </when>  
+  <when test="(f,and,(prop,do-sign),(f,not,(prop,prod_allow_serial)))">
+    <tk type="msg" msg_type="w">NO SIGNATION will be performed because it is not allowed ...
+(prop,pro)</tk>  
+  </when>
+  <when test="(f,and,(prop,do-sign),(prop,prod_allow_serial))">
+    <spirit id="sig"
+            act="open"
+            xml="(file,sig1)"/>
+            
+    <spirit id="sig"
+            act="xml_update"
+            how="remove"
+            where="//modo[@off='1']"
+            flag="any"
+            count_prop_id="stat_removed_off_modo"/>  
+    <i>dosamma</i>        
+    <i>Nbr. of removed modo-offs = (prop,stat_removed_off_modo)</i>      
+    
+    <spirit id="sig"
+            act="xml_update"
+            how="remove"
+            where="//file[@off='1']"
+            flag="any"
+            count_prop_id="stat_removed_off_file"/>  
+    <i>Nbr. of removed file-offs = (prop,stat_removed_off_file)</i>        
+  
+    <spirit id="sig"
+            act="xml_update"
+            how="remove"
+            where="//bit[@off='1']"
+            flag="any"
+            count_prop_id="stat_removed_off_bit"/>  
+    <i>Nbr. of removed bit-offs = (prop,stat_removed_off_bit)</i>   
+    
+    <spirit id="sig" act="save" out="(dir,doku-c)signator-2.xml" />
+    
+    <loop_xml 
+      act="open" 
+      id="bits" 
+      spirit="sig" 
+      xpath="bit"/>
+    <prop id="max-bit" x="0"/>  
+    <loop 
+      id="while-bits" 
+      while="()(f,loop_xml,bits,has_next?)()">
+      <loop_xml act="next" id="bits" /> 
+      <when test="(f,gt_num,(f,loop_xml,bits,@bit),(prop,max-bit))">
+        <prop id="max-bit" x="(f,loop_xml,bits,@bit)"/>
+      </when> 
+    </loop>
+    <prop id="stat_max_bit" x="(prop,max-bit)"/>
+    
+    <loop_xml 
+      act="close" 
+      id="bits"/>  
+      
+    <prop id="highest-serial" x="(f,round,(f,pow,2,(f,add,1,(prop,max-bit))))"/>
+    
+    <when test="(f,gte_num,(prop,prod_serial_nbr),(prop,highest-serial))">    
+      <throw>You requested serial-nbr '(prop,prod_serial_nbr)' but the highest possible serial is '(f,sub,(prop,highest-serial),1)'. Add more bits !! </throw>    
+    </when>
+    
+    <prop id="b1" x="(f,nbr_base_convert,(prop,prod_serial_nbr),10,2,(f,add,1,(prop,max-bit)))"/>
+    <prop id="j" x="0"/>
+    <prop id="stat_removed_noneed_bit" x="0" />
+    <loop id="w" while="()(f,lt,(prop,j),(f,add,1,(prop,max-bit)))()">
+      <ti test="0">j = (prop,j) </ti>
+      
+      <prop id="j2" x="(f,sub,(prop,max-bit),(prop,j))"/>
+      
+      <choose>
+        <when test="(f,eq_num,1,(f,substring,(prop,b1),(prop,j2),(f,add,1,(prop,j2))))">
+        </when>
+        <otherwise>
+          <ti label=" ">bit auf pos '(prop,j)' wird nicht gebraucht</ti>
+          <spirit id="sig"
+            act="xml_update"
+            how="remove"
+            where="//bit[@bit=(f,xpath_string,(prop,j))]"
+            flag="any"
+            count_prop_id="stt_removed_noneed_bitx"/>
+          <prop id="stat_removed_noneed_bit" x="(f,add,(prop,stat_removed_noneed_bit),(prop,stt_removed_noneed_bitx))" />   
+        </otherwise>
+      
+      </choose>
+      
+      <!-- ende -->>      
+      <prop id="j" x="(f,add,(prop,j),1)"/>
+
+    </loop>    
+    
+    <spirit id="sig" act="save" out="(dir,doku-c)signator-3.xml" />
+      
+  </when>
+  
+  <!-- blurry prepare-->
+  <when test="(prop,prod_allow_blurry)">
+  
+    <choose>
+      <when test="(f,has,file,prod_alt_blurry_def)">
+        <ti label="Reusing foreign Blurry-Rules"/>
+        <ti type="file" label="External Blurry" x="(file,prod_alt_blurry_def)"/>
+        <spirit id="blurry"
+                act="open"
+                xml="(file,prod_alt_blurry_def)"/> 
+        <tp flag="ok">External Blurry</tp>     
+        <ti_hr/>               
+      </when>
+      <otherwise>
+        <spirit id="blurry"
+                act="open"
+                xml="(file,blurries)"/>   
+      </otherwise>
+    </choose>
+    
+  </when> 
+  
+  <!-- prodconf prepare-->
+  <when test="(prop,prod_allow_prodconf)">
+  
+    <choose>
+      <when test="(f,has,file,prod_alt_prodconf_def)">
+        <ti label="Reusing foreign ProdConf-Rules"/>
+        <ti type="file" label="External ProdConf" x="(file,prod_alt_prodconf_def)"/>
+        <spirit id="prodconf"
+                act="open"
+                xml="(file,prod_alt_prodconf_def)"/> 
+        <tp flag="ok">External ProdConf</tp>     
+        <ti_hr/>               
+      </when>
+      <otherwise>
+        <spirit id="prodconf"
+                act="open"
+                xml="(file,prodconf)"/>   
+      </otherwise>
+    </choose>
+    
+  </when>          
+            
+      
+  
+  <!-- fd replacements prepare-->
+  
+  <prop id="total-fd-replacements">0</prop>
+  <prop id="total-fd-replacements-history"></prop>
+  <prop id="do-final-date" x="(f,and,(f,has_flag,(prop,prod_type),f),(f,has,prop,prod_ablaufdatum))"/>
+  <tk type="msg" msg_type="w" test="(f,and,(f,has_flag,(prop,prod_type),f),(f,not,(f,has,prop,prod_ablaufdatum)))">NO final-date for JOBS specified. Continue without finalizing software...</tk>
+  
+  <throw test="(f,and,(f,not,(f,has,prop,prod_total_count_ablaufdatum)),(prop,do-final-date))">A replacement of the final-date was requested but there was no expected-number specified. Modify your parameters and enter [Total Nbr of FinalDates]</throw>
+  
+  <!-- prodname replacements prepare -->
+  <prop id="total-pd-replacements">0</prop>
+  <prop id="total-pd-replacements-history"></prop>
+  <prop id="do-prodname" x="(f,and,(f,has_flag,(prop,prod_type),p),(f,has,prop,prod_productname))"/>
+  <tk type="msg" msg_type="w" test="(f,and,(f,has_flag,(prop,prod_type),p),(f,not,(f,has,prop,prod_productname)))">NO product-name for JOBS specified. Continue without finalizing software...</tk>
+  
+  <throw test="(f,and,(f,not,(f,has,prop,prod_total_count_productname)),(prop,do-prodname))">A replacement of the product-name was requested but there was no expected-number specified. Modify your parameters and enter [Total Nbr of Product-replacements]</throw>
+  
+  <prop id="count-prodname">0</prop>
+  <prop id="do-prodname" x="(f,has_flag,(prop,prod_type),p)"/>
+      
+  <!-- loop je file -->
+  <file id="fiq" x="(dir,doku-c)files-in-question.xml"/>
+  <scan out="(file,fiq)" dir="(dir,appi_from_app)" level_limit="1" field="pre post post2 fn" flag="app_no_pro"/>
+  
+  <loop id="fiq" xml="(file,fiq)" xpath="file">
+    <ti_hr test="0"/>
+    <dir id="df" x="(dir,doku-f)(loop,fiq)"/>
+    <mkdir dir="(dir,df)"/>  
+    <prop id="stat_hist"></prop>
+    <prop id="nx" x="0"/>
+    <file id="now" x="(loop,fiq,@fn)"/>
+    <file id="stat_original" x="(file,now)"/>
+    
+    <file id="stat_reformated" x=""/>
+    <file id="stat_modified" x=""/>
+    <file id="stat_timed" x=""/>
+    <file id="stat_encrypted" x=""/>
+    <file id="stat_final" x=""/>
+    <file id="stat_product" x=""/>
+    <file id="stat_blurry" x=""/>
+    <file id="stat_prodconf" x=""/>
+   
+    <ti type="file" x="(file,now)" xlabel="Begin:" test="0"/>
+        
+    <copy file="(file,now)" tofile="(dir,df)0-original(loop,fiq,@post)"/>
+    <file id="now" x="(dir,df)0-original(loop,fiq,@post)"/>
+
+    <prop id="file-has-spirit" x="0"/>
+    <when test="(f,and,1,(f,has_flag,xrj ljx xrs lsx xxsl,(loop,fiq,@post2)))">
+
+      <prop id="nx-next" x="(f,add,1,(prop,nx))"/>
+      <file id="now-next" x="(dir,df)(prop,nx-next)-reformated(loop,fiq,@post)"/>
+      <!-- reformat das konvertiert die sonderzeichen raus und ich weiss nicht warum ich das eigetnlich brauche
+      <read_write 
+        file="(file,now)" 
+        tofile="(file,now-next)"/>       -->
+      <copy file="(file,now)"
+            tofile="(file,now-next)"/>
+        
+      <!-- <ti label="Reformated:" x="(file,now-next)" type="file"/>    -->
+      <file id="stat_reformated" x="(file,now-next)"/>
+      
+      <prop id="file-has-spirit" x="1"/>
+      <spirit id="me" act="open" file="(file,now-next)" xmissing_strategy="empty"/>
+      
+      <prop id="nx" x="(prop,nx-next)"/>
+      <file id="now" x="(file,now-next)"/>
+        
+    </when>     
+
+    <!-- effektive signation -->
+    <prop id="did-sign" x="0"/>
+    <when test="(f,and,(prop,do-sign),(prop,prod_allow_serial))">
+      <!-- pruefen ob dieses file fuer di signierung relevant ist -->
+      <when test="(f,spirit,sig,exists?,bit/file[@thefile=(f,xpath_string,(loop,fiq))])">
+        <ti type="rec" label="(f,html,bold,open)(f,name_of_file,(loop,fiq,@fn))(f,html,bold,close)">
+          <ti x="Relevant fuer (f,html,b,o)signatur(f,html,b,c)" />
+          <ti type="dir" x="(dir,df)"/>
+        </ti>
+                  
+        <loop_xml 
+          act="open" 
+          id="sf" 
+          spirit="sig" 
+          xpath="bit[file[@thefile=(f,xpath_string,(loop,fiq))]]"/>
+        
+        <loop 
+          id="while-sf" 
+          while="()(f,loop_xml,sf,has_next?)()">
+          
+          <loop_xml act="next" id="sf" /> 
+          <ti label="Bit" x="(f,html,bold,open)(f,loop_xml,sf,@bit)(f,html,bold,close)" flag="label_right"/>
+        
+          <loop_xml 
+            act="open" 
+            id="sm" 
+            spirit="sig" 
+            xpath="bit[@bit=(f,xpath_string,(f,loop_xml,sf,@bit))]/file[@thefile=(f,xpath_string,(loop,fiq))]/modo"
+            xxsort="@sort"
+            xxnumber="@sort"
+            missing_strategy="empty"/>
+  
+          <loop 
+            id="while-sm" 
+            while="()(f,loop_xml,sm,has_next?)()">
+            <loop_xml act="next" id="sm" /> 
+            <prop id="nx-next" x="(f,add,1,(prop,nx))"/>            
+            <ti label="Modo:(prop,nx) &gt; (prop,nx-next)" x="(f,loop_xml,sm,@how):(f,loop_xml,sm,@where)" flag="label_right"/>
+            
+
+            <file id="now-next" x="(dir,df)(prop,nx-next)-modified(loop,fiq,@post)"/>
+            
+            <call_job job="do-modo">
+              <file id="dm-from" x="(file,now)"/>
+              <file id="dm-to" x="(file,now-next)"/>
+              <file id="dm-mod" x="(dir,df)(prop,nx-next)-modificator.xrs"/>
+            </call_job>
+            <file id="stat_modified" x="(file,now-next)"/>
+            
+            <prop id="did-sign" x="1"/>
+            
+            <prop id="nx" x="(prop,nx-next)"/>
+            <file id="now" x="(file,now-next)"/>            
+  
+          </loop>
+         
+          <loop_xml 
+            act="close" 
+            id="sm"/>    
+
+        </loop>
+       
+        <loop_xml 
+          act="close" 
+          id="sf"/>          
+      
+      </when>    
+    </when>    
+    <!-- 
+    <ti label="XXXXX" test="0">(loop,fiq,@post2) sign=(prop,did-sign)</ti>
+    <when test="(f,not,(prop,did-sign))">   
+      <when test="(f,has_flag,xrj ljx xrs lsx xsl,(loop,fiq,@post2))">
+        <ti label="YYYYYY" test="0"/>   
+        <prop id="nx-next" x="(f,add,1,(prop,nx))"/>
+        <file id="now-next" x="(dir,df)(prop,nx-next)-readwrite(loop,fiq,@post)"/>
+        
+        <read_write 
+          file="(file,now)" 
+          tofile="(file,now-next)"/>      
+        
+        <prop id="nx" x="(prop,nx-next)"/>
+        <file id="now" x="(file,now-next)"/>  
+      </when>   
+    </when>
+     -->
+     
+    <!-- effective blurry -->
+    <prop id="did-blurry" x="0"/>
+    <ti test="(prop,conf_debug)">file-has-spirit=(prop,file-has-spirit)   prod_allow_blurry=(prop,prod_allow_blurry)</ti>
+    <when test="(f,and,(prop,file-has-spirit),(prop,prod_allow_blurry))">
+    
+        <call_job job="apply-modifications-of-spirit">
+          <prop id="amos-id">blurry</prop>
+          <prop id="amos-key">blurry</prop>
+        </call_job>
+            
+    </when>   
+    
+    <!-- effective prodconf -->
+    <prop id="did-prodconf" x="0"/>
+    <ti test="(prop,conf_debug)">file-has-spirit=(prop,file-has-spirit)   prod_allow_prodconf=(prop,prod_allow_prodconf)</ti>
+    <when test="(f,and,(prop,file-has-spirit),(prop,prod_allow_prodconf))">
+    
+        <call_job job="apply-modifications-of-spirit">
+          <prop id="amos-id">prodconf</prop>
+          <prop id="amos-key">prodconf</prop>
+        </call_job>
+            
+    </when>         
+    
+    
+    <!-- closing me -->
+    <when test="(prop,file-has-spirit)">
+      <spirit id="me" act="close"/>
+    </when>    
+    
+
+  
+    <when test="(f,and,(prop,do-final-date),(f,has_flag,xrj ljx xrs lsx,(loop,fiq,@post2)))">
+        
+        <prop id="rt">(f,file_content,(file,now))</prop>
+                                               
+        <prop id="fd-searcher">(e:o)f(e:s)gt_num(e:s)(e:o)f(e:s)time(e:s)yyyyMMdd(e:c)(e:s)30000101(e:c)</prop>
+        
+        <prop id="fd-replacer">(e:o)f(e:s)gt_num(e:s)(e:o)f(e:s)time(e:s)yyyyMMdd(e:c)(e:s)(prop,prod_ablaufdatum)(e:c)</prop>
+        
+        <prop id="number-of-found-dates">(f,count_text,(prop,rt),(prop,fd-searcher))</prop>
+        
+        <when test="(f,gt,(prop,number-of-found-dates),0)">
+          <prop id="total-fd-replacements">(f,add,(prop,total-fd-replacements),(prop,number-of-found-dates))</prop>
+          <prop id="total-fd-replacements-history">(prop,total-fd-replacements-history) (prop,number-of-found-dates) x in [(loop,fiq)]
+</prop>
+          <tk type="msg" test="0">hat (prop,fd-searcher)</tk>
+          <prop id="rt">(f,replace,(prop,rt),(prop,fd-searcher),(prop,fd-replacer))</prop>
+          
+          <prop id="nx-next" x="(f,add,1,(prop,nx))"/>
+          <file id="now-next" x="(dir,df)(prop,nx-next)-finaldate(loop,fiq,@post)"/>
+          
+          <create_file out="(file,now-next)" >(prop,rt)</create_file>
+          
+          
+          <file id="stat_final" x="(file,now-next)"/>
+          <prop id="stat_hist">(prop,stat_hist)final </prop>
+          
+          <prop id="nx" x="(prop,nx-next)"/>
+          <file id="now" x="(file,now-next)"/>  
+          
+          <prop id="count-timed">(f,add,1,(prop,count-timed))</prop>
+                  
+        </when>     
+           
+      
+    </when>    
+    
+    <prop id="should-do-productname">0</prop>
+    
+    <when test="(f,and,(prop,do-prodname),(f,has,prop,filepd_include))">   
+      <when test="(f,has_flag,(prop,filepd_include),(loop,fiq))">
+         <prop id="should-do-productname">1</prop>
+      </when>
+    </when>  
+    
+    <choose>
+      <when test="(prop,should-do-productname)">
+        <!-- <ti>doing product name</ti>  -->
+        
+        <prop id="rt">(f,file_content,(file,now))</prop>
+                                               
+        <prop id="fd-searcher">[[pdname]]</prop>
+        
+        <prop id="fd-replacer">(prop,prod_productname)</prop>
+        
+        <prop id="number-of-found-productnames">(f,count_text,(prop,rt),(prop,fd-searcher))</prop>
+        
+        <when test="(f,gt,(prop,number-of-found-productnames),0)">
+          <prop id="total-pd-replacements">(f,add,(prop,total-pd-replacements),(prop,number-of-found-productnames))</prop>
+          <prop id="total-pd-replacements-history">(prop,total-pd-replacements-history) (prop,number-of-found-productnames) x in [(loop,fiq)]
+</prop>
+          <tk type="msg" test="0">hat (prop,fd-searcher)</tk>
+          <prop id="rt">(f,replace,(prop,rt),(prop,fd-searcher),(prop,fd-replacer))</prop>
+          
+          <prop id="nx-next" x="(f,add,1,(prop,nx))"/>
+          <file id="now-next" x="(dir,df)(prop,nx-next)-productname(loop,fiq,@post)"/>
+          
+          <create_file out="(file,now-next)" >(prop,rt)</create_file>
+          
+          
+          <file id="stat_product" x="(file,now-next)"/>      
+          <prop id="stat_hist">(prop,stat_hist)product </prop>
+          
+          <prop id="nx" x="(prop,nx-next)"/>
+          <file id="now" x="(file,now-next)"/>  
+          
+          <prop id="count-prodname">(f,add,1,(prop,count-timed))</prop>
+                  
+        </when>          
+        
+      </when>
+      <otherwise>
+        <!-- 
+        <ti>doing NOt product name 
+        (prop,do-prodname) (f,has,prop,filepd_include)
+        (prop,filepd_include) (loop,fiq)
+        </ti>      -->
+      </otherwise>
+    
+    </choose>
+ 
+<!--
+  <when test="(f,has,prop,fileig_exclude)">
+    <ti label="Excluding Files : (prop,pro)"/>
+    <ti label="Requested to Exclude" x="(prop,fileig_exclude)"/>
+    <loop id="sx" xml="(file,sx)" xpath="file">
+    
+    		<when test="(f,has_flag,(prop,fileig_exclude),(loop,sx))">
+        
+        
+  
+  <loop id="fiq" xml="(file,fiq)" xpath="file">
+    <ti_hr test="0"/>
+    <dir id="df" x="(dir,doku-f)(loop,fiq)"/>
+    <mkdir dir="(dir,df)"/>  
+    <prop id="stat_hist"></prop>
+    <prop id="nx" x="0"/>
+    <file id="now" x="(loop,fiq,@fn)"/>
+    <file id="stat_original" x="(file,now)"/>        
+-->   
+      
+    <when test="(f,or,(prop,do-encrypt),(prop,do-encrypt-xsl))">
+    
+      <prop id="do-encrypth-this" x="0"/>
+      <prop id="this-encryption-a-job" x="0"/>
+      
+      <choose>
+      
+        <when test="(f,and,(prop,do-encrypt),(f,has_flag,xrj ljx,(loop,fiq,@post2)))">
+          <!-- jobs immer encrypten -->
+          <prop id="do-encrypth-this" x="1"/> 
+          <prop id="this-encryption-a-job" x="1"/>
+        </when>  
+        
+        <when test="(f,and,(prop,do-encrypt-xsl),(f,has_flag,xsl,(loop,fiq,@post2)))"> 
+          <!-- xsl -->
+          <when test="(f,not,(f,has_flag,(prop,noxsl_files),(loop,fiq)))"> 
+            <!-- xsl nur verschluesseln wenn nicht in der exclude-liste -->
+            <prop id="do-encrypth-this" x="1"/>
+            <prop id="this-encryption-a-job" x="0"/>
+            <ti test="(prop,conf_debug)">dieses xsl schon</ti> 
+          </when>         
+
+        </when>              
+      
+      </choose>
+      
+      <ti test="0">prop do-encrypth-this=(prop,do-encrypth-this) this-encryption-a-job=(prop,this-encryption-a-job)</ti>
+      
+    
+      
+      <when test="(prop,do-encrypth-this)">
+        
+
+        
+        <prop id="nx-next" x="(f,add,1,(prop,nx))"/>
+        <file id="now-next" x="(dir,df)(prop,nx-next)-encrypted(loop,fiq,@post)"/>
+        
+        <choose>
+          <when test="(prop,this-encryption-a-job)">
+            <crypto id="scrypt" act="encrypt" from="(file,now)" to="(file,now-next)"/>
+            <!-- <ti type="file" label="HU-from">(file,now)</ti>
+            <ti type="file" label="HU-to">(file,now-next)</ti>   -->
+          </when>
+          <otherwise>
+            <crypto id="scrypt_xsl" act="encrypt" from="(file,now)" to="(file,now-next)"/>
+          </otherwise>
+        </choose>
+        
+         
+        <ti label="Encrypted" type="file" x="(file,now-next)" test="0"/>     
+        <file id="stat_encrypted" x="(file,now-next)"/>
+        <prop id="stat_hist">(prop,stat_hist)crypto </prop>
+        <prop id="nx" x="(prop,nx-next)"/>
+        <file id="now" x="(file,now-next)"/>      
+      
+      </when>
+     
+
+      <!-- 
+      
+    <ti type="rec" label="final copy">
+      <ti type="file" x="(file,now)"/>
+      <ti type="file" x="(dir,prod_target)(loop,fiq)"/>
+    </ti>      
+      <when test="(f,has_flag,xrj ljx xsl,(loop,fiq,@post2))"> 
+        <when test="(f,not,(f,has_flag,(prop,noxsl_files),(loop,fiq)))"> 
+          <prop id="nx-next" x="(f,add,1,(prop,nx))"/>
+          <file id="now-next" x="(dir,df)(prop,nx-next)-encrypted(loop,fiq,@post)"/>
+          
+          <crypto id="scrypt" act="encrypt" from="(file,now)" to="(file,now-next)"/> 
+          <ti label="Encrypted" type="file" x="(file,now-next)"/>     
+          
+          <prop id="nx" x="(prop,nx-next)"/>
+          <file id="now" x="(file,now-next)"/>  
+        </when>
+      </when> 
+      -->    
+    </when>
+    
+      <ti type="rec" laybel="  ">
+      <ti flag="wrap">(prop,stat_hist) </ti>
+      <ti type="file">(f,vob,file,stat_original)</ti>
+        <ti type="file">(f,vob,file,stat_reformated)</ti>
+        <ti type="file">(f,vob,file,stat_modified)</ti>
+        <ti type="file">(f,vob,file,stat_blurry)</ti>
+        <ti type="file">(f,vob,file,stat_prodconf)</ti>
+        <ti type="file">(f,vob,file,stat_final)</ti>
+        <ti type="file">(f,vob,file,stat_product)</ti>
+        <ti type="file">(f,vob,file,stat_encrypted)</ti>
+        <ti type="file" x="(dir,prod_target)(loop,fiq)" test="(f,exists_file,(dir,prod_target)(loop,fiq))"/>
+        
+      </ti>    
+                                          
+    <choose>
+      <when test="(f,not,(f,has,prop,do-encrypth-this))">
+        <prop id="real-filename">(loop,fiq)</prop>
+      </when>
+      <when test="(f,and,(prop,do-encrypth-this),(prop,prod_encrypted_rename))">
+        <prop id="real-filename">(loop,fiq,@pre)-encrypted(loop,fiq,@post)</prop>
+      </when>
+      <otherwise>
+        <prop id="real-filename">(loop,fiq)</prop>
+      </otherwise>
+    </choose>
+    <ti label=" " type="rec">
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+      <ti>(f,html,b,o)(prop,real-filename)(f,html,b,c)</ti>
+    </ti>
+
+    <ti test="0">(file,now) ==&gt; (dir,prod_target)(loop,fiq)</ti>
+    <!-- <copy file="(f,file,classic,(file,now))" tofile="(f,file,classic,(dir,prod_target)(loop,fiq))"/> -->
+    <file id="some" x="(dir,filetemp)(f,random_text,3)"/>
+   
+    <copy file="(f,file,classic,(file,now))"
+          tofile="(f,file,classic,(dir,prod_target)(prop,real-filename))" 
+          tofileOld="(f,file,classic,(dir,prod_target)(loop,fiq))" 
+          flag="hard"
+          test="(f,has,dir,prod_target)"/>
+    <!--      
+    <copy file="(f,file,classic,(file,now))" 
+          tofile="(f,file,classic,(dir,prod_target2)(prop,real-filename))" 
+          tofileOld="(f,file,classic,(dir,prod_target2)(loop,fiq))"
+          flag="hard"
+          test="(f,has,dir,prod_target2)"/>   -->       
+    
+    <!-- <create_file out="(file,some)">(f,file_content,(file,now))</create_file> -->
+    <ti type="file" x="(file,some)" test="0"/>
+     
+  </loop>  
+  
+  <!-- blurry close-->
+  <when test="(prop,prod_allow_blurry)">
+    <spirit id="blurry"
+            act="close"/>
+  </when>   
+  
+  <!-- prodconf close-->
+  <when test="(prop,prod_allow_prodconf)">
+    <spirit id="prodconf"
+            act="close"/>
+  </when>  
+  
+  <!-- pruefe anzahl final dates-->
+  <when test="(prop,do-final-date)">
+    <when test="(f,not,(f,eq_num,(prop,total-fd-replacements),(prop,prod_total_count_ablaufdatum)))">
+      <prop id="fd-problem-msg">Problem with final-date-replacements!
+The expected number of replacements was not fullfilled.
+Expected:  (prop,prod_total_count_ablaufdatum)
+Effective: (prop,total-fd-replacements)
+Protocoll: 
+(prop,total-fd-replacements-history)</prop>
+      <ti label="Problem"/>
+      <ti>(prop,fd-problem-msg)</ti>
+      <throw>(prop,fd-problem-msg)</throw>    
+    </when>
+
+  </when>
+  
+  <!-- pruefe anzahl productname-->
+  <when test="(prop,do-prodname)">
+    <when test="(f,not,(f,eq_num,(prop,total-pd-replacements),(prop,prod_total_count_productname)))">
+      <prop id="pd-problem-msg">Problem with productname-replacements!
+The expected number of replacements was not fullfilled.
+Expected:  (prop,prod_total_count_productname)
+Effective: (prop,total-pd-replacements)
+Protocoll: 
+(prop,total-pd-replacements-history)</prop>
+      <ti label="Problem"/>
+      <ti>(prop,pd-problem-msg)</ti>
+      <throw>(prop,pd-problem-msg)</throw>    
+    </when>
+
+  </when>  
+
+
+  <crypto id="scrypt" act="close"  test="(prop,do-encrypt)"/>  
+  <crypto id="scrypt_xsl" act="close"  test="(prop,do-encrypt-xsl)"/>        
+  
+
+  <ti_break/>                                                    
+  <when test="(prop,do-encrypt)">
+    
+    <file id="ai" x="(dir,prod_target)app-info.xml" />
+    <choose>
+      <!-- <when test="(f,or,(f,exists_file,(dir,prod_target)_00_boot.ljx),(f,exists_file,(dir,prod_target)_00_boot-encrypted.ljx))" > -->
+      <when test="(prop,prod_is_services)">
+      
+        <ti>it was the services ...</ti>
+        
+        <create_file file="(dir,prod_target)topsecret.txt" >yes</create_file>
+        
+        <!--
+         <create_file file="(dir,prod_target2)topsecret.txt" test="(f,has,dir,prod_target2)">yes</create_file> -->
+        <!--<create_file file="(dir,prod_target)app-info.xml" >&lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;app-info role="user"flag="encrypted"/&gt;</create_file>
+        -->
+      </when>    
+      <!-- <when test="(f,exists_file,(file,ai))"> -->
+      <otherwise>
+        <ti>it was an application ...</ti>
+        <choose>
+          <when test="(f,exists_file,(file,ai))">
+            <spirit id="ai" file="(file,ai)" act="open" missing_strategy="empty"/>
+            <!-- 
+            <prop id="ai-flag" x="(f,spirit,ai,@flag)"/>
+            <spirit id="ai" act="xml_update" how="set_attribute" where="."
+              attribute="flag" value="(prop,ai-flag) encrypted"/>  -->
+            <spirit id="ai" act="xml_update" how="set_attribute" where="."  
+              value=""
+              attribute="sort"
+              flag="remove"/>  
+            <spirit id="ai" flag="save" act="close"/>
+            <!--
+            <when  test="(f,has,dir,prod_target2)">
+              <file id="ai" x="(dir,prod_target2)app-info.xml" />
+              <spirit id="ai" file="(file,ai)" act="open" missing_strategy="empty"/>
+              <prop id="ai-flag" x="(f,spirit,ai,@flag)"/>
+              <spirit id="ai" act="xml_update" how="set_attribute" where="."
+                attribute="flag" value="(prop,ai-flag) encrypted"/>
+              <spirit id="ai" flag="save" act="close"/>        
+            </when>        -->
+          </when>
+          <otherwise>
+            <throw>This is supposed to be an application(e:s) but there is no app-info.xml file</throw>
+          </otherwise>
+        </choose>
+      </otherwise>
+      <!-- 
+      <otherwise>
+        <ti>Have been looking for 'app-info.xml' or '_00_boot.ljx' but didnt find it.
+So we dont know wheter htis is a service or an application</ti>
+        <ti type="dir" label="Searched in" x="(dir,prod_target)"/>
+        
+        <throw>not services - not an application - WHAT IS IT?</throw>
+     
+      </otherwise>        -->
+    </choose>
+  </when>
+  
+  <file id="sx">(dir,filetemp)app-backup-scanSxN.xml</file>
+  <scan out="(file,sx)" dir="(dir,appi_from_app)" level_limit="1" field="fn" flag="app_no_pro"/>
+  <ti label="AppScan" x="(file,sx)" type="file"/> 
+
+  
+  <when test="(f,has,prop,fileig_exclude)">
+    <ti label="Excluding Files : (prop,pro)"/>
+    <ti label="Requested to Exclude" x="(prop,fileig_exclude)"/>
+    <loop id="sx" xml="(file,sx)" xpath="file">
+    
+    		<when test="(f,has_flag,(prop,fileig_exclude),(loop,sx))">
+          <prop id="del-file-plain-exists">(f,exists_file,(dir,prod_target)(loop,sx))</prop>
+          <delete file="(dir,prod_target)(loop,sx)"/>
+          <file id="delencrypt">(dir,prod_target)(f,substring_before,(loop,sx),.)-encrypted.(f,substring_after,(loop,sx),.)</file>
+          <prop id="del-file-crypt-exists">(f,exists_file,(file,delencrypt))</prop>
+          <delete file="(file,delencrypt)" test="(prop,del-file-crypt-exists)"/>
+    			<ti label="Did exclude File" type="rec">
+            <ti test="(prop,del-file-plain-exists)">(loop,sx)</ti>
+            <ti test="(f,not,(prop,del-file-plain-exists))"></ti>
+            <ti test="(prop,del-file-crypt-exists)">(f,name_of_file,(file,delencrypt))</ti> 
+            <ti test="(f,not,(prop,del-file-crypt-exists))"></ti>  
+          </ti>  
+    		</when>    
+    
+    </loop>  
+  </when>
+  
+  
+  <when test="(f,has,prop,prod_file_filter)">
+    <ti label="Applied FileFilters:"/>
+    <when test="(f,has_flag,(prop,prod_file_filter),web-services)">
+      <ti  label="Not-WebServices-Typicals">alles AUSSER [api-.*] [jack] [jil] und [_web-.*]</ti>
+
+      <delete files_of_dir="(dir,prod_target)">
+          <except>
+            <file name_regex="api-.*"  ext_regex="(e:o)xrj|ljx(e:c)" level_eq="1"/>
+            
+            <file name_regex="jack.*"  ext_regex="(e:o)xrj|ljx(e:c)" level_eq="1"/>
+            <file name_regex="jil.*"  ext_regex="(e:o)xrj|ljx(e:c)" level_eq="1"/>
+            <file name_regex="_web-.*" ext_regex="(e:o)xrj|ljx(e:c)" level_eq="1"/> 
+            <file base_equals="topsecret.txt" level_eq="1"/>
+          </except>    
+      </delete>
+ 
+    </when>     
+    
+    <when test="(f,has_flag,(prop,prod_file_filter),web-prefixed)">
+      <ti  label="_web-.*">alles service-files die definiv zum web gehoeren</ti>
+
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file name_regex="_web-.*"  ext_regex="(e:o)xrj|ljx(e:c)" level_eq="1"/> 
+          </select>    
+      </delete>
+ 
+    </when>      
+    
+    
+    <when test="(f,has_flag,(prop,prod_file_filter),computers)">
+   
+      <ti  label="Computers">Computerdefinitionen als konfigurationsdaten oder generierten daten</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file base_regex="computer-.*"  level_eq="1"  ext_regex="(e:o)xrj|ljx(e:c)"/>
+            <file base_regex="check-computers-onstart.*" level_eq="1"  ext_regex="(e:o)xrj|ljx(e:c)"/>
+ 
+          </select>    
+      </delete>
+    </when>  
+    
+    <when test="(f,has_flag,(prop,prod_file_filter),online-login)">
+   
+      <ti  label="Online-Login-Tools">zz-online-adapter.xrj</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file base_regex="zz-online-adapter.*" level_eq="1"  ext_regex="(e:o)xrj|ljx(e:c)"/> 
+          </select>      
+      </delete>
+    </when>       
+    
+    
+     
+    <when test="(f,has_flag,(prop,prod_file_filter),license)">
+      <ti  label="LICENSE.XML">einfach dieses eine file</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file base_equals="LICENSE.XML" level_eq="1"/>  
+          </select>    
+      </delete>
+    </when>      
+
+    <when test="(f,has_flag,(prop,prod_file_filter),jar-top)">
+      <ti  label="jar-files on top-level">alle *.jar auf oberster ebene</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file ext_regex="jar" level_eq="1"/>  
+          </select>    
+      </delete>
+    </when>   
+        
+    <when test="(f,has_flag,(prop,prod_file_filter),java-top)">
+      <ti  label="java-files on top-level">alle *.java auf oberster ebene</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file ext_regex="java" level_eq="1"/>  
+          </select>    
+      </delete>
+    </when>    
+    
+    <when test="(f,has_flag,(prop,prod_file_filter),class-top)">
+      <ti  label="classs-files on top-level">alle *.class auf oberster ebene</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file ext_regex="class" level_eq="1"/>  
+          </select>    
+      </delete>
+    </when>       
+    
+    <when test="(f,has_flag,(prop,prod_file_filter),jar-all)">
+      <ti  label="jar-files on all levels">alle *.jar auf allen ebenen</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file ext_regex="jar" />  
+          </select>    
+      </delete>
+    </when>   
+        
+    <when test="(f,has_flag,(prop,prod_file_filter),java-top)">
+      <ti  label="java-files on all levels">alle *.java auf allen ebenen</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file ext_regex="java" />  
+          </select>    
+      </delete>
+    </when>    
+    
+    <when test="(f,has_flag,(prop,prod_file_filter),class-top)">
+      <ti  label="classs-files on all levels">alle *.class auf allen ebenen</ti>
+      <delete files_of_dir="(dir,prod_target)">
+          <select>
+            <file ext_regex="class" />  
+          </select>    
+      </delete>
+    </when>       
+    
+  </when>      
+      <!--
+      <when test="(f,has,dir,prod_target2)">
+        <ti label="apply filter 2" type="dir" x="(dir,prod_target2)"/>
+        <delete files_of_dir="(dir,prod_target2)">
+            <except>
+              <file base_regex="_web.+"  level_eq="1"/>
+              <file base_equals="api-panorama.ljx" level_eq="1"/>
+              <file base_equals="api-compare.ljx" level_eq="1"/>
+              <file base_equals="static-project-prolog.xrs" level_eq="1"/>
+              <file base_equals="topsecret.txt" level_eq="1"/>
+              <file base_equals="jack-joe-jil.ljx" level_eq="1"/>
+            </except>    
+        </delete>    
+      </when>
+      -->
+  
+    
+  <!-- rename if encrypted -->
+  <when test="(prop,do-scramble)">
+    <ti_break/>
+    <ti label="Scrambling jobfile-names : (prop,pro)"/>
+    <file id="sx2">(dir,filetemp)app-backup-scanSx2.xml</file>
+    <scan out="(file,sx2)" dir="(dir,prod_target)" level_limit="1" field="fn" flag="app_no_pro"/>    
+    <unique id="jobfile" act="open" style="xml_attribute" />
+    <ti type="file" test="0">(file,sx2)</ti>
+    <loop id="rename" xml="(file,sx2)" xpath="file">
+    
+      <when test="(f,or,(f,ends_with,(loop,rename),-encrypted.xrj),(f,ends_with,(loop,rename),-encrypted.ljx))">
+        <prop id="online-sorter">A</prop>
+        <prop id="online-sorter" test="(f,ends_with,(loop,rename),online-adapter-encrypted.xrj)">B</prop>
+        <prop id="new-name">(f,unique,jobfile,(prop,online-sorter)(f,random_text,16,ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz))-encrypted.xrj</prop>            
+        <ti label="Renaming" type="rec">
+          <ti>(loop,rename)</ti>
+          <ti>&gt;&gt;</ti> 
+          <ti>(prop,new-name)</ti>
+        </ti>           
+        <!--    zu testzwecken wegen decrypt     -->
+        <copy file="(loop,rename,@fn)" tofile="(dir,prod_target)(prop,new-name)"/>
+        <delete file="(loop,rename,@fn)"/>      
+      </when>
+    
+     </loop>                                                
+    
+    <unique id="jobfile" act="close" />
+  </when>
+
+ <ti_break/> 
+    <ti label="Excluding Dirs : (prop,pro)"/>
+    <ti label="Requested to Exclude" x="(prop,dirig_exclude)"/>  
+    
+ 
+
+  <loop id="sx" xml="(file,sx)" xpath="dir">
+  	<choose>
+  		<when test="(f,contains,(loop,sx,@rpath),nobackup)">
+      
+  			<ti label="Forget dir" key=" because it contains 'nobackup'">(loop,sx,@ipath)</ti>
+  		</when>
+  		<when test="(f,starts_with,(loop,sx,@rpath),pro)">
+  			<i>Forget dir  (loop,sx,@ipath)</i>
+  		</when>
+  		<when test="(f,has_flag,(prop,dirig_exclude),(loop,sx,@ipath))">
+  			<ti label="Forget dir" key=" because it is excluded">(loop,sx,@ipath)</ti>
+  		</when>      
+      
+  		<otherwise>
+  			<ti label="Copy dir">(loop,sx,@ipath)</ti>
+        <copy uri="(dir,appi_from_app)(loop,sx,@ipath)" touri="(dir,prod_target)(loop,sx,@ipath)"/>
+        <!--
+        <when  test="(f,has,dir,prod_target2)">
+          <copy uri="(dir,appi_from_app)(loop,sx,@ipath)" touri="(dir,prod_target2)(loop,sx,@ipath)"/>
+        </when>
+        -->
+ 
+  		</otherwise>
+  	</choose>	
+    
+
+  </loop>
+
+  <!--   
+  <when test="(prop,prod_del_jars)">
+    <ti label="delete jars 1" type="dir" x="(dir,prod_target)"/>
+    <delete files_of_dir="(dir,prod_target)">
+        <select>
+          <file ext_regex="(e:o)class|jar|java(e:c)"/>
+        </select>    
+    </delete>
+
+    <file id="qs" x="(dir,filetemp)xx.xml"/>
+    <quick_scan out="(file,qs)" dir="(dir,prod_target)" xlevel_limit="2"/>
+    <loop id="j" xml="(file,qs)" xpath="dir[@level=2]">
+      <when test="(f,ends_with,(loop,j,@rpath),-jar)">
+        <delete dir="(dir,prod_target)(loop,j,@ipath)"/>
+      </when>
+    </loop>
+    
+  </when>
+  -->
+  
+  
+  
+
+  <interpreter watch="1"/>
+  <file id="sxFinalCheck1">(dir,filetemp)scan-finalcheck1.xml</file>
+  <file id="sxFinalCheck2">(dir,filetemp)scan-finalcheck2.xml</file>  
+  <scan out="(file,sxFinalCheck1)" dir="(dir,prod_target)" level_limit="1" field="pre" flag="hidden"/>
+
+  <xslt 
+      xml="(file,sxFinalCheck1)" 
+      out="(file,sxFinalCheck2)"
+      xsl="(dir,app)calculate-expected-finals.xsl"/>
+      
+  <prop id="found_count_files">(f,xpath,(file,sxFinalCheck2),count_files)</prop>     
+  <prop id="found_count_dirs">(f,xpath,(file,sxFinalCheck2),count_dirs)</prop> 
+  <prop id="found_count_files_open">(f,xpath,(file,sxFinalCheck2),count_files_open)</prop> 
+  <ti label="Verifiying expeced result-counts"/>
+  <ti>Checking expeced number of files: (prop,prod_total_count_files)</ti>
+  <when test="(f,not,(f,eq_num,(prop,found_count_files),(prop,prod_total_count_files)))">      
+    <prop id="letzteMeldung">The number of expected files in the result does not match
+expected number of files = (prop,prod_total_count_files)
+found number of files = (prop,found_count_files)</prop>
+    <tk type="msg" msg_type="e">(prop,letzteMeldung)</tk> 
+    <throw>(prop,letzteMeldung)</throw>
+  </when>
+  <ti>OK</ti> 
+  
+  <ti>Checking expeced number of unencrypted files: (prop,prod_total_count_files_open)</ti>
+  <when test="(f,not,(f,eq_num,(prop,found_count_files_open),(prop,prod_total_count_files_open)))">      
+    <prop id="letzteMeldung">The number of expected unencrypted files in the result does not match
+expected number of unencrypted files = (prop,prod_total_count_files_open)
+found number of unencrypted files = (prop,found_count_files_open)</prop>
+    <tk type="msg" msg_type="e">(prop,letzteMeldung)</tk> 
+    <throw>(prop,letzteMeldung)</throw>
+  </when>
+  <ti>OK</ti>   
+  
+  <ti>Checking expeced number of dirs: (prop,prod_total_count_dirs)</ti>
+  <when test="(f,not,(f,eq_num,(prop,found_count_dirs),(prop,prod_total_count_dirs)))">      
+    <prop id="letzteMeldung">The number of expected dirs in the result does not match
+expected number of dirs = (prop,prod_total_count_dirs)
+found number of dirs = (prop,found_count_dirs)</prop>
+    <tk type="msg" msg_type="e">(prop,letzteMeldung)</tk> 
+    <throw>(prop,letzteMeldung)</throw>
+  </when>
+  <ti>OK</ti>  
+    
+   
+ 
+  
+  <ti x="(f,html,b,o)Produced Darkened App or Service(f,html,b,c)"/>
+  <ti label="Result in" type="dir" x="(dir,prod_target)"/>
+        <!--
+        <when  test="(f,has,dir,prod_target2)">
+          <ti label="Result2 in" type="dir" x="(dir,prod_target2)"/>
+        </when>
+        -->  
+  
+  <when test="(f,has,file,prod_target_zip)">
+
+      <zip  destfile="(file,prod_target_zip)"
+            basedir="(dir,prod_target)" />
+
+    <ti label="App Zip" type="file" x="(file,prod_target_zip)"/>
+  </when>
+  
+  <!--
+  <when test="(f,has,file,prod_target_zip2)">
+
+      <zip  destfile="(file,prod_target_zip2)"
+            basedir="(dir,prod_target)" />
+
+    <ti label="App Zip2" type="file" x="(file,prod_target_zip2)"/>
+  </when>  -->
+  
+  <when test="(prop,prod_listed_zips)">
+    <file id="myt" x="(dir,temp)vorbereitet.zip"/>
+
+  
+    <loop id="e" xml="(file,exportfiles)" xpath="exportfile">
+      <prop id="f" x="(loop,e,@file)"/>
+      <unescape id="f" type="prop"/> 
+      <translate id="f" type="prop"/>
+      <tp>zipping to (prop,f)</tp>
+      
+      <zip  destfile="(prop,f)"
+            basedir="(dir,prod_target)" />
+            
+      <ti label="App Zip .(loop,e,#i)" type="file" x="(prop,f)"/>                
+    
+    </loop>
+
+
+    
+  </when>    
+  
+  <!-- <throw test="(f,eq_num,(prop,count-timed),0)">Not timed insert 30000101</throw> -->
+  <spirit id="all" act="close" />
+  
+  <print id="messages" out="(dir,mfiletemp)messages.txt" act="close"/>
+  <prop id="messages">(f,file_content,(file,messages))</prop>
+  <when test="(f,has,prop,messages)">
+      <tk label="Messages from Arc-App-Dark: (prop,pro)">
+      <tk type="msg" label="Messages">(prop,messages)</tk>
+      </tk>
+      <ti_hr/>
+      <ti label="Messages from Arc-App-Dark: (prop,pro)"/>
+      <ti>(prop,messages)</ti>
+      <remove id="messages" type="prop"/>
+  </when>
+
+</job>
+
+
+<job id="apply-modifications-of-spirit" role="hidden">
+<need>(prop,amos-id)</need>
+<need>(prop,amos-key)</need>
+       <loop_xml 
+          act="open" 
+          id="bf" 
+          spirit="(prop,amos-id)" 
+          xpath="file2[@thefile=(f,xpath_string,(loop,fiq))]"/>
+        
+        <loop 
+          id="while-bf" 
+          while="()(f,loop_xml,bf,has_next?)()">
+          
+          <loop_xml act="next" id="bf" />
+          
+          <prop id="blurry-on-file">0</prop>
+          <choose>
+            <when test="(f,eq_num,(f,loop_xml,bf,@prob),0)">
+              <prop id="blurry-on-file">0</prop>
+            </when>
+            <when test="(f,eq_num,(f,loop_xml,bf,@prob),100)">
+              <prop id="blurry-on-file">1</prop>
+            </when>    
+            <when test="(f,lt_num,(f,random,1,100),(f,loop_xml,bf,@prob))">
+              <prop id="blurry-on-file">1</prop>
+            </when>                        
+          </choose> 
+          <ti test="(prop,conf_debug)">(prop,amos-key)-on-file = (prop,blurry-on-file)</ti>
+          <when test="(prop,blurry-on-file)">
+          
+            <loop_xml 
+              act="open" 
+              id="sm" 
+              spirit="(prop,amos-id)" 
+              xpath="file2[@thefile=(f,xpath_string,(loop,fiq))]/modo2"
+              missing_strategy="empty"/>
+    
+            <loop 
+              id="while-sm" 
+              while="()(f,loop_xml,sm,has_next?)()">
+              <loop_xml act="next" id="sm" /> 
+              
+              <prop id="this-current-probability">(f,loop_xml,sm,@prob)</prop>
+              <unescape id="this-current-probability" type="prop" />
+              <translate id="this-current-probability" type="prop" />
+              
+              <prop id="blurry-on-mod">0</prop>
+              <choose>
+                <when test="(f,eq_num,(prop,this-current-probability),0)">
+                  <prop id="blurry-on-mod">0</prop>
+                </when>
+                <when test="(f,eq_num,(prop,this-current-probability),100)">
+                  <prop id="blurry-on-mod">1</prop>
+                </when>    
+                <when test="(f,lt_num,(f,random,1,100),(prop,this-current-probability))">
+                  <prop id="blurry-on-mod">1</prop>
+                </when>                        
+              </choose>          
+              <remove id="this-current-probability" type="prop" />     
+              <ti test="(prop,conf_debug)">(prop,amos-key)-on-mod = (prop,blurry-on-mod)</ti>
+              <when test="(prop,blurry-on-mod)">
+                <prop id="nx-next" x="(f,add,1,(prop,nx))"/> 
+                
+                <ti type="rec" >
+                  <ti x="(f,html,bold,open)(f,name_of_file,(loop,fiq,@fn))(f,html,bold,close)" flag="block"/>
+                  <ti x="Relevant fuer (f,html,b,o)(prop,amos-key)(f,html,b,c)" />
+                  <ti type="dir" x="(dir,df)"/>
+                </ti>
+                   
+                <ti label="(prop,amos-key):  (prop,nx) &gt; (prop,nx-next)" x="(f,loop_xml,sm,@how):(f,loop_xml,sm,@where) - (f,name_of_file,(loop,fiq,@fn))" flag="label_right"
+                key=""/>  
+                
+                <prop id="stat_hist">(prop,stat_hist)(prop,amos-key) </prop>    
+                
+                <file id="now-next" x="(dir,df)(prop,nx-next)-(prop,amos-key)(loop,fiq,@post)"/>
+                
+                <call_job job="do-modo">
+                  <file id="dm-from" x="(file,now)"/>
+                  <file id="dm-to" x="(file,now-next)"/>
+                  <file id="dm-mod" x="(dir,df)(prop,nx-next)-(prop,amos-key).xrs"/>
+                </call_job>             
+                
+                <file id="stat_(prop,amos-key)" x="(file,now-next)"/>
+                
+                <prop id="did-(prop,amos-key)" x="1"/>
+                
+                <prop id="nx" x="(prop,nx-next)"/>
+                <file id="now" x="(file,now-next)"/>                            
+              </when>
+    
+            </loop>
+           
+            <loop_xml 
+              act="close" 
+              id="sm"/>   
+                        
+          </when>
+        
+    
+
+        </loop>
+       
+        <loop_xml 
+          act="close" 
+          id="bf"/>      
+      
+</job>
+
+
+</jobs>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="folder-see">
+<need>(prop,folder_key)</need>
+<call_job job="folder-read"/>
+<prop x="print print_only" id="folders_tk_control"/>
+<prop id="label" x="Folder: (f,html,bold,open)(prop,folder_name)(f,html,bold,close)(f,when,(f,has,(prop,folders_offset_label)), - (prop,folders_offset_label),)"/>
+<call_job job="folder-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="[ ? ]" align="right" job="folder-see-more">
+<prop id="folder_key">(prop,folder_key)</prop>
+<file id="folders">(file,folders)</file>
+<prop id="folders_offset">(prop,folders_offset)</prop>
+<prop id="folders_offset_label">(prop,folders_offset_label)</prop>
+<prop id="folders_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="folders_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="folders_sort_number">(prop,folders_sort_number)</prop>
+<prop id="folders_where">(prop,folders_where)</prop>
+<prop id="folders_return_job">(prop,folders_return_job)</prop>
+</ti>
+<ti flag=" block" type="call_job" explain="[ Edit ]" job="folder-edit">
+<prop id="folder_key">(prop,folder_key)</prop>
+<file id="folders">(file,folders)</file>
+<prop id="folders_offset">(prop,folders_offset)</prop>
+<prop id="folders_offset_label">(prop,folders_offset_label)</prop>
+<prop id="folders_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="folders_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="folders_sort_number">(prop,folders_sort_number)</prop>
+<prop id="folders_where">(prop,folders_where)</prop>
+<prop id="folders_return_job">(prop,folders_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti isFromAction="1" type="call_job" page="details" explain="Copy" job="action_copy_folder">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">copy</prop>
+<prop page="details" id="folder_key">(prop,folder_key)</prop>
+<file id="folders">(file,folders)</file>
+<prop id="folders_offset">(prop,folders_offset)</prop>
+<prop id="folders_offset_label">(prop,folders_offset_label)</prop>
+<prop id="folders_offset_new_key">(prop,folders_offset_new_key)</prop>
+<prop id="folders_sort_attribute">(prop,folders_sort_attribute)</prop>
+<prop id="folders_sort_number">(prop,folders_sort_number)</prop>
+<prop id="folders_where">(prop,folders_where)</prop>
+<prop id="folders_return_job">(prop,folders_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+</job>

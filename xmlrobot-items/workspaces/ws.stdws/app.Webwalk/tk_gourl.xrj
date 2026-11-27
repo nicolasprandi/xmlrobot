@@ -1,0 +1,156 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+
+-->
+<call_job job="prolog" />
+
+
+
+<!-- setting the default-values -->
+<job id="tk_gourl_default" role="hidden">
+  <need default="http://www.nicolas.at">(prop,gourl_u1)</need>
+  <need default="https://www.xmlrobot.net">(prop,gourl_u2)</need>
+  <need default="1">(prop,gourl_dest)</need>
+</job>
+
+
+<!-- gourl-core, make your changes here -->
+<job id="tk_gourl_core" role="hidden" tip="gourl_: Tk Internal">
+
+  <need default="">(prop,tk_gourl_add_flag)</need>
+
+  <tk label="Goto Url" 
+      flag="(prop,tk_gourl_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+    <tk id="gourl_dest"
+        type="sel"  
+        label="Destination" 
+        test_first="0"  flag="nono"      >
+        <sel >1</sel>
+        <sel>2</sel>
+        <sel>3</sel>   
+        <sel>4</sel>   
+        <sel>5</sel>
+        <sel>none</sel>                               
+    </tk>  
+    
+    <tk id="gourl_u1" 
+        type="text" 
+        label="Destination 1"      
+        test_first="0"              
+        tip="()eg http://www.nicolas.at()"/>
+    <tk id="gourl_u2" 
+        type="text" 
+        label="Destination 2"     
+        test_first="0"               
+        tip="()eg http://www.nicolas.at()"/>
+    <tk id="gourl_u3" 
+        type="text" 
+        label="Destination 3"   
+        test_first="0"                 
+        tip="()eg http://www.nicolas.at()"/>
+    <tk id="gourl_u4" 
+        type="text" 
+        label="Destination 4"      
+        test_first="0"              
+        tip="()eg http://www.nicolas.at()"/>
+    <tk id="gourl_u5" 
+        type="text" 
+        label="Destination 5"     
+        test_first="0"               
+        tip="()eg http://www.nicolas.at()"/>   
+        
+    <tk id="gourl_docu" 
+        type="textblock" 
+        label="Docu"     
+        test_first="0"               
+        tip="()eg http://www.nicolas.at()"/>                                         
+  
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_gourl_edit" tip="gourl_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,gourl-data))">
+      <!-- data exists already -->
+      <prop id="tk_gourl_add_flag" x="sum_only print"/>
+      <call_job job="tk_gourl_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_gourl_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_gourl_default"/>
+  <!-- doing input -->
+  <call_job job="tk_gourl_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_gourl_write"/>
+
+</job>
+
+
+
+<job id="tk_gourl_print_values" tip="gourl_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_gourl_read"/>
+  
+  <call_job job="tk_gourl_core">
+    <prop id="tk_gourl_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_gourl_print_values_tips" tip="gourl_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_gourl_read"/>
+  
+  <call_job job="tk_gourl_core">
+    <prop id="tk_gourl_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_gourl_print_help" tip="gourl_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_gourl_core">
+    <prop id="tk_gourl_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_gourl_read" role="hidden">
+  <call_job job="go-joe-read">
+    <prop id="joe-in-regex" x="(prop,gourl-regex)" />  
+    <file id="joe-in-store" x="(file,gourl-data)" />
+  </call_job>
+  <call_job job="tk_gourl_default"/>
+  
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_gourl_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,gourl-data)" />
+    <prop id="joe-in-regex" x="(prop,gourl-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_gourl_clear"  tip="gourl_: Clears the data" role="hidden">
+  <delete file="(file,gourl-data)"/>
+</job>
+
+
+</jobs>

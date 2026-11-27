@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="file-write">
+<need>(prop,file_key) (prop,isAdd)</need>
+<spirit act="open" id="files_spirit_tc" xml="(file,files)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,files_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,files_offset),0,(f,sub,(f,len,(prop,files_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,files_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="files_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;file row="(prop,file_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="files_spirit_tc" where="(prop,files_offset)file[@row='(prop,file_key)']" attribute="thefile" value="(f,vob,prop,file_thefile)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="files_spirit_tc" where="(prop,files_offset)file[@row='(prop,file_key)']" attribute="off" value="(f,vob,prop,file_off)"/>
+<spirit act="close" flag="save pretty" id="files_spirit_tc"/>
+</job>

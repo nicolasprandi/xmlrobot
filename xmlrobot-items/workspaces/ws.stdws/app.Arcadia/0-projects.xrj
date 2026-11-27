@@ -1,0 +1,222 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<job id="create-new-pro-index" role="hidden">
+  <delete file="(file,pro-list)"/>
+  <call_job job="list-projects"/>
+</job>
+
+<job id="list-projects" role="hidden">
+  <need default="">(prop,path-extender)</need>
+  <need default="0">(prop,read-always)</need>
+  
+  <call_job job="connect"/>
+  <!-- <ti type="file" x="(file,pro-list)" key="(prop,path-extender)"/>  -->
+   
+  <choose>
+    <when test="(f,or,(f,not,(f,exists_file,(file,pro-list))),(prop,read-always))">
+      <tp>reading project-list from github ...</tp>
+      <xrghub  
+              act="list" 
+              out="(file,pro-list)"
+              path="project-items(prop,path-extender)"
+              level="2"
+              flag="folderOnly"/>      
+    </when>
+    <otherwise>
+
+      <ti type="call_job" job="create-new-pro-index" label=" " 
+        explain="This is a reused project-index(e:s) to get the newest one click here ..."/>
+    </otherwise>
+  </choose>
+    
+   <spirit id="list" xml="(file,pro-list)" act="open"/>
+   <loop_xml 
+      act="open" 
+      id="app" 
+      spirit="list" 
+      xpath="dir"/> 
+   <prop id="has-workspaces" x="0"/>
+   <loop 
+      id="while-app" 
+      while="()(f,loop_xml,app,has_next?)()">
+      <loop_xml act="next" id="app" />
+      <choose>
+      
+        <when test="(f,eq_text,(f,loop_xml,app,@name),workspaces)">
+          <!-- <ti>Workspaces ...</ti> -->
+          <prop id="has-workspaces" x="1"/>
+        </when>
+        <otherwise>
+          <ti label="(f,loop_xml,app,@name)"/>
+        
+         <loop_xml 
+            act="open" 
+            id="pro" 
+            spirit="list" 
+            xpath="dir[@name=(f,xpath_string,(f,loop_xml,app,@name))]/dir"/> 
+         <loop 
+            id="while-pro" 
+            while="()(f,loop_xml,pro,has_next?)()">
+            <loop_xml act="next" id="pro" />
+            <ti label=" " x="(f,loop_xml,pro,@name)" type="call_job" job="install-project"
+              explain="(f,loop_xml,pro,@name)">
+              <prop id="pro-path" x="(f,loop_xml,pro,@path)"/>
+              <prop id="pro-name" x="(f,loop_xml,pro,@name)"/>
+              <prop id="app-name" x="(f,loop_xml,app,@name)"/>
+              
+            </ti>     
+         </loop>
+         
+         <loop_xml 
+            act="close" 
+            id="pro" />         
+        </otherwise>
+      
+      </choose>
+
+                
+   </loop>
+ 
+   <when test="(prop,has-workspaces)">
+    <ti_hr/>
+    <ti label="Workspaces"/>
+    <!-- <interpreter watch="1"/> -->
+    <file id="ws-list" x="(dir,temp)workspaces.xml"/>
+         <xrghub  
+              act="list" 
+              out="(file,ws-list)"
+              path="project-items(prop,path-extender)/workspaces"
+              level="2"
+              flag="folderOnly"/> 
+      <loop id="ws" xml="(file,ws-list)" xpath="dir">
+            <ti>
+            <ti type="call_job" job="list-projects" explain="(loop,ws,@name)" label=" ">
+              <file id="pro-list" x="(dir,temp)(f,time)(f,random,0,64).xml"/>
+              <prop id="path-extender" x="(prop,path-extender)/workspaces/(loop,ws,@name)" />
+              <prop id="read-always" x="1" />
+              <ti label="(loop,ws,@name)" />
+            </ti>
+            </ti>
+            
+              
+  
+  
+      </loop>
+   </when>
+   
+   <loop_xml 
+      act="close" 
+      id="app" />           
+   
+   <spirit id="list" act="close"/>    
+    
+      
+
+ 
+           
+</job>
+<job id="install-project" role="hidden">
+   <need>(prop,pro-path)</need>
+   <need>(prop,pro-name)</need>
+   <need>(prop,app-name)</need>
+   <tk label="(prop,pro-name) / (prop,app-name)">
+   <tk type="msg" x="Continue with installation of '(prop,pro-name)'"/>
+   </tk>
+   
+   <dir id="mybase" x="(dir,workspace)"/>
+   <prop id="myflag" x="sum"/>
+   <when test="(f,starts_with,(prop,app-name),app.)">
+    <try_catch>
+      <try>
+        <dir id="my-app-dir" x="(f,ask,pro_home,(f,substring_after,(prop,app-name),.))"/>
+        <dir id="mypro" x="(dir,my-app-dir)(prop,pro-name)"/>
+        <choose>
+          <when test="(f,exists_dir,(dir,mypro))">
+            <tk type="msg" x="A project '(prop,pro-name)' of app '(prop,app-name)' exists already. We are going to take that ..." msg_type="w"/>
+            <dir id="new-pro" x="(dir,mypro)"/>
+            <prop id="myflag" x="sum_only"/>
+          </when>
+          <otherwise>
+            <tk type="msg" x="A project '(prop,pro-name)' does not yet exist. It will be created ..." msg_type="w"/>
+            <dir id="new-project" x="(dir,my-app-dir)(prop,pro-name)"/>
+            <!-- <mkdir dir="(dir,new-project)"/> -->
+            <dir id="new-pro" x="(dir,new-project)"/>
+            <prop id="myflag" x="sum_only"/>
+          </otherwise>
+        </choose>
+        
+      </try>
+      <catch>
+        <tk type="msg" x="The app '(prop,app-name)' was not found. Select your own project-folder ..." msg_type="w"/>
+        <dir id="mybase" x="(dir,workspace)"/>
+      </catch>
+    </try_catch>   
+    
+   </when>
+   
+   <tk label="Installing '(prop,pro-name)'" flag="(prop,myflag)">
+    <tk type="dir" id="new-pro" label="New project-folder" tip="This will be the new project-folder for pro '(prop,pro-name)' of app '(prop,app-name)'"
+        base="(dir,mybase)"/>
+   </tk>
+   
+   <dir id="downloaded-pro" x="(dir,temp)(prop,pro-name)"/>
+   <call_job job="connect"/>
+   <call_job job="caf">
+    <prop id="caf-path" x="(prop,pro-path)"/>
+    <dir id="caf-target" x="(dir,downloaded-pro)"/>
+    <dir id="caf-retry" x="1"/>
+  </call_job>
+  
+  <call_service job="copy-new">  
+    <dir id="cn-target" x="(dir,new-pro)"/>
+    <dir id="cn-from-dir" x="(dir,downloaded-pro)"/>
+    <prop id="cn-report" x="1"/>
+    <prop id="cn-perform-when-copied"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+  <ti>app=(prop,app-name) pro=(prop,pro-name)</ti>
+  <restart app="(f,substring_after,(prop,app-name),.)" pro="(f,substring_after,(prop,pro-name),.)"/>
+</steps>]]></prop>
+  </call_service>  
+
+    
+  
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

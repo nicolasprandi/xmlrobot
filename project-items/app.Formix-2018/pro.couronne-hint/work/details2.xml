@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="hint-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="hints_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,hints_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="hint-see">
+<prop id="hint_key">(prop,hint_key)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="hint-see-all">
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,hint_key)</need>
+<call_job job="hint-read"/>
+<prop id="hint_default_label_class" x="(prop,_sl_hint)"/>
+<prop id="hint_default_label_name" x="(f,text,cut_nice,(prop,hint_name),25)(f,when,(f,has,(prop,hints_offset_label)), - (prop,hints_offset_label),)"/>
+<call_job job="hint-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailHint" explain="(prop,_x_edit)" job="hint-edit">
+<prop id="hint_key">(prop,hint_key)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,hints_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="hint-see">
+<prop id="hint_key">(prop,hint_key)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="hint-see-all">
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

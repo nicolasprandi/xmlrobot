@@ -1,0 +1,805 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="mv-create-int-para-file" role="hidden">
+
+  <call_job job="tk_mvc_read" />
+  <prop id="mat-stil-incog">(f,eq_text,incog,(prop,mvc_style))</prop>
+  
+  <throw test="(f,not,(f,exists_file,(file,mv-report-sql)))">no file  (file,mv-report-sql)</throw>
+  
+                                      
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)gui/create-mv-defs-4-integration.xml" />
+        <prop id="joe-in-regex" x="mv-defs" />
+      </call_job>              
+      <tk flag="(f,when,(f,exists_file,(file,joe-in-store)),sum_only,sum)">                                        
+      <tk type="file" id="mv-defs" flag="nono write save" label="File to create.v1"
+      x="(dir,pro)mv-defs-4-integration.xml" x2="(dir,pro)mv-defs-4-integration.xml" />
+      </tk>
+      
+      <call_job job="go-joe-write"/>
+  <ti>view_prefix='(prop,mvc_prefix_view)'  mv_prefix='(f,vob,prop,mvc_prefix)' mv_style='(prop,mvc_style)'</ti>
+    
+          <call_job job="-db-open-"/>
+                    
+      <dbc id="(prop,mydbc)"
+        out="(file,mv-report-result)"
+        style="a"
+        act="select"
+        root_name="objects"
+        row_name="object"    
+        flag="trim">(f,file_content,(file,mv-report-sql))</dbc>  
+    
+      <call_job job="-db-close-"/>
+      <ti type="file" test="1" label="mv-report-sql">(file,mv-report-sql)</ti>                                             
+      <ti type="file" test="1" label="mv-report-result">(file,mv-report-result)</ti> 
+      <ti type="file" test="1" label="vok">(dir,repo)vok.xml</ti> 
+      <print id="mvd" out="(file,mv-defs)" act="open"/> 
+      
+      <print id="mvd" act="println">&lt;mvdefs&gt;</print>
+      
+      <spirit act="open" id="vok" file="(dir,repo)vok.xml"/>
+      <loop id="object" xml="(file,mv-report-result)" xpath="object[@ok='1']" >
+        <print id="mvd" act="print">&lt;mvdef obj_typ=&quot;(x,(f,spirit,vok,//ot[@tech_name=(f,xpath_string,(loop,object,@obj_tech_name))],@obj_typ))&quot; table=&quot;(x,(loop,object,@mv_name))&quot; view=&quot;(f,vob,prop,mvc_prefix_view)2_</print>
+        <ti>table=(loop,object,@mv_name)  obj_typ=(f,spirit,vok,//ot[@tech_name=(f,xpath_string,(loop,object,@obj_tech_name))],@obj_typ)</ti>
+        <prop id="cur-obj-typ">(f,spirit,vok,//ot[@tech_name=(f,xpath_string,(loop,object,@obj_tech_name))],@obj_typ)</prop>
+        <choose>
+          <when test="(f,eq_text,name,(prop,mvc_style))">
+            <print id="mvd" act="print">(x,(loop,object,@obj_tech_name))</print>
+          </when>
+          <otherwise>
+            <print id="mvd" act="print">_(x,(f,spirit,vok,//ot[@tech_name=(f,xpath_string,(loop,object,@obj_tech_name))],@obj_typ))</print>
+          </otherwise>
+        
+        </choose>
+        
+        <print id="mvd" act="print">&quot; cols=&quot;</print>
+        <!-- <ti label="(prop,cur-obj-typ)"/>  -->
+        <loop id="au" spirit="vok" xpath="aus/au[@obj_typ='(prop,cur-obj-typ)']" >
+           <!-- <ti x="(loop,au,@attr)"/> -->
+           <choose>
+            <when test="(f,eq_text,name,(prop,mvc_style))">
+              <print id="mvd" act="print">(e:s) (x,(loop,au,@attr))</print>
+            </when>
+            <otherwise>
+              <print id="mvd" act="print">(e:s) _(x,(loop,au,@attr_typ))</print>
+            </otherwise>
+          
+          </choose>              
+        </loop>
+        
+        <print id="mvd" act="println">&quot; /&gt;</print>
+      </loop>
+      <print id="mvd" act="println">&lt;/mvdefs&gt;</print>
+      <print id="mvd" act="close"/>
+      <ti type="file" label="Created">(file,mv-defs)</ti>
+      <spirit act="close" id="vok" />
+      
+
+
+</job>
+
+<job id="mv-run" role="hidden">
+  <need>(file,sr-file)</need>
+  <need>(prop,sr-label)</need>
+  <need>(prop,sr-select-update)</need> 
+  <need default="0">(prop,sr-use-print-limit)</need>
+    
+  <call_job job="tk_limit_read"/>
+
+  <file id="sr-out" x="(dir,filetemp)(f,name_of_file2,(file,sr-file))-result.csv"/>
+  <!-- <prop id="sr-cmd" x="(f,file_content,(file,sr-file))"/> -->
+  
+  <try_catch>
+    <try>    
+      
+  <call_job job="-db-open-"/>
+  <!-- valli   
+  <prop id="dbci-gleiches">mva__</prop>
+  <prop id="dbc-gleiches">mv</prop>
+  
+        <dbc id="(prop,dbc-gleiches)"
+          how="dbci"
+          dbci="(prop,dbci-gleiches)"
+          dbci_app="Hibiscus"          
+          act="open"/> --> 
+          
+          <!--(prop,dbc-gleiches)  -->
+                
+      <loop id="us" xml="(file,sr-file)" xpath="node(e:o)(e:c)">
+        <!-- <ti label="#(loop,us,#i):(loop,us,$name)">(loop,us)</ti>  -->
+        <choose>
+          <when test="(f,eq_text,u,(loop,us,$name))">
+            <choose prodconf="nosql_mv_u_choose">
+              <when test="(prop,do-nosql)" prodconf="nosql_mv_u_do">
+                <!-- sql wird NICHT durchgefuehrt, nosql -->
+                <call_job job="do-nosql">
+                  <prop id="nosql-label">Materialized View</prop>
+                  <prop id="nosql-explain">(loop,us,#i)/(loop,us,#max)</prop>
+                  <prop id="nosql-sql">(loop,us)</prop>
+                  <file id="nosql-result-csv"></file>  
+                  <prop id="nosql-limit"></prop> 
+                  <prop id="nosql-act">update</prop> 
+                </call_job>    
+              </when>
+              
+              <otherwise prodconf="nosql_mv_u_dont">                                
+                <dbc id="(prop,mydbc)"
+                      act="update">(loop,us)</dbc>                  
+              </otherwise>
+            
+            </choose>          
+ 
+          </when>
+          <otherwise>
+          
+            <choose prodconf="nosql_mv_s_choose">
+              <when test="(prop,do-nosql)" prodconf="nosql_mv_s_do">
+                <!-- sql wird NICHT durchgefuehrt, nosql -->
+                <call_job job="do-nosql">
+                  <prop id="nosql-label">Materialized View</prop>
+                  <prop id="nosql-explain">(loop,us,#i)/(loop,us,#max)</prop>
+                  <prop id="nosql-sql">(loop,us)</prop>
+                  <file id="nosql-result-csv">(file,sr-out)</file>  
+                  <prop id="nosql-limit">(f,when,(f,eq_text,select,(prop,sr-select-update)),(prop,sql_limit_mv),99999)</prop> 
+                  <prop id="nosql-act">select</prop> 
+                </call_job>    
+              </when>
+              
+              <otherwise  prodconf="nosql_mv_s_dont">
+                <dbc id="(prop,mydbc)"
+                      act="select"
+                      limit="(f,when,(f,eq_text,select,(prop,sr-select-update)),(prop,sql_limit_mv),99999)"
+                      flag="trim "
+                      out="(file,sr-out)"
+                      style="c">(loop,us)</dbc>                 
+              </otherwise>
+            
+            </choose>     
+
+          </otherwise>
+        </choose>
+                
+      </loop>
+      <!--  valli
+      <dbc id="(prop,dbc-gleiches)"            
+          act="commit"/>
+      <dbc id="(prop,dbc-gleiches)"            
+          act="close"/>      -->
+      <call_job job="-db-commit-"/>
+          
+      <prop id="sql-was-ok">1</prop>      
+    </try>
+    <catch>
+      <prop id="sql-was-ok">0</prop>
+      <prop id="sql_catched_msg" x="(prop,catched_msg)"/>
+      <!-- <dbc id="(prop,dbc-gleiches)"            
+          act="close" flag="catch"/> -->
+               
+    </catch>
+  </try_catch>
+
+  
+  
+  <choose>
+    <when test="(prop,sql-was-ok)">
+      <ti label="(prop,sr-label) - OK"/>
+      <ti label="(prop,_mv_sql_did)" type="file" x="(file,sr-file)" flag="naked"/>
+     
+      <when test="(f,exists_file,(file,sr-out))">
+        <!--  <ti x="(file,sr-out)" type="file" label="(prop,_mv_sql_result)" />    -->
+        <ti_hr_break/>     
+        
+        <call_service job="fps">
+          <file id="fps-file">(file,sr-out)</file>      
+          <choose>
+            <when test="(prop,sr-use-print-limit)">
+              <prop id="fps-limit">(f,add,1,(prop,sql_limit_print))</prop>
+            </when>
+            <otherwise>
+              <prop id="fps-limit">989</prop>
+            </otherwise>
+          </choose>          
+        </call_service>
+        <!--       
+        <ti flag="html" x="&lt;font face=&quot;Courier&quot;&gt;(f,escape,_htmlb,(f,file_content,(file,sr-out),UTF-8))&lt;font&gt;" />
+        -->
+            
+      </when>
+    </when>
+    <otherwise>
+      <ti label="(prop,sr-label) - (prop,_mv_sql_problem)"/>   
+      <ti label="(prop,_mv_sql_did)" type="file" x="(file,sr-file)" flag="naked" />
+      <ti label="(prop,_mv_sql_msg)">(prop,sql_catched_msg)</ti>
+   
+    </otherwise>
+  </choose>
+  
+
+
+</job>
+
+
+<!--
+                <ti type="call_job" job="mv-refresh-all-ok" explain="(prop,_mv_wrd_refresh)">
+                </ti>
+                <ti></ti>   
+                <ti></ti>                          
+                <ti type="call_job" job="mv-create-all-ok" explain="(prop,_mv_wrd_re-create)">
+                </ti>
+                <ti></ti> <ti></ti>  
+                <ti type="call_job" job="mv-delete-all-ok" explain="(prop,_mv_wrd_delete)">
+-->
+<job id="mv-refresh-all-ok" role="hidden">
+  <throw test="(f,not,(f,right,mv))">Diese Funktion der Materialized Views mit diesen Privilegien nicht moeglich bpMatPlus</throw>
+  <call_job job="tr_mat"/>
+  <tk type="msg" msg_type="w">(prop,_mv_sure_refresh_all)</tk>
+
+     <loop id="object" xml="(file,mv-report-result)" xpath="object[@ok=(f,xpath_string,1)]" sort="@ok @obj_tech_name" number="@ok" desc="@ok" ignore_case="@obj_tech_name">
+      <tp>(loop,object,#i)/(loop,object,#max) (loop,object,@obj_tech_name)</tp>
+         <call_job job="mv-refresh">        
+              <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              <prop id="mv-do-reporting">0</prop>
+         </call_job>
+         <tp flag="ok">(loop,object,@obj_tech_name)</tp>
+     </loop>  
+
+  <ti_break_hr/>
+
+  <call_job job="mv-list"/> 
+</job>
+
+<job id="mv-create-all-ok" role="hidden">
+  <throw test="(f,not,(f,right,mv))">Diese Funktion der Materialized Views mit diesen Privilegien nicht moeglich</throw>
+  <call_job job="tr_mat"/>
+  <tk type="msg" msg_type="w">(prop,_mv_sure_recreate_all)</tk>
+
+     <loop id="object" xml="(file,mv-report-result)" xpath="object[@ok=(f,xpath_string,1)]" sort="@ok @obj_tech_name" number="@ok" desc="@ok" ignore_case="@obj_tech_name">
+      <tp>(loop,object,#i)/(loop,object,#max) (loop,object,@obj_tech_name)</tp>
+         <call_job job="mv-create">        
+              <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              <prop id="mv-do-reporting">0</prop>
+         </call_job>
+         <tp flag="ok">(loop,object,@obj_tech_name)</tp>
+     </loop>  
+     
+  <ti_break_hr/>
+  
+  <call_job job="mv-list"/>      
+
+</job>
+
+<job id="mv-create-all-neg" role="hidden">
+  <throw test="(f,not,(f,right,mv))">Diese Funktion der Materialized Views mit diesen Privilegien nicht moeglich</throw>
+  <call_job job="tr_mat"/>
+  <tk type="msg" msg_type="w">(prop,_mv_sure_create_all)</tk>
+
+     <loop id="object" xml="(file,mv-report-result)" xpath="object[@ok=(f,xpath_string,0)]" sort="@ok @obj_tech_name" number="@ok" desc="@ok" ignore_case="@obj_tech_name">
+      <tp>(loop,object,#i)/(loop,object,#max) (loop,object,@obj_tech_name)</tp>
+         <call_job job="mv-create">        
+              <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              <prop id="mv-do-reporting">0</prop>
+         </call_job>
+         <tp flag="ok">(loop,object,@obj_tech_name)</tp>
+     </loop>  
+     
+  <ti_break_hr/>
+
+  <call_job job="mv-list"/>      
+
+</job>
+
+<job id="mv-delete-all-ok" role="hidden">
+  <throw test="(f,not,(f,right,mv))">Diese Funktion der Materialized Views mit diesen Privilegien nicht moeglich</throw>
+  <call_job job="tr_mat"/>
+  <tk type="msg" msg_type="w">(prop,_mv_sure_delete_all)</tk>
+
+  <tk type="msg" msg_type="w">(prop,_mv_sure_delete_all2)</tk>
+
+     <loop id="object" xml="(file,mv-report-result)" xpath="object[@ok=(f,xpath_string,1)]" sort="@ok @obj_tech_name" number="@ok" desc="@ok" ignore_case="@obj_tech_name">
+      <tp>(loop,object,#i)/(loop,object,#max) (loop,object,@obj_tech_name)</tp>
+         <call_job job="mv-delete">        
+              <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              <prop id="mv-do-reporting">0</prop>
+         </call_job>
+         <tp flag="ok">(loop,object,@obj_tech_name)</tp>
+     </loop>  
+     
+  <ti_break_hr/>
+
+  <call_job job="mv-list"/>      
+
+</job>
+
+<job id="mv-count" role="hidden">
+  <need>(prop,mv-object)</need>
+  <call_job job="tr_mat"/>
+  <call_job job="mv-run">
+    <file id="sr-file">(dir,fin-count)(prop,mv-object).xml</file>
+    <prop id="sr-label">(prop,_mv_wrd_count) mv (prop,mv-object)</prop>
+    <prop id="sr-select-update">select</prop>
+  </call_job>
+  <tp flag="ok">(prop,mv-object)</tp>
+  <ti_break_hr/>
+
+  <call_job job="mv-list"/>  
+</job>
+
+<job id="mv-select" role="hidden">
+  <need>(prop,mv-object)</need>
+  <call_job job="tr_mat"/>
+  <call_job job="mv-run">
+    <file id="sr-file">(dir,fin-select)(prop,mv-object).xml</file>
+    <prop id="sr-label">(prop,_mv_wrd_select) mv (prop,mv-object)</prop>
+    <prop id="sr-select-update">select</prop>
+    <prop id="sr-use-print-limit">1</prop>
+  </call_job>
+  <tp flag="ok">(prop,mv-object)</tp>
+  
+       <ti type="rec">
+        <ti type="call_job" job="limit-conf-called-by-mv" explain="(prop,_mv_wrd_limit) (e:o)Mat-View:(prop,sql_limit_mv)(e:s) Print:(prop,sql_limit_print)(e:c)" 
+            flag="button block" class="fx fxAction justgui "/>
+       </ti>
+      
+        
+  <ti_break_hr/>
+
+  <call_job job="mv-list"/>  
+    
+</job>
+
+<job id="limit-conf-called-by-mv" role="hidden">
+
+  
+  <call_job job="tk_limit_edit">
+    <prop id="edit-limit-and-print">0</prop>
+  </call_job>
+
+  <call_job job="_mat_views"/>
+  
+</job>
+
+<job id="mv-refresh" role="hidden">
+  <throw test="(f,not,(f,right,mv))">Diese Funktion der Materialized Views mit diesen Privilegien nicht moeglich</throw>
+  <need>(prop,mv-object)</need>
+  <need default="1">(prop,mv-do-reporting)</need>
+  <call_job job="tr_mat"/>
+  <call_job job="mv-run">
+    <file id="sr-file">(dir,fin-refresh)(prop,mv-object).xml</file>
+    <prop id="sr-label">(prop,_mv_wrd_refresh) mv (prop,mv-object)</prop>
+    <prop id="sr-select-update">update</prop>
+  </call_job>
+  <when test="(prop,mv-do-reporting)">
+    <tp flag="ok">(prop,mv-object)</tp>
+    <ti_break_hr/>
+
+    <call_job job="mv-list"/>
+  </when>
+</job>
+
+<job id="mv-create" role="hidden">
+  <throw test="(f,not,(f,right,mv))">Diese Funktion der Materialized Views mit diesen Privilegien nicht moeglich</throw>
+  <need>(prop,mv-object)</need>
+  <need default="1">(prop,mv-do-reporting)</need>
+  <call_job job="tr_mat"/>
+  <call_job job="mv-run">
+    <file id="sr-file">(dir,fin-create)(prop,mv-object).xml</file>
+    <prop id="sr-label">(prop,_mv_wrd_create) mv (prop,mv-object)</prop>
+    <prop id="sr-select-update">update</prop>
+  </call_job>
+  <when test="(prop,mv-do-reporting)">
+    <tp flag="ok">(prop,mv-object)</tp>
+    <ti_break_hr/>
+
+    <call_job job="mv-list"/>
+  </when>
+
+</job>
+
+<job id="mv-delete" role="hidden">
+  <throw test="(f,not,(f,right,mv))">Diese Funktion der Materialized Views mit diesen Privilegien nicht moeglich</throw>
+  <need>(prop,mv-object)</need>
+  <need default="1">(prop,mv-do-reporting)</need>
+  <call_job job="tr_mat"/>
+  <tk type="msg" msg_type="w" test="(prop,mv-do-reporting)">(prop,_mv_sure_delete_this)
+[ (prop,mv-object) ] 
+??</tk>
+  <call_job job="mv-run">
+    <file id="sr-file">(dir,fin-delete)(prop,mv-object).xml</file>
+    <prop id="sr-label">(prop,_mv_wrd_delete) mv (prop,mv-object)</prop>
+    <prop id="sr-select-update">update</prop>
+  </call_job>
+  <when test="(prop,mv-do-reporting)">
+    <tp flag="ok">(prop,mv-object)</tp>
+    <ti_break_hr/>
+
+    <call_job job="mv-list"/>
+  </when>
+
+</job>
+<job id="mv-list-all-ok" role="hidden">
+
+<when test="(f,right,mv)">
+    <ti> </ti>
+    <ti type="rec" label="- (prop,_mv_head_all) (prop,total-group-ok) -">
+      <ti test="(prop,mat-stil-incog)"> </ti>     
+      
+      <ti type="call_job" job="mv-refresh-all-ok" explain="(prop,_mv_wrd_refresh) +">
+      </ti>
+      <ti></ti>   
+      <ti></ti>                          
+      <ti type="call_job" job="mv-create-all-ok" explain="(prop,_mv_wrd_re-create) +">
+      </ti>
+      <ti></ti> 
+      <ti type="call_job" job="mv-delete-all-ok" explain="(prop,_mv_wrd_delete) +">
+      </ti>                
+    </ti> 
+</when>              
+</job>
+
+
+
+<job id="mv-list" role="hidden">
+
+  <call_job job="tk_mvc_read" />
+  <prop id="mat-stil-incog">(f,eq_text,incog,(prop,mvc_style))</prop>
+  <prop id="mvl-space">(f,when,(f,implement,online),4,3)px</prop>
+  
+
+  <!-- <dump_ti/> -->
+  
+  <choose>
+    <when test="(f,exists_file,(file,mv-report-sql))">
+              
+      <call_job job="-db-open-"/>
+                    
+      <dbc id="(prop,mydbc)"
+        out="(file,mv-report-result)"
+        style="a"
+        act="select"
+        root_name="objects"
+        row_name="object"    
+        flag="trim">(f,file_content,(file,mv-report-sql))</dbc>  
+    
+      <call_job job="-db-close-"/>                                            
+      <ti type="file" test="0">(file,mv-report-result)</ti> 
+      <prop id="did-print-group-ok">0</prop>
+      <prop id="did-print-group-not-ok">0</prop>
+      <prop id="total-group-ok">0</prop>
+      <prop id="total-group-neg">0</prop>
+
+      <ti_break class_table="tabLinklist" />  
+      
+      <loop id="object" xml="(file,mv-report-result)" xpath="object" sort="@ok @obj_tech_name" number="@ok" desc="@ok" ignore_case="@obj_tech_name">
+        <choose>
+          <!-- gruppenheader vorhandene -->
+          <when test="(f,and,(loop,object,@ok),(f,not,(prop,did-print-group-ok)))">
+            
+            <ti label="(prop,_mv_head_existing)"/>
+            <ti> </ti>
+            <prop id="did-print-group-ok">1</prop>
+          </when>
+          
+          <!-- gruppenheader nicht vorhandene -->
+          
+          <when test="(f,and,(f,not,(loop,object,@ok)),(f,not,(prop,did-print-group-not-ok)))">
+            <when test="(f,gt_num,(prop,total-group-ok),1)">
+
+              <call_job job="mv-list-all-ok"/>
+   
+                        
+            </when>
+            <ti> </ti>
+            <ti_hr/>
+            <ti label="(prop,_mv_head_neglected)"/>
+            <prop id="did-print-group-not-ok">1</prop>
+          </when>      
+         </choose>
+         
+         <prop id="total-group-ok" test="(loop,object,@ok)">(f,add,1,(prop,total-group-ok))</prop>
+         <prop id="total-group-neg" test="(f,not,(loop,object,@ok))">(f,add,1,(prop,total-group-neg))</prop>  
+         
+         <choose>
+          <when test="(loop,object,@ok)">
+            
+            <ti type="rec" 
+                label="(f,html,b,o)(loop,object,@mv_name)(f,html,b,c)">     
+              <ti test="(prop,mat-stil-incog)">(loop,object,@obj_tech_name)</ti>
+                                                        
+              <ti type="call_job" job="mv-refresh" explain="(prop,_mv_wrd_refresh)" test="(f,right,mv)">
+                <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              </ti>
+              <ti type="call_job" job="mv-count" explain="(prop,_mv_wrd_count)">
+                <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              </ti>   
+              <ti type="call_job" job="mv-select" explain="(prop,_mv_wrd_select)">
+                <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              </ti>                          
+              <ti type="call_job" job="mv-create" explain="(prop,_mv_wrd_re-create)" test="(f,right,mv)">
+                <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              </ti>              
+
+              <ti>(f,html,b,o)(loop,object,@obj_name)(f,html,b,c)</ti>      
+              <ti type="call_job" job="mv-delete" explain="(prop,_mv_wrd_delete)" test="(f,right,mv)">
+                <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              </ti>                        
+            </ti>                                              
+            <!-- <ti_space height="(prop,mvl-space)" />   -->   
+          </when>
+          <otherwise>
+            <ti type="rec" label="(f,html,b,o)(loop,object,@mv_name)(f,html,b,c)" xkey="(loop,object,#i)">   
+              <ti test="(prop,mat-stil-incog)">(loop,object,@obj_tech_name)</ti>  
+              <ti type="call_job" job="mv-create" explain="(prop,_mv_wrd_create)" test="(f,right,mv)">
+                <prop id="mv-object">(loop,object,@obj_tech_name)</prop>
+              </ti>                          
+              <ti test="(f,right,mv)"> </ti>
+              <ti test="(f,right,mv)"> </ti>
+              <ti test="(f,not,(f,right,mv))"> </ti>
+              <ti> </ti>
+              <ti>(f,html,b,o)(loop,object,@obj_name)(f,html,b,c)</ti> 
+              <ti> </ti>
+              
+              
+              <ti></ti>           
+            </ti>         
+            <!-- <ti_space height="(prop,mvl-space)" />  -->
+            
+          </otherwise>
+        </choose>
+
+        <!--                                                   
+        <ti type="call_job" job="Type-Of-Object" explain="(loop,typ,@name_plural)" key="(loop,typ,@obj_typ)" flag="no_arrow">
+          
+          <prop id="on-obj-typ" x="(loop,typ,@obj_typ)"/>
+          <prop id="on-obj-name-plural" x="(loop,typ,@name_plural)"/>
+          -->
+     
+      </loop>  
+      <when test="(f,eq_num,(prop,total-group-neg),0)">
+        <call_job job="mv-list-all-ok"/>
+      </when>
+      
+      <when test="(f,gt_num,(prop,total-group-neg),1)">
+
+
+        <ti type="rec" label="- (prop,_mv_head_missing) (prop,total-group-neg) -">     
+          <ti test="(prop,mat-stil-incog)"> </ti>
+                        
+          <ti type="call_job" job="mv-create-all-neg" explain="(prop,_mv_wrd_create) (prop,total-group-neg)+" test="(f,right,mv)">
+          </ti>
+          <ti></ti> <ti></ti>  
+          <ti></ti>                
+        </ti>    
+                        
+            </when>      
+      
+    </when>
+    <otherwise>   
+      <ti label="(prop,_mv_welc_head1)" flag="label_right">(prop,_mv_welc_head2)</ti>
+      <ti label=" " type="ul">(prop,_mv_welc_line1)</ti>
+      <ti label=" " type="ul">(prop,_mv_welc_line2)</ti>
+    </otherwise>  
+  </choose>
+  
+  <remove type="prop" id="mvl-space" />
+</job>
+
+<job id="_mat_views" role="hidden">
+  <throw test="(f,not,(f,role,expert))">Materialized Views mit diesen Privilegien nicht moeglich</throw>
+  
+   <call_job job="tr_mat"/>           
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec">
+    <ti type="call_job" job="mv-create-all-commands" explain="(prop,_mv_intro_create)"
+        align="right" />
+  </ti>  
+    
+        
+   <ti_hr_break/>     
+   <try_catch>
+   <try>     
+   <call_job job="mv-list" /> 
+   </try>
+   <catch>
+    <ti label="mv-list-error">(prop,catched_msg)</ti>
+   </catch>
+   </try_catch>
+     <ti_hr_break/> 
+    <call_job job="tk_mvc_print_values" test="(f,has,prop,pro)"/>    
+            
+    <ti type="menu" first_cell="2">
+    
+      <ti type="call_job" job="Mvc Conf" explain="(prop,_x_edit)" flag="button" class="fb fbEdit" />
+  
+      <ti type="call_job" job="Mvc Conf?" flag="button" class="fb fbAskAsk" explain="(prop,_label_askask)" />
+         
+    </ti>     
+   
+
+     <ti_hr style="2" /> 
+  
+      <ti type="call_job" job="mv-create-int-para-file" explain="Create Mv-Connector 4 Integration"
+          label=" "/>
+
+ 
+  
+</job>
+
+<job id="mv-create-all-commands" role="hidden">
+   
+  <!-- 
+  <choose>                                             
+    <when test="(prop,bpDb)" >   
+      <call_job job="tk_db_read_dbms">
+        <prop id="ask-user-for-dbms">1</prop>
+      </call_job>
+    </when>
+    <otherwise>
+      <prop id="db_dbms" prodconf="mv-statements">postgres</prop>
+      <prop id="2db_dbms" xtest="(f,has,prop,db_dbms)">(f,when,(f,eq_text,maria,(prop,db_dbms)),mysql,(prop,db_dbms))</prop>
+    </otherwise>
+  </choose> -->
+    <!--       -->
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)gui/mv-creator-dbms.xml" />
+        <prop id="joe-in-regex" x="db_dbms" />
+      </call_job>              
+      
+      
+      
+      
+
+    
+  <tk label="Create all mv-commands">
+  <tk id="db_dbms" type="sel" label="Dbms" flag="nono">
+    <sel>maria</sel>
+    <sel>mysql</sel>
+    <sel>postgres</sel>
+  </tk>
+  </tk>
+  <call_job job="go-joe-write"/>
+  
+  <prop id="2db_dbms">(f,when,(f,eq_text,maria,(prop,db_dbms)),mysql,(prop,db_dbms))</prop>
+    
+    
+  <!-- <prop id="db_dbms" prodconf="mv-statements">(prop,2db_dbms)</prop>   -->
+  <ti label="Using dbms=(prop,db_dbms)"/>
+   
+  <call_job job="tr_mat"/> 
+  <call_job job="tk_mvc_read"/>
+  
+  <ti_break class_table="tabNavigator" />        
+  <ti type="rec">
+  <ti align="right" x="(prop,_mv_intro_converting) (e:o)(prop,db_dbms)(e:c) mv_style=(prop,mvc_style) ..." />
+  </ti>      
+          
+  <prop id="gfx" x="0"/>
+  
+  <loop id="ot" xml="(dir,repo)vok.xml" xpath="ots/ot">
+    <tp>(loop,ot,#i) (loop,ot,@tech_name)</tp>
+    <prop id="gfx" x="(f,add,1,(prop,gfx))"/>
+    <when test="(f,right,mv)">
+      <xslt 
+        xml="(dir,repo)vok.xml" 
+        xsl="(dir,app)vok2f2.xsl" 
+        out="(dir,fin-create)(loop,ot,@tech_name).xml"                                    
+        home="(dir,app)">
+          <params>obj_typ='(f,xslp,(loop,ot,@obj_typ))'  dwh_prefix='' view_prefix='(f,xslp,(prop,mvc_prefix_view))'  mv_prefix='(f,xslp,(f,vob,prop,mvc_prefix))' mv_style='(prop,mvc_style)' dbms='(prop,2db_dbms)' obj_tech_name2='(f,xslp,(loop,ot,@tech_name))'</params>
+      </xslt>
+      
+      <xslt 
+        xml="(dir,repo)vok.xml" 
+        xsl="(dir,app)vok2refresh.xsl" 
+        out="(dir,fin-refresh)(loop,ot,@tech_name).xml"
+        home="(dir,app)">
+          <params>obj_typ='(f,xslp,(loop,ot,@obj_typ))'  dwh_prefix='' view_prefix='(f,xslp,(prop,mvc_prefix_view))'  mv_prefix='(f,xslp,(f,vob,prop,mvc_prefix))' mv_style='(prop,mvc_style)' dbms='(prop,2db_dbms)' obj_tech_name2='(f,xslp,(loop,ot,@tech_name))'</params>
+      </xslt>
+      
+      <xslt 
+        xml="(dir,repo)vok.xml" 
+        xsl="(dir,app)vok2delete.xsl" 
+        out="(dir,fin-delete)(loop,ot,@tech_name).xml"
+        home="(dir,app)">
+          <params>obj_typ='(f,xslp,(loop,ot,@obj_typ))'  dwh_prefix='' view_prefix='(f,xslp,(prop,mvc_prefix_view))'  mv_prefix='(f,xslp,(f,vob,prop,mvc_prefix))' mv_style='(prop,mvc_style)' dbms='(prop,2db_dbms)' obj_tech_name2='(f,xslp,(loop,ot,@tech_name))'</params>
+      </xslt>    
+    </when>
+    
+    <xslt 
+      xml="(dir,repo)vok.xml" 
+      xsl="(dir,app)vok2count.xsl" 
+      out="(dir,fin-count)(loop,ot,@tech_name).xml"
+      home="(dir,app)">
+          <params>obj_typ='(f,xslp,(loop,ot,@obj_typ))'  dwh_prefix='' view_prefix='(f,xslp,(prop,mvc_prefix_view))'  mv_prefix='(f,xslp,(f,vob,prop,mvc_prefix))' mv_style='(prop,mvc_style)' dbms='(prop,2db_dbms)' obj_tech_name2='(f,xslp,(loop,ot,@tech_name))'</params>
+    </xslt>       
+        
+    <xslt 
+      xml="(dir,repo)vok.xml" 
+      xsl="(dir,app)vok2select.xsl" 
+      out="(dir,fin-select)(loop,ot,@tech_name).xml"
+      home="(dir,app)">
+          <params>obj_typ='(f,xslp,(loop,ot,@obj_typ))'  dwh_prefix='' view_prefix='(f,xslp,(prop,mvc_prefix_view))'  mv_prefix='(f,xslp,(f,vob,prop,mvc_prefix))' mv_style='(prop,mvc_style)' dbms='(prop,2db_dbms)' obj_tech_name2='(f,xslp,(loop,ot,@tech_name))'</params>
+    </xslt>              
+    <tp>Did #(loop,ot,#i):(loop,ot,@tech_name)</tp>
+  </loop>
+  
+  
+    <xslt 
+      xml="(dir,repo)vok.xml" 
+      xsl="(dir,app)vok2mvreport.xsl" 
+      out="(file,mv-report-sql)"
+      home="(dir,app)">
+        <params>view_prefix='(f,xslp,(prop,mvc_prefix_view))'  mv_prefix='(f,xslp,(f,vob,prop,mvc_prefix))' mv_style='(prop,mvc_style)' dbms='(prop,2db_dbms)'</params>
+    </xslt>
+    
+   <ti label="(prop,_mv_intro_did_head)"/> 
+    <ti label="(prop,_mv_intro_did_nbr)" x="(prop,gfx)"/>
+    <ti label="(prop,_mv_intro_did_scripts)" type="dir">(dir,fin)</ti>
+    <ti label="(prop,_mv_intro_did_report)" type="file" test="0">(file,mv-report-sql)</ti>
+  <ti_break_hr/>    
+  <ti label="Die Erzeugung der Befehle wurde orndungsgemaess abgeschlossen"/>
+  <call_job job="mv-list" />
+
+</job>
+<!-- 
+<job id="mv-run" role="hidden">
+  <need>(file,sr-file)</need>
+  <need>(prop,sr-label)</need>
+  <need>(prop,sr-select-update)</need> 
+  
+  
+  
+  <call_job job="tk_limit_read"/>
+
+  <file id="sr-out" x="(dir,filetemp)(f,name_of_file2,(file,sr-file))-result.csv"/>
+  <prop id="sr-cmd" x="(f,file_content,(file,sr-file))"/>
+  
+  <call_job job="-db-open-trans-"/>
+ 
+  <try_catch>
+    <try>    
+    
+      <dbc id="(prop,mydbc)"
+
+        out="(file,sr-out)"
+        style="c"
+        act="(prop,sr-select-update)"
+        limit="(f,when,(f,eq_text,select,(prop,sr-select-update)),(prop,sql_limit_mv),99999)"
+        flag="trim " >(prop,sr-cmd)</dbc>  
+      <prop id="sql-was-ok">1</prop>
+    </try>
+    <catch>
+      <prop id="sql-was-ok">0</prop>
+      <prop id="sql_catched_msg" x="(prop,catched_msg)"/>
+    </catch>
+  </try_catch>
+
+  <call_job job="-db-close-"/>    
+
+
+  
+  <choose>
+    <when test="(prop,sql-was-ok)">
+      <ti x="(f,html,b,o)(prop,sr-label) - OK(f,html,b,c)"/>
+      <ti label="(prop,_mv_sql_did)" type="file" x="(file,sr-file)" />
+     
+      <when test="(f,exists_file,(file,sr-out))">
+         <ti x="(file,sr-out)" type="file" label="(prop,_mv_sql_result)" />
+        <ti_hr/>     
+        <ti flag="html" x="&lt;font face=&quot;Courier&quot;&gt;(f,escape,_htmlb,(f,file_content,(file,sr-out),UTF-8))&lt;font&gt;" />
+            
+      </when>
+    </when>
+    <otherwise>
+      <ti label="(prop,sr-label) - (prop,_mv_sql_problem)"/>   
+      <ti label="(prop,_mv_sql_did)" type="file" x="(file,sr-file)" />
+      <ti label="(prop,_mv_sql_msg)">(prop,sql_catched_msg)</ti>
+   
+    </otherwise>
+  </choose>
+  
+</job>
+
+-->
+</jobs>

@@ -1,0 +1,1325 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+
+<job id="call-convert-bulk-to-ms" role="hidden">
+   <file id="bulk-file"></file>
+   <file id="new-ims-file">(dir,pro)new-ims-file.xml</file> 
+   
+  <tk flag="print">
+   <tk type="file" id="bulk-file" flag="print"/>
+   <tk type="file" id="new-ims-file" flag="print"/>
+  </tk>
+     
+   <call_job job="convert-bulk-to-ims"/>
+</job>
+<job id="convert-bulk-to-ims" role="hidden">
+  <file id="naming" x="(dir,pro)gui/naming.xml"/>
+  <create_file file="(file,naming)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<sps>
+  <sp sn="1" name="PubBox"/>
+  <sp sn="2" name="PubObj"/>
+  <sp sn="3" name="PubAttr"/>
+  <sp sn="4" name="PubWert"/>
+  <sp sn="5" name="PubMehr"/>        
+  <sp sn="6" name="PubBez"/>
+  <sp sn="7" name="MigProduceMigs"/>
+  <sp sn="8" name="MigOptiEquals"/>
+  <sp sn="9" name="MigOptiCyles"/>
+  <sp sn="10" name="MigOptiDouble"/>       
+  <sp sn="11" name="MigSmart"/>
+  <sp sn="12" name="MigDoAttrMigs"/>
+  <sp sn="13" name="MigDoBezBMigs"/>
+  <sp sn="14" name="MigDoBezAMigs"/>
+  <sp sn="15" name="MigUntop"/>       
+  <sp sn="16" name="MigRemoveObjects"/>
+  <sp sn="17" name="HealRelations"/>
+  <sp sn="18" name="HealAttributes"/>
+  <sp sn="19" name="HealWert"/>
+  <sp sn="20" name="TopSolo"/>       
+  <sp sn="21" name="TopWerte"/>
+
+</sps>
+]]></create_file>
+
+  <spirit id="naming"
+          file="(file,naming)"
+          act="open"/>     
+  
+  <create_file file="(file,new-ims-file)">&lt;sps/&gt;</create_file>
+  <spirit id="ok"
+          file="(file,new-ims-file)"
+          act="open"/>           
+   <!--        
+   <ti type="file">(file,new-ims-file)</ti>       -->
+   <ti label="Going into analysing Selection-Update" />
+   <prop id="sumi"></prop>
+   <prop id="total">0</prop>
+   <prop id="total_selects"></prop>
+   
+   <dir id="queries-xdb">(f,dir_of_dir,(f,dir_of_dir,(f,dir_of_file,(file,bulk-file))))queries/</dir>
+   <ti label="Home of queries" type="dir">(dir,queries-xdb)</ti>
+   
+   <loop id="bulk" xml="(file,bulk-file)" xpath="bulk[@type='qu' or @type='qu_sqli']">      <!-- [@type='qu']
+   <interpreter watch="1" />
+   (dir,pro)xDb/             (dir,goMoon)               (dir,pro)xDb/         <ti>(loop,bulk,xml?)</ti> 
+    -->
+                  
+    
+    <prop id="sumi">(loop,bulk,#i)</prop>
+    <file id="source-queries">(dir,queries-xdb)(loop,bulk,@qu_file)/queries-list.xml</file>
+                                             
+                                             
+                                             
+    
+    <prop id="the-query">(f,xpath,(file,source-queries),squery[@row='(loop,bulk,@qu_row)'],@sql)</prop> 
+    <prop id="this-one-ok">0</prop>
+    <when test="(f,has,prop,the-query)">
+    
+    <when test="(f,starts_with,(loop,bulk,@name),sn=)">
+    <prop id="the-number">(loop,bulk,@name)</prop> 
+    <prop id="the-number">(f,substring_before,(prop,the-number),:)</prop> 
+    
+    <prop id="the-number" test="(f,not,(f,has,prop,the-number))">(loop,bulk,@name)</prop> 
+    
+    <prop id="the-number">(f,substring_after,(prop,the-number),sn=)</prop> 
+    <prop id="the-number" test="(f,eq_text,(prop,the-number),(loop,bulk,@name))"></prop> 
+    
+
+    <when test="(f,has,prop,the-number)">                
+      <try_catch><try>
+        <prop id="the-name">(f,spirit,naming,//sp[@sn='(prop,the-number)'],@name)</prop>
+        <prop id="my-name">(loop,bulk,@name)</prop>
+        <prop id="my-name">(f,substring_after,(prop,my-name),:)</prop>
+        <when test="(f,eq_text,(prop,my-name),(loop,bulk,@name))">
+          <prop id="my-name"></prop>
+        </when>
+        <prop id="this-one-ok">1</prop>
+        <ti label="(f,html,b,o)(prop,the-name)(f,html,b,c)" x="(f,html,b,o)#(prop,the-number) Accepted(f,html,b,c)"/>
+        <ti label=" ">(f,html,b,o)(loop,bulk,@name)(f,html,b,c) sn=(prop,the-number)</ti>
+        <!-- <ti label="accepted sn=(prop,the-number)">(prop,the-name) :: (loop,bulk,@name)</ti> 
+        <ti label=" ">(f,html,i,o)sn=(prop,the-number):(f,html,i,c)</ti>             -->
+        <ti label=" " flag="wide">(prop,the-query)</ti>   
+        <prop id="total">(f,add,1,(prop,total))</prop>  
+        <prop id="total_selects" x="(prop,total_selects)(prop,total)(e:c) (prop,the-name) #(prop,the-number)&#xA;" />
+        <spirit id="ok"
+                act="xml_update"
+                how="append">               
+                <inline attribute="with">&lt;sp sn=&quot;(x,(prop,the-number))&quot; 
+                (f,when,(f,has,prop,my-name),name=&quot;(f,x,(prop,my-name))&quot;,)
+                originalName=&quot;(x,(loop,bulk,@name))&quot;
+                sql=&quot;(x,(prop,the-query))&quot; /&gt;&#xA;</inline>
+                
+        </spirit>           
+        
+      </try>
+      <catch>
+        <ti label="Exception">(prop,catched_msg)</ti>
+      </catch>
+      </try_catch> 
+     </when>
+     </when>
+     
+     </when>
+     
+     <when test="(f,not,(prop,this-one-ok))">
+        <ti label="(f,html,b,o)!! rejected !!(f,html,b,c)">bulk with name &apos;(f,html,b,o)(loop,bulk,@name)(f,html,b,c)&apos;</ti>
+     </when> 
+   
+   </loop>
+  <spirit id="ok"
+          act="close" flag="save write"/>     
+          
+  <spirit id="naming"
+          act="close"/> 
+  <ti label="Analyzing Selection-Update done" />        
+  <ti label="total">(prop,total)</ti>           
+  <ti label="records found">(prop,sumi)</ti>
+<ti type="file" label="Updated Selects">(file,new-ims-file)</ti>  
+  <prop id="kick_confirm">(f,replace,(f,file_content,(file,new-ims-file)),&amp;#xA;,
+)</prop> 
+  <prop id="kick_confirm">(f,replace,(prop,kick_confirm),/&gt;,/&gt;
+)</prop>
+  <prop id="kick_confirm">(f,replace,(prop,kick_confirm),&lt;sps&gt;,&lt;sps&gt;
+)</prop> 
+ 
+ 
+  <ti>(prop,kick_confirm)</ti> 
+
+
+      <when test="(prop,ip_dokickconfirm)">  
+        <tk label="Replaced Selects: (prop,total) Select(f,plural,(prop,total),s)">
+        <tk type="msg" label="Selection Update to confirm">(prop,total_selects)
+(prop,kick_confirm)</tk>      
+        </tk>     
+      </when>
+    <remove id="kick_confirm" type="prop" />
+<ti_hr/>
+  <!--
+  <tk type="msg">replacing selects
+(f,file_content,(file,new-ims-file))</tk>     -->
+     
+</job>
+
+<job id="bulk-tk" role="hidden">
+<need default="">(prop,bulks_tk_control)</need>
+<choose>
+  <when test="(f,and,(f,has_flag,(prop,bulks_tk_control),print_only),(f,not,(f,has_flag,(prop,bulks_tk_control),print_all_fields)))">
+    <call_job job="bulk-tk-alternat"/>
+  </when>
+  <otherwise>
+    <call_job job="bulk-tk-plain"/>
+  </otherwise>
+</choose>
+
+</job>
+
+<job role="hidden" id="bulk-tk-alternat">
+<call_job job="tr_bulk"/>
+<need default="">(prop,bulks_tk_control)</need>
+<call_job job="bulk_event_tk_core"/>
+<when test="(f,has_flag,(prop,bulks_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,bulks_tk_control),print_all_fields)">
+<ti label="(prop,bulk_default_label_class): (prop,bulk_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,bulk_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,bulks_tk_control),print_only),,(prop,bulk_default_label_class)(f,when,(f,has,prop,bulk_default_label_name),: (prop,bulk_default_label_name),))" tip="(prop,_bulk_tip)" tk_id="28" flag="(prop,bulks_tk_control) wrap ">
+<tk label="(prop,_bulk_l_type)" id="bulk_type" x="" test_first="1" tip="(prop,_bulk_t_type)" type="sel" follow_job="bulk_follow_type" flag=" nono  dynamo ">
+<sel label="(prop,_bulk_s_typ_qu_sqli)">qu_sqli</sel>
+<sel label="(prop,_bulk_s_typ_qu)">qu</sel>
+<sel label="(prop,_bulk_s_typ_sqli)">sqli</sel>
+<sel label="Script">script</sel>
+</tk>
+<tk label="(prop,_bulk_l_name)" id="bulk_name" x="(f,time)" test_first="1" tip="(prop,_bulk_t_name)" type="text" cols="30" flag=" nono "/>
+<tk label="(prop,_bulk_l_doku)" id="bulk_doku" x="" test_first="0" tip="(prop,_bulk_t_doku)" type="textblock" cols="30" flag=" "/>
+<tk label="(prop,_bulk_l_bscript)" id="bulk_bscript" x="" test_first="0" tip="(prop,_bulk_t_bscript)&#xA;(prop,_scripthelper)" type="textblock" cols="50" flag="  big bigbig wide " />
+
+<!--
+<tk label="(prop,_bulk_l_qu)" x="(prop,_bulk_l_qu)" test_first="0" tip="(prop,_bulk_t_qu)" test_dyn="()(f,starts_with,(prop,bulk_type),qu)()" type="msg" flag=" "/>
+<tk label="(prop,_bulk_l_qu_file)" id="bulk_qu_file" x="" test_first="1" tip="(prop,_bulk_t_qu_file)" test_dyn="()(f,starts_with,(prop,bulk_type),qu)()" type="sel" follow_job="bulk_follow_query" flag="  fresh_xml " xml="(file,bulksel_query_file)"/>
+<tk label="(prop,_bulk_l_qu_row)" id="bulk_qu_row" x="" test_first="1" tip="(prop,_bulk_t_qu_row)" test_dyn="()(f,starts_with,(prop,bulk_type),qu)()" type="sel" flag="  fresh_xml " xml="(file,bulksel_query_id)"/>
+<tk label="(prop,_bulk_l_sqli)" x="(prop,_bulk_l_sqli)" test_first="1" tip="(prop,_bulk_t_sqli)" test_dyn="()(f,ends_with,(prop,bulk_type),sqli)()" type="msg" flag=" "/>
+<tk label="(prop,_bulk_l_sqli_file)" id="bulk_sqli_file" x="" test_first="1" tip="(prop,_bulk_t_sqli_file)" test_dyn="()(f,ends_with,(prop,bulk_type),sqli)()" type="sel" follow_job="bulk_follow_sqli" flag="  fresh_xml " xml="(file,bulksel_query_file)"/>
+<tk label="(prop,_bulk_l_sqli_row)" id="bulk_sqli_row" x="" test_first="1" tip="(prop,_bulk_t_sqli_row)" test_dyn="()(f,ends_with,(prop,bulk_type),sqli)()" regex="\d+" type="sel" flag="  fresh_xml " xml="(file,bulksel_sqli_id)"/>
+-->
+<tk label="Script" x="Script" test_first="0" test_dyn="()(f,starts_with,(prop,bulk_type),script)()" type="msg" flag=" "/>
+<tk label="(prop,_bulk_l_script)" id="bulk_script" x="" test_first="1" tip="(prop,_scripthelper)" test_dyn="()(f,starts_with,(prop,bulk_type),script)()" type="textblock" cols="50" flag="  big bigbig wide "/>
+</tk>
+</job>
+
+
+<job id="bulk-see-all" role="hidden">
+
+<call_job job="tr_bulk" />
+
+<call_job job="tk_gpref_read" />
+                                                                                  
+  <prop id="book-name">(f,name_of_dir,(f,dir_of_file,(file,bulks)))</prop>
+  <ti_break class_table="tabNavigator"/>  
+  
+  <ti type="rec" >   
+    <ti flag="block wrap_word" span="8">(f,html,b,o)(prop,book-name)(f,html,b,c) (e:o)(prop,_sl_bulk2)-(prop,_sl_buch)(e:c)</ti>
+                         
+    <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="mm-tester-bulks"/>  
+  </ti>  
+
+  <call_job job="tk_bd_intro">
+      <dir id="book-master">(dir,goMoon)bulks/</dir>
+      <prop id="book-type">bulks</prop>
+      <prop id="book-type-name">(prop,_sl_bulk2)</prop>
+      <!-- book name schon oben festgelegt -->
+      <prop id="book-home-job">_bulk</prop>  
+  </call_job>
+  
+  <!-- <ti_hr_break class_table="tabNavigator"/>    -->
+  <create_file out="(dir,ghome)last-books/bulks_last.txt">(prop,book-name)</create_file> 
+   <!-- 
+   <ti type="rec" test="(prop,bpDev)" >
+
+    <ti flag="button" align="right" type="call_job" explain_nix="bulk-add" 
+        class="fb fbAdd" explain="+ (prop,_sl_bulk)" job="bulk-add">
+      <file id="bulks">(file,bulks)</file>
+      <prop id="bulks_offset_label"></prop>
+
+    </ti>   
+  </ti>                                -->
+
+  <when test="(f,eq_text,zeppelin,(prop,book-name))">
+    <ti type="rec">
+    <ti  type="call_job" flag="button block"   class="fx fxEdit"  align="right"          
+        job="sqli-build-zeppelin" explain="zeppelin: (f,when,(f,eq_text,(prop,ling),de),Generiere iFace-Typen,Generate iFace-Types)">
+        <prop id="return-job-to-do">_bulk</prop>
+    </ti>    
+    </ti>   
+  
+</when>   
+
+<!-- 
+<ti type="rec">    
+<ti type="call_job"                 
+    job="bulk-create-all" explain=(prop,_fresh) flag="button" align="right" class="fx fxAdd">
+    <prop id="refresh-back-job">_bulk</prop>
+</ti>   
+</ti>        -->
+
+    
+  
+<call_job job="tk_gpref_show_button" >
+  <prop id="what_gpref">bulkstyle</prop>
+  <prop id="ready_job">_bulk</prop>
+  <prop id="do_break">0</prop>
+  <prop id="do_align">right</prop>  
+</call_job>  
+
+<call_job job="tk_gpref_show_button" >
+  <prop id="what_gpref">askaction</prop>
+  <prop id="do_break">0</prop>
+  <prop id="do_align">right</prop>  
+  <prop id="ready_job">_bulk</prop>
+  <!-- 
+  <prop id="gpref_button_class">fx justgui justguiCalm justview</prop>  
+  -->
+</call_job>
+<remove type="prop" id="gpref_button_class" />
+
+<!-- Auswahlt ausführen -->
+<ti type="rec" >
+  <ti type="call_job" job="bulk-hook-run-all" explain="(prop,_bulk_l_run_all)"  flag="button " class="fx fxGoBulk2" xalign="right">
+    <file id="bulks">(file,bulks)</file>
+    <prop id="qra-from">bl</prop>
+  </ti> 
+    
+</ti>    
+
+
+<!-- 
+    <ti type="rec">
+    <ti xlabel="(prop,_sl_bulk)" type="call_job"                 
+        job="bulk-create-all" explain="(prop,_fresh)" flag="button block"  class="fx fxEdit" align="right">
+        <prop id="refresh-back-job">_bulk</prop>
+    </ti> 
+    </ti>      -->
+  
+
+
+<ti_hr_break/>
+
+<choose>
+  <when test="(prop,gpref_bulkstyle)">
+   
+    <call_job job="bulk-see-all-details" />
+  </when>
+  <otherwise>                                                   
+ 
+    <call_job job="bulk-see-all-plain" />
+  </otherwise>
+</choose>
+
+<!-- ende buttons für beide gleich -->
+<ti_hr_break/>
+
+<!-- Auswahlt ausführen -->
+<ti type="rec" >
+  <ti type="call_job" job="bulk-hook-run-all" explain="(prop,_bulk_l_run_all)"  flag="button (f,when,(prop,gpref_bulkstyle),block,)" class="fx fxGoBulk2" xalign="right">
+    <file id="bulks">(file,bulks)</file>
+    <prop id="qra-from">bl</prop>
+  </ti> 
+  
+<ti type="call_job"                 
+    job="bulk-create-all" explain="(prop,_fresh)" flag="button" align="right" class="fx fxAdd">
+    <prop id="refresh-back-job">_bulk</prop>
+</ti>   
+    
+</ti>  
+<ti_break/>
+
+<!-- Ansicht wechseln  
+<call_job job="tk_gpref_show_button" >
+  <prop id="what_gpref">bulkstyle</prop>
+  <prop id="ready_job">_bulk</prop>
+  <prop id="do_break">0</prop>  
+  <prop id="do_align"></prop>
+</call_job>
+<call_job job="tk_gpref_show_button" >
+  <prop id="what_gpref">askaction</prop>
+</call_job>        
+
+<ti type="rec">  
+<ti type="call_job"                 
+    job="bulk-create-all" explain="(prop,_fresh)" flag="button" xalign="right" class="fx fxAdd">
+    <prop id="refresh-back-job">_bulk</prop>
+</ti> 
+</ti>          -->
+   
+</job>
+
+<job id="do_link_bulk" role="hidden">
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec" label=" ">
+  <ti type="call_job" job="bulk-see" align="right" explain="(prop,_x_go_back_sys)" label=" " flag="button" class="justback">
+     <file id="bulks">(file,bulks)</file>
+     <prop id="bulk_key">(prop,bulk_key)</prop>
+  </ti>
+  </ti>
+     
+
+</job> 
+
+<job id="do_link_bulks" role="hidden">
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec" label=" ">
+  <ti type="call_job" job="bulk-see-all" align="right" explain="(prop,_x_go_back_sys)" label=" " flag="button" class="justback">
+     <file id="bulks">(file,bulks)</file>
+  </ti>
+   </ti>
+    
+
+</job> 
+
+<job id="bulk-see-all-details" role="hidden">
+  
+
+<need default="">(prop,bulks_sort_attribute)</need>
+<need default="">(prop,bulks_sort_number)</need>
+<need default="">(prop,bulks_sort_ignore_case)</need>
+<need default="">(prop,bulks_sort_desc)</need>
+<need default="">(prop,bulks_where)</need>
+<need default="">(prop,bulks_offset_label)</need>
+<need default="./">(prop,bulks_offset)</need>
+<need default="">(prop,bulks_return_job)</need>
+<need default="//">(prop,bulks_offset_new_key)</need>
+<need default="0">(prop,bulks_no_header)</need>
+<call_job job="tr_bulk"/>
+
+
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="bulk_loop" xml="(file,bulks)"
+       xpath="(prop,bulks_offset)bulk(prop,bulks_where)" sort="(prop,bulks_sort_attribute)" number="(prop,bulks_sort_number)" ignore_case="(prop,bulks_sort_ignore_case)" desc="(prop,bulks_sort_desc)">
+                                                                              
+ <call_job job="prepare_bulk_display">
+  <prop id="bulk_qu_file">(f,when,(f,has,(loop,bulk_loop,@qu_file)),(loop,bulk_loop,@qu_file),)</prop>
+  <prop id="bulk_sqli_file">(f,when,(f,has,(loop,bulk_loop,@sqli_file)),(loop,bulk_loop,@sqli_file),)</prop> 
+ </call_job>
+
+  
+ <when test="(f,gt_num,(loop,bulk_loop,#i),1)">
+    <ti_hr xstyle="2"/>
+  </when>  
+
+
+<when test="(prop,nothing)">
+  <when test="(f,gt,(f,len,(prop,bulks_offset_label)),0)">
+    <ti label="(prop,bulks_offset_label)"/>
+    <ti x=" "/>
+  </when>
+      
+  <prop id="nothing">0</prop>
+</when>
+
+<!-- daten vorbereiten -->
+<prop id="bulk-query-has">0</prop>
+<prop id="bulk-query-failed">0</prop>
+<prop id="bulk-query-text"></prop>
+
+
+<when test="(f,has,(loop,bulk_loop,@qu_row))">
+  <prop id="bulk-query-text">(prop,bulk-query-text)(f,tk_sel_translate,(loop,bulk_loop,@qu_row),(file,bulksel_query_id))
+</prop>
+    <prop id="bulk-query-text" test="(f,not,(f,has,prop,bulk-query-text))">#(loop,bulk_loop,@qu_row)
+</prop>
+  <prop id="bulk-query-has">1</prop>
+</when>
+
+<when test="(f,has,(loop,bulk_loop,@qu_file))">
+  <choose>
+    <when test="(prop,bulk-query-has)">
+      <try_catch><try>
+        <prop id="second-apos">(f,index_of,(prop,bulk-query-text),&apos;,1)</prop>
+        <prop id="bulk-query-text">(f,html,b,o)(f,substring,(prop,bulk-query-text),1,(prop,second-apos))(f,html,b,c) (f,substring,(prop,bulk-query-text),(f,add,1,(prop,second-apos))) &lt;&lt;(loop,bulk_loop,@qu_file)&gt;&gt;</prop>
+      </try><catch>
+        <prop id="bulk-query-text">(f,html,b,o)(f,when,(f,has,(loop,bulk_loop,@qu_row)),#(loop,bulk_loop,@qu_row),?)(f,html,b,c) &lt;&lt;(loop,bulk_loop,@qu_file)&gt;&gt;</prop>            
+      </catch></try_catch>
+    </when>
+    <otherwise>
+        <prop id="bulk-query-text">(f,html,b,o)(f,when,(f,has,(loop,bulk_loop,@qu_row)),#(loop,bulk_loop,@qu_row),?)(f,html,b,c) &lt;&lt;(loop,bulk_loop,@qu_file)&gt;&gt;</prop>            
+        <prop id="bulk-query-failed">1</prop>
+    </otherwise>
+  </choose>
+</when>
+
+<prop id="bulk-sqli-has">0</prop>
+<prop id="bulk-sqli-failed">0</prop>
+<prop id="bulk-sqli-text"></prop>
+
+<when test="(f,has,(loop,bulk_loop,@sqli_row))">
+
+    <prop id="bulk-sqli-text">(f,tk_sel_translate,(loop,bulk_loop,@sqli_row),(file,bulksel_sqli_id))
+</prop>
+    <prop id="bulk-sqli-text" test="(f,not,(f,has,prop,bulk-sqli-text))">#(loop,bulk_loop,@sqli_row)
+</prop>
+    <prop id="bulk-sqli-has">1</prop>
+</when>      
+
+<when test="(f,has,(loop,bulk_loop,@sqli_file))">
+  <choose>
+    <when test="(prop,bulk-sqli-has)">
+      <try_catch><try>
+        <prop id="second-apos">(f,index_of,(prop,bulk-sqli-text),&apos;,1)</prop>
+        <prop id="bulk-sqli-text">(f,html,b,o)(f,substring,(prop,bulk-sqli-text),1,(prop,second-apos))(f,html,b,c) (f,substring,(prop,bulk-sqli-text),(f,add,1,(prop,second-apos))) &lt;&lt;(loop,bulk_loop,@sqli_file)&gt;&gt;</prop>      
+      </try><catch>
+        <prop id="bulk-sqli-text">(f,html,b,o)(f,when,(f,has,(loop,bulk_loop,@sqli_row)),#(loop,bulk_loop,@sqli_row),?)(f,html,b,c) &lt;&lt;(loop,bulk_loop,@sqli_file)&gt;&gt;</prop>            
+      </catch></try_catch>
+    </when>
+    <otherwise>
+        <prop id="bulk-sqli-text">(f,html,b,o)(f,when,(f,has,(loop,bulk_loop,@sqli_row)),#(loop,bulk_loop,@sqli_row),?)(f,html,b,c) &lt;&lt;(loop,bulk_loop,@sqli_file)&gt;&gt;</prop>                
+        <prop id="bulk-sqli-failed">1</prop>
+    </otherwise>
+  </choose>
+  
+
+  <!-- <prop id="bulk-sqli-text">(prop,bulk-sqli-text)&lt;&lt;(loop,bulk_loop,@sqli_file)&gt;&gt;
+</prop>                                                       -->
+  
+</when>
+
+
+<!-- das neue -->
+<!-- link mit namen -->
+<prop id="theAlign"></prop>
+<prop id="thePref"></prop>
+<when test="(f,eq_text,script,(loop,bulk_loop,@type))">
+<prop id="theAlign">center</prop>
+<prop id="thePref">script: </prop>
+</when>
+<prop id="theAlign">center</prop>
+
+
+
+<ti type="rec"  >
+                                   
+  <ti flag="block" class="justmaiXnBulk" type="call_job" spxan="9" 
+    explain="(f,html,b,o)(loop,bulk_loop,@name)(f,html,b,c)" 
+    xalign="(prop,theAlign)"
+    job="bulk-see"       >
+    
+    <prop id="bulk_key">(loop,bulk_loop,@row)</prop>
+    <file id="bulks">(file,bulks)</file>
+    <prop id="bulks_offset">(prop,bulks_offset)</prop>
+    <prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+    <prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+    <prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+    <prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+    <prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+    <prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+    <prop id="bulks_where">(prop,bulks_where)</prop>
+    <prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+  </ti>   
+  
+  <!-- <ti align="right">(f,html,i,o)(loop,bulk_loop,@type)(f,html,i,c)</ti>  
+    
+    xprefix="(prop,thePref)"
+    xpostfix_class="bulkHeaderType"
+    postfix=" (f,when,(f,has_flag,(loop,bulk_loop,@type),qu_sqli),(prop,_bulk_s_typ_qu_sqli),)(f,when,(f,has_flag,(loop,bulk_loop,@type),qu),(prop,_bulk_s_typ_qu),)(f,when,(f,has_flag,(loop,bulk_loop,@type),sqli),(prop,_bulk_s_typ_sqli),)(f,when,(f,has_flag,(loop,bulk_loop,@type),script),Script,)"
+  
+  
+    -->
+
+</ti>
+
+<ti type="rec">
+   <ti flag="block">(e:o)(loop,bulk_loop,#i). (f,when,(f,has_flag,(loop,bulk_loop,@type),qu_sqli),(prop,_bulk_s_typ_qu_sqli),)(f,when,(f,has_flag,(loop,bulk_loop,@type),qu),(prop,_bulk_s_typ_qu),)(f,when,(f,has_flag,(loop,bulk_loop,@type),sqli),(prop,_bulk_s_typ_sqli),)(f,when,(f,has_flag,(loop,bulk_loop,@type),script),Script,)(e:c)</ti>
+</ti>
+
+
+ <ti_space height="2px" />
+ 
+ <!-- <ti>hieristwer</ti>  -->
+ <when test="(f,has,(loop,bulk_loop,@doku))">
+  <call_job job="cd">
+    <prop id="cd-in">(loop,bulk_loop,@doku)</prop>
+  </call_job>
+  <ti type="rec" >
+    <ti  x="(prop,cd-out)" flag="wrap_word block"  />
+  </ti>  
+ </when>
+
+<ti type="rec">
+<ti type="menu" span="10" flag="block">
+ 
+  <ti  type="call_job" explain="(prop,_bulk_act_run)" job="bulk-hook-run" flag="button  xblock" class="fb fbGoBulk"  >
+    <prop id="bulk_key">(loop,bulk_loop,@row)</prop>
+    <file id="bulks">(file,bulks)</file>
+    <prop id="bulks_offset">(prop,bulks_offset)</prop>
+    <prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+    <prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+    <prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+    <prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+    <prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+    <prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+    <prop id="bulks_where">(prop,bulks_where)</prop>
+    <prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+    <prop id="qra-from">bl</prop>
+  </ti>    
+
+  <ti  type="call_job" explain="(prop,_bulk_act_editnrun)" job="bulk-hook-edit-run" flag="button" class="fb fbBulk"  test="(prop,bpDev)"  >
+    <prop id="bulk_key">(loop,bulk_loop,@row)</prop>
+    <file id="bulks">(file,bulks)</file>
+    <prop id="bulks_offset">(prop,bulks_offset)</prop>
+    <prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+    <prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+    <prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+    <prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+    <prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+    <prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+    <prop id="bulks_where">(prop,bulks_where)</prop>
+    <prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+    <prop id="qra-from">bl</prop>
+  </ti> 
+  <ti  type="call_job" explain="(prop,_x_edit)"  job="bulk-edit-by-view" flag="button "  test="(prop,bpDev)" class="fb fbEdit fbEditDetail fbEditDetailBulk "  >
+    <prop id="bulk_key">(loop,bulk_loop,@row)</prop>
+    <file id="bulks">(file,bulks)</file>
+    <prop id="bulks_offset">(prop,bulks_offset)</prop>
+    <prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+    <prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+    <prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+    <prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+    <prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+    <prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+    <prop id="bulks_where">(prop,bulks_where)</prop>
+    <prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+  </ti>      
+</ti>   
+</ti>
+
+
+ 
+<ti_space height="7px" />
+
+
+
+<try_catch>
+  <try>
+  
+  <choose>
+    <when test="(prop,bulk-sqli-has)">
+        <prop 
+        id="upper_squery_row"
+        >(f,xpath,(dir,goMoon)queries/(loop,bulk_loop,@sqli_file)/queries-list.xml,//sqli[@row=(loop,bulk_loop,@sqli_row)]/..,@row)</prop>
+    </when>
+    <otherwise>
+      <prop id="upper_squery_row"></prop>
+    </otherwise>
+  </choose>
+  
+
+  </try>
+  <catch>
+    <prop id="upper_squery_row"></prop>
+  </catch>
+</try_catch>
+
+                                                       
+<choose>
+  <when test="(f,eq_text,script,(loop,bulk_loop,@type))">  
+  <ti flag="catch">(f,text,cut_nice,(loop,bulk_loop,@script),230)</ti>
+  </when>
+  <otherwise>
+
+<ti type="rec" >
+  <ti type="call_job"
+      test="(prop,bulk-query-has)"
+      span="2" 
+      job="squery-see" 
+      explain="(prop,_bulk_l_go_query)"
+      class="fx fxEditSquery "
+      flag="block button">
+    <file id="squerys">(dir,goMoon)queries/(loop,bulk_loop,@qu_file)/queries-list.xml</file>
+    <prop id="squery_key">(loop,bulk_loop,@qu_row)</prop>
+    <prop id="squerys_offset">./</prop>
+    <file id="bulks">(file,bulks)</file>
+    <prop id="bulk_key">(loop,bulk_loop,@row)</prop>
+    <prop id="do_link_bulks">1</prop>
+
+    
+  </ti>    
+  
+  <ti span="2" 
+      test="(prop,bulk-query-failed)" flag="block">(prop,_sl_squery)-Link not possible</ti>    
+  <ti span="2"  test="(f,and,(f,not,(prop,bulk-query-has)),(f,not,(prop,bulk-query-failed)))" > </ti>
+    
+                                                                 
+  <ti type="call_job" 
+      span="2" 
+      test="(prop,bulk-sqli-has)" 
+      job="sqli-see"  
+      class="fx fxJumpSqli"
+      flag="button"
+      explain="(prop,_bulk_l_go_sqli)">
+              
+    <file id="sqlis">(dir,goMoon)queries/(loop,bulk_loop,@sqli_file)/queries-list.xml</file>
+    <prop id="sqli_key">(loop,bulk_loop,@sqli_row)</prop>
+    <prop id="sqlis_offset">squery[@row='(prop,upper_squery_row)']/</prop>
+                        
+    <file id="squerys">(dir,goMoon)queries/(loop,bulk_loop,@sqli_file)/queries-list.xml</file>
+    <prop id="squery_key">(prop,upper_squery_row)</prop>
+    <prop id="squerys_offset">./</prop>
+    
+    <file id="bulks">(file,bulks)</file>
+    <prop id="bulk_key">(loop,bulk_loop,@row)</prop>
+
+    <prop id="do_link_bulks">1</prop>  
+    
+  </ti>    
+  <ti span="2" 
+      test="(prop,bulk-sqli-failed)">(prop,_sl_sqli)-Link not possible</ti>    
+  <ti span="2"  test="(f,and,(f,not,(prop,bulk-sqli-has)),(f,not,(prop,bulk-sqli-failed)))" > </ti>
+</ti> 
+
+
+
+<ti type="rec" xlabel=" ">
+  <ti span="2" flag="wrap block" test="(f,or,(prop,bulk-query-has),(prop,bulk-query-failed))">(prop,bulk-query-text)</ti>
+  <ti span="2"  flag="wrap" test="(f,not,(f,or,(prop,bulk-query-has),(prop,bulk-query-failed)))"> </ti>
+  <ti span="2"  flag="wrap" test="(prop,bulk-sqli-has)" >(prop,bulk-sqli-text) </ti>
+  <ti span="2"  flag="wrap" test="(prop,bulk-sqli-failed)" >(prop,bulk-sqli-text) </ti>
+</ti> 
+
+</otherwise>
+</choose>
+           
+
+  <when test="(loop,bulk_loop,exists?,@bscript)">      
+  <ti flag="catch">[ (prop,_bulk_l_bscript) ]
+(f,text,cut_nice,(loop,bulk_loop,@bscript),200)</ti>
+  </when>
+  
+</loop>
+<ti_break/>
+<when test="(prop,nothing)">
+  <ti type="rec">
+    <ti flag="wrap">(prop,_bulk_nodata_l)</ti>
+  </ti>
+</when>     
+
+
+<when test="(f,not,(f,contains,(prop,bulks_offset),node(e:o)(e:c)))">
+  
+  <ti_hr_break xstyle="2"/>
+  <ti type="menu" flag="block" first_cell="1" last_cell="10">
+    <ti flag="button obutton block"  type="call_job" explain_nix="bulk-add" class="fb fbAdd" explain="+ (prop,_sl_bulk)" job="bulk-add"  test="(prop,bpDev)" >
+      <file id="bulks">(file,bulks)</file>
+      <prop id="bulks_offset">(prop,bulks_offset)</prop>
+      <prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+      <prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+      <prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+      <prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+      <prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+      <prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+      <prop id="bulks_where">(prop,bulks_where)</prop>
+      <prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+    </ti>
+    <ti flag="button" test="(f,not,(prop,nothing))" type="call_job" class="fb fbOrg" explain="(prop,_x_organize)" job="do-org-me">
+      <file id="orga">(file,bulks)</file>
+      <prop id="orga_where">(prop,bulks_where)</prop>
+      <prop id="orga_view_loop_id">bulk_loop</prop>
+      <prop id="orga_finished_job">bulk-orga-finished</prop>
+      <prop id="orga_offset">(prop,bulks_offset)</prop>
+      <prop id="orga_offset_label">(prop,bulks_offset_label)</prop>
+      <prop id="orga_offset_new_key">(prop,bulks_offset_new_key)</prop>
+      <prop id="orga_segment_plural">bulks</prop>
+      <prop id="orga_segment_singular">bulk</prop>
+      <prop id="orga_segment_plural_label">(prop,_pl_bulk)</prop>
+      <prop id="orga_segment_singular_label">(prop,_sl_bulk)</prop>
+      <prop id="orga_sort_attribute">(prop,bulks_sort_attribute)</prop>
+      <prop id="orga_sort_number">(prop,bulks_sort_number)</prop>
+      <prop id="orga_where">(prop,bulks_where)</prop>
+      <prop id="orga_name_expression_loop">()(loop,bulk_loop,@name)()</prop>
+      <prop id="orga_desc_expression_loop">()()</prop>
+    </ti>     
+  </ti>
+</when>
+
+
+
+<call_job job="bulk_event_view_end"/>
+
+</job>
+
+<!-- bulk events 
+
+<job id="bulk_follow_type_test" xrole="hidden">
+  <interpreter watch="1" />
+    <prop id="bulk_type">qu</prop>
+    <call_job job="bulk_follow_type" />
+</job>          -->
+
+
+<job id="bulk_event_post_print" role="hidden">
+
+  <when test="(f,or,(f,starts_with,(prop,bulk_type),qu),(f,ends_with,(prop,bulk_type),sqli))">
+  <!-- <ti_hr style="2" /> -->
+ 
+  
+  <when test="(f,starts_with,(prop,bulk_type),qu)">
+    <choose>
+      <when test="(f,and,(f,has,prop,bulk_qu_file),(f,has,prop,bulk_qu_row))">
+      <!-- 
+        <ti label="query mit bulk_qu_file und bulk_qu_row"/>
+        <ti label="bulk_qu_file">(prop,bulk_qu_file)</ti>
+        <ti label="bulk_qu_row">(prop,bulk_qu_row)</ti>
+        <ti label="file bulksel_query_id">(file,bulksel_query_id)</ti>
+        <ti label=""></ti>                  -->
+        <ti type="call_job" 
+            job="squery-see" 
+            label="(f,html,b,o)(prop,_bulk_l_go_query):(f,html,b,c)" 
+            flag=" button wrap_word"
+            explain="(f,xpathx,?,(file,bulksel_query_id),sel[text(e:o)(e:c)=(prop,bulk_qu_row)],@label)&#xA;&lt;&lt;(prop,bulk_qu_file)&gt;&gt;"
+            class="fx fxRef fxRefQuery">
+          <file id="squerys">(dir,goMoon)queries/(prop,bulk_qu_file)/queries-list.xml</file>
+          <prop id="squery_key">(prop,bulk_qu_row)</prop>
+          <prop id="squerys_offset">./</prop>
+          
+          <file id="bulks">(file,bulks)</file>
+          <prop id="bulk_key">(prop,bulk_key)</prop>
+          <prop id="do_link_bulk">1</prop>          
+        </ti>      
+      
+      </when>
+      <when test="(f,has,prop,bulk_qu_file)">
+        <ti type="call_job" job="squery-see-all" 
+            label="(f,html,b,o)(prop,_bulk_l_go_query):(f,html,b,c)" 
+            flag=" button wrap_word"    
+            class="fx fxRef fxRefQuery"
+            explain="Abfrage-Buch: (prop,bulk_qu_file)">
+          <file id="squerys">(dir,goMoon)queries/(prop,bulk_qu_file)/queries-list.xml</file>
+          <file id="bulks">(file,bulks)</file>
+          <prop id="bulk_key">(prop,bulk_key)</prop>
+          <prop id="do_link_bulk">1</prop>                
+        </ti>
+      </when>         
+    </choose>  
+  </when>
+
+  <when test="(f,ends_with,(prop,bulk_type),sqli)">
+  
+    <choose>
+      <when test="(f,and,(f,has,prop,bulk_sqli_file),(f,has,prop,bulk_sqli_row))">
+      
+        <ti_space height="3px" test="(f,starts_with,(prop,bulk_type),qu)"/>
+
+        <prop id="upper_squery_row">(f,xpath,(dir,goMoon)queries/(prop,bulk_sqli_file)/queries-list.xml,//sqli[@row=(prop,bulk_sqli_row)]/..,@row)</prop>
+
+        <ti type="call_job" 
+            job="sqli-see" 
+            label="(f,html,b,o)(prop,_bulk_l_go_sqli):(f,html,b,c)" 
+            flag=" button wrap_word"  
+            class="fx fxRef fxRefSqli"
+            explain="(f,xpathx,?,(file,bulksel_sqli_id),sel[text(e:o)(e:c)=(prop,bulk_sqli_row)],@label)&#xA;&lt;&lt;(prop,bulk_sqli_file)&gt;&gt;">          
+          <file id="sqlis">(dir,goMoon)queries/(prop,bulk_sqli_file)/queries-list.xml</file>
+          <prop id="sqli_key">(prop,bulk_sqli_row)</prop>
+          <prop id="sqlis_offset">squery[@row='(prop,upper_squery_row)']/</prop>
+                              
+          <file id="squerys">(dir,goMoon)queries/(prop,bulk_sqli_file)/queries-list.xml</file>
+          <prop id="squery_key">(prop,upper_squery_row)</prop>
+          <prop id="squerys_offset">./</prop>
+          
+          <file id="bulks">(file,bulks)</file>
+          <prop id="bulk_key">(prop,bulk_key)</prop>
+          
+          <prop id="do_link_bulk">1</prop>
+          
+        </ti>      
+      
+      </when>
+      <when test="(f,has,prop,bulk_sqli_file)">
+        <ti type="call_job" job="squery-see-all" 
+            label="(f,html,b,o)(prop,_bulk_l_go_sqli):(f,html,b,c)"
+            flag=" button wrap_word" 
+            class="fx fxRef fxRefSqli"
+            explain="Interface-Buch: (prop,bulk_sqli_file)">
+          <file id="squerys">(dir,goMoon)queries/(prop,bulk_sqli_file)/queries-list.xml</file>
+          <file id="bulks">(file,bulks)</file>
+          <prop id="bulk_key">(prop,bulk_key)</prop>
+          <prop id="do_link_bulk">1</prop>             
+        </ti>
+      </when>         
+    </choose>   
+  </when>  
+
+  <ti_hr style="2" />
+  </when>  
+  <!--<dump_ti label="ende bulk_event_post_print"/>
+   <dump_ti label="bulk_event_post_print" /> -->
+</job>
+
+<job id="bulksel_create_query_file" role="hidden">
+
+    <!-- erzeuge: (file,bulksel_query_file)-->
+    
+    <file id="qu-scanner" x="(dir,filetemp)qu-scanner.xml"/>
+    <!-- <file id="qu-scanner" x="(dir,pro)qu-scanner.xml"/>  -->
+    <scan out="(file,qu-scanner)" 
+          dir="(dir,goMoon)queries/"
+          level_limit="1"
+          field="fn pre" />      
+    
+    <xslt 
+      xml="(file,qu-scanner)" 
+      xsl="(dir,app)bulk-query-sel.xsl" 
+      out="(file,bulksel_query_file)">
+    </xslt>    
+    
+</job>
+
+<job id="bulksel_create_query_id" role="hidden">
+    <need>(prop,c_query_file)</need>
+    <!-- erzeuge: (file,bulksel_query_id)-->
+                                                   
+    
+    <xslt 
+      xml="(dir,goMoon)queries/(prop,c_query_file)/queries-list.xml" 
+      xsl="(dir,app)bulk-query-sel-id.xsl" 
+      out="(file,bulksel_query_id)"
+      home="(dir,app)">
+    
+ <params>offline='(f,not,(f,implement,online))' sql_len='110' script_len='80' doku='(prop,_x_doku)' dokuw1='100' dokuw2='30'</params>      
+    </xslt>
+    
+</job>
+
+<job id="bulksel_create_sqli_id" role="hidden">
+    <need>(prop,c_query_file)</need>
+    <!-- erzeuge: (file,bulksel_query_id)-->
+                                                    
+    
+    <xslt 
+      xml="(dir,goMoon)queries/(prop,c_query_file)/queries-list.xml" 
+      xsl="(dir,app)bulk-sqli-sel-id.xsl" 
+      out="(file,bulksel_sqli_id)"
+      home="(dir,app)">
+      <params>offline='(f,not,(f,implement,online))' sql_len='110' script_len='120' doku='(prop,_x_doku)' dokuw1='100' dokuw2='30'
+      each='(f,when,(f,eq_text,(prop,ling),de),je Datensatz,each Record)' 
+      head='(f,when,(f,eq_text,(prop,ling),de),Kopf,Head)' 
+      first='(f,when,(f,eq_text,(prop,ling),de),erster Datensatz,first Record)'</params>
+    </xslt>
+    
+</job>
+
+<!-- follower nach der eingabe eines types -->
+<job id="bulk_follow_type" role="hidden">
+  <!-- rausgenommen 
+  <i>im bulk_follow_type: (prop,bulk_type)</i>
+  
+  <when test="(f,or,(f,starts_with,(prop,bulk_type),qu),(f,ends_with,(prop,bulk_type),sqli))">
+    <call_job job="bulksel_create_query_file" />            
+  </when>                 -->
+</job>
+
+<!-- follower nach der auswahl eines query-files fuer queries-->
+  <!-- rausgenommen 
+  <i>im bulk_follow_type: (prop,bulk_type)</i>
+  
+  <when test="(f,starts_with,(prop,bulk_type),qu)">
+    <call_job job="bulksel_create_query_id">
+      <prop id="c_query_file">(prop,bulk_qu_file)</prop>
+    </call_job>            
+  </when>
+  
+<job id="bulk-get-query" role="hidden">
+  <need>(prop,query-book)</need>
+  <file id="query-book">(dir,goMoon)queries/(prop,query-book)/query-sel.xml</file>
+  <need>(file,query-book)</need>
+</job>  
+  -->
+<job id="bulk_follow_query" role="hidden">
+  <when test="(f,starts_with,(prop,bulk_type),qu)">
+  <call_job job="bulk-get-query">
+    <prop id="query-book">(prop,bulk_qu_file)</prop>
+  </call_job>
+  
+    <copy file="(file,query-book)" tofile="(file,bulksel_query_id)"/>
+            
+  </when>
+  
+</job>
+
+
+<!-- follower nach der auswahl eines query-files fuer sqlis-->
+<job id="bulk_follow_sqli" role="hidden">
+
+          
+  <when test="(f,ends_with,(prop,bulk_type),sqli)">
+  <call_job job="bulk-get-sqli">
+    <prop id="sqli-book">(prop,bulk_sqli_file)</prop>
+  </call_job>
+  
+    <copy file="(file,sqli-book)" tofile="(file,bulksel_sqli_id)"/>
+
+  </when>  
+  <!-- 
+  <i>im bulk_follow_type: (prop,bulk_type)</i>
+  
+  <when test="(f,ends_with,(prop,bulk_type),sqli)">
+    <call_job job="bulksel_create_sqli_id">
+      <prop id="c_query_file">(prop,bulk_sqli_file)</prop>
+    </call_job>            
+  </when>
+  -->
+</job>
+
+
+
+<job id="bulk-orga-finished" role="hidden">
+  <!-- 
+  <ti label="orga_offset">(prop,orga_offset)</ti>
+  <interpreter watch="1"/>
+  <interpreter watch="0"/>
+  -->
+
+  <file id="bulks">(file,orga)</file>  
+  
+  <call_job job="bulk-see-all"/> 
+   
+
+</job>
+
+<job id="bulk-edit-by-view" role="hidden">  
+                                     
+  <call_job job="bulk-edit" />
+ 
+  <ti_hr_break class_table="tabNavigator"/>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti> 
+  <ti type="rec"><ti>|</ti><ti span="10" align="center">(f,html,i,o)Zurück zum Stapel-Buch(f,html,i,c)</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti span="10" align="center">(f,html,i,o)Back to the book of bulks(f,html,i,c)</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti> 
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti>   
+  <ti_hr_break/>  
+  
+  <call_job 
+        job="_bulk" />   
+    
+
+</job>
+
+<job id="bulk_event_post_update" role="hidden">                                         
+  <call_job job="bulk-see" test="(f,not,(f,exists,prop,dont-see-bulk-see-after-edit))"/>
+
+</job>
+
+<job id="bulk_event_post_insert" role="hidden">
+  <prop id="bulkFromInsert">1</prop>
+  <call_job job="bulk-see" />
+
+</job>
+
+
+
+
+
+
+
+<job id="bulk_event_details_begin2" role="hidden">
+
+ <call_job job="prepare_bulk_display">
+  <prop id="bulk_qu_file">(f,when,(f,has,(prop,bulk_qu_file)),(prop,bulk_qu_file),)</prop>
+  <prop id="bulk_sqli_file">(f,when,(f,has,(prop,bulk_sqli_file)),(prop,bulk_sqli_file),)</prop> 
+ </call_job>  
+ 
+ <!-- 
+ 
+ <call_job job="prepare_bulk_display">
+  <prop id="bulk_qu_file">(f,when,(f,has,(loop,bulk_loop,@qu_file)),(loop,bulk_loop,@qu_file),)</prop>
+  <prop id="bulk_sqli_file">(f,when,(f,has,(loop,bulk_loop,@sqli_file)),(loop,bulk_loop,@sqli_file),)</prop> 
+ </call_job>
+  
+
+              -->
+   <ti type="rec">
+    <ti>(prop,_sl_bulk)</ti>
+    <ti >(f,html,b,o)(prop,bulk_name)(f,html,b,c)</ti>
+   </ti>             
+   <ti type="rec" label="in (prop,_sl_buch):" >
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,bulks)))</ti>
+   </ti>  
+   
+   <ti_hr style="2"/>
+    
+</job>
+                       
+<job id="bulk_event_details_end" role="hidden">
+ 
+  <call_job job="bulk_event_post_print" />
+  
+  
+
+
+<ti_space height="3px"/>
+<ti type="menu" info="an-edit-button-details" first_cell="2">
+<ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailBulk" explain="(prop,_x_edit)" job="bulk-edit"  test="(prop,bpDev)" >
+<prop id="bulk_key">(prop,bulk_key)</prop>
+<file id="bulks">(file,bulks)</file>
+<prop id="bulks_offset">(prop,bulks_offset)</prop>
+<prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+<prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+<prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+<prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+<prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+<prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+<prop id="bulks_where">(prop,bulks_where)</prop>
+<prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskBulk" explain="(prop,_label_askask)" job="bulk-see-more">
+<prop id="bulk_key">(prop,bulk_key)</prop>
+<file id="bulks">(file,bulks)</file>
+<prop id="bulks_offset">(prop,bulks_offset)</prop>
+<prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+<prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+<prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+<prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+<prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+<prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+<prop id="bulks_where">(prop,bulks_where)</prop>
+<prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+</ti>
+</ti>
+
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionBulkRun" explain="(prop,_bulk_act_run)" job="bulk-hook-run">
+<prop id="qra-from">bd</prop>
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">Run</prop>
+<prop page="details" id="bulk_key">(prop,bulk_key)</prop>
+<file id="bulks">(file,bulks)</file>
+<prop id="bulks_offset">(prop,bulks_offset)</prop>
+<prop id="bulks_offset_label">(prop,bulks_offset_label)</prop>
+<prop id="bulks_offset_new_key">(prop,bulks_offset_new_key)</prop>
+<prop id="bulks_sort_attribute">(prop,bulks_sort_attribute)</prop>
+<prop id="bulks_sort_number">(prop,bulks_sort_number)</prop>
+<prop id="bulks_sort_ignore_case">(prop,bulks_sort_ignore_case)</prop>
+<prop id="bulks_sort_desc">(prop,bulks_sort_desc)</prop>
+<prop id="bulks_where">(prop,bulks_where)</prop>
+<prop id="bulks_return_job">(prop,bulks_return_job)</prop>
+</ti>
+<ti />
+</ti>  
+
+
+</job>
+
+<job id="bulk_event_wants_conf" role="hidden">
+
+  <call_job job="tk_nav_edit">
+    <prop id="edit-navi-and-print">0</prop>
+  </call_job>
+  
+  <call_job job="_bulk" />
+  
+</job>
+
+<job id="bulk_event_view_end" role="hidden">
+   
+</job>
+
+
+
+<job id="bulk-create-all" role="hidden">
+  <!-- <ti type="dir" label="dir xdbQb">(dir,goMoon)</ti>   -->
+  <call_job job="bulk-create-book"/>
+
+  <loop id="dlist" xml="(file,mm-scanner)" xpath="dir">
+   
+    <!--<ti label="(loop,dlist,#i).">(loop,dlist,@rpath)</ti>
+    <ti>(loop,dlist,#i) going into bulk-create-query (loop,dlist,@rpath)</ti>     -->
+    <call_job job="bulk-create-query">
+      <prop id="query-book">(loop,dlist,@rpath)</prop>
+    </call_job>
+    
+    <call_job job="bulk-create-sqli">
+      <prop id="sqli-book">(loop,dlist,@rpath)</prop>
+    </call_job>    
+      
+  </loop>    
+  <ti label="Done with Ui-Refresh" />
+  <ti label="Selectors in" type="dir">(dir,goMoon)queries/</ti>
+  
+  <when test="(f,has,prop,refresh-back-job)">
+    <ti_hr_break/>
+    <call_job job="(prop,refresh-back-job)"/>
+  
+  </when>   
+          
+</job>
+
+<job id="bulk-create-sqli" role="hidden">
+  <need>(prop,sqli-book)</need>
+  
+  <call_job job="bulk-get-sqli"/>
+  
+  <when test="(f,exists_file,(dir,goMoon)queries/(prop,sqli-book)/queries-list.xml)">
+    <xslt 
+      xml="(dir,goMoon)queries/(prop,sqli-book)/queries-list.xml" 
+      xsl="(dir,app)bulk-sqli-sel-id.xsl" 
+      out="(file,sqli-book)"
+      home="(dir,app)">
+      <params>offline='(f,not,(f,implement,online))' sql_len='110' script_len='120' doku='(prop,_x_doku)' dokuw1='100' dokuw2='30'
+      each='(f,when,(f,eq_text,(prop,ling),de),je Datensatz,each Record)' 
+      head='(f,when,(f,eq_text,(prop,ling),de),Kopf,Head)' 
+      first='(f,when,(f,eq_text,(prop,ling),de),erster Datensatz,first Record)'</params>
+    </xslt>
+    <!--               -->
+    <ti type="file" label="created sqli-sel" xtest="(f,role,test)">(file,sqli-book)</ti>           
+  </when>
+      
+</job>
+
+<job id="bulk-get-sqli" role="hidden">
+  <need>(prop,sqli-book)</need>
+  <file id="sqli-book">(dir,goMoon)queries/(prop,sqli-book)/sqli-sel.xml</file>
+  <need>(file,sqli-book)</need>
+</job>
+
+<job id="bulk-create-query" role="hidden">                   
+  <need>(prop,query-book)</need>
+  
+  <call_job job="bulk-get-query"/>
+  
+  <when test="(f,exists_file,(dir,goMoon)queries/(prop,query-book)/queries-list.xml)">
+   
+    <xslt 
+      xml="(dir,goMoon)queries/(prop,query-book)/queries-list.xml" 
+      xsl="(dir,app)bulk-query-sel-id.xsl" 
+      out="(file,query-book)"
+      home="(dir,app)">
+      <params>offline='(f,not,(f,implement,online))' sql_len='110' script_len='80' doku='(prop,_x_doku)' dokuw1='100' dokuw2='30'</params>
+    </xslt>
+    <ti type="file" label="created query-sel"  xtest="(f,role,test)">(file,query-book)</ti>
+    
+    <xslt 
+      xml="(dir,goMoon)queries/(prop,query-book)/queries-list.xml" 
+      xsl="(dir,app)bulk-query-sel-id.xsl" 
+      out="(file,query-book)-3"
+      home="(dir,app)">
+      <params>offline='(f,not,(f,implement,online))' sql_len='330' script_len='80' doku='(prop,_x_doku)' dokuw1='100' dokuw2='30'</params>
+    </xslt>      
+    <ti type="file" label="created query-sel-3"  xtest="(f,role,test)">(file,query-book)-3</ti>
+    <!--                   -->
+                
+   
+  </when>
+      
+</job>
+
+<job id="bulk-get-query" role="hidden">
+  <need>(prop,query-book)</need>
+  <file id="query-book">(dir,goMoon)queries/(prop,query-book)/query-sel.xml</file>
+  <need>(file,query-book)</need>
+</job>
+
+<job id="bulk-create-book" role="hidden">
+ <!-- create book start <interpreter watch="1"/>-->
+  
+  
+  <file id="mm-scanner" x="(dir,filetemp)mm-scanner.xml"/>
+  <scan out="(file,mm-scanner)" 
+        dir="(dir,goMoon)queries/"
+        level_limit="2"
+        field="fn pre" />  
+     
+  <xslt 
+    xml="(file,mm-scanner)" 
+    xsl="(dir,app)bulk-query-sel.xsl" 
+    out="(file,bulksel_query_file)">
+  </xslt>          
+ 
+  <!--   -->  
+  <ti label="Books" type="file" x="(file,bulksel_query_file)" xtest="(f,role,test)"/>  
+  
+    
+</job>
+
+<job id="prepare_bulk_display" role="hidden">    
+<!-- <ti>... im prepare_bulk_display</ti>  -->
+
+<when test="(f,has,prop,bulk_qu_file)">
+  <call_job job="bulk-get-query">
+    <prop id="query-book">(prop,bulk_qu_file)</prop>
+  </call_job>
+  
+  <choose>
+    <when test="(f,exists_file,(file,query-book))">
+      <copy file="(file,query-book)-3" tofile="(file,bulksel_query_id)"/>
+    </when>
+    <otherwise>  
+      <ti>ATTENTION: Requested Query-Book '(prop,bulk_qu_file)' does not exist</ti>
+      <copy 
+          file="(dir,app)dummy-sel.xml" 
+          tofile="(file,bulksel_query_id)"/>
+    </otherwise>
+  </choose>
+  
+  
+</when>
+
+<when test="(f,has,prop,bulk_sqli_file)">
+  <call_job job="bulk-get-sqli">
+    <prop id="sqli-book">(prop,bulk_sqli_file)</prop>
+  </call_job>
+  
+  <choose>
+    <when test="(f,exists_file,(file,sqli-book))">
+      <copy file="(file,sqli-book)" tofile="(file,bulksel_sqli_id)"/>
+    </when>
+    <otherwise>  
+      <ti>ATTENTION: Requested sqli-Book '(prop,bulk_sqli_file)' does not exist</ti>
+      <copy 
+          file="(dir,app)dummy-sel.xml" 
+          tofile="(file,bulksel_sqli_id)"/>
+    </otherwise>
+  </choose>  
+  
+  
+</when>  
+
+
+
+
+</job>
+
+<job id="bulk_event_tk_core" role="hidden">
+
+</job> 
+
+<job id="cd" role="hidden">
+  <need>(prop,cd-in)</need>
+  <prop id="cd-out" x="" />
+  
+  <when test="(f,gt_num,(f,len,(prop,cd-in)),0)">
+    <prop id="cd-out">(prop,_x_doku): </prop>
+    
+    <choose>                               ,
+      <when test="(f,contains,(f,substring,(prop,cd-in),0,100),.)">
+        <!-- es gibt einen punkt in dokuw1-->    
+        <prop id="cd-out">(prop,cd-out)(f,substring_before,(prop,cd-in),.)</prop>
+      </when>    
+      <when test="(f,gt_num,(f,len,(prop,cd-in)),30)">
+        <prop id="cd-out">(prop,cd-out)(f,substring,(prop,cd-in),0,30) ...</prop>
+      </when>
+      <otherwise>
+        <prop id="cd-out">(prop,cd-out)(prop,cd-in)</prop>
+      </otherwise>
+    </choose>
+    
+  </when>
+    
+
+</job>
+
+</jobs>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dbci-write">
+<need>(prop,dbci_key) (prop,isAdd)</need>
+<need default="./">(prop,dbcis_offset)</need>
+<spirit act="open" id="dbcis_spirit_tc" xml="(file,dbcis)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,dbcis_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,dbcis_offset),0,(f,sub,(f,len,(prop,dbcis_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,dbcis_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="dbcis_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;dbci row="(prop,dbci_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="id" value="(f,vob,prop,dbci_id)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="app" value="(f,vob,prop,dbci_app)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="titel" value="(f,vob,prop,dbci_titel)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="db" value="(f,vob,prop,dbci_db)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="url" value="(f,vob,prop,dbci_url)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="user" value="(f,vob,prop,dbci_user)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="password" value="(f,vob,prop,dbci_password)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="autocommit" value="(f,vob,prop,dbci_autocommit)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="doku" value="(f,vob,prop,dbci_doku)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="off" value="(f,vob,prop,dbci_off)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="crypto" value="(f,vob,prop,dbci_crypto)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dbcis_spirit_tc" where="(prop,dbcis_offset)dbci[@row='(prop,dbci_key)']" attribute="request" value="(f,vob,prop,dbci_request)"/>
+<spirit act="close" flag="save pretty" id="dbcis_spirit_tc"/>
+</job>

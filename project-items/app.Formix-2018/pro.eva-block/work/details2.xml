@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="block-see-more">
+<need>(prop,block_key)</need>
+<call_job job="block-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="blocks_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,block_name)(f,html,bold,close)(f,when,(f,has,(prop,blocks_offset_label)), - (prop,blocks_offset_label),)"/>
+<call_job job="block-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="Edit" job="block-edit">
+<prop id="block_key">(prop,block_key)</prop>
+<file id="blocks">(file,blocks)</file>
+<prop id="blocks_offset">(prop,blocks_offset)</prop>
+<prop id="blocks_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="blocks_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="blocks_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="blocks_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="blocks_where">(prop,blocks_where)</prop>
+<prop id="blocks_return_job">(prop,blocks_return_job)</prop>
+</ti>
+</ti>
+</job>

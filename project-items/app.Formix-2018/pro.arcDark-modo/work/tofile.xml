@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo-write">
+<need>(prop,modo_key) (prop,isAdd)</need>
+<spirit act="open" id="modos_spirit_tc" xml="(file,modos)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,modos_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,modos_offset),0,(f,sub,(f,len,(prop,modos_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,modos_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="modos_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;modo row="(prop,modo_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="how" value="(f,vob,prop,modo_how)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="where" value="(f,vob,prop,modo_where)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="with" value="(f,vob,prop,modo_with)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="with_what" value="(f,vob,prop,modo_with_what)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="attribute" value="(f,vob,prop,modo_attribute)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="value" value="(f,vob,prop,modo_value)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="flag" value="(f,vob,prop,modo_flag)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="off" value="(f,vob,prop,modo_off)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="modos_spirit_tc" where="(prop,modos_offset)modo[@row='(prop,modo_key)']" attribute="count" value="(f,vob,prop,modo_count)"/>
+<spirit act="close" flag="save pretty" id="modos_spirit_tc"/>
+</job>

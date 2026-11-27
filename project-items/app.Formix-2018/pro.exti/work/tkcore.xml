@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exti-tk">
+<need default="">(prop,extis_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,extis_tk_control) wrap ">
+<tk label="Ons" id="exti_ons" x="" test_first="1" type="sel" flag="multi  dynamo " xml="(dir,app)sel-ons.xml"/>
+<tk label="Cnf: CheckIn/Out Project" id="exti_pro_check_string" x="" test_first="0" tip="Parameters for Project CheckIn and CheckOut" test_dyn="()(f,or,(f,has_flag,(f,vob,prop,exti_ons),mayCheckinProject),(f,has_flag,(f,vob,prop,exti_ons),mayCheckoutProject))()" type="textblock" flag=" "/>
+<tk label="Cnf: Down/Upload Proj-Zip" id="exti_pro_load_string" x="" test_first="0" tip="Parameters for upload and download the project-zip" test_dyn="()(f,or,(f,has_flag,(f,vob,prop,exti_ons),mayUploadProject),(f,has_flag,(f,vob,prop,exti_ons),mayDownloadProject))()" type="textblock" flag=" "/>
+<tk label="Cnf: Passwords" id="exti_password_string" x="" test_first="0" tip="Password Configuration" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),pwd)()" type="textblock" flag=" "/>
+<tk label="Passwords" id="exti_passwords" x="" test_first="0" tip="Passwords separated with whitespace" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),pwd)()" type="textblock" flag=" "/>
+<tk label="Cnf: Mediathek" id="exti_mediathek_string" x="" test_first="0" tip="Mediathek configuration" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),mediathek)()" type="textblock" flag=" "/>
+<tk label="Cnf: Runtimes" id="exti_runtime_string" x="" test_first="0" tip="maxJobRuntimeMs='' ... Maximal Job Runtime in Milliseconds" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),runtime)()" type="textblock" flag=" "/>
+<tk label="Cnf: JavaScript Embed" id="exti_ext_embedjs_string" x="" test_first="0" tip="What to include in java-script html" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),embedjs)()" type="textblock" flag=" "/>
+<tk label="Cnf: My Data" id="exti_mydata_string" x="" test_first="0" tip="Specifies the personal data in the project" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),mydata)()" type="textblock" flag=" "/>
+<tk label="Cnf: Gui-Privilegs" id="exti_guiprivs" x="" test_first="0" tip="Specifies the gui privilegs; user=‘000000‘ expert=‘abcdef‘ admin=‘abcdef‘; a=JobHeaderName b=JobHeaderTip c=JobFooter d=eeFooter e=IncludeHeader f=IncludeFooter" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),guiprivs)()" type="textblock" flag=" "/>
+<tk label="Cnf: Down/Upload Files" id="exti_file_load_string" x="" test_first="0" tip="Parameters for upload and downloading files" test_dyn="()(f,or,(f,has_flag,(f,vob,prop,exti_ons),uploadfiles),(f,has_flag,(f,vob,prop,exti_ons),downloadfiles))()" type="textblock" flag=" "/>
+<tk label="Cnf: Tk" id="exti_tk_string" x="" test_first="0" tip="Tk Configuration fast=all|none; fast_except=tk-list of exceptions; offerfast=all|none; offerfast_except=tk-list of exceptions; max_text_len='' max_textblock_len='' offersequ=all|none; offersequ_except=tk-list of exceptions" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),tk)()" type="textblock" flag=" "/>
+<tk label="Cnf: Interpreter" id="exti_interpreter_string" x="" test_first="0" tip="Interpreter Configuration" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),interpreter)()" type="textblock" flag=" "/>
+<tk label="Cnf: Workspace" id="exti_ws_string" x="" test_first="0" tip="Workspace Configuration" test_dyn="()(f,has_flag,(f,vob,prop,exti_ons),ws)()" type="textblock" flag=" "/>
+<tk label="Extended Bits" id="exti_ebits" x="" test_first="0" tip="Configure the confs" type="sel" flag="multi " xml="(dir,app)sel-ebits.xml"/>
+</tk>
+</job>

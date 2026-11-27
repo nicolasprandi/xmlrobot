@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="zuts">(dir,pro)zuts.xml</file>
+<when test="(f,not,(f,exists_file,(file,zuts)))">
+<create_file out="(file,zuts)">&lt;zuts/&gt;</create_file>
+<i>Created: (file,zuts)</i>
+</when>
+<prop id="zuts_offset">./</prop>
+<prop id="zuts_offset_label"/>
+<prop id="zuts_offset_new_key">//</prop>
+<prop id="zuts_sort_attribute"/>
+<prop id="zuts_sort_number"/>
+<prop id="zuts_sort_ignore_case"/>
+<prop id="zuts_sort_desc"/>
+<prop id="zuts_where"/>
+<prop id="zuts_return_job">zut-see-all</prop>
+</prolog>

@@ -1,0 +1,966 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="generate-selector" role="hidden">
+
+  <xslt xml="(file,appconfs)" 
+        xsl="(dir,app)appconfs-2-selector.xsl" 
+        out="(file,selector)"/>
+  <ti type="file" x="(file,selector)" test="0"/>
+
+</job>
+
+<job id="core-operation" role="hidden">
+  <need default="1">(prop,do-core-singleinput)</need>
+  <choose>
+    <when test="(prop,do-core-singleinput)">
+      <call_job job="tk_run_read"/>
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_ext_read"/>
+  <call_job job="tk_fut_read"/>
+  <call_job job="tk_conf_read"/>
+  
+  
+  <create_file file="(file,project-exists)">yes</create_file>
+  
+  <prop id="stat_begin" x="(f,time,yyyyMMdd_HHmmss)"/>
+  
+  <!-- phase 1 <interpreter watch="1"/>  <dump_ti/> -->
+  
+  <dir id="results" x="(dir,pro)results/"/>
+  <mkdir dir="(dir,results)"/>
+
+  <interpreter watch="1" test="0"/>                                                              
+  <spirit id="cnf" xml="(file,appconfs)" act="open"/>
+  
+  <prop id="run_takeoff"></prop>
+  <choose>
+    <when test="(f,eq,eclipse,(prop,run_action))">
+      <prop id="run_takeoff">(prop,run_takeoff_eclipse)</prop>
+    </when>
+    <when test="(f,eq,tomcat,(prop,run_action))">
+      <prop id="run_takeoff">(prop,run_takeoff_tomcat)</prop>
+    </when>    
+  </choose>
+  
+  <!-- vorbereiten services -->
+  <when test="(prop,run_produce_services)">
+    <file id="prep-services" x="(dir,temp)services.zip"/>
+    <zip destfile="(file,prep-services)" basedir="(dir,run_services_resources)" />
+    <ti label="Prepared Services" type="file" x="(file,prep-services)"/>
+  </when>     
+          
+  <loop_xml 
+      act="open" 
+      id="cnf" 
+      spirit="cnf" 
+      missing_strategy="empty"
+      xpath="appconf"
+      xxpath="appconf[contains(e:o)(f,xpath_string, (prop,para_webapps) )(e:s)(f,xpath_string, @row )(e:c)]"/> 
+  <loop 
+      id="while-cnf" 
+      while="()(f,loop_xml,cnf,has_next?)()">
+      <loop_xml act="next" id="cnf" />
+      <try_catch>
+      <try>
+      
+      <when test="(f,contains, (prop,run_webapps) , (f,loop_xml,cnf,@row) )">
+        <prop id="thisapp" x="(f,loop_xml,cnf,@app)"/>
+        
+        <ti_hr/>
+        <ti label="(f,loop_xml,cnf,@app)"/>
+        <ti label="Eclipseproject" flag="label_right">(f,loop_xml,cnf,@eclipseproject)</ti>
+        <ti test="0" label=" ">working on row=(f,loop_xml,cnf,@row) of  (prop,para_webapps) </ti>
+        <prop id="_uri_wf_bits"></prop>
+        <prop id="_uri_wf_prov_pro"></prop>  
+        <prop id="_uri_rf_bits"></prop>
+        <prop id="_uri_rf_prov_app"></prop> 
+        <prop id="_uri_rf_prov_pro"></prop>
+        <prop id="_uri_wd_bits"></prop> 
+        <prop id="_uri_wd_prov_pro"></prop>
+        <prop id="_uri_rd_bits"></prop>     
+        <prop id="_uri_rd_prov_app"></prop>
+        <prop id="_uri_rd_prov_pro"></prop>  
+                   
+        <prop id="_project_dir"></prop>
+        <prop id="_clone_project_dir_on"></prop>
+        <prop id="_login"></prop>
+        <prop id="_css"></prop>
+        <prop id="_firstjob"></prop>
+        <prop id="_header"></prop>
+        <prop id="_header_job"></prop>
+        <prop id="_footer"></prop>
+        <prop id="_footer_job"></prop>
+        <prop id="_trace_on"></prop>
+        <prop id="_role"></prop>
+        <prop id="_bits"></prop>
+        <!-- 
+        <prop id="_bits"></prop>
+        -->
+        <prop id="_ext_ons"></prop>
+        <prop id="_ext_ebits"></prop>
+        
+        <prop id="_ext_pro_check_string"></prop>
+        <prop id="_ext_pro_load_string"></prop>
+        <prop id="_ext_password_string"></prop>
+        <prop id="_ext_passwords"></prop>
+        <prop id="_ext_mediathek_string"></prop>
+        <prop id="_ext_runtime_string"></prop>
+        <prop id="_ext_ext_embedjs_string"></prop>
+        <prop id="_ext_mydata_string"></prop>
+        <prop id="_ext_guiprivs"></prop>
+        <prop id="_ext_file_load_string"></prop>
+        <prop id="_ext_tk_string"></prop>
+        <prop id="_ext_interpreter_string"></prop>
+        <prop id="_ext_ws_string"></prop>
+        <ti test="0">xxx A</ti>        
+        <prop id="rb" x="(f,loop_xml,cnf,@rule_base)"/>
+        <when test="(f,or,(f,eq,STANDARD,(prop,rb)),(f,eq,OVERWRITE_SOME,(prop,rb)))">
+          <prop id="_bits">(f,vob,prop,para_bits)</prop> 
+          <when test="(f,has_flag,(f,vob,prop,para_bits),hasSelFileWrite)">     
+            <prop id="_uri_wf_bits">(f,vob,prop,para_uri_wf_bits)</prop>
+            <prop id="_uri_wf_prov_pro">(f,vob,prop,para_uri_wf_prov_pro)</prop>  
+          </when>
+          <when test="(f,has_flag,(f,vob,prop,para_bits),hasSelFileRead)">
+            <prop id="_uri_rf_bits">(f,vob,prop,para_uri_rf_bits)</prop>
+            <prop id="_uri_rf_prov_app">(f,vob,prop,para_uri_rf_prov_app)</prop> 
+            <prop id="_uri_rf_prov_pro">(f,vob,prop,para_uri_rf_prov_pro)</prop>
+          </when>  
+          <when test="(f,has_flag,(f,vob,prop,para_bits),hasSelDirWrite)">  
+            <prop id="_uri_wd_bits">(f,vob,prop,para_uri_wd_bits)</prop> 
+            <prop id="_uri_wd_prov_pro">(f,vob,prop,para_uri_wd_prov_pro)</prop>
+          </when>  
+          <when test="(f,has_flag,(f,vob,prop,para_bits),hasSelDirRead)">  
+            <prop id="_uri_rd_bits">(f,vob,prop,para_uri_rd_bits)</prop>     
+            <prop id="_uri_rd_prov_app">(f,vob,prop,para_uri_rd_prov_app)</prop>
+            <prop id="_uri_rd_prov_pro">(f,vob,prop,para_uri_rd_prov_pro)</prop>
+          </when>      
+          
+          <ti test="0">xxx b</ti>       
+                          
+          <prop id="_project_dir">(f,vob,prop,para_project_dir)</prop>
+          <prop id="_clone_project_dir_on">(f,vob,prop,para_clone_project_dir_on)</prop>
+          <prop id="_login">(f,vob,prop,para_login)</prop>
+          <prop id="_css">(f,vob,prop,para_css)</prop>
+          <prop id="_firstjob">(f,vob,prop,para_firstjob)</prop>
+          <prop id="_header">(f,vob,prop,para_header)</prop>
+          <prop id="_header_job">(f,vob,prop,para_header_job)</prop>
+          <prop id="_footer">(f,vob,prop,para_footer)</prop>
+          <prop id="_footer_job">(f,vob,prop,para_footer_job)</prop>
+          <prop id="_trace_on">(f,vob,prop,para_trace_on)</prop>
+          <prop id="_role">(f,vob,prop,para_role)</prop>  
+           
+          <ti test="0">xxx e</ti>
+          <prop id="_ext_ons">(f,vob,prop,ext_ons)</prop>  
+          <prop id="_ext_ebits">(f,vob,prop,ext_ebits)</prop>  
+          <prop id="_ext_pro_check_string">(f,vob,prop,ext_pro_check_string)</prop>
+          <prop id="_ext_pro_load_string">(f,vob,prop,ext_pro_load_string)</prop>
+          <prop id="_ext_password_string">(f,vob,prop,ext_password_string)</prop>
+          <prop id="_ext_passwords">(f,vob,prop,ext_passwords)</prop>
+          <prop id="_ext_mediathek_string">(f,vob,prop,ext_mediathek_string)</prop>
+          <prop id="_ext_runtime_string">(f,vob,prop,ext_runtime_string)</prop>
+          <prop id="_ext_ext_embedjs_string">(f,vob,prop,ext_ext_embedjs_string)</prop>
+          <prop id="_ext_mydata_string">(f,vob,prop,ext_mydata_string)</prop>
+          <prop id="_ext_guiprivs">(f,vob,prop,ext_guiprivs)</prop>
+          <prop id="_ext_file_load_string">(f,vob,prop,ext_file_load_string)</prop>
+          <prop id="_ext_tk_string">(f,vob,prop,ext_tk_string)</prop>
+          <prop id="_ext_interpreter_string">(f,vob,prop,ext_interpreter_string)</prop>
+          <prop id="_ext_ws_string">(f,vob,prop,ext_ws_string)</prop>          
+        
+        </when>
+        <when test="(f,eq,OVERWRITE_ALL,(prop,rb))">
+          <ti test="0">xxx r</ti>
+          <prop id="_uri_wf_bits">(f,loop_xml,cnf,@uri_wf_bits)</prop>
+          <prop id="_uri_wf_prov_pro">(f,loop_xml,cnf,@uri_wf_prov_pro)</prop>  
+          <prop id="_uri_rf_bits">(f,loop_xml,cnf,@uri_rf_bits)</prop>
+          <prop id="_uri_rf_prov_app">(f,loop_xml,cnf,@uri_rf_prov_app)</prop> 
+          <prop id="_uri_rf_prov_pro">(f,loop_xml,cnf,@uri_rf_prov_pro)</prop>
+          <prop id="_uri_wd_bits">(f,loop_xml,cnf,@uri_wd_bits)</prop> 
+          <prop id="_uri_wd_prov_pro">(f,loop_xml,cnf,@uri_wd_prov_pro)</prop>
+          <prop id="_uri_rd_bits">(f,loop_xml,cnf,@uri_rd_bits)</prop>     
+          <prop id="_uri_rd_prov_app">(f,loop_xml,cnf,@uri_rd_prov_app)</prop>
+          <prop id="_uri_rd_prov_pro">(f,loop_xml,cnf,@uri_rd_prov_pro)</prop>   
+                                       
+          <prop id="_project_dir">(f,loop_xml,cnf,@project_dir)</prop>
+          <prop id="_clone_project_dir_on">(f,loop_xml,cnf,@clone_project_dir_on)</prop>
+          <prop id="_login">(f,loop_xml,cnf,@login)</prop>
+          <prop id="_css">(f,loop_xml,cnf,@css)</prop>
+          <prop id="_firstjob">(f,loop_xml,cnf,@firstjob)</prop>
+          <prop id="_header">(f,loop_xml,cnf,@header)</prop>
+          <prop id="_header_job">(f,loop_xml,cnf,@header_job)</prop>
+          <prop id="_footer">(f,loop_xml,cnf,@footer)</prop>
+          <prop id="_footer_job">(f,loop_xml,cnf,@footer_job)</prop>
+          <prop id="_trace_on">(f,loop_xml,cnf,@trace_on)</prop>
+          <prop id="_role">(f,loop_xml,cnf,@role)</prop>  
+          <prop id="_bits">(f,loop_xml,cnf,@bits)</prop>
+          
+          <prop id="_ext_ons">(f,loop_xml,cnf,exti,@ons)</prop>  
+          <prop id="_ext_ebits">(f,loop_xml,cnf,exti,@ebits)</prop> 
+          <prop id="_ext_pro_check_string">(f,loop_xml,cnf,exti,@pro_check_string)</prop>
+          <prop id="_ext_pro_load_string">(f,loop_xml,cnf,exti,@pro_load_string)</prop>
+          <prop id="_ext_password_string">(f,loop_xml,cnf,exti,@password_string)</prop>
+          <prop id="_ext_passwords">(f,loop_xml,cnf,exti,@passwords)</prop>
+          <prop id="_ext_mediathek_string">(f,loop_xml,cnf,exti,@mediathek_string)</prop>
+          <prop id="_ext_runtime_string">(f,loop_xml,cnf,exti,@runtime_string)</prop>
+          <prop id="_ext_ext_embedjs_string">(f,loop_xml,cnf,exti,@ext_embedjs_string)</prop>
+          <prop id="_ext_mydata_string">(f,loop_xml,cnf,exti,@mydata_string)</prop>
+          <prop id="_ext_guiprivs">(f,loop_xml,cnf,exti,@guiprivs)</prop>
+          <prop id="_ext_file_load_string">(f,loop_xml,cnf,exti,@file_load_string)</prop>
+          <prop id="_ext_tk_string">(f,loop_xml,cnf,exti,@tk_string)</prop>
+          <prop id="_ext_interpreter_string">(f,loop_xml,cnf,exti,@interpreter_string)</prop>
+          <prop id="_ext_ws_string">(f,loop_xml,cnf,exti,@ws_string)</prop>           
+
+        </when>
+        <when test="(f,eq,OVERWRITE_SOME,(prop,rb))">
+          <ti test="0">xxx s</ti>
+          <when test="(f,has_flag,(f,loop_xml,cnf,@bits),hasSelFileWrite)">
+            <when test="(f,not,(f,has_flag,(prop,_bits),hasSelFileWrite))">
+              <prop id="_bits">(prop,_bits) hasSelFileWrite </prop>
+            </when>
+            <prop id="_uri_wf_bits">(f,loop_xml,cnf,@uri_wf_bits)</prop>
+            <prop id="_uri_wf_prov_pro">(f,loop_xml,cnf,@uri_wf_prov_pro)</prop>                      
+          </when>
+          
+          <when test="(f,has_flag,(f,loop_xml,cnf,@bits),hasSelFileRead)">
+            <when test="(f,not,(f,has_flag,(prop,_bits),hasSelFileRead))">
+              <prop id="_bits">(prop,_bits) hasSelFileRead </prop>
+            </when>
+            <prop id="_uri_rf_bits">(f,loop_xml,cnf,@uri_rf_bits)</prop>
+            <prop id="_uri_rf_prov_pro">(f,loop_xml,cnf,@uri_rf_prov_pro)</prop>  
+            <prop id="_uri_rf_prov_app">(f,loop_xml,cnf,@uri_rf_prov_app)</prop>                     
+          </when>     
+          
+          <when test="(f,has_flag,(f,loop_xml,cnf,@bits),hasSelDirWrite)">
+            <when test="(f,not,(f,has_flag,(prop,_bits),hasSelDirWrite))">
+              <prop id="_bits">(prop,_bits) hasSelDirWrite </prop>
+            </when>
+            <prop id="_uri_wd_bits">(f,loop_xml,cnf,@uri_wd_bits)</prop>
+            <prop id="_uri_wd_prov_pro">(f,loop_xml,cnf,@uri_wd_prov_pro)</prop>                      
+          </when>
+          
+          <when test="(f,has_flag,(f,loop_xml,cnf,@bits),hasSelDirRead)">
+            <when test="(f,not,(f,has_flag,(prop,_bits),hasSelDirRead))">
+              <prop id="_bits">(prop,_bits) hasSelDirRead </prop>
+            </when>
+            <prop id="_uri_rd_bits">(f,loop_xml,cnf,@uri_rd_bits)</prop>
+            <prop id="_uri_rd_prov_pro">(f,loop_xml,cnf,@uri_rd_prov_pro)</prop>  
+            <prop id="_uri_rd_prov_app">(f,loop_xml,cnf,@uri_rd_prov_app)</prop>                     
+          </when>                 
+                        
+          
+          
+          <prop id="_project_dir"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@project_dir)(),,))">(f,loop_xml,cnf,@project_dir)</prop>
+          <prop id="_clone_project_dir_on"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@clone_project_dir_on)(),,))">(f,loop_xml,cnf,@clone_project_dir_on)</prop>
+                
+          <prop id="_login"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@login)(),,))">(f,loop_xml,cnf,@login)</prop>
+                                
+          <prop id="_css"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@css)(),,))">(f,loop_xml,cnf,@css)</prop>
+          <prop id="_firstjob"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@firstjob)(),,))">(f,loop_xml,cnf,@firstjob)</prop>
+          <prop id="_header"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@header)(),,))">(f,loop_xml,cnf,@header)</prop>
+          <prop id="_header_job"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@header_job)(),,))">(f,loop_xml,cnf,@header_job)</prop>
+          <prop id="_footer"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@footer)(),,))">(f,loop_xml,cnf,@footer)</prop>
+          <prop id="_footer_job"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@footer_job)(),,))">(f,loop_xml,cnf,@footer_job)</prop>
+          <prop id="_trace_on"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@trace_on)(),,))">(f,loop_xml,cnf,@trace_on)</prop>
+          <prop id="_role"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@role)(),,))">(f,loop_xml,cnf,@role)</prop> 
+          <prop id="_bits"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,@bits)(),,))">(f,loop_xml,cnf,@bits)</prop> 
+                
+          <prop id="_ext_ons"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@ons)(),,))">(f,loop_xml,cnf,exti,@ons)</prop>   
+                
+          <prop id="_ext_ebits"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@ebits)(),,))">(f,loop_xml,cnf,exti,@ebits)</prop>  
+                
+          <prop id="_ext_pro_check_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@pro_check_string)(),,))">(f,loop_xml,cnf,exti,@pro_check_string)</prop>
+
+          <prop id="_ext_pro_load_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@pro_load_string)(),,))">(f,loop_xml,cnf,exti,@pro_load_string)</prop>
+          <prop id="_ext_password_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@password_string)(),,))">(f,loop_xml,cnf,exti,@password_string)</prop>
+          <prop id="_ext_passwords"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@passwords)(),,))">(f,loop_xml,cnf,exti,@passwords)</prop>
+          <prop id="_ext_mediathek_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@mediathek_string)(),,))">(f,loop_xml,cnf,exti,@mediathek_string)</prop>
+          <prop id="_ext_runtime_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@runtime_string)(),,))">(f,loop_xml,cnf,exti,@runtime_string)</prop>
+          <prop id="_ext_ext_embedjs_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@ext_embedjs_string)(),,))">(f,loop_xml,cnf,exti,@ext_embedjs_string)</prop>
+          <prop id="_ext_mydata_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@mydata_string)(),,))">(f,loop_xml,cnf,exti,@mydata_string)</prop>
+          <prop id="_ext_guiprivs"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@guiprivs)(),,))">(f,loop_xml,cnf,exti,@guiprivs)</prop>
+          <prop id="_ext_file_load_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@file_load_string)(),,))">(f,loop_xml,cnf,exti,@file_load_string)</prop>
+          <prop id="_ext_tk_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@tk_string)(),,))">(f,loop_xml,cnf,exti,@tk_string)</prop>
+          <prop id="_ext_interpreter_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@interpreter_string)(),,))">(f,loop_xml,cnf,exti,@interpreter_string)</prop>
+          <prop id="_ext_ws_string"
+                test="(f,has,(f,try,()(f,loop_xml,cnf,exti,@ws_string)(),,))">(f,loop_xml,cnf,exti,@ws_string)</prop> 
+                                                                                         
+        </when>     
+        
+        <!-- jetzt ins xsl -->
+        <ti test="0">ins xsl _app_file_provision_path=(prop,_app_file_provision_path)</ti>
+        
+        <prop id="target-name" x="(f,loop_xml,cnf,@eclipseproject)"/>
+        <ti label="target-name" flag="label_right"> (prop,target-name)</ti> 
+        <dir id="ecproject" x="(dir,run_eclipsews)(prop,target-name)" />
+        <when test="(f,not,(f,dir_exists,(dir,ecproject)))">
+          <tk type="msg">going to create somwehere as eclipse project
+(dir,ecproject)</tk>
+          <mkdir dir="(dir,ecproject)"/>
+        </when>
+          <throw test="(f,not,(f,dir_exists,(dir,ecproject)))">the folder (dir,ecproject) does not exist. there should be an eclipse project.</throw>
+
+        <choose>
+          <when test="(f,eq,eclipse,(prop,run_action))">
+            <file id="target" x="(dir,run_eclipsews)(prop,target-name)/WebContent/WEB-INF/web.xml"/>
+            <dir id="target-css" x="(dir,run_eclipsews)(prop,target-name)/WebContent/css/"/>
+            <dir id="WEB-INF"  x="(dir,run_eclipsews)(prop,target-name)/WebContent/WEB-INF/"/>
+          </when>
+          <when test="(f,eq,tomcat,(prop,run_action))">
+            <when  test="(f,not,(f,has,dir,run_tomcat_home))">
+            <tk texst="0" type="msg">kein tomcate-homve</tk>            
+            <throw>Wir brauchen ein tomcat-homveerzeichenis</throw>
+
+            </when>
+            <file id="target" x="(dir,run_tomcat_home)webapps/(prop,target-name)/WEB-INF/web.xml"/>
+            <dir id="target-css" x="(dir,run_tomcat_home)webapps/(prop,target-name)/css/"/>
+            <mkdir dir="(dir,run_tomcat_home)webapps/(prop,target-name)/libro/"/>
+            <dir id="WEB-INF"  x="(dir,run_tomcat_home)webapps/(prop,target-name)/WEB-INF/"/>
+            <dir id="will-haben" x="(dir,run_tomcat_home)webapps/(prop,target-name)/WEB-INF/"/>
+            <when test="(f,not,(f,exists_dir,(dir,will-haben)))">
+              <tk type="msg" x="Going to create (dir,will-haben)"/>
+              <mkdir dir="(dir,will-haben)"/>
+            </when>
+          </when>          
+        </choose>
+        
+        
+        <file id="result" x="(dir,results)(prop,target-name).xml"/>
+ 
+  
+          <ti label="Temporary web.xml" type="file" x="(file,result)" flag="label_right"/>
+          <ti label="Final web.xml" type="file" x="(file,target)" flag="label_right"/>
+
+        <prop id="dbp"></prop>
+        <choose>
+          <when test="(f,not,(f,has,prop,run_db_selector))">
+            <prop id="dbp"></prop>
+          </when>
+          <when test="(f,eq_text,1,(prop,run_db_selector))">
+            <prop id="dbp">(f,vob,prop,run_db_add_one)</prop>
+          </when>          
+          <when test="(f,eq_text,2,(prop,run_db_selector))">
+            <prop id="dbp">(f,vob,prop,run_db_add_two)</prop>
+          </when>  
+                  
+        </choose>
+        <ti label="Database Specs:" flag="label_right">(prop,dbp)</ti>
+        <prop id="final-login" x="(prop,_login)"/>
+        <prop id="final-login" x=""
+              test="(f,eq_text,-,(prop,run_trans_garant))"/>
+        <prop id="the-xsl-parameterei">thisapp='(f,xslp,(prop,thisapp))' waid='(f,xslp,(f,loop_xml,cnf,@row))' login='(f,xslp,(prop,final-login))'
+              transport='(f,xslp,(prop,run_trans_garant))' 
+            project_dir='(f,xslp,(prop,_project_dir))'  
+            clone_project_dir_on='(f,xslp,(prop,_clone_project_dir_on))' 
+            css='(f,xslp,(prop,_css))' 
+            firstjob= '(f,xslp,(prop,_firstjob))' 
+            header='(f,xslp,(prop,_header))'  
+            header_job='(f,xslp,(prop,_header_job))'
+            footer='(f,xslp,(prop,_footer))'  
+            footer_job='(f,xslp,(prop,_footer_job))'              
+            trace_on='(f,xslp,(prop,_trace_on))'  
+            role='(f,xslp,(prop,_role))'
+            bits='(f,xslp,(f,vob,prop,_bits))'
+            uri_wf_bits='(f,xslp,(f,vob,prop,_uri_wf_bits))'
+            uri_wf_prov_pro='(f,xslp,(f,vob,prop,_uri_wf_prov_pro))'
+            uri_rf_bits='(f,xslp,(f,vob,prop,_uri_rf_bits))'
+            uri_rf_prov_pro='(f,xslp,(f,vob,prop,_uri_rf_prov_pro))' 
+            uri_rf_prov_app='(f,xslp,(f,vob,prop,_uri_rf_prov_app))'   
+            uri_wd_bits='(f,xslp,(f,vob,prop,_uri_wd_bits))'
+            uri_wd_prov_pro='(f,xslp,(f,vob,prop,_uri_wd_prov_pro))'
+            uri_rd_bits='(f,xslp,(f,vob,prop,_uri_rd_bits))'
+            uri_rd_prov_pro='(f,xslp,(f,vob,prop,_uri_rd_prov_pro))' 
+            uri_rd_prov_app='(f,xslp,(f,vob,prop,_uri_rd_prov_app))'                                 
+            ext_ons='(f,xslp,(f,vob,prop,_ext_ons))' 
+            ext_ebits='(f,xslp,(f,vob,prop,_ext_ebits))'          
+            ext_pro_check_string='(f,xslp,(prop,dbp) (f,vob,prop,_ext_pro_check_string))'
+            ext_pro_load_string='(f,xslp,(f,vob,prop,_ext_pro_load_string))'
+            ext_password_string='(f,xslp,(f,vob,prop,_ext_password_string))'
+            ext_passwords='(f,xslp,(f,vob,prop,_ext_passwords))'
+            ext_mediathek_string='(f,xslp,(f,vob,prop,_ext_mediathek_string))'
+            ext_runtime_string='(f,xslp,(f,vob,prop,_ext_runtime_string))'
+            ext_ext_embedjs_string='(f,xslp,(f,vob,prop,_ext_ext_embedjs_string))'
+            ext_mydata_string='(f,xslp,(f,vob,prop,_ext_mydata_string))'
+            ext_guiprivs='(f,xslp,(f,vob,prop,_ext_guiprivs))'
+            ext_file_load_string='(f,xslp,(f,vob,prop,_ext_file_load_string))'
+            ext_tk_string='(f,xslp,(f,vob,prop,_ext_tk_string))'
+            ext_interpreter_string='(f,xslp,(f,vob,prop,_ext_interpreter_string))'
+            ext_ws_string='(f,xslp,(f,vob,prop,_ext_ws_string))'
+            public='(f,loop_xml,cnf,@public)'</prop>
+        <ti label="xsl-paras" flag="label_right">(prop,the-xsl-parameterei)</ti>
+        <xslt xml="(file,appconfs)" 
+              xsl="(dir,app)webxml-generator.xsl" 
+              out="(file,result)">
+              <params>(prop,the-xsl-parameterei)</params>
+        </xslt>
+        <ti label="Before Replace" xtype="file" test="0">(f,file_content,(file,result))</ti>
+        <create_file out="(file,result)">(f,replace,(f,file_content,(file,result)),xmlns=&quot;&quot;,)</create_file>
+        <ti label="After Replace" xtype="file" test="0">(f,file_content,(file,result))</ti>
+        <ti label="Created Temporary:" flag="label_right" type="file">(file,result)</ti>
+        
+        <prop id="needs-copy" x="0"/>
+        <choose>
+          <when test="(f,not,(f,file_exists,(file,target)))">
+            <prop id="needs-copy" x="1"/>
+            <ti label=" ">target does not exist. needs to copy. (file,target)</ti>
+            <mkdir dir="(f,dir_of_file,(file,target))"/>
+          </when>        
+        
+          <when test="(f,eq_text,(f,file_info,hash,md5,(file,result)),(f,file_info,hash,md5,(file,target)))">
+            <prop id="needs-copy" x="0"/>
+            <ti label=" ">no need to copy. deployed version is uptodate.</ti>
+          </when>
+          <otherwise>
+            <prop id="needs-copy" x="1"/>
+          </otherwise>
+        </choose>       
+        
+        <when test="(prop,needs-copy)">
+          
+          <prop id="do-copy" x="1"/>
+          <when test="(prop,para_askoverwrite)">
+              <ti type="file" label="before" x="(file,target)" test="0"/>
+              <ti label="before" x="(f,file_content,(file,target))" flag="catch" test="0"/>
+              <tk type="bool" id="do-copy" label="Overwrite web.xml of [(prop,target-name)] ?"/>
+          </when>
+          
+          <when test="(prop,do-copy)">
+            <mkdir dir="(f,dir_of_dir,(file,target))"/>
+            
+            <copy file="(file,result)" tofile="(file,target)"/>
+            <ti label="Created Finally:" type="file" x="(file,target)" flag="label_right"/>
+          </when>
+        
+        </when>
+        
+        <when test="(prop,run_produce_css)">
+          <copy uri="(dir,run_css_resources)" touri="(dir,target-css)"/>
+          <ti label="copied css" type="dir">(dir,target-css)</ti>
+          <!-- <ti>Did copy css  uri=(dir,run_css_resources) touri=(dir,target-css)</ti>  -->
+        </when>    
+        
+        <when test="(f,has,dir,run_customers_delivery)">
+          <ti label="Pushing apps from CustomerDelivery"/>
+          <ti type="dir" label="Delivery Folder:">(dir,run_customers_delivery)</ti>
+          <ti label="Requested Apps:" x="(f,loop_xml,cnf,@apps)"/>
+          <tk type="msg" test="0">(f,loop_xml,cnf,@app).(f,loop_xml,cnf,@apps)</tk>
+          <delete content_of_dir="(dir,WEB-INF)service_apps/" test="(f,exists_dir,(dir,WEB-INF)service_apps/)"/>
+          
+          <!--   <interpreter watch="1"/>
+          <file id="vv" x="(dir,filetemp)hasi.xml"/>
+          <scan dir="(dir,run_customers_delivery)zip/system/service_apps/"
+                out="(file,vv)" level_limit="1"/>
+                
+          <loop id="vv" xml="(file,vv)" xpath="file">
+            <ti>(loop,vv)</ti>
+            <copy 
+                file="(dir,run_customers_delivery)zip/system/service_apps/(loop,vv)" 
+                tofile="(dir,WEB-INF)service_apps/(loop,vv)"/>
+            <ti type="file" label="Created App" x="(dir,WEB-INF)service_apps/(loop,vv)"/>
+          </loop>
+          -->                
+           
+          <file id="ww" x="(dir,filetemp)hasi.xml"/>
+          <split
+            text="(f,loop_xml,cnf,@apps)"
+            out="(file,ww)"/>
+          <ti type="file" x="(file,ww)" test="0"/>
+          
+          
+          <mkdir dir="(dir,WEB-INF)service_apps/"/>
+          <loop id="ww" xml="(file,ww)" xpath="split">
+            <!-- <ti>Copy app (loop,ww,@x)</ti>  -->
+           
+            <copy 
+                file="(dir,run_customers_delivery)zip/system/service_apps/(loop,ww,@x).zip" 
+                tofile="(dir,WEB-INF)service_apps/(loop,ww,@x).zip"/>
+            <ti type="file" label="Copied App" x="(dir,WEB-INF)service_apps/(loop,ww,@x).zip"/>
+          </loop>
+         
+
+            <copy 
+                  file="(dir,run_customers_delivery)zip/system/services.zip" 
+                  tofile="(dir,WEB-INF)services.zip"/>
+            <ti type="file" label="Copied Services" x="(dir,WEB-INF)services.zip"/>      
+          <!--         
+                   <choose>
+          <when test="(f,exists_file,(dir,run_customers_delivery)zip/system/services.zip)">        
+          </when>
+          <when test="(f,exists_file,(dir,run_customers_delivery)zip/system/Services.zip)">
+            <copy 
+                  file="(dir,run_customers_delivery)zip/system/Services.zip" 
+                  tofile="(dir,WEB-INF)services.zip"/>
+          </when>      
+          <otherwise>
+            <ti label="Problem"/>
+            <ti>Did not find services</ti>
+            <ti label="looked in" type="file">(dir,run_customers_delivery)zip/system/Services.zip</ti>
+            <throw>Did not find services</throw>
+          </otherwise>    
+         </choose>   -->
+         
+          <!-- 
+          <file id="target-services" x="(dir,WEB-INF)services.zip"/>
+          <copy file="(file,prep-services)" tofile="(file,target-services)"/>
+          <ti label="Created Services" type="file" x="(file,target-services)"/>       -->
+        </when>                      
+        
+        <when test="(prop,run_produce_services)">
+          <file id="target-services" x="(dir,WEB-INF)services.zip"/>
+          <copy file="(file,prep-services)" tofile="(file,target-services)"/>
+          <ti label="Created Services" type="file" x="(file,target-services)"/>
+        </when>      
+        
+        <when test="(prop,run_produce_serviceapps)">
+          <dir id="target-serviceapps" x="(dir,WEB-INF)service_apps/"/>
+          <mkdir dir="(dir,target-serviceapps)"/>
+          <delete content_of_dir="(dir,target-serviceapps)" />
+
+          <copy uri="(dir,run_serviceapps_resources)" touri="(dir,target-serviceapps)"/>
+          <ti label="Created ServiceApps" type="dir" x="(dir,target-serviceapps)"/>
+        </when>                   
+           
+      </when> <!-- das ende ob das gemacht werden soll -->
+      
+      </try>
+      <catch>
+        <ti>A problem occured with in app with position=(loop,while-cnf,#i)
+Message:
+(prop,catched_msg)</ti>
+        <tk type="msg">A problem occured with in app with position=(loop,while-cnf,#i)
+Message:
+(prop,catched_msg)</tk>
+      </catch>
+      </try_catch> 
+      
+   </loop>
+   
+   <loop_xml 
+      act="close" 
+      id="cnf" />           
+   
+   <spirit id="cnf" act="close"/> 
+               
+  <!--
+         <prop id="rule_base" x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@rule_base)(),standard)"/>
+
+   
+
+
+      <ti label="(f,loop_xml,ws,@name)"/>
+      
+       <loop_xml 
+          act="open" 
+          id="app" 
+          spirit="list" 
+          xpath="dir[@name=(f,xpath_string,(f,loop_xml,ws,@name))]/dir"/> 
+       <loop 
+          id="while-ws" 
+          while="()(f,loop_xml,app,has_next?)()">
+          <loop_xml act="next" id="app" />
+          <ti label=" " x="(f,loop_xml,app,@name)" type="call_job" job="see-app-2-download"
+            explain="(f,loop_xml,app,@name)">
+            <prop id="app-path" x="(f,loop_xml,app,@path)"/>
+            <prop id="app-name" x="(f,loop_xml,app,@name)"/>
+          </ti>     
+       </loop>
+       
+       <loop_xml 
+          act="close" 
+          id="app" /> 
+                
+ 
+  -->
+</job>
+<job id="core-operation2" role="hidden">
+
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_conf_read"/>
+  <interpreter talk="1"/>
+  
+  <create_file file="(file,project-exists)">yes</create_file>
+  
+  <prop id="stat_begin" x="(f,time,yyyyMMdd_HHmmss)"/>
+  
+  <!-- phase 1 -->
+  
+  <file id="split" x="(dir,temp)split.xml"/>
+  
+  
+  
+  <split
+    text="(prop,para_webapps)"
+    out="(file,split)"/>
+    
+  <dir id="results" x="(dir,pro)results/"/>
+  <mkdir dir="(dir,results)"/>
+
+  <loop id="wa" xml="(file,split)" xpath="split">
+  
+      <try_catch>
+      <try>
+        <ti label="(loop,wa,#i)."> (loop,wa,@x)</ti>  
+        
+        <prop id="rule_base" x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@rule_base)(),standard)"/>
+        
+        <when test="(f,eq_text,OVERWRITE_ALL,(prop,rule_base))"> 
+        
+          <prop id="para_app_file_provision_path" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@app_file_provision_path)(),,)"/>
+          <prop id="para_upload_path" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@upload_path)(),,)"/>
+                
+          <prop id="para_project_dir" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@project_dir)(),,)"/>
+          <prop id="para_clone_project_dir_on" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@clone_project_dir_on)(),,)"/>    
+                
+          <prop id="para_css" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@css)(),,)"/>     
+                
+          <prop id="para_firstjob" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@firstjob)(),,)"/>                                          
+          
+          <prop id="para_header" x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@header)(),,)"/>
+          <prop id="para_header_job" x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@header_job)(),,)"/>
+          <prop id="para_footer" x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@footer)(),,)"/>
+          <prop id="para_footer_job" x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@footer_job)(),,)"/> 
+          
+          <prop id="para_trace_on" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@trace_on)(),,)"/>      
+                
+          <prop id="para_role" 
+                x="(f,try,()(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@role)(),,)"/>                               
+
+        </when>
+        
+        
+        <prop id="target-name" x="(f,xpath,(file,appconfs),appconf[@row=(f,xpath_string,(loop,wa,@x))],@eclipseproject)"/>
+        <ti label=" "> (prop,target-name)</ti> 
+        <dir id="ecproject" x="(dir,para_eclipsews)(prop,target-name)" />
+        
+        <throw test="(f,not,(f,dir_exists,(dir,ecproject)))">the folder (dir,ecproject) does not exist. there should be an eclipse project.</throw>
+        <file id="target" x="(dir,para_eclipsews)(prop,target-name)/WebContent/WEB-INF/web.xml"/>
+        <file id="result" x="(dir,results)(prop,target-name).xml"/>
+        <xslt xml="(file,appconfs)" 
+              xsl="(dir,app)webxml-generator.xsl" 
+              out="(file,result)">
+              <params>waid='(f,xslp,(loop,wa,@x))' takeoff='(f,xslp,(prop,para_takeoff))' 
+            app_file_provision_path='(f,xslp,(prop,para_app_file_provision_path))'  
+            upload_path='(f,xslp,(prop,para_upload_path))' 
+            project_dir='(f,xslp,(prop,para_project_dir))'  
+            clone_project_dir_on='(f,xslp,(prop,para_clone_project_dir_on))' 
+            css='(f,xslp,(prop,para_css))' 
+            firstjob= '(f,xslp,(prop,para_firstjob))' 
+            header='(f,xslp,(prop,para_header))'  
+            header_job='(f,xslp,(prop,para_header_job))'
+            footer='(f,xslp,(prop,para_footer))'  
+            footer_job='(f,xslp,(prop,para_footer_job))'              
+            trace_on='(f,xslp,(prop,para_trace_on))'  
+            role='(f,xslp,(prop,para_role))'</params>
+        </xslt>
+        <ti label=" " type="file">(file,result)</ti>
+        <prop id="needs-copy" x="0"/>
+        <choose>
+          <when test="(f,not,(f,file_exists,(file,target)))">
+            <prop id="needs-copy" x="1"/>
+            <ti label=" ">target does not exist. needs to copy. (file,target)</ti>
+            <mkdir dir="(f,dir_of_file,(file,target))"/>
+          </when>        
+        
+          <when test="(f,eq_text,(f,file_info,hash,md5,(file,result)),(f,file_info,hash,md5,(file,target)))">
+            <prop id="needs-copy" x="0"/>
+            <ti label=" ">no need to copy. deployed version is uptodate.</ti>
+          </when>
+          <otherwise>
+            <prop id="needs-copy" x="1"/>
+          </otherwise>
+        </choose>       
+        
+        <when test="(prop,needs-copy)">
+          <prop id="do-copy" x="1"/>
+          <when test="(prop,para_askoverwrite)">
+              <tk type="bool" id="do-copy" label="Overwrite (prop,target-name) ?"/>
+          </when>
+          
+          <when test="(prop,do-copy)">
+            <copy file="(file,result)" tofile="(file,target)"/>
+            <ti label="Created:" type="file" x="(file,target)" flag="label_right"/>
+          </when>
+        
+        </when> 
+           
+      </try>
+      <catch>
+        <ti>A problem occured with (loop,wa,@x): (prop,catched_msg)</ti>
+      </catch>
+      </try_catch> 
+            
+    
+          
+    
+  </loop>  
+  
+  
+  <!-- 
+  <dump_ti_all label="Greetings from core-operation"/>
+  
+  <dir id="starter" x="(dir,services)" />
+  
+  <file id="scan" x="(dir,temp)scan.xml" />
+  
+  <scan dir="(dir,starter)" 
+        level_limit="3"
+        out="(file,scan)"
+        field="fn"/>
+  
+  <prop id="counter" x="0" />
+  <prop id="found" x="0"/> 
+        
+  <loop id="scan" xml="(file,scan)" xpath="//file">
+    <prop id="counter" x="(f,add,1,(prop,counter))"/>
+    
+    <ti type="file" label="Some (prop,counter)" x="(loop,scan,@fn)"/>
+
+    <prop id="found" x="1"/>     
+  
+  </loop>
+    <ti label="Summary"/>
+  <ti type="dir" x="(dir,services)" label="Eben"/>
+  <ti type="file" x="(file,takeoff)" label="Dort"/>
+
+  
+
+  
+  -->
+
+  <prop id="stat_end" x="(f,time,yyyyMMdd_HHmmss)"/>
+ 
+  <call_job job="tk_stat_write" />
+</job>
+
+<!--
+<job id="test-2">
+
+      <choose>
+        <when test="1">
+        </when>
+        <when test="0">
+        </when>
+        <otherwise>
+        </otherwise>
+      </choose>
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+<job id="spiritell" role="hidden">
+
+  <need>(dir,target)</need>
+  <need>(prop,report)</need>
+  <need default="0">(prop,services)</need>
+  <throw>hallo</throw>
+  <mkdir dir="(dir,target)"/>
+  <tp>Searching for updated files ...</tp>
+  <interpreter watch="0"/>
+  <prop id="sum" x="0"/>
+  <choose>
+    <when test="(f,has,dir,from-dir)">
+      <file id="scan" x="(dir,temp)scan.xml"/>
+      <scan dir="(dir,from-dir)" out="(file,scan)" field="md5"/>
+    </when>
+    <when test="(f,has,file,from-scan)">
+      <file id="scan" x="(file,from-scan)"/>
+    </when>    
+    <otherwise>
+      <throw>service 'copy-new' needs parameter ()(dir,from-dir) or (file,from-scan)() </throw>
+    </otherwise>  
+  </choose>
+  <ti type="file" label="copy-new" x="(file,scan)" test="0"/>
+  <!--
+   <spirit id="list" xml="(file,l)" act="open"/>
+   <loop_xml 
+      act="open" 
+      id="ws" 
+      spirit="list" 
+      xpath="dir"/> 
+   <loop 
+      id="while-ws" 
+      while="()(f,loop_xml,ws,has_next?)()">
+      <loop_xml act="next" id="ws" />
+      <ti label="(f,loop_xml,ws,@name)"/>
+      
+       <loop_xml 
+          act="open" 
+          id="app" 
+          spirit="list" 
+          xpath="dir[@name=(f,xpath_string,(f,loop_xml,ws,@name))]/dir"/> 
+       <loop 
+          id="while-ws" 
+          while="()(f,loop_xml,app,has_next?)()">
+          <loop_xml act="next" id="app" />
+          <ti label=" " x="(f,loop_xml,app,@name)" type="call_job" job="see-app-2-download"
+            explain="(f,loop_xml,app,@name)">
+            <prop id="app-path" x="(f,loop_xml,app,@path)"/>
+            <prop id="app-name" x="(f,loop_xml,app,@name)"/>
+          </ti>     
+       </loop>
+       
+       <loop_xml 
+          act="close" 
+          id="app" /> 
+                
+   </loop>
+   
+   <loop_xml 
+      act="close" 
+      id="ws" />           
+   
+   <spirit id="list" act="close"/>  
+  -->
+  
+  <spirit id="cn" act="open" xml="(file,scan)"/>
+  
+  <dir id="from-my-dir" x="(f,spirit,cn,@dir)"/>
+  <prop id="did-print-header" x="0"/>
+  <!-- 
+  <ti label="(f,html,b,open)Action(f,html,b,close)" key="(f,html,b,open)Reason(f,html,b,close)" type="rec">
+    <ti x="(f,html,b,open)from(f,html,b,close)" />
+    <ti x="(f,html,b,open)to(f,html,b,close)" />
+  </ti>    -->
+  <!-- copy if requested -->
+  
+  <loop_xml 
+    act="open" 
+    id="copy" 
+    spirit="cn" 
+    xpath="//file"/>
+ 
+  <loop 
+    id="while" 
+    while="()(f,loop_xml,copy,has_next?)()">
+    <loop_xml act="next" id="copy" />
+    <file id="dest" x="(dir,target)(f,loop_xml,copy,..,@ipath)(f,loop_xml,copy)"/>
+    <file id="source" x="(dir,from-my-dir)(f,loop_xml,copy,..,@ipath)(f,loop_xml,copy)"/>
+    <prop id="do-copy" x="0"/>
+    <choose>
+      <when test="(f,not,(f,exists_file,(file,dest)))">
+        <prop id="do-copy" x="1"/>
+        <prop id="reason" x="new"/>
+      </when>      
+      <when test="(f,not,(f,eq_text,(f,file_info,hash,md5,(file,dest)),(f,loop_xml,copy,@md5)))">
+        <prop id="do-copy" x="1"/>
+        <prop id="reason" x="updated"/>
+      </when>               
+    </choose> 
+    
+    <throw>hallo</throw>
+    
+    <!-- 
+    
+    <when test="(prop,services)">
+      <when test="(f,matches_regex,(f,loop_xml,copy),computer\-.+\.xrj)">
+        <prop id="do-copy" x="0"/>
+      </when>
+      <when test="(f,matches_regex,(f,loop_xml,copy),computer\-.+\.ljx)">
+        <prop id="do-copy" x="0"/>
+      </when>  
+      </when>                         
+    </when>
+    
+    <when test="(prop,do-copy)">
+      <call_service job="copy-new-print-header"/>   
+      <prop id="sum" x="(f,add,1,(prop,sum))"/>
+      <choose>
+        <when test="(prop,report)">
+          <ti label="Copy" key="(prop,reason)" type="rec">
+            <ti type="file" x="(file,source)" />
+            <ti type="file" x="(file,dest)" />
+            <ti type="call_service" job="Goto-Compare-Files" explain="Compare" xflag="silent"
+                test="(f,eq_text,updated,(prop,reason))">
+              <file id="old" x="(file,dest)"/>
+              <file id="new" x="(file,source)"/>
+            </ti>
+          </ti>
+        </when>      
+        <otherwise>
+          <copy file="(file,source)" tofile="(file,dest)" />
+          <ti label="Did copy" key="(prop,reason)" type="rec">
+            
+            <ti type="file" x="(file,source)" />
+            <ti type="file" x="(file,dest)" />
+          </ti>        
+        </otherwise>                
+      </choose>       
+    </when> 
+    -->
+  </loop>
+  
+  <loop_xml 
+    act="close" 
+    id="copy"/>    
+
+  <spirit id="cn" act="close" />
+  
+</job>
+
+
+</jobs>

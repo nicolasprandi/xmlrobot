@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+
+<job id="report_file_specials" role="hidden">
+  <need>(file,fn2)</need>
+  
+  <prop id="sp-ok">0</prop>
+  <choose>
+    <!-- jobs -->
+    <when test="(f,or,(f,ends_with,(loop,file),.xrj),(f,ends_with,(loop,file),.ljx))">
+      
+      <prop id="details"></prop>
+      <loop id="job" xml="(file,fn2)" xpath="job">
+        <prop id="details">(prop,details) (loop,job,@id)(e:s)</prop> 
+        <prop id="sp-ok">1</prop>      
+      </loop>
+      
+      <when test="(prop,sp-ok)">
+        <prop id="details">jobs: (prop,details)</prop>
+      </when>
+      
+    </when>
+    
+    <!-- xsl -->
+    <when test="(f,ends_with,(loop,file),.xsl)">
+      <prop id="details"></prop>
+      <loop id="job" file="(file,fn2)" 
+            regex="template match=&quot;(e:o)[a-zA-Z0-9_]*(e:c)&quot;">
+        <prop id="details">(prop,details) (loop,job,1)(e:s)</prop>
+        <prop id="sp-ok">1</prop>       
+      </loop>
+      <when test="(prop,sp-ok)">
+        <prop id="details">matches: (prop,details)</prop>
+      </when>         
+    </when>
+    
+    <!-- excel -->
+    <when test="(f,or,(f,ends_with,(loop,file),.xls),(f,ends_with,(loop,file),.xlsx))">
+      <try_catch>
+        <try>
+          <file id="it.sheets">(dir,filetemp)sheets.xml</file>
+          <excel_sheets excel="(file,fn2)" out="(file,it.sheets)" />
+          <prop id="details"></prop>
+          <loop id="sheets" xml="(file,it.sheets)" xpath="sheet">
+            <prop id="details">(prop,details) (loop,sheets,@name)(e:s)</prop>
+            <prop id="sp-ok">1</prop>       
+          </loop>
+          <when test="(prop,sp-ok)">
+            <prop id="details">sheets: (prop,details)</prop>
+          </when>          
+              
+        </try>
+        <catch>
+          <warn>Problem in reading excel sheet, possible its just not in the expected format, file:(loop,it.files,@fn)</warn>
+        </catch>
+      </try_catch>
+    </when>              
+  </choose> 
+  
+  <when test="(prop,sp-ok)">
+    <ti label=" " key=" " flag="wrap">(f,substring,(prop,details),0,(f,sub,(f,len,(prop,details)),1))</ti>
+  </when> 
+</job>
+
+
+</jobs>

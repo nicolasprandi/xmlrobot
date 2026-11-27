@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+
+  
+<job id="api-olix" role="hidden">
+
+  <!-- <ti type="call_job" job="sys_project_setup" />   -->
+  <call_job job="prolog"/>
+  <ti>did prolog</ti>
+  <call_job job="??"/>
+
+</job>
+<job id="prolog" role="hidden">  
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>  
+   <when test="(f,has,prop,pro)">  
+   
+      <file id="spalten">(dir,pro)spalten.xml</file>
+      <when test="(f,not,(f,exists_file,(file,spalten)))">
+      <create_file out="(file,spalten)">&lt;spalten/&gt;</create_file>
+      <i>Created: (file,spalten)</i>
+      </when>
+      <prop id="spalten_offset">./</prop>
+      <prop id="spalten_offset_label"/>
+      <prop id="spalten_offset_new_key">//</prop>
+      <prop id="spalten_sort_attribute"/>
+      <prop id="spalten_sort_number"/>
+      <prop id="spalten_sort_ignore_case"/>
+      <prop id="spalten_sort_desc"/>
+      <prop id="spalten_where"/>
+      <prop id="spalten_return_job">spalte-see-all</prop>   
+   
+    <file id="starter" x="(dir,pro)starter.xml"/>
+    <file id="base" x="(dir,pro)base.xml"/>
+
+    
+    <file id="para-data" x="(dir,pro)para-data.xrs"/>
+    <prop id="para-regex" x="para_.+"/>
+  
+    <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+    <prop id="conf-regex" x="conf_.+"/>
+    
+    <file id="stat-data" x="(dir,pro)stat-data.xrs"/>
+    <prop id="stat-regex" x="stat_.+"/>  
+      
+    <file id="project-exists" x="(dir,pro)project-exists.txt"/>
+    
+    
+  
+  </when> 
+</job>
+
+</jobs>
+

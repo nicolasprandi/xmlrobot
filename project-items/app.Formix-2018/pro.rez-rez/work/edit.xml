@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rez-edit">
+<need>(prop,rez_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="rez-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="rez-editor"/>
+<call_job job="rez-write"/>
+<ti align="right" x="Did update (prop,myclass) '(prop,rez_bez)'"/>
+<call_job job="rez-see"/>
+</job>

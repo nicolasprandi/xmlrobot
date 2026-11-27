@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="aspect-edit">
+<need>(prop,aspect_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="aspect-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="aspect-editor"/>
+<call_job job="aspect-write"/>
+<ti align="right" x="Did update Aspect '(prop,aspect_titel)'"/>
+<call_job job="aspect-see-all"/>
+</job>

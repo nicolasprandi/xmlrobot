@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exti-see-more">
+<need>(prop,exti_key)</need>
+<call_job job="exti-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="extis_tk_control"/>
+<call_job job="exti-tk"/>
+<ti_hr/>
+<ti type="rec">
+<ti type="call_job" explain="Edit Extended Configuration" job="exti-edit">
+<prop id="exti_key">(prop,exti_key)</prop>
+<file id="extis">(file,extis)</file>
+<prop id="extis_offset">(prop,extis_offset)</prop>
+<prop id="extis_offset_label">(prop,extis_offset_label)</prop>
+<prop id="extis_offset_new_key">(prop,extis_offset_new_key)</prop>
+<prop id="extis_sort_attribute">(prop,extis_sort_attribute)</prop>
+<prop id="extis_sort_number">(prop,extis_sort_number)</prop>
+<prop id="extis_where">(prop,extis_where)</prop>
+<prop id="extis_return_job">(prop,extis_return_job)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+<prop id="appconf_key">(prop,appconf_key)</prop>
+</ti>
+</ti>
+</job>

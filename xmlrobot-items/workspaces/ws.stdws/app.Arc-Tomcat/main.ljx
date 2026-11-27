@@ -1,0 +1,261 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog" />
+                              
+<job id="Generate Kings Vars" role="hidden" level="app" tip="generates variable-definitions out of excel">
+  
+  
+  <call_job job="king">
+    <file id="king_in_execl">(dir,app)input-vars.xls</file>
+    <prop id="king_in_sheet">server</prop>
+    <file id="king_result">(file,kingkong_index)</file> 
+    <file id="king_result_prolog">(file,kingkong_lsx)</file> 
+  </call_job>
+  
+  <call_job job="king">
+    <file id="king_in_execl">(dir,app)input-vars.xls</file>
+    <prop id="king_in_sheet">app</prop>
+    <file id="king_result">(file,japp_index)</file> 
+    <remove type="file" id="king_result_prolog"/>
+  </call_job>  
+  
+  
+</job>
+<job id="Generate Kings Vars?" role="hidden">
+  <file id="king_in_execl">(dir,app)input-vars.xls</file>
+  <ti type="file" label="Excel to Edit:">(file,king_in_execl)</ti>
+</job>
+
+<job id="Test Kings Vars" role="dev" pri="10">
+  <dump flag="ti"/>
+</job>
+
+<job id="just-dump" role="hidden">
+  <dump flag="ti"/>
+</job>
+
+<job id="Project Setup" role="hidden">
+  <tk type="msg" msg="Tomcat to use: (dir,loc), going to restart ..." />
+</job>
+
+<job id="detail-application" role="hidden">
+  <need>(prop,wish-app)</need>
+  <ti label="App:(prop,wish-app) ">
+    <ti type="dir" label="Apphome:" x="(dir,webapps)(prop,wish-app)" />
+    <ti type="file" label="web.xml" x="(dir,webapps)(prop,wish-app)(prop,fs)WEB-INF(prop,fs)web.xml" />
+  </ti>
+</job>
+
+<job id="list-applications" role="hidden">
+  <scan dir="(dir,webapps)" level_limit="2" out="(dir,temp)scanxxx.xml"/>
+  <ti type="file" test="0">(dir,temp)scanxxx.xml</ti>
+  <loop id="wa" xml="(dir,temp)scanxxx.xml" xpath="dir">
+    <ti label="(loop,wa,@rpath)" type="dir">(dir,webapps)(loop,wa,@rpath)</ti>
+    <ti label=" " type="call_job" job="detail-application" explain="See (loop,wa,@rpath)">
+      <prop id="wish-app">(loop,wa,@rpath)</prop>
+    </ti>
+  </loop>
+</job>
+
+<job id="list-important" role="dev">
+
+  <call_job job="kong">
+    <prop id="kong_groups_flags">important</prop>
+    <file id="kong_data">(file,kingkong_index)</file>
+  </call_job>
+
+  <ti type="call_job" job="just-dump" />
+</job>  
+
+<job id="list-config" role="dev">
+
+  <call_job job="kong">
+    <prop id="kong_groups_flags">config</prop>
+    <file id="kong_data">(file,kingkong_index)</file>
+  </call_job>
+
+  <ti type="call_job" job="just-dump" xlabel="Next:"/>
+  
+</job>  
+
+<job id="?">
+  <ti label="Application UFO-Tomcat55">
+    <ti label="Targets:" type="ul">Install a Tomcat 5.5 Server on the Fly</ti>
+    <ti label=" " type="ul">Administrate a Tomcat 5.5 Server</ti>
+  </ti>
+  
+  <ti label="About the application UFO-Tomcat55">
+    <ti label="Integrated:" type="ul">Comes with Tomcat 5.5.36</ti>
+    <ti label="Install:" type="ul">Let's you extract those zips into a folder</ti>
+    <ti label=" " type="ul">Let's you choose the installation directory of tomcat</ti>
+    <ti label="Start/Stop:" type="ul">Let's you start the server</ti>
+    <ti label=" " type="ul">Let's you stop the server</ti>
+    <ti label=" " type="ul">Let's you verfy if server is running</ti>
+    <ti label=" " type="ul">Let's you open a terminal window in the bin directory</ti>
+    <ti label="Info:" type="ul">Gives a filelist of important server files</ti>
+    <ti label=" " type="ul">Let's you list the webapps</ti>
+    <ti label=" " type="ul">Let's you open a webapp in a browser</ti>
+    <ti label="Webapp Creation:" type="ul">Let's you create a template j2ee-webapp</ti>
+    <ti label=" " type="ul">Let's you create a template webdav-webapp</ti>
+
+  </ti>
+
+  <ti label="Links">
+    <ti label=" " type="web">http://tomcat.apache.org/</ti>
+    <ti label=" " type="web">http://wiki.apache.org/tomcat/</ti>
+    <ti label=" " type="web">http://archive.apache.org/dist/tomcat/tomcat-5/</ti>
+    <ti label=" " type="web">http://linux-sxs.org/internet_serving/c140.html</ti>
+    
+    
+  </ti>  
+  <ti label="Next">
+    <ti label=" " type="call_service" job="Create empty project" explain="Create a new UFO-Tomcat55 Project ..."/>
+  </ti>
+
+</job>
+<job id="???">
+  <call_job job="??"/>
+</job>
+<job id="??">
+
+  <i>(f,right,testArcTomcat)</i>
+	<call_job job="server-report" />
+    	<!-- <call_job job="list-important" />    -->
+  <ti label="Setup"/>
+  <ti type="file" x="(file,setup)" label="Setup"/>
+  <ti label=" ">&lt;setup loc_dir=&quot;file:///C:/Users/nicolas/Documents/tomcats/tomcat9/&quot; /&gt;</ti>
+  
+
+  
+
+</job>
+
+<job id="Run Service of Instrument" role="hidden">
+  <tk type="sel" id="soi">
+    <sel laxbel="">catalina</sel>
+    <sel laxbel="">digest</sel>
+    <sel laxbel="">cpappend</sel>
+    <sel laxbel="">setclasspath</sel>
+    <sel laxbel="">shutdown</sel>
+    <sel laxbel="">startup</sel>
+  </tk>
+  
+  <ti type="file">(dir,bin)(prop,soi).bat</ti>
+  
+  <tk type="msg" msg="execute this: (dir,bin)(prop,soi).bat"/>
+  
+  <!-- <exe dir="(dir,bin)">
+    <arg>(dir,bin)(prop,soi).bat</arg>
+  </exe> -->
+
+</job>
+<!-- 
+<job id="RUN AN INSTRUMENT" role="hidden">
+
+  <tk type="text" id="reqeusted_service" x="(prop,tc-services)" label="Service to Run"/>
+  <prop id="wish-srv">(prop,requested_service)</prop>
+  <call_job job="call-inst-service-Internal"/>
+
+</job>
+
+<job id="call-inst-service-Internal" os="win" role="hidden">
+  <need>(dir)</need>
+  <need></need>
+  <exe>
+    <arg>(dir,inst-dir-bin)(prop,wish-srv).bat</arg>
+  </exe>
+</job>
+
+
+<job id="list-instrument-services" role="hidden">
+
+  <ti label="asd">
+    <ti label="startup" type="call_job" job="call-inst-service">
+      <prop id="wish-srv">startup</prop>
+    </ti>
+  </ti>
+
+</job>
+
+<job id="edit-app-vars" role="hidden">
+  <ti label="Edit this, sheet vars:" type="file">(dir,app)input-vars.xls</ti>
+</job>
+-->
+
+<job id="show-snippets" role="dev">
+
+  <ti label="1(e:c) Insert User and Role">
+    <ti type="file">(file,usersxml)</ti>
+    <ti><![CDATA[<role rolename="manager"/>
+    <user username="wallace" password="gromit" roles="manager"/>   
+    ]]></ti>
+    <ti><![CDATA[# groupadd tomcat
+# useradd -g tomcat -d /opt/tomcat tomcat
+# passwd tomcat   
+    ]]></ti>    
+    
+    
+  </ti>
+  
+
+  <ti label="2(e:c) Reload dynamic">
+    <ti type="file">(file,contextxml)</ti>
+    <ti><![CDATA[<Context reloadable="true">   
+    ]]></ti>
+    <ti><![CDATA[]]></ti>        
+  </ti>
+  
+  <ti label="3(e:c) Scripts on Linux/Mac">
+    <ti type="file">(file,contextxml)</ti>
+    <ti><![CDATA[Funktioniert wahrscheinlich nicht:
+<target name="startTomcat_DebugLinux" if="isLinux">
+  <exec executable="gnome-terminal" spawn="true">
+    <arg line="--window-with-profile=Tomcat --geometry=120x60 -e '${env.CATALINA_HOME}/bin/catalina.sh jpda run'" />
+  </exec>
+</target>
+
+<target name="startTomcat_DebugMac" if="isMac">
+  <exec executable="/usr/X11R6/bin/xterm" spawn="true">
+    <arg  line="-geometry 180x65 -e ${env.CATALINA_HOME}/bin/catalina.sh jpda run" />
+  </exec>
+</target>    
+    ]]></ti>
+    <ti><![CDATA[]]></ti>        
+  </ti>  
+    
+  <ti label="4(e:c) Linux: Setting JAVA_HOME (Terminal)">
+
+    <ti><![CDATA[JAVA_HOME="usr/lib/jvm/java-1.7.0-openjdk-i386"
+export JAVA_HOME    
+    ]]></ti>
+    <ti><![CDATA[or add this path to etc/environment
+and restart linux!]]></ti>        
+  </ti> 
+
+</job>
+<!-- 
+<job id="see-servicios" pri="10" role="hidden">
+  
+  <prop id="kong_in_type_rex">dir|file|prop</prop>
+  <prop id="kong_in_id_rex">.*</prop>
+  <prop id="kingkong_groups_flags">servicios</prop>
+
+  <call_job job="kong"/>
+
+</job>
+
+
+<job id="is-running" role="hidden">
+  
+  <prop id="kong_in_type_rex">dir|file|prop</prop>
+  <prop id="kong_in_id_rex">.*</prop>
+  <prop id="kingkong_groups_flags">important</prop>
+
+  <call_job job="kong"/>
+
+</job>
+-->
+
+
+
+</jobs>

@@ -1,0 +1,156 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+
+
+
+<job id="perform-file-operation" role="hidden">
+<need>(file,gofile)</need>
+<need default="(file,gofile)">(file,with)</need>
+
+
+<prop id="ispic">(f,or,(f,ends_with,(file,with),.jpg),(f,ends_with,(file,with),.png))</prop>
+<choose>
+  <when test="(prop,ispic)">
+    <ti type="img">(file,with)</ti>
+    <ti>(file,with)</ti>
+    <ti type="call_job" job="perform-file-operation2" explain="See more file-operations ...">
+      <file id="gofile">(file,gofile)</file>
+    </ti>
+  </when>
+  <otherwise>
+    <call_job job="perform-file-operation2"/>
+  </otherwise>
+</choose>
+</job>
+
+<job id="perform-file-operation2" role="hidden">
+
+<need>(file,gofile)</need>
+<need default="(file,gofile)">(file,with)</need>
+
+<call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,work)eingaben2.txt" />
+    <prop id="joe-in-regex" x="what" />
+</call_job>
+
+<tk label="Select the operation (dir,gofile)" >
+  <tk type="sel" id="what" flag="nono">
+    <sel label="See content of text-file">content</sel>
+    <sel label="See content as picture">pic</sel>
+    <sel label="Edit a text-file">edit</sel>
+    <sel label="File Info">vfs</sel>
+    <sel label="Checksum">checksum</sel>
+    <!-- <sel label="Extract a zip-file">extract</sel> -->
+    <sel label="Copy">copy</sel>    
+
+    <!-- <sel label="Split a text-file">split</sel> -->     
+    <sel label="Text Replace">replaceText</sel>
+    <sel label="Delete">delete</sel>
+    <sel label="Rename">rename</sel>  
+    <!-- 
+    <sel label="Blo">2</sel>
+    <sel label="Blu">3</sel>             -->
+  </tk>
+</tk>
+<call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,work)eingaben2.txt" />
+    <prop id="joe-in-regex" x="what" />
+</call_job>
+
+<choose>
+  <when test="(f,eq_text,replaceText,(prop,what))">
+    <call_job job="File-ReplaceText"/>
+  </when>
+  <when test="(f,eq_text,nope,(prop,what))">
+    <ti>Nothing</ti>
+  </when>  
+  <when test="(f,eq_text,edit,(prop,what))">
+    <call_job job="File-Edit"/>
+  </when>
+  <when test="(f,eq_text,vfs,(prop,what))">
+    <call_job job="File-VFS"/>
+  </when>  
+  <when test="(f,eq_text,checksum,(prop,what))">
+    <call_job job="File-Checksum"/>
+  </when>  
+  <when test="(f,eq_text,extract,(prop,what))">
+    <call_job job="File-Extract"/>
+  </when> 
+  <when test="(f,eq_text,pic,(prop,what))">
+    <call_job job="File-Pic"/>
+  </when>     
+  <when test="(f,eq_text,copy,(prop,what))">
+    <call_job job="File-Copy"/>
+  </when>   
+  <when test="(f,eq_text,content,(prop,what))">
+    <call_job job="File-Content"/>
+  </when>   
+  <when test="(f,eq_text,split,(prop,what))">
+    <call_job job="File-Split"/>
+  </when>   
+  
+  <when test="(f,eq_text,delete,(prop,what))">
+    <call_job job="File-Delete"/>
+  </when>  
+  
+  <when test="(f,eq_text,rename,(prop,what))">
+    <call_job job="File-Rename"/>
+  </when>        
+    
+  
+  <!--
+  <when test="(f,eq_text,1,(prop,what))">
+  </when>  
+  -->
+
+</choose>
+
+s
+
+</job>
+
+
+
+
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

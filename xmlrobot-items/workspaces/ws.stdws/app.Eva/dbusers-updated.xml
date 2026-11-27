@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<users>
+  <user row="2" userid="Niki" name="zweiter von zwo" apps="Panorama Check " role="user" pwd="niki" right_privsRoles="all" right_appPrivsRoles="all" right_privParasRoles="all" />
+  <user row="3" userid="Florian" pwd="florian" apps="Zoran Panorama Compare JarComposer Search Rezepte Backup Check Xslt " role="admin" right_privsRoles="all" right_appPrivsRoles="all" right_privParasRoles="all"><splits><split x="Zoran" /><split x="Panorama" /><split x="Compare" /><split x="JarComposer" /><split x="Search" /><split x="Rezepte" /><split x="Backup" /><split x="Check" /><split x="Xslt" /></splits></user>
+</users>

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="objekttyp" add_edit="1" label="(prop,_pgo_otyp_l)" name_flag="1" tip="(prop,_pgo_otyp_t)" type="sel" nono="1" sel_file="(dir,repo)osel-(prop,tip-term-class).xml" /><field id="detail" label="(prop,_pgo_docu_l)" tip="(prop,_pgo_docu_t)" type="textblock" view_flag="1" view_len="26" /></fields>

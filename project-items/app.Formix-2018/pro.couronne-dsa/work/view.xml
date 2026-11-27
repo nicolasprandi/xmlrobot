@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="dsa-see-all" level="ws" role="hidden">
+<need default="">(prop,dsas_sort_attribute)</need>
+<need default="">(prop,dsas_sort_number)</need>
+<need default="">(prop,dsas_sort_ignore_case)</need>
+<need default="">(prop,dsas_sort_desc)</need>
+<need default="">(prop,dsas_where)</need>
+<need default="">(prop,dsas_offset_label)</need>
+<need default="./">(prop,dsas_offset)</need>
+<need default="">(prop,dsas_return_job)</need>
+<need default="//">(prop,dsas_offset_new_key)</need>
+<need default="0">(prop,dsas_no_header)</need>
+<call_job job="tr_dsa"/>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="dsa_loop" xml="(file,dsas)" xpath="(prop,dsas_offset)dsa(prop,dsas_where)" sort="(prop,dsas_sort_attribute)" number="(prop,dsas_sort_number)" ignore_case="(prop,dsas_sort_ignore_case)" desc="(prop,dsas_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,dsas_offset_label)),0)">
+<ti label="(prop,dsas_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<prop id="dsa-parent-objekttyp">(loop,dsa_loop,..,@objekttyp)</prop>
+<file id="pdi-sel-attr">(dir,repo)ot-(prop,dsa-parent-objekttyp)-asel-(prop,tip-term-class).xml</file>
+
+<prop id="dsa-plus-translated">(f,tk_sel_translate,(loop,dsa_loop,@attributtyp),(file,pdi-sel-attr))</prop>
+<choose>
+  <when test="(f,ends_with,(prop,dsa-plus-translated), *)">
+    <prop id="dsa-plus-translated">(f,substring_before,(prop,dsa-plus-translated), *)</prop>
+    <prop id="dsa-plus-postfix">*</prop>
+  </when>
+  <otherwise>
+    <prop id="dsa-plus-postfix"></prop>
+  </otherwise>
+</choose>                                                                               
+<ti type="rec">
+<ti flag="block" type="call_job" postfix="(prop,dsa-plus-postfix)" explain="(f,html,bold,open)(prop,dsa-plus-translated)(f,html,bold,close)" job="dsa-see">
+<prop id="dsa_key">(loop,dsa_loop,@row)</prop>
+<file id="dsas">(file,dsas)</file>
+<prop id="dsas_offset">(prop,dsas_offset)</prop>
+<prop id="dsas_offset_label">(prop,dsas_offset_label)</prop>
+<prop id="dsas_offset_new_key">(prop,dsas_offset_new_key)</prop>
+<prop id="dsas_sort_attribute">(prop,dsas_sort_attribute)</prop>
+<prop id="dsas_sort_number">(prop,dsas_sort_number)</prop>
+<prop id="dsas_sort_ignore_case">(prop,dsas_sort_ignore_case)</prop>
+<prop id="dsas_sort_desc">(prop,dsas_sort_desc)</prop>
+<prop id="dsas_where">(prop,dsas_where)</prop>
+<prop id="dsas_return_job">(prop,dsas_return_job)</prop>
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+<prop id="dsi_key">(prop,dsi_key)</prop>
+<file id="dsos">(file,dsos)</file>
+<prop id="dsos_offset">(prop,dsos_offset)</prop>
+<prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+<prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+<prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+<prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+<prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+<prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+<prop id="dsos_where">(prop,dsos_where)</prop>
+<prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+<prop id="dso_key">(prop,dso_key)</prop>
+</ti>
+<ti type="menu">
+<ti isFromAction="1" type="call_job" page="view" flag="button" class="fb fbAction fbActionDsaEdit fbEnter" explain="(loop,dsa_loop,@wert)" job="dsa-edit">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">Edit</prop>
+<prop page="view" id="dsa_key">(loop,dsa_loop,@row)</prop>
+<file id="dsas">(file,dsas)</file>
+<prop id="dsas_offset">(prop,dsas_offset)</prop>
+<prop id="dsas_offset_label">(prop,dsas_offset_label)</prop>
+<prop id="dsas_offset_new_key">(prop,dsas_offset_new_key)</prop>
+<prop id="dsas_sort_attribute">(prop,dsas_sort_attribute)</prop>
+<prop id="dsas_sort_number">(prop,dsas_sort_number)</prop>
+<prop id="dsas_sort_ignore_case">(prop,dsas_sort_ignore_case)</prop>
+<prop id="dsas_sort_desc">(prop,dsas_sort_desc)</prop>
+<prop id="dsas_where">(prop,dsas_where)</prop>
+<prop id="dsas_return_job">(prop,dsas_return_job)</prop>
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+<prop id="dsi_key">(prop,dsi_key)</prop>
+<file id="dsos">(file,dsos)</file>
+<prop id="dsos_offset">(prop,dsos_offset)</prop>
+<prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+<prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+<prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+<prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+<prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+<prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+<prop id="dsos_where">(prop,dsos_where)</prop>
+<prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+<prop id="dso_key">(prop,dso_key)</prop>
+</ti>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti type="rec">
+<ti span="1"> </ti>
+<ti flag="wrap_word">(prop,_dsa_nothing_l)</ti>
+</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,dsas_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti type="menu" span="10">
+<ti label=" " type="call_job" explain_nix="dsa-add" flag="button " class="fb fbAdd fbAddDsa" explain="+ (prop,_sl_dsa)" job="dsa-add">
+<file id="dsas">(file,dsas)</file>
+<prop id="dsas_offset">(prop,dsas_offset)</prop>
+<prop id="dsas_offset_label">(prop,dsas_offset_label)</prop>
+<prop id="dsas_offset_new_key">(prop,dsas_offset_new_key)</prop>
+<prop id="dsas_sort_attribute">(prop,dsas_sort_attribute)</prop>
+<prop id="dsas_sort_number">(prop,dsas_sort_number)</prop>
+<prop id="dsas_sort_ignore_case">(prop,dsas_sort_ignore_case)</prop>
+<prop id="dsas_sort_desc">(prop,dsas_sort_desc)</prop>
+<prop id="dsas_where">(prop,dsas_where)</prop>
+<prop id="dsas_return_job">(prop,dsas_return_job)</prop>
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+<prop id="dsi_key">(prop,dsi_key)</prop>
+<file id="dsos">(file,dsos)</file>
+<prop id="dsos_offset">(prop,dsos_offset)</prop>
+<prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+<prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+<prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+<prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+<prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+<prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+<prop id="dsos_where">(prop,dsos_where)</prop>
+<prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+<prop id="dso_key">(prop,dso_key)</prop>
+</ti>
+<ti test="(f,not,(prop,nothing))" label=" " type="call_job" flag="button" class="fb fbOrg fbOrgDsa" explain="(prop,_dsa_org)" job="do-org-me">
+<file id="orga">(file,dsas)</file>
+<prop id="orga_where">(prop,dsas_where)</prop>
+<prop id="orga_view_loop_id">dsa_loop</prop>
+<prop id="orga_finished_job">ready-and-done-dsa</prop>
+<prop id="orga_offset">(prop,dsas_offset)</prop>
+<prop id="orga_offset_label">(prop,dsas_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,dsas_offset_new_key)</prop>
+<prop id="orga_segment_plural">dsas</prop>
+<prop id="orga_segment_singular">dsa</prop>
+<prop id="orga_segment_plural_label">(prop,_pl_dsa)</prop>
+<prop id="orga_segment_singular_label">(prop,_sl_dsa)</prop>
+<prop id="orga_sort_attribute">(prop,dsas_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,dsas_sort_number)</prop>
+<prop id="orga_where">(prop,dsas_where)</prop>
+<prop id="orga_name_expression_loop">()(f,tk_sel_translate,(loop,dsa_loop,@attributtyp),(file,pdi-sel-attr))()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<prop id="orga_tr_job">tr_dsa</prop>
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+<prop id="dsi_key">(prop,dsi_key)</prop>
+<file id="dsos">(file,dsos)</file>
+<prop id="dsos_offset">(prop,dsos_offset)</prop>
+<prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+<prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+<prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+<prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+<prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+<prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+<prop id="dsos_where">(prop,dsos_where)</prop>
+<prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+<prop id="dso_key">(prop,dso_key)</prop>
+</ti>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,dsas)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,dsas_offset)),0)">(prop,dsas_offset)</ti>
+</ti>
+</when>
+</job>

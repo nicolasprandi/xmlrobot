@@ -1,0 +1,491 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+<when test="(f,has,prop,pro)">  
+  <file id="reco-data" x="(dir,pro)reco-data.xrs"/>
+  <prop id="reco-regex" x="reco_.+"/>
+</when>
+-->
+<call_job job="prolog" />
+
+
+
+
+<!-- setting the default-values -->
+<job id="tk_reco_default" role="hidden">
+  <need default="20220101">(prop,reco_ablaufdatum)</need>
+  <need default="0">(prop,reco_debug)</need>
+  <need default="0">(prop,reco_open_include)</need>
+  <need default="0">(prop,reco_allow_ant)</need>  
+  
+  <need default="0">(prop,reco_allow_remote_project)</need>
+  <need default="0">(prop,reco_allow_app_info)</need>
+  
+  <need default="0">(prop,reco_allow_encrypted_s)</need>
+  <need default="0">(prop,reco_allow_not_encrypted_s)</need>
+
+  <need default="0">(prop,reco_allow_encrypted_a)</need>
+  <need default="0">(prop,reco_allow_not_encrypted_a)</need>    
+  
+  <need default="0">(prop,reco_allow_encrypted_x)</need>
+  <need default="0">(prop,reco_allow_not_encrypted_x)</need>    
+    
+  <need default="DasAllheilmittel 1">(prop,reco_sw_name)</need>  
+  <need default="2015-2020 Nicolas Prandstaetter">(prop,reco_sw_copyright)</need> 
+  <need default="If you found this software and it is not yours write to found@nicolas.at">(prop,reco_sw_remark)</need> 
+  <need default="5:Nimbus">(prop,reco_sw_look)</need>  
+  <need default="Earth">(prop,reco_sw_persp)</need>
+  <need default="user">(prop,reco_role)</need>
+  <need default="0">(prop,reco_log)</need> 
+  <need default="0">(prop,reco_devinfo_help)</need> 
+  <!-- <need default="0">(prop,reco_allow_edit_all_button)</need>  --> 
+  <need default="en">(prop,reco_default_lang)</need> 
+  
+  
+  
+</job>
+
+
+<!-- reco-core, make your changes here -->
+<job id="tk_reco_core" role="hidden" tip="reco_: Tk Internal">
+  <need>(prop,is-reco-core)</need>
+  <need default="">(prop,tk_reco_add_flag)</need>
+
+  <tk label="Parameters: Reconquista-Build - (f,when,(prop,is-reco-core),Core,Lib)" 
+      flag="(prop,tk_reco_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+ 
+                
+          
+ 
+        
+
+    <tk type="msg" x="Customer Info" test_first="0"/>    
+     <tk id="reco_customer"
+        label="Customer Name" 
+        test_first="0" 
+        tip="()Kunden-Name()"
+        flag="nono"/>   
+        
+    <tk id="reco_customer_notice"
+        label="Customer Notice" 
+        test_first="0" 
+        tip="()Zusaetzliche Anmerkung fuer print()"/>    
+    <tk type="msg" x="Secrets" test_first="0"/> 
+   <tk id="reco_password"
+        test="(prop,is-reco-core)"
+        label="Pin" 
+        test_first="0" 
+        tip="()Password to enter at the beginnin()"
+        xflag="nono"/>
+            
+   <tk id="reco_ablaufdatum"
+        label="Ablaufdatum YYYYMMDD" 
+        test_first="0" 
+        regex="\d\d\d\d\d\d\d\d"
+        tip="()YYYYMMDD - Ablaufdatum defines the enddate()"
+        flag="nono"/>
+        
+    <tk id="reco_decrypt"
+        test="(prop,is-reco-core)"
+        label="Enryptor Jobs" 
+        test_first="0" 
+        xregex="................"
+        tip="()Secret Key for app-encryption der jobs 16-stellig()"
+        flag="nono"/>   
+        
+    <tk id="reco_decrypt_xsl"
+        test="(prop,is-reco-core)"
+        label="Enryptor Xsl" 
+        test_first="0" 
+        xregex="................"
+        tip="()Secret Key for app-encryption der jobs 16-stellig()"
+        flag="nono"/>            
+    <tk type="msg" x="Protection" test_first="0"/>   
+    
+    <tk id="reco_allowed_apps"    
+        test="(prop,is-reco-core)"
+        label="Allowed Apps"       
+      	test_first="0"
+        type="sel"
+        xml="(file,app-selektor)"
+        flag="multi"
+        tip="The following apps will be allowed in general."/>  
+        
+    <tk id="reco_startup_app"    
+        test="(prop,is-reco-core)"
+        label="Startup App"       
+      	test_first="0"
+        type="sel"
+        xml="(file,app-selektor)"
+        tip="()This app will be choosen on startup and whenever there exists no guistatus.xml automatically()"/>         
+                     
+    <tk id="reco_debug"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="Enable Debug"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="Diverse Meldungen(e:s) die auf die script-struktur zurueckschliessen lassen werden angedruckt"/>  
+        
+    <tk id="reco_log"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="Enable Logging"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="Log4j-logging wird angedruckt"/>          
+        
+    <tk id="reco_devinfo_help"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="DevInfo on Help"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="Zeigt die links zu den Job-Files an wenn Hilfe fuer einen Job gedrueckt wird"/>          
+
+    <tk id="reco_open_include"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="Enable Open-Include"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="Unverschluesselte include-commandos werden ermoeglicht"/>     
+        
+    <tk id="reco_allow_ant"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="Allow Ant"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="ant-scripts werden ermoeglicht. Achtung(e:s) sowas kann sehr gefaehrlich werden."/>     
+
+    <tk id="reco_allow_remote_project"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="Allow Remote-Projects"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="Erlaubt Remote-Projects fuer alle apps"/>      
+        
+    <tk id="reco_allow_app_info"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="Perform App-Info.xml"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="Liest die app-info.xml bei allen apps ein. Das ermoeglicht das app-sort."/>    
+    
+    <!--     
+    <tk id="reco_allow_edit_all_button"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="Edit-All-Button"       
+      	test_first="0"
+        flag="no_is_0"
+        tip="Zeigt den EDIT-ALL-Button bei TK an."/> -->   
+   <tk id="reco_default_lang"    
+        test="(prop,is-reco-core)"
+    
+        label="Default Language"       
+      	test_first="0"
+        
+        tip="Default Sprache: en ist default. de es fr it pt"/>                   
+           
+       
+    <tk id="reco_role"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="Roles"       
+      	test_first="0"
+        flag="multi nono"
+        tip="Possible Roles for this app">
+        
+      <sel>public</sel>
+      <sel>user</sel>
+      <sel>user2</sel>
+      <sel>expert</sel>
+      <sel>expert2</sel>
+      <sel>expert3</sel>
+      <sel>boss</sel>
+      <sel>boss2</sel>
+      <sel>boss3</sel>
+      <sel>boss4</sel>
+      <sel>admin</sel>
+      <sel>admin2</sel>
+      <sel>admin3</sel>
+      <sel>admin4</sel>
+      <sel>admin5</sel>
+      <sel>test</sel>
+      <sel>test2</sel>
+      <sel>test3</sel>
+      <sel>test4</sel>
+      <sel>test5</sel>
+      <sel>test6</sel>
+      <sel>dev</sel>
+      <sel>dev2</sel>
+      <sel>dev3</sel>
+      <sel>dev4</sel>
+      <sel>dev5</sel>
+      <sel>dev6</sel>
+      <sel>dev7</sel>
+      <sel>hidden</sel>
+
+    </tk>                   
+        
+    <tk type="msg" x="Services" test_first="0"/>    
+    <tk id="reco_allow_encrypted_s"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="ENCRYPTED Scripts"       
+      	test_first="0"
+        flag=" no_is_0"/>       
+        
+    <tk id="reco_allow_not_encrypted_s"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="OPEN Scripts"       
+      	test_first="0"
+        flag=" no_is_0"/>    
+        
+    <tk id="reco_allow_encrypted_xs"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="ENCRYPTED Xsl"       
+      	test_first="0"
+        flag=" no_is_0"/>       
+        
+    <tk id="reco_allow_not_encrypted_xs"    
+        test="(prop,is-reco-core)"
+        type="bool"
+        label="OPEN Xsl"       
+      	test_first="0"
+        flag=" no_is_0"/>    
+        
+    <tk type="msg" x="Application-Scripts" test_first="0"/>    
+    <tk id="reco_allow_encrypted_a"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="ENCRYPTED Scripts"       
+      	test_first="0"
+        flag=" nono">
+      <sel label="Yes">1</sel>
+      <sel label="SPECIFY">s</sel>
+      <sel label="No">0</sel>
+      
+    </tk>    
+    
+    <tk id="reco_allow_encrypted_a_apps"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="Apps with Encryption"       
+      	test_first="0"
+        flag="multi"
+        xml="(file,app-selektor)"
+        tip="The following apps will be allowed to have encrypted scripts."/> 
+        
+    <tk id="reco_allow_not_encrypted_a"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="OPEN Scripts"       
+      	test_first="0"
+        flag=" nono">
+      <sel label="Yes">1</sel>
+      <sel label="SPECIFY">s</sel>
+      <sel label="No">0</sel>      
+    </tk>     
+    
+    <tk id="reco_allow_not_encrypted_a_apps"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="Apps with OpenSource"       
+      	test_first="0"
+        flag="multi"
+        xml="(file,app-selektor)"
+        tip="The following apps will be allowed to have open-source scripts."/>  
+            
+    <tk type="msg" x="Application-Xsl" test_first="0"/>            
+    <tk id="reco_allow_encrypted_xa"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="ENCRYPTED Xsl"       
+      	test_first="0"
+        flag=" nono">
+      <sel label="Yes">1</sel>
+      <sel label="SPECIFY">s</sel>
+      <sel label="No">0</sel>      
+    </tk>            
+    
+    <tk id="reco_allow_encrypted_xa_apps"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="Apps with Encryption"       
+      	test_first="0"
+        flag="multi"
+        xml="(file,app-selektor)"
+        tip="The following apps will be allowed to have encrypted xsl."/>     
+        
+    <tk id="reco_allow_not_encrypted_xa"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="OPEN Xsl"       
+      	test_first="0"
+        flag=" nono">
+      <sel label="Yes">1</sel>
+      <sel label="SPECIFY">s</sel>
+      <sel label="No">0</sel>      
+    </tk>                      
+    <tk id="reco_allow_not_encrypted_xa_apps"    
+        test="(prop,is-reco-core)"
+        type="sel"
+        label="Apps with OpenSource"       
+      	test_first="0"
+        flag="multi"
+        xml="(file,app-selektor)"
+        tip="The following apps will be allowed to have open xsl."/>      
+           
+    <tk type="msg" x="Produced Software" test_first="0"/>
+    <tk id="reco_sw_name"
+        label="Software-Name" 
+        test_first="1" 
+        tip="()Der name der software eg &apos;Das Allheilmittel&apos;()"
+        flag="nono"/>   
+        
+    <tk id="reco_sw_name_file"
+        label="Software-Name 4 Files" 
+        rule="filename"
+        test="(prop,is-reco-core)"
+        test_first="1" 
+        tip="()Der name der software fuer die files eg &apos;DasAllheilmittel&apos;()"
+        flag="nono"/>   
+                
+    <tk id="reco_sw_copyright"
+        label="Copyright" 
+        test_first="0" 
+        tip="()eg: 2001-3000 Robert Sinatra()"
+        flag="nono"/>      
+        
+    <tk id="reco_sw_remark"
+        label="Remark" 
+        type="textblock"
+        test="(prop,is-reco-core)"
+        test_first="0" 
+        tip="()This will be printed at the startup and after every jobrun()"
+        />   
+        
+    <tk id="reco_sw_look"
+        label="Look &amp; Feel" 
+        type="sel"
+        test="(prop,is-reco-core)"
+        test_first="0"
+        flag="nono"
+        tip="()The Look and Feel()">
+        <sel label="Nimbus">5:Nimbus</sel>        
+        <sel label="Metal">5:Metal</sel>  
+        <sel label="CDE/Motif">5:CDE/Motif</sel>
+        <sel label="Windows">5:Windows</sel>
+        <sel label="Windows Classic">5:Windows Classic</sel>            
+        <sel label="UIManager.getSystemLookAndFeelClassName(e:o)(e:c)">1</sel>
+        <sel label="UIManager.getCrossPlatformLookAndFeelClassName(e:o)(e:c)">2</sel>
+        <sel label="com.sun.java.swing.plaf.motif.MotifLookAndFeel">3</sel>
+        <sel label="javax.swing.plaf.nimbus.NimbusLookAndFeel">4</sel>
+            
+    </tk>   
+    
+    <tk id="reco_sw_persp"
+        label="Perspective" 
+        type="text"
+        test="(prop,is-reco-core)"
+        test_first="0" 
+        flag="nono"
+        tip="()The perspective()" xxml="(dir,app)reco-persp-selector.xml"/>
+    
+         
+        
+
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_reco_edit" tip="reco_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,reco-data))">
+      <!-- data exists already -->
+      <prop id="tk_reco_add_flag" x="sum_only print"/>
+      <call_job job="tk_reco_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_reco_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_reco_default"/>
+  <!-- doing input -->
+  <call_job job="tk_reco_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_reco_write"/>
+
+</job>
+
+
+
+<job id="tk_reco_print_values" tip="reco_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_reco_read"/>
+  
+  <call_job job="tk_reco_core">
+    <prop id="tk_reco_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_reco_print_values_tips" tip="reco_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_reco_read"/>
+  
+  <call_job job="tk_reco_core">
+    <prop id="tk_reco_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_reco_print_help" tip="reco_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_reco_core">
+    <prop id="tk_reco_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_reco_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,reco-data)" />
+    <prop id="joe-in-regex" x="(prop,reco-regex)" />
+  </call_job>
+  <call_job job="tk_reco_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_reco_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,reco-data)" />
+    <prop id="joe-in-regex" x="(prop,reco-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_reco_clear"  tip="reco_: Clears the data" role="hidden">
+  <delete file="(file,reco-data)"/>
+</job>
+
+
+</jobs>

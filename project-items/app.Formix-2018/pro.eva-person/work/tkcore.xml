@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="person-tk">
+<need default="">(prop,persons_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,persons_tk_control) wrap ">
+<tk label="Full Name" id="person_name_full" x="" test_first="1" tip="Der volle name" type="text" flag=" "/>
+<tk label="Nic Name" id="person_name_nic" x="" test_first="1" tip="Der volle name" type="text" flag=" nono "/>
+<tk label="Name Add" id="person_name_add" x="" test_first="0" tip="Additionals to the name" type="text" flag=" "/>
+<tk label="Type" id="person_type" x="" test_first="1" tip="A person may be a human individual; a legal body or a collection of inviduals under a common topic" type="sel" flag=" ">
+<sel label="Human">human</sel>
+<sel label="Legal Body">company</sel>
+<sel label="Group">group</sel>
+</tk>
+<tk label="Contact Category" id="person_cat" x="" test_first="0" tip="The appliactions which the user can user" type="sel" flag="multi ">
+<sel label="Private">private</sel>
+<sel label="Business">business</sel>
+<sel label="Family">family</sel>
+</tk>
+<tk label="Privilegs" id="person_privs" x="" test_first="0" tip="Privilegs of the person" type="text" flag=" "/>
+<tk label="Adress" x="Adress" test_first="0" tip="Address" type="msg" flag=" "/>
+<tk label="Country" id="person_country" x="" test_first="0" tip="international country" type="text" flag=" "/>
+<tk label="City" id="person_city" x="" test_first="0" tip="many people" type="text" flag=" "/>
+<tk label="Province" id="person_province" x="" test_first="0" tip="die provinz" type="text" flag=" "/>
+<tk label="Street" id="person_street" x="" test_first="0" tip="Strasse" type="text" flag=" "/>
+<tk label="Zip" id="person_zip" x="" test_first="0" tip="Postal Cod" type="text" flag=" "/>
+<tk label="Contact-Info" x="Contact-Info" test_first="0" type="msg" flag=" "/>
+<tk label="Email-Address" id="person_email" x="" test_first="0" type="text" flag=" "/>
+<tk label="Phone numer" id="person_phone" x="" test_first="0" type="text" flag=" "/>
+<tk label="Website" id="person_web" x="" test_first="0" type="text" flag=" "/>
+<tk label="Electronic Addr" id="person_elec" x="" test_first="0" tip="Electronic Adresses" type="textblock" flag=" "/>
+</tk>
+</job>

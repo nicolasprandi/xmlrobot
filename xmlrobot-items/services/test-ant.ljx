@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<job id="Print Role" role="dev">
+  <ti>role = (f,role)</ti>
+</job>
+<job id="Test-Ant" role="test">
+  <interpreter watch="1"/>
+
+  <file id="out">(dir,filetemp)takeoff-(f,random_text,3)</file>
+<ant level="info">
+  <copy file="(f,file,classic,(file,takeoff))" 
+        tofile="(f,file,classic,(file,out))" 
+        preservelastmodified="true" 
+        overwrite="true"/>
+</ant>  
+</job>  
+
+<job id="unzipp-test" role="test">
+
+<ti>(f,file,classic,file:///F:/XmlRobot-Dev/Echnaton-Scripts/xmlrobot-internals/system/service_apps/app.Arcadia/pro.03-echo-desk-app-dev/compile-xmlrobot-core/bin_download/ant-launcher-1.9.11.jar)</ti>
+
+<ti>(f,dir,classic,file:///C:/Users/nicol/Documents/tests/)</ti>
+<ant>
+  <unzip src="(f,file,classic,file:///F:/XmlRobot-Dev/Echnaton-Scripts/xmlrobot-internals/system/service_apps/app.Arcadia/pro.03-echo-desk-app-dev/compile-xmlrobot-core/bin_download/ant-launcher-1.9.11.jar)" 
+  dest="(f,dir,classic,file:///C:/Users/nicol/Documents/tests/)"/>
+</ant>
+
+
+
+
+
+</job>   
+ 
+</jobs>

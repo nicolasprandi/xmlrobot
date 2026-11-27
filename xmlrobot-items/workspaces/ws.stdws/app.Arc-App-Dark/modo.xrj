@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="do-modo" role="hidden">
+  <need>(file,dm-from)</need>
+  <need>(file,dm-to)</need>
+  <need>(file,dm-mod)</need>
+  
+  <print id="p" out="(file,dm-mod)" act="open"/>
+  <print id="p" act="println"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+  <xml_update
+    how="(x,(f,loop_xml,sm,@how))"    
+    what="(x,(file,dm-from))"
+    out="(x,(file,dm-to))"]]></print>
+  <print id="p" act="println"
+         test="(f,not,(f,eq_text,append,(f,loop_xml,sm,@how)))"><![CDATA[where="(x,(f,loop_xml,sm,@where))"]]></print>
+  <when test="(f,has,(f,loop_xml,sm,@with_what))">  
+    <print id="p" act="println"
+          ><![CDATA[with_what="(x,(f,loop_xml,sm,@with_what))"]]></print>     
+   </when>  
+   <when test="(f,has,(f,loop_xml,sm,@flag))">   
+    <print id="p" act="println"><![CDATA[flag="(x,(f,loop_xml,sm,@flag))"]]></print>
+   </when>  
+   <when test="(f,has,(f,loop_xml,sm,@count))">            
+    <print id="p" act="println"><![CDATA[count_prop_id="count_result_mod"]]></print>  
+   </when>       
+         
+  <choose>
+    <when test="(f,eq_text,set_attribute,(f,loop_xml,sm,@how))">
+      <print id="p" act="println"><![CDATA[attribute="(x,(f,loop_xml,sm,@attribute))"]]></print>  
+      <print id="p" act="println"><![CDATA[value="(x,(f,loop_xml,sm,@value))">]]></print>         
+    </when>
+    
+    <when test="(f,eq_text,remove_attribute,(f,loop_xml,sm,@how))">
+      <print id="p" act="println"><![CDATA[attribute="(x,(f,loop_xml,sm,@attribute))">]]></print>      
+    </when>    
+
+    <when test="(f,eq_text,set_text,(f,loop_xml,sm,@how))">
+      <print id="p" act="println"><![CDATA[value="(x,(f,loop_xml,sm,@value))">]]></print>        
+    </when> 
+  
+    <otherwise>
+      <print id="p" act="print"><![CDATA[>
+    <inline attribute="with">]]></print>  
+
+      <print id="p" act="print">&lt;</print>    
+
+      <print id="p" act="print"><![CDATA[![CDATA[(f,loop_xml,sm,@with)]]]]></print>     
+
+      <print id="p" act="print">&gt;</print>   
+
+      <print id="p" act="println"><![CDATA[</inline>]]></print>        
+    </otherwise>       
+
+  </choose>       
+
+  <print id="p" act="println"><![CDATA[</xml_update>
+</steps>]]></print>        
+  <print id="p"  act="close"/>
+  
+  <tk label="Going to execute ..."  test="(prop,conf_debug)">
+    <tk type="msg">(f,file_content,(file,dm-mod))</tk> 
+  </tk> 
+  <ti type="rec" label=" ">
+  <ti label=" " x="(file,dm-to)" type="file"/>
+  </ti>
+  <include file="(file,dm-mod)"/>
+  <choose> 
+    <when test="(f,has,(f,loop_xml,sm,@count))">
+      <choose>
+        <when test="(f,eq_num,(prop,count_result_mod),(f,loop_xml,sm,@count))">
+          <ti label=" " x="Count of (prop,count_result_mod) ok"/>
+        </when>
+        <otherwise>
+          <ti_hr/>
+          <ti_hr/>
+          <ti label="(f,html,b,o)Executed(f,html,b,c)">(f,file_content,(file,dm-mod))</ti>
+          <throw>count failed of SerialNumber/Blurry; requested is (f,loop_xml,sm,@count) but delivered was (prop,count_result_mod); See &quot;Executed&quot; in this dump.</throw>
+        </otherwise>
+      </choose>
+    </when>
+    <when test="(prop,prod_perform_counts)">
+      <throw>Counting of replacements of SerialNumber/Blurry was requested but no counter was found for file [(loop,fiq)]</throw>
+    </when>
+    <otherwise>
+      <ti label=" " x="No Count Performed"/>
+    </otherwise>
+  </choose>
+  
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

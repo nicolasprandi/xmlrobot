@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="add ganz links" file_class="view" search="&lt;ti type=&quot;rec&quot; label=&quot; &quot;&gt;" search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot; &gt;" />
+</updates>

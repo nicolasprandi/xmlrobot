@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="plate-see">
+<need>(prop,plate_key)</need>
+<call_job job="plate-read"/>
+<prop x="print print_only" id="plates_tk_control"/>
+<prop id="label" x="Teller: (f,html,bold,open)(f,text,cut_nice,(prop,plate_name),26)(f,html,bold,close)(f,when,(f,has,(prop,plates_offset_label)), - (prop,plates_offset_label),)"/>
+<call_job job="plate-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="[ ? ]" align="right" job="plate-see-more">
+<prop id="plate_key">(prop,plate_key)</prop>
+<file id="plates">(file,plates)</file>
+<prop id="plates_offset">(prop,plates_offset)</prop>
+<prop id="plates_offset_label">(prop,plates_offset_label)</prop>
+<prop id="plates_offset_new_key">(prop,plates_offset_new_key)</prop>
+<prop id="plates_sort_attribute">(prop,plates_sort_attribute)</prop>
+<prop id="plates_sort_number">(prop,plates_sort_number)</prop>
+<prop id="plates_where">(prop,plates_where)</prop>
+<prop id="plates_return_job">(prop,plates_return_job)</prop>
+</ti>
+<ti flag=" block" type="call_job" explain="[ Edit ]" job="plate-edit">
+<prop id="plate_key">(prop,plate_key)</prop>
+<file id="plates">(file,plates)</file>
+<prop id="plates_offset">(prop,plates_offset)</prop>
+<prop id="plates_offset_label">(prop,plates_offset_label)</prop>
+<prop id="plates_offset_new_key">(prop,plates_offset_new_key)</prop>
+<prop id="plates_sort_attribute">(prop,plates_sort_attribute)</prop>
+<prop id="plates_sort_number">(prop,plates_sort_number)</prop>
+<prop id="plates_where">(prop,plates_where)</prop>
+<prop id="plates_return_job">(prop,plates_return_job)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-plate-details-end</trace>
+<call_job job="hook-plate-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: plate-details: end.0">
+<ti> hook_job=hook-plate-details-end hook=end page=details station=0 object=plate</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

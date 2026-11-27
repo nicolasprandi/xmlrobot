@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="thefile" add_edit="1" label="File" name_flag="1" tip="File to blur" view_flag="0" type="sel" nono="1" sel_multi_flag="0" sel_file="(file,file-selector-any)" position="1" /><field id="prob" add_edit="1" label="Probability" tip="Probability [0-100]" view_flag="1" type="text" regex="\d+" position="2" /></fields>

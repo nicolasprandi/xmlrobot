@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+<interpreter jovial="1" />
+
+
+
+
+<job id="event_past_defnrun" role="hidden">
+  <prop id="past_dont_show_all">1</prop>
+  <call_job job="past-edit"/> 
+  <call_job job="event_past_run_core"/> 
+</job>
+
+<job id="event_past_run" role="hidden">
+  <prop id="past_dont_show_all">1</prop>
+  <prop id="sco-do-hr">0</prop>
+  <!-- <call_job job="past-see"/> -->
+  <ti_break class_table="tabNavigator"/>
+
+  <ti type="rec" >
+    <ti type="call_job" job="_searched" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" >          
+    </ti>  
+  </ti>     
+  
+  <ti_break/> 
+  <call_job job="event_past_run_core"/> 
+
+</job>
+
+<job id="event_past_run_core" role="hidden">
+
+  
+  <call_job job="tk_limit_read"/>
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />
+
+  <call_job job="past-read" />
+
+
+  <choose>
+    <when test="(f,eq_text,-objid-,(prop,past_type))">
+      <ti_hr_break/>
+      <prop id="on-id" x="(prop,past_for)"/>
+      <call_job job="Object"/>
+    </when>
+    <otherwise>        
+      <prop id="sco_for">(f,vob,prop,past_for)</prop>      
+      <prop id="sco_type">(f,vob,prop,past_type)</prop>     
+      <prop id="sco_obj_tech_name">(f,vob,prop,past_obj_tech_name)</prop>     
+      <prop id="sco_attr_tech_name">(f,vob,prop,past_attr_tech_name)</prop>    
+      <call_job job="sco" />
+ 
+        
+ 
+      <!-- <ti_hr_break/> -->
+    </otherwise>
+  </choose>
+  <!-- 
+  <ti_hr_break/> 
+  <call_job job="past-see-all" />       -->
+
+</job>  
+
+<job id="hook_past_view_begin" role="hidden">             
+<!--                
+<ti_break class_table="tabNavigator"/>
+  <ti type="rec">        
+    <ti type="call_job" job="_search" explain="(prop,_past_act_classic)" align="right" flag="button block" class="fx justmenu " />  
+  </ti>                         -->
+  <ti label="(prop,_pl_past)" />
+  
+</job>
+
+<job id="hook_past_view_end" role="hidden">
+  <ti_hr_break />
+  
+  <ti type="rec">    
+    <ti type="call_job" job="hook_past_delete_all" explain="(prop,_past_delall)"  flag="button block" class="fx fxAction" />  
+  </ti>    
+  <ti_space height="2px" />    
+  <ti type="rec">        
+    <ti type="call_job" job="_search" explain="(prop,_past_act_classic)"  flag="button block" class="fx fxAction justmenu hibMenuSearchObjects" />  
+  </ti>    
+    
+  
+
+  
+      
+
+</job>
+
+<job id="hook_past_delete_all" role="hidden">
+  <tk label="L&#246;schen(e:s) Delete ?">
+  <tk type="msg" msg_type="w">Wollen sie wirklich alle historischen Suchen l&#246;schen?
+Do you really want to delete all historical searches?</tk>
+  </tk>
+  
+  <delete file="(file,pasts)"/>
+  <ti label="Done(e:s) Erledigt" >
+  <ti>All historical searches have been deleted.</ti>
+  <ti>Alle historischen Suchen wurden gel&#246;scht.</ti>
+  </ti>
+  <ti_hr/>
+  <call_job job="prolog" />
+  <call_job job="past-see-all" />
+</job>
+
+<job id="hook_past_details_end" role="hidden">
+ <!-- 
+  <when test="(f,not,(f,exists,prop,past_dont_show_all))">                                                                                                                        
+    <ti_hr/>
+    
+    <ti type="rec" label=" ">
+    <ti type="call_job" job="past-see-all" explain="(prop,_past_goto) ..."  flag="button" class="fx fxAction justblack" >  
+    </ti>
+    </ti>  
+  </when>
+  -->
+    
+
+</job>
+
+<job id="_searched" role="hidden">
+  <call_job job="past-see-all" />
+</job>
+
+
+<job id="ready-and-done-past" role="hidden">
+  <call_job job="past-see-all" />
+</job>
+
+
+<job id="past-insert-done" role="hidden">
+  <call_job job="past-see-all" />
+</job>
+
+
+</jobs>

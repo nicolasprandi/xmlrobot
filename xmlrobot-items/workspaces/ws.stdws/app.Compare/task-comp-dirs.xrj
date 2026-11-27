@@ -1,0 +1,539 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">COMPARE out of service</throw>
+<call_job job="prolog" />
+
+
+<job id="_compare_dirs" role="hidden">
+  <call_job job="tr_cdir"/>
+
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store">(file,dircomp-data)</file>
+    <prop id="joe-in-regex">(prop,dircomp-regex)</prop>   
+  </call_job>
+  
+  <prop id="tk_sum_flag">sum</prop>
+  <choose>
+    <when test="(f,or,(f,exists,dir,dir_left),(f,exists,dir,dir_right))">
+      <prop id="tk_sum_flag">sum_only</prop>
+    </when>
+    <when test="(f,implement,online)">
+      <prop id="tk_sum_flag">sum</prop>
+    </when>
+    <otherwise>
+      <tk type="msg" x="(prop,_cdir_sel_left_msg)"/>
+      <when test="(f,not,(f,exists,dir,dir_left))">           
+        <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question">(prop,_cdir_sel_left)</prop>
+        </call_service>
+        <global act="get" id="jil-result"/>
+        <dir id="dir_left">(prop,jil-result)</dir>   
+        <tk type="dir" id="dir_left" label="(prop,_cdir_sel_left)" flag="nono"/>
+      </when>
+
+      <when test="(f,not,(f,exists,dir,dir_right))">
+        <!-- 
+        <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question">Preselect: Right/New Directory</prop>
+        </call_service>
+        <global act="get" id="jil-result"/>
+        <dir id="dir_right">(prop,jil-result)</dir>
+        -->
+        <tk type="msg" x="(prop,_cdir_sel_right_msg)"/>
+        <tk type="dir" id="dir_right" label="(prop,_cdir_sel_right)"
+            x="(dir,dir_left)"/>
+      </when>
+      <prop id="tk_sum_flag">sum_only</prop>
+    </otherwise>
+  </choose>
+
+  <call_job job="do-tk-dirs"/>
+      
+
+  <call_job job="go-joe-write">
+    <file id="joe-in-store">(file,dircomp-data)</file>
+    <prop id="joe-in-regex">(prop,dircomp-regex)</prop>   
+  </call_job>
+  
+
+
+  <call_job job="comp-dirs"/>
+  <call_job job="Differences: Comp Dirs"/>
+  
+</job>
+
+<job id="comp-dirs" role="hidden">
+  <!-- compares effectevely 2 directories and creates an xml as output -->
+  <need>(dir,dir_left) (dir,dir_right) (file,out_comp_dirs)</need>
+  <need default="999">(prop,level_limit)</need>
+  <call_job job="tr_cdir"/>
+
+
+  <file id="left">(dir,pro)left.xml</file>
+  <file id="right">(dir,pro)right.xml</file>
+
+  <tp>(prop,_cdir_scanning)</tp>
+  <scan out="(file,left)" dir="(dir,dir_left)" flag="hash"
+        level_limit="(prop,level_limit)" field="kb mb bytes sha1 fn lm ipath ext"/>
+  <scan out="(file,right)" dir="(dir,dir_right)" flag="hash" 
+        level_limit="(prop,level_limit)" field="kb mb bytes sha1 fn lm ipath ext"/>
+  
+  <ti type="file" x="(file,out_comp_dirs)" label="Internal Compare-File:" test="(prop,dm)"/>
+  <print id="out" out="(file,out_comp_dirs)" act="open"/>
+    
+  <print id="out" act="print">&lt;differences  moment="(f,time)" </print>
+   
+  <dir id="jack-in">(dir,dir_left)</dir>
+  <call_job job="go-jack-do-dir" />
+
+  <print id="out" act="print">dir_left="(x,(prop,jack-result))" </print> <!-- nic123 -->
+
+  <dir id="jack-in">(dir,dir_right)</dir>
+  <call_job job="go-jack-do-dir"/>
+  <print id="out" act="print">dir_right="(x,(prop,jack-result))"</print>
+
+  <print id="out" act="println">&gt;</print>  
+ 
+  <call_job job="convert"/>
+
+  <print id="out" act="println">&lt;/differences&gt;</print>
+  <print id="out" act="close"/> 
+  
+</job>
+
+<job id="Clear Compare Directories" role="hidden" pri="10">
+    <tk type="msg" x="Do Clear the Directories?" msg_type="w"/>
+    <delete file="(dir,pro)input-cache-cd1.xml"/>
+    <ti label="Cleared Data of 'Compare Directories'">
+      <ti type="call_job" job="Compare Directories" label="Next:"/>
+    </ti>
+</job>
+
+<job id="Differences: Comp Dirs" role="hidden">
+  <!-- test xxx -->
+  <file id="ld-file">(dir,pro)dir-diff.xml</file> 
+  
+  <call_job job="list-differences-internal"/>
+  <ti type="file" label="(prop,_cdir_differences):" test="0">(file,ld-file)</ti>
+</job>
+
+
+
+<job id="make-shorten" role="hidden">
+  <choose>
+    <when test="(f,gt,(f,len,(prop,to-shorten)),60)">
+      <prop id="len">(f,sub,(f,len,(prop,to-shorten)),30)</prop>
+      <prop id="result-shorten" x="(f,substring,(prop,to-shorten),0,20)...(f,substring,(prop,to-shorten),(prop,len))" />
+    </when>
+    <otherwise>
+      <prop id="result-shorten" x="(prop,to-shorten)" />
+    </otherwise>
+  </choose>
+</job>
+    
+<job id="list-differences-internal" role="hidden">
+  <need>(file,ld-file)</need>
+  <prop id="uncomparable">(f,file_content,(dir,app)uncomparable.txt,UTF-8,)</prop>
+
+  <prop id="do_trace">(f,file_exists,(file,cd-dirlist))</prop>
+  <!-- (file,cd-dirlist) -->
+
+  <dir id="dir_left" flag="cool">(f,xpath,(file,ld-file),.,@dir_left)</dir>
+  <unescape type="dir" id="dir_left"/>
+  <translate type="dir" id="dir_left"/>
+
+  <dir id="dir_right" flag="cool">(f,xpath,(file,ld-file),.,@dir_right)</dir>
+  <unescape type="dir" id="dir_right"/>
+  <translate type="dir" id="dir_right"/>
+  
+  <ti label="(prop,_cdir_dirs2comp)" size="2">
+    <ti type="dir" label="(prop,_cdir_oldleft):" flag="wrap flow">(f,can_dir,(dir,dir_left))</ti>
+    <ti type="dir" label="(prop,_cdir_newright):" flag="wrap flow">(f,can_dir,(dir,dir_right))</ti>
+  </ti>
+  <ti type="file" label="ld-file:" test="(f,role,test)">(file,ld-file)</ti>
+  <spirit id="ld" act="open" xml="(file,ld-file)" 
+    flag="nuevo"
+    missing_strategy="empty"/>
+  
+  <!-- Summary -->
+  <ti_hr/>
+  <ti label="(prop,_cdir_summary)" padding_top="4px" size="2">
+  
+    <ti type="rec" label=" ">
+      <ti align="center">(prop,_cdir_only_left)</ti>
+      <ti align="center">(prop,_cdir_in_both)</ti>
+      <ti align="center">(prop,_cdir_only_right)</ti>
+      <ti></ti>
+    </ti>   
+      
+    <ti type="rec" label="(prop,_cdir_changes):" >
+      <ti></ti>
+      <ti align="center">(f,spirit,ld,stat,@count_diff)</ti>
+      <ti></ti>
+      <ti></ti>
+    </ti>
+    
+    <ti type="rec" label="(prop,_cdir_only_left_right):" >
+      <ti align="center">(f,spirit,ld,stat,@count_only_left)</ti>
+      <ti></ti>
+      <ti align="center">(f,spirit,ld,stat,@count_only_right)</ti>
+      <ti></ti>
+    </ti>    
+    
+    <ti type="rec" label="(prop,_cdir_equal):" >
+      <ti></ti>
+      <ti align="center">(f,spirit,ld,stat,@count_equal)</ti>
+      <ti></ti>
+      <ti></ti>
+    </ti>    
+  </ti>  
+
+  <ti_break/>
+    
+  <!-- in both sources, but different -->
+  <loop id="ld" spirit="ld" xpath="diff[@type='dna']">
+    <when test="(f,eq,1,(loop,ld,#i))">
+      <ti_hr/>      
+      <ti label="(prop,_cdir_changes) ..." key="(loop,ld,#max) (prop,_cdir_file)(f,plural,(loop,ld,#max),(prop,_cdir_file_pl))" size="2"/>
+    </when>
+
+    <prop id="diff-bytes">(f,sub,(loop,ld,@right_bytes),(loop,ld,@left_bytes))</prop>
+        
+    <prop id="plus">(f,when,(f,gt,(prop,diff-bytes),0),+,)</prop>
+    <prop id="is_uncomparable">(f,has_flag,(prop,uncomparable),(f,lower,(loop,ld,@ext)))</prop>
+    
+    <prop id="to-shorten" x="(loop,ld,@left_fn2)" />
+    <call_job job="make-shorten"/>  
+        
+    <ti type="rec" label="(e:o)(loop,ld,#i)(e:c) (f,html,bold,open)(prop,result-shorten)(f,html,bold,close)" flag="inline">
+
+      <ti  
+        test="(f,not,(prop,is_uncomparable))"
+        type="call_job" 
+        job="Compare 2 Files-Internal"
+        align="right" 
+        explain="(f,html,bold,open)(prop,plus)(f,format,(prop,diff-bytes),(e:s)###(e:s)###)(f,html,bold,close) bytes">
+        <file id="a">(loop,ld,@left_fn)</file>
+        <file id="b">(loop,ld,@right_fn)</file>
+        <file id="c2f-out">(dir,pro)out1.txt</file>
+      </ti>
+      
+      <ti  
+        test="(prop,is_uncomparable)"
+        type="text" 
+        align="right" 
+        x="(f,html,bold,open)(prop,plus)(f,format,(prop,diff-bytes),(e:s)###(e:s)###)(f,html,bold,close) bytes">
+      </ti>      
+      
+      <ti  
+        type="call_job" 
+        job="trace-file-start" 
+        explain="(prop,_cdir_trace)"
+        test="(prop,do_trace)">
+        <file id="a">(loop,ld,@left_fn)</file>
+        <file id="b">(loop,ld,@right_fn)</file>
+        <prop id="use_left">1</prop>
+      </ti>           
+      
+      <ti  
+        type="call_job" 
+        job="See both files"
+        explain="(prop,_cdir_see_files)">
+        <prop id="see_pos">(prop,_cdir_changes) (e:o)(loop,ld,#i)(e:c)</prop>
+        <file id="see_left">(loop,ld,@left_fn)</file>
+        <file id="see_right">(loop,ld,@right_fn)</file>
+        <prop id="see_left_lm">(loop,ld,@left_lm)</prop>
+        <prop id="see_right_lm">(loop,ld,@right_lm)</prop>
+        <prop id="see_left_bytes">(loop,ld,@left_bytes)</prop>
+        <prop id="see_right_bytes">(loop,ld,@right_bytes)</prop>        
+      </ti>      
+    </ti>
+  </loop>
+  
+  <loop id="ld" spirit="ld" xpath="diff[@type='only_left']">
+
+    <when test="(f,eq,1,(loop,ld,#i))">
+      <ti_hr/>
+      <ti label="(prop,_cdir_only_in_left) ..." key="(loop,ld,#max) (prop,_cdir_file)(f,plural,(loop,ld,#max),(prop,_cdir_file_pl))" size="2"/>
+    </when>
+    <prop id="to-shorten" x="(loop,ld,@left_fn)" />
+    <call_job job="make-shorten"/>    
+    <ti type="rec" 
+        label="(e:o)(loop,ld,#i)(e:c) (f,html,bold,open)(prop,result-shorten)(f,html,bold,close)">
+        <ti></ti>
+        <ti type="call_job" 
+            job="trace-file-start" 
+            explain="(prop,_cdir_trace)"
+            test="(prop,do_trace)">
+          <file id="a">(dir,dir_left)(loop,ld,@left_fn)</file>
+          <prop id="use_left">1</prop> 
+        </ti>  
+                
+        <ti type="call_service"
+            job="Goto-Panorama-File"
+            explain="(prop,_cdir_see_file)">
+            <prop id="label">(prop,_cdir_only_left) (e:o)(loop,ld,#i)(e:c):</prop>
+            <file id="with">(dir,dir_left)(loop,ld,@left_fn)</file>
+        </ti>        
+    </ti>    
+    
+  </loop>  
+  
+  <loop id="ld" spirit="ld" xpath="diff[@type='only_right']">
+    <when test="(f,eq,1,(loop,ld,#i))">
+      <ti_hr/>
+      <ti label="(prop,_cdir_only_right) ..." key="(loop,ld,#max) (prop,_cdir_file)(f,plural,(loop,ld,#max),(prop,_cdir_file_pl))" size="2"/>      
+    </when>
+    
+    <prop id="to-shorten" x="(loop,ld,@right_fn)" />
+    <call_job job="make-shorten"/>
+        
+    <ti type="rec" 
+        label="(e:o)(loop,ld,#i)(e:c) (f,html,bold,open)(prop,result-shorten)(f,html,bold,close)">
+        <ti></ti>
+        <ti type="call_job" 
+            job="trace-file-start" 
+            explain="(prop,_cdir_trace)"
+            test="(prop,do_trace)">
+          <file id="a">(dir,dir_right)(loop,ld,@right_fn)</file>
+          <prop id="use_left">0</prop> 
+        </ti>  
+                
+        <ti type="call_service"
+            job="Goto-Panorama-File"
+            explain="(prop,_cdir_see_file)">
+            <prop id="label">(prop,_cdir_only_right) (e:o)(loop,ld,#i)(e:c):</prop>
+            <file id="with">(dir,dir_right)(loop,ld,@right_fn)</file>
+        </ti>        
+    </ti>
+
+  </loop>    
+  
+  <loop id="ld" spirit="ld" xpath="equal">
+    <when test="(f,eq,1,(loop,ld,#i))">
+      <ti_hr/>
+      <!-- <ti_break/> -->
+      <ti label="(prop,_cdir_equals) ..." key="(loop,ld,#max) (prop,_cdir_file)(f,plural,(loop,ld,#max),(prop,_cdir_file_pl))" size="2"/>      
+    </when>
+
+    <prop id="to-shorten" x="(loop,ld,@fn2)" />
+    <call_job job="make-shorten"/>
+
+    
+    <ti type="rec" label="(e:o)(loop,ld,#i)(e:c) (f,html,bold,open)(prop,result-shorten)(f,html,bold,close)" flag="inline">
+      <ti></ti>
+      <ti  
+        type="call_job" 
+        job="trace-file-start" 
+        explain="(prop,_cdir_trace)"
+        test="(prop,do_trace)">
+        <file id="a">(dir,dir_left)(loop,ld,@fn2)</file>
+        <prop id="use_left">1</prop>
+      </ti> 
+            
+      <ti  
+        type="call_job" 
+        job="See both files"
+        explain="(prop,_cdir_see_files)">
+        <prop id="see_pos">(prop,_cdir_equals) (e:o)(loop,ld,#i)(e:c)</prop>
+        <file id="see_left">(dir,dir_left)(loop,ld,@fn2)</file>
+        <file id="see_right">(dir,dir_right)(loop,ld,@fn2)</file>
+        <prop id="see_left_lm">(loop,ld,@left_lm)</prop>
+        <prop id="see_right_lm">(loop,ld,@right_lm)</prop>
+        <prop id="see_left_bytes">(loop,ld,@bytes)</prop>
+        <prop id="see_right_bytes">(loop,ld,@bytes)</prop>        
+      </ti>      
+    </ti>    
+    
+  </loop>   
+  <ti_break/>
+    
+  <spirit id="ld" act="close" />  
+
+</job>
+
+<job id="event_only_left" role="hidden">
+  <print id="out" act="println">&lt;diff type="only_left" left_key="(x,(prop,left_key))"  left_dna="(x,(prop,left_dna))" left_fn="(x,(f,loop_xml,left,.,@ipath)(f,loop_xml,left,.))" left_file="(x,(f,loop_xml,left,.))" left_lm="(f,loop_xml,left,@lm)"  left_bytes="(f,loop_xml,left,@bytes)" left_md5="(x,(f,loop_xml,left,@hash))"/&gt;</print>
+  <prop id="count_only_left">(f,add,1,(prop,count_only_left))</prop>
+</job>
+
+<job id="event_only_right" role="hidden">
+  <print id="out" act="println">&lt;diff type="only_right" right_key="(x,(prop,right_key))"  right_dna="(x,(prop,right_dna))"  right_fn="(x,(f,loop_xml,right,.,@ipath)(f,loop_xml,right,.))"  right_file="(x,(f,loop_xml,right,.))"  right_lm="(f,loop_xml,right,@lm)"  right_bytes="(f,loop_xml,right,@bytes)" right_md5="(x,(f,loop_xml,right,@hash))"/&gt;</print>
+  <prop id="count_only_right">(f,add,1,(prop,count_only_right))</prop>
+</job>
+
+<job id="event_both" role="hidden">
+  <prop id="some-valuex" x=""/>
+  <prop id="some-valuex" x="(f,loop_xml,right,@ext)" flag="catch"/>   
+  <choose>
+    <when test="(f,eq,(prop,right_dna),(prop,left_dna))">           
+      <print id="out" act="println">&lt;equal key="(x,(prop,right_key))"  dna="(x,(prop,right_dna))" file="(x,(f,loop_xml,right,.))" dir="(x,(f,loop_xml,right,.,@ipath))" bytes="(f,loop_xml,left,@bytes)" left_lm="(f,loop_xml,left,@lm)" right_lm="(f,loop_xml,right,@lm)" ext="(x,(prop,some-valuex))"  fn2="(x,(f,loop_xml,right,@ipath)(f,loop_xml,right,.))" /&gt;</print>        
+      <prop id="count_equal">(f,add,1,(prop,count_equal))</prop>
+    </when>
+    <otherwise>
+      <print id="out" act="println">&lt;diff type="dna" right_key="(x,(prop,right_key))" right_dna="(x,(prop,right_dna))" left_key="(x,(prop,left_key))"  left_dna="(x,(prop,left_dna))" left_lm="(f,loop_xml,left,@lm)" right_lm="(f,loop_xml,right,@lm)" left_bytes="(f,loop_xml,left,@bytes)" right_bytes="(f,loop_xml,right,@bytes)" file="(x,(f,loop_xml,left))" dir="(x,(f,loop_xml,right,.,@ipath))" left_fn2="(x,(f,loop_xml,left,@ipath)(f,loop_xml,left,.))" right_fn2="(x,(f,loop_xml,right,@ipath)(f,loop_xml,right,.))" left_fn="(x,(f,loop_xml,left,@fn))" right_fn="(x,(f,loop_xml,right,@fn))" left_md5="(x,(f,loop_xml,left,@hash))" right_md5="(x,(f,loop_xml,right,@hash))" left_kb="(f,loop_xml,left,@kb)" right_kb="(f,loop_xml,right,@kb)" ext="(x,(prop,some-valuex))" /&gt;</print>
+      <prop id="count_diff">(f,add,1,(prop,count_diff))</prop>
+    </otherwise>
+  </choose>
+  
+</job>
+
+<job id="convert" joblevel="app" role="hidden">
+  
+  <need>(file,left)</need>
+  <need>(file,right)</need>
+  
+  <spirit id="left" act="open" xml="(file,left)" />
+  <spirit id="right" act="open" xml="(file,right)" />
+            
+  <loop_xml id="left" 
+              act="open" 
+              spirit="left" 
+              xpath="//file"
+              sort="@ipath text" />
+
+  <prop id="left_exists">1</prop>
+  <call_job job="read_left" />
+  
+  <loop_xml id="right"                             
+              act="open"
+              spirit="right"              
+              xpath="//file"
+              sort="@ipath text"/>
+              
+  <prop id="right_exists">1</prop>          
+  <call_job job="read_right" />
+  
+  <prop id="count_equal">0</prop>
+  <prop id="count_diff">0</prop>
+  <prop id="count_only_left">0</prop>
+  <prop id="count_only_right">0</prop>
+      
+  <loop id="master" while="()(f,or,(prop,left_exists),(prop,right_exists))()">
+      
+    <prop id="left_key"></prop>
+    <prop id="left_dna"></prop>
+    <when test="(prop,left_exists)">
+      <prop id="left_key">(f,loop_xml,left,@ipath)&amp;amp;(f,loop_xml,left)</prop>
+      <prop id="left_dna">(f,loop_xml,left,@ipath)_(f,loop_xml,left)_(f,loop_xml,left,@hash)</prop>  
+
+    </when>
+
+    <prop id="right_key"></prop>
+    <prop id="right_dna"></prop>    
+    <when test="(prop,right_exists)">
+      <prop id="right_key">(f,loop_xml,right,@ipath)&amp;amp;(f,loop_xml,right)</prop>
+      <prop id="right_dna">(f,loop_xml,right,@ipath)_(f,loop_xml,right)_(f,loop_xml,right,@hash)</prop>  
+          
+    </when>    
+
+    <!--choose what to do next -->
+    
+    <tp test="(f,eq,0,(f,remain,(loop,master,#i),50))">(prop,_cdir_comparing_file): (loop,master,#i) ...</tp>
+
+    <choose>
+      <when test="(f,and,(prop,left_exists),(prop,right_exists))">
+        <!-- <ti label="ex-both" x2="(prop,right_key)">(prop,left_key)</ti> -->
+        <choose>
+          <when test="(f,eq,(prop,left_key),(prop,right_key))">
+            <!-- same keys -->
+            <call_job job="event_both"/>
+            <call_job job="read_left" />
+            <call_job job="read_right" />
+          </when>
+          <when test="(f,lt,(prop,left_key),(prop,right_key))">
+            <!-- left lt right  -->
+            <call_job job="event_only_left"/>
+            <call_job job="read_left" />
+          </when>   
+          <otherwise>
+            <!-- not(left lt right)  -->
+            <call_job job="event_only_right"/>
+            <call_job job="read_right" />
+          </otherwise>                  
+        </choose>
+      </when>
+      <when test="(prop,left_exists)">
+            <call_job job="event_only_left"/>
+            <call_job job="read_left" />     
+      </when>
+      <when test="(prop,right_exists)">
+            <call_job job="event_only_right"/>
+            <call_job job="read_right" />      
+      </when>      
+
+    </choose>
+          
+  </loop> 
+  
+  <loop_xml id="left" act="close"/>
+  <loop_xml id="right"  act="close"/>
+  
+  <spirit id="left" act="close" /> 
+  <spirit id="right" act="close"/>
+  
+  <print id="out" act="println">&lt;stat count_equal="(prop,count_equal)" count_diff="(prop,count_diff)" count_only_left="(prop,count_only_left)"  count_only_right="(prop,count_only_right)"/&gt;</print>  
+  
+</job>
+
+<job id="read_left" role="hidden">
+  <choose>
+    <when test="(f,loop_xml,left,has_next?)">
+      <loop_xml act="next" id="left" />
+      <prop id="left_exists">1</prop>
+      <!-- 
+      <ti type="rec" label="left"> 
+        <ti x="(f,loop_xml,left,@ipath)(f,loop_xml,left)"/>
+        <ti></ti>
+      </ti> -->
+    </when>
+    <otherwise>
+       <prop id="left_exists">0</prop>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="read_right" role="hidden">
+  <choose>
+    <when test="(f,loop_xml,right,has_next?)">
+      <loop_xml act="next" id="right" />
+      <prop id="right_exists">1</prop> 
+      <!-- 
+      <ti type="rec" label="right">
+        <ti></ti> 
+        <ti x="(f,loop_xml,right,@ipath)(f,loop_xml,right)"/>        
+      </ti> 
+      -->
+        
+    </when>
+    <otherwise>
+      <prop id="right_exists">0</prop>
+    </otherwise>
+  </choose>
+</job>
+
+
+<job id="See both files" role="hidden">
+  <call_job job="tr_seeb"/>
+  <ti label="(prop,_seeb_pos):">(prop,see_pos)</ti>
+  <ti label="(prop,_seeb_left)">
+
+    <ti type="text" label="(prop,_seeb_last):" flag="label_right">(prop,see_left_lm)</ti>
+    <ti type="text" label="Bytes:" flag="label_right">(prop,see_left_bytes)</ti>
+    <ti type="file" label="(prop,_seeb_file):" flag="label_right">(file,see_left)</ti>    
+  </ti>
+  <ti label="(prop,_seeb_right)">
+
+    <ti type="text" label="(prop,_seeb_last):" flag="label_right">(prop,see_right_lm)</ti>
+    <ti type="text" label="Bytes:" flag="label_right">(prop,see_right_bytes)</ti>
+    <ti type="file" label="(prop,_seeb_file):" flag="label_right">(file,see_right)</ti>    
+  </ti>
+  
+</job>
+        
+
+</jobs>

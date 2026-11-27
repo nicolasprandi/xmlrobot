@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="task-see">
+<need>(prop,task_key)</need>
+<call_job job="task-read"/>
+<prop x="print print_only" id="tasks_tk_control"/>
+<prop id="label" x="Task: (f,html,bold,open)(f,text,cut_nice,(prop,task_name),26)(f,html,bold,close)(f,when,(f,has,(prop,tasks_offset_label)), - (prop,tasks_offset_label),)"/>
+<call_job job="task-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="[ ? ]" align="right" job="task-see-more">
+<prop id="task_key">(prop,task_key)</prop>
+<file id="tasks">(file,tasks)</file>
+<prop id="tasks_offset">(prop,tasks_offset)</prop>
+<prop id="tasks_offset_label">(prop,tasks_offset_label)</prop>
+<prop id="tasks_offset_new_key">(prop,tasks_offset_new_key)</prop>
+<prop id="tasks_sort_attribute">(prop,tasks_sort_attribute)</prop>
+<prop id="tasks_sort_number">(prop,tasks_sort_number)</prop>
+<prop id="tasks_where">(prop,tasks_where)</prop>
+<prop id="tasks_return_job">(prop,tasks_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit Task Data" job="task-edit">
+<prop id="task_key">(prop,task_key)</prop>
+<file id="tasks">(file,tasks)</file>
+<prop id="tasks_offset">(prop,tasks_offset)</prop>
+<prop id="tasks_offset_label">(prop,tasks_offset_label)</prop>
+<prop id="tasks_offset_new_key">(prop,tasks_offset_new_key)</prop>
+<prop id="tasks_sort_attribute">(prop,tasks_sort_attribute)</prop>
+<prop id="tasks_sort_number">(prop,tasks_sort_number)</prop>
+<prop id="tasks_where">(prop,tasks_where)</prop>
+<prop id="tasks_return_job">(prop,tasks_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,business)" type="call_job" explain="Delete" job="task-del">
+<prop id="task_key">(prop,task_key)</prop>
+<file id="tasks">(file,tasks)</file>
+<prop id="tasks_offset">(prop,tasks_offset)</prop>
+<prop id="tasks_offset_label">(prop,tasks_offset_label)</prop>
+<prop id="tasks_offset_new_key">(prop,tasks_offset_new_key)</prop>
+<prop id="tasks_sort_attribute">(prop,tasks_sort_attribute)</prop>
+<prop id="tasks_sort_number">(prop,tasks_sort_number)</prop>
+<prop id="tasks_where">(prop,tasks_where)</prop>
+<prop id="tasks_return_job">(prop,tasks_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-task-details-end</trace>
+<call_job job="hook-task-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: task-details: end.0">
+<ti> hook_job=hook-task-details-end hook=end page=details station=0 object=task</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

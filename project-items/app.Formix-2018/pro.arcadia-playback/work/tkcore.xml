@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="playback-tk">
+<need default="">(prop,playbacks_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,playbacks_tk_control) wrap ">
+<tk label="Target" id="playback_target" x="service_apps/app.Generator/generator-first.jar" test_first="1" tip="A file as relative to the Delivery-System; The file to be replaced eg: service_apps/app.Generator/generator-first.jar" type="text" flag=" nono "/>
+<tk label="Beschreibung" id="playback_desc" x="" test_first="0" tip="Beschreibungstext" type="text" flag=" "/>
+</tk>
+</job>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><steps>
+<p id="idio_welcome">Kangei to formix
+
+Roguin o tsudzukeru.
+
+For account write to  abraham@nicolas.at
+
+</p>
+<p id="idio_accept1">Kangei bei Formix-Rezeptblock</p>
+<p id="idio_accept2">Dōi shimasu.</p>
+<p id="idio_accept3">Ukeiremasu</p>
+<p id="idio_accept4">Sutoppu</p>
+<p id="idio_accept5q1">Getsuyōbi wa eigodesu Monday</p>
+<p id="idio_accept5q2">Wakarimasu webseite Kukkī nashi.</p>
+<p id="idio_accept5q3">Wakarimasu webseite Tesuto nomi - Honmonode wanai - Kangaemasu</p>
+<p id="idio_accept5q4">Hogo ni kansuru kokusai kisoku ni dōi shimasu: Chiteki zaisan</p>
+<p id="idio_accept6p0">Mondai 1</p>
+<p id="idio_accept6p1">Mondai 2</p>
+<p id="idio_accept6p2">Mondai 3</p>
+<p id="idio_accept6p3">Mondai 4</p>
+<p id="idio_accept6p4">Mondai 5</p>
+<p id="idio_login1">Tōroku</p>
+<p id="idio_login2">Roguin jōhō</p>
+<p id="idio_login3">Namae(e:s) sollte dir mitgeteilt worden sein.</p>
+<p id="idio_login4">Pasuwādo (e:o)wast eh(e:s) total geheim und so ;-(e:c)</p>
+<p id="idio_login5">Kinō</p>
+<p id="idio_login6">Gesuto - Guest (e:o)Yomimasu(e:c)</p>
+<p id="idio_login7">Kokyaku - Customer (e:o)Ōdā(e:c)</p>
+<p id="idio_login8">Chosha - Editor (e:o)Kakimasu(e:c)</p>
+<p id="idio_msg1">Mondai</p>
+<p id="idio_msg2">Pasuwādo ga chigaimasu :
+Sore ni kaku
+
+  [ abraham@nicolas.at  ]
+  
+  </p>
+
+<!-- 
+
+<p id="idio_">regex</p>
+<p id="idio_">doku</p>
+<p id="idio_">regex</p>
+<p id="idio_">doku</p>
+<p id="idio_">regex</p>
+<p id="idio_">doku</p>
+<p id="idio_">regex</p>
+-->
+</steps>

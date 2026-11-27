@@ -1,0 +1,664 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="cmd-import-to" role="hidden">                                                         
+      <need>(dir,td-playlist)</need>
+      <call_job job="tr_tsim"/>
+      <!-- <interpreter watch="1"/>  -->
+      <call_job job="run-this-sql-script-intro"/>
+<try_catch><try>      
+
+      <file id="dlist">(dir,pro)dirliste.xml</file>
+      <quick_scan dir="(dir,td-playlist)" out="(file,dlist)" level_limit="2"/>
+      <ti type="file" label="Scan" test="(f,role,test)">(file,dlist)</ti>
+      <loop id="ddir" xml="(file,dlist)" xpath="dir">
+          <ti test="(f,role,test)">(loop,ddir,#i) (loop,ddir,@rpath)</ti>
+          
+        <call_job job="run-this-sql-script">
+          <file id="scripts-to-run">(dir,td-playlist)(loop,ddir,@ipath)record.xml</file>
+          <prop id="scripts-to-run-titel">(loop,ddir,@rpath)</prop>
+        </call_job>        
+        
+        <!-- commit einmalig am schluss <dbc id="(prop,dbc-gleiches)"            
+          act="commit"/>                -->
+      </loop>
+
+      <call_job job="run-this-sql-script">
+        <file id="scripts-to-run">(dir,td-playlist)box.xml</file>
+        <prop id="scripts-to-run-titel">Box</prop>
+      </call_job>
+            
+      <call_job job="run-this-sql-script-extro"/>
+      </try>
+      <catch>
+        <dbc id="(prop,dbc-gleiches)"            
+          act="rollback" flag="catch"/>
+        <dbc id="(prop,dbc-gleiches)" flag="catch"            
+          act="close"/>
+      </catch>
+</try_catch>
+      
+      <call_job job="-db-giveback-import-"/>  
+</job>
+
+<job id="run-this-sql-script-intro" role="hidden">
+
+  <prop id="dbci-gleiches">testa__</prop>
+  <prop id="dbc-gleiches">test</prop>
+  
+        <dbc id="(prop,dbc-gleiches)"
+          how="dbci"
+          dbci="(prop,dbci-gleiches)"
+          dbci_app="Hibiscus"          
+          act="open"/>
+
+
+</job>
+
+<job id="run-this-sql-script-extro" role="hidden">
+      <dbc id="(prop,dbc-gleiches)"            
+          act="commit"/>
+      <dbc id="(prop,dbc-gleiches)"            
+          act="close"/>          
+          
+ 
+      <ti x="(prop,_tsim_ok)"/>
+      <when  test="(f,right,int)">
+      <ti label="(prop,_tsim_runint)"/>
+      <ti type="call_job" job="_integrate" explain="(prop,_tsim_runintnow)" flag="button" class="fx fxAction justgo"/>
+      </when> 
+
+</job>
+
+<job id="run-this-sql-script" role="hidden">
+  <need>(file,scripts-to-run)</need>
+  <need>(prop,scripts-to-run-titel)</need>
+
+  <ti type="file" label="(prop,_tsim_running_script): (prop,scripts-to-run-titel)" flag="naked">(file,scripts-to-run)</ti>
+
+
+      <loop id="updates" xml="(file,scripts-to-run)" xpath="u">
+        <!-- <ti label="#(loop,updates,#i)">(loop,updates)</ti> -->
+        <tp>(loop,updates,#i)</tp>
+     
+          
+        <choose prodconf="nosql_hint_choose">
+          <when test="0" xtest="(prop,do-nosql)" prodconf="nosql_hint_do">
+            <!-- sql wird NICHT durchgefuehrt, nosql -->
+            <call_job job="do-nosql">
+              <prop id="nosql-label">Send Record to Db</prop>
+              <prop id="nosql-explain">(loop,updates,#i)/(loop,updates,#max)</prop>
+              <prop id="nosql-sql">(loop,updates)</prop>
+              <file id="nosql-result-csv"></file>  
+              <prop id="nosql-limit"></prop> 
+              <prop id="nosql-act">update</prop> 
+            </call_job>    
+          </when>
+          
+          <otherwise prodconf="nosql_hint_dont">
+            <dbc id="(prop,dbc-gleiches)"
+              act="update">(loop,updates)</dbc>                  
+          </otherwise>
+        
+        </choose>                             
+      </loop>
+  <!--     
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+      <ti label="Db-Problem"/>
+      <ti label="Error">(prop,catched_msg)</ti>    
+      <call_job job="-db-rollback-real-"/>
+      <call_job job="-db-close-on-purpose-" />
+    </catch>
+  </try_catch>        -->
+
+</job>                                                     
+
+<job id="testdata-prod-this-record" role="hidden">
+
+      <when test="(f,has,prop,td-key)">
+        <prop id="sh-box-titel" test="(f,has,prop,sh-box-titel)">(prop,sh-box-titel)(e:s) </prop>
+        <prop id="sh-box-titel">(prop,sh-box-titel)(f,loop_xml,record,@name)</prop>
+      </when>
+
+<dir id="td-deposit">(dir,td-playlist)(f,loop_xml,record,@row)</dir>
+<ti label="(f,loop_xml,record,@name)" />
+<ti label="satz" test="(f,role,test)">(f,loop_xml,record,@key)</ti>
+<ti type="dir" test="(f,role,test)">(dir,td-deposit)</ti>
+
+  <create_file file="(dir,filetemp)start.xml">&lt;root/&gt;</create_file>
+  <spirit id="ok"
+          file="(dir,filetemp)start.xml"
+          act="open"/>           
+          
+  <spirit id="ok"
+          act="xml_update"
+          how="append">
+          <inline attribute="with">&lt;ok/&gt;</inline>
+  </spirit>                
+  <ti test="(f,role,test)">(f,spirit,ok,xml?)</ti>       
+  
+  <print id="sh" out="(dir,td-deposit)record.sql" act="open"/> 
+  <print id="sh-xml" out="(dir,td-deposit)record.xml" act="open"/>  
+  <print id="sh-xml" act="println">&lt;us&gt;</print>                                                          
+
+  <loop_xml id="object" 
+          act="open" 
+          spirit="data"
+          xpath="dsi[@row=(f,loop_xml,record,@row)]/dso"
+          missing_strategy="empty"/>  
+                                                                                        
+  <loop id="wo" while="()(f,loop_xml,object,has_next?)()">
+    <loop_xml act="next" id="object" />
+    <prop id="sh-max-obj">(f,add,1,(prop,sh-max-obj))</prop>
+    <ti>(f,loop_xml,object,@name)</ti>
+    <spirit id="ok"
+            act="xml_update"
+            how="set_attribute"
+            where="ok"
+            attribute_name="key_(f,loop_xml,object,@row)"
+            attribute="key_(f,loop_xml,object,@row)"
+            value="(prop,sh-max-obj)"/>  
+    <ti test="(f,role,test)">(f,spirit,ok,xml?)</ti>        
+    
+    <!-- <prop id="sh-max-obj">(f,add,1,(prop,sh-max-obj))</prop>   -->
+    
+      
+      <call_job job="add-db-update">
+        <prop id="update-to-add">()INSERT INTO 
+      i_obj( obj_id, obj_typ,box_id)
+      VALUES ( () (prop,sh-max-obj)(e:s) (f,loop_xml,object,@objekttyp)(e:s)(prop,sh-max-box) (e:c);</prop>
+      </call_job>  
+
+      <loop id="resi" xpath="dsi[@row=(f,loop_xml,record,@row)]/dso[@row=(f,loop_xml,object,@row)]/dsa" spirit="data">
+        <prop id="sh-max-attr">(f,add,1,(prop,sh-max-attr))</prop>
+
+        <call_job job="add-db-update">
+          <prop id="update-to-add">()INSERT INTO 
+  i_attr(attr_id, obj_id, attr_typ, box_id)
+  VALUES ( () (prop,sh-max-attr)(e:s)(prop,sh-max-obj)(e:s) (loop,resi,@attributtyp)(e:s)(prop,sh-max-box) (e:c);</prop>
+        </call_job>      
+  
+        <prop id="sh-max-wert">(f,add,1,(prop,sh-max-wert))</prop>
+        <try_catch>
+        <try>
+        <call_job job="add-db-update">
+          <prop id="update-to-add">()INSERT INTO 
+  i_wert(wert_id, attr_id,  inhalt,  wann, box_id)
+  VALUES ( () (prop,sh-max-wert)(e:s)(prop,sh-max-attr)(e:s) &apos;(f,replace,(loop,resi,@wert),&apos;,&apos;&apos;)&apos;(e:s)NOW(e:o)(e:c)(e:s)(prop,sh-max-box) (e:c);</prop>
+        </call_job>   
+        </try>
+        <catch>
+          <ti label="Exception bei der werte-extraktion des datensatzes"/>
+          <ti label="Exception=">(prop,catched_msg)</ti>
+          <ti label="Datensatz=">(f,loop_xml,record,@name)</ti>   
+          <ti label="Objekt=">(f,loop_xml,object,@name)</ti>                 
+          <ti label="Attribut-Typ=">(loop,resi,@attributtyp)</ti>           
+          <throw_again/>
+
+        </catch>
+        </try_catch>      
+      </loop>       
+  </loop>
+
+ <loop_xml id="object" 
+          act="close" />   
+          
+          
+  <loop id="bez" xpath="dsi[@row=(f,loop_xml,record,@row)]/dsb" spirit="data">
+    <prop id="sh-max-bez">(f,add,1,(prop,sh-max-bez))</prop>
+    <when test="(loop,bez,exists?,@dso_from_row)">
+    <when test="(loop,bez,exists?,@dso_to_row)">
+    
+    <choose>
+      <when test="(f,spirit,ok,exists?,ok,@key_(loop,bez,@dso_from_row))">
+        <prop id="aValue">(f,spirit,ok,ok,@key_(loop,bez,@dso_from_row))</prop>
+      </when>
+      <otherwise>
+        <prop id="aValue">(loop,bez,@dso_from_row)</prop>
+      </otherwise>    
+    </choose>
+    
+    <choose>
+      <when test="(f,spirit,ok,exists?,ok,@key_(loop,bez,@dso_to_row))">
+        <prop id="bValue">(f,spirit,ok,ok,@key_(loop,bez,@dso_to_row))</prop>
+      </when>
+      <otherwise>
+        <prop id="bValue">(loop,bez,@dso_to_row)</prop>
+      </otherwise>    
+    </choose>    
+    
+    
+    <call_job job="add-db-update">
+      <prop id="update-to-add">()INSERT INTO 
+  i_bez(bez_id, bez_typ, obj_id_a, obj_id_b, box_id)
+  VALUES ( () (prop,sh-max-bez)(e:s)(loop,bez,@beztyp)(e:s) (prop,aValue)(e:s)(prop,bValue)(e:s)(prop,sh-max-box) (e:c);</prop>
+    </call_job>      
+    
+    </when>
+    </when>
+   </loop>    
+
+  <print id="sh-xml" act="println">&lt;/us&gt;</print>    
+  <print id="sh" act="close"/> 
+  <print id="sh-xml" act="close"/>  
+  
+     
+          
+  <spirit id="ok"
+          act="close"/>               
+          
+</job>               
+                                     
+<job id="testdata-prod-inner2" role="hidden">
+<throw test="(f,not,(f,right,import))">No right to import</throw>
+<need>(file,td-data)</need>
+<need>(prop,td-key)</need>
+<need>(prop,td-keys)</need>
+<need>(dir,td-playlist)</need>
+
+
+<when test="(f,role,test)">
+  <ti type="file">(file,td-data)</ti>
+  <ti>(prop,td-key) (prop,td-keys) (dir,td-playlist)</ti>
+</when>
+<call_job job="tr_tst" />
+<ti label="Best Case (prop,_tst_next)"/>
+<ti type="rec">
+<ti type="call_job" job="cmd-import-to" explain="(prop,_tst_import)" flag="button block" class="fx greenButton">
+ <dir id="td-playlist">(dir,td-playlist)</dir>
+</ti>
+</ti>
+
+<spirit id="data" act="open" xml="(file,td-data)"/>
+
+<prop id="td-xpath">dsi</prop>
+<when test="(f,has,prop,td-key)">
+<prop id="td-xpath">dsi[@row=(prop,td-key)]</prop>
+</when>
+
+ <file id="sh-max-result">(dir,filetemp)sh-max-result.xml</file>   
+  
+  <call_job job="-db-open-"/>
+                                  
+  <call_job job="get-import-token-for-data" />
+    
+  <call_job job="-db-open-"/>
+  <call_job job="get-max-imports">
+    <prop id="get-max-imports-report">0</prop>
+    <prop id="get-max-imports-report-values">1</prop>
+  </call_job>
+  <ti type="dir" label="Import-Scripts:">(dir,td-playlist)</ti>
+  <ti_hr/>
+
+  
+  <prop id="sh-max-box">(f,add,1,(prop,sh-max-box))</prop>
+  <ti type="dir" label="Datensätze" test="(f,role,test)">(dir,td-playlist)</ti>
+  <delete dir="(dir,td-playlist)"/>
+  <mkdir dir="(dir,td-playlist)"/>
+  
+   
+  <prop id="sh-box-titel"></prop> 
+
+  <loop_xml id="record" 
+          act="open" 
+          spirit="data"
+          xpath="(prop,td-xpath)"
+          missing_strategy="empty"/>  
+  <prop id="sh-counter">0</prop>                                                                                      
+  <loop id="w" while="()(f,loop_xml,record,has_next?)()">
+    <loop_xml act="next" id="record" />
+    <prop id="takeit">1</prop>
+    
+    <when test="(prop,takeit)">
+       <prop id="sh-counter">(f,add,1,(prop,sh-counter))</prop>
+       <call_job job="testdata-prod-this-record"/>
+    </when>
+    
+  </loop>
+
+ <loop_xml id="record" 
+          act="close" />   
+          
+  <choose>
+    <when test="(f,has,prop,sh-box-titel)">
+      <prop id="sh-box-titel">(e:s)(prop,_sl_dsi) &apos;(prop,sh-box-titel)&apos;</prop>
+    </when>
+    <otherwise>
+      <prop id="sh-box-titel">(e:s)All(f,when,(f,eq_text,(prop,ling),de),e,) (prop,_pl_dsi)</prop>
+    </otherwise>
+  </choose>                                                                            
+            
+  <prop id="sh-box-beschreibung">(prop,sh-box-titel)</prop>
+  <prop id="sh-box-titel">(prop,_pl_dsi)(e:s) (prop,_sl_buch) &apos;(f,name_of_dir,(f,dir_of_file,(file,td-data)))&apos;</prop>
+
+  <file id="sh-printer">(dir,td-playlist)box.sql</file> 
+  <file id="sh-xml">(dir,td-playlist)box.xml</file>   
+  
+  <print id="sh" out="(file,sh-printer)" act="open"/> 
+  <print id="sh-xml" out="(file,sh-xml)" act="open"/>  
+  <print id="sh-xml" act="println">&lt;us&gt;</print>  
+    
+  
+  <call_job job="add-db-update">
+    <prop id="update-to-add">()INSERT INTO  
+  i_box( box_id, zeit_import, zeit_qk, titel,beschreibung,werte)
+  VALUES ( () (prop,sh-max-box)(e:s) NOW(e:o)(e:c)(e:s) NOW(e:o)(e:c)(e:s)&apos;(f,replace,(prop,sh-box-titel),&apos;,&apos;&apos;)&apos;(e:s)&apos;(f,replace,(prop,sh-box-beschreibung),&apos;,&apos;&apos;)&apos;(e:s)&apos;count=&apos;&apos;(prop,sh-counter)&apos;&apos; &apos;(e:c);</prop>
+  </call_job>  
+  
+  <print id="sh-xml" act="println">&lt;/us&gt;</print>  
+    
+  <print id="sh"  act="close"/> 
+  <print id="sh-xml" act="close"/>    
+            
+<spirit id="data" act="close"/>
+
+
+
+
+<tk type="msg" msg_type="i">(prop,_tst_time)</tk>
+
+<ti_hr/>
+
+<ti label="(prop,_tst_next)"/>
+<ti type="rec">
+<ti type="call_job" job="cmd-import-to" explain="(prop,_tst_import)" flag="button block" class="fx greenButton">
+ <dir id="td-playlist">(dir,td-playlist)</dir>
+</ti>
+</ti>
+
+<ti type="rec">
+<ti type="call_job" job="-db-giveback-import-" explain="(prop,_tst_back)" flag="button block" class="fx redButton "/>
+</ti>
+
+<ti label="(prop,_tst_remember)"/>
+<ti>(prop,_tst_time)</ti>
+
+
+  <try_catch><try>
+  <ti label="(prop,get-max-imports-report-label)"/>
+  <ti>(prop,get-max-imports-report-text)</ti>
+  </try><catch/></try_catch>  
+
+</job>
+
+<job id="get-import-token-for-data" role="hidden">
+  <try_catch>
+    <try>
+      <call_job job="-db-request-import-"/>
+    </try>
+    <catch>
+      <ti label="Problem"/>
+      <ti label="Exception:">(prop,catched_msg)</ti>
+      <ti type="call_job" job="_dwh" explain="Tables/Tabellen" flag="button"/>
+      <throw_again/>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="get-max-imports" role="hidden">
+
+  <need default="1">(prop,get-max-imports-report)</need>
+  <need default="0">(prop,get-max-imports-report-values)</need>
+  <ti>(f,html,s,o)Getting Max-Values from db(f,html,s,c)</ti>
+  <need>(prop,mydbc)</need>
+  <dbc id="(prop,mydbc)"
+    out="(file,sh-max-result)"
+    style="a"
+    act="select"
+    root_name="all"
+    row_name="row"    
+    flag="trim">()select 
+( select max(box_id) from i_box) as  max_box_id,
+( select max(obj_id) from i_obj) as  max_obj_id,
+( select max(attr_id) from i_attr) as  max_attr_id,
+( select max(wert_id) from i_wert) as  max_wert_id,
+( select max(bez_id) from i_bez) as  max_bez_id,
+( select max(box_id) from box) as  max_box_id_int,
+( select max(obj_id) from obj) as  max_obj_id_int,
+( select max(attr_id) from attr) as  max_attr_id_int,
+( select max(wert_id) from wert) as  max_wert_id_int,
+( select max(bez_id) from bez) as  max_bez_id_int; ()</dbc>  
+      
+  <spirit id="max" file="(file,sh-max-result)" act="open"/>  
+  <prop id="sh-max-box">(f,try,()(f,spirit,max,row,@max_box_id)(),0,0)</prop>
+  <prop id="sh-max-obj">(f,try,()(f,spirit,max,row,@max_obj_id)(),0,0)</prop>
+  <prop id="sh-max-attr">(f,try,()(f,spirit,max,row,@max_attr_id)(),0,0)</prop>
+  <prop id="sh-max-wert">(f,try,()(f,spirit,max,row,@max_wert_id)(),0,0)</prop>
+  <prop id="sh-max-bez">(f,try,()(f,spirit,max,row,@max_bez_id)(),0,0)</prop>
+ 
+  <prop id="sh-max-box-int">(f,try,()(f,spirit,max,row,@max_box_id_int)(),0,0)</prop>
+  <prop id="sh-max-obj-int">(f,try,()(f,spirit,max,row,@max_obj_id_int)(),0,0)</prop>
+  <prop id="sh-max-attr-int">(f,try,()(f,spirit,max,row,@max_attr_id_int)(),0,0)</prop>
+  <prop id="sh-max-wert-int">(f,try,()(f,spirit,max,row,@max_wert_id_int)(),0,0)</prop>
+  <prop id="sh-max-bez-int">(f,try,()(f,spirit,max,row,@max_bez_id_int)(),0,0)</prop>
+  
+  <prop id="sh-max-box" test="(f,gt_num,(prop,sh-max-box-int),(prop,sh-max-box))">(prop,sh-max-box-int)</prop>
+
+  <prop id="sh-max-obj" test="(f,gt_num,(prop,sh-max-obj-int),(prop,sh-max-obj))">(prop,sh-max-obj-int)</prop>
+  <prop id="sh-max-attr" test="(f,gt_num,(prop,sh-max-attr-int),(prop,sh-max-attr))">(prop,sh-max-attr-int)</prop>
+  <prop id="sh-max-wert" test="(f,gt_num,(prop,sh-max-wert-int),(prop,sh-max-wert))">(prop,sh-max-wert-int)</prop>
+  
+  <prop id="sh-max-bez" test="(f,gt_num,(prop,sh-max-bez-int),(prop,sh-max-bez))">(prop,sh-max-bez-int)</prop>
+  
+  <remove type="prop" id="sh-max-box-int"/>
+  <remove type="prop" id="sh-max-obj-int"/>
+  <remove type="prop" id="sh-max-attr-int"/>
+  <remove type="prop" id="sh-max-wert-int"/>
+  <remove type="prop" id="sh-max-bez-int"/>
+  
+  <spirit id="max"  act="close"/> 
+<when test="(prop,get-max-imports-report)">  
+  <ti label="Max-Id's in Db"/>
+  <ti>box/i_box=(prop,sh-max-box) obj/i_obj=(prop,sh-max-obj) attr/i_attr=(prop,sh-max-attr) wert/i_wert=(prop,sh-max-wert) bez/i_bez=(prop,sh-max-bez) </ti>
+</when>
+
+<when test="(prop,get-max-imports-report-values)">  
+  <prop id="get-max-imports-report-label">Max-Id's in Db</prop>
+  <prop id="get-max-imports-report-text">box/i_box=(prop,sh-max-box) obj/i_obj=(prop,sh-max-obj) attr/i_attr=(prop,sh-max-attr) wert/i_wert=(prop,sh-max-wert) bez/i_bez=(prop,sh-max-bez)</prop>
+</when>
+
+
+</job>
+
+<job id="hook_hint_send_to_db_internal-2" role="hidden">
+  <call_job job="tr_hnt"/>
+  <throw test="(f,not,(f,right,import))">No right to import</throw>
+  <need>(file,sh-file)</need>
+  <!-- ? (prop,sh-keys) -->
+  <prop id="sh-has-keys">(f,has,prop,sh-keys)</prop>
+
+  <file id="sh-max-result">(dir,filetemp)sh-max-result.xml</file>   
+  <file id="sh-printer">(dir,filetemp)sh-sql-printer.txt</file> 
+  <file id="sh-xml">(dir,filetemp)sh-sql-printer.xml</file>
+         
+  <call_job job="-db-open-"/>
+  
+  <call_job job="get-max-imports">
+    <prop id="get-max-imports-report">0</prop>
+    <prop id="get-max-imports-report-values">1</prop>
+  </call_job>
+ 
+
+  <print id="sh" out="(file,sh-printer)" act="open"/> 
+  <print id="sh-xml" out="(file,sh-xml)" act="open"/>  
+  <print id="sh-xml" act="println">&lt;us&gt;</print>
+  
+  <prop id="sh-max-box">(f,add,1,(prop,sh-max-box))</prop>
+ 
+  <call_job job="add-db-update">
+    <prop id="update-to-add">()INSERT INTO  
+  i_box( box_id, zeit_import, zeit_qk, beschreibung)
+  VALUES ( () (prop,sh-max-box)(e:s) NOW(e:o)(e:c)(e:s) NOW(e:o)(e:c)(e:s)&apos;hints (f,name_of_file2,(file,sh-file)) (f,vob,prop,sh-keys)&apos;(e:c);</prop>
+  </call_job>  
+    
+  <spirit id="sh" file="(file,sh-file)" act="open"/>  
+  <!-- <prop id="sh-total-name"></prop> -->
+  <ti label="(prop,_hnt_adding)" />
+  <prop id="sh-counter">0</prop>
+  <loop id="hnt" xpath="hint" spirit="sh">
+    <choose>
+      <when test="(prop,sh-has-keys)">
+        <prop id="sh-take">(f,has_flag,(prop,sh-keys),(loop,hnt,@row))</prop>
+      </when>
+      <otherwise>
+        <prop id="sh-take">1</prop>
+      </otherwise>
+    </choose>
+    <when test="(prop,sh-take)">
+      <prop id="sh-counter">(f,add,1,(prop,sh-counter))</prop>
+      <ti>(prop,sh-counter). (loop,hnt,@name)</ti>
+      <!-- <prop id="sh-total-name">(prop,sh-total-name)(loop,hnt,@detail);</prop> -->
+      <prop id="sh-max-obj">(f,add,1,(prop,sh-max-obj))</prop>
+      
+      <call_job job="add-db-update">
+        <prop id="update-to-add">()INSERT INTO 
+      i_obj( obj_id, obj_typ,box_id)
+      VALUES ( () (prop,sh-max-obj)(e:s) (loop,hnt,@objekt_typ)(e:s)(prop,sh-max-box) (e:c);</prop>
+      </call_job>  
+
+      <loop id="resi" xpath="hint[@row=(f,xpath_string,(loop,hnt,@row))]/namaste" spirit="sh">
+        <prop id="sh-max-attr">(f,add,1,(prop,sh-max-attr))</prop>
+
+        <call_job job="add-db-update">
+          <prop id="update-to-add">()INSERT INTO 
+  i_attr(attr_id, obj_id, attr_typ, box_id)
+  VALUES ( () (prop,sh-max-attr)(e:s)(prop,sh-max-obj)(e:s) (loop,resi,@attributtyp)(e:s)(prop,sh-max-box) (e:c);</prop>
+        </call_job>      
+  
+        <prop id="sh-max-wert">(f,add,1,(prop,sh-max-wert))</prop>
+      
+        <call_job job="add-db-update">
+          <prop id="update-to-add">()INSERT INTO 
+  i_wert(wert_id, attr_id,  inhalt,  wann, box_id)
+  VALUES ( () (prop,sh-max-wert)(e:s)(prop,sh-max-attr)(e:s) &apos;(f,replace,(loop,resi,@value),&apos;,&apos;&apos;)&apos;(e:s)NOW(e:o)(e:c)(e:s)(prop,sh-max-box) (e:c);</prop>
+        </call_job>         
+      </loop>       
+    </when> 
+  </loop>
+  <remove type="prop" id="sh-counter"/>
+  <print act="println" id="sh">UPDATE i_box SET zeit_qk=NOW(e:o)(e:c) WHERE box_id=(prop,sh-max-box);</print>
+    
+  <spirit id="sh"  act="close"/> 
+  <print id="sh-xml" act="println">&lt;/us&gt;</print>
+  <print id="sh-xml"  act="close"/>
+    
+  <print id="sh" act="close"/>  
+      
+  <tk label="(prop,_hnt_run_really)">
+    <tk type="msg"       
+        msg="(f,file_content,(file,sh-printer))"
+        msg_type="i"
+        tip="(prop,_hnt_run_really2)"/>
+  </tk>  
+  
+  <!-- 
+  <call_job job="-db-prepare-operations-" >
+    <prop id="prepare-reason">Unify Objects</prop>
+  </call_job>  
+  -->
+  
+  <call_job job="-db-close-on-purpose-" />
+  <call_job job="-db-open-">
+    <prop id="open-with-autocommit">0</prop>
+  </call_job>  
+  <try_catch>
+    <try>
+      <loop id="updates" xml="(file,sh-xml)" xpath="u">
+        <!-- <ti label="#(loop,updates,#i)">(loop,updates)</ti> -->
+        <tp>(loop,updates,#i)</tp>
+     
+          
+        <choose prodconf="nosql_hint_choose">
+          <when test="0" xtest="(prop,do-nosql)" prodconf="nosql_hint_do">
+            <!-- sql wird NICHT durchgefuehrt, nosql -->
+            <call_job job="do-nosql">
+              <prop id="nosql-label">Send Composition to Db</prop>
+              <prop id="nosql-explain">(loop,updates,#i)/(loop,updates,#max)</prop>
+              <prop id="nosql-sql">(loop,updates)</prop>
+              <file id="nosql-result-csv"></file>  
+              <prop id="nosql-limit"></prop> 
+              <prop id="nosql-act">update</prop> 
+            </call_job>    
+          </when>
+          
+          <otherwise prodconf="nosql_hint_dont">
+            <dbc id="(prop,mydbc)"
+              act="update">(loop,updates)</dbc>                  
+          </otherwise>
+        
+        </choose>                             
+      </loop>
+      <call_job job="-db-commit-real-"/>
+      <call_job job="-db-close-on-purpose-" />
+      <ti x="(prop,_hnt_run_ok)"/>
+      <when  test="(f,right,int)">
+      <ti label="(prop,_hnt_run_next)"/>
+      <ti type="call_job" job="_integrate" explain="(prop,_hnt_run_int)" flag="button" class="fx fxEdit justgo" />
+      </when>
+    </try>
+    <catch>
+      <ti label="Db-Problem"/>
+      <ti label="Error">(prop,catched_msg)</ti>    
+      <call_job job="-db-rollback-real-"/>
+      <call_job job="-db-close-on-purpose-" />
+    </catch>
+  </try_catch>
+  
+  <!-- <call_job job="-db-open-"/> -->  
+  <try_catch><try>
+  <ti label="(prop,get-max-imports-report-label)"/>
+  <ti>(prop,get-max-imports-report-text)</ti>
+  </try><catch/></try_catch>            
+</job>
+
+<job id="add-db-update-test" role="hidden">
+  <need>(prop,update-to-add)</need>
+  <print act="println" id="sh">(prop,update-to-add)</print>
+  
+  <print id="sh-xml" act="println">&lt;u&gt;(x,(prop,update-to-add))&lt;/u&gt;</print>
+
+</job>
+
+
+<job id="testdata-prod-record" role="hidden">
+<throw test="(f,not,(f,right,import))">No right to import</throw>
+<need>(file,dsis)</need>
+<need>(prop,dsi_key)</need>
+<call_job job="testdata-prod-inner1"/>
+
+</job>
+<job id="testdata-prod-records" role="hidden">
+<throw test="(f,not,(f,right,import))">No right to import</throw>
+<need>(file,dsis)</need>
+<prop id="dsi_key"></prop>
+    <call_job job="testdata-prod-inner1"/>
+
+
+</job>
+
+<job id="testdata-prod-inner1" role="hidden">
+<throw test="(f,not,(f,right,import))">No right to import</throw>
+<need>(file,dsis)</need>
+<need default="">(prop,dsi_key)</need>
+<need default="">(prop,dsi_keys)</need>
+<need default="(dir,pro)cache/testdata-screate-scripts/">(dir,td-playlist)</need>
+<mkdir dir="(dir,td-playlist)"/>
+<call_job job="testdata-prod-inner2">
+      <dir id="td-playlist">(dir,td-playlist)</dir>
+      <file id="td-data">(file,dsis)</file>
+      <prop id="td-key">(prop,dsi_key)</prop>
+      <prop id="td-keys">(prop,dsi_keys)</prop>
+</call_job>
+
+</job>
+
+
+
+
+
+</jobs>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="file2-see-more">
+<need>(prop,file2_key)</need>
+<call_job job="file2-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="files2_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,tk_sel_translate,(prop,file2_thefile),(file,file-selector-any))(f,html,bold,close)(f,when,(f,has,(prop,files2_offset_label)), - (prop,files2_offset_label),)"/>
+<call_job job="file2-tk"/>
+<ti_hr/>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="[ Edit ]" job="file2-edit">
+<prop id="file2_key">(prop,file2_key)</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+</ti>
+</ti>
+</job>

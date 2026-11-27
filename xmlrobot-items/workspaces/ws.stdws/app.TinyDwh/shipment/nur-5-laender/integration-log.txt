@@ -1,0 +1,50 @@
+20210630_2121_13_991
+ Started Integration ...
+ did: SET sql_mode = 'PAD_CHAR_TO_FULL_LENGTH'
+ Did copy 17 objects.
+ Did copy 13 beziehungen.
+ Did copy 105 attributes.
+ Did copy 0 mehr.
+ now is: 2021-06-30 21:21:14.408
+ Did copy 108 werte. davon 0 schlecht.
+ Did copy 2 boxes.
+20210630_2121_14_759
+ Round #1
+ Did have 4 migrations.
+Did 2 - mig_obj_remove_duplicates 
+Did 0 - mig_obj_remove_cyles 
+ Did 50 - mig_perform_obj_migration 
+  from this 18 solo values
+  from this 4 parallel values for one attribute
+Did 0 - mig_perform_obj_bez2_migration / b
+Did 0 - mig_perform_obj_bez_migration / a 
+Did 0 - heal_double_bez_simple 
+Did 0 - heal_double_attr_types 
+ tsDiffers [0] a=null b=null = false
+ tsDiffers [1] a=null b=null = false
+ tsDiffers [2] a=null b=null = false
+ tsDiffers [3] a=null b=null = false
+ tsDiffers [4] a=null b=null = false
+ tsDiffers [5] a=null b=null = false
+ tsDiffers [6] a=null b=null = false
+ tsDiffers [7] a=null b=null = false
+Did 4 - heal_double_wert 
+Did 2 - copy mig_obj_hist.
+20210630_2121_15_402
+ Round #2
+ Did have 0 migrations.
+Did 0 - mig_obj_remove_duplicates 
+Did 0 - mig_obj_remove_cyles 
+ Did 0 - mig_perform_obj_migration 
+  from this 0 solo values
+  from this 0 parallel values for one attribute
+Did 0 - mig_perform_obj_bez2_migration / b
+Did 0 - mig_perform_obj_bez_migration / a 
+Did 0 - heal_double_bez_simple 
+Did 0 - heal_double_attr_types 
+Did 0 - heal_double_wert 
+Did 0 - copy mig_obj_hist.
+Did 101 - werte looked into top 
+   with 101 - werte as top 
+ Finished with success. Loadcounter = 243
+20210630_2121_15_648

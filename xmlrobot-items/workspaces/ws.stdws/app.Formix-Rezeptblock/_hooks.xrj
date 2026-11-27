@@ -1,0 +1,1679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jobs>
+<job id="get-new-key" role="hidden">
+  <!-- <call_job job="prolog" /> -->
+  <file id="rezs">(dir,pro)rezs.xml</file>
+  <file id="nk" x="(file,rezs)"/>
+  <try_catch>
+    <try>
+      <need>(file,nk) (prop,nk-singular)</need>
+    </try>
+    <catch>
+      
+      <tk xflag="sum" label="Generate new key for ?">
+        <tk type="file" id="nk" label="Das File" x="(file,rezs)" flag="nono" test="0"/>
+        <tk type="sel" id="nk-singular" flag="nono">
+          <sel label="Rezept">rez</sel>
+          <sel label="Zutat">zut</sel>
+          <sel label="Option">opt</sel>
+          <sel label="Vorgang">ephase</sel>
+          <sel label="Komponente">komp</sel>
+          <sel label="Zutaten-Verwendung">kompzut</sel>
+        </tk>
+      </tk>
+    </catch>
+  </try_catch>
+
+  <prop id="nk-key">1</prop>
+
+  <loop id="nk" limit="1" flag="back" xml="(file,nk)" sort="@row" number="@row" xpath="//(prop,nk-singular)">
+    <trace>max key=(loop,nk,@row)</trace>
+    <trace>i=(loop,nk,#i)</trace>
+    <prop id="nk-key">(f,add,(loop,nk,@row),1)</prop>
+  </loop>  
+  <ti>new row-key for (prop,nk-singular) is: (prop,nk-key)</ti>
+  
+  <need>(prop,nk-key)</need>
+</job>
+
+<job id="event-rez-insert" role="hidden">
+  
+  <when test="(f,eq_text,e,(prop,moda))"> 
+    <file id="nk" x="(file,komps)"/>
+    <prop id="nk-singular" x="komp"/>
+    <call_job job="get-new-key"/>
+    <need>(prop,nk-key)</need>
+    <prop id="komp_key" x="(prop,nk-key)"/>
+    
+    
+    <prop id="isAdd" x="1"/>
+    <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+    <prop id="komp_bez" x="(prop,rez_bez)"/>
+    <call_job job="komp-write"/>
+    <ti align="right" x=" ">Did create default component due to moda==e</ti>
+  </when>
+  <call_job job="rez-see-all"/>
+  <!-- 
+  
+  <prop id="kompzut_komp_key" x="(prop,komp_key)"/>
+  <prop id="kompzut_zut_key" x="(prop,zut_key)"/>
+  <call_job job="kompzut-write"/>  
+  <call_job job="rez-see-all"/>
+  -->
+</job>
+
+<job id="did-finish-orga-rezkomp" role="hidden">
+  <call_job job="prolog" />
+  <!-- -->
+  <prop id="komp_key">(f,substring_before,(f,substring_after,(prop,orga_where),[@komp_key='),'])</prop>
+  <prop id="rez_key">(f,substring_before,(f,substring_after,(prop,orga_offset),rez[@row='),'])</prop>
+  <prop id="rezeptname" x="(f,xpath,(file,rezs),rez[@row=(f,xpath_string,(prop,rez_key))],@bez)"/>
+  
+  <prop id="komps_offset">rez[@row=(f,xpath_string,(prop,rez_key))]/</prop>
+  <prop id="komps_offset_label"> </prop>
+  
+  <call_job job="komp-see"/>                    <!--[Rezept (prop,rezeptname)] -->
+    
+
+</job>
+
+<job id="zutatenverwendung-detail-ende" role="hidden">
+
+  <prop id="zuts_offset">rez[@row='(prop,rez_key)']/</prop>
+  <!--The offset label is communicated to the user, it verbalizes the offset /zut[@row='(prop,kompzut_zut_key)']-->
+  <prop id="zuts_offset_label"></prop>
+  <prop id="zuts_where"/>
+  
+  <prop id="zut_key">(prop,kompzut_zut_key)</prop>
+  <ti_hr/>
+  <ti type="rec">
+  <ti>zugrundeliegend - base - 基部 基底 - au base de  ...</ti>
+  </ti>
+  <call_job job="zut-see"/>
+  <!-- 
+  <ti_hr style="2"/>
+  <call_job job="zum-rezept-link"/>     -->
+  
+    
+
+</job>
+
+<job id="zum-rezept-link" role="hidden">
+  <!-- 
+  <when test="(f,not,(f,exists,prop,myclassAkt))">
+  
+    <prop id="myclassAkt">Aktuelles Rezepte</prop>
+    <when test="(f,exists_file,(file,uc-data))">
+      <exclude file="(file,uc-data)" regex="uc_aktuelles_rezept"/>
+      <prop id="myclassAkt" test="(f,has,prop,uc_aktuelles_rezept)">(prop,uc_aktuelles_rezept)</prop>    
+    </when>  
+    
+  </when>     <ti>(f,vob,prop,myclassAkt)</ti>
+  -->
+  
+  <ti type="call_job"  label=" " xprefix="&gt;&gt; " job="rez-see" explain="[ (f,vob,prop,myclassAkt) ]">
+    <prop id="rez_key" x="(prop,rez_key)"/>
+  </ti> 
+</job>
+
+    <!-- <ti_hr style="14"/> 
+    <ti_space height="10px" test="(f,gt_num,(loop,kompzut_loop,#i),1)" />
+    
+    <file id="mx" flag="cool" x="(loop,kompzut_loop,@logo)"/>
+    <unescape id="mx" type="file"/>
+    <translate id="mx" type="file"/>
+    <when test="(f,exists_file,(file,mx))">
+      <ti type="call_job" max_x="(loop,kompzut_loop,@logo_max_x)" max_y="(loop,kompzut_loop,@logo_max_y)" pic="(file,mx)"
+          job="kompzut-see">
+        <prop id="rez_key">(loop,kompzut_loop,../..,@row)</prop>  
+        <prop id="komp_key">(loop,kompzut_loop,..,@row)</prop>  
+        <prop id="kompzut_key">(loop,kompzut_loop,@row)</prop>
+        <file id="ephasen">(file,ephasen)</file>
+        <prop id="ephasen_offset">(prop,ephasen_offset)</prop>
+        <prop id="ephasen_offset_label">(prop,ephasen_offset_label)</prop>
+        <prop id="ephasen_offset_new_key">(prop,ephasen_offset_new_key)</prop>
+        <prop id="ephasen_sort_attribute">(prop,ephasen_sort_attribute)</prop>
+        <prop id="ephasen_sort_number">(prop,ephasen_sort_number)</prop>
+        <prop id="ephasen_where">(prop,ephasen_where)</prop>
+        <prop id="ephasen_return_job">(prop,ephasen_return_job)</prop>          
+      </ti>
+    </when>    
+    <ti>hallo see-pics-of-kompzut</ti>
+    -->
+
+<job id="see-pics-of-kompzut" role="hidden">
+
+<try_catch>
+<try>
+  <interpreter watch="0"/>
+  <prop id="die-zutat">(loop,kompzut_loop,@zut_key)</prop>
+  <when test="(loop,kompzut_loop,exists?,../zut[@row='(prop,die-zutat)'],@logo)">
+    
+    <file id="mx" flag="cool" x="(loop,kompzut_loop,../zut[@row='(prop,die-zutat)'],@logo)"/>
+    <unescape id="mx" type="file"/>
+    <translate id="mx" type="file"/>
+    <when test="(f,exists_file,(file,mx))">
+      <ti type="call_job" max_x="(loop,kompzut_loop,../zut[@row='(prop,die-zutat)'],@logo_max_x)" max_y="(loop,kompzut_loop,../zut[@row='(prop,die-zutat)'],@logo_max_y)" pic="(file,mx)"
+          job="zut-see">
+          
+        <prop id="rez_key">(loop,kompzut_loop,..,@row)</prop>  
+        <prop id="zut_key">(loop,kompzut_loop,@zut_key)</prop>
+        <file id="zuts">(file,zuts)</file>
+        <prop id="zuts_offset">(prop,zuts_offset)</prop>
+        <prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+        <prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+        <prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+        <prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+        <prop id="zuts_where">(prop,zuts_where)</prop>
+        <prop id="zuts_return_job">(prop,zuts_return_job)</prop> 
+      </ti>    
+    </when>
+
+  </when>
+</try>
+<catch>
+  <dump_ti label="cateched"/>
+</catch>
+</try_catch>
+</job>
+
+<job id="eine-zutatenverwendung-vorbereiten" role="hidden">
+<try_catch>
+<try>
+       <call_job job="see-pics-of-kompzut" />   
+          <prop id="teil" x=""/>
+          <prop id="teil" x="(loop,kompzut_loop,@anteil) von " test="(f,has,(loop,kompzut_loop,@anteil))" />
+          <prop id="die-menge" x=""/>
+          <prop id="die-mengen-einheit" x=""/>
+          <!-- <ti>zut-key = (loop,kompzut_loop,@zut_key)</ti>  -->
+          <prop id="zutaten-row" >(loop,kompzut_loop,@zut_key)</prop>
+          <!-- <ti>zutaten-row = (prop,zutaten-row)</ti>  -->
+          <when test="(loop,kompzut_loop,exists?,../zut[@row='(prop,zutaten-row)'],@menge)">
+            
+            <prop id="die-menge" x="(loop,kompzut_loop,../zut[@row='(prop,zutaten-row)'],@menge)"/>
+            
+            <when test="(loop,kompzut_loop,exists?,../zut[@row='(prop,zutaten-row)'],@einheit)">
+              <prop id="die-mengen-einheit" x="(f,tk_sel_translate,(loop,kompzut_loop,../zut[@row='(prop,zutaten-row)'],@einheit),(dir,app)mengen-selector.xml)"/>
+            </when>            
+          </when>
+</try>
+<catch>
+  <ti>errror (prop,catched_msg)</ti>
+</catch>
+</try_catch>
+<!-- 
+          <when test="(loop,kompzut_loop,exists?,../zut[@row=(loop,kompzut_loop,@zut_key)],@menge)">
+            
+            
+            <when test="(loop,kompzut_loop,exists?,../zut[@row=(loop,kompzut_loop,@zut_key)],@einheit)">
+            <prop id="die-mengen-einheit" x="(f,tk_sel_translate,(loop,kompzut_loop,../zut[@row=(loop,kompzut_loop,@zut_key)],@einheit),(dir,app)mengen-selector.xml)"/>
+            </when>
+          </when>  
+          
+             -->
+          
+  <prop id="ein-mengentext">(prop,teil) (prop,die-menge) (prop,die-mengen-einheit)</prop> <!--    -->
+
+  
+</job>
+
+<job id="did-insert-ephase" role="hidden">
+
+<prop id="rezeptname" x="(f,xpath,(file,ephasen),rez[@row='(prop,rez_key)'],@bez)"/>
+<prop id="komponentenname" x="(f,xpath,(file,ephasen),rez[@row='(prop,rez_key)']/komp[@row='(prop,komp_key)'],@bez)"/>
+<!-- 
+<ti label="Rezept" test="0">(prop,rezeptname)</ti>
+<ti label="Komponente">(prop,komponentenname) von Rezept '(prop,rezeptname)'</ti>
+<ti_hr/>
+<ti label="Vorgaenge" />
+<call_job job="ephase-see-all"/>
+<ti_hr/>        -->
+ 
+    <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+    <prop id="komps_label">(prop,rezeptname)</prop>
+    <call_job job="komp-see"/>
+  <!-- 
+  <ti type="call_job" job="komp-see"  label=" " explain="Zur Komponente"  prefix="&gt;&gt; ">
+    <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+    <prop id="komps_label">(prop,rezeptname)</prop>
+    <prop id="rez_key" x="(prop,rez_key)"/>
+    <prop id="komp_key" x="(prop,komp_key)"/>
+  </ti>  
+  -->
+  
+  <!-- 
+<ti type="call_job" job="rez-see" explain=" '(prop,rezeptname)'" label="Zum 1 Rezept" >
+  <prop id="rez_key">(prop,rez_key)</prop>
+</ti>  -->
+
+   
+
+
+</job>
+
+<job id="hook-ephase-add-begin" role="hidden">
+<dump_ti label="nach-update-zutatenverwendung" test="0"/>
+<when test="(f,exists_file,(dir,pro)rembered1.txt)">
+  <prop id="ephase_zut_key">(f,file_content,(dir,pro)rembered1.txt)</prop>
+</when>
+</job>
+
+<job id="hook-ephase-add-end" role="hidden">
+  <dump_ti label="hook-ephase-add-end" test="0"/>
+  <when test="(f,has,prop,ephase_zut_key)">
+    <create_file file="(dir,pro)rembered1.txt">(prop,ephase_zut_key)</create_file>
+  </when>
+</job>
+
+<job id="nach-update-zutatenverwendung" role="hidden">
+<dump_ti label="nach-update-zutatenverwendung"/>
+</job>
+  
+  <job id="strich" role="hidden">
+  
+    <!-- 
+    <ti_break test="1"/>
+    <ti_hr/>      <ti test="(f,gt_num,(loop,komp_loop,#i),1)">  </ti>        -->
+    
+    <ti_hr test="(f,gt_num,(loop,komp_loop,#i),1)" stxyle="2"/> 
+  </job>   
+ <job id="hook-komp-detail-starter-off" role="hidden">
+ </job>  
+ 
+ <job id="hook-komp-detail-starter" role="hidden">
+ <ti test="0">hook-komp-detail-starter a</ti>
+  <call_job job="zeige-zutatenliste"/>
+  <ti test="0">hook-komp-detail-starter b</ti>
+ </job>    
+  
+<job id="zeige-zutatenliste" role="hidden">
+
+  <need>(prop,rez_key) (prop,komp_key)</need> 
+ 
+  <!-- 
+  <prop id="is-single-component" x="0"/>
+  
+  <choose>
+    <when test="(f,eq_text,e,(prop,moda))">
+    
+      <prop id="is-single-component" x="1"/>
+      <when test="(f,has,prop,nbr-of-comps)">
+        
+        <when test="(f,gt_num,(prop,nbr-of-comps),1)">
+          <prop id="is-single-component" x="0"/>
+        </when>         
+      </when>      
+    </when>
+    <otherwise>
+     
+    
+    </otherwise>
+  
+  </choose>
+  -->
+  <!-- 
+  <when test="(f,has,prop,nbr-of-comps)">
+    <prop id="is-single-component" x="(f,eq_num,1,(prop,nbr-of-comps))"/>
+  </when>                   -->
+
+  <!--             <when test="(f,eq_text,e,(prop,moda))">
+  <call_job job="do-create-akt-zutatenliste"/>
+  </when>
+  <when test="(prop,is-single-component)">
+    <ti test="0">da sollten wir was tun</ti>
+    <call_job job="do-create-akt-zutatenliste"/>
+  </when>
+  -->
+<when test="(f,gt_num,(prop,moda_zutaten),0)">
+  <prop id="kompzuts_offset">rez[@row='(prop,rez_key)']/</prop>
+  <prop id="kompzuts_offset_label"></prop>
+  <prop id="kompzuts_offset_new_key">//</prop>
+  <prop id="kompzuts_where">[@komp_key='(prop,komp_key)']</prop>
+  <prop id="kompzut_komp_key">(prop,komp_key)</prop>
+  <call_job job="do-create-akt-zutatenliste"/>
+
+  <ti_space height="3px"/>
+  <ti>(f,html,i,o)(prop,myclassZutatVerw):(f,html,i,c)</ti>
+  <call_job job="kompzut-see-all"/>
+  <when test="(f,role,boss)">
+  <ti type="call_job" job="Neue Grund-Zutat" explain="[ + neue (prop,myclassZutat) verwenden ]" label=" ">
+    <prop id="jobtodo" x="komp-see" />
+    <call_job job="prolog" />
+    <prop id="rez_key">(prop,rez_key)</prop>
+
+    <prop id="kompzuts_offset">rez[@row='(prop,rez_key)']/</prop>
+    <prop id="kompzuts_offset_label"></prop>
+    <prop id="kompzuts_offset_new_key">//</prop>
+    <prop id="kompzuts_where">[@komp_key='(prop,komp_key)']</prop>
+    <prop id="kompzut_komp_key">(prop,komp_key)</prop>      
+    
+    <prop id="rez_key">(prop,rez_key)</prop>
+    <prop id="komp_key">(prop,komp_key)</prop>  
+          
+    <prop id="zuts_offset">rez[@row='(prop,rez_key)']/</prop>
+    <prop id="zuts_offset_label"> fuer Rezept &apos;(f,xpath,(file,rezs),rez[@row=(f,xpath_string,(prop,rez_key))],@bez)&apos;</prop>
+    <prop id="zuts_offset_new_key">//</prop> 
+    <prop id="komponentenname" x="(f,xpath,(file,ephasen),rez[@row='(prop,rez_key)']/komp[@row='(prop,komp_key)'],@bez)"/>   
+  </ti>
+  </when>
+</when>     
+
+
+
+
+ </job> 
+ 
+<job id="Neue Grund-Zutat" role="hidden">
+  <need>(prop,jobtodo)</need>
+  <prop id="post_add_script_zut"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps/>
+]]></prop>
+  <call_job job="zut-add"/>
+
+  <prop id="kompzut_key">1</prop>
+  <when test="(f,not,(f,exists,prop,kompzuts_offset_new_key))">
+    <prop id="kompzuts_offset_new_key">//</prop>
+  </when>
+  <loop id="max" limit="1" flag="back" xml="(file,kompzuts)" sort="@row" number="@row" xpath="(prop,kompzuts_offset_new_key)kompzut">
+    <trace>max key=(loop,max,@row)</trace>
+    <trace>i=(loop,max,#i)</trace>
+    <prop id="kompzut_key">(f,add,(loop,max,@row),1)</prop>
+  </loop>
+  <!-- <ti>Generated Key for new Zutaten-Verwendung: #(prop,kompzut_key)</ti> -->
+  <prop id="isAdd" x="1"/>
+  <prop id="kompzut_komp_key" x="(prop,komp_key)"/>
+  <prop id="kompzut_zut_key" x="(prop,zut_key)"/>
+  <call_job job="kompzut-write"/>
+
+ <call_job job="do-create-akt-zutatenliste"/>
+ <call_job job="do-create-akt-komponentenliste"/>
+
+  <prop id="rezeptname" x="(f,xpath,(file,rezs),rez[@row=(f,xpath_string,(prop,rez_key))],@bez)"/>  
+  <prop id="komps_offset">rez[@row=(f,xpath_string,(prop,rez_key))]/</prop>
+  <prop id="komps_offset_label"></prop> 
+     
+  <!-- <ti label="Komponente: (prop,komponentenname)"/> -->
+  <call_job job="(prop,jobtodo)" xjob="zeige-zutatenliste"/>
+
+  
+ </job>
+   
+ <job id="zeige-zutatenliste-alt" role="hidden">
+  <need>(prop,rez_key) (prop,komp_key)</need>
+ 
+ <try_catch>
+<try>
+
+ <spirit act="open" id="starter" xml="(file,rezs)"/>
+
+ 
+      <prop id="virgin" x="1"/>
+      
+      <prop id="rezeptname"></prop>
+     
+      <loop id="v" spirit="starter" xpath="rez[@row=(prop,rez_key)]/kompzut[@komp_key=(prop,komp_key)]" sort="@zut_key"
+            missing_strategy="empty">
+            
+          <when test="(prop,virgin)">
+            <!-- <ti label="(f,spirit,starter,rez[@row=(prop,rez_key)],@bez)"/> <ti_hr/>     -->
+            <ti></ti>
+            <ti_break xinfo="web"/>
+            <ti></ti>
+            <ti type="rec">
+            <ti x="(f,html,i,o)(prop,myclassZutatVerw)(f,html,i,c): " flag="label_right" ylabel=" " />
+            </ti>
+            <prop id="rezeptname">(loop,v,..,@bez)</prop>
+            
+            <prop id="virgin" x="0"/>
+          </when>
+          <prop id="teil" x=""/>
+          <prop id="teil" x="(loop,v,@anteil) von " test="(f,has,(loop,v,@anteil))" />
+          <prop id="die-menge" x=""/>
+          <prop id="die-mengen-einheit" x=""/>
+          <when test="(f,spirit,starter,exists?,rez[@row=(prop,rez_key)]/zut[@row=(loop,v,@zut_key)],@menge)">
+            <prop id="die-menge" x="(f,spirit,starter,rez[@row=(prop,rez_key)]/zut[@row=(loop,v,@zut_key)],@menge)"/>
+            
+            <when test="(f,spirit,starter,exists?,rez[@row=(prop,rez_key)]/zut[@row=(loop,v,@zut_key)],@einheit)">
+            <prop id="die-mengen-einheit" x="(f,tk_sel_translate,(f,spirit,starter,rez[@row=(prop,rez_key)]/zut[@row=(loop,v,@zut_key)],@einheit),(dir,app)mengen-selector.xml)"/>
+            </when>
+          </when>
+          <!-- <prop id="teil">(prop,teil) (prop,die-menge) (prop,die-mengen-einheit)</prop> -->
+        <ti type="rec" xlabel="  " flag="label_right">
+          <!-- 
+          <ti align="center" explain="(prop,teil)" type="call_job" job="show-zuordnung">
+            <prop id="rez_key">(prop,rez_key)</prop>
+            <prop id="key_kompzut">(loop,v,@row)</prop>
+            <prop id="key_zut">(loop,v,@zut_key)</prop>
+            <prop id="key_komp">(loop,v,@komp_key)</prop>
+          </ti> 
+          -->
+          
+          <ti explain="(f,spirit,starter,rez[@row=(prop,rez_key)]/zut[@row=(loop,v,@zut_key)],@bez)" type="call_job" job="show-zutat">
+            <prop id="rez_key">(prop,rez_key)</prop>
+            <prop id="kompzut_key">(loop,v,@row)</prop>
+            <prop id="zut_key">(loop,v,@zut_key)</prop>
+            <prop id="komp_key">(loop,v,@komp_key)</prop>
+            <prop id="rezeptname">(loop,v,..,@bez)</prop>
+          </ti>
+          <ti align="left" >(prop,teil) (prop,die-menge) (prop,die-mengen-einheit)</ti>
+          <!-- 
+          <ti align="left" explain="(prop,teil) (prop,die-menge) (prop,die-mengen-einheit)" type="call_job" job="show-zuordnung">
+            <prop id="rez_key">(prop,rez_key)</prop>
+            <prop id="kompzut_key">(loop,v,@row)</prop>
+            <prop id="zut_key">(loop,v,@zut_key)</prop>
+            <prop id="komp_key">(loop,v,@komp_key)</prop>
+            <prop id="rezeptname">(loop,v,..,@bez)</prop>
+          </ti> -->
+                              
+          <ti></ti> 
+          <ti></ti>
+               
+
+         </ti>
+      </loop>
+     <spirit act="close" id="starter"/>  
+     
+     <ti type="call_job" job="neue-zuordnung" explain="[ + Zutat verwenden ]" label=" " test="(f,role,boss)">
+      <prop id="rez_key">(prop,rez_key)</prop>
+      <prop id="komp_key">(prop,komp_key)</prop>
+      <prop id="rezeptname">(prop,rezeptname)</prop>
+     </ti> 
+     <!--
+     <ti type="call_job" job="do-org-me" explain="organizieren" label=" ">
+      <file id="orga">(file,rezs)</file>
+      <prop id="orga_segment_plural_label">Etwas</prop>
+      <prop id="orga_offset">rez[@row=(prop,rez_key)]/</prop>
+      <prop id="orga_segment_singular">kompzut[@komp_key=(prop,komp_key)]</prop>
+      
+      <prop id="orga_name_expression_loop"></prop>
+      <prop id="orga_desc_expression_loop"></prop>
+     </ti>      
+     
+<ti flag="no_arrow" label=" " type="call_service" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,rezs)</file>
+<prop id="orga_offset">rez[@row=(prop,rez_key)]/</prop>
+<prop id="orga_offset_label">rezept (prop,rez_key)</prop>
+<prop id="orga_offset_new_key">//</prop>
+<prop id="orga_segment_plural">kompzuts</prop>
+<prop id="orga_segment_singular">kompzut</prop>
+<prop id="orga_segment_plural_label">Komponente-Zutat</prop>
+<prop id="orga_segment_singular_label">Kompopn-zutaten-</prop>
+<prop id="orga_sort_attribute"></prop>
+<prop id="orga_sort_number"></prop>
+<prop id="orga_where">@komp_key=(prop,komp_key)</prop>
+<prop id="orga_name_expression_loop">()(f,html,bold,open)(loop,i,@bez)(f,html,bold,close)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,i,@beschreibung),40)()</prop>
+</ti>     
+             -->
+    <ti_break info="web"/>
+</try>
+<catch>
+<dump_ti label="Hallo from starter komponent"/>
+</catch> 
+ </try_catch>
+ 
+
+    
+</job>
+<job id="ass-see-all-event" role="hidden">
+
+  <prop id="asss_sort_attribute">@sort</prop>
+  <prop id="asss_sort_number">@sort</prop>
+  <call_job job="ass-see-all"/>
+  <ti_hr/>
+  <call_job job="zum-rezept-link"/>
+
+    
+</job>
+
+<job id="zut-see-all-event" role="hidden">
+  <call_job job="zut-see-all"/>
+  <ti_hr/>
+  <call_job job="zum-rezept-link"/>
+    
+</job>
+
+<job id="zut-finalizer" role="hidden">
+
+
+
+
+  
+  <prop id="opts_offset">rez[@row=(prop,rez_key)]/zut[@row=(prop,zut_key)]/</prop>
+  <prop id="opts_offset_label"/>
+  <prop id="opts_offset_new_key">//</prop>
+  <prop id="opts_sort_attribute"></prop>
+  <prop id="opts_sort_number"></prop>
+  <prop id="opts_sort_ignore_case"/>
+  <prop id="opts_sort_desc"/>
+  <prop id="opts_where"/>
+  <prop id="opts_return_job">zut-see</prop>  
+  <ti_space height="3px"/>
+
+  <try_catch>
+    <try>  
+  <call_job job="opt-see-all"/>
+  </try>
+  </try_catch>
+    
+  
+  <ti_hr/>
+  <call_job job="zum-rezept-link"/>
+  
+</job>
+<job id="hook_goto_rezept" role="hidden">
+
+  <try_catch>
+    <try>  
+  
+  <ti_hr/>
+  <!-- 
+  <ti type="call_job" job="rez-see" explain="Zum gesamten Rezept &apos;(f,xpath,(file,rezs),rez[@row=(prop,rez_key)],@bez)&apos;">
+    <prop id="rez_key" x="(prop,rez_key)"/>
+  </ti>     -->
+  <ti>
+  .
+  .
+  .
+  </ti>
+  <ti_hr/>
+  <ti>Gesamtes Rezept ...</ti>
+  <call_job job="rez-see"/>
+  
+  </try>
+  <catch>
+    <dump_ti label="catched"/>
+  </catch>
+  </try_catch>  
+  
+</job>
+
+
+<job id="see-options-list" role="hidden">
+  <need>(prop,rez_key)</need>
+
+  <prop id="did-intro" x="0"/>
+  <loop id="x" xml="(file,rezs)" xpath="rez[@row=(prop,rez_key)]/zut/opt"
+        missing_strategy="empty">
+      
+      <when test="(f,eq_num,0,(prop,did-intro))">
+      
+        <prop id="did-intro" x="1"/>
+            <ti_space height="3px"/>
+
+  <ti label="Zutaten-Optionen" flag="label_right">  </ti>       
+        
+        <!--
+            <ti_space height="3px"/>
+  <ti_hr style="2aL" label="2(e:c) Arbeitsschritte"/>
+        -->
+        
+      </when>
+      
+      <ti type="rec" label="(loop,x,@bez);" flag="label_right">
+     
+     <ti type="call_job" prefix="  " job="opt-see" explain="(loop,x,@bez) fuer (loop,x,..,@bez)">          
+        <prop id="opts_offset">rez[@row=(loop,x,../..,@row)]/zut[@row=(loop,x,..,@row)]/</prop>
+        <prop id="opts_offset_label"/>
+        <prop id="opts_offset_new_key">//</prop>
+        <prop id="opts_sort_attribute"></prop>
+        <prop id="opts_sort_number"></prop>
+        <prop id="opts_sort_ignore_case"/>
+        <prop id="opts_sort_desc"/>
+        <prop id="opts_where"/>
+        <prop id="opts_return_job">opt-see</prop>  
+        <prop id="rez_key" x="(loop,x,../..,@row)"/>  
+        <prop id="zut_key" x="(loop,x,..,@row)"/>  
+        <prop id="opt_key" x="(loop,x,@row)"/>   
+        <ti label="Optionen zu zutat [(loop,x,..,@bez)]"/>
+     </ti>
+
+     <ti>(loop,x,@besch)</ti>
+     </ti>
+  </loop>
+</job>
+
+<job id="hoop-opt-detail-end" role="hidden">
+<call_job job="zum-rezept-link"/>
+
+  <ti type="rec">
+  <ti type="call_job" job="zut-see" explain="Zur Zutat">
+  <prop id="rez_key" x="(prop,rez_key)"/>
+    <prop id="zut_key" x="(prop,zut_key)"/>
+  </ti>  
+  </ti>
+  <dump_ti test="0"/>  
+</job>
+
+<job id="einfache-komponentenliste-max" role="hidden">
+  <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+  <prop id="max" x="0"/>
+  <loop 
+      missing_strategy="empty" 
+      id="komp_loop" 
+      xml="(file,komps)" 
+      xpath="(prop,komps_offset)komp" >                                           
+      <prop id="max" x="(loop,komp_loop,#i)"/>
+  </loop>
+
+</job>
+
+<job id="einfache-komponentenliste" role="hidden">
+  <ti test="0">in einfache-komponentenliste</ti>
+  <prop id="kompzuts_offset">rez[@row=(prop,rez_key)]/</prop>
+  <prop id="max" x="0"/>
+  <loop 
+      missing_strategy="empty" 
+      id="komp_loop" 
+      xml="(file,komps)" 
+      xpath="(prop,komps_offset)komp" >
+      <when test="(f,eq_num,1,(loop,komp_loop,#i))">
+        <ti_hr/>  
+        <ti label="Komponenten" xx=" "/>
+      </when>
+      <!-- 
+      <ti prxefix="   " label="(loop,komp_loop,#i).(f,text,cut_nice,(loop,komp_loop,@bez),23)" 
+      x="(f,try,()(f,substring,(loop,komp_loop,@bez),20)())"/>
+      -->
+      
+      <ti type="rec">
+        <ti type="call_job"   prefix="(loop,komp_loop,#i). " job="komp-see" 
+        explain="(loop,komp_loop,@bez)" span="9" fxlag="block">
+          <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+          <prop id="rez_key" x="(prop,rez_key)"/>
+          <prop id="komp_key" x="(loop,komp_loop,@row)"/>
+        </ti> 
+      </ti>
+      <!-- 
+      <ti label=" " type="rec">
+        <ti prefix="   ">(loop,komp_loop,#i).(loop,komp_loop,@bez)</ti>
+      </ti>                                              -->
+      <prop id="max" x="(loop,komp_loop,#i)"/>
+  </loop>
+  <when test="(f,gt_num,(prop,max),1)">
+    <ti_hr/>
+    
+  </when>
+
+</job>
+<job id="hook-rezpic-detail-end" role="hidden">
+
+<prop id="the-fn-upper" x="(f,lower,(f,name_of_file,(file,rezpic_pic)))"/>
+<ti>the-fn-upper=(prop,the-fn-upper)</ti>
+<when test="(f,or,(f,ends_with,(prop,the-fn-upper),.jpg),(f,ends_with,(prop,the-fn-upper),.png))">
+  <ti_hr/>
+  <ti label="libro">(f,file,libro,(file,rezpic_pic))</ti>
+  <ti type="img" alt="(prop,rezpic_bez)" max_x="(prop,rezpic_max_x_px)" max_y="(prop,rezpic_max_y_px)">(file,rezpic_pic)</ti>
+  <ti>Scaled</ti>
+  <ti_hr style="2"/>
+  <ti>Original</ti>
+   <ti type="img" alt="(prop,rezpic_bez)" xmax_x="(prop,rezpic_max_x_px)" xmax_y="(prop,rezpic_max_y_px)">(file,rezpic_pic)</ti>
+</when>
+
+</job>
+
+<job id="see-the-pics" role="hidden">
+  <need>(file,pics) (prop,pics_xpath)</need>
+  <need default="0">(prop,pics_div)</need>
+  <file id="tpx" x="(f,request,dir,session_home_mem)pics(f,random_text,4)"/>
+  <print act="open" id="tpx" out="(file,tpx)"/>
+  <print act="println" id="tpx">&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;steps&gt;</print>
+  <print act="print" id="tpx">&lt;ti type="rec"</print> 
+  
+  <print act="print" id="tpx" test="(prop,pics_div)"> flag="divs"</print>
+  
+  <print act="println" id="tpx">&gt;</print>  
+  
+
+  <loop missing_strategy="empty" id="pics" xml="(file,pics)" xpath="(prop,pics_xpath)">
+    <when test="(loop,pics,exists?,@pic)">
+      <file id="mp" flag="cool" x="(loop,pics,@pic)"/>
+
+      <unescape id="mp" type="file"/>
+
+      <translate id="mp" type="file"/>                    
+
+      <print act="print" id="tpx">&lt;ti type="img" </print>
+      
+      <print act="print" id="tpx" test="(f,has,(loop,pics,@max_x_px))"> max_x="(loop,pics,@max_x_px)" </print>
+            
+      
+      <print act="print" id="tpx" test="(f,has,(loop,pics,@max_y_px))"> max_y="(loop,pics,@max_y_px)" </print>
+      
+      <print act="print" id="tpx" test="(f,has,(loop,pics,@bez))"> alt="(loop,pics,@bez)" </print>
+          
+      <print act="println" id="tpx"> pic="(file,mp)"/&gt;</print>              
+      
+    </when>
+  </loop>
+  
+  <print act="println" id="tpx">&lt;/ti&gt;</print>
+  <print act="println" id="tpx">&lt;/steps&gt;</print>
+  <print act="close" id="tpx"/>
+ 
+  
+  <include file="(file,tpx)"/>
+  
+  <!--    <ti>(f,file_content,(file,tpx)) </ti>    <ti type="file" x="(file,tpx)"/>   
+  <when test="(f,has,prop,html)">
+    <ti>derhtml</ti>
+    <ti flag="html">&lt;div &gt;(prop,html)&lt;/div &gt;</ti>
+  </when>
+  -->
+  
+</job> 
+<job id="see-the-pics-gut" role="hidden">
+  <need>(file,pics) (prop,pics_xpath)</need>
+  <loop missing_strategy="empty" id="pics" xml="(file,pics)" xpath="(prop,pics_xpath)">
+    <when test="(loop,pics,exists?,@pic)">
+      <file id="mp" flag="cool" x="(loop,pics,@pic)"/>
+
+      <unescape id="mp" type="file"/>
+
+      <translate id="mp" type="file"/>
+
+      <ti type="img">(file,mp)</ti>
+      
+      <choose>
+        <when test="(f,role,boss)">
+          <ti>(f,html,b,o)(loop,pics,@bez)(f,html,b,c)</ti>
+          <ti>(f,html,b,o)(f,name_of_file,(file,mp))(f,html,b,c)</ti>
+          <ti flag="wrap">(file,mp)</ti>
+          <ti_hr/>        
+        </when>
+        <otherwise>
+          <ti>(loop,pics,@bez)</ti>
+          <ti> </ti>
+        </otherwise>
+      </choose>
+
+      
+    </when>
+  </loop>
+</job> 
+
+<job id="hook-every-ephase-list" role="hidden">
+  <when test="(f,has,(loop,ephase_loop,@logo))">
+  
+    <!-- <ti_hr style="14"/> -->
+    <ti_space height="10px" test="(f,gt_num,(loop,ephase_loop,#i),1)" />
+    
+    <file id="mx" flag="cool" x="(loop,ephase_loop,@logo)"/>
+    <unescape id="mx" type="file"/>
+    <translate id="mx" type="file"/>
+    <when test="(f,exists_file,(file,mx))">
+      <ti type="call_job" max_x="(loop,ephase_loop,@logo_max_x)" max_y="(loop,ephase_loop,@logo_max_y)" pic="(file,mx)"
+          job="ephase-see">
+        <prop id="rez_key">(loop,ephase_loop,../..,@row)</prop>  
+        <prop id="komp_key">(loop,ephase_loop,..,@row)</prop>  
+        <prop id="ephase_key">(loop,ephase_loop,@row)</prop>
+        <file id="ephasen">(file,ephasen)</file>
+        <prop id="ephasen_offset">(prop,ephasen_offset)</prop>
+        <prop id="ephasen_offset_label">(prop,ephasen_offset_label)</prop>
+        <prop id="ephasen_offset_new_key">(prop,ephasen_offset_new_key)</prop>
+        <prop id="ephasen_sort_attribute">(prop,ephasen_sort_attribute)</prop>
+        <prop id="ephasen_sort_number">(prop,ephasen_sort_number)</prop>
+        <prop id="ephasen_where">(prop,ephasen_where)</prop>
+        <prop id="ephasen_return_job">(prop,ephasen_return_job)</prop>          
+      </ti>
+    </when>    
+  </when>
+</job>
+
+<job id="hook-every-zutat-list" role="hidden">
+  <when test="(f,has,(loop,zut_loop,@logo))">
+  
+    <!-- <ti_hr style="14"/> -->
+    <ti_space height="10px" test="(f,gt_num,(loop,zut_loop,#i),1)" />
+    
+    <file id="mx" flag="cool" x="(loop,zut_loop,@logo)"/>
+    <unescape id="mx" type="file"/>
+    <translate id="mx" type="file"/>
+    <when test="(f,exists_file,(file,mx))">
+      <ti type="call_job" max_x="(loop,zut_loop,@logo_max_x)" max_y="(loop,zut_loop,@logo_max_y)" pic="(file,mx)"
+          job="zut-see">
+        <prop id="rez_key">(loop,zut_loop,..,@row)</prop>  
+        <prop id="zut_key">(loop,zut_loop,@row)</prop>
+        <file id="zuts">(file,zuts)</file>
+        <prop id="zuts_offset">(prop,zuts_offset)</prop>
+        <prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+        <prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+        <prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+        <prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+        <prop id="zuts_where">(prop,zuts_where)</prop>
+        <prop id="zuts_return_job">(prop,zuts_return_job)</prop>          
+      </ti>
+    </when>    
+  </when>
+</job>
+
+<job id="hook-every-rezept-list" role="hidden">
+  <when test="(f,has,(loop,rez_loop,@logo))">
+  
+    <!-- <ti_hr style="14"/> -->
+    <ti_space height="10px" test="(f,gt_num,(loop,rez_loop,#i),1)" />
+    
+    <file id="mx" flag="cool" x="(loop,rez_loop,@logo)"/>
+    <unescape id="mx" type="file"/>
+    <translate id="mx" type="file"/>
+    <when test="(f,exists_file,(file,mx))">
+      <ti type="call_job" max_x="(loop,rez_loop,@logo_max_x)" max_y="(loop,rez_loop,@logo_max_y)" pic="(file,mx)"
+          job="rez-see">
+        <prop id="rez_key">(loop,rez_loop,@row)</prop>
+        <file id="rezs">(file,rezs)</file>
+        <prop id="rezs_offset">(prop,rezs_offset)</prop>
+        <prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+        <prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+        <prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+        <prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+        <prop id="rezs_where">(prop,rezs_where)</prop>
+        <prop id="rezs_return_job">(prop,rezs_return_job)</prop>          
+      </ti>
+    </when>    
+  </when>
+</job>
+
+<job id="hook_rezeptdetails1" role="hidden">
+     <!--
+     <ti>hook_rezeptdetails1</ti>
+     <dump_ti label="hook_rezeptdetails1"/>
+     <ti>rezeptlogo main</ti>
+     <ti>rezeptlogo list</ti>
+     
+<when test="(f,has,file,rez_logo)">          
+  <choose>
+    <when test="(f,or,(f,has,prop,rez_logo_max_x_main),(f,has,prop,rez_logo_max_y_main))">     
+      <ti type="img" alt="(prop,rez_bez)" max_x="(f,vob,prop,rez_logo_max_x_main)" max_y="(f,vob,prop,rez_logo_max_y_main)">(file,rez_logo)</ti>
+    </when>  
+    <otherwise>    
+      <ti type="img" alt="(prop,rez_bez)" max_x="(f,vob,prop,rez_logo_max_x)" max_y="(f,vob,prop,rez_logo_max_y)">(file,rez_logo)</ti>
+    </otherwise>
+  </choose>  
+</when>     
+     -->
+<when test="(f,has,file,rez_logo)"> 
+         
+  <choose>
+    <when test="(f,or,(f,has,prop,rez_logo_max_x_main),(f,has,prop,rez_logo_max_y_main))">     
+
+      <ti type="img" alt="(prop,rez_bez)" max_x="(f,vob,prop,rez_logo_max_x)" max_y="(f,vob,prop,rez_logo_max_y)" pic="(file,rez_logo)">(file,rez_logo)</ti>
+      <ti type="img" alt="(prop,rez_bez)" max_x="(f,vob,prop,rez_logo_max_x_main)" max_y="(f,vob,prop,rez_logo_max_y_main)" pic="(file,rez_logo)">(file,rez_logo)</ti>      
+    </when>  
+    <otherwise>    
+      <ti type="img" alt="(prop,rez_bez)" max_x="(f,vob,prop,rez_logo_max_x)" max_y="(f,vob,prop,rez_logo_max_y)" pic="(file,rez_logo)">(file,rez_logo)</ti>
+    </otherwise>
+  </choose>  
+</when>
+
+</job>
+
+<job id="hook_zutdetails1" role="hidden">
+
+<when test="(f,has,file,zut_logo)">
+           
+  <choose>
+    <when test="(f,or,(f,has,prop,zut_logo_max_x_main),(f,has,prop,zut_logo_max_y_main))">  
+      <ti type="rec" flag="div">
+      <ti type="img" alt="(prop,zut_bez)" max_x="(f,vob,prop,zut_logo_max_x)" max_y="(f,vob,prop,zut_logo_max_y)" pic="(file,zut_logo)">(file,zut_logo)</ti>    
+      <ti type="img" alt="(prop,zut_bez)" max_x="(f,vob,prop,zut_logo_max_x_main)" max_y="(f,vob,prop,zut_logo_max_y_main)" pic="(file,zut_logo)">(file,zut_logo)</ti>
+      </ti>
+    </when>  
+    <otherwise>    
+       <ti type="img" alt="(prop,zut_bez)" max_x="(f,vob,prop,zut_logo_max_x)" max_y="(f,vob,prop,zut_logo_max_y)" pic="(file,zut_logo)">(file,zut_logo)</ti> 
+    </otherwise>
+  </choose>  
+</when>
+
+</job>
+
+<job id="hook_ephasedetails1" role="hidden">
+
+<when test="(f,has,file,ephase_logo)">
+           
+  <choose>
+    <when test="(f,or,(f,has,prop,ephase_logo_max_x_main),(f,has,prop,ephase_logo_max_y_main))">  
+      <ti type="rec" flag="div">
+      <ti type="img" alt="(prop,ephase_besch)" max_x="(f,vob,prop,ephase_logo_max_x)" max_y="(f,vob,prop,ephase_logo_max_y)" pic="(file,ephase_logo)">(file,ephase_logo)</ti>    
+      <ti type="img" alt="(prop,ephase_besch)" max_x="(f,vob,prop,ephase_logo_max_x_main)" max_y="(f,vob,prop,ephase_logo_max_y_main)" pic="(file,ephase_logo)">(file,ephase_logo)</ti>
+      </ti>
+    </when>  
+    <otherwise>    
+       <ti type="img" alt="(prop,ephase_besch)" max_x="(f,vob,prop,ephase_logo_max_x)" max_y="(f,vob,prop,ephase_logo_max_y)" pic="(file,ephase_logo)">(file,ephase_logo)</ti> 
+    </otherwise>
+  </choose>  
+</when>
+      
+</job>
+
+<job id="hook_rezeptdetails" role="hidden">
+
+
+
+<!-- <dump_ti label="ACTHUNG"/> -->
+
+
+<try_catch>
+<try>
+
+  <!-- hier die bilder -->
+  <choose>
+    <when test="(f,role,boss)">
+      <file id="rezpics">(file,rezs)</file>
+      <prop id="rezpics_offset">rez[@row=(prop,rez_key)]/</prop>
+      <prop id="rezpics_offset_label"/>
+      <prop id="rezpics_offset_new_key">//</prop>
+      <prop id="rezpics_sort_attribute"/>
+      <prop id="rezpics_sort_number"/>
+      <prop id="rezpics_sort_ignore_case"/>
+      <prop id="rezpics_sort_desc"/>
+      <prop id="rezpics_where"/>
+      <prop id="rezpics_return_job">rez-see</prop>  
+      <ti label="Pictures"/>    
+      <call_job job="rezpic-see-all"/>
+      <!-- 
+      <ti type="call_job" job="see-the-pics" explain="See all pictures/Autor" label=" ">
+        <call_job job="prolog"/>
+        <file id="pics">(file,rezs)</file>
+        <prop id="pics_xpath">rez[@row=(prop,rez_key)]/rezpic</prop>
+        <prop id="pics_div" x="0"/>  
+      </ti>         -->
+      <ti type="call_job" job="see-the-pics" explain="See all pictures" label=" ">
+        <call_job job="prolog"/>
+        <file id="pics">(file,rezs)</file>
+        <prop id="pics_xpath">rez[@row=(prop,rez_key)]/rezpic</prop>
+        <prop id="pics_div" x="1"/>  
+      </ti>           
+    </when>
+    <otherwise>
+      <call_job job="see-the-pics">
+        <file id="pics">(file,rezs)</file>
+        <prop id="pics_xpath">rez[@row=(prop,rez_key)]/rezpic</prop> 
+        <prop id="pics_div" x="1"/> 
+      </call_job>
+    </otherwise>
+  </choose>
+  
+  <!-- bilder fertig -->
+  <create_file file="(file,akt-rez)">(prop,rez_key)</create_file>
+  <prop id="mymoda" x="(prop,moda)"/>
+  <call_job job="einfache-komponentenliste-max"/>
+  <call_job job="do-create-akt-zutatenliste"/>
+  <call_job job="do-create-akt-komponentenliste"/>
+  
+  <prop id="nbr-of-comps" x="(prop,max)"/>
+  
+  <when test="(f,eq_text,e,(prop,moda))">
+  <when test="(f,not,(f,eq_num,1,(prop,max)))">
+    <prop id="mymoda" x="m"/>
+  </when>
+  </when>
+  <ti x="  " key="modaZ2=(prop,moda).(prop,mymoda)" test="0"/>
+  
+  <prop id="zuts_offset">rez[@row=(prop,rez_key)]/</prop>
+  <prop id="zuts_offset_label"/>
+  <prop id="zuts_offset_new_key">//</prop>
+  <prop id="zuts_sort_attribute"></prop>
+  <prop id="zuts_sort_number"></prop>
+  <prop id="zuts_sort_ignore_case"/>
+  <prop id="zuts_sort_desc"/>
+  <prop id="zuts_where"/>
+  <prop id="zuts_return_job">rez-see</prop>    
+  
+  <!-- einfache komponenten sicht -->
+  <when test="(f,eq_text,e,(prop,mymoda))">
+  
+
+    <ti_space height="3px"/>
+    <!-- 
+    <prop id="zadd" x=""/>
+    <prop id="zadd" x="(e:o)(prop,rez_portionen) Portion(f,plural,(prop,rez_portionen),en)(e:c)"
+          test="(f,has,prop,rez_portionen)"/>   -->
+       
+
+    
+    <when test="(f,eq_num,0,(prop,max))">
+      <ti>keine komponente gefunden</ti>
+    </when>
+    <prop id="komp_key" x=""/>
+    <loop id="firstkomp" xml="(file,komps)" xpath="rez[@row=(prop,rez_key)]/komp" limit="1">
+      <ti test="0">(loop,firstkomp,#i). Komponente</ti>
+      <prop id="komp_key" x="(loop,firstkomp,@row)"/>
+    </loop>
+
+
+      
+    <choose>
+      <when test="(f,has,prop,komp_key)">
+      
+        <prop id="kompzuts_offset">rez[@row='(prop,rez_key)']/</prop>
+        <prop id="kompzuts_offset_label"></prop>
+        <prop id="kompzuts_offset_new_key">//</prop>
+        <prop id="kompzuts_where">[@komp_key='(prop,komp_key)']</prop>
+        <prop id="kompzut_komp_key">(prop,komp_key)</prop>
+      
+        <when test="(f,gt_num,(prop,moda_zutaten),0)">
+          <ti_space height="3px"/>
+          <ti label="(prop,myclassZutatVerw)" />        
+          <call_job job="kompzut-see-all"/>
+          <when test="(f,role,boss)">
+            <ti type="call_job" job="Neue Grund-Zutat" explain="[ + neue Zutat verwenden ]" label=" ">
+              <prop id="jobtodo" x="rez-see" />
+              <call_job job="prolog" />
+              <prop id="rez_key">(prop,rez_key)</prop>
+          
+              <prop id="kompzuts_offset">rez[@row='(prop,rez_key)']/</prop>
+              <prop id="kompzuts_offset_label"></prop>
+              <prop id="kompzuts_offset_new_key">//</prop>
+              <prop id="kompzuts_where">[@komp_key='(prop,komp_key)']</prop>
+              <prop id="kompzut_komp_key">(prop,komp_key)</prop>      
+              
+              <prop id="rez_key">(prop,rez_key)</prop>
+              <prop id="komp_key">(prop,komp_key)</prop>  
+                    
+              <prop id="zuts_offset">rez[@row='(prop,rez_key)']/</prop>
+              <prop id="zuts_offset_label"> fuer Rezept &apos;(f,xpath,(file,rezs),rez[@row=(f,xpath_string,(prop,rez_key))],@bez)&apos;</prop>
+              <prop id="zuts_offset_new_key">//</prop> 
+              <prop id="komponentenname" x="(f,xpath,(file,ephasen),rez[@row='(prop,rez_key)']/komp[@row='(prop,komp_key)'],@bez)"/>   
+            </ti>    
+           </when>         
+        
+          <prop id="ephasen_offset">rez[@row=(prop,rez_key)]/komp[@row=(prop,komp_key)]/</prop>
+          <prop id="ephasen_offset_label"/>
+          <prop id="ephasen_offset_new_key">//</prop>
+          <prop id="ephasen_sort_attribute"></prop>
+          <prop id="ephasen_sort_number"></prop>
+          <prop id="ephasen_sort_ignore_case"/>
+          <prop id="ephasen_sort_desc"/>
+          <prop id="ephasen_where"/>
+          <prop id="ephasen_return_job">komp-see</prop>  
+        </when>
+        <ti_space height="6px"/>
+      
+        <ti label="(f,vob,prop,mcDokumentation)" />
+   
+        <call_job job="ephase-see-all"/>      
+       
+      </when>
+      <otherwise>
+        <ti x=" " key="Keine Komponente gefunden(e:s) Darstellung erfolgt im Mehr-Komponenten-Modus"/>
+        <prop id="mymoda" x="m"/>
+      </otherwise>
+    
+    </choose>
+ 
+  </when>
+  <when test="(f,eq_text,m,(prop,mymoda))">
+  
+        <ti label="(prop,myclassZutatPl)" />
+        <call_job job="zut-see-all"/>
+
+        <call_job job="einfache-komponentenliste"/>  
+        
+        <file id="komps">(file,rezs)</file>
+        <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+        <prop id="komps_offset_label"/>
+        <prop id="komps_offset_new_key">//</prop>
+        <prop id="komps_sort_attribute"/>
+        <prop id="komps_sort_number"/>
+        <prop id="komps_sort_ignore_case"/>
+        <prop id="komps_sort_desc"/>
+        <prop id="komps_where"/>
+        <prop id="komps_return_job">rez-see</prop>      
+        <call_job job="komp-see-all"/>  
+  </when>
+
+  <when test="(f,role,expert)">
+    <ti_hr/>
+  
+    <ti label="Bestellungen" xx=" "/>
+    
+    <try_catch>
+    <try>
+    <call_job job="order-see-all"/>
+    </try>
+    <catch>
+      <ti>probleme mit den bestellungen</ti>
+    </catch>
+    </try_catch>   
+  </when>
+  <ti_break/>
+
+  
+  <ti type="call_job" job="mext-rezept" explain="Next Rezept" pic="(dir,libro)next-logo.png"  max_y="60" label=" ">
+    <prop id="prev_rez_key" x="(prop,rez_key)"/>
+  </ti>
+
+  
+</try>
+<catch>
+  <ti label="error">(prop,catched_msg)</ti>
+</catch>
+</try_catch>      
+</job>
+
+<job id="mext-rezept" role="hidden">
+    <need>(prop,prev_rez_key)</need>
+    <call_job job="prolog"/>
+    <prop id="passed" x="0"/>
+    <prop id="passedDone" x="0"/>
+    <prop id="next_key" x=""/>
+    <loop id="r" xml="(file,rezs)" xpath="rez">
+    
+      <choose>
+        <when test="(prop,passedDone)">
+        </when>      
+        <when test="(prop,passed)">
+          <prop id="next_key" x="(loop,r,@row)"/>
+          <prop id="passedDone" x="1"/>
+        </when>
+        <when test="(f,eq_num,(loop,r,@row),(prop,prev_rez_key))">
+          <prop id="passed" x="1"/>
+        </when>
+      </choose>
+    
+    </loop>
+    
+    <choose>
+      <when test="(f,has,prop,next_key)">      
+        <call_job job="rez-see" >
+          <prop id="rez_key" x="(prop,next_key)"/>
+        </call_job>
+      </when>
+      <otherwise>
+         <call_job job="Liste der Rezepte" />
+      </otherwise>
+    </choose>
+    <!-- 
+      <ti type="call_job"  label=" " xprefix="&gt;&gt; " job="rez-see" explain="[ (prop,myclassAkt) ]">
+    <prop id="rez_key" x="(prop,rez_key)"/>   -->
+  
+</job>
+
+<job id="hook_rezeptdetails-xx" role="hidden">
+
+   <ti>post 1</ti>
+  <call_job job="do-create-akt-komponentenliste" />  
+       <ti>post 2</ti>
+  <create_file file="(file,akt-rez)">(prop,rez_key)</create_file>
+  
+  <dump_ti test="0"/>
+  <prop id="zuts_offset">rez[@row=(prop,rez_key)]/</prop>
+  <prop id="zuts_offset_label"/>
+  <prop id="zuts_offset_new_key">//</prop>
+  <prop id="zuts_sort_attribute">@sort</prop>
+  <prop id="zuts_sort_number">@sort</prop>
+  <prop id="zuts_sort_ignore_case"/>
+  <prop id="zuts_sort_desc"/>
+  <prop id="zuts_where"/>
+  <prop id="zuts_return_job">rez-see</prop>  
+  <ti_space height="3px"/>
+  <prop id="zadd" x=""/>
+  <prop id="zadd" x="(e:o)(prop,rez_portionen) Portion(f,plural,(prop,rez_portionen),en)(e:c)"
+        test="(f,has,prop,rez_portionen)"/>
+ <ti>post 3</ti>       
+ <when test="(f,eq_text,e,(prop,moda))">
+        <ti label="(prop,myclassZutatPl)" />
+      <call_job job="zut-see-all"/>
+ </when> 
+        <ti>post 4</ti>
+  <try_catch>
+    <try>  
+    <ti>post 5</ti>
+    <call_job job="einfache-komponentenliste-max"/>
+    <ti>post 6</ti>
+    <when test="(f,eq_text,e,(prop,moda))">
+    <when test="(f,not,(f,eq_num,1,(prop,max)))">
+      <ti_hr/>
+      <ti label="Zutatenliste" />
+      <ti>post 7</ti>
+      <call_job job="zut-see-all"/>     
+      <ti>post 8</ti>
+    </when>
+    </when>
+
+    
+     <ti>post 9</ti>
+        
+    <when test="(f,gt_num,(prop,max),1)">
+        
+        <!-- <ti>mehr als eine komponente</ti><ti_hr/><ti_hr style="2aL" label="1(e:c) Zutaten (prop,zadd)"/>   
+        <ti_hr/>
+        <ti label="Grund-Zutaten (f,html,b,o)(prop,zadd)(f,html,b,c)" xx=" "/>    
+        <ti>post 1</ti>                                                                                  -->
+        <ti>post 10</ti>
+        <call_job job="hook-kompzutat-editor-begin"/>   
+        <ti>post 11</ti>
+    </when>
+    <ti>post 12</ti>
+
+  
+
+  <file id="komps">(file,rezs)</file>
+  <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+  <prop id="komps_offset_label"/>
+  <prop id="komps_offset_new_key">//</prop>
+  <prop id="komps_sort_attribute"/>
+  <prop id="komps_sort_number"/>
+  <prop id="komps_sort_ignore_case"/>
+  <prop id="komps_sort_desc"/>
+  <prop id="komps_where"/>
+  <prop id="komps_return_job">rez-see</prop>
+  <ti_space height="3px"/>
+   <ti>post 13</ti>
+  <ti>moda = (prop,moda)</ti>
+  <when test="(f,eq_num,(prop,max),1)">
+    <ti_hr/>
+  </when>  
+  <ti>post 14</ti>
+  <when test="(f,eq_text,(prop,moda),m)">
+  <when test="(f,gt_num,(prop,max),1)">
+    <ti>post 15</ti>
+    <call_job job="einfache-komponentenliste"/>
+    <ti>post 16</ti>
+  </when>
+  </when>
+  <ti>post 17</ti>
+  <need>(prop,max)</need>
+  <prop id="nbr-of-comps" x="(prop,max)"/>
+
+  <call_job job="komp-see-all"/>   
+  <ti>post 18</ti>
+  <!-- 
+  <prop id="kompzuts_offset">rez[@row=(prop,rez_key)]/</prop>
+  <prop id="kompzuts_offset_label"/>
+  <prop id="kompzuts_offset_new_key">//</prop>
+  <prop id="kompzuts_sort_attribute">@komp_key</prop>
+  <prop id="kompzuts_sort_number"/>
+  <prop id="kompzuts_sort_ignore_case"/>
+  <prop id="kompzuts_sort_desc"/>
+  <prop id="kompzuts_where"/>
+  <prop id="kompzuts_return_job">kompzut-see</prop>
+                        -->
+  
+  <ti_hr/>
+
+  <ti label="3(e:c) Bestellungen" xx=" "/>
+  
+  
+  <call_job job="order-see-all"/>     
+    
+  </try>
+  <catch>
+    <dump_ti label="catched"/>
+  </catch>
+  </try_catch>    
+  <ti_hr/>
+  
+  <ti type="call_job" job="rez-see-all" explain="Liste aller Rezepte" label=" " prefix="&gt;&gt; " />
+  
+ 
+</job>
+
+<job id="event-ephase-orga-finished" role="hidden">
+   <dump_ti label="event-ephase-orga-finished" test="0"/>
+   <call_job job="prolog" />
+   <call_job job="Aktuelle Komponente"/>
+</job>   
+
+<job id="komp-finalizer" role="hidden">
+<ti test="0">komp-finalizer</ti>
+  <dump_ti label="komp-finalizer" test="0"/>
+  <when test="(f,has,prop,komp_moda_zutaten)">
+    <prop id="moda_zutaten" x="(prop,komp_moda_zutaten)"/>
+  </when>
+  <try_catch>
+    <try>    
+      <create_file file="(file,akt-komp)">(prop,komp_key)</create_file>
+      <create_file file="(file,akt-rez)">(prop,rez_key)</create_file>
+      <when test="(f,eq_num,1,(prop,moda_zutaten))">
+       <call_job job="zeige-zutatenliste" />
+      </when>
+      
+      <prop id="ephasen_offset">rez[@row=(prop,rez_key)]/komp[@row=(prop,komp_key)]/</prop>
+      <prop id="ephasen_offset_label"/>
+      <prop id="ephasen_offset_new_key">//</prop>
+      <prop id="ephasen_sort_attribute"></prop>
+      <prop id="ephasen_sort_number"></prop>
+      <prop id="ephasen_sort_ignore_case"/>
+      <prop id="ephasen_sort_desc"/>
+      <prop id="ephasen_where"/>
+      <prop id="ephasen_return_job">komp-see</prop>  
+    
+      <ti_space height="6px"/>
+    
+      <ti>(f,html,i,o)Aktionen:(f,html,i,c)</ti>
+
+
+      <call_job job="ephase-see-all"/>
+      
+      <when test="(f,eq_num,2,(prop,moda_zutaten))">
+       <call_job job="zeige-zutatenliste" />
+      </when>
+            
+  </try>
+  <catch> 
+    <ti>catched msg= (prop,catched_msg)</ti>
+  </catch>
+  </try_catch>
+    
+   
+  <ti_hr/>
+  <call_job job="zum-rezept-link"/>   
+
+
+
+</job>
+
+<job id="komp-see-all-event" role="hidden">
+  <call_job job="komp-see-all"/>
+  
+  <ti_hr/>
+  <call_job job="zum-rezept-link"/>
+</job>
+
+<job id="kompzut-see-all-event" role="hidden">
+
+  <call_job job="kompzut-see-all"/>
+  
+  <ti_hr/>
+<call_job job="zum-rezept-link"/> 
+</job>
+
+<job id="hook-ephase-detail-end" role="hidden">
+
+
+  <ti_hr style="2"/>
+  
+  <ti type="call_job"  label=" " prefix="&gt;&gt; " job="komp-see" 
+  explain="Zur Komponente &apos;(f,xpath,(file,rezs),rez[@row=(prop,rez_key)]/komp[@row=(prop,komp_key)],@bez)&apos;">
+    <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+    <prop id="rez_key" x="(prop,rez_key)"/>
+    <prop id="komp_key" x="(prop,komp_key)"/>
+  </ti>    
+ 
+  
+<call_job job="zum-rezept-link"/>  
+ 
+  
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+<job id="see-ephasen-list" role="hidden">
+  <need>(prop,rez_key)</need>
+   
+  <prop id="did-intro" x="0"/>
+  <loop id="x" xml="(file,rezs)" xpath="rez[@row=(prop,rez_key)]/komp/ephase"
+        missing_strategy="empty">
+      
+      <when test="(f,eq_num,0,(prop,did-intro))">
+      
+        <prop id="did-intro" x="1"/>
+            <ti_space height="3px"/>
+
+  <ti label="Komponenten-Phasen" flag="label_right">  </ti>       
+        
+        <!--
+            <ti_space height="3px"/>
+  <ti_hr style="2aL" label="2(e:c) Arbeitsschritte"/>
+        -->
+        
+      </when>
+      
+      <ti type="rec" label="(loop,x,..,@bez) (loop,x,@phase) " flag="label_right">
+     
+     <ti type="call_job" prefix="  " job="ephase-see" explain="(loop,x,@bez) sdaf (loop,x,..,@bez)">          
+        <prop id="ephasen_offset">rez[@row=(loop,x,../..,@row)]/komp[@row=(loop,x,..,@row)]/</prop>
+        <prop id="ephasen_offset_label"/>
+        <prop id="ephasen_offset_new_key">//</prop>
+        <prop id="ephasen_sort_attribute"></prop>
+        <prop id="ephasen_sort_number"></prop>
+        <prop id="ephasen_sort_ignore_case"/>
+        <prop id="ephasen_sort_desc"/>
+        <prop id="ephasen_where"/>
+        <prop id="ephasen_return_job">ephase-see</prop>  
+        <prop id="rez_key" x="(loop,x,../..,@row)"/>  
+        <prop id="komp_key" x="(loop,x,..,@row)"/>  
+        <prop id="ephase_key" x="(loop,x,@row)"/>   
+        <ti label="Phase zu Komponente [(loop,x,..,@bez)]"/>
+     </ti>
+
+     <ti>(loop,x,@besch)</ti>
+     </ti>
+  </loop>
+</job>
+<job id="hook-komp-listend" role="hidden">
+
+  <when test="(f,eq_text,e,(prop,moda))">
+  <!-- 
+    <ti test>hier noch die ephasen zur ersten komponente im rezept</ti>
+    <dump_ti/>                  -->
+  </when>
+</job>
+<job id="hook-komp-listed" role="hidden">
+  <ti test="0">hook-komp-listed</ti>
+  <call_job job="hook-komp-detail-starter">
+    <prop id="komp_key" x="(loop,komp_loop,@row)"/>
+  </call_job>
+</job>
+<job id="hook-komp-listed2" role="hidden">
+<ti test="0">hook-komp-listed2</ti>
+<try_catch>
+<try>
+  <ti test="0">hallo nic123 komp_key=(loop,i,@row) komps_offset=(prop,komps_offset)</ti>
+  <dump_ti label="dada" test="0"/>
+  
+  <call_job job="hook-komp-detail-starter">
+    <prop id="komp_key" x="(loop,i,@row)"/>
+  </call_job>
+            
+ <prop id="virg" x="1"/>
+ <prop id="rezeptname"></prop>
+ <prop id="komponentenname"></prop>
+ <spirit id="r" act="open" file="(file,komps)"/>
+  <loop id="r" spirit="r" xpath="(prop,komps_offset)komp[@row=(loop,i,@row)]/ephase"
+        missing_strategy="empty" sort="@phase" number="@phase">
+      <when test="(prop,virg)">
+        <ti x="(f,html,b,o)Vorgangs-Doku(f,html,b,c)" flag="label_right" label=" "/>
+          <prop id="virg" x="0" span="5" colspan="5"/>
+          
+         <prop id="rezeptname">(loop,r,../../@bez)</prop>
+         <prop id="komponentenname">(loop,r,../@bez)</prop>          
+      </when>
+     
+      <prop id="zutatheader"></prop>
+      
+      
+      <when test="(f,has,(loop,r,@zut_key))">
+         <prop id="zutatheader">(f,spirit,r,rez[@row=(prop,rez_key)]/zut[@row=(loop,r,@zut_key)],@bez): </prop>   
+     
+      </when>    
+                               
+      
+      
+      <ti type="rec" label="(f,tk_sel_translate,(loop,r,@phase),(file,phasen-selektor)):" flag="label_right" prefix="  " >
+      
+    <ti>(prop,zutatheader)</ti>
+     
+     <ti type="call_job" prefix="  " job="ephase-see" explain="(f,text,cut_nice,(loop,r,@besch),40)"> 
+                 
+        <prop id="ephasen_offset">rez[@row=(loop,r,../..,@row)]/komp[@row=(loop,r,..,@row)]/</prop>
+        <prop id="ephasen_offset_label"> [ (prop,rez_bez) ] [ (f,text,cut_nice,(loop,r,..,@bez),30) ]</prop>
+        <prop id="ephasen_offset_new_key">//</prop>
+        <prop id="ephasen_sort_attribute"></prop>
+        <prop id="ephasen_sort_number"></prop>
+        <prop id="ephasen_sort_ignore_case"/>
+        <prop id="ephasen_sort_desc"/>
+        <prop id="ephasen_where"/>
+        <prop id="ephasen_return_job">ephase-see</prop>  
+        <prop id="rez_key" x="(loop,r,../..,@row)"/>  
+        <prop id="komp_key" x="(loop,r,..,@row)"/>  
+        <prop id="ephase_key" x="(loop,r,@row)"/>   
+        <ti label="Phase zu Komponente [(loop,r,..,@bez)]"/>
+        
+     </ti>
+
+     <!-- <ti>(loop,r,@besch)</ti>   -->
+     </ti>
+  </loop> 
+  
+  <spirit id="r" act="close" />
+  <ti type="call_job" job="neuer-vorgang" explain="[+ weiteren Vorgang dokumentieren ]" label=" ">
+         <prop id="rezeptname">(prop,rezeptname)</prop>
+         <prop id="komponentenname">(prop,komponentenname)</prop> 
+         <prop id="rez_key">(prop,rez_key)</prop>
+         <prop id="komp_key">(loop,i,@row)</prop>  
+  </ti>
+</try>
+<catch>
+  <dump_ti label="problem in hook-komp-listed"/>
+</catch>
+</try_catch>
+   
+</job>
+
+<job id="do-create-akt-komponentenliste" role="hidden" >
+  <need>(prop,rez_key) (file,akt-komponentenliste)</need>
+  
+  <xslt xml="(file,rezs)" xsl="(dir,app)komponentenliste-rez.xsl"
+   out="(file,akt-komponentenliste)">
+    <params>rez_key='(f,xslp,(prop,rez_key))'</params>
+  </xslt>    
+</job>
+
+<job id="do-create-akt-zutatenliste" role="hidden" >
+  <need>(prop,rez_key) (file,akt-zutatenliste)</need>
+  
+  <!-- 
+  <xslt xml="(file,rezs)" xsl="(dir,app)zutatenliste-rez.xsl" out="(file,akt-zutatenliste2)">
+    <params>rez_key='(f,xslp,(prop,rez_key))' meinmodus='1'</params>
+  </xslt>   
+  <ti label="generated" type="file" x="(file,akt-zutatenliste2)"/>
+  <ti label="generated" type="file" x="(file,akt-zutatenliste)"/> 
+  
+  -->
+  <xslt xml="(file,rezs)" xsl="(dir,app)zutatenliste-rez.xsl" out="(file,akt-zutatenliste)">
+    <params>rez_key='(f,xslp,(prop,rez_key))' meinmodus='2'</params>
+  </xslt>
+      
+</job>
+
+<job id="hook-kompzutat-editor-begin" role="hidden">
+
+  <call_job job="do-create-akt-zutatenliste" />
+  <call_job job="do-create-akt-komponentenliste" />  
+  
+</job>
+
+<job id="hook-ephase-editor-begin" role="hidden">
+                 
+<try_catch>
+  <try>
+  <xslt xml="(file,rezs)" xsl="(dir,app)zutatenliste-rez-komponente.xsl" out="(file,akt-zutatenliste-komponente)">
+    <params>rez_key='(f,xslp,(prop,rez_key))' komp_key='(f,xslp,(prop,komp_key))'</params>
+  </xslt>  
+  <ti type="file" label="produzierte zutatenliste komp" test="0">(file,akt-zutatenliste-komponente)</ti>
+</try>
+<catch>
+  <dump_ti label="problem in hook-komp-listed"/>
+</catch>
+</try_catch>  
+</job>
+
+<job id="hook-zutat-editor-begin" role="hidden">
+
+
+  <xslt xml="(file,rezs)" xsl="(dir,app)komponentenliste-rez.xsl"
+   out="(file,akt-komponentenliste)">
+    <params>rez_key='(f,xslp,(prop,rez_key))'</params>
+  </xslt>  
+
+ 
+  
+</job>
+
+<job id="see-the-pics-ALT" role="hidden">
+  <need>(file,pics) (prop,pics_xpath)</need>
+  <need default="0">(prop,pics_div)</need>
+  <prop id="html"></prop>
+  <loop missing_strategy="empty" id="pics" xml="(file,pics)" xpath="(prop,pics_xpath)">
+    <when test="(loop,pics,exists?,@pic)">
+      <file id="mp" flag="cool" x="(loop,pics,@pic)"/>
+
+      <unescape id="mp" type="file"/>
+
+      <translate id="mp" type="file"/>
+
+      
+      
+      <choose>
+        <when test="(prop,pics_div)">
+          <prop id="sizer"> style='height: auto; width: auto; </prop>
+          <when test="(f,has,(loop,pics,@max_x_px))">
+            <prop id="sizer">(prop,sizer) max-width: (loop,pics,@max_x_px)px;</prop>
+          </when>
+          <when test="(f,has,(loop,pics,@max_y_px))">
+            <prop id="sizer">(prop,sizer) max-height: (loop,pics,@max_y_px)px;</prop>
+          </when>      
+          <prop id="sizer">(prop,sizer)' </prop>    
+          <prop id="html">(prop,html)&lt;div style='float: left;' alt='(f,when,(f,has,(loop,pics,@max_y_px)),(loop,pics,@max_y_px),Bild)' &gt;&lt;img src="(f,file,libro,(file,mp))" (prop,sizer)&gt;&lt;/div&gt;</prop>
+          <!-- 
+          <ti>(loop,pics,@bez)</ti>
+          <ti> </ti>               -->
+        </when>
+        <otherwise>
+
+          
+          <ti type="img">(file,mp)</ti>
+          <ti>(f,html,b,o)(loop,pics,@bez)(f,html,b,c)</ti>
+          <ti>(f,html,b,o)(f,name_of_file,(file,mp))(f,html,b,c)</ti>
+          <ti flag="wrap">(file,mp)</ti>
+          <ti_hr/>             
+        </otherwise>
+      </choose>
+
+      
+    </when>
+  </loop>
+  
+  <when test="(f,has,prop,html)">
+    <ti>derhtml</ti>
+    <ti flag="html">&lt;div &gt;(prop,html)&lt;/div &gt;</ti>
+  </when>
+  
+</job> 
+
+</jobs>

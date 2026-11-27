@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+
+<job id="Add XmlRobot Item" role="hidden" tip="Add a new sdfa item">
+  
+  <file id="joe-in-store">(dir,status)srv-add-element-ic.xml</file>
+  <call_service job="go-joe-read"/>
+  
+  <tk label="New Item">
+  	<tk type="sel" 
+        id="toadd" 
+        flag="nono" 
+        label="Select the type of item you want to add"
+        tip="()You create here new projects, applications or workspaces. With 'Install '?' Project from zip' you can import projects from which you made a backup (zipped) before.()" 
+        x="pro">
+  	  <sel label="New '(f,vob,prop,app)' Project ..." 
+           test="(f,exists,prop,app)">pro</sel>
+  	  
+      <sel label="(f,when,(f,role,admin),New Application,Install an Application) ...">app-std</sel>
+  	  
+      <sel label="New Service-Application ..." 
+           test="(f,role,expert)">app-service</sel>
+  	  
+      <sel label="New Workspace ..." 
+           test="(f,role,expert)">workspace</sel>
+  	  
+      <sel label="Install '(f,vob,prop,app)' Project from zip ..."
+           test="(f,exists,prop,app)">pfromzip</sel>
+  	  
+  	</tk>
+  </tk>      
+   
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">toadd</prop>
+  </call_service>
+
+  <choose>
+
+    <!-- new project from zip-->
+    <when test="(f,eq,pfromzip,(prop,toadd))">
+      <call_service job="item-add-pro-from-zip"/>
+    </when>    
+    
+    <!-- empty project -->
+    <when test="(f,eq,pro,(prop,toadd))">
+      <call_service job="item-add-pro-empty">
+        <prop id="empty-app" x="(prop,app)"/>
+      </call_service>
+    </when>
+
+    <when test="(f,eq,app-std,(prop,toadd))">      
+      <call_service job="item-add-app" />      
+    </when>
+    
+    <when test="(f,eq,app-service,(prop,toadd))">
+      <call_service job="item-add-app-service"/> 
+    </when>
+    
+    <when test="(f,eq,workspace,(prop,toadd))">
+      <call_service job="item-add-workspace"/>
+    </when>  
+    <otherwise>
+      <ti>Nothing to do.</ti>
+    </otherwise>
+  </choose>	
+</job>
+
+<job id="item-add-pro-empty"  role="hidden" joblevel="app" >
+  <need>(prop,empty-app)</need>
+  
+  <choose>
+    <when test="(f,has,prop,computer)">
+    
+      <prop id="def_pro_id">(f,time,MMdd,job)_[(prop,computer)]</prop>
+      
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),a,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),e,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),i,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),o,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),u,)</prop>
+  
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),A,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),E,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),I,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),O,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),U,)</prop>
+      
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id), ,)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),/,-)</prop>
+      <prop id="def_pro_id">(f,replace,(prop,def_pro_id),\,-)</prop>    
+    
+    </when>
+    <otherwise>
+      <prop id="def_pro_id">(f,time,MMdd,job)</prop>
+    </otherwise>
+  </choose>
+  
+  <ask  what="apps" 
+        out="(dir,filetemp)ask-apps.xml" 
+        app="(prop,empty-app)"
+        style="natural"/>
+  
+  <dir id="pro_home2" x="(f,xpath,(dir,filetemp)ask-apps.xml,apps/app,@pro_home_dir)"/>
+  
+    <when test="(f,dir_exists,(dir,pro_home2)pro.(prop,def_pro_id))">
+      <prop id="def_pro_id">(f,substring,(prop,def_pro_id),0,4)-(f,time,HHmm,job)(f,substring,(prop,def_pro_id),4)</prop>
+    </when>
+    
+    <when test="(f,dir_exists,(dir,pro_home2)pro.(prop,def_pro_id))">
+      <prop id="def_pro_id">(f,substring,(prop,def_pro_id),0,9)-(f,time,sss,job)(f,substring,(prop,def_pro_id),9)</prop>
+    </when>    
+    <prop id="not_ok" x="1"/>
+    <loop id="not_ok" while="()(prop,not_ok)()">    
+      <tk label="Create a new project for app '(prop,empty-app)'">    
+        <tk id="new_name" 
+            label="Name of new project" 
+            x="(prop,def_pro_id)" 
+            flag="nono" 
+            tip="The project-name identifies the project. It should be short and significant. You can change that later with the project-manager. The supposed default-name comes from the current date/time and the current computer."
+            rule="filename_with_blanks"/>
+      </tk>   
+       
+      <dir id="new_dir">(dir,pro_home2)pro.(prop,new_name)</dir>
+      <choose>
+        <when test="(f,eq_text,Standard-Project,(prop,new_name))">
+          <throw>Project-name [Standard-Project] not allowed because reserved ...</throw>
+        </when>            
+        <when test="(f,starts_with,(prop,new_name),+)">
+          <throw>Project-names with a plus-sign at the beginning are not allowed because reserved ...</throw>
+        </when>      
+        <when test="(f,ends_with,(prop,new_name),+)">
+          <throw>Project-names with a plus-sign at the end are not allowed because reserved ...</throw>
+        </when>
+        <when test="(f,ends_with,(dir,new_dir),+(prop,fs))">
+          <throw>Project-names with a plus-sign at the end are not allowed because reserved ...</throw>
+        </when>        
+        <when test="(f,dir_exists,(dir,new_dir))">
+          <tk label="Project name not unique">
+            <tk type="msg" msg_type="e" x="project '(prop,new_name)' &#xA;with directory '(dir,new_dir)' &#xA;exists already.&#xA;Enter another project-name ..."/>
+          </tk>
+        </when>
+        <otherwise>
+          <prop id="not_ok" x="0"/>
+        </otherwise>
+      </choose>
+    </loop>  
+
+
+      <mkdir dir="(dir,new_dir)" />
+  
+    
+    <tp>created project folder: (dir,new_dir)</tp>
+    
+    <when test="(f,ask,exists_job,(prop,empty-app),sys_project_setup)">
+      <file id="easc" x="(dir,status)execute-after-startup.lsx" />
+      <create_file out="(file,easc)" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> <steps>
+          <call_app 
+            job="sys_project_setup"
+            app="(x,(prop,empty-app))"
+            pro_id="(x,(prop,new_name))" 
+            pro_dir="(x,(dir,new_dir))"/>
+      </steps>]]></create_file>
+    </when>
+
+    <restart app="(prop,empty-app)" pro="(prop,new_name)"/>
+  
+</job>
+
+<job id="item-add-pro-from-zip" role="hidden">
+  <need>(prop,app)</need>
+  
+  <!-- read cached input -->
+  <call_service job="go-joe-read">
+    <file id="joe-in-store">(dir,status)srv-add-pro-zip-ic.xml</file>
+  </call_service>
+
+  <tk label="Install project for app '(prop,app)'">
+    <tk id="pro-zip" 
+        type="file" 
+        label="Zip-File" 
+        base="(f,vob,dir,zip-base)"
+        extension=".zip"
+        tip="A zip-file which contains a compressed project. You can create a zip-file of a project-backup with the direcory-operation 'Zip the directory'"
+        flag="nono"/>  
+  </tk>       
+  
+  <!-- write input to cache for next time -->
+  <dir id="zip-base" x="(f,dir_of_file,(file,pro-zip))"/>
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">zip-base</prop>
+    <file id="joe-in-store">(dir,status)srv-add-pro-zip-ic.xml</file>
+  </call_service>       
+    
+  <!-- create default app-name by filename of zip -->
+  <prop id="proname">(f,name_of_file2,(file,pro-zip))</prop>
+  <when test="(f,starts_with,(prop,proname),PRO_)">
+    <prop id="proname">(f,substring,(prop,proname),4)</prop>
+  </when>
+
+  <when test="(f,gt,(f,index_of,(prop,proname),(prop,app)),-1)">
+    <prop id="where" x="(f,index_of,(prop,proname),(prop,app))"/>
+    <prop id="len" x="(f,len,(prop,app))"/>
+    <prop id="starter" x="(f,add,(prop,where),(prop,len))"/>
+    
+    <prop id="proname">(f,substring,(prop,proname),0,(prop,where))(f,substring,(prop,proname),(prop,starter))</prop>
+    
+  </when>
+            
+  <!-- verify input -->
+  <prop id="proname">(f,good_filename,(prop,proname))</prop>
+  <tk label="New project for app '(prop,app)'">
+    <tk id="proname" 
+        label="Project Name" 
+        flag="nono"
+        rule="filename_with_blanks"/>
+  </tk>
+  
+
+  <tk label="Create Project by Zip-File(e:s) App '(prop,app)'" 
+      flag="sum_only print print_with_tips">
+     <tk id="pro-zip" 
+         type="file" 
+         label="Zip-File" 
+         base="(dir,backup)" 
+         extension=".zip" 
+         tip="File to be unzipped"
+         flag="nono"/>
+         
+     <tk id="proname" 
+          label="Project Name" 
+          tip="Future Project Name"
+          flag="nono"
+          rule="filename_with_blanks"/>
+  </tk>
+  
+  <!-- specify foldername for app-->
+  <dir id="target-pro" x="(dir,app)pro.(prop,proname)" />
+  
+  <when test="(f,dir_exists,(dir,target-pro))">
+    <ti label="Problem">
+      <ti label="Exists already:" 
+          type="dir"
+          x="(dir,target-pro)"/>
+    </ti>
+    <ti_hr/>
+    <throw>A project '(prop,proname)' exists already. Try again with another name ...</throw>
+  </when>
+  
+  <!-- unzip -->
+  <tp>Unzip Archive (f,name_of_file,(file,pro-zip)) ...</tp>  
+
+   <mkdir dir="(dir,target-pro)"/>
+   <unzip file="(file,pro-zip)" todir="(dir,target-pro)"/>
+
+  
+  <!-- restart -->
+  <restart app="(prop,app)" pro="(prop,proname)"/>   
+</job>
+
+<job id="item-add-app-service" role="hidden">
+  <!-- read input-cache -->
+  <file id="joe-in-store">(dir,status)srv-add-app-ic.xml</file>
+  <call_service job="go-joe-read"/>
+  
+  <!-- do input -->
+  <tk label="New Service Application">
+    <tk id="import-zip" 
+        type="bool" 
+        label="Do you want to import a ZIPPED-Application ?" 
+        flag="nono"/>
+  </tk>
+  
+  <!-- write input-cach -->
+  <prop id="joe-in-regex">import-zip</prop>
+  <call_service job="go-joe-write-srv"/> 
+  
+  <choose>
+    <when test="(prop,import-zip)">
+      <dir id="target-dir">(dir,service_apps)</dir>
+      <call_service job="item-add-app-zip"/>
+    </when>
+    <otherwise>
+      <prop id="app-loc">services</prop>
+      <call_service job="item-add-app-empty"/> 
+    </otherwise>
+  </choose> 
+</job>  
+
+<job id="item-add-app" role="hidden">
+  <choose>
+    <when test="(f,role,admin)">
+      <!-- read input-cache -->  
+      <call_service job="go-joe-read">
+        <file id="joe-in-store">(dir,status)srv-add-app-ic.xml</file>
+      </call_service>
+      
+      <!-- do input -->
+      <tk label="New Application in workspace '(prop,workspace)'">
+        <tk id="import-zip" 
+            type="bool" 
+            label="Do you want to import a ZIPPED-Application ?" 
+            flag="nono"/>
+      </tk>
+      
+      <!-- write input-cach -->
+      <prop id="joe-in-regex">import-zip</prop>
+      <call_service job="go-joe-write-srv"/>      
+    </when>
+    
+    <otherwise>
+      <!-- expert and users are not asked -->
+      <prop id="import-zip" x="1"/>    
+    </otherwise>
+  
+  </choose>  
+
+      
+  <choose>
+    <when test="(prop,import-zip)">      
+      <call_service job="item-add-app-zip">
+        <dir id="target-dir">(dir,workspace)</dir>
+      </call_service>
+    </when>
+    <otherwise>      
+      <call_service job="item-add-app-empty">
+        <prop id="app-loc">workspace</prop>
+      </call_service>
+    </otherwise>
+  </choose>
+      
+</job>
+
+<job id="item-add-app-empty" role="hidden">
+  <need>(prop,app-loc)</need>
+  
+  <tk label="New Application in (prop,app-loc)">
+    <tk id="appname" 
+        label="Application Name" 
+        flag="nono"
+        rule="filename"/>
+  </tk>
+  
+  <call_service job="item-add-check-newapp">
+    <prop id="newapp" x="(prop,appname)"/>
+  </call_service>
+
+  <choose>
+  	<when test="(f,eq,workspace,(prop,app-loc))">
+  	  <mkdir dir="(dir,workspace)app.(prop,appname)" />
+  	  <restart app="(prop,appname)" pro=" "/>	  
+  	</when>
+  	<when test="(f,eq,services,(prop,app-loc))">
+  	  <mkdir dir="(dir,service_apps)app.(prop,appname)" />
+  	  <restart app="(prop,appname)" pro=" "/>	  
+  	</when>	
+  </choose>  
+</job>
+
+<job id="add-app-from-mgmt" role="hidden">
+  <prop id="at" x="normal" />
+  
+  <tk label="New Application">
+    <tk type="sel" 
+        id="at" 
+        label="Select Application Location" 
+        flag="nono" 
+        x="normal" 
+        tip="Where should new application reside?"
+        test="(f,role,expert)">
+      <sel label="Standard Application in workspace">normal</sel>
+      <sel label="Service Application">service</sel>
+    </tk>
+  </tk>
+  
+  <choose>
+    <when test="(f,eq,normal,(prop,at))">
+	     <call_service job="item-add-app" />
+    </when>
+    <when test="(f,eq,service,(prop,at))">
+	     <call_service job="item-add-app-service" />
+    </when>
+  </choose>
+</job>
+<job id="item-add-workspace" role="hidden">
+
+  <!-- read input-cach -->
+  <file id="joe-in-store">(dir,status)srv-add-ws-ic.xml</file>
+  <call_service job="go-joe-read"/>
+  
+  <!-- do inputs -->
+  <tk label="New Workspace">
+    <tk id="import" 
+        type="bool" 
+        label="Do you want to import a ZIPPED Workspace ?" 
+        flag="nono"/>
+  </tk>
+  
+  <when test="(prop,import)">
+    <tk id="ws-zip" 
+        type="file" 
+        label="Workspace-Zip-File" 
+        base="(dir,system)material"
+        extension=".zip"
+        flag="nono"/>
+        
+    <prop id="ws-name">(f,name_of_file,(file,ws-zip))</prop>
+    
+    <when test="(f,starts_with,(f,lower,(prop,ws-name)),ws_)">
+      <prop id="ws-name">(f,substring,(prop,ws-name),3)</prop>
+    </when>
+    
+    <when test="(f,starts_with,(f,lower,(prop,ws-name)),ws.)">
+      <prop id="ws-name">(f,substring,(prop,ws-name),3)</prop>
+    </when>    
+    
+    <when test="(f,ends_with,(prop,ws-name),.zip)">
+      <prop id="ws-name">(f,substring_before,(prop,ws-name),.zip)</prop>
+    </when>
+    
+    <prop id="ws-name">(f,good_filename,(prop,ws-name))</prop>    
+  </when>
+
+  <!-- write input-cach -->
+  <prop id="joe-in-regex">import|ws-zip</prop>
+  <call_service job="go-joe-write-srv"/>
+
+  <!-- do input workspace-name -->
+  <tk label="New Workspace">
+    <tk id="ws-name" 
+        label="Workspace-Name" 
+        flag="nono" 
+        rule="filename_with_blanks"/>
+  </tk>
+  
+  <!-- check in takeoff-file -->
+  <prop id="check">(f,xpathx,jdz34!?8123,(file,takeoff),workspace[@id=(f,xpath_string,(prop,ws-name))],@id)</prop>
+  
+  <when test="(f,not,(f,eq,(prop,check),jdz34!?8123))">
+    <ti type="file" label="Takeoff:" x="(file,takeoff)"/>
+    <throw>A workspace '(prop,ws-name)' exists in takeoff-file already. Try again with another name ...</throw>
+  </when>
+  
+  <prop id="rel-dir">xmlrobot-internals/workspaces/ws.(prop,ws-name)</prop>
+  <tk label="New Workspace">
+    <tk id="rel-dir"
+        label="Dir-Link in takeoff-file"
+        flag="nono"/>
+  </tk>
+  
+  <dir  id="abs-dir">(f,dir_of_file,(file,takeoff))(prop,rel-dir)(prop,fs)</dir>
+  <dir  id="abs-dir2">(f,replace,(dir,abs-dir),/,(prop,fs))</dir>
+  
+  <when test="(f,dir_exists,(dir,abs-dir2))">
+    <ti type="dir" label="Exists already:" x="(dir,abs-dir2)"/>
+    <throw>Workspace-Folder exists already, try another name ...</throw>
+  </when>
+  
+  <mkdir dir="(dir,abs-dir2)" flag="cascade"/>
+  <ti type="dir" label="Created:" x="(dir,abs-dir2)"/>
+  <when test="(prop,import)">
+    <!-- unzip -->
+    <tp>Unzip Archive (f,name_of_file,(file,ws-zip))...</tp>  
+  
+
+     <unzip file="(file,ws-zip)" todir="(dir,abs-dir)"/>
+   
+  </when>
+  
+  <xml_update 
+        what="(file,takeoff)" 
+        where="."  
+        how="insert_in">
+        <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <workspace id="(x,(prop,ws-name))" dir="(x,(prop,rel-dir))" flag="create" base="takeoff" />
+        ]]></inline>        
+  </xml_update> 
+  
+  <tk type="msg" msg="Workspace created. Going to Restart. Switch manually to new workspace."/>
+  <restart/>
+
+</job>
+<!-- 
+<job id="add-pro-from-zip" role="hidden">
+  <need>(dir,target-dir)</need>
+  
+ 
+  <call_service job="go-joe-read">
+    <file id="joe-in-store">(dir,status)srv-add-element-2-ic.xml</file>
+  </call_service>
+
+
+  <tk label="Install Project">
+    <tk id="app-zip" 
+        type="file" 
+        label="Zip-File"
+        extension=".zip"
+        flag="nono"
+        tip="A zipped Xml-Robot-Project"/>
+  </tk>
+  
+
+  <call_service job="go-joe-write-srv">
+    <file id="joe-in-store">(dir,status)srv-add-element-2-ic.xml</file>
+    <prop id="joe-in-regex">app-zip</prop>
+  </call_service>
+
+
+  <prop id="appname">(f,name_of_file,(file,app-zip))</prop>
+  <prop id="p1" x="(f,index_of,(prop,appname),.)"/>
+  <when test="(f,gt,(prop,p1),-1)">
+     <prop id="appname">(f,substring,(prop,appname),0,(prop,p1))</prop>
+  </when>
+  
+
+  <tk id="appname" label="Application Name" flag="nono" regex=".+"/>
+  
+  <tk label="Request for: Application Information" flag="sum_only">
+     <tk id="app-zip" type="file" label="Zip-File" base="(dir,backup)" extension=".zip" />
+     <tk id="appname" label="Application Name" />
+  </tk>
+  
+  <dir id="target-app" x="(dir,target-dir)app.(prop,appname)" />
+  
+  <when test="(f,dir_exists,(dir,target-app))">
+    <ti label="Problem">
+      <ti label="Exists already:" 
+          type="dir"
+          x="(dir,target-app)"/>
+    </ti>
+    <ti_hr/>
+    <throw>An application '(prop,appname)' exists already, Try again with another name ...</throw>
+  </when>
+  
+
+  <tp>Unzip Archive (file,app-zip)...</tp>  
+
+   <mkdir dir="(dir,target-app)"/>
+   <unzip src="(file,app-zip)" dest="(dir,target-app)"/>
+
+  
+
+  <restart app="(prop,appname)" pro=" "/>  
+</job>
+-->
+
+<job id="item-add-app-zip" role="hidden">
+  <need>(dir,target-dir)</need>
+  
+  <!-- read input-cach -->
+  <file id="joe-in-store">(dir,status)srv-add-element-2-ic.xml</file>
+  <call_service job="go-joe-read"/>
+
+  <!-- select a zip-file -->
+
+  <tk label="Install an Application">
+    <tk id="app-zip"
+        type="file"
+        label="Select Application Zip-File to use"
+        base="(dir,system)material"
+        extension=".zip"
+        tip="A zip file which contains the zipped application folder"
+        flag="print_before nono"/>
+  </tk>
+  
+  <!-- write input-cach -->
+  <prop id="joe-in-regex">app-zip</prop>
+  <call_service job="go-joe-write-srv"/>
+
+  <!-- create default app-name by filename of zip -->
+  <prop id="appname">(f,name_of_file,(file,app-zip))</prop>
+  <when test="(f,starts_with,(prop,appname),app.)">
+    <prop id="appname" x="(f,substring_after,(prop,appname),app.)"/>
+  </when>
+  <prop id="p1" x="(f,index_of,(prop,appname),.)"/>
+  <when test="(f,gt,(prop,p1),-1)">
+     <prop id="appname">(f,substring,(prop,appname),0,(prop,p1))</prop>
+  </when>
+  
+  <when test="(f,starts_with,(prop,appname),APP_)">
+     <prop id="appname" flag="catch">(f,substring,(prop,appname),4)</prop>
+  </when>  
+
+  <!-- verify input -->
+  <tk id="appname" 
+      label="Application Name" 
+      flag="nono" 
+      regex=".+"
+      test="(f,role,admin)"/>
+
+  <tk label="Going to install app: (prop,appname)" 
+      flag="sum_only"
+      tip="We are going to install now this application. Check the details ...">
+     <tk id="appname" 
+         label="Application Name" 
+         flag="nono"
+         tip="The name the application will have"/>  
+     <tk id="app-zip" 
+         type="file" 
+         label="Zip-File"
+         extension=".zip"
+         flag="nono"
+         tip="The zip-file which contains the Application to be installed."/>
+
+  </tk>
+  
+  <!--check for duplicate appname -->
+  <call_service job="item-add-check-newapp">
+    <prop id="newapp" x="(prop,appname)"/>
+  </call_service>
+  
+  <!-- specify foldername for app-->
+  <dir id="target-app" x="(dir,target-dir)app.(prop,appname)" />
+  
+  <when test="(f,dir_exists,(dir,target-app))">
+    <ti type="dir" label="Found this:" x="(dir,target-app)"/>
+    <throw>An application '(prop,appname)' exists already in folder '(f,dir_of_dir,(dir,target-app))'. Try again with another name ...</throw>
+  </when>
+  
+  <!-- unzip, doing the unzip now to a temporary folder to check github -->
+  <dir id="aut" x="(dir,filetemp)app-unzip-tmp" />
+  <tp>Unzip App-Archive (file,app-zip)...</tp>  
+
+   <delete dir="(dir,aut)" />
+   <mkdir dir="(dir,aut)"/>
+   <unzip file="(file,app-zip)" todir="(dir,aut)"/>
+
+  
+  <!-- standard-app-zip remembers things ... -->
+  <prop id="standard-app-zip" x="1" />
+
+  <!-- thats expected thing on github -->  
+  <dir id="github" x="(dir,aut)(f,name_of_file2,(file,app-zip))" />
+
+  <when test="(f,exists_dir,(dir,github))">
+  
+    <tk type="sel" label="Was this application-zip downloaded from GITHUB ?" id="github" x="1" flag="nono">
+      <sel label="Yes">1</sel>
+      <sel label="No">0</sel>
+      <sel label="Just do what you are said(e:s) and dont ask">0</sel>
+    </tk>
+    
+    <when test="(f,eq,1,(prop,github))">
+      <!-- ok, came from github, just take the inner zip/dir -->
+      <copy uri="(dir,github)" touri="(dir,target-app)"/>
+
+      <prop id="standard-app-zip" x="0" /> <!-- avoid doing the standard -->
+    </when>
+  </when>
+  
+  <!-- standard procedure if its not coming from github -->
+  <when test="(f,eq,1,(prop,standard-app-zip))">
+    <copy uri="(dir,aut)" touri="(dir,target-app)"/>
+   
+  </when>
+  
+  <!-- restart nic -->
+  <restart app="(prop,appname)" pro=" "/>  
+</job>
+
+<job id="item-add-check-newapp" role="hidden">
+  <need>(prop,newapp)</need>
+  <file id="adcna-ask" x="(dir,filetemp)ask.xml"/>
+  <ask what="apps" app="(prop,newapp)" out="(file,adcna-ask)" style="natural"/>
+  <prop id="adcna-count" x="(f,xsl,(file,adcna-ask),count(e:o)//app(e:c))"/>
+  <when test="(f,gt,(prop,adcna-count),0)">
+    <prop id="adcna-sa" x="(f,xsl,(file,adcna-ask),//app/@sa)"/>
+    <throw>Application '(prop,newapp)' exists already. Its (f,when,(prop,adcna-sa),a Service application, an Application in Workspace '(prop,workspace)'). Try another name!</throw>
+  </when>
+</job>
+
+</jobs>

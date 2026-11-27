@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="rezpic-see-all" level="ws" role="hidden" tip="Lists all Rezept-Pics">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="rezpic_loop" xml="(file,rezpics)" xpath="(prop,rezpics_offset)rezpic(prop,rezpics_where)" sort="(prop,rezpics_sort_attribute)" number="(prop,rezpics_sort_number)" ignore_case="(prop,rezpics_sort_ignore_case)" desc="(prop,rezpics_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,rezpics_offset_label)),0)">
+<ti label="(prop,rezpics_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<file flag="cool" z="a" id="rezpic_pic_temp_var_formix" x="(loop,rezpic_loop,@pic)"/>
+<unescape id="rezpic_pic_temp_var_formix" type="file"/>
+<translate id="rezpic_pic_temp_var_formix" type="file"/>
+<ti type="rec">
+<ti type="call_job" flag="block"  prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,rezpic_loop,@bez),20)(f,html,bold,close)" job="rezpic-see">
+<prop id="rezpic_key">(loop,rezpic_loop,@row)</prop>
+<file id="rezpics">(file,rezpics)</file>
+<prop id="rezpics_offset">(prop,rezpics_offset)</prop>
+<prop id="rezpics_offset_label">(prop,rezpics_offset_label)</prop>
+<prop id="rezpics_offset_new_key">(prop,rezpics_offset_new_key)</prop>
+<prop id="rezpics_sort_attribute">(prop,rezpics_sort_attribute)</prop>
+<prop id="rezpics_sort_number">(prop,rezpics_sort_number)</prop>
+<prop id="rezpics_where">(prop,rezpics_where)</prop>
+<prop id="rezpics_return_job">(prop,rezpics_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti test="(f,role,business)" type="call_job" explain="Edit" job="rezpic-edit">
+<prop id="rezpic_key">(loop,rezpic_loop,@row)</prop>
+<file id="rezpics">(file,rezpics)</file>
+<prop id="rezpics_offset">(prop,rezpics_offset)</prop>
+<prop id="rezpics_offset_label">(prop,rezpics_offset_label)</prop>
+<prop id="rezpics_offset_new_key">(prop,rezpics_offset_new_key)</prop>
+<prop id="rezpics_sort_attribute">(prop,rezpics_sort_attribute)</prop>
+<prop id="rezpics_sort_number">(prop,rezpics_sort_number)</prop>
+<prop id="rezpics_where">(prop,rezpics_where)</prop>
+<prop id="rezpics_return_job">(prop,rezpics_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti test="(f,has,(loop,rezpic_loop,@pic))" type="file" x="(f,try,()(f,name_of_file,(f,try,(loop,rezpic_loop,@pic),))(),)" flag="translate"/>
+<ti test="(f,not,(f,has,(loop,rezpic_loop,@pic)))"/>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine Rezept-Pics gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,rezpics_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="rezpic-add" explain="[ + Rezept-Pic ]" job="rezpic-add">
+<file id="rezpics">(file,rezpics)</file>
+<prop id="rezpics_offset">(prop,rezpics_offset)</prop>
+<prop id="rezpics_offset_label">(prop,rezpics_offset_label)</prop>
+<prop id="rezpics_offset_new_key">(prop,rezpics_offset_new_key)</prop>
+<prop id="rezpics_sort_attribute">(prop,rezpics_sort_attribute)</prop>
+<prop id="rezpics_sort_number">(prop,rezpics_sort_number)</prop>
+<prop id="rezpics_where">(prop,rezpics_where)</prop>
+<prop id="rezpics_return_job">(prop,rezpics_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,rezpics)</file>
+<prop id="orga_where">(prop,rezpics_where)</prop>
+<prop id="orga_view_loop_id">rezpic_loop</prop>
+<prop id="orga_finished_job">Aktuelles Rezept</prop>
+<prop id="orga_offset">(prop,rezpics_offset)</prop>
+<prop id="orga_offset_label">(prop,rezpics_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,rezpics_offset_new_key)</prop>
+<prop id="orga_segment_plural">rezpics</prop>
+<prop id="orga_segment_singular">rezpic</prop>
+<prop id="orga_segment_plural_label">Rezept-Pics</prop>
+<prop id="orga_segment_singular_label">Rezept-Pic</prop>
+<prop id="orga_sort_attribute">(prop,rezpics_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,rezpics_sort_number)</prop>
+<prop id="orga_where">(prop,rezpics_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,rezpic_loop,@bez),20)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,rezpics)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,rezpics_offset)),0)">(prop,rezpics_offset)</ti>
+</ti>
+</when>
+</job>

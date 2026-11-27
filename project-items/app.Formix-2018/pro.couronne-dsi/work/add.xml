@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="dsi-add" level="ws" role="hidden">
+x<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="dsi-editor"/>
+<prop id="dsi_key">1</prop>
+<when test="(f,not,(f,exists,prop,dsis_offset_new_key))">
+<prop id="dsis_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,dsis)" sort="@row" number="@row" xpath="(prop,dsis_offset_new_key)dsi">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="dsi_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new (prop,_sl_dsi): #(prop,dsi_key)</i>
+<call_job job="dsi-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+ (prop,_sl_dsi) '(f,text,cut_nice,(prop,dsi_name),30)'"/>
+</ti>
+<choose>
+<when test="(f,exists,prop,hack-mox)">
+</when>   
+<when test="(f,has,prop,post_add_script_dsi)">
+<file id="formix-posting" x="(dir,temp)(f,random_text,5)"/>
+<prop id="formix-posting-code" x="(f,random_text,16)"/>
+<create_file file="(file,formix-posting)" code="(prop,formix-posting-code)">(prop,post_add_script_dsi)</create_file>
+<include file="(file,formix-posting)" code="(prop,formix-posting-code)"/>
+<delete file="(file,formix-posting)"/>
+<remove type="file" id="formix-posting"/>
+<remove type="prop" id="formix-posting-code"/>
+</when>
+<otherwise>
+<call_job job="dsi_did_insert"/>
+</otherwise>
+</choose>
+</job>

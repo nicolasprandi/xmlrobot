@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="squery-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="squery_default_label_class" x="+ (prop,_sl_squery)"/>
+<prop id="squery_default_label_name" x="(f,when,(f,has,(prop,squerys_offset_label)), | (prop,squerys_offset_label),)"/>
+<prop id="squerys_tk_control" x="sum"/>
+</when>
+<otherwise>
+<need>(prop,squery_key)</need>
+<prop id="squery_default_label_class" x="(prop,_sl_squery)"/>
+<prop id="squery_default_label_name" x="(f,text,cut_nice,(prop,squery_id),50)(f,when,(f,has,(prop,squerys_offset_label)), - (prop,squerys_offset_label),)"/>
+<prop id="squerys_tk_control" x="sum_only"/>
+</otherwise>
+</choose>
+<call_job job="squery-tk"/>
+</job>

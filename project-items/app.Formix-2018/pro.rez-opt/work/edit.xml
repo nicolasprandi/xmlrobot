@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="opt-edit">
+<need>(prop,opt_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="opt-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="opt-editor"/>
+<call_job job="opt-write"/>
+<ti align="right" x="Did update Option '(f,text,cut_nice,(prop,opt_bez),30)'"/>
+<call_job job="zut-see"/>
+</job>

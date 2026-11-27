@@ -1,0 +1,260 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="etl-jobs" role="hidden">
+
+  <throw test="(f,not,(f,right,load))">Diese Funktion ist mit diesen Privilegien nicht moeglich. right load</throw>
+  <!-- 
+  <ti label="Vokabular"/>
+  <ti type="call_job" job="run-etl-job" label="job-LOAD-VOK.kjb" explain="Load Vokabular">
+    <file id="pentaho-job-to-run">(dir,app_pdi)job-LOAD-VOK.kjb</file>
+  </ti>
+  
+  <ti label="Integration"/>
+  <ti type="call_job" job="do-the-integration" label="Do it" explain="Migrate Data"/>
+  
+  <ti_hr/>      -->
+  <call_job job="get-app_pdi"/>
+  <ti_hr/>
+  <call_job job="tr_rij"/>
+
+  <ti label="2(e:c) (prop,_pl_sample)"/>
+    <ti type="call_job" job="run-etl-job" label="(f,html,b,o)job-load-00-them-all.kjb(f,html,b,c)" explain="(prop,_x_rij_loadthemall)">
+      <file id="pentaho-job-to-run">(dir,app_pdi)job-load-00-them-all.kjb</file>
+    </ti>  
+    <ti label=" ">(prop,_x_rij_loadthemall_what)</ti>
+       
+    <ti_hr style="2"/>  
+
+    <ti type="call_job" job="run-etl-job" label="(f,html,b,o)job-load-01-countries.kjb(f,html,b,c)" explain="(prop,_x_rij_loadcount)">
+      <file id="pentaho-job-to-run">(dir,app_pdi)job-load-01-countries.kjb</file>
+    </ti>  
+    <ti label=" ">(prop,_x_rij_loadcount_what)</ti>
+    <ti label=" " type="file" x="(dir,app_pdi)..(prop,fs)01-country-codes.xls"/>
+    <ti> </ti> 
+  
+  <ti type="call_job" job="run-etl-job" label="(f,html,b,o)job-load-25-worldbank.kjb(f,html,b,c)" explain="(prop,_x_rij_loadwb)">
+    <file id="pentaho-job-to-run">(dir,app_pdi)job-load-25-worldbank.kjb</file>
+  </ti>  
+  <ti label=" ">(prop,_x_rij_loadwb_what)</ti>
+  <ti label=" " type="file" x="(dir,app_pdi)..(prop,fs)25-worldpopulation.xls"/>
+   
+  <ti> </ti>  
+  <ti type="call_job" job="run-etl-job" label="(f,html,b,o)job-load-29-bank.kjb(f,html,b,c)" explain="(prop,_x_rij_loadbank)">
+    <file id="pentaho-job-to-run">(dir,app_pdi)job-load-29-bank.kjb</file>
+  </ti>    
+  <ti label=" ">(prop,_x_rij_loadbank_what)</ti>
+  <ti label=" " type="file" x="(dir,app_pdi)..(prop,fs)29-bank.xls"/>
+  <ti> </ti>     
+  <ti type="call_job" job="run-etl-job" label="(f,html,b,o)job-load-31-ipranges.kjb(f,html,b,c)" explain="(prop,_x_rij_loadip)">
+    <file id="pentaho-job-to-run">(dir,app_pdi)job-load-31-ipranges.kjb</file>
+  </ti>   
+  <ti label=" ">(prop,_x_rij_loadip_what)</ti>
+  <ti label=" " type="file" x="(dir,app_pdi)..(prop,fs)31-GeoIP.csv"/>  
+  <ti> </ti> 
+  
+  <ti type="call_job" job="run-etl-job" label="(f,html,b,o)job-load-30-pageviews.kjb(f,html,b,c)" explain="(prop,_x_rij_loadpage)">
+    <file id="pentaho-job-to-run">(dir,app_pdi)job-load-30-pageviews.kjb</file>
+  </ti>   
+  <ti label=" ">(prop,_x_rij_loadpage_what)</ti>
+  <ti label=" " type="file" x="(dir,app_pdi)..(prop,fs)30-pageviews.csv"/>   
+  <ti> </ti>  
+  <ti type="call_job" job="run-etl-job" label="(f,html,b,o)job-load-32-wechselkurse.kjb(f,html,b,c)" explain="(prop,_x_rij_loadkurs)">
+    <file id="pentaho-job-to-run">(dir,app_pdi)job-load-32-wechselkurse.kjb</file>
+  </ti>   
+  <ti label=" ">(prop,_x_rij_loadkurs_what)</ti>
+  <ti label=" " type="file" x="(dir,app_pdi)..(prop,fs)32-wechselkurse.xls"/>   
+  
+  <ti_hr />
+  <ti label="(prop,_x_rij_sampleloc)"/>
+  <ti type="dir" label=" ">(dir,app_pdi)</ti>
+    
+  <!-- 
+  <ti_hr style="2"/>
+  <ti type="rec">
+    <ti> </ti>
+    <ti x="(f,html,b,o)(prop,_x_rij_sampleloc)(f,html,b,c)"/>
+
+  </ti>
+  
+  <ti type="rec">
+    <ti> </ti>
+    <ti x="(dir,app_pdi)" flag="wrap"/>
+  </ti>  
+  -->
+  
+
+</job>
+
+
+
+
+
+<job id="run-etl-vok-byinst" role="hidden">
+   <need>(prop,from-sender)</need>
+   <call_job job="vok-upload"/>
+   <call_job job="return-to-sender"/>
+      <!-- 
+   <call_job job="get-app_pdi"/>
+   
+   <file id="pentaho-job-to-run">(dir,app_pdi)job-LOAD-VOK.kjb</file>
+   <call_job job="run-etl-job"/>
+
+      <ti type="call_job" job="run-etl-job" label="a(e:c)" explain="(prop,_ex_gs_4bt3)" flag="label_right">
+        <file id="pentaho-job-to-run">(dir,app_pdi)job-LOAD-VOK.kjb</file>
+        <prop id="from-sender">41</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+      </ti>
+  -->
+
+</job>
+
+<job id="run-etl-all-byinst" role="hidden">
+   <need>(prop,from-sender) (prop,guided-setup-job)</need>
+   <call_job job="get-app_pdi"/>
+   <file id="pentaho-job-to-run">(dir,app_pdi)job-load-00-them-all.kjb</file>
+   
+   <call_job job="run-etl-job">
+    <prop id="run-etl-by-inst">1</prop>
+   </call_job>
+   
+   <!-- 
+      <ti type="call_job" job="run-etl-job" label="b(e:c)" explain="(prop,_ex_gs_4bt4)" flag="label_right">
+        <file id="pentaho-job-to-run">(dir,app_pdi)load-data-sources/job-load-00-them-all.kjb</file>
+        <prop id="from-sender">42</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+      </ti>        
+    -->
+
+</job>
+
+
+<job id="get-app_pdi" role="hidden">
+
+    <call_job job="tk_db_read_dbms">
+      <prop id="ask-user-for-dbms">1</prop>
+    </call_job>
+    <dir id="app_pdi" x="(dir,app)pdi(prop,fs)(prop,2db_dbms)(prop,fs)"/>       
+</job>
+
+<job id="run-etl-job" role="hidden">
+<throw test="(f,not,(f,right,load))">Diese Funktion ist mit diesen Privilegien nicht moeglich. bpLoad</throw>
+<need default="0">(prop,run-etl-by-inst)</need>
+
+<call_job job="tr_rij"/>
+
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>
+
+  <try_catch>
+    <try>
+      <call_job job="run-etl-job-inner"/>
+      <when test="(f,not,(prop,run-etl-by-inst))">
+        <ti_space height="5px" />
+        <ti label="(prop,_x_next)" type="call_job" job="_integrate"  flag="button" 
+            explain="(prop,_x_rij_do_int)"  class="fx fxEdit fxEditDetail fxEditDetailConf fxEditDetailConfNav"
+            test="(f,right,int)"/>
+      </when>
+    </try>
+    <catch>
+      <ti label="Error:">(prop,catched_msg)</ti>
+      <when test="(f,not,(f,has,dir,kitch_logs))">
+        <ti label="(prop,_x_rij_problem)">(prop,_x_rij_nokitchlog)</ti>
+        <ti label="(prop,_x_rij_repair)" type="call_job" job="tk_kitch_edit" explain="(prop,_x_rij_confkitch)"/>
+      </when>
+      <when test="(f,not,(f,has,prop,pentaho-job-to-run))">
+        <ti label="(prop,_x_rij_problem)">(prop,_x_rij_nojobfound)</ti>
+      </when>      
+    </catch>
+  </try_catch>
+  <remove id="run-etl-by-inst" type="prop"/>
+  <call_job job="return-to-sender"/>  
+</job>
+
+<job id="run-etl-job-inner" role="hidden">
+  <need>(file,pentaho-job-to-run)</need>
+  
+  <ti type="file" label="(prop,_x_rij_yourwish)" x="(file,pentaho-job-to-run)"/>
+  <ti_flush/>
+  
+  <call_job job="tk_kitch_read"/>
+  
+  <file id="lf">(dir,kitch_logs)log-(f,name_of_file2,(file,pentaho-job-to-run))_(f,time).log</file>
+  <prop id="comm">(f,name_of_file,(file,kitch_bat)) /file:(f,file,classic,(file,pentaho-job-to-run)) /level:Basic &gt; (f,file,classic,(file,lf))</prop>
+  
+  <ti_hr/>
+  <ti>(prop,comm)</ti>
+  <ti_hr/>
+  <prop id="kettle-tip">(prop,_x_rij_runtip)</prop> 
+  <!--  
+  <tk label="(prop,_x_rij_runpdijob)">  
+  <tk type="textblock" id="comm" flag="wrap nono big" label="(prop,_x_rij_runlabel)" tip="(prop,kettle-tip)"/>
+  </tk>            
+  -->
+  
+  <tk label="(prop,_x_rij_runpdijob)">
+    <tk type="msg" tip="(prop,kettle-tip)" msg_type="c" label="(prop,_x_rij_runlabel)" cols="60" rows="6" flag="wrap">(prop,comm)</tk>
+  </tk>  
+
+  <ti label="(prop,_x_rij_logoutfile)" type="file">(file,lf)</ti>
+  
+  <call_job job="-db-close-on-purpose-" />
+  
+  <call_job job="-db-prepare-operations-" >
+    <prop id="prepare-reason">Run a Pentaho-Job</prop>
+  </call_job>
+  
+  <call_job job="open-terminal-internal" flag="silent">
+    <dir id="with">(f,dir_of_file,(file,kitch_bat))</dir>
+  </call_job>
+  
+  <ti type="call_job" job="see-log-file" explain="(prop,_x_rij_seelogcont)" xflag="silent" label=" ">
+    <file id="logging">(file,lf)</file>
+  </ti>
+  
+  
+</job>
+
+<job id="see-log-file" role="hidden">
+  <need>(file,logging)</need>
+  <call_service job="File-Content-UTF8">
+    <file id="with">(file,logging)</file>
+  </call_service>
+  <!-- 
+  <ti type="file" label="LogFile">(file,logging)</ti>
+  <ti>(f,file_content,(file,logging),UTF-8)</ti>
+  -->
+</job>  
+
+
+<job id="open-terminal-internal" os="mac" role="dev">
+
+    <exe>
+      <arg>open</arg>
+      <arg>-a</arg>
+      <arg>Terminal</arg>
+      <arg>(dir,with)</arg>
+    </exe>      
+
+</job>
+
+<job id="open-terminal-internal" os="linux" role="dev">
+
+    <exe dir="(dir,with)">
+      <arg>gnome-terminal</arg>
+    </exe>
+
+</job>
+
+<job id="open-terminal-internal"  os="win" role="dev">
+
+  <exe dir="(dir,with)">
+    <arg>cmd</arg>
+    <arg>/c</arg>
+    <arg>start</arg>
+  </exe>
+
+</job>
+
+</jobs>

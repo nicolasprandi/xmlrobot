@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="aspect-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Aspect(prop,aspects_offset_label)"/>
+<prop x="sum" id="aspects_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,aspect_key)</need>
+<prop id="label" x="Aspect [(prop,aspect_titel)](prop,aspects_offset_label)"/>
+<prop x="sum_only" id="aspects_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="aspect-tk"/>
+</job>

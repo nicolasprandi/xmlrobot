@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="woche-read">
+<need>(prop,woche_key)</need>
+<spirit act="open" missing_strategy="empty" id="wochen_spirit_tc" xml="(file,wochen)"/>
+<prop id="woche_dt_upd">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@dt_upd)</prop>
+<prop id="woche_dt_add">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@dt_add)</prop>
+<prop id="woche_bez">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@bez)</prop>
+<prop id="woche_beschreibung">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@beschreibung)</prop>
+<prop id="woche_menge">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@menge)</prop>
+<prop id="woche_einheit">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@einheit)</prop>
+<prop id="woche_klasse">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@klasse)</prop>
+<prop id="woche_ersatz">(f,spirit,wochen_spirit_tc,(prop,wochen_offset)woche[@row=(f,xpath_string,(prop,woche_key))],@ersatz)</prop>
+<spirit act="close" id="wochen_spirit_tc"/>
+</job>

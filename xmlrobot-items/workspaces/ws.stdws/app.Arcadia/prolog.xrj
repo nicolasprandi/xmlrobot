@@ -1,0 +1,146 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="prolog" role="hidden">
+
+
+
+  <prop id="github-repo-default" x="https://github.com/UdoScotti/xmlrobot/tree/master"/>
+
+  <ti_hr/>
+  
+  <prop id="connected" x="0"/>
+  
+  
+  <prop id="xr-java-items" x="java-items/grp.XmlRobot"/>
+  <prop id="trash-1" x="iKksdfieJIWdkf"/>
+  <prop id="trash-2" x="eijjjIUILelrejJ"/>
+  <when test="(f,has,prop,pro)">
+  
+    <prop id="prol-regex" x="prol_typus|prol_link|prol_steps"/>
+    <prop id="auto-regex" x="auto_compile|auto_zelix"/>
+        
+    <file id="app-selektor">(dir,pro)app-selektor.xml</file>
+  
+    <file id="zsels">(dir,pro)zsels.xml</file>
+    <when test="(f,not,(f,exists_file,(file,zsels)))">
+    <create_file out="(file,zsels)">&lt;zsels/&gt;</create_file>
+    <i>Created: (file,zsels)</i>
+    </when>
+    <prop id="zsels_offset">./</prop>
+    <prop id="zsels_offset_label"/>
+    <prop id="zsels_offset_new_key">//</prop>
+    <prop id="zsels_sort_attribute"/>
+    <prop id="zsels_sort_number"/>
+    <prop id="zsels_sort_ignore_case"/>
+    <prop id="zsels_sort_desc"/>
+    <prop id="zsels_where"/>
+    <prop id="zsels_return_job">zsel-see-all</prop>
+  
+    <file id="zblock-selector" x="(dir,pro)zblock-selector.xml"/>
+    <when test="(f,not,(f,exists_file,(file,zblock-selector)))">
+    <create_file out="(file,zblock-selector)">&lt;sels/&gt;</create_file>
+    <i>Created: (file,zblocks)</i>
+    </when>    
+    
+    <dir id="zelix" x="(dir,pro)zelix"/>
+    <mkdir dir="(dir,zelix)"/>
+    
+    <dir id="zelix-logs" x="(dir,zelix)logs"/>
+    <mkdir dir="(dir,zelix-logs)"/>
+        
+    <dir id="zelix-output" x="(dir,zelix)zelix-output"/>
+    <dir id="zelix-input" x="(dir,zelix)zelix-input"/>
+    <file id="printer1" x="(dir,zelix)printer1.txt"/>
+    <file id="printer2" x="(dir,zelix)printer2.txt"/>
+    <file id="zelix-script" x="(dir,zelix)zelix-script.txt"/>
+    <file id="zelix-bat" x="(dir,zelix)run.bat"/>
+    <file id="zelix-copy-in" x="(dir,zelix)zelix-copy-in.xrs"/>
+    <file id="zelix-copy-out" x="(dir,zelix)zelix-copy-out.xrs"/>
+    <file id="zelix-script-advice" x="(dir,zelix)zelix-script-advice.txt"/>
+    
+    <file id="compileinfo" x="(dir,pro)compileinfo.xml"/>
+    
+    <file id="my-zelix-script" x="(dir,pro)my-zelix-script.txt"/>
+    <file id="zblocks">(dir,app)zblocks.xml</file>
+    <when test="(f,not,(f,exists_file,(file,zblocks)))">
+    <create_file out="(file,zblocks)">&lt;zblocks/&gt;</create_file>
+    <i>Created: (file,zblocks)</i>
+    </when>
+    <prop id="zblocks_offset">./</prop>
+    <prop id="zblocks_offset_label"/>
+    <prop id="zblocks_offset_new_key">//</prop>
+    <prop id="zblocks_sort_attribute"/>
+    <prop id="zblocks_sort_number"/>
+    <prop id="zblocks_sort_ignore_case"/>
+    <prop id="zblocks_sort_desc"/>
+    <prop id="zblocks_where"/>
+    <prop id="zblocks_return_job">zblock-see-all</prop>
+  
+    <file id="compx" x="(dir,pro)compx.xml"/>
+    <file id="current-java-lib" x="(dir,pro)current-java-lib.txt"/>
+    <prop id="playbacks_offset">./</prop>
+    <prop id="playbacks_offset_label"/>
+    <prop id="playbacks_offset_new_key">//</prop>
+    <prop id="playbacks_sort_attribute"/>
+    <prop id="playbacks_sort_number"/>
+    <prop id="playbacks_sort_ignore_case"/>
+    <prop id="playbacks_sort_desc"/>
+    <prop id="playbacks_where"/>
+    <prop id="playbacks_return_job">playback-see-all</prop>  
+  
+    <file id="prodfn" x="(dir,pro)product-filename.txt"/>
+    <prop id="default-produktname">DasAllheilmittel</prop>
+  
+    <file id="matto-data" x="(dir,pro)matto-data.xrs"/>
+    <prop id="matto-regex" x="matto_.+"/>  
+    
+    <file id="libs-data" x="(dir,pro)libs-data.xrs"/>
+    <prop id="libs-regex" x="libs_.+"/>
+    
+    <file id="finish-data" x="(dir,pro)finish-data.xrs"/>
+    <prop id="finish-regex" x="finish_.+"/>
+  
+    <file id="scnf-data" x="(dir,pro)scnf-data.xrs"/>
+    <prop id="scnf-regex" x="scnf_.+"/>
+    
+    <file id="project-exists" x="(dir,pro)project-exists.txt"/>  
+    <file id="noto-data" x="(dir,pro)noto-data.xrs"/>
+    <prop id="noto-regex" x="noto_.+"/>
+    
+    <file id="jvcp-data" x="(dir,pro)jvcp-data.xrs"/>
+    <prop id="jvcp-regex" x="jvcp_.+"/>
+    
+    <file id="caft-data" x="(dir,pro)caft-data.xrs"/>
+    <prop id="caft-regex" x="caft_.+"/>    
+    <sequence id="cc" file="(dir,pro)sequence-cc.xml" act="open"/>
+    <dir id="ultimo" x="(dir,pro)xmlrobot-jar-collect"/>
+    <dir id="ultimo2" x="(dir,pro)xmlrobot-presentation"/> 
+    <file id="ultimo1" x="(dir,pro)ultimo"/> 
+    <dir id="work" x="(dir,pro)work"/> 
+    <mkdir dir="(dir,work)"/>
+    
+    <dir id="material" x="(dir,pro)material-final-xr-build"/> 
+    
+    <file id="l" x="(dir,work)ws-app-list.xml" />
+    <file id="pro-list" x="(dir,work)project-list.xml" />  
+    <file id="nca-out" x="(dir,work)legals-collect-selector.xml" />
+    
+    <file id="javacp-data" x="(dir,pro)javacp-data.xrs"/>
+    <prop id="javacp-regex" x="javacp_.+"/>
+    <file id="lJava" x="(dir,work)lJava.xml"/>  
+    <file id="jc-hist" x="(dir,pro)java-compile-history.xml"/> 
+    
+    <dir id="appDwnGh" x="(dir,pro)gh-downloads-apps"/> 
+    <dir id="ghsrv" x="(dir,pro)gh-download-services"/>  
+    <file id="java-step-docu" x="(dir,work)java-step-docu.xml"/>
+    <dir id="default-noto-out" x="(dir,pro)collected-notices"/>
+  </when>
+  <prop id="gh-web-1" x="https://github.com"/>
+  
+  <file id="excel-config" x="(dir,app)config.xls"/>
+
+</job>
+
+</jobs>

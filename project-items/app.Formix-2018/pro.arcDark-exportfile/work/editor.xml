@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exportfile-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Export File(prop,exportfiles_offset_label)"/>
+<prop x="sum" id="exportfiles_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,exportfile_key)</need>
+<prop id="label" x="Export File [(prop,exportfile_desc)](prop,exportfiles_offset_label)"/>
+<prop x="sum_only" id="exportfiles_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="exportfile-tk"/>
+</job>

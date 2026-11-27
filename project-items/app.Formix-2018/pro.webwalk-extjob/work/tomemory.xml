@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extjob-read">
+<need>(prop,extjob_key)</need>
+<spirit act="open" missing_strategy="empty" id="extjobs_spirit_tc" xml="(file,extjobs)"/>
+<prop id="extjob_dt_upd">(f,spirit,extjobs_spirit_tc,(prop,extjobs_offset)extjob[@row=(f,xpath_string,(prop,extjob_key))],@dt_upd)</prop>
+<prop id="extjob_dt_add">(f,spirit,extjobs_spirit_tc,(prop,extjobs_offset)extjob[@row=(f,xpath_string,(prop,extjob_key))],@dt_add)</prop>
+<prop id="extjob_jobid">(f,spirit,extjobs_spirit_tc,(prop,extjobs_offset)extjob[@row=(f,xpath_string,(prop,extjob_key))],@jobid)</prop>
+<prop id="extjob_desc">(f,spirit,extjobs_spirit_tc,(prop,extjobs_offset)extjob[@row=(f,xpath_string,(prop,extjob_key))],@desc)</prop>
+<spirit act="close" id="extjobs_spirit_tc"/>
+</job>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="appconfs">(dir,pro)appconfs.xml</file>
+<when test="(f,not,(f,exists_file,(file,appconfs)))">
+<create_file out="(file,appconfs)">&lt;appconfs/&gt;</create_file>
+<i>Created: (file,appconfs)</i>
+</when>
+<prop id="appconfs_offset">./</prop>
+<prop id="appconfs_offset_label"/>
+<prop id="appconfs_offset_new_key">//</prop>
+<prop id="appconfs_sort_attribute"/>
+<prop id="appconfs_sort_number"/>
+<prop id="appconfs_sort_ignore_case"/>
+<prop id="appconfs_sort_desc"/>
+<prop id="appconfs_where"/>
+<prop id="appconfs_return_job">appconf-see-all</prop>
+</prolog>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="block-read">
+<need>(prop,block_key)</need>
+<spirit act="open" missing_strategy="empty" id="blocks_spirit_tc" xml="(file,blocks)"/>
+<prop id="block_dt_upd">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@dt_upd)</prop>
+<prop id="block_dt_add">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@dt_add)</prop>
+<prop id="block_name">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@name)</prop>
+<prop id="block_docu">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@docu)</prop>
+<prop id="block_blockid">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@blockid)</prop>
+<prop id="block_type">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@type)</prop>
+<prop id="block_lokal">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@lokal)</prop>
+<prop id="block_topic">(f,spirit,blocks_spirit_tc,(prop,blocks_offset)block[@row=(f,xpath_string,(prop,block_key))],@topic)</prop>
+<spirit act="close" id="blocks_spirit_tc"/>
+</job>

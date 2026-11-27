@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<job id="Panorama-File-Activity-WEB-FILE-ACTIONS" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_service job="see_file_actions" />
+</job>
+
+<job id="Panorama-File-Activity-WEB-DIR-ACTIONS" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <call_service job="see_dir_actions" />
+</job>
+
+        
+<job id="Panorama-File-Activity-TREAT" role="hidden">
+  <need>(file,with)</need>
+  
+  <prop id="x" x="(f,vfs,(file,with),extension):(f,vfs,(file,with),uri)/"/>
+   <tk id="x" label="proposed new uri" type="textblock" flag="big"/>
+  <call_service job="Goto-Panorama">
+    <dir id="with" x="(prop,x)"/>
+  </call_service>
+  <!-- 
+  <tk label="Treat file as directory">
+    <tk id="before">    -->
+</job>       
+
+
+
+<job id="Panorama-Dir-Activity-UNZIPALL" role="hidden">
+  <need>(dir,with)</need>
+  <prop id="extensions" x="zip jar war"/>
+  <prop id="naming" x="fn"/>
+  <prop id="delete" x="0"/>
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(dir,status)op-unzipall-ic.lsx</file>  
+  </call_service>
+  <tk label="Operation: Unzip all contained zips">
+    <tk type="msg" x="This operation 'Unzip all contained zips' does unzip all zipped files somewhere under this directory&#xA;It works recursive so zips within zips will also be extracted.&#xA;Selected dir: (dir,with)" msg_type="w"/>
+  </tk>
+  <tk label="Unzip all contained zips: (f,name_of_dir,(dir,with))" flag="sum_only print print_with_tips">
+    <tk id="extensions" 
+        x="zip jar war" 
+        label="Zip-Extensions" 
+        tip="List of extension which are in zip-format and should be unzipped"
+        flag="nono"/>
+        
+      <tk id="naming"
+        type="sel" 
+        label="Namerules" 
+        flag="nono" x="fn"
+        tip="Namingrule for new directories. Specifies the algorithm for newly created directories">
+        <sel label="Filename">fn</sel>
+        <sel label="Filename plus lastmod">fnlm</sel>
+      </tk>   
+      
+      <tk id="delete"
+        type="bool" 
+        label="Delete Zips" 
+        flag="no_is_0" 
+        x="0"
+        tip="Deletes the zip-files after extraction. Don't panic(e:s) if this is checked your are going to be asked once more if you want that really!"/>
+        
+      <tk id="duplicate"
+        type="dir" 
+        label="Do it somewhere else" 
+        flaxg="nono" 
+        tip="Creates a copy of the folder in advance and does all the work there. So your folder [ (f,name_of_dir,(dir,with)) ] will be completely untouched and stays as it is."
+        test_first="0"
+        base="(f,dir_of_dir,(dir,with))"/>        
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">extensions|naming|delete</prop>  
+    <file id="joe-in-store">(dir,status)op-unzipall-ic.lsx</file>  
+  </call_service> 
+  
+
+  <ti_hr/>
+  <choose>
+    <when test="(f,has,dir,duplicate)">
+      <tp>Creating a duplicate of (dir,with) ...</tp>
+      <copy uri="(dir,with)" touri="(dir,duplicate)"/>
+
+      <dir id="work" x="(dir,duplicate)"/>
+      <ti type="dir" label="Copied:" x="(dir,work)"/>
+    </when>
+    <otherwise>
+      <dir id="work" x="(dir,with)"/>
+    </otherwise>
+  </choose>
+  
+  <when test="(prop,delete)">
+    <tk label="Sure about deleting?" 
+    	type="accept" 
+    	id="delete-pro-1" 
+    	x="You commanded to delete unzipped files after extraction.&#xA;Thats going to happen in (dir,work)&#xA;Are you sure about that???" 
+    	label_accept="Delete them" 
+    	label_decline="Forget it" 
+    	width="300" height="150">
+    	<q id="delete-pro-2" label="()Yes, I know that the deleted files will be gone forever()"/>
+    </tk>
+    
+    <!-- fail if question not answered properly -->
+    <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+      <ti>Operation terminated.</ti>
+    	<throw>Operation terminated on request.</throw>
+    </when>  
+  </when>
+  
+
+  <file id="spirit" x="(dir,filetemp)unzipall.xml"/>
+  <create_file out="(file,spirit)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<spirit/>
+]]></create_file>
+
+  <spirit id="spirit" act="open" xml="(file,spirit)" flag="nuevo"/>
+  <prop id="count" x="0"/>
+  
+  <file id="scan" x="(dir,filetemp)unzip-all-scan.xml"/>
+  <prop id="did" x="1"/>
+  <loop while="()(prop,did)()" id="while">
+    
+    <ti_hr style="2"/>
+    <ti label="Iteration: (loop,while,#i)"/>
+    <prop id="did" x="0"/>
+    <tp>Iteration #(loop,while,#i) does scan ...</tp>
+    <scan
+      out="(file,scan)"
+      dir="(dir,work)"
+      field="fn lm ext"/>
+      
+    <tp>Iteration #(loop,while,#i) does unzips ...</tp>  
+      
+    <loop xml="(file,scan)" xpath="//file" id="file" missing_strategy="empty">
+       <when test="(f,has_flag,(prop,extensions),(loop,file,@ext))">
+          <!-- check if already done -->
+          <try_catch>
+            <try>
+              <prop id="search" x="(f,spirit,spirit,done[text(e:o)(e:c)=(f,xpath_string,(loop,file,@fn))])"/>
+              <ti test="0">did this alread: (loop,file,@fn)</ti> 
+            </try>
+            <catch>
+               <ti label="Unip"/>
+                 <ti label="Zip-File:" type="file" x="(loop,file,@fn)" flag="flow"/>
+                 
+                 <prop id="pn" x="(f,dir_of_file,(loop,file,@fn))"/>
+                 <choose>
+                    <when test="(f,eq,fn,(prop,naming))">
+                      <prop id="pn" x="(prop,pn)(f,replace,(loop,file),.,-)"/>
+                    </when>
+                    <when test="(f,eq,fnlm,(prop,naming))">
+                      <prop id="pn" x="(prop,pn)(f,replace,(loop,file),.,-)-(loop,file,@lm)"/>
+                    </when>              
+                 </choose>
+                 
+                 <prop id="cn" x="(prop,pn)"/>
+                 <loop id="wn" while="()(f,exists_dir,(prop,cn)(prop,fs))()">
+                  <prop id="cn" x="(prop,pn)_(loop,wn,#i)"/>
+                 </loop>
+                 <dir id="target" x="(prop,cn)"/>
+                 <ti label="Target:" type="dir" x="(dir,target)" flag="flow"/>
+                 <!-- <ti_flush/> -->
+                 <prop id="count" x="(f,add,1,(prop,count))"/>
+                 <tp>Extracting: (prop,count) (f,name_of_file,(loop,file,@fn))</tp>
+      
+                  <mkdir dir="(dir,target)"/>
+                  <unzip file="(loop,file,@fn)" todir="(dir,target)"/>
+       
+                 
+                 <when test="(prop,delete)">
+                  <delete file="(loop,file,@fn)"/>
+                 </when>
+                 <spirit 
+                    id="spirit" 
+                    act="xml_update"
+                    how="append">
+                    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <done>(loop,file,@fn)</done>
+      ]]>
+                    </inline>
+                 </spirit>
+                 <prop id="did" x="1"/>
+            
+            </catch>
+          </try_catch>
+             
+           
+           
+       </when>
+    
+    </loop>
+  
+  </loop>
+  
+  <spirit id="spirit" act="close" flag="save"/>
+  <ti_hr/>
+  <ti label="All Done">
+    <ti label="Number Unextractions:" x="(prop,count)"/>
+    <ti label="Results:" x="(dir,work)" type="dir"/>
+  </ti>
+  <ti test="0" type="file" x="(file,spirit)"/>
+  
+  
+</job>
+
+<job id="Panorama-File-Activity-MONTAG(" role="hidden">
+  <ti>hallo montag</ti>
+  <throw>hallo montag</throw>
+  <ti>hallo dienstag</ti>
+</job>
+
+
+<job id="Panorama-Dir-Activity-SEARCH" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <dir id="temp-pro" x="(dir,filetemp)temp-pro-Search-Replace-(f,time)"/>
+  <file id="para" x="(dir,temp-pro)api1-para.xml"/>
+  <mkdir dir="(dir,temp-pro)"/>
+
+  <create_file out="(file,para)" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <api1 dir="(x,(dir,with))"/>]]></create_file>
+          
+  <call_app
+    job="api1"
+    app="Search"
+    pro_dir="(dir,temp-pro)"
+    pro_id="Search-Replace-Temporary"
+    flag="silent"/>       
+  
+  
+</job>
+
+<job id="Panorama-Dir-Activity-MOVE" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <tk id="preselect" type="bool" x="1" label="Use Preselection for Directory-Selection?" flag="nono" />
+  <when test="(prop,preselect)">
+    <call_service job="go-jil-run"/> 
+    <global act="get" id="jil-result"/>
+    <dir id="move-to">(prop,jil-result)</dir>
+  </when>
+  <tk id="move-to" type="dir" label="Move To"/>
+  <copy uri="(dir,with)" touri="(dir,move-to)"/>
+  <delete dir="(dir,with)"/>
+  <ti label="Moved to">
+    <ti type="dir" label="From">(dir,with)</ti>
+    <ti type="dir" label="To">(dir,move-to)</ti>
+  </ti>
+
+</job>
+
+<job id="Panorama-Dir-Activity-DELETE" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+
+  <tk label="Delete folder (f,name_of_dir,(dir,with)) ?" 
+      type="accept" 
+      id="quest-delete-1" 
+      x="The following directory is going to be deleted: (dir,with)&#xA;All data will disappear.&#xA;"
+      label_accept="Delete"
+      label_decline="Forget it"
+      width="300"
+      height="150">
+    <q id="quest-delete-2" label="()Yes, I know that folder-data will be gone forever()"/>       
+  </tk>
+  <choose>  
+    <when test="(f,not,(f,and,(prop,quest-delete-1),(prop,quest-delete-2)))">
+      <ti label="Operation stopped"/>
+      <throw>Operation stopped</throw>
+    </when>
+    <otherwise>
+ 
+        <delete dir="(dir,with)"/>
+
+      <ti label="Activity Performed">
+        <ti label="Deleted:">(dir,with)</ti>
+      </ti>    
+    </otherwise>
+  </choose>
+
+</job>
+
+<job id="Panorama-Dir-Activity-BROWSER" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <call_service job="open_dir" flag="silent"/>
+
+</job>
+
+
+<job id="Panorama-File-Activity-BROWSER" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <dir id="with">(f,dir_of_file,(file,with))</dir>
+  <call_service job="open_dir" flag="silent"/>
+
+</job>
+
+<job id="Panorama-File-Activity-DIRACTIVITY" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <dir id="with">(f,dir_of_file,(file,with))</dir>
+  <call_service job="Panorama-Dir-Activity" flag="silent"/>
+</job>
+
+<job id="Panorama-File-Activity-OPEN" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_service job="sel_open_file" flag="silent"/>
+</job>
+
+<job id="Panorama-Dir-Activity-TERMINAL" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <call_service job="open-terminal-internal" />
+</job>
+
+<job id="open-terminal-internal" os="mac" role="dev">
+
+    <exe>
+      <arg>open</arg>
+      <arg>-a</arg>
+      <arg>Terminal</arg>
+      <arg>(f,dir,classic,(dir,with))</arg>
+    </exe>      
+
+</job>
+
+<job id="open-terminal-internal" os="linux" role="dev">
+
+    <exe dir="(f,dir,classic,(dir,with))">
+      <arg>gnome-terminal</arg>
+    </exe>
+
+</job>
+
+<job id="open-terminal-internal"  os="win" role="dev">
+
+  <exe dir="(f,dir,classic,(dir,with))">
+    <arg>cmd</arg>
+    <arg>/c</arg>
+    <arg>start</arg>
+  </exe>
+
+</job>
+
+
+
+
+<job id="Panorama-Dir-Activity-ZIP" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <need default="(f,good_filename,(f,name_of_dir,(dir,with)).zip)">(prop,with-filename-zip)</need>
+  <prop id="nof" x="(prop,with-filename-zip)"/>
+  <!-- 
+  <prop id="nof"></prop>
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(dir,status)op-copy-move-ic.lsx</file>  
+  </call_service>
+  -->
+  <prop id="target-format" x="zip"/>
+  <choose>
+    <when test="(f,not,(f,has,dir,target))">
+      <call_service job="go-joe-read"> 
+        <file id="joe-in-store">(dir,status)op-copy-move-ic.lsx</file>  
+      </call_service>
+      <when test="(f,exists,dir,target)">
+        <dir id="saved-target" x="(dir,target)"/>
+      </when>
+      <tk label="Zip Destination">
+      <tk type="sel" flag="nono"
+          id="target-is-source"
+          label="Where to store?">
+          <sel label="Same directory: xxx(prop,fs)(f,upper,(f,name_of_dir,(dir,with))) ">1</sel>
+          <sel label="Somwhere else ... ">0</sel>
+      </tk>
+      <!-- 
+      <tk type="sel" flag="nono"
+          id="target-format"
+          label="Format?"
+          x="zip">
+          <sel>zip</sel>
+          <sel>jar</sel>   </tk>      -->
+           
+      </tk>
+      <choose>
+        <when test="(prop,target-is-source)">
+          <dir id="target" x="(dir,with)"/>
+          <prop id="save-target" x="0"/>
+        </when>
+        <otherwise>
+          <tk id="target" label="Target Directory" type="dir" flag="nono"/>
+          <prop id="save-target" x="1"/>
+        </otherwise>
+      </choose>
+    </when>
+    <otherwise>
+      <tk id="target" label="Target Directory" type="dir" flag="nono"/>
+      <prop id="save-target" x="0"/>
+    </otherwise>
+  </choose>
+
+  <tk id="nof" label="Filename" flag="nono" />
+  
+  <tk label="Target of Zip" flag="sum_only print">
+    <tk id="target" label="Target Directory" type="dir" flag="nono"/>
+    <!-- 
+      <tk type="sel" flag="nono"
+          id="target-format"
+          label="Format?"
+          x="zip">
+          <sel>zip</sel>
+          <sel>jar</sel>
+      </tk>               -->
+    <tk id="nof" label="Filename" flag="nono" />
+  </tk>
+
+  <file id="new">(dir,target)(prop,nof)</file>
+  
+  <choose>
+    <when test="(prop,save-target)">
+      <call_service job="go-joe-write-srv">
+        <prop id="joe-in-regex">target|target-is-source|target-format</prop>  
+        <file id="joe-in-store">(dir,status)op-copy-move-ic.lsx</file>  
+      </call_service>      
+    </when>
+    <otherwise>
+      <when test="(f,exists,dir,saved-target)">
+        <dir id="target" x="(dir,saved-target)"/>
+      </when>
+      <call_service job="go-joe-write-srv">
+        <prop id="joe-in-regex">target|target-is-source|target-format</prop>  
+        <file id="joe-in-store">(dir,status)op-copy-move-ic.lsx</file>  
+      </call_service>     
+    </otherwise>
+  </choose>
+  <ti type="file" x="(dir,status)op-copy-move-ic.lsx" test="0"/>  
+
+
+  <when test="(f,file_exists,(file,new))">
+    <tk label="Overwrite file ?" 
+      type="accept" 
+      id="delete-pro-1" 
+      x="The file exists already: (f,name_of_file,(file,new))&#xA;Do you want to overwrite it?" 
+      label_accept="Overwrite" 
+      label_decline="Forget it" 
+      width="300" height="150">
+      <q id="delete-pro-2" label="()Yes, I know that the existing file will be gone forever()"/>
+    </tk>
+    
+    <!-- fail if question not answered properly -->
+    <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+      <throw>Operation terminated on request.</throw>
+    </when>
+  </when>
+  <choose>
+    <when test="(f,eq_text,zip,(prop,target-format))">
+      <tp>doing zip</tp>
+
+        <zip  destfile="(file,new)"
+              basedir="(dir,with)" />
+
+    </when>
+    <when test="(f,eq_text,jar,(prop,target-format))">
+      <throw>out of service</throw>
+
+    </when>    
+  </choose>
+  <ti label="Zip performed...">
+    <ti type="dir" label="From:" x="(dir,with)" />
+    <ti type="file" label="To:" x="(file,new)" />
+
+  </ti>  
+  
+</job>
+
+
+<job id="Panorama-File-Activity-PDF2TXT" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+  <file id="target">(f,dir_of_file,(file,with))(f,replace,(f,name_of_file,(file,with)),.,-).txt</file>
+  
+  <tk id="target" label="Target Text-File" type="file" flag="nono save"/>
+  <dir id="comp-temp" x="(dir,filetemp)TEMP_COMP_PRO_(f,time)"/>
+  <mkdir dir="(dir,comp-temp)"/>
+  
+
+    <tk type="msg" x="in conver-pdf-to-text 2"/>
+    <taskdef
+      id="pdf_to_text"
+      class="at.nicolas.x.pdfbox.PdfToText"
+      jar="(f,ask,app_dir,Compare)pdf-box-ava.jar" />   
+    <pdf_to_text in="(file,with)" out="(file,target)" format="text"/>
+
+
+    <ti>conversion finished</ti>  
+    
+  <!-- -->
+  <call_app 
+      app="Compare" 
+      pro_id="temp" 
+      pro_dir="(dir,comp-temp)" 
+      job="convert-pdf-to-text">
+    <file id="cptt-pdf" x="(file,with)"/>
+    <file id="cptt-text" x="(file,target)"/>
+  </call_app>
+  
+  <ti label="Conversion performed...">
+    <ti type="file" label="From:" x="(file,with)" />
+    <ti type="file" label="To:" x="(file,target)" />
+  </ti>
+</job>
+
+
+
+<job id="Panorama-File-Activity-DUPLICATE" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+  <prop id="nof">(f,time)-(f,name_of_file,(file,with))</prop>
+
+  <when test="(f,not,(f,has,dir,target))">
+    <dir id="target" x="(f,dir_of_file,(file,with))" />
+  </when>
+ 
+  <ti_flush/>
+  
+  <tk id="target" label="Target Directory" type="dir" flag="nono"/>
+  <tk id="nof" label="Filename" type="text" flag="nono"/>
+  <file id="new">(dir,target)(prop,nof)</file>
+  <tk label="Target of duplications" flag="sum_only">
+    
+    <tk id="new" type="file" label="File to write" flag="nono save"/>
+  </tk>
+
+  <when test="(f,file_exists,(file,new))">
+    <tk type="msg" x="Going to overwrite: (file,new)" msg_type="w"/>
+  </when>
+  
+  <copy file="(file,with)" tofile="(file,new)"/>
+
+  <ti label="Copy performed...">
+    <ti type="file" label="From:" x="(file,with)" />
+    <ti type="file" label="To:" x="(file,new)" />
+  </ti>
+</job>
+
+<job id="Panorama-File-Activity-MOVE" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+  <prop id="nof">(f,name_of_file,(file,with))</prop>
+
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(dir,status)op-copy-move-ic.lsx</file>  
+  </call_service>
+  
+  <when test="(f,not,(f,has,dir,target))">
+    <dir id="target" x="(f,dir_of_file,(file,with))" />
+  </when>
+
+
+  <tk id="target" label="Target Directory" type="dir" flag="nono"/>
+  <tk id="nof" label="Filename" type="text" flag="nono"/>
+  <file id="new">(dir,target)(prop,nof)</file>
+  <tk label="Target of Moving" flag="sum_only">
+    
+    <tk id="new" type="file" label="File to write" flag="nono save" flxag="write"/>
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">target</prop>  
+    <file id="joe-in-store">(dir,status)op-copy-move-ic.lsx</file>  
+  </call_service>
+
+  <when test="(f,file_exists,(file,new))">
+    <tk type="msg" x="Going to overwrite: (file,new)" msg_type="w"/>
+  </when>
+  <prop id="t1" x="(f,file_info,last_mod,(file,with),yyyy-MM-dd-HH-mm-ss-SSS)"/>
+  <copy file="(file,with)" tofile="(file,new)"/>
+  <set_last_mod file="(file,new)" time="(prop,t1)"/>
+  <delete file="(file,with)"/>
+
+  <ti label="Move performed...">
+    <ti type="file" label="From:" x="(file,with)" />
+    <ti type="file" label="To:" x="(file,new)" />
+  </ti>
+
+</job>
+<job id="Panorama-File-Activity-TRASH" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+  <prop id="nof">(f,name_of_file,(file,with))</prop>
+
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(dir,status)op-trash-move-ic.lsx</file>  
+  </call_service>
+  
+  <when test="(f,not,(f,has,dir,target))">
+    <dir id="target" x="(dir,backup)trashed" />
+    <mkdir dir="(dir,target)"/>
+  </when>
+
+  <!-- 
+  <tk id="target" label="Target Directory" type="dir" flag="nono" 
+      tip="The directory to save the trashed file after deleting it"/>
+  -->    
+  <when test="(f,file_exists,(dir,target)(prop,nof))">
+    <prop id="extension" x="(f,substring_after,(prop,nof),.)"/>
+    <choose>
+      <when test="(f,has,prop,extension)">
+        <prop id="extension" x=".(prop,extension)"/>
+      </when>
+      <otherwise>
+        <prop id="extension" x=""/>
+      </otherwise>
+    </choose>
+    <prop id="date" x="(f,file_info,last_mod,(file,with))"/>
+    <prop id="nof" x="(f,name_of_file2,(file,with))-(prop,date)(prop,extension)"/>
+    <loop id="w" while="()(f,exists_file,(dir,target)(prop,nof))()">
+      <prop id="nof" x="(f,name_of_file2,(file,with))-(prop,date)-(loop,w,#i)(prop,extension)"/>
+    </loop>
+    <ti>Supposing (prop,nof)</ti>
+  </when>
+  <!-- <tk id="nof" label="Filename" type="text" flag="nono"/>  -->
+  <file id="new">(dir,target)(prop,nof)</file>
+  <tk label="Target of Trashing" flag="sum_only">
+    
+    <tk id="new" type="file" label="Backup before trashing" flag="nono save" flxag="write"/>
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">target</prop>  
+    <file id="joe-in-store">(dir,status)op-trash-move-ic.lsx</file>  
+  </call_service>
+
+  <when test="(f,file_exists,(file,new))">
+    <tk type="msg" x="Going to overwrite: (file,new)" msg_type="w"/>
+  </when>
+  
+  <prop id="t1" x="(f,file_info,last_mod,(file,with),yyyy-MM-dd-HH-mm-ss-SSS)"/>
+  <copy file="(file,with)" tofile="(file,new)"/>
+  <set_last_mod file="(file,new)" time="(prop,t1)"/>
+  <delete file="(file,with)"/>  
+
+  <ti label="Trashing move performed...">
+    <ti type="file" label="From:" x="(file,with)" />
+    <ti type="file" label="To:" x="(file,new)" />
+  </ti>
+
+</job>
+
+<job id="Panorama-File-Activity-DELETE" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+  <tk label="Delete file (f,name_of_file,(file,with)) ?" 
+      type="accept" 
+      id="quest-delete-1" 
+      x="The file is going to be deleted: (file,with)&#xA;All data will disappear.&#xA;"
+      label_accept="Delete"
+      label_decline="Forget it"
+      width="300"
+      height="150">
+    <q id="quest-delete-2" label="()Yes, I know that the file will be gone forever()"/>       
+  </tk>
+
+  <choose>  
+    <when test="(f,not,(f,and,(prop,quest-delete-1),(prop,quest-delete-2)))">
+       <ti type="file" label="Delete stopped:">(file,with)</ti>
+    </when>
+    <otherwise>
+          <delete file="(file,with)"/>
+          <ti type="file" label="Deleted File:">(file,with)</ti>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="Panorama-File-Activity-RENAME" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <prop id="nof">(f,name_of_file,(file,with))</prop>
+
+  <tk id="nof" label="New Name" regex=".+" flag="nono" />
+
+  <file id="new">(f,dir_of_file,(file,with))(prop,nof)</file>
+
+  <prop id="t1" x="(f,file_info,last_mod,(file,with),yyyy-MM-dd-HH-mm-ss-SSS)"/>
+  <copy file="(file,with)" tofile="(file,new)"/>
+  <set_last_mod file="(file,new)" time="(prop,t1)"/>
+  <delete file="(file,with)"/>  
+
+  <ti label="Rename performed...">
+    <ti type="file" id="From:" x="(file,with)" />
+    <ti type="file" id="To:" x="(file,new)" />
+  </ti>
+
+</job>
+
+
+
+ 
+</jobs>

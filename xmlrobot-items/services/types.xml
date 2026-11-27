@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><types>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<group title="EchnatonCcc Jobs----------------------------------" sort="0"/>
+<type group="EchnatonCcc Jobs----------------------------------" name="jobs.xml" end="jobs.xml"/>
+<group title="EchnatonCcc Steps" sort="10"/>
+<type group="EchnatonCcc Steps" name="steps.xml" end="steps.xml"/>
+<group title="Xsl" sort="15"/>
+<type group="Xsl" name=".xsl" end=".xsl"/>
+<group title="Java" sort="20"/>
+<type group="Java" name=".jar" end=".jar"/>
+<type group="Java" name=".java" end=".java"/>
+<type group="Java" name=".war" end=".war"/>
+<type group="Java" name=".class" end=".class"/>
+<type group="Java" name=".mf" end=".mf"/>
+<group title="Windows-Executable" sort="30"/>
+<type group="Windows-Executable" name=".exe" end=".exe"/>
+<type group="Windows-Executable" name=".bat" end=".bat"/>
+<group title="Xml" sort="40"/>
+<type group="Xml" name=".xml" end=".xml"/>
+<type group="Xml" name=".dtd" end=".dtd"/>
+<group title="Html Css Php Js" sort="50"/>
+<type group="Html Css Php Js" name=".html" end=".html"/>
+<type group="Html Css Php Js" name=".htm" end=".htm"/>
+<type group="Html Css Php Js" name=".css" end=".css"/>
+<type group="Html Css Php Js" name=".php" end=".php"/>
+<type group="Html Css Php Js" name=".js" end=".js"/>
+<group title="Excel" sort="60"/>
+<type group="Excel" name=".xls" end=".xls"/>
+<group title="Text, Pdf" sort="66"/>
+<type group="Text, Pdf" name=".txt" end=".txt"/>
+<type group="Text, Pdf" name=".pdf" end=".pdf"/>
+<type group="Text, Pdf" name=".rtf" end=".rtf"/>
+<group title="Layoutet Documents" sort="70"/>
+<type group="Layoutet Documents" name=".doc" end=".doc"/>
+<type group="Layoutet Documents" name=".docx" end=".docx"/>
+<type group="Layoutet Documents" name=".odt" end=".odt"/>
+<type group="Layoutet Documents" name=".ai" end=".ai"/>
+<type group="Layoutet Documents" name=".psd" end=".psd"/>
+<type group="Layoutet Documents" name=".dia" end=".dia"/>
+<type group="Layoutet Documents" name=".ppt" end=".ppt"/>
+<group title="Movies Media" sort="90"/>
+<type group="Movies Media" name=".mov" end=".mov"/>
+<type group="Movies Media" name=".avi" end=".avi"/>
+<type group="Movies Media" name=".flv" end=".flv"/>
+<group title="Media Pictures" sort="110"/>
+<type group="Media Pictures" name=".mpg" end=".mpg"/>
+<type group="Media Pictures" name=".jpg" end=".jpg"/>
+<type group="Media Pictures" name=".swf" end=".swf"/>
+<type group="Media Pictures" name=".png" end=".png"/>
+<type group="Media Pictures" name=".bmp" end=".bmp"/>
+<type group="Media Pictures" name=".gif" end=".gif"/>
+<group title="Archives" sort="300"/>
+<type group="Archives" name=".zip" end=".zip"/>
+<type group="Archives" name=".t3x" end=".t3x"/>
+<type group="Archives" name=".iso" end=".iso"/>
+<group title="Links" sort="400"/>
+<type group="Links" name=".lnk" end=".lnk"/>
+<type group="Links" name=".url" end=".url"/>
+</types>

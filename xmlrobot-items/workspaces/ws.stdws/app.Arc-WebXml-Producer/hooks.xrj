@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<job id="hook_appconf_details_end" role="hidden">
+    <dump_ti_all test="0"/>
+    <ti_hr/>
+    
+  <prop id="extis_wish">appconf[@row=(prop,appconf_key)]</prop> 
+  <try_catch>
+    <try>
+      <prop id="exists_wish_key">(f,xpath,(file,appconfs),appconf[@row=(prop,appconf_key)]/exti,@key)</prop> 
+      <ti test="0">have exti with key (prop,exists_wish_key)</ti>
+    </try>
+    <catch>
+      <ti>no exti</ti>
+      <xml_update
+        what="(file,appconfs)"
+        how="insert_in"
+        where="appconf[@row=(prop,appconf_key)]">
+        <inline attribute="with">&lt;exti key="(prop,appconf_key)" row="(prop,appconf_key)"/&gt;</inline>
+      </xml_update>
+      <prop id="exists_wish_key">(prop,appconf_key)</prop> 
+    </catch>
+  </try_catch>
+  
+  
+  <prop id="exti_key">(prop,exists_wish_key)</prop>  
+  <prop id="extis_offset">appconf[@row=(prop,appconf_key)]/</prop>
+  <prop id="extis_offset_label">(prop,appconf_app)</prop>
+  <prop id="extis_offset_new_key">//</prop>
+  <prop id="extis_sort_attribute"/>
+  <prop id="extis_sort_number"/>
+  <prop id="extis_sort_ignore_case"/>
+  <prop id="extis_sort_desc"/>
+  <prop id="extis_where"/>
+  <prop id="extis_return_job">appconf-see</prop>
+  
+  <try_catch>
+  <try>
+  <ti label="Extended Configuration ...."/>
+  <call_job job="exti-see"/>
+  </try>
+  <catch>
+    <dump_ti_all/>
+  </catch>
+  </try_catch>
+  
+  
+  <!-- <call_job job="exti-see-all" />  -->
+  
+  <ti_hr/>
+  <ti type="call_job" job="List of webapps" explain="See all webapps"/>
+  
+</job>     
+
+<!--
+        
+    <file id="recognitions">(dir,services)computers.xml</file>
+    <prop id="recognitions_offset">computer[@row=(prop,computer_key)]/</prop>
+    <prop id="recognitions_offset_label"> [(prop,computer_computer)]</prop>
+    <prop id="recognitions_offset_new_key">//</prop>
+    <prop id="recognitions_sort_attribute" />
+    <prop id="recognitions_sort_number" />
+    <prop id="recognitions_sort_ignore_case" />
+    <prop id="recognitions_sort_desc" />
+    <prop id="recognitions_where" />
+    <prop id="recognitions_return_job">XXX</prop>
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

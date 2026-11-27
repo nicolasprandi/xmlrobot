@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="product-read">
+    <need>(prop,product_key)</need>
+    <spirit act="open" missing_strategy="empty" id="products_spirit_tc" xml="(file,products)"/>
+    <prop id="product_dt_upd">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@dt_upd)</prop>
+    <prop id="product_dt_add">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@dt_add)</prop>
+    <prop id="product_name">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@name)</prop>
+    <prop id="product_productname">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@productname)</prop>
+    <prop id="product_doku">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@doku)</prop>
+    <prop id="product_proddoku">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@proddoku)</prop>
+    <prop id="product_apps">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@apps)</prop>
+    <prop id="product_apps_open">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@apps_open)</prop>
+    <prop id="product_arcadia_pro">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@arcadia_pro)</prop>
+    <prop id="product_prodconf">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@prodconf)</prop>
+    <prop id="product_dcl_services">(f,spirit,products_spirit_tc,(prop,products_offset)product[@row=(f,xpath_string,(prop,product_key))],@dcl_services)</prop>
+    <spirit act="close" id="products_spirit_tc"/>
+</job>

@@ -1,0 +1,8 @@
+<?xml version="1.0" ?><steps>
+<p id="myclass">Recette</p>
+<p id="myclassPl">Recettes</p>
+<p id="myclassAkt">Recette actuelle</p>
+<p id="myclassZutat">Ingredient</p>
+<p id="myclassZutatPl">Ingredients</p>
+<p id="myclassZutatVerw">Ingredients utilises</p>
+</steps>

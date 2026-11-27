@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extjob-see">
+<need>(prop,extjob_key)</need>
+<need default="">(prop,extjobs_sort_attribute)</need>
+<need default="">(prop,extjobs_sort_number)</need>
+<need default="">(prop,extjobs_sort_ignore_case)</need>
+<need default="">(prop,extjobs_sort_desc)</need>
+<need default="">(prop,extjobs_where)</need>
+<need default="">(prop,extjobs_offset_label)</need>
+<need default="">(prop,extjobs_offset)</need>
+<need default="">(prop,extjobs_return_job)</need>
+<need default="//">(prop,extjobs_offset_new_key)</need>
+<prop x="print print_only" id="extjobs_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,extjobs_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="extjob-see">
+<prop id="extjob_key">(prop,extjob_key)</prop>
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="extjob-see-all">
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<call_job job="extjob-read"/>
+<prop id="extjob_default_label_class" x="Job"/>
+<prop id="extjob_default_label_name" x="(prop,extjob_jobid)(f,when,(f,has,(prop,extjobs_offset_label)), - (prop,extjobs_offset_label),)"/>
+<call_job job="extjob-tk"/>
+<ti_space height="3px"/>
+<ti type="menu" info="an-edit-button-details" first_cell="2">
+<ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailExtjob" explain="Edit" job="extjob-edit">
+<prop id="extjob_key">(prop,extjob_key)</prop>
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskExtjob" explain="" job="extjob-see-more">
+<prop id="extjob_key">(prop,extjob_key)</prop>
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,extjobs_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="extjob-see">
+<prop id="extjob_key">(prop,extjob_key)</prop>
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="extjob-see-all">
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

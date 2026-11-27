@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="user-read">
+<need>(prop,user_key)</need>
+<spirit act="open" missing_strategy="empty" id="users_spirit_tc" xml="(file,users)"/>
+<prop id="user_dt_upd">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@dt_upd)</prop>
+<prop id="user_dt_add">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@dt_add)</prop>
+<prop id="user_userid">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@userid)</prop>
+<prop id="user_db">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@db)</prop>
+<prop id="user_apps">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@apps)</prop>
+<prop id="user_role">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@role)</prop>
+<prop id="user_db_size">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@db_size)</prop>
+<prop id="user_right_privsRoles">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@right_privsRoles)</prop>
+<prop id="user_right_appPrivsRoles">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@right_appPrivsRoles)</prop>
+<prop id="user_right_privParasRoles">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@right_privParasRoles)</prop>
+<prop id="user_right_privs">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@right_privs)</prop>
+<prop id="user_right_appPrivs">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@right_appPrivs)</prop>
+<prop id="user_right_privParas">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@right_privParas)</prop>
+<prop id="user_name">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@name)</prop>
+<prop id="user_email">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@email)</prop>
+<prop id="user_phone">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@phone)</prop>
+<prop id="user_address">(f,spirit,users_spirit_tc,(prop,users_offset)user[@row=(f,xpath_string,(prop,user_key))],@address)</prop>
+<spirit act="close" id="users_spirit_tc"/>
+</job>

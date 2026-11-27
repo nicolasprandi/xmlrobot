@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="group-edit">
+<need>(prop,group_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="group-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="group-editor"/>
+<call_job job="group-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- Group '(prop,group_titel)'"/>
+</ti>
+<call_job job="group-see-all"/>
+</job>

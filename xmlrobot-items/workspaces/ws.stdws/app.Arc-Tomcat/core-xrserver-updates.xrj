@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+
+<job id="core-franz">
+
+  <call_job job="tk_way_read"/>
+  <dump_ti_all test="0" label="core-franz"/>
+  
+  <interpreter watch="1" />
+  <dir id="class-target" x="(dir,loc)shared/classes/"/>
+  <dir id="lib-target" x="(dir,loc)shared/lib/"/>
+  
+  <when test="(f,has,dir,way_xrbase_class_dir)">
+      <tp>doing xrbase_class_dir  (dir,way_xrbase_class_dir)</tp>
+      <ant level="info">
+        <copy todir="(f,dir,classic,(dir,class-target))" overwrite="true" preservelastmodified="true">
+          <fileset dir="(f,dir,classic,(dir,way_xrbase_class_dir))" includes="**/*.class"/>
+        </copy>
+      </ant>
+      <ti type="dir" label="updated" x="(dir,class-target)"/>
+  </when>
+  
+  <when test="(f,has,dir,way_webbase_class_dir)">
+      <tp>doing webbase_class_dir  (dir,way_webbase_class_dir)</tp>
+      <ant level="info">
+        <copy todir="(f,dir,classic,(dir,class-target))" overwrite="true" preservelastmodified="true">
+          <fileset dir="(f,dir,classic,(dir,way_webbase_class_dir))" includes="**/*.class"/>
+        </copy>
+      </ant>
+      <ti type="dir" label="updated" x="(dir,class-target)"/>
+  </when>  
+  
+  <when test="(f,has,dir,way_lib_dir)">
+      <tp>doing lib_dir  (dir,way_lib_dir)</tp>
+      <ant level="info">
+        <copy todir="(f,dir,classic,(dir,lib-target))" overwrite="true" preservelastmodified="true">
+          <fileset dir="(f,dir,classic,(dir,way_lib_dir))" includes="**/*.jar"/>
+        </copy>
+      </ant>
+      <ti type="dir" label="updated" x="(dir,lib-target)"/>
+  </when>   
+  
+  <when test="(f,has,dir,way_webapplib_dir)">
+      <tp>doing webapplib_dir  (dir,way_webapplib_dir)</tp>
+      <ant level="info">
+        <copy todir="(f,dir,classic,(dir,lib-target))" overwrite="true" preservelastmodified="true">
+          <fileset dir="(f,dir,classic,(dir,way_webapplib_dir))" includes="**/*.jar"/>
+        </copy>
+      </ant>
+      <ti type="dir" label="updated" x="(dir,lib-target)"/>
+  </when>    
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

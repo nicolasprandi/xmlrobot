@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zirami-read">
+<need>(prop,zirami_key)</need>
+<spirit act="open" missing_strategy="empty" id="ziramis_spirit_tc" xml="(file,ziramis)"/>
+<prop id="zirami_dt_upd">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@dt_upd)</prop>
+<prop id="zirami_dt_add">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@dt_add)</prop>
+<prop id="zirami_bez">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@bez)</prop>
+<prop id="zirami_character">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@character)</prop>
+<prop id="zirami_beschreibung">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@beschreibung)</prop>
+<prop id="zirami_portionen">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@portionen)</prop>
+<file flag="cool" id="zirami_bild_read">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@bild_read)</file>
+<unescape type="file" id="zirami_bild_read"/>
+<translate type="file" id="zirami_bild_read"/>
+<file flag="cool" id="zirami_bild_write">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@bild_write)</file>
+<unescape type="file" id="zirami_bild_write"/>
+<translate type="file" id="zirami_bild_write"/>
+<dir flag="cool" id="zirami_folders_read">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@folders_read)</dir>
+<unescape type="dir" id="zirami_folders_read"/>
+<translate type="dir" id="zirami_folders_read"/>
+<dir flag="cool" id="zirami_folders_write">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@folders_write)</dir>
+<unescape type="dir" id="zirami_folders_write"/>
+<translate type="dir" id="zirami_folders_write"/>
+<prop id="zirami_logo_max_x">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@logo_max_x)</prop>
+<prop id="zirami_logo_max_y">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@logo_max_y)</prop>
+<prop id="zirami_logo_max_x_main">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@logo_max_x_main)</prop>
+<prop id="zirami_logo_max_y_main">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@logo_max_y_main)</prop>
+<prop id="zirami_rezeptstatus">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@rezeptstatus)</prop>
+<prop id="zirami_bewertung">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@bewertung)</prop>
+<prop id="zirami_detail">(f,spirit,ziramis_spirit_tc,(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))],@detail)</prop>
+<spirit act="close" id="ziramis_spirit_tc"/>
+</job>

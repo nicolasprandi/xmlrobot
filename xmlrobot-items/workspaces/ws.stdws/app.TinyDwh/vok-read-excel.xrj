@@ -1,0 +1,517 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Import Excel-Vokabular" role="hidden">
+  <need default="0">(prop,import-excel-and-links)</need>
+  <call_job job="tk_para_read"/>
+  <call_job job="tr_ivo"/>
+  
+  <file id="tmp-vok" x="(dir,pro)tmp-vok.xml"/>
+  
+  <call_job job="read-excel">
+    <file id="re-in" x="(file,para_file_vok)"/>
+    <file id="re-out" x="(file,tmp-vok)"/>
+  </call_job>
+
+  <file id="uq-file" x="(file,tmp-vok)"/>
+      
+  <!-- das sind nur pruefungen auf eindeutigkeit -->
+  <!-- ots/ot -->
+  <call_job job="xml-uq">      
+    <prop id="uq-xpath" x="ots/ot"/>
+    <prop id="uq-attr" x="@tech_name"/>       
+  </call_job>
+  
+  <call_job job="xml-uq">
+    <prop id="uq-xpath" x="ots/ot"/>
+    <prop id="uq-attr" x="@name"/>       
+  </call_job>   
+  
+  <call_job job="xml-uq-num">
+    <prop id="uq-xpath" x="ots/ot"/>
+    <prop id="uq-attr" x="@obj_typ"/>       
+  </call_job>  
+  
+  <!-- ats/at -->
+  <call_job job="xml-uq">      
+    <prop id="uq-xpath" x="ats/at"/>
+    <prop id="uq-attr" x="@tech_name"/>       
+  </call_job>
+  <!-- 
+  <call_job job="xml-uq">
+    <prop id="uq-xpath" x="ats/at"/>
+    <prop id="uq-attr" x="@name"/>       
+  </call_job>  
+  -->     
+  <call_job job="xml-uq-num">
+    <prop id="uq-xpath" x="ats/at"/>
+    <prop id="uq-attr" x="@attr_typ"/>       
+  </call_job>  
+  
+   <!-- bts/bt -->
+  <call_job job="xml-uq">      
+    <prop id="uq-xpath" x="bts/bt"/>
+    <prop id="uq-attr" x="@tech_name"/>       
+  </call_job>
+  
+  <call_job job="xml-uq">
+    <prop id="uq-xpath" x="bts/bt"/>
+    <prop id="uq-attr" x="@name"/>       
+  </call_job>  
+       
+  <call_job job="xml-uq-num">
+    <prop id="uq-xpath" x="bts/bt"/>
+    <prop id="uq-attr" x="@bez_typ"/>       
+  </call_job> 
+    
+  <!-- fts/ft -->
+  <call_job job="xml-uq">      
+    <prop id="uq-xpath" x="fts/ft"/>
+    <prop id="uq-attr" x="@name"/>       
+  </call_job>
+  
+  <call_job job="xml-uq-num">
+    <prop id="uq-xpath" x="fts/ft"/>
+    <prop id="uq-attr" x="@final_typ"/>       
+  </call_job>  
+  
+  <call_job job="tr_vokabulary" />
+        
+  <copy file="(file,tmp-vok)" tofile="(file,vok)"/> 
+  <ti label="(prop,_vok_seems_ok_l)">
+    <ti type="file" label="(prop,_vok_new_xml_vok_l):" x="(file,vok)"/>  
+   </ti>        
+   
+   <call_job job="build-event">
+    <prop id="build-event-type">new_vok</prop>
+   </call_job>
+   
+   <when test="(prop,import-excel-and-links)">     
+    <call_job job="vok-aktionen">
+      <prop id="vok-aktionen-typ">3</prop>      
+    </call_job>          
+   </when>
+
+  <call_job job="return-to-sender"/>
+</job>
+
+<job id="xml-uq" role="hidden">
+  <need>(file,uq-file) (prop,uq-xpath) (prop,uq-attr)</need>
+
+    <prop id="uq-last" x=""/>
+    <loop id="l" xml="(file,uq-file)" xpath="(prop,uq-xpath)" sort="(prop,uq-attr)"
+          missing_strategy="empty">
+      <prop id="uq-curr" x="(loop,l,(prop,uq-attr))"/>
+      <throw test="(f,and,(f,has,prop,uq-curr),(f,eq_text,(prop,uq-curr),(prop,uq-last)))">(prop,_ivo_uq) (prop,uq-xpath) (prop,uq-attr)=(prop,uq-curr)</throw>
+      <prop id="uq-last" x="(prop,uq-curr)"/>    
+    </loop>
+</job>
+
+<job id="xml-uq-num" role="hidden">
+  <need>(file,uq-file) (prop,uq-xpath) (prop,uq-attr)</need>
+
+    <prop id="uq-last" x="-111111111111111111111111111111111111111"/>
+    <loop id="l" xml="(file,uq-file)" xpath="(prop,uq-xpath)" sort="(prop,uq-attr)" number="(prop,uq-attr)"
+          missing_strategy="empty">
+      <prop id="uq-curr" x="(loop,l,(prop,uq-attr))"/>
+      <prop id="uq-curr" x="-111111111111111111111111111111111111111" test="(f,not,(f,has,prop,uq-curr))"/>
+      <throw test="(f,and,(f,gt_num,(f,has,prop,uq-curr),-111111111111111111111111111111111111111),(f,eq_num,(prop,uq-curr),(prop,uq-last)))">(prop,_ivo_uqn) (prop,uq-xpath) (prop,uq-attr)=(prop,uq-curr) (prop,_ivo_uqnn) '(loop,l,@tech_name)'</throw>
+      <prop id="uq-last" x="(prop,uq-curr)"/>    
+    </loop>
+</job>
+
+<job id="read-excel" role="hidden">
+  <need>(file,re-in) (file,re-out)</need>
+  
+  <create_file file="(file,re-out)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><root/>]]></create_file>
+
+  <!-- obj -->
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="obj-typ"
+    root_name="ots"
+    row_name="ot"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>
+
+  <!-- attr -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="attr-typ"
+    root_name="ats"
+    row_name="at"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>    
+
+  <!-- bez -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="bez-typ"
+    root_name="bts"
+    row_name="bt"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>           
+  
+  <!-- loesche alle leeren dinger -->    
+  <xml_update
+    what="(file,re-out)"
+    how="remove"
+    where="node(e:o)(e:c)/node(e:o)(e:c)[string-length(e:o)@tech_name(e:c)=0]"
+    with="(dir,filetemp)sheet.xml"
+    flag="any"/>      
+    
+  <!-- attr-usg -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="attr-usg"
+    root_name="aus"
+    row_name="au"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/> 
+   
+  <!-- spririt open: vok --> 
+  <spirit id="vok"
+          act="open"
+          xml="(file,re-out)"/>  
+  
+  <ti label="Removing Off&apos;s" /> 
+         
+  <!-- alle offs loeschen -->
+  <spirit 
+    id="vok"
+    act="xml_update"
+    how="remove" 
+    where="ots/ot[@off='1']"
+    flag="any"
+    count_prop_id="removed_off_ot"
+    />
+    
+  <when test="(f,gt_num,(prop,removed_off_ot),0)">
+    <ti label="Object Offs:">(prop,removed_off_ot)</ti>
+  </when>
+  
+  <spirit 
+    id="vok"
+    act="xml_update"
+    how="remove" 
+    where="ats/at[@off='1']"
+    flag="any"
+    count_prop_id="removed_off_at"
+    />
+    
+  <when test="(f,gt_num,(prop,removed_off_at),0)">
+    <ti label="Off&apos;s-Attributes:">(prop,removed_off_at)</ti>
+  </when>  
+
+  <spirit 
+    id="vok"
+    act="xml_update"
+    how="remove" 
+    where="aus/au[@off='1']"
+    flag="any"
+    count_prop_id="removed_off_au"
+    />
+    
+  <when test="(f,gt_num,(prop,removed_off_au),0)">
+    <ti label="Off&apos;s-Attr Usages:">(prop,removed_off_au)</ti>
+  </when>  
+    
+  <spirit 
+    id="vok"
+    act="xml_update"
+    how="remove" 
+    where="bts/bt[@off='1']"
+    flag="any"
+    count_prop_id="removed_off_bt"
+    />
+    
+  <when test="(f,gt_num,(prop,removed_off_bt),0)">
+    <ti label="Off&apos;s-Beziehungen:">(prop,removed_off_bt)</ti>
+  </when>    
+  
+  <when test="(f,and,(f,eq_num,(prop,removed_off_ot),0),(f,eq_num,(prop,removed_off_at),0),(f,eq_num,(prop,removed_off_au),0),(f,eq_num,(prop,removed_off_bt),0))">
+    <ti>No off-flags (e:o)off=1(e:c) found at all.</ti>
+  </when>    
+  <remove type="prop" id="removed_off_ot"/>
+  <remove type="prop" id="removed_off_at"/>
+  <remove type="prop" id="removed_off_au"/>
+  <remove type="prop" id="removed_off_bt"/>
+     
+            
+  <!-- open loop for spirit: au -->
+  <loop_xml id="au" 
+            act="open" 
+            spirit="vok"
+            xpath="aus/au"/>  
+   
+  <!-- core while loop -->          
+  <loop id="w" while="()(f,loop_xml,au,has_next?)()">
+    <loop_xml act="next" id="au" />
+    
+    <choose>
+    
+      <when test="(f,loop_xml,au,exists?,@attr)">
+        <!-- do the lookup -->
+        <prop   id="attr_typ" 
+                x="(f,spirit,vok,ats/at[@tech_name=(f,xpath_string,(f,loop_xml,au,@attr))],@attr_typ)"/>
+        <!-- set the value -->
+        <spirit id="vok"  
+                act="xml_update" 
+                where_is_loop_xml="au" 
+                how="set_attribute" 
+                attribute="attr_typ" 
+                value="(prop,attr_typ)" />     
+      </when>    
+        
+      <otherwise>
+      
+        <prop id="my-problem-is-1">(prop,_ivo_prob_seite) 'attr-usg'</prop>        
+        <prop id="my-problem-is-2">(prop,_ivo_auf_zeile) '(f,add,1,(f,loop_xml,au,#i))' (prop,_ivo_p_keinattr)</prop>
+        <ti label="(prop,my-problem-is-1)"/>
+        <ti>(prop,my-problem-is-2)</ti>
+        <throw>(prop,my-problem-is-1): (prop,my-problem-is-2)</throw> 
+                  
+      </otherwise>
+    </choose>
+        
+  
+    <choose>
+    
+      <when test="(f,loop_xml,au,exists?,@obj)">
+        <!-- do the lookup -->
+        <prop   id="obj_typ" 
+                x="(f,spirit,vok,ots/ot[@tech_name=(f,xpath_string,(f,loop_xml,au,@obj))],@obj_typ)"/>
+        <!-- set the value -->
+        <spirit id="vok"  
+                act="xml_update" 
+                where_is_loop_xml="au" 
+                how="set_attribute" 
+                attribute="obj_typ" 
+                value="(prop,obj_typ)" />     
+      </when>   
+        
+      <otherwise>
+      
+        <prop id="my-problem-is-1">(prop,_ivo_prob_seite) 'attr-usg'+</prop>        
+        <prop id="my-problem-is-2">(prop,_ivo_auf_zeile) '(f,add,1,(f,loop_xml,au,#i))' (prop,_ivo_p_keinobj)</prop>
+        <ti label="(prop,my-problem-is-1)"/>
+        <ti>(prop,my-problem-is-2)</ti>
+        <throw>(prop,my-problem-is-1): (prop,my-problem-is-2)</throw> 
+                  
+      </otherwise>
+    </choose>
+    
+    <prop id="ident-to-set">0</prop>
+    <choose>      
+      <when test="(f,loop_xml,au,exists?,@ident)">
+        <when test="(f,not,(f,or,(f,eq_num,0,(f,loop_xml,au,@ident)),(f,eq_num,1,(f,loop_xml,au,@ident))))">
+          <prop id="my-problem-is-1">(prop,_ivo_prob_seite) 'attr-usg'</prop>        
+          <prop id="my-problem-is-2">(prop,_ivo_auf_zeile) '(f,add,1,(f,loop_xml,au,#i))' (prop,_ivo_p_ident) (f,loop_xml,au,@ident)</prop>
+          <ti label="(prop,my-problem-is-1)"/>
+          <ti>(prop,my-problem-is-2)</ti>
+          <throw>(prop,my-problem-is-1): (prop,my-problem-is-2)</throw> 
+                
+        </when>   
+        <prop id="ident-to-set">(f,loop_xml,au,@ident)</prop>
+      </when>   
+        
+      <otherwise>
+          <prop id="ident-to-set">0</prop>                  
+      </otherwise>
+    </choose>    
+    
+      <spirit id="vok"  
+              act="xml_update" 
+              where_is_loop_xml="au" 
+              how="set_attribute" 
+              attribute="ident" 
+              value="(f,add,0,(prop,ident-to-set))" />     
+    
+    
+  </loop> <!-- close the while -->
+  
+  <!-- close loop for spirit -->
+  <loop_xml id="au" act="close"/>
+  
+  <!-- open loop for spirit: ats/at -->
+  <loop_xml id="at" 
+            act="open" 
+            spirit="vok"
+            xpath="ats/at"/>  
+   
+  <!-- core while loop -->          
+  <loop id="w" while="()(f,loop_xml,at,has_next?)()">
+    <loop_xml act="next" id="at" />
+    
+    <!-- do a lookup and set the value to the spirit if exists -->
+    <choose>
+      <when test="(f,loop_xml,at,exists?,@vartype)">
+        <!-- do the lookup -->
+        <choose>
+          <when test="(f,eq_text,varchar,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="1"/>          
+          </when>
+          <when test="(f,eq_text,char,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="2"/>          
+          </when>
+          <when test="(f,eq_text,integer,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="3"/>          
+          </when>
+          <when test="(f,eq_text,number,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="4"/>          
+          </when>                              
+          <when test="(f,eq_text,bool,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="5"/>          
+          </when>
+          <when test="(f,eq_text,date,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="6"/>          
+          </when>
+          <when test="(f,eq_text,datetime,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="7"/>          
+          </when>
+          <when test="(f,eq_text,time,(f,loop_xml,at,@vartype))">
+            <prop   id="final_typ" x="8"/>          
+          </when>
+          <otherwise>
+            <prop id="my-problem-is-1">(prop,_ivo_prob_seite) 'attr-typ'</prop>        
+            <prop id="my-problem-is-2">(prop,_ivo_p_tp1) '(f,loop_xml,at,@attr_typ)' (prop,_ivo_p_tp2) '(f,loop_xml,at,@tech_name)' (prop,_ivo_p_tp3) (f,loop_xml,at,@vartype)</prop>
+            <ti label="(prop,my-problem-is-1)"/>
+            <ti>(prop,my-problem-is-2)</ti>
+            <throw>(prop,my-problem-is-1): (prop,my-problem-is-2)</throw>         
+          </otherwise>                                                
+        </choose>
+
+        <!-- set the value -->
+        <spirit id="vok"  
+                act="xml_update" 
+                where_is_loop_xml="at" 
+                how="set_attribute" 
+                attribute="final_typ" 
+                value="(prop,final_typ)" />    
+                
+        <!-- setzen des alten final --> 
+        <spirit id="vok"  
+                act="xml_update" 
+                where_is_loop_xml="at" 
+                how="set_attribute" 
+                attribute="final" 
+                value="(f,loop_xml,at,@vartype)" />      
+        
+        <when test="(f,loop_xml,at,exists?,@len)">
+          <when test="(f,not,(f,or,(f,eq_text,varchar,(f,loop_xml,at,@vartype)),(f,eq_text,char,(f,loop_xml,at,@vartype))))">
+          
+        <prop id="my-problem-is-1">(prop,_ivo_prob_seite) 'attr-typ'</prop>        
+        <prop id="my-problem-is-2">(prop,_ivo_p_tp1) '(f,loop_xml,at,@attr_typ)' (prop,_ivo_p_tp2) '(f,loop_xml,at,@tech_name)' (prop,_ivo_p_tpl)</prop>
+        <ti label="(prop,my-problem-is-1)"/>
+        <ti>(prop,my-problem-is-2)</ti>
+        <throw>(prop,my-problem-is-1): (prop,my-problem-is-2)</throw>          
+          </when>
+          <spirit id="vok"  
+                  act="xml_update" 
+                  where_is_loop_xml="at" 
+                  how="set_attribute" 
+                  attribute="fp1" 
+                  value="(f,loop_xml,at,@len)" />
+                        
+        </when>
+                     
+      </when>
+      <otherwise>
+        <!-- keine defaultwerte mehr -->
+        <prop id="my-problem-is-1">(prop,_ivo_prob_seite) 'attr-typ'</prop>        
+        <prop id="my-problem-is-2">(prop,_ivo_p_tp1) '(f,loop_xml,at,@attr_typ)' (prop,_ivo_p_tp2) '(f,loop_xml,at,@tech_name)' (prop,_ivo_p_kv)</prop>
+        <ti label="(prop,my-problem-is-1)"/>
+        <ti>(prop,my-problem-is-2)</ti>
+        <throw>(prop,my-problem-is-1): (prop,my-problem-is-2)</throw>
+      </otherwise>
+    </choose>
+    
+    <!-- check the realname -->
+    <when test="(f,not,(f,loop_xml,at,exists?,@name))">
+      <!-- set the value -->
+      <spirit id="vok"  
+              act="xml_update" 
+              where_is_loop_xml="at" 
+              how="set_attribute" 
+              attribute="name" 
+              value="(f,loop_xml,at,@tech_name)" />     
+    </when>    
+ 
+  </loop> <!-- close the while -->
+  
+  <!-- close loop for spirit -->
+  <loop_xml id="at" act="close"/>  
+  
+  <!-- open loop for spirit: ots/ot -->
+  <loop_xml id="ot" 
+            act="open" 
+            spirit="vok"
+            xpath="ots/ot"/>  
+   
+  <!-- core while loop -->        
+  <prop id="reserved-objects-names">integration_running import_running box obj attr wert mehr bez mig_obj mig_obj_hist r_o i_box i_obj i_attr i_wert i_mehr i_bez i_schlecht i_qk_attr_wert t_b t_o t_a t_u</prop>  
+  
+  <loop id="w" while="()(f,loop_xml,ot,has_next?)()">
+    <loop_xml act="next" id="ot" />
+    
+    <!-- pruefen ob der techn_name vom objekt eh nicht verboten ist -->
+    
+    <when test="(f,or,(f,has_flag,(prop,reserved-objects-names),(f,loop_xml,ot,@tech_name)),(f,starts_with,(f,loop_xml,ot,@tech_name),nope))">
+      <ti label="Error"/>
+      <ti>(f,html,b,o)Die folgenden tech_names von objekten sind verboten:(f,html,b,c)</ti>
+      <ti>(f,html,b,o)The following tech_names are not allowed:(f,html,b,c)</ti>     
+      <ti label=" ">nope*&#xA;(f,replace,(prop,reserved-objects-names), ,&#xA;)</ti>
+      <ti label="Found:">(f,html,b,o)(f,loop_xml,ot,@tech_name)(f,html,b,c) &#xA;with obj_typ '(f,html,b,o)(f,loop_xml,ot,@obj_typ)(f,html,b,c)'</ti>
+      <throw>Do not use obj-typ.tech_name: '(f,loop_xml,ot,@tech_name)'</throw>
+    </when>                                                   
+    
+    <!-- do a lookup and set the value to the spirit if exists -->
+    <when test="(f,loop_xml,ot,exists?,@kopf_attr)">
+      <!-- do the lookup -->
+      <prop   id="kopf_attr_typ" 
+              x="(f,spirit,vok,ats/at[@tech_name=(f,xpath_string,(f,loop_xml,ot,@kopf_attr))],@attr_typ)"/>
+      <!-- set the value -->
+      <spirit id="vok"  
+              act="xml_update" 
+              where_is_loop_xml="ot" 
+              how="set_attribute" 
+              attribute="kopf_attr_typ" 
+              value="(prop,kopf_attr_typ)" />     
+    </when>
+ 
+  </loop> <!-- close the while -->
+  
+  <remove id="reserved-objects-names" type="prop" />
+  
+  <!-- close loop for spirit -->
+  <loop_xml id="ot" act="close"/>    
+                        
+  <!-- spririt close with save --> 
+  <spirit id="vok"
+          act="close"
+          flag="save"/>                 
+        
+</job>
+
+
+
+
+</jobs>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="custset-edit">
+<need>(prop,custset_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="custset-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="custset-editor"/>
+<call_job job="custset-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- Customer '(f,text,cut_nice,(prop,custset_name),30)'"/>
+</ti>
+<call_job job="custset-see"/>
+</job>

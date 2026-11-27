@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="blocks">(dir,pro)blocks.xml</file>
+<when test="(f,not,(f,exists_file,(file,blocks)))">
+<create_file out="(file,blocks)">&lt;blocks/&gt;</create_file>
+<i>Created: (file,blocks)</i>
+</when>
+<prop id="blocks_offset">./</prop>
+<prop id="blocks_offset_label"/>
+<prop id="blocks_offset_new_key">//</prop>
+<prop id="blocks_sort_attribute"/>
+<prop id="blocks_sort_number"/>
+<prop id="blocks_sort_ignore_case"/>
+<prop id="blocks_sort_desc"/>
+<prop id="blocks_where"/>
+<prop id="blocks_return_job">block-see-all</prop>
+</prolog>

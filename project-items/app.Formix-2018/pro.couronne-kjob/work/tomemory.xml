@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kjob-read">
+<need>(prop,kjob_key)</need>
+<spirit act="open" missing_strategy="empty" id="kjobs_spirit_tc" xml="(file,kjobs)"/>
+<prop id="kjob_dt_upd">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@dt_upd)</prop>
+<prop id="kjob_dt_add">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@dt_add)</prop>
+<file flag="cool" id="kjob_jobfile">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@jobfile)</file>
+<unescape type="file" id="kjob_jobfile"/>
+<translate type="file" id="kjob_jobfile"/>
+<prop id="kjob_id">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@id)</prop>
+<file flag="cool" id="kjob_datafile">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@datafile)</file>
+<unescape type="file" id="kjob_datafile"/>
+<translate type="file" id="kjob_datafile"/>
+<dir flag="cool" id="kjob_datafolder">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@datafolder)</dir>
+<unescape type="dir" id="kjob_datafolder"/>
+<translate type="dir" id="kjob_datafolder"/>
+<prop id="kjob_desc">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@desc)</prop>
+<prop id="kjob_hist">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@hist)</prop>
+<prop id="kjob_uri">(f,spirit,kjobs_spirit_tc,(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))],@uri)</prop>
+<spirit act="close" id="kjobs_spirit_tc"/>
+</job>

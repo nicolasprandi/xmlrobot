@@ -1,0 +1,106 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+ 
+<job id="do-tk-dirs" role="hidden">
+  <need default="">(prop,with-flags)</need>
+  <need default="0">(prop,with-read)</need>
+  <need>(prop,tk_sum_flag)</need>
+  <prop id="with-read" x="0" test="(f,not,(f,is_bool,(prop,with-read)))" />
+  <when test="(prop,with-read)">     
+    <call_job job="go-joe-read">
+      <file id="joe-in-store">(dir,pro)input-cache-cd1.xml</file>
+      <prop id="joe-in-regex">dir_left|dir_right|level_limit</prop>
+    </call_job>
+  </when>
+  
+
+  <tk flag="(prop,tk_sum_flag) (prop,with-flags)" 
+      label="(prop,_cdir_tk_label)">
+    <tk type="dir" 
+        id="dir_left" 
+        label="(prop,_cdir_tk_left_l)" 
+        flag="nono"
+        tip="(prop,_cdir_tk_left_t)" />
+        
+    <tk type="dir" 
+        id="dir_right" 
+        label="(prop,_cdir_tk_right_l)" 
+        flag="nono"
+        tip="(prop,_cdir_tk_right_t)" />
+        
+    <tk type="sel" 
+        id="level_limit" 
+        label="(prop,_cdir_tk_limit_l)" 
+        flag="nono" 
+        x="999"
+        tip="(prop,_cdir_tk_limit_t)">
+      <sel>1</sel>
+      <sel>2</sel>
+      <sel>3</sel>
+      <sel>4</sel>
+      <sel>5</sel>
+      <sel>6</sel>
+      <sel>7</sel>
+      <sel>8</sel>
+      <sel>9</sel>
+      <sel label="(prop,_cdir_tk_unlimited)">999</sel>
+      
+    </tk>
+  </tk>
+  
+</job> 
+
+<job id="do-tk-files" role="hidden">
+  <need default="">(prop,with-flags)</need>
+  <need default="0">(prop,with-read)</need>
+  
+  <when test="(prop,with-read)">     
+    <call_job job="go-joe-read">
+      <file id="joe-in-store">(dir,pro)input-cache-c2f.xml</file>
+      <prop id="joe-in-regex">a|b</prop> 
+    </call_job>
+  </when>
+
+  <!-- 
+  <when test="(f,not,(f,file_exists,(dir,pro)input-cache-c2f.xml))">
+
+    <tk label="Compare Files">
+    <tk type="file" 
+        id="a" 
+        label="Left/Old File" 
+        flag="nono"
+        tip="Left/Old file to compare"/>
+    </tk>
+        
+    <tk label="Compare Files">
+    <tk type="file" 
+        id="b" 
+        base="(f,dir_of_file,(file,a))" 
+        label="Right/New File"  
+        flag="nono"
+        tip="Right/New file to compare"/>
+    </tk>
+        
+  </when>  
+  -->
+    
+  <tk label="Parameters: Compare Files" flag="(f,when,(f,file_exists,(dir,pro)input-cache-c2f.xml),sum_only,sum) (prop,with-flags)">
+    <tk type="file" 
+        id="a" 
+        label="Left/Old File" 
+        flag="nono"
+        tip="Left/Old file to compare"/>
+        
+    <tk type="file" 
+        id="b" 
+        label="Right/New File"  
+        flag="nono"
+        tip="Right/New file to compare"/>
+  </tk>
+  
+</job> 
+        
+
+</jobs>

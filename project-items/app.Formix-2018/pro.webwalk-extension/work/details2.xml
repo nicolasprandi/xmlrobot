@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extension-see-more">
+<need>(prop,extension_key)</need>
+<call_job job="extension-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="extensions_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,extension_titel)(f,html,bold,close)(f,when,(f,has,(prop,extensions_offset_label)), - (prop,extensions_offset_label),)"/>
+<call_job job="extension-tk"/>
+<ti_hr/>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="Edit" job="extension-edit">
+<prop id="extension_key">(prop,extension_key)</prop>
+<file id="extensions">(file,extensions)</file>
+<prop id="extensions_offset">(prop,extensions_offset)</prop>
+<prop id="extensions_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="extensions_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="extensions_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="extensions_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="extensions_where">(prop,extensions_where)</prop>
+<prop id="extensions_return_job">(prop,extensions_return_job)</prop>
+</ti>
+</ti>
+</job>

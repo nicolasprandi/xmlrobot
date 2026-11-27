@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+
+
+
+<job id="api-compare-files-life" role="hidden">
+  <need>(file,old)</need>
+  <need>(file,new)</need>
+  
+  <file id="a">(file,old)</file>
+  <file id="b">(file,new)</file>
+    
+  <!-- 
+  
+  <dump_ti label="api-compare-dirs" test="0"/>
+  
+  <choose>
+    <when test="(f,eq,2,(f,sissi))">
+      <create_file file="(dir,pro)input-cache-c2f.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <steps>
+        <f id="a">(x,(file,old))</f>
+        <f id="b">(x,(file,new))</f>
+      </steps>]]></create_file>
+      
+      <exclude file="(dir,pro)input-cache-c2f.xml" regex="a|b"/>    
+      
+    </when>
+    
+    <when test="(f,eq,1,(f,sissi))">
+    <prop id="code">(f,random_text,16)</prop>
+    <file id="tfn">(dir,temp)(f,random_text,7).xml</file>
+      <create_file file="(file,tfn)" code="(prop,code)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <steps>
+        <file id="a">(x,(file,old))</file>
+        <file id="b">(x,(file,new))</file>
+      </steps>]]></create_file>
+      
+      <include file="(file,tfn)" code="(prop,code)"/>    
+    </when>
+    
+    <otherwise>
+      <throw>Unknown System (f,sissi)</throw>
+    </otherwise>    
+  
+  </choose>
+
+  -->
+  
+  <file id="c2f-out">(dir,pro)deltas.xml</file>
+  
+  <call_job job="Compare 2 Files-Internal"/> 
+                       
+</job>
+
+<job id="api-compare-dirs-life" role="hidden">
+
+  
+  <dir id="dir_left">(dir,old)</dir>
+  <dir id="dir_right">(dir,new)</dir>
+<create_file file="(file,cd-paras)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<compare left_dir="(x,(dir,old))" right_dir="(x,(dir,new))"/>]]></create_file>
+
+<create_file file="(file,dircomp-data)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+<d id="dir_left">(x,(dir,old))</d>
+<d id="dir_right">(x,(dir,new))</d>
+</steps>]]></create_file>
+  
+  <!-- 
+  <file id="out_comp_dirs">(dir,pro)dir-diff.xml</file>      
+  
+  <create_file out="(dir,pro)signal-api.txt">(f,time)</create_file>    -->
+
+  <call_job job="comp-dirs"/>
+  <call_job job="Differences: Comp Dirs"/>
+  <when test="(f,not,(f,implement,online))"> 
+    <ti_hr/>
+    <ti type="call_job" job="Make Project"
+        explain="Make a real Compare-Project from this anonym project"/>
+    <ti type="call_service" job="Goto-Compare-Dirs"
+        explain="Compare again">
+      <dir id="old" x="(dir,old)"/>
+      <dir id="new" x="(dir,new)"/>  
+      <tk flag="sum_only" label="Compare again">
+        <tk type="dir" id="old" />
+        <tk type="dir" id="new" />
+      </tk>  
+    </ti>     
+  </when>   
+                       
+</job>
+
+<job id="Make Project" role="hidden" tip="Convert this report to a panorama-project with a name">
+  <call_service job="Make Project">
+    <dir id="from-pro-home" x="(dir,pro_home)"/>
+    <dir id="from-pro" x="(dir,pro)"/>
+    <prop id="from-app" x="(prop,app)"/>
+  
+  </call_service>
+     
+</job>
+
+
+
+<job id="api-compare-dirs" role="hidden">
+  <dump_ti label="api-compare-dirs" test="0"/>
+  <ti type="dir" test="0" label="project-dir" x="(dir,pro)" />
+  <file id="in">(dir,pro)api-comp-dirs.xml</file>
+  
+  <spirit id="in" act="open" xml="(file,in)"
+    missing_strategy="empty"/>
+  
+  <dir id="dir_left">(f,spirit,in,@left_dir)</dir>
+  <dir id="dir_right">(f,spirit,in,@right_dir)</dir>
+  <spirit id="in" act="close"/>
+  
+  <file id="out_comp_dirs">(dir,pro)dir-diff.xml</file>
+  <!-- 
+  <create_file out="(dir,pro)signal-api.txt">(f,time)</create_file>     -->
+
+  <call_job job="comp-dirs"/>
+  <call_job job="Differences: Comp Dirs"/>
+  
+</job>
+
+<job id="api-olix" role="hidden">
+
+  <call_job job="??"/>
+
+</job>
+
+</jobs>

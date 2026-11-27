@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ass-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Arbeitsschritt(prop,asss_offset_label)"/>
+<prop x="sum" id="asss_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,ass_key)</need>
+<prop id="label" x="Arbeitsschritt [(prop,ass_bez)](prop,asss_offset_label)"/>
+<prop x="sum_only" id="asss_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="ass-tk"/>
+</job>

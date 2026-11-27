@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2023 Red-Shark-Formationr. All Rights reserved. 
+ -->
+<app-info 
+  role="public" 
+  tip="Hibiscus" 
+  sort="1Hibiscus"
+  cache="cache/"
+  flag="has_static_project">
+
+</app-info>

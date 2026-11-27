@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="zblock-see-all" level="ws" role="hidden">
+<try_catch>
+<try>
+<call_job job="hook_zblock_view_begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zblock-view: begin.0">
+<ti> hook_job=hook_zblock_view_begin hook=begin page=view station=0 object=zblock</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="zblock_loop" xml="(file,zblocks)" xpath="(prop,zblocks_offset)zblock(prop,zblocks_where)" sort="(prop,zblocks_sort_attribute)" number="(prop,zblocks_sort_number)" ignore_case="(prop,zblocks_sort_ignore_case)" desc="(prop,zblocks_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,zblocks_offset_label)),0)">
+<ti label="(prop,zblocks_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Script Content"/>
+<ti/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti flag="" type="call_job" prefix="  " explain="(f,html,bold,open)(loop,zblock_loop,@titel)(f,html,bold,close)" job="zblock-see">
+<prop id="zblock_key">(loop,zblock_loop,@row)</prop>
+<file id="zblocks">(file,zblocks)</file>
+<prop id="zblocks_offset">(prop,zblocks_offset)</prop>
+<prop id="zblocks_offset_label">(prop,zblocks_offset_label)</prop>
+<prop id="zblocks_offset_new_key">(prop,zblocks_offset_new_key)</prop>
+<prop id="zblocks_sort_attribute">(prop,zblocks_sort_attribute)</prop>
+<prop id="zblocks_sort_number">(prop,zblocks_sort_number)</prop>
+<prop id="zblocks_sort_ignore_case">(prop,zblocks_sort_ignore_case)</prop>
+<prop id="zblocks_sort_desc">(prop,zblocks_sort_desc)</prop>
+<prop id="zblocks_where">(prop,zblocks_where)</prop>
+<prop id="zblocks_return_job">(prop,zblocks_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,zblock_loop,@content))" type="textblock" x="(loop,zblock_loop,@content)"/>
+<ti test="(f,not,(f,has,(loop,zblock_loop,@content)))"/>
+<ti type="call_job" flag="button" explain="Edit" class="fx fxEdit fxEditView fxEditViewZblock" job="zblock-edit">
+<prop id="zblock_key">(loop,zblock_loop,@row)</prop>
+<file id="zblocks">(file,zblocks)</file>
+<prop id="zblocks_offset">(prop,zblocks_offset)</prop>
+<prop id="zblocks_offset_label">(prop,zblocks_offset_label)</prop>
+<prop id="zblocks_offset_new_key">(prop,zblocks_offset_new_key)</prop>
+<prop id="zblocks_sort_attribute">(prop,zblocks_sort_attribute)</prop>
+<prop id="zblocks_sort_number">(prop,zblocks_sort_number)</prop>
+<prop id="zblocks_sort_ignore_case">(prop,zblocks_sort_ignore_case)</prop>
+<prop id="zblocks_sort_desc">(prop,zblocks_sort_desc)</prop>
+<prop id="zblocks_where">(prop,zblocks_where)</prop>
+<prop id="zblocks_return_job">(prop,zblocks_return_job)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fx fxDelete fxDeleteView fxDeleteViewZblock" explain="Del" job="zblock-del">
+<prop id="zblock_key">(loop,zblock_loop,@row)</prop>
+<file id="zblocks">(file,zblocks)</file>
+<prop id="zblocks_offset">(prop,zblocks_offset)</prop>
+<prop id="zblocks_offset_label">(prop,zblocks_offset_label)</prop>
+<prop id="zblocks_offset_new_key">(prop,zblocks_offset_new_key)</prop>
+<prop id="zblocks_sort_attribute">(prop,zblocks_sort_attribute)</prop>
+<prop id="zblocks_sort_number">(prop,zblocks_sort_number)</prop>
+<prop id="zblocks_sort_ignore_case">(prop,zblocks_sort_ignore_case)</prop>
+<prop id="zblocks_sort_desc">(prop,zblocks_sort_desc)</prop>
+<prop id="zblocks_where">(prop,zblocks_where)</prop>
+<prop id="zblocks_return_job">(prop,zblocks_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No ZelixBlocks found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,zblocks_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="button obutton " label=" " type="call_job" explain_nix="zblock-add" class="fx fxAdd fxAddZblock" explain="Add another ZBlock" job="zblock-add">
+<file id="zblocks">(file,zblocks)</file>
+<prop id="zblocks_offset">(prop,zblocks_offset)</prop>
+<prop id="zblocks_offset_label">(prop,zblocks_offset_label)</prop>
+<prop id="zblocks_offset_new_key">(prop,zblocks_offset_new_key)</prop>
+<prop id="zblocks_sort_attribute">(prop,zblocks_sort_attribute)</prop>
+<prop id="zblocks_sort_number">(prop,zblocks_sort_number)</prop>
+<prop id="zblocks_sort_ignore_case">(prop,zblocks_sort_ignore_case)</prop>
+<prop id="zblocks_sort_desc">(prop,zblocks_sort_desc)</prop>
+<prop id="zblocks_where">(prop,zblocks_where)</prop>
+<prop id="zblocks_return_job">(prop,zblocks_return_job)</prop>
+</ti>
+<ti flag="button" label=" " type="call_job" class="fx fxOrga fxOrgaZblock" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,zblocks)</file>
+<prop id="orga_where">(prop,zblocks_where)</prop>
+<prop id="orga_view_loop_id">zblock_loop</prop>
+<prop id="orga_finished_job">zblock-see-all</prop>
+<prop id="orga_offset">(prop,zblocks_offset)</prop>
+<prop id="orga_offset_label">(prop,zblocks_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,zblocks_offset_new_key)</prop>
+<prop id="orga_segment_plural">zblocks</prop>
+<prop id="orga_segment_singular">zblock</prop>
+<prop id="orga_segment_plural_label">ZelixBlocks</prop>
+<prop id="orga_segment_singular_label">ZelixBlock</prop>
+<prop id="orga_sort_attribute">(prop,zblocks_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,zblocks_sort_number)</prop>
+<prop id="orga_where">(prop,zblocks_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,zblock_loop,@titel)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,zblocks)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,zblocks_offset)),0)">(prop,zblocks_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<call_job job="hook_zblock_view_end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zblock-view: end.0">
+<ti> hook_job=hook_zblock_view_end hook=end page=view station=0 object=zblock</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>

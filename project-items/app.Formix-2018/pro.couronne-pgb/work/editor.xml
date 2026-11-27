@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgb-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="pgb_default_label_class" x="+ (prop,_sl_pgb)"/>
+<prop id="pgb_default_label_name" x="(f,when,(f,has,(prop,pgbs_offset_label)), - (prop,pgbs_offset_label),)"/>
+<prop id="pgbs_tk_control" x="sum"/>
+</when>
+<otherwise>
+<need>(prop,pgb_key)</need>
+<prop id="pgb_default_label_class" x="(prop,_sl_pgb)"/>
+<prop id="pgb_default_label_name" x="(f,tk_sel_translate,(prop,pgb_beztyp),(file,pdi-sel-bez))(f,when,(f,has,(prop,pgbs_offset_label)), - (prop,pgbs_offset_label),)"/>
+<prop id="pgbs_tk_control" x="sum_only"/>
+</otherwise>
+</choose>
+<call_job job="pgb-tk"/>
+</job>

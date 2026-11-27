@@ -1,0 +1,109 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<include file="(dir,app)prolog.xrs"/>
+                                   C:\Users\nicolas\Desktop\Requ\xmlrobot-internals\workspaces\ws.WebWalk\app.Sugarbabe2\pro.0325_[Lnn10]\
+<job id="do-countries-1">
+  <loop id="a" xml="(dir,pro)archives\005_ausminist-landestliste1\data.xml" xpath="we">
+    <ti>(loop,a,@text)</ti>
+    <ti_flush/>
+    <call_job job="do-country"><prop id="country" x="(loop,a,@text)"/></call_job>
+  </loop>
+  
+
+</job>
+
+<job id="do-country-Albanien">
+  <interpreter watch="1"/>
+  <call_job job="do-country"><prop id="country" x="Albanien"/></call_job>
+
+</job>
+
+<job id="do-country">
+ <prop id="paras_url" x="https://www.bmeia.gv.at/reise-aufenthalt/reiseinformation/laender/"/>
+ <need>(prop,paras_url)</need>
+ <need>(prop,country)</need>
+ 
+  <wdriver act="get"
+           url="(prop,paras_url)"           
+           sleep="(f,random,1000,2000)"/>
+           
+
+  <prop id="paras_xpath" x="//a[contains(e:o).(e:s)(f,xpath_string,(prop,country))(e:c)]"/>
+
+  <need>(prop,paras_xpath)</need>
+  
+  <wdriver act="find_element"
+           by_xpath="(prop,paras_xpath)"
+           xnew_spirit_id="alia"
+           return_prop_element_id="country-eid"
+           xflag="keep"/>  
+  
+  <!-- 
+  <wdriver act="find_elements"
+           by_xpath="(prop,paras_xpath)"
+           new_spirit_id="alia"
+           xflag="keep"/>
+   -->        
+           
+           
+  <throw>ok end of dev</throw>
+           
+  <loop id="i" max="1" limit="1" xpath="we" spirit="alia">
+        <prop id="widdi" x="(loop,i,@id)"/>
+        <ti>was gefunden (loop,i,@id)</ti>
+        
+        <wdriver 
+          act="build_element"
+          element_id="(prop,widdi)"
+          flag="catch" />  
+     
+        <welement 
+          act="scroll"
+          id="(prop,widdi)" 
+          webdriver_id="wd_KEEP"/>    
+          
+        <welement id="(prop,widdi)"
+          act="click"         
+          sleep="(f,random,1000,2000)"/>  
+          
+        <wdriver act="find_elements"
+                 by_xpath="//a[contains(e:o).(e:s)'Besondere Bestimmungen'(e:c)]"
+                 new_spirit_id="besondere"
+                 xflag="keep"/>
+                 
+        <loop id="j" max="1" limit="1" xpath="we" spirit="besondere">
+              
+              <ti>was gefunden (loop,j,@id)</ti> 
+                
+              <wdriver 
+                act="build_element"
+                element_id="(loop,j,@id)"
+                flag="catch" />    
+                
+              <welement 
+                act="scroll"
+                id="(loop,j,@id)" 
+                webdriver_id="wd_KEEP"/>    
+                
+              <welement id="(loop,j,@id)"
+                act="click"         
+                sleep="(f,random,1000,2000)"/>       
+              <dir id="results" x="(dir,pro)results"/>
+              <mkdir dir="(dir,results)"/>
+              <dir id="resultgroup" x="(dir,results)aussenminist-besonderes"/>
+              <mkdir dir="(dir,resultgroup)"/>
+              <file id="result" x="(dir,resultgroup)(prop,country).png"/>  
+              <wdriver act="screenshot" file="(file,result)"/>
+              <ti label="(prop,country)" type="file" x="(file,result)"/>                       
+        </loop>
+        <spirit id="besondere" act="close"/>              
+                                           
+  </loop>
+  <spirit id="alia" act="close"/>
+
+
+</job>
+
+
+</jobs>

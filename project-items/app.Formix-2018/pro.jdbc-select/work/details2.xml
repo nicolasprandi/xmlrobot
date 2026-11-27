@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="select-see-more">
+<need>(prop,select_key)</need>
+<call_job job="select-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="selects_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,select_sql),50)(f,html,bold,close)(f,when,(f,has,(prop,selects_offset_label)), - (prop,selects_offset_label),)"/>
+<call_job job="select-tk"/>
+<ti_hr/>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="Edit" job="select-edit">
+<prop id="select_key">(prop,select_key)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+</ti>
+</job>

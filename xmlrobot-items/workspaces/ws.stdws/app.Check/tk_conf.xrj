@@ -1,0 +1,160 @@
+<?xml version="1.0" ?><!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<!-- <when test="(f,has,prop,pro)"> take 2 things to the prolog --> 
+  <!-- 
+  <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+  <prop id="conf-regex" x="conf_.+"/>
+  -->
+<!-- </when>       -->
+
+<!-- gui Adapters: to copy in the app  take the edit to your gui.... -->
+
+
+
+
+
+<!-- setting the default-values -->
+<job id="tk_conf_default" role="hidden">
+  <need default="mysql">(prop,conf_db)</need>
+  <need default="formixat001">(prop,conf_postgres_schema)</need>
+
+  <!--  
+  <need default="(dir,filetemp)">(dir,conf_dir)</need>
+  -->
+</job>
+
+
+<!-- conf-core, make your changes here -->
+<job id="tk_conf_core" role="hidden" tip="conf_: Tk Internal">
+
+  <need default="">(prop,tk_conf_add_flag)</need>
+
+  <tk label="Parameters: Configuration" 
+      flag="(prop,tk_conf_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+    <tk id="conf_db"
+        type="sel"  
+        label="Db System" 
+        test_first="0"        
+        tip="()Explain conf_typus here ...()">
+        <sel xlabel="Text">postgres</sel>
+        <sel xlabel="Regex">mysql</sel>    
+    </tk>
+    
+    <tk id="conf_postgres_schema"
+        type="text"  
+        label="Postgres-Schema" 
+        test_first="0"        
+        tip="()Explain conf_typus here ...()">
+    </tk>    
+    
+    
+                              
+  </tk>   
+</job>
+<!-- 
+<job id="See Values: conf_" role="dev">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+ <job id="Clear Data: conf_">
+  <tk type="msg" x="Sure to clear data of conf_ ?" msg_type="w"/>
+  <call_job job="tk_conf_clear"/>
+</job>
+
+<job id="Print Values:  conf_">
+  <call_job job="tk_conf_print_values"/>
+</job>
+<job id="Print Help: conf_" role="dev">
+  <call_job job="tk_conf_print_help"/>
+</job>
+
+-->
+<!-- edit data: read, userinput, write -->
+<job id="tk_conf_edit" tip="conf_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,conf-data))">
+      <!-- data exists already -->
+      <prop id="tk_conf_add_flag" x="sum_only print"/>
+      <call_job job="tk_conf_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_conf_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_conf_default"/>
+  <!-- doing input -->
+  <call_job job="tk_conf_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_conf_write"/>
+
+</job>
+
+
+
+<job id="tk_conf_print_values" tip="conf_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_conf_read"/>
+  
+  <call_job job="tk_conf_core">
+    <prop id="tk_conf_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_conf_print_values_tips" tip="conf_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_conf_read"/>
+  
+  <call_job job="tk_conf_core">
+    <prop id="tk_conf_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_conf_print_help" tip="conf_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_conf_core">
+    <prop id="tk_conf_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_conf_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,conf-data)" />
+    <prop id="joe-in-regex" x="(prop,conf-regex)" />    
+  </call_job>
+  <call_job job="tk_conf_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_conf_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,conf-data)" />
+    <prop id="joe-in-regex" x="(prop,conf-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_conf_clear"  tip="conf_: Clears the data" role="hidden">
+  <delete file="(file,conf-data)"/>
+</job>
+
+
+</jobs>

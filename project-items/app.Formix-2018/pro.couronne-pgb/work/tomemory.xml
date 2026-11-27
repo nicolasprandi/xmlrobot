@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgb-read">
+<need>(prop,pgb_key)</need>
+<spirit act="open" missing_strategy="empty" id="pgbs_spirit_tc" xml="(file,pgbs)"/>
+<prop id="pgb_dt_upd">(f,spirit,pgbs_spirit_tc,(prop,pgbs_offset)pgb[@row=(f,xpath_string,(prop,pgb_key))],@dt_upd)</prop>
+<prop id="pgb_dt_add">(f,spirit,pgbs_spirit_tc,(prop,pgbs_offset)pgb[@row=(f,xpath_string,(prop,pgb_key))],@dt_add)</prop>
+<prop id="pgb_beztyp">(f,spirit,pgbs_spirit_tc,(prop,pgbs_offset)pgb[@row=(f,xpath_string,(prop,pgb_key))],@beztyp)</prop>
+<prop id="pgb_detail">(f,spirit,pgbs_spirit_tc,(prop,pgbs_offset)pgb[@row=(f,xpath_string,(prop,pgb_key))],@detail)</prop>
+<spirit act="close" id="pgbs_spirit_tc"/>
+</job>

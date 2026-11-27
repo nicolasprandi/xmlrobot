@@ -1,0 +1,949 @@
+<?xml version="1.0" ?>
+ 
+<jobs>
+<job id="systema-reco-core" role="hidden">
+  <prop id="is-reco-core">1</prop>
+  <call_job job="systema-reco-base"/>
+</job>
+
+<job id="systema-reco-lib" role="hidden">
+  <prop id="is-reco-core">0</prop>
+  <call_job job="systema-reco-base"/>
+</job>
+
+<job id="systema-reco-base" role="hidden">
+  <need>(dir,systema-dir)</need>
+  <need>(file,systema-scan)</need>
+  <need>(prop,systema-encoding)</need>
+  <need>(dir,systema-residence)</need>
+  <need>(prop,is-reco-core)</need>
+  
+  <file id="reco-residence" x="(dir,systema-residence)reco.xrs"/>
+
+  <call_job job="tk_reco_edit">
+    <file id="reco-data" x="(dir,systema-residence)reco.xrs"/>
+    <prop id="reco-regex" x="reco_.*"/>
+  </call_job>
+  
+  <when test="(prop,is-reco-core)">
+    <create_file out="(file,prodfn)">(prop,reco_sw_name_file)</create_file>
+  </when>
+  
+  <ti_hr/>
+
+      
+  <dump_ti label="systema-reco" test="0"/>
+  <interpreter watch="0"/>
+   <choose>
+      <when test="(f,not,(prop,jvcp_never_overwrite_java))">                            
+        
+        <file id="sk" x="(file,systema-scan)"/>
+ 
+        <ti type="file" x="(file,sk)" label="derscan"/>
+        
+        <tp>Timestamp java-source-files ...</tp>
+        <ti>Timestamp java-source-files ...(prop,javaitem_path)/src (dir,src)</ti>
+        <!-- timer insert -->
+        <prop id="timer-insert">
+		if (e:o)new java.util.Date(e:o)(e:c).getTime(e:o)(e:c)() &gt; 
+			// new java.text.SimpleDateFormat(&quot;yyyyMMdd&quot;).parse()(e:o)&quot;(prop,reco_ablaufdatum)&quot;(e:c).getTime(e:o)(e:c)
+      (f,add,86400000,(f,timef,get_time,(prop,reco_ablaufdatum),yyyyMMdd))L
+      (e:c) 
+			throw new Exception(e:o)&quot;This is the end of software!&quot;(e:c);
+		        
+ </prop>      
+ 
+        <!-- customer insert -->
+         <prop id="customer-insert">        
+            System.out.println(e:o)&quot;(f,escape,java,(prop,reco_sw_name)-Testversion)&quot;(e:c);
+            System.out.println(e:o)&quot;Copyright (f,escape,java,(prop,reco_sw_copyright)). All rights reserved.&quot;(e:c);            
+            System.out.println(e:o)&quot;&quot;(e:c);
+            System.out.println(e:o)&quot;Customer:                 (f,escape,java,(prop,reco_customer))&quot;(e:c);  
+
+            </prop>
+          
+         <when test="(f,has,prop,reco_customer_notice)">
+           <prop id="customer-insert">(prop,customer-insert)
+            System.out.println(e:o)&quot;                          (f,escape,java,(prop,reco_customer_notice))&quot;(e:c);</prop>         
+         </when>  
+         
+         <prop id="customer-insert">(prop,customer-insert)        
+            System.out.println(e:o)&quot;Expiry:                   (f,escape,java,(prop,reco_ablaufdatum)) &quot;(e:c);
+            System.out.println(e:o)&quot;&quot;(e:c);
+            </prop>         
+
+         <prop id="privs-insert">        
+            System.out.println(e:o)&quot;Privs Encrypted-Scripts:  (f,escape,java,(prop,reco_allow_encrypted_s)(prop,reco_allow_encrypted_a)(prop,reco_allow_encrypted_x))&quot;(e:c);
+            System.out.println(e:o)&quot;      Plain-Scripts:      (f,escape,java,(prop,reco_allow_not_encrypted_s)(prop,reco_allow_not_encrypted_a)(prop,reco_allow_not_encrypted_x))&quot;(e:c);
+            System.out.println(e:o)&quot;      Open Include:       (f,escape,java,(prop,reco_open_include))&quot;(e:c);
+            System.out.println(e:o)&quot;      Debugging:          (f,escape,java,(prop,reco_debug))&quot;(e:c);
+            System.out.println(e:o)&quot;      Logging:            (f,escape,java,(prop,reco_log))&quot;(e:c);
+            System.out.println(e:o)&quot;      DevInfo:            (f,escape,java,(prop,reco_devinfo_help))&quot;(e:c);
+            System.out.println(e:o)&quot;      Ant:                (f,escape,java,(prop,reco_allow_ant))&quot;(e:c);
+            System.out.println(e:o)&quot;      Remote-Projects:    (f,escape,java,(prop,reco_allow_remote_project))&quot;(e:c);
+            System.out.println(e:o)&quot;      App-Info:           (f,escape,java,(prop,reco_allow_app_info))&quot;(e:c);     
+            System.out.println(e:o)&quot;      Default-Lang:       (f,escape,java,(prop,reco_default_lang))&quot;(e:c);                                    
+            System.out.println(e:o)&quot;      Roles:              (f,escape,java,(prop,reco_role))&quot;(e:c);
+            System.out.println(e:o)&quot;Date of Production        (f,escape,java,(f,time,YYYY-MM-dd HH:mm:ss))&quot;(e:c);
+            </prop>
+            
+         <prop id="search-expire-time">32503676400000L</prop>   
+         <prop id="replace-expire-time">(f,add,86400000,(f,add,86400000,(f,timef,get_time,(prop,reco_ablaufdatum),yyyyMMdd)))L</prop>
+                                              
+            
+         <!-- crypto insert (f,escape,java,(prop,reco_ablaufdatum)) -->             
+         <prop id="crypto-insert">
+          new at.nicolas.x.int_db.CryptoBaseReco(e:o)</prop>            
+        <ti label="Insert Specifications"/>            
+        <ti label="timer-insert:" key="/*[requo-timer]*/">(prop,timer-insert)</ti>
+        <ti label="customer-insert:" key="/*[requo-customer]*/">(prop,customer-insert)</ti>
+        <ti label="privs-insert:" key="/*[requo-privs]*/">(prop,privs-insert)</ti>
+        <ti label="crypto-insert:" key="/*[requo-crypto]*/">(prop,crypto-insert)&quot;XXXXXXXX?XXXXXXX&quot;(e:c);</ti>
+        
+        <ti label="timed-file:" key="(prop,search-expire-time)">(prop,replace-expire-time)</ti>
+        <ti_hr/> 
+        <prop id="did-do-app-decoder" x="0"/>
+        <prop id="did-minimum-timer">0</prop>
+        <prop id="did-minimum-customer">0</prop>
+        
+        <prop id="count-did-timer">0</prop>
+        <prop id="count-did-customer">0</prop>
+        <prop id="count-did-expire">0</prop>
+        <prop id="count-did-crypto">0</prop>
+
+        <loop id="m" xml="(file,sk)" xpath="//file" missing_strategy="empty">
+          <when test="(f,eq_text,java,(loop,m,@ext))">
+            
+            <prop id="rt">(f,file_content,(loop,m,@fn),(prop,systema-encoding))</prop>
+            
+            <when test="(f,contains,(prop,rt),/*[requo-timer]*/)">
+              <prop id="did-minimum-timer">1</prop>
+              <ti label="requo-timer:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),/*[requo-timer]*/,(prop,timer-insert))</prop>
+              <ti label=" " tyxpe="file" test="0">(prop,rt)</ti>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+              
+              <prop id="count-did-timer">(f,add,1,(prop,count-did-timer))</prop>
+
+            </when>
+            
+            <when test="(f,contains,(prop,rt),/*[requo-customer]*/)">
+              <prop id="did-minimum-customer">1</prop>
+              <ti label="requo-customer:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),/*[requo-customer]*/,(prop,customer-insert))</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+                      
+              <prop id="count-did-customer">(f,add,1,(prop,count-did-customer))</prop>
+
+            </when>      
+            <when test="(f,contains,(prop,rt),/*[requo-privs]*/)">
+              <ti label="requo-privs:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),/*[requo-privs]*/,(prop,privs-insert))</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+            </when>            
+
+            <when test="(f,contains,(prop,rt),(prop,search-expire-time))">
+
+              <ti label="requo-timed-file:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),(prop,search-expire-time),(prop,replace-expire-time))</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+              
+              <prop id="count-did-expire">(f,add,1,(prop,count-did-expire))</prop>
+                     
+            </when>                    
+            
+            <when test="(prop,is-reco-core)">
+            <when test="(f,contains,(prop,rt),/*[requo-crypto]*/)">
+              <ti label="requo-crypto:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),/*[requo-crypto]*/,(prop,crypto-insert)&quot;(f,escape,java,(f,random_text,16))&quot;(e:c);)</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+              <prop id="count-did-crypto">(f,add,1,(prop,count-did-crypto))</prop>
+            </when>
+            </when>                   
+            
+          </when>
+
+                    
+        </loop> 
+        
+        <ti label="Summary of common replacements"/>
+        <ti label="/*[requo-timer]*/">(prop,count-did-timer)</ti>
+        <ti label="/*[requo-customer]*/">(prop,count-did-customer)</ti>
+        <ti label="(prop,search-expire-time)" key="(prop,replace-expire-time)">(prop,count-did-expire)</ti>        
+        <ti label="/*[requo-crypto]*/">(prop,count-did-crypto)</ti>    
+        
+        <when test="(prop,is-reco-core)">
+          <prop id="count-did-timer-must">7</prop>
+          <prop id="count-did-customer-must">5</prop>
+          <prop id="count-did-expire-must">25</prop>
+          <prop id="count-did-crypto-must">16</prop>    
+          
+          <throw test="(f,not,(f,eq_num,(prop,count-did-timer-must),(prop,count-did-timer)))">Failed expected number of replacements for [timer]. requested [(prop,count-did-timer)]. had [(prop,count-did-timer-must)].</throw>
+          <throw test="(f,not,(f,eq_num,(prop,count-did-customer-must),(prop,count-did-customer)))">Failed expected number of replacements for [customer]. requested [(prop,count-did-customer-must)]. had [(prop,count-did-customer)].</throw>
+          <throw test="(f,not,(f,eq_num,(prop,count-did-expire-must),(prop,count-did-expire)))">Failed expected number of replacements for [expiration date]. requested [(prop,count-did-expire-must)]. had [(prop,count-did-expire)].</throw>
+          <throw test="(f,not,(f,eq_num,(prop,count-did-crypto-must),(prop,count-did-crypto)))">Failed expected number of replacements for [crypto]. requested [(prop,count-did-crypto-must)]. had [(prop,count-did-crypto)].</throw>
+    
+        </when>    
+        
+        <!-- check minimus -->
+        <when test="(f,not,(prop,did-minimum-timer))">
+          <tk type="msg">Not one timer found to replace. very bad. insert at least once: /*[requo-timer]*/ </tk>
+          <prop id="serious-question">0</prop>
+          <tk id="serious-question" label="Continue anyway?" type="bool" flag="nono"/>
+          <throw test="(f,not,(prop,serious-question))">Not one timer found to replace. very bad. insert at least once: /*[requo-timer]*/</throw>
+        </when>
+        
+        <when test="(f,not,(prop,did-minimum-customer))">
+          
+          <tk type="msg">Not one customer-info found to replace. very bad. insert at least once: /*[requo-customer]*/</tk>
+          <prop id="serious-question">0</prop>
+          <tk id="serious-question" label="Continue anyway?" type="bool" flag="nono"/>
+          <throw test="(f,not,(prop,serious-question))">Not one customer-info found to replace. very bad. insert at least once: /*[requo-customer]*/</throw>
+                    
+        </when>
+                               
+        <when test="(prop,is-reco-core)">
+          <prop id="rs-encoding">(prop,systema-encoding)</prop>
+          <choose>
+            <when test="(f,has,prop,reco_password)">
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/PasswordQuestion.java</file>
+                <prop id="rs-search">/*[reqo-password]*/</prop>
+                <prop id="rs-replace">do_ask_password = true; requested = &quot;(f,escape,java,(prop,reco_password))&quot;;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>              
+            </when>
+            <otherwise>
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/PasswordQuestion.java</file>
+                <prop id="rs-search">/*[reqo-password]*/</prop>
+                <prop id="rs-replace">do_ask_password = false;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>                 
+            </otherwise>
+          
+          </choose>
+                 
+          
+          <!-- namen in terminal --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/run/Terminal.java</file>
+            <prop id="rs-search">sm.out.println(e:o)&quot;Your are:&quot;(e:c);</prop>
+            <prop id="rs-replace">sm.out.println(e:o)&quot;Your are: (f,escape,java,(prop,reco_customer))&quot;(e:c);</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>   
+          
+          <!-- product in terminator --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_core/Tc_Terminator.java</file>      
+            <prop id="rs-search">/* [maybe-another-software] */</prop>
+            <prop id="rs-replace">wellMsg = &quot;&lt;html&gt;&lt;body&gt;Welcome to (f,escape,java,(prop,reco_sw_name)).&lt;br/&gt;(f,escape,java,(prop,reco_sw_copyright)). All rights reserved.&lt;br/&gt;&lt;/body&lt;/html&gt;&quot;;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>      
+          
+          <!-- product Well Known --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_const/Wellknown.java</file>      
+            <prop id="rs-search">&quot;DasAllheilmittel&quot;</prop>
+            <prop id="rs-replace">&quot;(f,escape,java,(prop,reco_sw_name))&quot;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>   
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_const/Wellknown.java</file>      
+            <prop id="rs-search">&quot;Copyright (e:o)c(e:c) 2015-2010 Ricardo Sandflatter</prop>
+            <prop id="rs-replace">&quot;Copyright (e:o)c(e:c) (f,escape,java,(prop,reco_sw_copyright))</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>     
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_const/Wellknown.java</file>      
+            <prop id="rs-search">&quot;Copyright (e:o)e:o(e:c)c(e:o)e:c(e:c) 2015-2010 Ricardo Sandflatter</prop>
+            <prop id="rs-replace">&quot;Copyright (e:o)e:o(e:c)c(e:o)e:c(e:c) (f,escape,java,(prop,reco_sw_copyright))</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>                                                      
+          
+          <!-- product Map_JobButtonsDb --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_map/Map_JobButtonsDb.java</file>      
+            <prop id="rs-search">&quot;Welcome to DasAllheilmittel&quot;</prop>
+            <prop id="rs-replace">&quot;Welcome to (f,escape,java,(prop,reco_sw_name))&quot;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>     
+          
+          <!-- product Map_JobButtonsDb --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/PasswordQuestion.java</file>      
+            <prop id="rs-search">&quot;Welcome to DasAllheilmittel&quot;</prop>
+            <prop id="rs-replace">&quot;Welcome to (f,escape,java,(prop,reco_sw_name))&quot;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>     
+          
+          <!-- product Tc_AppConsole --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_core/Tc_AppConsole.java</file>      
+            <prop id="rs-search">&quot;Welcome to DasAllheilmittel (e:o)e:o(e:c)Testversion(e:o)e:c(e:c)&quot;</prop>
+            <prop id="rs-replace">&quot;Welcome to (f,escape,java,(f,escape,sys,(prop,reco_sw_name)))&quot;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>   
+          
+          <!-- product Map_ContextViewerApp --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_map/Map_ContextViewerApp.java</file>      
+            <prop id="rs-search">&quot;DasAllheilmittel &quot;</prop>
+            <prop id="rs-replace">&quot;(f,escape,java,(prop,reco_sw_name)) &quot;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>      
+          
+          <!-- product JobConsoleGui --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_run/JobConsoleGui.java</file>      
+            <prop id="rs-search">&quot;DasAllheilmittel: &quot;</prop>
+            <prop id="rs-replace">&quot;(f,escape,java,(prop,reco_sw_name)): &quot;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>     
+          
+          <!-- product Workspace --> 
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/Workspace.java</file>      
+            <prop id="rs-search">&quot;DasAllheilmittel did not</prop>
+            <prop id="rs-replace">&quot;(f,escape,java,(prop,reco_sw_name)) did not</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>                                            
+          
+          <!-- job encryptor in db -->
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/Db.java</file>
+            <prop id="rs-search">CryptoBaseReco(e:o)&quot;resi&quot;(e:c)</prop>
+            <prop id="rs-replace">CryptoBaseReco(e:o)&quot;(f,escape,java,(prop,reco_decrypt))&quot;(e:c)</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>   
+          
+          <!-- xsl encryptor in xslt -->
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/tasks/Xslt.java</file>
+            <prop id="rs-search">CryptoBaseReco(e:o)&quot;XYZ0123456789ABC&quot;(e:c)</prop>
+            <prop id="rs-replace">CryptoBaseReco(e:o)&quot;(f,escape,java,(prop,reco_decrypt_xsl))&quot;(e:c)</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>   
+          
+          <!-- no ant -->
+          <when test="(f,not,(prop,reco_allow_ant))">     
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/PlugTryTask.java</file>
+              <prop id="rs-search">/* [maybe-no-ant] */</prop>
+              <prop id="rs-replace">if (e:o) true (e:c) throw new Exception(e:o)&quot;No Ant&quot;(e:c);</prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>    
+          </when>   
+          
+          <!-- no reco_allow_remote_project -->
+          <when test="(f,not,(prop,reco_allow_remote_project))">     
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbPro.java</file>
+              <prop id="rs-search">if (e:o) false (e:c) /* [reco-no-remote-project */</prop>
+              <prop id="rs-replace">if (e:o) true (e:c) </prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>    
+          </when>       
+          
+          <!-- no reco_allow_app_info -->
+          <when test="(f,not,(prop,reco_allow_app_info))">     
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/Db.java</file>
+              <prop id="rs-search">if (e:o) false (e:c) /* [reco-no-app-info] */</prop>
+              <prop id="rs-replace">if (e:o) true (e:c) </prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>    
+          </when>                                     
+          
+          <!-- allow encryption and plain for services -->
+          <choose>
+            <when test="(prop,reco_allow_encrypted_s)">
+              <prop id="service-updater1">allow_encrypted = true;</prop>
+            </when>
+            <otherwise>
+              <prop id="service-updater1">allow_encrypted = false;</prop>
+            </otherwise>         
+          </choose>
+          
+          <choose>
+            <when test="(prop,reco_allow_not_encrypted_s)">
+              <prop id="service-updater2">allow_plain = true;</prop>
+            </when>
+            <otherwise>
+              <prop id="service-updater2">allow_plain = false;</prop>
+            </otherwise>         
+          </choose>   
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbJm.java</file>
+            <prop id="rs-search">/*[reco-set-allow-service]*/</prop>
+            <prop id="rs-replace">(prop,service-updater1) (prop,service-updater2)</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>                  
+  
+          <!-- allow encryption and plain for apps -->
+          <choose>
+            <when test="(f,eq_text,0,(prop,reco_allow_encrypted_a))">
+              <!-- ecrypted apps not allowed -->
+              <prop id="app-updater1">allow_encrypted = false;</prop>
+            </when>
+            <when test="(f,eq_text,1,(prop,reco_allow_encrypted_a))">                                        
+              <!-- ecrypted apps  allowed -->
+              <prop id="app-updater1">allow_encrypted = true;</prop>
+            </when>    
+            <when test="(f,eq_text,s,(prop,reco_allow_encrypted_a))">
+              <!-- ecrypted specified apps  allowed -->
+              <throw test="(f,not,(f,has,prop,reco_allow_encrypted_a_apps))">No apps specified for script-encryption-allowance</throw>
+              <prop id="app-updater1">allow_encrypted = hasFlag(e:o)&quot;(f,escape,java,(prop,reco_allow_encrypted_a_apps))&quot;(e:s) appId(e:c) ;</prop>
+            </when>                                  
+            <otherwise>
+              <throw>da hats was mit reco_allow_encrypted_a weil es ist '(prop,reco_allow_encrypted_a)' </throw>
+            </otherwise>         
+          </choose>      
+          
+          <choose>
+            <when test="(f,eq_text,0,(prop,reco_allow_not_encrypted_a))">
+              <!-- ecrypted apps not allowed -->
+              <prop id="app-updater2">allow_plain = false;</prop>
+            </when>
+            <when test="(f,eq_text,1,(prop,reco_allow_not_encrypted_a))">                                        
+              <!-- ecrypted apps  allowed -->
+              <prop id="app-updater2">allow_plain = true;</prop>
+            </when>    
+            <when test="(f,eq_text,s,(prop,reco_allow_not_encrypted_a))">
+              <!-- ecrypted specified apps  allowed -->
+              <throw test="(f,not,(f,has,prop,reco_allow_not_encrypted_a_apps))">No apps specified for script-os-allowance</throw>
+              <prop id="app-updater2">allow_plain = hasFlag(e:o)&quot;(f,escape,java,(prop,reco_allow_not_encrypted_a_apps))&quot;(e:s) appId(e:c) ;</prop>
+            </when>                                  
+            <otherwise>
+              <throw>da hats was mit reco_allow_not_encrypted_a weil es ist '(prop,reco_allow_not_encrypted_a)' </throw>
+            </otherwise>         
+          </choose>              
+
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbJm.java</file>
+            <prop id="rs-search">/*[reco-set-allow-app]*/</prop>
+            <prop id="rs-replace">(prop,app-updater1) (prop,app-updater2)</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>   
+                             
+          <!-- xsl -->
+          
+          <!-- xsl: allow encryption and plain for services -->
+          <choose>
+            <when test="(prop,reco_allow_encrypted_xs)">
+              <prop id="service-updater1-xsl">allow_encrypted = true;</prop>
+            </when>
+            <otherwise>
+              <prop id="service-updater1-xsl">allow_encrypted = false;</prop>
+            </otherwise>         
+          </choose>
+          
+          <choose>
+            <when test="(prop,reco_allow_not_encrypted_xs)">
+              <prop id="service-updater2-xsl">allow_plain = true;</prop>
+            </when>
+            <otherwise>
+              <prop id="service-updater2-xsl">allow_plain = false;</prop>
+            </otherwise>         
+          </choose>   
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/tasks/Xslt.java</file>
+            <prop id="rs-search">/*[reco-set-allow-service]*/</prop>
+            <prop id="rs-replace">(prop,service-updater1-xsl) (prop,service-updater2-xsl)</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>  
+          
+          <!-- xsl allow encryption for apps -->
+          <choose>
+            <when test="(f,eq_text,0,(prop,reco_allow_encrypted_xa))">
+              <!-- ecrypted apps not allowed -->
+              <prop id="app-updater1-xsl">allow_encrypted = false;</prop>
+            </when>
+            <when test="(f,eq_text,1,(prop,reco_allow_encrypted_xa))">                                        
+              <!-- ecrypted apps  allowed -->
+              <prop id="app-updater1-xsl">allow_encrypted = true;</prop>
+            </when>    
+            <when test="(f,eq_text,s,(prop,reco_allow_encrypted_xa))">
+              <!-- ecrypted specified apps  allowed -->
+              <throw test="(f,not,(f,has,prop,reco_allow_encrypted_xa_apps))">No apps specified for xsl-encryption-allowance</throw>
+              <prop id="app-updater1-xsl">allow_encrypted = hasFlag(e:o)&quot;(f,escape,java,(prop,reco_allow_encrypted_xa_apps))&quot;(e:s) appId(e:c) ;</prop>
+            </when>                                  
+            <otherwise>
+              <throw>da hats was mit reco_allow_encrypted_xa weil es ist '(prop,reco_allow_encrypted_xa)' </throw>
+            </otherwise>         
+          </choose>      
+          
+          <!-- xsl allow plain for apps -->          
+          <choose>
+            <when test="(f,eq_text,0,(prop,reco_allow_not_encrypted_xa))">
+              <!-- ecrypted apps not allowed -->
+              <prop id="app-updater2-xsl">allow_plain = false;</prop>
+            </when>
+            <when test="(f,eq_text,1,(prop,reco_allow_not_encrypted_xa))">                                        
+              <!-- ecrypted apps  allowed -->
+              <prop id="app-updater2-xsl">allow_plain = true;</prop>
+            </when>    
+            <when test="(f,eq_text,s,(prop,reco_allow_not_encrypted_xa))">
+              <!-- ecrypted specified apps  allowed -->
+              <throw test="(f,not,(f,has,prop,reco_allow_not_encrypted_xa_apps))">No apps specified for xsl-os-allowance</throw>
+              <prop id="app-updater2-xsl">allow_plain = hasFlag(e:o)&quot;(f,escape,java,(prop,reco_allow_not_encrypted_xa_apps))&quot;(e:s) appId(e:c) ;</prop>
+            </when>                                  
+            <otherwise>
+              <throw>da hats was mit reco_allow_not_encrypted_xa_apps weil es ist '(prop,reco_allow_not_encrypted_xa_apps)' </throw>
+            </otherwise>         
+          </choose>              
+
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/tasks/Xslt.java</file>
+            <prop id="rs-search">/*[reco-set-allow-app]*/</prop>
+            <prop id="rs-replace">(prop,app-updater1-xsl) (prop,app-updater2-xsl)</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>           
+          
+          <!-- Role -->
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/Workspace.java</file>
+            <prop id="rs-search">/*[requo-role-workspace]*/</prop>
+            <prop id="rs-replace">allowedRoles=&quot;(f,escape,java,(prop,reco_role))&quot;;</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>   
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbJm.java</file>
+            <prop id="rs-search">/*[requo-role-dbjm-1]*/</prop>
+            <prop id="rs-replace">if (e:o) cj.getRole(e:o)(e:c)!=null &amp;&amp; Commons.hasFlag(e:o)&quot;(f,escape,java,(prop,reco_role))&quot;(e:s)cj.getRole(e:o)(e:c)(e:c) (e:c) {</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>                         
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbJm.java</file>
+            <prop id="rs-search">/*[requo-role-dbjm-2]*/</prop>
+            <prop id="rs-replace">}</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>
+                    
+        <!-- allow_encrypted x 
+          <prop id="allow_plain_xsl">(f,when,(prop,reco_allow_not_encrypted_x),true,false)</prop>
+          <prop id="allow_encrypted_xsl">(f,when,(prop,reco_allow_encrypted_x),true,false)</prop>
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/tasks/Xslt.java</file>
+              <prop id="rs-search">/*[reco-allow-xsl]*/</prop>
+              <prop id="rs-replace">allow_plain = (prop,allow_plain_xsl) ; allow_encrypted = (prop,allow_encrypted_xsl);</prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>  -->          
+                               
+          <!-- single app -->
+          <when test="(f,has,prop,reco_allowed_apps)">
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/Db.java</file>
+              <prop id="rs-search">true /*[reco-allowed-apps]*/</prop>
+              <prop id="rs-replace">hasFlag(e:o)&quot;(f,escape,java,(prop,reco_allowed_apps))&quot;(e:s) files[i].substring(e:o)4(e:c)(e:c)</prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>      
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_map/Map_DbSelector.java</file> 
+              <prop id="rs-search">/*[reco-allowed-apps]*/</prop>
+              <prop id="rs-replace">if (e:o) ! hasFlag(e:o)&quot;(f,escape,java,(prop,reco_allowed_apps))&quot;(e:s) app.getId(e:o)(e:c)(e:c)(e:c) showThisApp = false;</prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>   
+                       
+                  
+          </when>
+          
+          <!-- startup-app -->
+          <when test="(f,has,prop,reco_startup_app)">
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_core/Tc_Guistatus.java</file>
+              <prop id="rs-search">/*[reco-marked-app-startup]*/</prop>
+              <prop id="rs-replace">marked_appid= &quot;(f,escape,java,(prop,reco_startup_app))&quot;;</prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>   
+                      
+          </when>                    
+                    
+          <!-- logic debug -->
+          <when test="(prop,reco_open_include)">
+            <call_job job="rs">
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+              <prop id="rs-search">boolean allow_open_include = false;</prop>
+              <prop id="rs-replace">boolean allow_open_include = true;</prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>           
+          </when>
+ 
+          <!-- default lang -->
+          <when test="(f,has,prop,reco_default_lang)">
+            <call_job job="rs">                            
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/Workspace.java</file>
+              <prop id="rs-search">lang = &quot;en&quot;;</prop>
+              <prop id="rs-replace">lang = &quot;(f,escape,java,(prop,reco_default_lang))&quot;;</prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>           
+          </when>          
+          <!-- no edit-all-button 
+          <when test="(f,not,(prop,reco_allow_edit_all_button))">
+            <call_job job="rs">                             
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_tk/Tk_SumManager.java</file>
+              <prop id="rs-search">buttonPanel.add(e:o)editallButton(e:c);</prop>
+              <prop id="rs-replace"> </prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>      
+            <call_job job="rs">                             
+              <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_tk/Tk_SumManager.java</file>
+              <prop id="rs-search">editallButton.addActionListener(e:o)buttonHandler(e:c);</prop>
+              <prop id="rs-replace"> </prop> 
+              <prop id="rs-expected">1</prop>       
+            </call_job>                   
+          </when>  
+          -->        
+          
+          <choose>
+            <when test="(f,not,(prop,reco_debug))">
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_core/Tc_AppConsole.java</file>
+                <prop id="rs-search">boolean see_jobtext = true;</prop>
+                <prop id="rs-replace">boolean see_jobtext = false;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>   
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">boolean see_error_on_throw = true;</prop>
+                <prop id="rs-replace">boolean see_error_on_throw = false;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>            
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">CoreBuilder.rslogger.isDebug_filter_logic(e:o)(e:c)</prop>
+                <prop id="rs-replace">false</prop> 
+                <prop id="rs-expected">4</prop>       
+              </call_job> 
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">false /*see-stop-errors*/</prop>
+                <prop id="rs-replace">true /*see-stop-errors*/</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>         
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">/* [replace-exception-trace-is-off] */</prop>
+                <prop id="rs-replace">trace = false;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>           
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">/* [replace-debug-always-off] */</prop>
+                <prop id="rs-replace">debugOn = false;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>  
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">/* [replace-debugall-quits] */</prop>
+                <prop id="rs-replace">if (e:o)true(e:c) return;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>    
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">/* [replace-no-exception-info-at-all] */</prop>
+                <prop id="rs-replace">seeDetails = false;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>     
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">/* [replace-no-step-doku] */</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return &quot;&quot;;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>                                                              
+                                 
+            </when>         
+            <otherwise>
+              <!-- mit debug -->
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">trace = false; /*trace*/</prop>
+                <prop id="rs-replace">trace = true; /*trace*/</prop> 
+                <prop id="rs-expected">10</prop>       
+              </call_job>     
+                       
+            </otherwise>
+            </choose>
+
+            <!-- DevInfo on help, die links zu den jobfiles -->
+            <when test="(f,not,(prop,reco_devinfo_help))">
+            
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_const/Zet_Privileg.java</file>
+                <prop id="rs-search">return (e:o)CoreBuilder.ws.isRoleAdminUp(e:o)(e:c) ||</prop>
+                <prop id="rs-replace">return(e:o)false(e:c); // </prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job> 
+                          
+            </when>
+                        
+            <!-- logging -->
+            <when test="(f,not,(prop,reco_log))">
+
+            
+
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbJm.java</file>
+                <prop id="rs-search">/*[requo-nolog]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job> 
+                          
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/PlugTryFun.java</file>
+                <prop id="rs-search">/*[requo-nolog]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job> 
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/PlugTryTask.java</file>
+                <prop id="rs-search">/*[requo-nolog]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>     
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Reserve.java</file>
+                <prop id="rs-search">/*[requo-nolog]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return;</prop> 
+                <prop id="rs-expected">2</prop>       
+              </call_job>                           
+                          
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/LogConnector.java</file>
+                <prop id="rs-search">/*[requo-nolog]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return;</prop> 
+                <prop id="rs-expected">2</prop>       
+              </call_job>  
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/LogConnector.java</file>
+                <prop id="rs-search">/*[requo-nolog2]*/</prop>
+                <prop id="rs-replace">if (e:o) false (e:c) </prop> 
+                <prop id="rs-expected">2</prop>       
+              </call_job>         
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_setup/LogLogger.java</file>
+                <prop id="rs-search">/*[requo-nolog]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return;</prop> 
+                <prop id="rs-expected">3</prop>       
+              </call_job>                         
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">/*[requo-nolog]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c) return;</prop> 
+                <prop id="rs-expected">3</prop>       
+              </call_job>       
+              
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+                <prop id="rs-search">/*[requo-nolog-exception]*/</prop>
+                <prop id="rs-replace">if (e:o) true (e:c)  throw new Exception(e:o)&quot;Job terminated due to exception and reason.&quot;(e:c);</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>                           
+             </when>            
+       <!-- sw remark -->
+        <when test="(f,has,prop,reco_sw_remark)">
+        
+          <prop id="remark_to_bring1">
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;(f,escape,java,(prop,reco_sw_remark))&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+
+          sm.out.println(e:o)&quot;&quot;(e:c);
+          sm.out.println(e:o)&quot;&quot;(e:c);
+          sm.out.println(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          sm.out.println(e:o)&quot;&quot;(e:c);          
+          sm.out.println(e:o)&quot;(f,escape,java,(prop,reco_sw_remark))&quot;(e:c); </prop>
+          sm.out.println(e:o)&quot;&quot;(e:c);
+          sm.out.println(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          sm.out.println(e:o)&quot;&quot;(e:c);
+          sm.out.println(e:o)&quot;&quot;(e:c);                                     
+          <prop id="remark_to_bring2">
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;(f,escape,java,(prop,reco_sw_remark))&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+          System.out.println(e:o)&quot;&quot;(e:c);
+
+          lc.info(e:o)&quot;&quot;(e:c);
+          lc.info(e:o)&quot;&quot;(e:c);
+          lc.info(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          lc.info(e:o)&quot;&quot;(e:c);          
+          lc.info(e:o)&quot;(f,escape,java,(prop,reco_sw_remark))&quot;(e:c); </prop>                                     
+          lc.info(e:o)&quot;&quot;(e:c);
+          lc.info(e:o)&quot;= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =&quot;(e:c);
+          lc.info(e:o)&quot;&quot;(e:c);
+          lc.info(e:o)&quot;&quot;(e:c); 
+        
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/run/Terminal.java</file>
+            <prop id="rs-search">/*[requo-remark1]*/</prop>
+            <prop id="rs-replace">(prop,remark_to_bring1)</prop> 
+            <prop id="rs-expected">2</prop>       
+          </call_job>   
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+            <prop id="rs-search">/*[requo-remark2]*/</prop>
+            <prop id="rs-replace">(prop,remark_to_bring2)</prop>  
+            <prop id="rs-expected">1</prop>       
+          </call_job>           
+        </when>    
+        
+        <!-- sw look and feel -->
+        <when test="(f,has,prop,reco_sw_look)">   
+          <choose>
+            <when test="(f,starts_with,(prop,reco_sw_look),5:)">
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/run/Terminal.java</file>
+                <prop id="rs-search">/*[requo-uistyle]*/</prop>
+                <prop id="rs-replace">uistyle = 5; bywish = &quot;(f,escape,java,(f,substring_after,(prop,reco_sw_look),5:))&quot;;</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>                
+            
+            </when>
+            <otherwise>            
+              <call_job job="rs">
+                <file id="rs-file">(dir,systema-dir)at/nicolas/x/run/Terminal.java</file>
+                <prop id="rs-search">/*[requo-uistyle]*/</prop>
+                <prop id="rs-replace">uistyle = (prop,reco_sw_look);</prop> 
+                <prop id="rs-expected">1</prop>       
+              </call_job>                                
+            </otherwise>                    
+          </choose>
+                
+        </when>   
+        
+        <!-- sw perspective -->
+        <when test="(f,has,prop,reco_sw_persp)">   
+        
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_core/Tc_AppConsole.java</file>
+            <prop id="rs-search">perspManager.getPersp(e:o)&quot;Earth&quot;(e:c);</prop>
+            <prop id="rs-replace">perspManager.getPersp(e:o)&quot;(f,escape,java,(prop,reco_sw_persp))&quot;(e:c);</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>       
+          
+          <call_job job="rs">
+            <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_core/Tc_PerspManager.java</file>
+            <prop id="rs-search">(e:o)Persp_IZP(e:c)izpMap.get(e:o)&quot;Earth&quot;(e:c);</prop>      
+            <prop id="rs-replace">(e:o)Persp_IZP(e:c)izpMap.get(e:o)&quot;(f,escape,java,(prop,reco_sw_persp))&quot;(e:c);</prop> 
+            <prop id="rs-expected">1</prop>       
+          </call_job>                   
+        
+        </when>    
+            
+        </when>     
+        
+        <ti label="did do pwd replacement" test="(prop,did-do-app-decoder)"/>
+        <ti label="did NOT do pwd replacement" test="(f,not,(prop,did-do-app-decoder))"/>
+ 
+         
+        
+      </when>
+      <otherwise>
+        <ti>i am not overwrting java files although you asked to timestamp !!!</ti>
+      </otherwise>
+    </choose>  
+</job>
+
+<job id="rs" role="hidden">
+  <need>(file,rs-file)</need>
+  <need>(prop,rs-search)</need>
+  <need>(prop,rs-replace)</need> 
+  <need>(prop,rs-encoding)</need>
+  <need default="1">(prop,rs-expected)</need> 
+  <ti_hr/>
+  <ti label="REPLACEMENT" x=" " />
+  <ti label="searching for:">(f,html,b,o)(prop,rs-search)(f,html,b,c)</ti>
+  <ti label="replacing with:">(f,html,i,o)(prop,rs-replace)(f,html,i,c)</ti>
+  <ti label="in file:">(file,rs-file)</ti> 
+  
+  <prop id="rs-x">(f,file_content,(file,rs-file),(prop,rs-encoding))</prop>
+  <prop id="rs-count">(f,count_text,(prop,rs-x),(prop,rs-search))</prop>
+  
+  <choose>
+    <when test="(f,eq_num,(prop,rs-count),(prop,rs-expected))">
+      <ti type="file" xlabel="Doing Replacement ..." label=" " x="(file,rs-file)"/>
+      <prop id="rs-x">(f,replace,(prop,rs-x),(prop,rs-search),(prop,rs-replace))</prop>
+      <create_file out="(file,rs-file)" encoding="(prop,rs-encoding)">(prop,rs-x)</create_file>
+      <ti test="0">search (prop,rs-search) replace (prop,rs-replace)</ti>
+      <ti label=" ">done.</ti>
+      <!-- 
+      <ti type="file" label="Did Replacement " x="(file,rs-file)"/>
+      -->
+    </when>
+    
+    <otherwise>
+      <throw>Expectations not fullfilled
+(f,eq_num,(prop,rs-count),(prop,rs-expected))= f eq_num  count=(prop,rs-count) expected=(prop,rs-expected)
+for    (prop,rs-search)
+replace (prop,rs-replace)  
+in file
+(file,rs-file) 
+      </throw>
+    
+    </otherwise>
+  
+  </choose>
+ 
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

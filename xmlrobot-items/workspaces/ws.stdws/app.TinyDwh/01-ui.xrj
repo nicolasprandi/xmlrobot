@@ -1,0 +1,295 @@
+<?xml version="1.0" ?>      
+
+<jobs>
+
+<call_job job="prolog"/>                    
+
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>
+ <job id="Stapel-Aktion" role="expert" 
+      lang="de" 
+      tip="Stapeln erm&#246;glichen die Kombination von Abfragen und Sql-Interfaces um diese in weiterer folge als Gruppe auszuf&#252;hren." 
+      class_menu="amBulks">
+
+    <call_job job="_bulk"/>          
+</job>
+
+ <job id="Bulk-Actions" role="expert" 
+      lang="en" 
+      tip="Bulks allow the combination of Queries and Sql-Interfaces for further execution as a group." 
+      class_menu="amBulks">
+
+    <call_job job="_bulk"/>
+</job>
+
+<job  id="Queries" role="expert" lang="en" xpri="10" 
+      tip="Write and excute your own sql-select-statements" 
+      class_menu="amQueries">
+
+      <call_job job="_select"/>
+                                       
+</job>
+
+<job id="Abfragen" role="expert" lang="de" xpri="10" 
+     tip="Schreiben Sie Ihre eigenen Sql-Select-Statements und f&#252;hren Sie diese aus" 
+     class_menu="amQueries">
+
+      <call_job job="_select"/>
+                                       
+</job>
+
+ 
+
+
+<job  id="Equals"  role="user" lang="en" 
+     tip="Declare manually 2 objects as one" 
+     class_menu="amCompos">
+  <call_job job="_connect"/>
+</job>
+
+<job  id="Gleiches"  role="user" lang="de" 
+     tip="F&#252;hren Sie 2 Objekte in ein einziges &#252;ber" 
+     class_menu="amCompos">
+  <call_job job="_connect"/>
+</job>
+
+<job xid="Mismas" id="Unir objectos"  role="user" lang="es" 
+     tip="2 objectos va estar solamente uno" 
+     class_menu="amCompos">
+  <call_job job="_connect"/>
+</job>
+
+<job id="Testdata"  role="expert2" lang="en" 
+     tip="Create testdata and simulate future constellations" 
+     class_menu="amTestdata">
+  <call_job job="_testdata"/>
+</job>
+
+<job id="Testdaten"   role="expert2" lang="de" 
+     tip="Erzeugen Sie Testdaten und simulieren Sie zukünftiges Verhalten" 
+     class_menu="amTestdata">
+  <call_job job="_testdata"/>
+</job>
+
+<job id="DatosTestos"   role="expert2" lang="es" 
+     tip="2 objectos va estar solamente uno" 
+     class_menu="amTestdata">
+  <call_job job="_testdata"/>
+</job>
+<!-- 
+ <job id="Integra"  role="boss2" lang="en" 
+      tip="Detect duplicte objects and unite them"  
+     class_menu="menuHibiscusDwh">
+   <call_job job="_integrate"/>
+
+  
+</job>
+
+ <job id="Integra"  role="boss2" lang="de" 
+      tip="Finde Duplikate in der Datenbank und vereinige diese"  
+     class_menu="menuHibiscusDwh">
+   <call_job job="_integrate"/>
+
+  
+</job>
+
+ <job id="Integra"  role="boss2" lang="es" 
+      tip="Encuentra duplicatos e combina los"  
+     class_menu="menuHibiscusDwh">
+   <call_job job="_integrate"/>
+
+  
+</job>
+-->
+<!-- 
+   
+ <job id="Mat-Views" role="expert" lang="de" 
+      tip="Materialized Views vereinfachen die Abfrage der Hibiscus-Db mittesl Sql" 
+      class_menu="menuHibiscusWork">
+
+    <call_job job="_mat_views"/>
+</job>
+
+ <job id="Mat-Views" role="expert" lang="en" 
+      tip="Materialized Views simplify the Sql-Selects on the Hibiscus-Db" 
+      class_menu="menuHibiscusWork">
+
+    <call_job job="_mat_views"/>
+</job>
+
+ <job id="Mat-Views" role="expert" lang="es" 
+      tip="Materialized Views ofrescen una manera mas simple para select los datos de la hibiscus-database" 
+      class_menu="menuHibiscusWork">
+
+    <call_job job="_mat_views"/>
+</job>
+
+-->
+
+<!-- 
+<job id="Selectiones" role="expert" lang="es" xpri="10" 
+     tip="Escriben sus sql-comandos e corren los" 
+     class_menu="menuHibiscusWork">
+
+      <call_job job="_select"/>
+                                       
+</job>
+
+
+
+
+
+
+
+
+
+<job id="| My Etl-Jobs"  role="hidden" >
+  <call_job job="my-etl-jobs"/>
+</job>
+
+
+
+
+
+
+
+
+<job id="Pdi"  role="adminxx" lang="en" 
+     tip="Support for the development of Import-Jobs with Kettle/PDI/Pentaho" 
+     class_menu="menuHibiscusData">
+  <call_job job="_programming"/>
+</job>
+
+<job id="Pdi"  role="adminxx" lang="de" 
+     tip="Unterst&#252;tzung f&#252;r die Entwicklung von Import-Jobs in Kettle/PDI/Pentaho"     
+     class_menu="menuHibiscusData">
+  <call_job job="_programming"/>
+</job>
+
+<job id="Pdi"  role="adminxx" lang="es" 
+     tip="Ayuda para el derollo de Import-Jobs en Kettle/PDI/Pentaho" 
+     class_menu="menuHibiscusData">
+  <call_job job="_programming"/>
+</job>
+
+
+
+-->
+
+<job id="Test-Zentrale" role="test" tip="Build up your system" class_menu="amTestcenter" xclass_menu="menuSetup">
+  <call_job job="test-zentrale"/>
+</job>
+<!-- 
+<job id="Test-Textarea" role="public" tip="Tests Textarea" class_menu="menuSetup">
+  <call_job job="test-textarea"/>
+</job>        -->
+
+
+<job id="Search" role="public" lang="en" tip="Search for an Object by Text" class_menu="amSearch">
+   <call_job job="_search"/>
+
+</job>
+<job id="Suche" role="public" lang="de" tip="Objektsuche per Text" class_menu="amSearch">
+   <call_job job="_search"/>
+
+</job>
+<job id="Buscar" role="public" lang="es" tip="Buscar un objecto en base del texto" class_menu="amSearch">
+   <call_job job="_search"/>
+
+</job>
+
+<job id="Did Search" role="public" lang="en" tip="History of searches"  class_menu="amSearched">
+   <call_job job="_searched"/>
+
+</job>
+<job id="Gesucht" role="public" lang="de" tip="Historische Suchen" class_menu="amSearched">
+   <call_job job="_searched"/>
+
+</job>
+<job id="Buscado" role="public" lang="es" tip="Buscars de pasado" class_menu="amSearched">
+   <call_job job="_searched"/>
+
+</job>
+<job id="Objects" role="public" lang="en" tip="Overview of available object and object-types" class_menu="amObjects">
+  <call_job job="_objects"/>
+</job>      
+<job id="Objekte" role="public" lang="de" tip="&#220;bersicht &#252;ber verf&#252;gbare Objekte und Objekt-Typen" class_menu="amObjects">
+  <call_job job="_objects"/>
+</job>
+
+<job id="Objectos" role="public" lang="es" tip="Objectos que hay" xclass_menu="stdToolButtonSuper" class_menu="amObjects">
+  <call_job job="_objects"/>
+</job>     
+
+               
+
+<!-- 
+ <job id="Integrate" role="boss" xlang="en"  
+      class_menu="amIntegrate" >
+  <call_job job="_integrate"/>
+
+   
+</job>          -->
+
+
+<job id="Index-Points" role="boss2" class_menu="amIndex">
+<call_job job="_imps" />
+
+</job>
+<!-- 
+<job id="Selection-Updates" role="boss3" class_menu="amSelects">
+<throw test="(f,not,(f,right,spi))">Diese Funktion spi ist mit diesen Privilegien nicht moeglich.</throw>
+<call_job job="_bulk"/>
+
+</job>
+-->
+
+ <job id="Tabellen" role="boss" lang="de"  
+      class_menu="amDwh" >
+  <call_job job="_dwh"/>
+
+   
+</job>
+
+ <job id="Tables" role="boss" lang="en"  
+      class_menu="amDwh" >
+  <call_job job="_dwh"/>
+
+   
+</job>
+
+ <job id="Tabulos" role="hidden"  
+      class_menu="amDwh" lang="es">
+  <call_job job="_dwh"/>
+
+   
+</job>
+
+ <job id="MVs" role="boss" lang="en"  
+      class_menu="amDwh" >
+  <call_job job="_mat_views"/>   
+</job>
+
+ <job id="MVs" role="boss" lang="de"  
+      class_menu="amDwh" >
+  <call_job job="_mat_views"/>   
+</job>
+
+<job id="Integration"  role="user"  tip="Rund um den Integratiosprozess" class_menu="amConfig">
+  <call_job job="_configurations_header2"/>
+ 
+  
+</job>
+                  
+<job id="Sys-Admin" role="public" lang="en" tip="Build up your system" class_menu="amConfig">
+  <call_job job="_configurations"/>
+</job>
+
+<job id="Sys-Admin"  role="public" lang="de" tip="Bauen Sie Ihr System auf" class_menu="amConfig">
+  <call_job job="_configurations"/>
+</job>
+
+<job id="Sys-Admin" role="public" lang="es" tip="Construye su sistema" class_menu="amConfig">
+  <call_job job="_configurations"/>
+</job>    
+
+</jobs>

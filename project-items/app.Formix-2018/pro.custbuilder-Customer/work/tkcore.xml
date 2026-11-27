@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="custset-tk">
+<need default="">(prop,custsets_tk_control)</need>
+<when test="(f,has_flag,(prop,custsets_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,custsets_tk_control),print_all_fields)">
+<ti label="(prop,custset_default_label_class) (prop,custset_default_label_name)"/>
+</when>
+<otherwise>
+<ti flag="label_right" label="(prop,custset_default_label_class)" x="(f,html,b,o)(prop,custset_default_label_name)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,custsets_tk_control),print_only),,(prop,custset_default_label_class)(f,when,(f,has,prop,custset_default_label_name), (prop,custset_default_label_name),))" tip="Ein Rezept ist ein Beschreibung eines Kochvorganges dervin einem Endresultat muendet. &#10;Zum einen gibt es Grund-Zutaten fuer das gesamte Rezept. &#10;Weiters kann ein Rezept in Teilprodukte gegliedert werden - diese werden Komponenten genannt;&#10;Innerhalb jeder Komponente kann aus den Grund-Zutaten auswgewaet werden um diese zu verarbeiten. ie Verarbeitungsschritte &#10;Wwerden dokumentiert. " flag="(prop,custsets_tk_control) wrap ">
+<tk label="Name" follow_job="follow_job_name" id="custset_name" x="" test_first="1" tip="Titel; Wird in der software angedruckt" type="text" flag=" nono "/>
+<tk label="Remarks" id="custset_remarks" x="" test_first="1" tip="Bemerkungen; Wird in der software angedruckt" type="textblock" flag=" "/>
+<tk label="Customers Delivery" id="custset_result" x="(f,vob,dir,base_delivery)" test_first="1" tip="Ergebnis" type="dir" flag=" "/>
+<tk label="Randomize CoopIds" id="custset_randomize" x="1" test_first="1" tip="Schaltet die zufaellige vergabe von system-coop-ids ein" type="bool" flag=" nono "/>
+<tk label="Zeichenanzahl Randomize" id="custset_randomize_len" x="10" test_first="1" regex="\d+" regex_msg="Zahl" type="text" flag=" "/>
+<tk label="Privilegien" x="Privilegien" test_first="0" type="msg" flag=" "/>
+<tk label="Product" id="custset_product" x="" test_first="1" tip="Selected Product" type="sel" flag=" nono " xml="(dir,pro)product-selector-gui.xml"/>
+<tk label="Pin" id="custset_password" x="(f,random_text,4,abcdefghijklmnopqrstuvwxyz)" test_first="1" tip="Password to enter at the beginning" type="text" flag=" "/>
+<tk label="Final-Date" id="custset_ablaufdatum" x="(f,vob,prop,base_default_final)" test_first="1" tip="in YYYYMMDD 20200301; Der LETZTE Tag an dem die app funktioniert!" regex="()(?&lt;!\d)(?:(?:20\d{2})(?:(?:(?:0[13578]|1[02])31)|(?:(?:0[1,3-9]|1[0-2])(?:29|30)))|(?:(?:20(?:0[48]|[2468][048]|[13579][26]))0229)|(?:20\d{2})(?:(?:0?[1-9])|(?:1[0-2]))(?:0?[1-9]|1\d|2[0-8]))(?!\d)()" regex_msg="Das muss ein Datum im format JJJJMMTT sein." type="text" flag=" "/>
+<tk label="Encryptor-Jobs" id="custset_encryptor" x="(f,random_text,16,ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!&quot;$%&amp;/(e:o)(e:c)=?*+'#-_.:(e:s);&lt;&gt;|{[]}\)" test_first="1" tip="Das ding mit dem all jobs verschluesselt sind; 16 stellig" regex="................" regex_msg="16 signs" type="text" flag=" "/>
+<tk label="Encryptor-Xsl" id="custset_encryptor_xsl" x="(f,random_text,16,ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!&quot;$%&amp;/(e:o)(e:c)=?*+'#-_.:(e:s);&lt;&gt;|{[]}\)" test_first="1" tip="Das ding mit dem all xsl verschluesselt sind; 16 stellig" regex="................" regex_msg="17 signs" type="text" flag=" "/>
+<tk label="Serial-Number" id="custset_serial" x="(f,add,0,(f,sequence,serial))" test_first="1" tip="Fuer das Wasserzeichen" type="text" flag=" "/>
+<tk label="Product-Configuration" id="custset_prodconf" x="" test_first="0" tip="Liste von Xml-Elementen&#10;zb:&#10;&lt;panorama groesserKleiner=&quot;(e:o)x(e:s)&lt;&gt;(e:c)&quot;/&gt;&#10;&lt;hibiscusJava limit=&quot;12&quot; limit1=&quot;(e:o)x(e:s)23(e:c)&quot;/&gt;&#10;Das (e:o)x(e:s)...(e:c) zum escapen von xml-entities!" type="textblock" flag="  big bigbig "/>
+<tk label="Details" x="Details" test_first="0" type="msg" flag=" "/>
+<tk label="Firma" id="custset_firma" x="" test_first="0" tip="Geschmaecker und Besonderheiten die das Rezept einzigartig machen" type="text" flag=" "/>
+<tk label="Telefon" id="custset_tel" x="" test_first="0" tip="Beschreibung die publiziert wird" type="text" flag=" "/>
+<tk label="email" id="custset_email" x="" test_first="0" tip="Anzahl der Portionen auf das die Mengenangaben gemuenzt sind" type="text" flag=" "/>
+<tk label="Web Adresse" id="custset_web" x="" test_first="0" tip="Anzahl der Portionen auf das die Mengenangaben gemuenzt sind" type="text" flag=" "/>
+<tk label="Interne Notiz" id="custset_notiz" x="" test_first="0" tip="Notiz" type="textblock" flag="  big "/>
+</tk>
+</job>

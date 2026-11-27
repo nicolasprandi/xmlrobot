@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+
+<job id="Mat-Views?" lang="de">
+
+  <ti label="Job &apos;Mat-Views&apos;"/>
+<ti type="ul">()Materialized Views (MVs) sind eine g&#228;ngige Technik vieler relationalen Datenbanksysteme, um Views performance-schonend anzubieten.()</ti> 
+<ti type="ul">()Views an sich, sind vor&#252;bergehende Ansichten auf mehr oder weniger komplexe Datenkonstrukte. Sie werden mittels &apos;Sql-Abfragen&apos; formuliert.()</ti> 
+<ti type="ul">()Die generische Datenstruktur von Hibiscus erf&#252;llt den ihr zugedachten Zweck gut, sie ist aber unpraktisch bei der Formulierung von Sql-Abfragen. Materialized Views (MVs) beheben dieses Defizit.()</ti> 
+<ti type="ul">()W&#228;hrend die generische Datenstruktur ein hierarchisches Konstrukt aus den Tabellen 'Objekt-Attribut-Wert' ist, bieten Materialized Views (MVs) die Daten in 'flachen Tabellen' an.()</ti> 
+<ti type="ul">()Je Objekttyp existiert eine Materialized View.()</ti> 
+
+<ti type="ul">()Sobald Sie mit MVs arbeiten, sollten Sie die sogenannten 'Kommandos' generieren.()</ti>
+<ti type="ul">()Sie sollten diese Kommandos auch generieren, sobald Sie &#196;nderungen am Vokabular vornehmen.()</ti>
+<ti type="ul">()F&#252;r das Generieren der Commandos wird der Link &lt;Erzeuge die Kommandos f&#252;r die Materialized Views&gt; verwendet.()</ti>
+<ti label="Kommandos"/>
+<ti xtype="ul">()Es stehen die folgenden Kommandos zur Verf&#252;gung:()</ti>
+<ti type="ul">(f,html,bold,open)Erzeugen &amp; Wieder-Erzeugen (f,html,bold,close) 
+()Hiermit werden MVs erzeugt.()</ti> 
+
+<ti type="ul">(f,html,bold,open)Auffrischen(f,html,bold,close)
+()Hiermit werden die Daten der MVs auf den neuersten Stand gebracht. F&#252;hren Sie ein Auffrischen immer dann durch, wenn Sie eine Integration durchgef&#252;hrt haben. Das Auffrischen ist eine Besonderheit der Materialized View. Eine g&#228;ngige View besitzt diese Moeglichkeit nicht. Daten einer MV werden nicht dynamisch aus den zugrundeliegenden Tabellen gelesen, sondern bei Bedarf ausgelesen und in einem 'eingefrohrenen Zustand' bereitgestellt. Dadurch werden Ressourcen gespart.()</ti>
+<ti type="ul">(f,html,bold,open)L&#246;schen(f,html,bold,close)
+()L&#246;schen Sie damit eine MV.()</ti> 
+<ti type="ul">(f,html,bold,open)Z&#228;hlen(f,html,bold,close)
+()Mit dieser Verwaltungsfunktion k&#246;nnenen Sie abfagen, wieviele Datens&#228;tze in einer MV enthalten sind.()</ti>
+<ti type="ul">(f,html,bold,open)Abfragen(f,html,bold,close)
+()Mit dieser Verwaltungsfunktion k&#246;nnen sie die Daten einer MV abfragen. Dabei wird die Konfiguration 'Limits/Vorschau Mat.Views' ber&#252;cksichtigt.()</ti> 
+<ti type="ul">()Sie k&#246;nnen auch eine ganze Liste von MVs erzeugen, auffrischen oder l&#246;schen. Sehen sie dazu die Zeilen 'ALLE' und 'VERMISSTE'.()</ti>
+<ti label="MVs in der Datenbank"/>
+
+<ti type="ul">()MVs werden im Datenbank-Schema 'stat' gespeichert.()</ti>
+<ti type="ul">()Ihr standardm&#228;sdiger Name ist mv_&lt;objektname&gt;.()</ti> 
+<ti type="ul">()Die MV fuer die Staaten nennt sich somit 'stat.mv_staat'.()</ti>
+
+<ti label="Kommando-Dateien"/> 
+
+<ti type="ul">()Die MV-Kommandos werden auf Ihren Wunsch generiert und bilden die aktuellen Spezifikationen des Vokabulars ab.()</ti>
+<ti type="ul">()Diese Kommandos sind letztendlich Sql-Befehle, die bei Bedarf an die Datenbank zur Ausf&#252;hrung geschickt werden.()</ti> 
+<ti type="ul">()Die Kommandos werden im Projekt gespeichert.()</ti>
+<!-- 
+<when test="(f,exists,prop,pro)">
+<when test="(f,exists_dir,(dir,fin))">
+<ti type="ul">()Ihre konkreten Komnandos finden Sie im()</ti>
+<ti type="dir" label="Verzeichnis" flag="label_right">(dir,fin)</ti>
+</when>
+</when>  
+-->  
+<!-- 
+<ti type="ul">()()</ti> 
+<ti type="ul">()()</ti>
+<ti type="ul">()()</ti> 
+<ti type="ul">()()</ti>
+<ti type="ul">()()</ti>        -->
+
+</job>
+
+
+
+</jobs>

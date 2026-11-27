@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="taste-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Verkostung(prop,tastes_offset_label)"/>
+<prop x="sum" id="tastes_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,taste_key)</need>
+<prop id="label" x="Verkostung [(f,tk_sel_translate,(prop,taste_was),(dir,pro)plate-selector-gui.xml)](prop,tastes_offset_label)"/>
+<prop x="sum_only" id="tastes_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="taste-tk"/>
+</job>

@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="check-login"/>
+
+<call_job job="prolog" />
+<!-- 
+<job id="test1" xrole="hidden">
+
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,b,o)explain this(f,html,b,c)" job="rez-see">
+
+</ti>  
+</ti>
+  
+</job>
+<job id="test2" xrole="hidden">
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)x(f,html,bold,close)" job="rez-see">
+
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">y</ti>
+<ti  type="text" x="portionen" />
+<ti  />
+<ti  type="call_job" explain="Edit" job="rez-edit">
+</ti>
+<ti test="(f,role,admin)" type="call_job" explain="Del" job="rez-del">
+</ti>
+</ti>
+</job>
+-->
+
+</jobs>

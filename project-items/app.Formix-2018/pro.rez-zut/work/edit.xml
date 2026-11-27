@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zut-edit">
+<need>(prop,zut_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="zut-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="zut-editor"/>
+<call_job job="zut-write"/>
+<ti align="right" x="Did update Zutat '(f,text,cut_nice,(prop,zut_bez),20)'"/>
+<call_job job="rez-see"/>
+</job>

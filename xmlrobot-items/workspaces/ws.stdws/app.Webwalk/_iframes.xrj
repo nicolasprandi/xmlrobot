@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="frame-navigation" role="hidden">
+<ti label="Frames"/>
+<ti type="call_job" job="do-iframes-parent" explain="Go to Parent Frame"
+    label="Go Up" />
+
+<ti type="call_job" job="do-iframes-select" explain="See all frames"
+    label="Go Down"/>   
+<ti type="call_job" job="do-iframes-select-by-index" explain="Select framy by index"
+    label=" "/>  
+<ti type="call_job" job="do-iframes-select-by-string" explain="Select frame by string"
+    label=" "/>          
+
+
+</job>
+<job id="do-iframes-select-by-index" role="hidden">
+  <tk id="index" tip="Enter the index" regex="\d+" flag="nono"/>
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,index)</need>
+          <wdriver act="switch_frame"
+           by_index="(prop,index)"/>
+           ()]]></prop>      
+      </call_job>   
+</job>
+
+<job id="do-iframes-select-by-string" role="hidden">
+  <tk id="string" tip="Enter the string" flag="nono"/>
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,string)</need>
+          <wdriver act="switch_frame"
+           by_string="(prop,string)"/>
+           ()]]></prop>      
+      </call_job>   
+</job>
+
+<job id="do-iframes-parent" role="hidden">
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <wdriver act="switch_frame"
+           by_parent="by_parent"/>
+           ()]]></prop>      
+      </call_job>  
+      <ti label="Did go to Parent-Frame"/>
+      <ti_hr_break/>
+      <call_job job="frame-navigation"/>
+      
+</job>
+<job id="do-iframes-select" role="hidden">
+  <prop id="var-spirit" x="frame_spirit"/>
+  <prop id="(prop,var-spirit)" x="katzen"/>
+  
+  <prop id="var-xpath" x="frame_xpath"/>
+  <prop id="(prop,var-xpath)" x="//frame|//iframe"/>  
+  <tp>selecting iframes or frames...</tp>  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,()(prop,var-spirit)())</need>
+  <need>(prop,()(prop,var-xpath)())</need>
+  <wdriver act="find_elements"
+           by_xpath="(prop,()(prop,var-xpath)())"
+           new_spirit_id="(prop,()(prop,var-spirit)())"
+           flag="keep"           
+           return_prop_count="nbr-found-elements"          
+           return_prop_single_id="found-single-id"/>
+           ()]]></prop>      
+      </call_job>       
+      <prop id="ps-desc" x="finding (e:o)i(e:c)frames "/>
+      <prop id="ps-desc" x="(prop,ps-desc) on url &apos;(f,wdriver,?,get_url)&apos;" flag="catch"/>
+      <prop id="ps-desc" x="(prop,ps-desc) with title &apos;(f,wdriver,?,get_title)&apos;" flag="catch" />
+        
+    <ti label="Searching for: (f,vob,prop,(prop,var-xpath))"/>    
+    <call_job job="ps-print-spirit">
+      <!-- <prop id="ps-xpath" x="(f,vob,prop,(prop,var-xpath))" />  -->
+      <prop id="ps-id" x="(f,vob,prop,(prop,var-spirit))" />
+      <prop id="ps-type" x="find_(e:o)i(e:c)frames" />
+      <prop id="ps-desc" x="(prop,ps-desc)" />
+      <prop id="ps-count" x="(prop,nbr-found-elements)" />
+      <prop id="ps-single-id" x="(f,vob,prop,found-single-id)"  test="(f,has,prop,found-single-id)"/>
+    </call_job> 
+     <call_job job="record">
+        <prop id="steps"><![CDATA[()  <spirit id="(prop,()(prop,var-spirit)())" act="close"/>
+        ()]]></prop>      
+    </call_job>         
+</job>
+
+
+<!--
+
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+
+-->
+
+
+</jobs>

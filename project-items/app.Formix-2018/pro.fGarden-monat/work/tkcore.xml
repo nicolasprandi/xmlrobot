@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="monat-tk">
+<need default="">(prop,monate_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" flag="(prop,monate_tk_control)">
+<tk label="Monat" id="monat_monat" x="" test_first="1" tip="Der Monat" type="sel" flag=" nono ">
+<sel label="Jänner">1</sel>
+<sel label="Februar">2</sel>
+<sel label="März">3</sel>
+<sel label="April">4</sel>
+<sel label="Mai">5</sel>
+<sel label="Juni">6</sel>
+<sel label="Juli">7</sel>
+<sel label="August">8</sel>
+<sel label="September">9</sel>
+<sel label="Oktober">10</sel>
+<sel label="November">11</sel>
+<sel label="Dezember">12</sel>
+</tk>
+</tk>
+</job>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ephase-editor">
+<try_catch>
+<try>
+<call_job job="hook-ephase-editor-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: ephase-editor: begin.0">
+<ti> hook_job=hook-ephase-editor-begin hook=begin page=editor station=0 object=ephase</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Vorgang(prop,ephasen_offset_label)"/>
+<prop x="sum" id="ephasen_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,ephase_key)</need>
+<prop id="label" x="Vorgang [(f,text,cut_nice,(f,tk_sel_translate,(prop,ephase_zut_key),(file,akt-zutatenliste-komponente)),30).(f,text,cut_nice,(prop,ephase_besch),40)](prop,ephasen_offset_label)"/>
+<prop x="sum_only" id="ephasen_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="ephase-tk"/>
+</job>

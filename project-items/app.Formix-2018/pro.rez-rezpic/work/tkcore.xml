@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rezpic-tk">
+<need default="">(prop,rezpics_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="bla bla bla bal" flag="(prop,rezpics_tk_control) wrap ">
+<tk label="Bild" id="rezpic_pic" x="" test_first="1" tip="ein Bild" type="file" flag=" nono "/>
+<tk label="Bezeichnung" id="rezpic_bez" x="" test_first="1" tip="Bildbezeichnung" type="text" flag=" nono "/>
+<tk label="Max Breite/Px" id="rezpic_max_x_px" x="" test_first="1" tip="in pixel" type="text" flag=" "/>
+<tk label="Max Hoehe/px" id="rezpic_max_y_px" x="300" test_first="1" tip="in pixel" type="text" flag=" "/>
+</tk>
+</job>

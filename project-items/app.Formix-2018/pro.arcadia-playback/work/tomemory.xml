@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="playback-read">
+<need>(prop,playback_key)</need>
+<spirit act="open" missing_strategy="empty" id="playbacks_spirit_tc" xml="(file,playbacks)"/>
+<prop id="playback_dt_upd">(f,spirit,playbacks_spirit_tc,(prop,playbacks_offset)playback[@row=(f,xpath_string,(prop,playback_key))],@dt_upd)</prop>
+<prop id="playback_dt_add">(f,spirit,playbacks_spirit_tc,(prop,playbacks_offset)playback[@row=(f,xpath_string,(prop,playback_key))],@dt_add)</prop>
+<prop id="playback_target">(f,spirit,playbacks_spirit_tc,(prop,playbacks_offset)playback[@row=(f,xpath_string,(prop,playback_key))],@target)</prop>
+<prop id="playback_desc">(f,spirit,playbacks_spirit_tc,(prop,playbacks_offset)playback[@row=(f,xpath_string,(prop,playback_key))],@desc)</prop>
+<spirit act="close" id="playbacks_spirit_tc"/>
+</job>

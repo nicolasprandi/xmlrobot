@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="url-write">
+    <need>(prop,url_key) (prop,isAdd)</need>
+    <need default="./">(prop,urls_offset)</need>
+    <spirit act="open" id="urls_spirit_tc" xml="(file,urls)"/>
+    <when test="(prop,isAdd)">
+        <choose>
+            <when test="(f,ends_with,(prop,urls_offset),/)">
+                <prop id="offset2" x="(f,substring,(prop,urls_offset),0,(f,sub,(f,len,(prop,urls_offset)),1))"/>
+            </when>
+            <otherwise>
+                <prop id="offset2" x="(prop,urls_offset)"/>
+            </otherwise>
+        </choose>
+        <spirit act="xml_update" how="insert_in" id="urls_spirit_tc" where="(prop,offset2)">
+            <inline attribute="with">&lt;url row="(prop,url_key)" /&gt;</inline>
+        </spirit>
+        <i>Added a new record</i>
+    </when>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="urls_spirit_tc" where="(prop,urls_offset)url[@row='(prop,url_key)']" attribute="url" value="(f,vob,prop,url_url)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="urls_spirit_tc" where="(prop,urls_offset)url[@row='(prop,url_key)']" attribute="desc" value="(f,vob,prop,url_desc)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="urls_spirit_tc" where="(prop,urls_offset)url[@row='(prop,url_key)']" attribute="history" value="(f,vob,prop,url_history)"/>
+    <spirit act="close" flag="save pretty" id="urls_spirit_tc"/>
+</job>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="app-see">
+<need>(prop,app_key)</need>
+<call_job job="app-read"/>
+<prop x="print print_only" id="apps_tk_control"/>
+<prop id="label" x="App: (f,html,bold,open)(prop,app_appid)(f,html,bold,close)(f,when,(f,has,(prop,apps_offset_label)), - (prop,apps_offset_label),)"/>
+<call_job job="app-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="[ ? ]" align="right" job="app-see-more">
+<prop id="app_key">(prop,app_key)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit Data of Application" job="app-edit">
+<prop id="app_key">(prop,app_key)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,admin)" type="call_job" explain="Delete" job="app-del">
+<prop id="app_key">(prop,app_key)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec">
+<ti/>
+<ti isFromAction="1" type="call_job" page="details" explain="Db:Cmd" job="hook-action-app-dbcommand">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">dbcommand</prop>
+<prop page="details" id="app_key">(prop,app_key)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-app-details-end</trace>
+<call_job job="hook-app-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: app-details: end.0">
+<ti> hook_job=hook-app-details-end hook=end page=details station=0 object=app</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

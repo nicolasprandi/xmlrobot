@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2021 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<job id="present-dirs-for-choose" joblevel="ws" role="hidden">
+    <call_service job="tr_choose_web"/>
+    <ti label="(prop,_webch_selbasic) &apos;(f,guicontroller,choose,file,label)&apos;(f,when,(f,guicontroller,choose,file,has-save), (prop,_webch_towrite),)"/>
+
+    <ti test="(f,has,(f,guicontroller,choose,file,tip))">(f,guicontroller,choose,file,tip)</ti>    
+    <ti_space height="3px" /> 
+    
+      <when test="(f,has,(f,request,dir,master_project))">
+        <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_your) (f,request,prop,master_project_app)-(prop,_webch_project)">
+          <dir id="with">(f,request,dir,master_project)</dir>
+        </ti>
+      </when>       
+      
+      <when test="(f,has,dir,pro)">
+        <choose>
+          <when test="(f,has,(f,request,dir,master_project))">
+          <when test="(f,not,(f,eq_text,(dir,pro),(f,request,dir,master_project)))">
+                <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_your) (f,vob,prop,app)-(prop,_webch_project)">
+                  <dir id="with">(dir,pro)</dir>
+                </ti>          
+          </when>          
+          </when>
+          <otherwise>
+            <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_your) (f,vob,prop,app)-(prop,_webch_project)">
+              <dir id="with">(dir,pro)</dir>
+            </ti>
+          </otherwise>
+        </choose> 
+      </when>                                                           
+      
+      <when test="(f,has,(f,request,dir,databaselink))">
+      <when test="(f,exists_dir,(f,request,dir,databaselink))">
+        <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_db)">
+          <dir id="with">(f,request,dir,databaselink)</dir>
+        </ti>
+              
+      </when>
+      </when>
+            
+      <when test="(f,has,(f,request,dir,session_home_fs))">
+        <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_session)">
+          <dir id="with">(f,request,dir,session_home_fs)</dir>
+        </ti>
+      </when>
+
+      <!-- <when test="(f,has,(f,request,dir,libro))"> -->
+      <when test="(f,exists_dir,(f,request,dir,libro))">      
+        <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_libro)">
+          <dir id="with">(f,request,dir,libro)</dir>
+        </ti>      
+      </when>
+      <!-- </when> -->
+      
+      <!-- <when test="(f,has,(f,request,dir,libro2))"> -->
+      <when test="(f,exists_dir,(f,request,dir,libro2))">      
+        <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_libro2)">
+          <dir id="with">(f,request,dir,libro2)</dir>
+        </ti>      
+      </when>
+      <!-- </when> -->      
+      
+      <when test="(f,has,(f,request,prop,master_project_app))">      
+        <ti type="call_service" job="Goto-Panorama" explain="(f,request,prop,master_project_app)-(prop,_webch_app)">
+          <dir id="with">(f,request,dir,master_project_app)</dir>
+        </ti>      
+      </when>
+      
+      <when test="(f,has,dir,lastChooseDir)">
+        
+        <ti type="call_service" job="Goto-Panorama" explain="(prop,_webch_lastchoose): (f,name_of_dir,(dir,lastChooseDir))">
+          <dir id="with">(dir,lastChooseDir)</dir>
+        </ti>    
+                
+      </when>        
+            
+    
+
+  <ti_space height="6px" />    
+  <ti type="call_service" job="Select Directory" explain="(prop,_webch_see_more_folders)"/>
+  <ti_space height="3px" />
+</job>
+
+<job id="present-dirs-for-choose-ALT" joblevel="ws" role="hidden">
+    <call_service job="tr_choose_web"/>
+    <ti label="(prop,_webch_selbasic) &apos;(f,guicontroller,choose,file,label)&apos;(f,when,(f,guicontroller,choose,file,has-save), (prop,_webch_towrite),)"/>
+
+    <ti test="(f,has,(f,guicontroller,choose,file,tip))">(f,guicontroller,choose,file,tip)</ti>    
+    <ti_space height="3px" /> 
+    
+      <when test="(f,has,(f,request,dir,master_project))">
+        <ti type="dir" label="(f,request,prop,master_project_app)-(prop,_webch_project):" flag="catch naked">(f,request,dir,master_project)</ti>
+      </when>
+      
+      <when test="(f,has,(f,request,dir,databaselink))">
+      <when test="(f,exists_dir,(f,request,dir,databaselink))">
+      <ti type="dir" label="(prop,_webch_db):"  flag="catch naked">(f,request,dir,databaselink)</ti>
+      </when>
+      </when>      
+      <ti type="dir" label="(prop,_webch_session):" test="(f,has,(f,request,dir,session_home_fs))" flag="naked catch">(f,request,dir,session_home_fs)</ti>
+      <!-- 
+      <ti type="dir" label="Session Memory-Fs:" test="(f,has,(f,request,dir,session_home_mem))" flag="catch">(f,request,dir,session_home_mem)</ti>   -->   
+      <!--               
+      <when test="(f,has,dir,pro)">
+        <prop id="show-the-simple-pro">1</prop>
+        <when test="(f,has,(f,request,dir,master_project))">
+          <prop id="show-the-simple-pro">(f,not,(f,eq_text,(dir,pro),(f,request,dir,master_project)))</prop>
+          <ti type="dir" label="Serving (f,vob,prop,app)-Project" test="(prop,show-the-simple-pro)" flag="catch naked"
+          >(f,vob,dir,pro)</ti>
+        </when>        
+      </when>   
+      -->      
+
+      <!-- <when test="(f,has,(f,request,dir,libro))"> -->
+      <when test="(f,exists_dir,(f,request,dir,libro))">      
+      <ti type="dir" label="(prop,_webch_libro):"  flag="catch naked">(f,request,dir,libro)</ti>
+      </when>
+      
+      <when test="(f,exists_dir,(f,request,dir,libro2))">      
+      <ti type="dir" label="(prop,_webch_libro2):"  flag="catch naked">(f,request,dir,libro2)</ti>
+      </when>      
+      <!-- </when> -->
+    
+      <ti type="dir" label="(prop,_webch_app):" test="(f,has,(f,request,prop,master_project_app))" flag="catch naked">(f,request,dir,master_project_app)</ti>
+      <!--       <ti label="Software"/>  
+      <ti type="dir" label="Services:" test="(f,has,dir,services)" flag="catch naked">(dir,services)</ti>
+      <ti type="dir" label="All Apps:" test="(f,has,dir,service_apps)" flag="catch naked">(dir,service_apps)</ti>   
+      <ti label="Action"/> 
+      -->
+  <ti_space height="5px" />    
+  <ti label=" " type="call_service" job="Select Directory" explain="(prop,_webch_see_more_folders)"/>
+</job>
+
+
+<job id="Goto-Choose-Dir" joblevel="ws" role="hidden">
+  <call_service job="tr_choose_web"/>
+  <!-- wird aufgerufen wenn vom web aus ein verzeichnis ausgewaehlt werden soll --> 
+  <call_service job="present-dirs-for-choose"/>
+  <prop id="is-first-chooser">1</prop>
+                                    
+  <choose>
+    <when test="(f,guicontroller,choose,dir,has-value)">
+      <call_service job="Goto-Panorama">
+        <dir id="with" x="(f,guicontroller,choose,dir,value)"/>
+      </call_service>
+    </when>
+    <otherwise> 
+      <when test="(f,has,prop,x2)">  
+        <ti_space height="3px" />             
+        <ti label="(prop,_webch_proposes)"/>
+        <ti xlabel=" "
+            type="dir" 
+            class_choose="panoChooseFileAccept"
+            flag="choose button_choose"
+            call_choose="(prop,_webch_accept_prepo)">(prop,x2)</ti>   
+          
+
+      </when>
+       
+    
+      <choose>
+        <when test="(f,has,dir,base)">
+          <call_service job="Goto-Panorama">
+            <dir id="with">(dir,base)</dir>
+          </call_service>
+        </when>      
+        <!-- 
+        <when test="(f,has,dir,lastChooseDir)">
+          <call_service job="Goto-Panorama">
+            <dir id="with">(dir,lastChooseDir)</dir>
+          </call_service>
+        </when>       -->
+        <otherwise>
+            
+          
+        </otherwise>
+      </choose>
+           
+    </otherwise> 
+  </choose>
+ 
+</job>
+
+<job id="Goto-Choose-File" joblevel="ws" role="hidden"> 
+  <call_service job="tr_choose_web"/>  
+  <call_service job="present-dirs-for-choose"/>
+  <prop id="is-first-chooser">1</prop>
+                                   
+  <choose>
+    <when test="(f,guicontroller,choose,file,has-value)">
+      <call_service job="Goto-Panorama">
+        <dir id="with" x="(f,dir_of_file,(f,guicontroller,choose,file,value))"/>
+      </call_service>
+    </when>
+    <otherwise> 
+      <when test="(f,has,prop,x2)">        
+        <ti_space height="3px" />      
+        <ti label="(prop,_webch_proposes)"/>
+        <ti type="file" 
+            xlabel=" "
+            class_choose="panoChooseFileAccept"
+            flag="choose button_choose"
+            call_choose="(prop,_webch_accept_prepo)">(prop,x2)</ti>   
+           
+
+      </when>
+       
+    
+      <choose>
+        <when test="(f,has,dir,base)">
+          <call_service job="Goto-Panorama">
+            <dir id="with">(dir,base)</dir>
+          </call_service>
+        </when>      
+        <!-- 
+        <when test="(f,has,dir,lastChooseDir)">
+          <call_service job="Goto-Panorama">
+            <dir id="with">(dir,lastChooseDir)</dir>
+          </call_service>
+        </when>         -->
+        <otherwise>
+           
+          
+        </otherwise>
+      </choose>
+           
+    </otherwise> 
+  </choose>
+ 
+</job>
+
+
+
+</jobs>

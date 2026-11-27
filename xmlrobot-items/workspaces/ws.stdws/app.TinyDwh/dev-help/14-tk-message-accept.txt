@@ -1,0 +1,24 @@
+<!-- warning -->
+<tk type="msg" msg_type="w">(prop,_sam_ups_veraenderungen)</tk>
+
+<!-- accept -->
+<tk label="(prop,_org_sicher)"> 
+<tk label="(prop,orga_segment_singular_label)(prop,_org_wirk_loe)"            
+		type="accept" 
+		id="delete-confirm-1" 
+		x="&quot;(prop,orga_name)&quot;(prop,_org_wirk_loe)&#xA;(prop,orga_desc)&#xA;(prop,_org_zu_loesch)&#xA;(f,loop_xml,orga,xml?)"
+
+		label_accept="(prop,_org_ja_loesch)" 
+		label_decline="(prop,_org_abbrechen)" 
+		width="300" height="200">
+			<q id="delete-confirm-2" label="(prop,_org_ja_forever)"/>
+</tk>
+</tk>
+   
+<when test="(f,not,(f,and,(prop,delete-confirm-1),(prop,delete-confirm-2)))">
+	<throw>(prop,_org_wurde_abgebr)
+(prop,orga_segment_singular_label) &quot;(prop,orga_name)&quot; (prop,_org_bleit)</throw>
+</when> 
+
+
+

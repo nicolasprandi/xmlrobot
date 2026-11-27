@@ -1,0 +1,1093 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+
+
+<job id="create testdata internal" joblevel="pro" role="hidden">
+  <need>(prop,askquestions) (prop,view)</need> 
+  <need default="0">(prop,from-projectsetup)</need>
+  
+  <call_job job="pt-get"/>
+
+  <ti align="right">Started transformation: (f,html,bold,open)(prop,mustpt)(f,html,bold,close) ...</ti>
+  
+  
+  <call_job job="flow input"/> 
+      
+  <when test="(f,not,(f,has,prop,first_row))">
+    <prop id="first_row" x="1"/>
+    <i>Assumed first row to be 1</i>
+  </when>  
+  
+  <!-- when excel-data is taken as it is,
+       which is signalled by not having a limit in input or output rows,
+       the algorithm is speeded up.
+       thats called 'fastlane' -->
+  
+  <choose>
+    <when test="(prop,mustfastlane)">
+      <prop id="fastlane" x="1"/>
+    </when>
+    <when test="(f,not,(f,has,prop,wish))">
+      <prop id="fastlane" x="(prop,mustfastlane)"/>
+    </when>
+    <otherwise>
+      <prop id="fastlane" x="0"/>
+    </otherwise>
+  </choose>
+  
+  <!-- creating the signal file -->
+
+  <prop id="stats-p1-project-type" x="(prop,pn1)"/>
+  <prop id="stats-p1-testdata" x="1"/>
+  <when test="(prop,fastlane)">
+    <prop id="stats-p1-project-type" x="(prop,pn2)"/>
+    <prop id="stats-p1-testdata" x="0"/>
+  </when>
+  <prop id="stats-p1-begin-date" x="(f,time,yyyy-MM-dd E HH:mm,job)"/>
+  <prop id="doall" x="1"/>
+  <!-- 
+  <ti>main_extra = (prop,main_extra)</ti>
+  <dump flag="ti"/>-->
+  <when test="(f,has,prop,main_extra)"> 
+    <!-- <ti>has main_extra</ti> -->
+    <when test="(f,has_flag,(prop,main_extra),skip_first_part)">
+      <when test="(f,not,(prop,fastlane))">     
+        <prop id="doall" x="0"/>
+      </when>
+    </when>
+  </when>
+  <prop id="stats-p1-begin-alltime" x="(f,alltime)"/>
+  <file id="stats-p1-input" x="(file,excel)"/>
+  <prop id="stats-p1-input-sheet" x="(f,vob,prop,sheet)"/>
+  <choose>
+    <when test="(prop,doall)">
+      <when test="(prop,fastlane)">
+        <prop id="last_row_orig" x="(prop,last_row)"/> 
+        <prop id="last_row" x="(prop,conf-nbr-fastlane)"/>        
+      </when>
+      <call_job job="excel to matrix"/>      <need>(file,excel) (file,matrix)</need>  
+      <call_job job="matrix to colspec"/>    <need>(file,cs)</need>
+      
+      <choose>
+        <when test="(prop,fastlane)">
+          <prop id="keep_original_data" x="1"/>
+          <prop id="wish" x="(prop,conf-nbr-fastlane)"/>
+        </when>
+        <when test="(f,has,prop,wish)">
+          <prop id="keep_original_data" x="0"/>
+          <prop id="stats-p1-records" x="(prop,wish)"/>
+        </when>
+        <otherwise>
+          <prop id="keep_original_data" x="1"/>
+        </otherwise>
+      </choose>
+      
+      <call_job job="colspec 2 shuffle"/>    <need>(file,sr) (file,src)</need>
+
+      
+      <when test="(prop,fastlane)">
+        <prop id="last_row" x="(prop,last_row_orig)"/> 
+        <choose>
+          <when test="(f,has,prop,last_row)">
+            <prop id="y2" x="(f,add,(prop,last_row),(prop,first_row))"/>
+          </when>
+          <otherwise>
+            <prop id="y2" x=""/>
+          </otherwise>
+        </choose>
+		<prop id="msg-9" x="Reading Excel-Data" />
+		<prop id="msg-9" x="(prop,msg-9) starting with row (prop,first_row)" test="(f,has,prop,first_row)"/>
+		<prop id="msg-9" x="(prop,msg-9) until row (prop,y2)" test="(f,has,prop,y2)"/>
+
+        <tp>Looking at data-2: (prop,msg-9) ...</tp>      
+        <excel_table
+              excel="(file,excel)" 
+              sheet="(prop,sheet)"
+              out="(file,shuffle3b)"
+              y1="(prop,first_row)"
+              y2="(prop,y2)"
+              count_base="1"
+              style="short"
+              flag="(f,when,(prop,conf-dates),,no_dates)"
+              date_format="(prop,conf-date-format)"/>     
+		    <tp>Looking at data-3: Counting things ...</tp> 
+        <prop id="nbr_fastlane_rows" x="(f,xsl,(file,shuffle3b),count(e:o)//row(e:c))"/>     
+        <prop id="stats-p1-records" x="(prop,nbr_fastlane_rows)"/>
+      </when>
+        
+    </when>
+    <otherwise>
+      <ti label="Skipping first part of creation">
+        <ti>Skipped: excel to matrix</ti>
+        <ti>Skipped: matrix to colspec</ti>
+        <ti>Skipped: colspec 2 shuffle</ti>
+      </ti>
+      <prop id="stats-p1-records" x="?"/>
+
+    </otherwise>
+  </choose>
+  <tp>Looking at data-4 ...</tp>
+  <call_job job="create colsel"/>
+  <tp>Looking at data-5: Analyze unique values...</tp>
+  <call_job job="colspec 2 unique"/>     <need>(file,cs_unique) (file,cs)</need>
+  <tp>Looking at data-6 ...</tp>  
+  <call_job job="colspec 2 rep_stat"/>   <need>(file,rep_stat)</need> 
+  <tp>Looking at data-7 ...</tp> 
+  <call_job job="colspec 2 rep_first"/>  <need>(file,rep_first2)</need> 
+  <tp>Looking at data-8 ...</tp> 
+  <call_job job="colspec 2 rep_unique"/> <need>(file,rep_unique)</need>
+  <tp>Looking at data-9 ...</tp>
+  <call_job job="create eb"/>            <need>(file,eb) (file,ebc)</need>
+   <tp>Looking at data-10 ...</tp>
+  <call_job job="create new result report"/>
+  <tp>Looking at data-11 ...</tp>
+   
+  <ti label="Xml Result:" type="file" x="(file,eb)"/>
+  <file id="stats-p1-output" x="(file,eb)"/>
+  
+  <call_job job="ebc 2 rep_second"/> <need>(file,rep_second)</need>
+  <tp>Looking at data-12 ...</tp> 
+     
+  <when test="(prop,fastlane)">        
+    <delete file="(file,shuffle2b)" />
+    <delete file="(file,ebc)" />
+  </when> 
+  <prop id="stats-p1-end-alltime" x="(f,alltime)"/>
+  <prop id="stats-p1-end-date" x="(f,time,yyyy-MM-dd E HH:mm,job)"/>
+  <prop id="stats-p1-duration-alltime" 
+        x="(f,sub,(prop,stats-p1-end-alltime),(prop,stats-p1-begin-alltime))"/>
+  <prop id="stats-p1-duration-seconds" 
+        x="(f,div,(prop,stats-p1-duration-alltime),1000)"/>      
+  <!-- writing phase 1 stats -->
+  <call_job job ="write-stats-p1"/>  
+  
+  <!-- <when test="(f,or,(prop,conf-do-export),(prop,fastlane))">  -->
+  <choose>
+    <when test="(prop,conf-do-export)">
+      <choose>
+        <when test="(prop,askquestions)">
+          <call_job job="internal: export">
+            <prop id="askquestions" x="(f,not,(prop,conf-do-export-silent))"/>
+          </call_job>      
+        </when>
+        <otherwise>
+          <call_job job="internal: export">
+            <prop id="askquestions" x="0"/>
+          </call_job>         
+        </otherwise>
+      </choose>
+  
+    </when>
+    <otherwise>
+      <ti>Export omitted due to configuration</ti>
+    </otherwise>
+  </choose>
+
+  <!-- <ti_break/> -->
+
+  <try_catch>
+    <try>
+      <ti_hr/>
+      <ti label="Column Information"/>
+      <include file="(file,rep_stat)" code="rep_stat"/>
+      <include file="(file,nrr)" code="nrr"/>
+
+      
+    </try>
+    <catch>
+      <ti label="No Results">
+      <ti label="Seems not" x="to be executed until now!"/>
+      </ti>
+    </catch>
+  </try_catch>
+  
+</job>
+
+<job id="excel to matrix" joblevel="pro" role="hidden">
+    
+  <tp>Looking at data-1: Analyzing spreadsheet ...</tp>
+  <ti test="0" x="(f,html,bold,open)Processing ...(f,html,bold,close)" align="right"/>
+  <ti_flush/>
+  
+  <!-- Reading excel sheet -->
+  <when test="(f,not,(f,has,prop,last_row))">
+    <prop id="last_row" x="999999"/>
+  </when>
+  
+  <excel_matrix
+        excel="(file,excel)" 
+        sheet="(prop,sheet)"
+        out="(file,matrix)"
+        y1="(prop,first_row)" 
+        y2="(f,add,(prop,last_row),(prop,first_row))"
+        count_base="1"        
+        flag="(f,when,(prop,conf-dates),,no_dates)"
+        date_format="(prop,conf-date-format)"/> 
+
+  <!-- filling up dim_col with at leas one col -->
+  <prop id="count" x="(f,xsl,(file,matrix),count(e:o)root/dim_col/col(e:c))"/>
+  <prop id="highest" x="(f,xsl,(file,matrix),root/dim_col/col[position(e:o)(e:c)=last(e:o)(e:c)]/@col)"/>
+  <when test="(f,not,(f,eq,(prop,count),(prop,highest)))">
+    <prop id="index" x="0"/>
+    <loop id="w" while="()(f,lt,(prop,index),(prop,highest))()">
+      <prop id="index" x="(f,add,1,(prop,index))"/>
+      <try_catch>
+        <try>
+          <prop id="found" x="(f,xsl,(file,matrix),root/dim_col/col[@col=(prop,index)]/@col)"/>
+          <!-- <ti>(loop,w,#i) found=(prop,found)</ti> -->
+          <when test="(f,eq,,(prop,found))">
+            <!-- <ti>(loop,w,#i) NOT FOUND</ti> -->
+            <xml_update 
+              how="insert_in" 
+              what="(file,matrix)" 
+              where="dim_col"> 
+              <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> <col col="(loop,w,#i)"/> ]]></inline> 
+            </xml_update>
+            <!-- <ti label="updated" type="file" x="(file,matrix)"/> -->
+          </when>
+        </try>
+        <catch>
+          <ti>did not find colspec for (prop,index)</ti>
+          <ti_flush/>
+        </catch>
+      </try_catch>
+    </loop>
+  </when>
+  
+</job>
+
+<job id="matrix to colspec" joblevel="pro" role="hidden">
+ 
+  <!-- 1) Xslt -->
+  <xslt
+    xml="(file,matrix)"
+    xsl="(dir,app)matrix2cs.xsl"
+    out="(file,cs)"/>
+
+  <!-- 2= Update Good Attribute Name -->
+  <unique id="u" act="open" style="xml_attribute" />
+  
+  <spirit id="cs" act="open" xml="(file,cs)"/>
+  <loop_xml id="x" act="open" spirit="cs" xpath="coltype" />
+  <loop id="wx" while="()(f,loop_xml,x,has_next?)()">
+    <loop_xml act="next" id="x" />
+    <when test="(f,has,(f,loop_xml,x,@name))">
+      <prop id="now">(f,loop_xml,x,@name)</prop>
+      <prop id="then">(f,unique,u,(prop,now))</prop>
+      <spirit 
+        id="cs"  
+        act="xml_update" 
+        where_is_loop_xml="x" 
+        how="set_attribute" 
+        attribute="name" 
+        value="(prop,then)" /> 
+      <spirit 
+        id="cs"  
+        act="xml_update" 
+        where_is_loop_xml="x" 
+        how="set_attribute" 
+        attribute="name_orig" 
+        value="(prop,now)" />      
+     </when> 
+  </loop>
+  <prop id="coll_count" x="(f,loop_xml,x,#i)"/>
+  <loop_xml id="x" act="close"/>
+  
+  <loop_xml id="x" act="open" spirit="cs" xpath="coltype" />
+  <loop id="wx" while="()(f,loop_xml,x,has_next?)()">
+    <loop_xml act="next" id="x" />
+    <when test="(f,not,(f,has,(f,loop_xml,x,@name)))">
+      <spirit 
+        id="cs"  
+        act="xml_update" 
+        where_is_loop_xml="x" 
+        how="set_attribute" 
+        attribute="name" 
+        value="(f,unique,u,)" /> 
+      <spirit 
+        id="cs"  
+        act="xml_update" 
+        where_is_loop_xml="x" 
+        how="set_attribute" 
+        attribute="name_orig" 
+        value="" />       
+     </when> 
+  </loop>
+  <loop_xml id="x" act="close"/>
+  
+  <ti type="file" label="Updated" x="(file,cs)" test="0"/>
+  
+  <!-- doing sheet_name_good -->
+  <unique id="sheet_name" act="open" style="xml_attribute" />
+  <prop id="sheet_name_good">(f,unique,sheet_name,(prop,sheet))</prop>
+  <unique id="sheet_name" act="close"/>
+  
+  <spirit 
+    id="cs"  
+    act="xml_update" 
+    where="." 
+    how="set_attribute"
+    attribute="sheet_name_good"
+    value="(prop,sheet_name_good)"/>
+
+  <!-- appending extending colums to cs -->
+  <choose>
+    <when test="(f,has,prop,ext_columns)">
+      <split text="(prop,ext_columns)" out="(file,split)"/>
+      <prop id="nbr_cols" x="(f,xsl,(file,split),count(e:o)splits/split(e:c))"/>
+      <ti test="0">nbr_cols=(prop,nbr_cols)</ti>
+      <prop id="total_cols" x="(f,add,(prop,nbr_cols),(prop,coll_count))"/>
+      <ti test="0" >total_cols=(prop,total_cols)</ti>
+      <ti type="file" x="(file,split)" test="0"/>
+      <ti test="0">coll_count=(prop,coll_count)</ti> 
+      <loop id="s" xml="(file,split)" xpath="split" flag="back">
+        <prop id="next">(f,add,(prop,coll_count),(loop,s,#i))</prop>   
+        <prop id="next2">(f,sub,(prop,total_cols),(loop,s,#i))</prop>     
+        <prop id="now">(f,unique,u,(loop,s,@x))</prop>
+        <!-- alt col_index="(f,sub,(prop,next),1)" -->
+        <spirit 
+          id="cs"  
+          act="xml_update" 
+          where="." 
+          how="insert_in_begin">
+          <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+          <coltype  
+            col_index="(prop,next2)" 
+            name="(prop,now)"
+            name_orig="(loop,s,@x)"> 
+            <values/></coltype>]]>
+          </inline>
+        </spirit> 
+        
+        <!--
+        <spirit 
+          id="cs"  
+          act="xml_update" 
+          where="dims" 
+          how="insert_before">
+          <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+          <coltype 
+            col_index="(f,sub,(prop,next),1)" 
+            name="(prop,now)"
+            name_orig="(loop,s,@x)"> 
+            <values/></coltype>]]>
+          </inline>
+        </spirit>         
+        -->
+        
+        <spirit 
+          id="cs"  
+          act="xml_update" 
+          where="dims/dim_col" 
+          how="insert_in">
+          <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+          <col 
+            col="(prop,next)" 
+            />
+            ]]>
+          </inline>
+        </spirit>       
+        
+      </loop>
+      
+    </when>
+    <otherwise>
+      <create_file out="(file,split)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+          <splits/>
+            ]]></create_file>
+    </otherwise>
+  </choose>
+  
+  <unique id="u" act="close" />  
+  <spirit id="cs" act="close" flag="save"/>
+</job>
+
+
+
+<job id="colspec 2 unique" role="hidden">
+<!-- 
+  <when test="(f,not,(f,has,prop,wish_ldf)">
+    <tk type="msg" x="hallo"/>
+    <throw>does not have prop wish-ldf</throw>
+  </when>            -->
+  <xslt
+    xml="(file,cs)"
+    xsl="(dir,app)cs2unique.xsl"
+    out="(file,cs_unique)">
+    <param>max='30'</param>
+  </xslt>
+  
+  <xml_update
+    how="append"
+    what="(file,cs)"
+    with="(file,cs_unique)"/>
+  
+</job>
+
+<job id="colspec 2 rep_stat" role="hidden">
+
+  <xslt
+    xml="(file,cs)"
+    xsl="(dir,app)cs2rep_stat.xsl"
+    out="(file,rep_stat)"   code="rep_stat"
+    home="(dir,app)">
+    <params>wish='(prop,wish)' sheet='(f,xslp,(prop,sheet))' fastlane='(f,xslp,(prop,fastlane))' nbr_fastlane_rows='(f,xslp,(f,vob,prop,nbr_fastlane_rows))'</params>
+  </xslt>
+  
+</job>
+
+<job id="colspec 2 rep_first" role="hidden">
+
+  <xslt
+    xml="(file,cs)"
+    xsl="(dir,app)cs2rep_first.xsl"
+    out="(file,rep_first2)">
+    <params>max='(f,xslp,(prop,conf-nbr-sample-recs))' wish='(f,xslp,(prop,wish))' sheet='(f,xslp,(prop,sheet))' fastlane='(f,xslp,(prop,fastlane))' nbr_fastlane_rows='(f,xslp,(f,vob,prop,nbr_fastlane_rows))'</params>
+  </xslt>
+  
+</job>
+
+<job id="colspec 2 rep_unique" role="hidden">
+
+  <xslt
+    xml="(file,cs)"
+    xsl="(dir,app)cs2rep_unique.xsl"
+    out="(file,rep_unique)"  code="rep_unique"
+    home="(dir,app)">
+    <params>max_unique='(f,xslp,(prop,conf-nbr-unique))'</params>
+  </xslt>
+  
+</job>
+
+
+
+<job id="colspec 2 shuffle" joblevel="pro" role="hidden">
+  <need>(prop,keep_original_data) (prop,wish)</need>
+
+  <call_job job="colspec 2 shuffle:fast">
+    <file id="shuffle:fast:in" x="(file,cs)"/>
+    <file id="shuffle:fast:out1" x="(file,shuffle2b)"/> 
+    <file id="shuffle:fast:out2" x="(file,shuffle3b)"/>
+    <prop id="shuffle:fast:sheet" x="(prop,sheet)"/>
+  </call_job>
+  <!--  
+  <call_job job="colspec 2 shuffle:slow">
+    <file id="shuffle:slow:in" x="(file,cs)"/>
+    <file id="shuffle:slow:out1" x="(file,shuffle2b)"/> 
+    <file id="shuffle:slow:out2" x="(file,shuffle3b)"/>
+    <prop id="shuffle:slow:sheet" x="(prop,sheet)"/>
+  </call_job>
+  
+  <ti label="testing cs-in-out">
+    <ti type="file" label="shuffle:slow:in" x="(file,shuffle:slow:in)"/>
+    <ti type="file" label="shuffle:slow:out1" x="(file,shuffle:slow:out1)"/>
+    <ti type="file" label="shuffle:slow:out2" x="(file,shuffle:slow:out2)"/>
+    <ti type="text" label="shuffle:slow:sheet" x="(prop,shuffle:slow:sheet)"/>
+  </ti>
+  -->
+
+</job>
+
+<job id="colspec 2 shuffle:fast" joblevel="pro" role="hidden">
+  <need>(prop,keep_original_data) (prop,wish)</need>
+  <need>(file,shuffle:fast:in)</need>
+  <need>(file,shuffle:fast:out1)</need>
+  <need>(file,shuffle:fast:out2)</need>
+  <need>(prop,shuffle:fast:sheet)</need>
+      
+  <shuffler
+    keep_data_original="(prop,keep_original_data)"
+    wish="(prop,wish)"
+    in="(file,shuffle:fast:in)"
+    out1="(file,shuffle:fast:out1)"
+    out2="(file,shuffle:fast:out2)"
+    sheet="(prop,shuffle:fast:sheet)" 
+	flag="sys_debug"/>
+    
+</job>
+  
+<job id="colspec 2 shuffle:slow" joblevel="pro" role="hidden">
+  <need>(prop,keep_original_data) (prop,wish)</need>
+  <need>(file,shuffle:slow:in)</need>
+  <need>(file,shuffle:slow:out1)</need>
+  <need>(file,shuffle:slow:out2)</need>
+  <need>(prop,shuffle:slow:sheet)</need>
+    
+  <!-- create prop wish if it doesnt exist -->
+  <when test="(f,not,(f,has,prop,wish))">
+    <ti label="cs" type="file">(file,shuffle:slow:in)</ti>
+    <prop id="found-rows" x="(f,xsl,(file,shuffle:slow:in),count(e:o)cs/dims/dim_row/row(e:c))"/>
+    <prop id="wish" x="(f,sub,(prop,found-rows),1)"/>
+  </when>
+  
+  <!-- preperation for temporary files on disk-->
+  <dir id="ro" x="(dir,filetemp)ro" />
+  <mkdir dir="(dir,ro)" flag="cascade"/>
+  <file id="ro" x="(dir,ro)record_output.xml"/>
+  <file id="ro2" x="(dir,ro)record_output2.xml"/>   
+  
+  <spirit id="cs" xml="(file,shuffle:slow:in)" act="open" flag="nuevo"/>
+   
+  <prop id="i" x="0"/>
+   
+   <!-- (2) shuffle2b contains the comples shuffle result: src-->
+   <print act="open" id="shuffle2b" out="(file,shuffle:slow:out1)" />
+   <print act="println" id="shuffle2b">&lt;?xml version="1.0" ?&gt;</print> 
+   <print act="println" id="shuffle2b">&lt;dataset&gt;</print>
+   
+   <xml_update 
+        what="(file,shuffle:slow:in)"
+        how="remove"
+        where="coltype/values"
+        flag="multi"
+        out="(dir,filetemp)cs-for-append.xml"/>
+        
+   <ti type="file" label="Cs for appaned" x="(dir,filetemp)cs-for-append.xml" flag="(f,role,test)"/>
+         
+   <print act="println" id="shuffle2b">(f,substring_after,(f,file_content,(dir,filetemp)cs-for-append.xml),?&gt;)</print>
+   <print act="println" id="shuffle2b">&lt;rows nbr_rows=&quot;(prop,wish)&quot;&gt;</print>
+
+   <!-- (2) shuffle3b contains the simple shuffle result: sr -->
+   <print act="open" id="shuffle3b" out="(file,shuffle:slow:out2)" />
+   <print act="println" id="shuffle3b">&lt;?xml version="1.0" ?&gt;</print> 
+   <print act="println" id="shuffle3b">&lt;root nbr_rows=&quot;(prop,wish)&quot; sheet_name=&quot;(x,(prop,shuffle:slow:sheet))&quot;&gt;</print>
+      
+   <prop id="nbr_cols" x="(f,spirit,cs,@nbr_cols)"/>
+   
+  <!-- first we do a loop around the colums and write some things -->
+  <prop id="j" x="0"/>
+  <!-- schleife je column -->  
+  <loop while="()(f,lt,(prop,j),(prop,nbr_cols))()" id="while-j">
+    <!-- <trace>j=(prop,j)</trace>   -->
+    <spirit id="cs" 
+            act="xml_update" 
+            where="coltype[@col_index=(prop,j)]"
+            how="set_attribute"
+            attribute="position"
+            value="-1"/> 
+
+    <prop id="max_row" x="0"/>
+    
+    <prop id="max_row" test="(f,spirit,cs,exists?,coltype[@col_index=(prop,j)]/values/value[position(e:o)(e:c)=last(e:o)(e:c)],@row_index)" x="(f,spirit,cs,coltype[@col_index=(prop,j)]/values/value[position(e:o)(e:c)=last(e:o)(e:c)],@row_index)"/>
+
+    <spirit id="cs" 
+            act="xml_update" 
+            where="coltype[@col_index=(prop,j)]"
+            how="set_attribute"
+            attribute="max_row"
+            value="(f,add,1,(prop,max_row))"/>
+    <!-- <ti>col[(prop,j)] max_row = (prop,max_row)</ti>      -->        
+
+    <prop id="j" x="(f,add,1,(prop,j))"/>  
+  </loop> <!-- end loop column -->
+    
+   <!-- loop around wished number of result records-->
+   <loop while="()(f,lt,(prop,i),(prop,wish))()" id="while-i">
+
+    <prop id="i" x="(f,add,1,(prop,i))"/>
+    <!-- <log_plus label="i=(prop,i)"/>  -->
+    <tp test="(f,eq,0,(f,remain,(prop,i),10))">Slow: Creating Case (prop,i) of (prop,wish)</tp>
+    
+    <!-- loop around number of cols -->
+    <prop id="j" x="0"/>
+
+    <create_file out="(file,ro)">&lt;r ri=&quot;(prop,i)&quot;/&gt;</create_file>
+    <spirit id="ro" xml="(file,ro)" act="open" flag="nuevo"/>
+    
+    
+    <create_file out="(file,ro2)">&lt;row /&gt;</create_file>
+    <spirit id="ro2" xml="(file,ro2)" act="open" flag="nuevo"/>    
+
+    <!-- schleife je column -->  
+    <loop while="()(f,lt,(prop,j),(prop,nbr_cols))()" id="while-j">
+   
+    
+      <prop id="max-position" x="(f,spirit,cs,coltype[@col_index=(prop,j)],@max_row)"/>
+          
+      <!-- value an spirit ro anhaengen -->
+      <prop id="position" x="-1"/>      
+      <prop id="position" test="(f,spirit,cs,exists?,coltype[@col_index=(prop,j)],@position)" x="(f,spirit,cs,coltype[@col_index=(prop,j)],@position)"/>
+
+      <prop id="position" x="(f,add,1,(prop,position))"/>
+      <when test="(f,gte_num,(prop,position),(prop,max-position))">
+        <choose>
+          <when test="(prop,keep_original_data)">
+            <prop id="position" x="999999999"/>  <!-- (f,sub,(prop,position),1) -->
+          </when>
+          <otherwise>
+            <prop id="position" x="0"/>
+          </otherwise>
+        </choose>
+        
+      </when>
+      
+      <!-- update next position in spirit -->
+      <spirit id="cs" 
+              act="xml_update" 
+              where="coltype[@col_index=(prop,j)]"
+              how="set_attribute"
+              attribute="position"
+              value="(prop,position)"/>    
+              
+      <spirit id="ro" 
+              act="xml_update" 
+              how="append"
+              flag="catch">
+        <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <v ci="(prop,j)" x="(f,spirit,cs,coltype[@col_index=(prop,j)]/values/value[@row_index=(prop,position)])" />
+    ]]></inline>        
+      </spirit>
+
+      <prop id="a_n">(f,spirit,cs,coltype[@col_index=(prop,j)],@name)</prop>
+
+      
+      <try_catch>
+        <try>
+          <prop id="a_v">(f,spirit,cs,coltype[@col_index=(prop,j)]/values/value[@row_index=(prop,position)])</prop>
+          <spirit id="ro2" 
+                  act="xml_update" 
+                  how="set_attribute"
+                  where="."
+                  attribute="(prop,a_n)"
+                  value="(prop,a_v)"
+                   />  
+        </try>
+        <catch/>
+      </try_catch>      
+                                      
+      <!-- loop end -->
+      <prop id="j" x="(f,add,1,(prop,j))"/>
+     
+      
+    </loop> <!-- end loop column -->
+              
+    <!-- (3) Streamers b -->
+    <print act="println" id="shuffle2b">(f,spirit,ro,xml?)</print>
+    <print act="println" id="shuffle3b">(f,spirit,ro2,xml?)</print>
+    <!-- <warn>(f,spirit,ro2,xml)</warn> -->
+    <spirit id="ro" act="close" />    
+    <spirit id="ro2" act="close" />    
+                    
+    <!-- <log_minus/>   -->
+    
+   </loop> <!-- end loop row -->>
+   <trace>nbr_cols=(prop,nbr_cols)</trace>
+   
+   <!-- <spirit id="cs" out="(file,shuffle:slow:inout)" act="close" flag="save"/>  -->  
+   <spirit id="cs" act="close" />   
+   <!-- (4) Streamers b -->   
+   <print act="println" id="shuffle2b">&lt;/rows&gt;</print>
+   <print act="println" id="shuffle2b">&lt;/dataset&gt;</print> 
+   <print act="close" id="shuffle2b" />
+
+   <print act="println" id="shuffle3b">&lt;/root&gt;</print> 
+   <print act="close" id="shuffle3b" />   
+   <!-- <ti type="file" label="shuffle3b" x="(file,shuffle:slow:out2)"/> -->
+   <!-- <throw>x</throw> -->
+
+   <ti label="Xml, First" type="file" test="(f,role,test)">(file,shuffle:slow:out2)</ti>        
+   <ti label="Complex Xml, First" type="file" test="(f,role,test)">(file,shuffle:slow:out1)</ti>
+
+   
+
+</job>
+
+<job id="create eb" role="hidden">
+  <need>(prop,askquestions)</need>
+  
+  <delete file="(dir,pro)updater.xsl"/>
+  <choose>
+    
+    <when test="(f,or,(f,has,file,ext_xsl),(f,has,file,ext_loxo))">
+      <tp>Creating extra columns ...</tp>
+      <!-- defining the chain of reading and writing files in combination -->
+      <choose>
+        <when test="(f,and,(f,has,file,ext_xsl),(f,has,file,ext_loxo))">
+          <file id="priv-xsl-in" x="(file,shuffle3b)"/>
+          <file id="priv-xsl-out" x="(dir,filetemp)between-xsl-loxo.xml"/>
+          <file id="priv-loxo-in" x="(dir,filetemp)between-xsl-loxo.xml"/>
+          <file id="priv-loxo-out" x="(file,eb)"/>          
+        </when>
+        <when test="(f,has,file,ext_xsl)">
+          <file id="priv-xsl-in" x="(file,shuffle3b)"/>
+          <file id="priv-xsl-out" x="(file,eb)"/>        
+        </when>
+        <when test="(f,has,file,ext_loxo)">
+          <file id="priv-loxo-in" x="(file,shuffle3b)"/>
+          <file id="priv-loxo-out" x="(file,eb)"/>        
+        </when>              
+      </choose>
+      
+      <!-- doing the xsl -->
+      <when test="(f,has,file,ext_xsl)">
+      
+        <!-- taking care of the xsl, maybe create a template or let it update -->
+        <choose>
+          <!-- create an xsl template if it doesnt exist -->
+          <when test="(f,not,(f,exists_file,(file,ext_xsl)))">
+            <tk label="Xsl file not found">
+            <tk type="msg" x="The xsl-file '(f,name_of_file,(file,ext_xsl))' you specified for the creation of new columns does not exist. &#xA;A template will be generated.&#xA;Searched for: &#xA;(file,ext_xsl)"/>
+            </tk>
+            <prop id="template" x="(f,file_content,(file,tpl))"/>
+            <tk type="textblock" id="template" 
+            tip="That&apos;s the template. Your can update it now in case you want that. &#xA;Extra columns: &#xA;(prop,ext_columns)" flag="nono bigbig"
+            label="Xsl to execute for extra columns"
+            />
+            
+            <create_file out="(file,ext_xsl)">(prop,template)</create_file>
+            <ti type="file" label="Created Xsl:" x="(file,ext_xsl)" flag="xdownload"/>
+          </when> <!-- xsl does not exist -->
+          
+          <!-- let it maybe enter -->
+          <when test="(f,and,(f,role,admin),(prop,askquestions))">
+            <tk type="textblock" 
+                id="exe" 
+                x="(f,file_content,(file,ext_xsl))" 
+                flag="nono big"
+                label="Xsl to execute for extra columns"
+                tip="Going to run this xsl now(e:s) you can update it. &#xA;Extra columns: &#xA;(prop,ext_columns)"/>
+            <when test="(f,not,(f,eq,(f,file_content,(file,ext_xsl)),(prop,exe)))">
+              <tk type="bool" label="Save Updates" x="1" id="save_updates" flag="nono"/>
+              <when test="(prop,save_updates)">
+                <create_file out="(file,ext_xsl)">(prop,exe)</create_file>
+                <ti type="file" label="updated" x="(file,ext_xsl)" />
+              </when>
+            </when>
+            <remove type="prop" id="exe"/>
+          </when>          
+           
+        </choose>
+        
+        <!-- perform the xsl -->
+        <tp>Performing (f,name_of_file,(file,ext_xsl)) ...</tp>
+        <ti align="right" x="(f,html,bold,open)Performing (f,name_of_file,(file,ext_xsl)) ...(f,html,bold,close)"/>
+        <try_catch>
+          <try>
+            <xslt
+              xml="(file,priv-xsl-in)"
+              xsl="(file,ext_xsl)"
+              out="(file,priv-xsl-out)">
+              <params>(prop,ext_params)</params>
+            </xslt>
+          </try>
+          <catch>
+            <ti label="Problem in performing xsl for additional columns">
+              <ti label="Xsl"
+                  x="(file,ext_xsl)"
+                  type="file"/> 
+              <ti label="with data"
+                  x="(file,priv-xsl-in)"
+                  type="file"/> 
+              <ti label="with parameters"
+                  x="(prop,ext_params)"
+                  test="(f,has,prop,ext_params)"/>                   
+              <ti label="because"
+                  x="(prop,catched_msg)"/>  
+            </ti>                                    
+            <throw_again/>
+          </catch>
+        </try_catch>
+                  
+      </when> <!-- end of doing the xsl -->
+
+      <!-- doing the loxo -->
+      <when test="(f,has,file,ext_loxo)">
+      
+        <!-- taking care of the loxo, maybe create a template or let it update -->
+        <choose>
+          <!-- create an loxo template if it doesnt exist -->
+          <when test="(f,not,(f,exists_file,(file,ext_loxo)))">
+
+            <tk label="XmlRobot-Scriptfile file not found">
+            <tk type="msg" x="The XmlRobot-File '(f,name_of_file,(file,ext_loxo))' you specified for the creation of new columns does not exist. &#xA;A template will be generated. &#xA;Searched for: &#xA;(file,ext_loxo)"/>
+            </tk>            
+            <tk type="textblock" id="template-loxo" x="(f,file_content,(file,tploxo))"
+            tip="Thats the template. your can update now if you want. &#xA;Extra columns: &#xA;(prop,ext_columns)" flag="nono big"
+            label="XmlRobot to execute for extra columns"/>
+            
+            <create_file out="(file,ext_loxo)">(prop,template-loxo)</create_file>
+            <ti type="file" label="Created XmlRobot" x="(file,ext_loxo)"/>
+          </when> <!-- loxo does not exist -->
+          
+          <!-- let it maybe enter -->
+          <when test="(f,and,(f,role,admin),(prop,askquestions))">
+            <tk 
+              type="textblock" 
+              id="exe-loxo" 
+              x="(f,file_content,(file,ext_loxo))" 
+              flag="nono big"              
+              label="XmlRobot to execute for extra columns"
+              tip="Going to run this XmlRobot-script now(e:s) you can update it &#xA;Extra columns: &#xA;(prop,ext_columns)"/>
+            <when test="(f,not,(f,eq,(f,file_content,(file,ext_loxo)),(prop,exe-loxo)))">
+              <tk type="bool" label="Save Updates" x="1" id="save_updates_loxo" flag="nono"/>
+              <when test="(prop,save_updates_loxo)">
+                <create_file out="(file,ext_loxo)">(prop,exe-loxo)</create_file>
+                <ti type="file" label="updated" x="(file,ext_loxo)" />
+              </when>
+            </when>
+            <remove type="prop" id="exe-loxo"/>
+          </when>          
+           
+        </choose>
+        
+        <!-- perform the XmlRobot, first create the parameters -->
+        <when test="(f,has,prop,ext_loxo_params)">
+          <file id="loxo-pf" x="(dir,filetemp)loxo-para-file.lsx"/>
+          <print act="open" id="loxo-pf" out="(file,loxo-pf)"/>
+          <print act="println" id="loxo-pf">&lt;?xml version="1.0" ?&gt;&lt;steps&gt;</print>
+          <create_file out="(dir,filetemp)paras.txt">(prop,ext_loxo_params)</create_file>
+          <ti type="file" label="paras:" x="(dir,filetemp)paras.txt" test="0"/>
+          <loop
+            file="(dir,filetemp)paras.txt"
+            id="lp"
+            regex="()([^=\s]+)[\s]*=[\s]*'((?:[^']|'')*)'()">
+            <ti test="0">Loxo-Paras: (loop,lp):(loop,lp,1):(loop,lp,2):</ti>
+            <print act="println" id="loxo-pf"></print>
+            <print act="print" id="loxo-pf">&lt;prop id=&quot;$(loop,lp,1)&quot;&gt;</print>
+            <print act="print" id="loxo-pf" flag="dont_unescape_on_write">(x,(f,replace,(loop,lp,2),'','))</print>
+            <print act="print" id="loxo-pf">&lt;/prop&gt;</print>
+          </loop>
+          <print act="println" id="loxo-pf"></print>
+          <print act="println" id="loxo-pf">&lt;/steps&gt;</print>
+          <print act="close" id="loxo-pf"/>
+          <!--
+          <ti type="file" label="loxo-pf" x="(file,loxo-pf)" test="(f,role,dev)"/>
+          <try_catch> 
+            <try>
+              <include file="(file,loxo-pf)"/>
+            </try>
+            <catch>
+              <throw>Something is wrong with your XmlRobot-Parameters. Make sure you do not use xml-entities like &lt; &gt; or &amp; in your variable names!</throw>
+            </catch> 
+          </try_catch>
+          -->
+        </when> <!-- end of parameter init -->
+        
+        <!-- set environmental paras -->
+        <dir id="script-location" x="(f,dir_of_file,(file,ext_loxo))"/>
+
+        <file id="data" x="(dir,filetemp)loxo-data-in.xml"/>
+        <copy file="(file,priv-loxo-in)" tofile="(file,data)"/>
+        
+        <file id="output" x="(file,priv-loxo-out)"/>  
+        <delete file="(file,output)"/>
+        <tp>Performing (f,name_of_file,(file,ext_loxo)) ...</tp>
+        <!-- execute loxo -->
+        <try_catch>
+          <try>
+            <!-- executing the private XmlRobot-script is done in antoher environment to protect the variables   -->
+            <choose>
+              <when test="(f,has,prop,ext_loxo_params)">
+                <call_app
+                  app="(prop,app)"
+                  pro_id="(prop,pro)"
+                  pro_dir="(dir,pro)"
+                  job="running-xmlrobot-for-column-creation">
+                  <file id="loxo-pf" x="(file,loxo-pf)" />
+                  <file id="data" x="(file,data)" />
+                  <file id="output" x="(file,output)" />
+                  <file id="script" x="(file,ext_loxo)" />
+                </call_app>              
+              </when>
+              <otherwise>
+                <call_app
+                  app="(prop,app)"
+                  pro_id="(prop,pro)"
+                  pro_dir="(dir,pro)"
+                  job="running-xmlrobot-for-column-creation">
+                  <file id="data" x="(file,data)" />
+                  <file id="output" x="(file,output)" />
+                  <file id="script" x="(file,ext_loxo)" />
+                </call_app>              
+              </otherwise>
+            </choose>   
+
+
+          </try>
+          <catch>
+            <ti>Your XmlRobot-Script has a problem!</ti>
+            <throw_again/>
+          </catch>
+        </try_catch>
+        <tp>Is done: (f,name_of_file,(file,ext_loxo)) ...</tp>
+        
+        <when test="(f,not,(f,exists_file,(file,output)))">
+          <copy file="(file,data)" tofile="(file,output)"/>
+        </when>
+                          
+      </when> <!-- end of doing the loxo -->
+      
+      <!-- now we need to add the new colums to the analysis file -->
+      <tp>Creating Export Base ...</tp>
+      
+      <prop id="start_col" x="(f,xsl,(file,shuffle2b),dataset/cs/@nbr_cols)"/>
+      
+      <tp>Preparing Creation of Export Base Complex ...</tp> 
+      <xslt
+        xml="(file,split)"
+        xsl="(dir,app)split2ebc-xsl-updater.xsl"
+        out="(dir,pro)updater.xsl">
+        <params>start_col='(f,xslp,(f,sub,(prop,start_col),1))'</params>
+      </xslt>   
+      <!-- da wars -->
+      <tp>Creating Export Base Complex(e:s) Short Version ...</tp>
+      <xslt
+        xml="(file,shuffle2b)"
+        xsl="(dir,app)extend-complex.xsl"
+        out="(file,ebc)"
+        home="(dir,pro)">
+        <params>ebfile='(f,xslp,(f,name_of_file,(file,eb)))' rowlimit='(f,xslp,(prop,conf-nbr-sample-recs))'</params>
+      </xslt>       
+            
+    </when>
+    
+    <otherwise>
+      <!-- no individual export defined -->
+      <copy file="(file,shuffle3b)" tofile="(file,eb)" />
+      <copy file="(file,shuffle2b)" tofile="(file,ebc)" 
+            test="(f,exists_file,(file,shuffle2b))"/>
+            
+      <call_job job="create-dummy-updater"/>      
+    </otherwise>
+    
+  </choose>
+  <dump_ti label="hallo" test="0"/>
+  <prop id="stats-p1-records-final" x="(f,xsl,(file,eb),count(e:o)//row(e:c))"/>
+  
+</job>
+
+<job id="running-xmlrobot-for-column-creation" role="hidden">
+  <when test="(f,exists,file,loxo-pf)">
+    <try_catch>
+      <try>
+        <include file="(file,loxo-pf)" />
+      </try>
+      <catch>
+        <ti>There is a problem with the parameters for the XmlRobot-script</ti>
+        <throw_again/>
+      </catch>
+    </try_catch>    
+  </when>
+  
+  
+    <try_catch>
+      <try>
+        <include file="(file,script)" />
+      </try>
+      <catch>
+        <ti>There is a problem in running your scipt</ti>
+        <ti type="file" label="script">(file,script)</ti>
+        <throw_again/>
+      </catch>
+    </try_catch>  
+</job>
+
+<job id="ebc 2 rep_second" role="hidden">
+  
+  <xslt
+    xml="(file,ebc)"
+    xsl="(dir,app)ebc2rep_second.xsl"
+    out="(file,rep_second)"  code="rep_second"
+    home="(dir,app)">
+    <params>rows_to_list='(f,xslp,(prop,conf-nbr-sample-recs))' fastlane='(f,xslp,(prop,fastlane))' name1='1' name2='2'</params>
+  </xslt>
+
+  <delete file="(file,ebc)"/>
+
+</job>
+
+<job id="load memory and dump" joblevel="pro" role="hidden">
+  <call_job job="load memory"/>
+  <dump_all flag="ti"/>
+</job>
+
+<job id="load memory" joblevel="pro" role="hidden">
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-conf)"/>
+    <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+  </call_job>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,conf)rf-store.xml"/>
+    <prop id="joe-in-regex" x="template" />
+  </call_job>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,conf)excel-source-store.xml"/>
+    <prop id="joe-in-regex" x="source"/>
+  </call_job>
+  
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+  </call_job>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-b)"/>
+    <prop id="joe-in-regex" x=".*"/>
+  </call_job>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>
+  </call_job>
+  
+  <call_job job="go-joe-read"> 
+    <file id="joe-in-store" x="(dir,conf)ic-collection-source.xml"/>
+    <prop id="joe-in-regex" x=".*"/>
+  </call_job>
+
+</job>
+
+<job id="create-dummy-updater" role="hidden">
+<create_file out="(dir,pro)updater.xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:output method="xml" indent="yes"/>
+<xsl:template name="do-missing-2">
+</xsl:template>
+</xsl:stylesheet>
+]]></create_file>
+
+</job>
+
+<job id="create colsel" role="hidden">
+    
+  <xslt
+    xml="(file,cs)"
+    xsl="(dir,app)cs2colsel.xsl"
+    out="(file,colsel)"/>    
+</job>
+
+<job id="create new result report" role="hidden">
+  <dir id="nrr" x="(dir,filetemp)nrr"/>
+  <mkdir dir="(dir,nrr)"/>
+    
+  <xslt
+    xml="(file,cs)"
+    xsl="(dir,app)create-result-report-include.xsl"
+    out="(dir,nrr)result-report-include.xsl"/>
+    
+  <xslt
+    xml="(file,cs)"
+    xsl="(dir,app)create-result-report-include2.xsl"
+    out="(dir,nrr)result-report-include2.xsl"/>
+    
+  <xslt
+    xml="(file,eb)"
+    xsl="(dir,app)result-report.xsl"
+    out="(file,nrr)" code="nrr"
+    home="(dir,nrr)">
+    <params>rows_to_list='(prop,conf-nbr-sample-recs)' fastlane='(prop,fastlane)'</params>
+    <home file="esc_xr.xsl">(dir,app)</home>
+  </xslt>   
+
+  <!-- <include file="(file,nrr)"/> -->
+</job>
+
+
+</jobs>

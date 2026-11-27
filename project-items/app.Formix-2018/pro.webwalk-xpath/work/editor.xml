@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="find-editor">
+    <need>(prop,isAdd)</need>
+    <choose>
+        <when test="(prop,isAdd)">
+            <prop id="find_default_label_class" x="+ Selektor"/>
+            <prop id="find_default_label_name" x="(f,when,(f,has,(prop,finds_offset_label)), | (prop,finds_offset_label),)"/>
+            <prop id="finds_tk_control" x="sum"/>
+        </when>
+        <otherwise>
+            <need>(prop,find_key)</need>
+            <prop id="find_default_label_class" x="Selektor"/>
+            <prop id="find_default_label_name" x="(f,text,cut_nice,(prop,find_titel),40)(f,when,(f,has,(prop,finds_offset_label)), - (prop,finds_offset_label),)"/>
+            <prop id="finds_tk_control" x="sum_only"/>
+        </otherwise>
+    </choose>
+    <call_job job="find-tk"/>
+</job>

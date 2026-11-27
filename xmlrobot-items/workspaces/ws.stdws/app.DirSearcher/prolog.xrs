@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<steps>
+<include file="(dir,services)static-project-prolog.xrs"/>
+<!-- <tx_style ti_border="0"  /> -->
+
+<when test="(f,has,prop,pro)">  
+  
+  <file id="para-data" x="(dir,pro)para-data.xrs"/>
+  <prop id="para-regex" x="para_.+"/>
+
+  <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+  <prop id="conf-regex" x="conf_.+"/>
+  
+  <file id="stat-data" x="(dir,pro)stat-data.xrs"/>
+  <prop id="stat-regex" x="stat_.+"/>  
+    
+  <file id="project-exists" x="(dir,pro)project-exists.txt"/>
+  
+  <file id="scan" x="(dir,pro)dir-scan.xml"/>
+
+</when>
+ 
+</steps>

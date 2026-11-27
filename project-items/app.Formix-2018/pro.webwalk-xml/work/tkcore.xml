@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="xmlf-tk">
+    <need default="">(prop,xmlfs_tk_control)</need>
+    <when test="(f,has_flag,(prop,xmlfs_tk_control),print_only)">
+        <choose>
+            <when test="(f,has_flag,(prop,xmlfs_tk_control),print_all_fields)">
+                <ti label="(prop,xmlf_default_label_class) (prop,xmlf_default_label_name)"/>
+            </when>
+            <otherwise>
+                <ti flag="label_right" label="(prop,xmlf_default_label_class)" x="(f,html,b,o)(prop,xmlf_default_label_name)(f,html,b,c)"/>
+            </otherwise>
+        </choose>
+    </when>
+    <tk label="(f,when,(f,has_flag,(prop,xmlfs_tk_control),print_only),,(prop,xmlf_default_label_class)(f,when,(f,has,prop,xmlf_default_label_name), (prop,xmlf_default_label_name),))" flag="(prop,xmlfs_tk_control) wrap ">
+        <tk label="Short Key" id="xmlf_name" x="" test_first="1" tip="Titel Shortkey" type="text" flag=" "/>
+        <tk label="Xsl-Parameters" x="Xsl-Parameters" test_first="0" type="msg" flag=" "/>
+        <tk label="Input-File" id="xmlf_file" x="" test_first="1" tip="The input-xml-file" base="(dir,pages)" type="file" flag=" nono "/>
+        <tk label="Output-File" id="xmlf_xsl_result" x="" test_first="0" tip="The created output-xml-file" base="(dir,extracted)" type="file" flag="  save "/>
+        <tk label="Parameters" id="xmlf_xsl_paras" x="" test_first="0" tip="Parameter die an das Xsl gesendet werden. Zusaetzlich zu denen von oben." type="textblock" flag=" "/>
+        <tk label="Doku" x="Doku" test_first="0" type="msg" flag=" "/>
+        <tk label="Beschreibung" id="xmlf_desc" x="" test_first="0" tip="Beschreibung" type="textblock" flag=" "/>
+    </tk>
+</job>

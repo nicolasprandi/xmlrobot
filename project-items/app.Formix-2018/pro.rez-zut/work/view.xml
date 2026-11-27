@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="zut-see-all" level="ws" role="hidden" tip="Lists all Zutaten">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="zut_loop" xml="(file,zuts)" xpath="(prop,zuts_offset)zut(prop,zuts_where)" sort="(prop,zuts_sort_attribute)" number="(prop,zuts_sort_number)" ignore_case="(prop,zuts_sort_ignore_case)" desc="(prop,zuts_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,zuts_offset_label)),0)">
+<ti label="(prop,zuts_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=2 hook_job=hook-every-zutat-list</trace>
+<call_job job="hook-every-zutat-list"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zut-view: 2.0">
+<ti> hook_job=hook-every-zutat-list hook=2 page=view station=0 object=zut</ti>
+</ti>
+</catch>
+</try_catch>
+<ti type="rec">
+<ti type="call_job" flag="block"  prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,zut_loop,@bez),20)(f,html,bold,close)" job="zut-see">
+<prop id="zut_key">(loop,zut_loop,@row)</prop>
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(loop,zut_loop,@menge) (f,tk_sel_translate,(loop,zut_loop,@einheit),(dir,app)mengen-selector.xml)</ti>
+<ti test="(f,has,(loop,zut_loop,@kat1))" type="text" x="(f,when,(f,has_flag,(loop,zut_loop,@kat1),obst),Frisch(e:s),)(f,when,(f,has_flag,(loop,zut_loop,@kat1),trocken),Trocken(e:s),)(f,when,(f,has_flag,(loop,zut_loop,@kat1),milch),Milch(e:s),)(f,when,(f,has_flag,(loop,zut_loop,@kat1),fleisch),Fleisch(e:s),)(f,when,(f,has_flag,(loop,zut_loop,@kat1),fisch),Fisch(e:s),)"/>
+<ti test="(f,not,(f,has,(loop,zut_loop,@kat1)))"/>
+<ti test="(f,has,(loop,zut_loop,@komp_key))" type="text" x="(f,tk_sel_translate,(loop,zut_loop,@komp_key),(file,akt-komponentenliste))"/>
+<ti test="(f,not,(f,has,(loop,zut_loop,@komp_key)))"/>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine Zutaten gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,zuts_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="zut-add" explain="[ + Zutat ]" job="zut-add">
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,zuts)</file>
+<prop id="orga_where">(prop,zuts_where)</prop>
+<prop id="orga_view_loop_id">zut_loop</prop>
+<prop id="orga_finished_job">Aktuelles Rezept</prop>
+<prop id="orga_offset">(prop,zuts_offset)</prop>
+<prop id="orga_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="orga_segment_plural">zuts</prop>
+<prop id="orga_segment_singular">zut</prop>
+<prop id="orga_segment_plural_label">Zutaten</prop>
+<prop id="orga_segment_singular_label">Zutat</prop>
+<prop id="orga_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="orga_where">(prop,zuts_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,zut_loop,@bez),20)()</prop>
+<prop id="orga_desc_expression_loop">()(loop,zut_loop,@menge) (f,tk_sel_translate,(loop,zut_loop,@einheit),(dir,app)mengen-selector.xml)()</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,zuts)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,zuts_offset)),0)">(prop,zuts_offset)</ti>
+</ti>
+</when>
+</job>

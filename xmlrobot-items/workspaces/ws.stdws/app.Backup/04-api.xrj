@@ -1,0 +1,249 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>                                                            
+<call_job job="prolog"/>
+
+
+<job id="List Backups" joblevel="pro" role="hidden">
+  
+  <need>(file,api-paras) (file,api-dirs)</need>
+  <ti type="file" x="(file,api-paras)" test="0"/>
+  <ti type="file" x="(file,api-dirs)" test="0"/>
+  <interpreter watch="0"/>
+  
+  <prop id="home">(f,xpath,(file,api-dirs),.,@dir)</prop>
+     
+  <spirit 
+    id="paras" act="open" xml="(file,api-paras)" 
+    flag="nuevo"
+    missing_strategy="empty"/>
+  
+  <prop id="limit">(f,spirit,paras,@limit)</prop>
+  <prop id="limit" test="(f,not,(f,has,prop,limit))">30</prop>  
+  <prop id="has_limit">(f,when,(f,eq,0,(prop,limit)),0,1)</prop>
+  <prop id="backup_label">(f,spirit,paras,@label)</prop>
+  
+  <spirit id="paras" act="close"/>
+  
+  <ti label="Backups '(prop,backup_label)'">
+    <ti label="sequence date time"> </ti>
+  </ti>
+
+  
+  <prop id="backups_max">0</prop>      
+  <loop id="backups" xml="(file,api-dirs)" xpath="dir" flag="back" limit="(f,when,(f,eq,0,(prop,limit)),100000,(prop,limit))">
+    
+    <prop id="backups_max">(loop,backups,#max)</prop> 
+    
+    <prop id="i-back">(f,add,(f,sub,(loop,backups,#max),(loop,backups,#i)),1)</prop>
+    <call_job job="get-list-label"/>  
+    <ti type="rec" label="(prop,lapel1)" key="#(prop,i-back)" xflag="left">
+      <ti>(prop,lapel2)</ti>
+      
+      <ti explain="Compare" 
+          type="call_job" job="List Backups to Compare" >
+        <dir id="compare1">(prop,home)(loop,backups,@ipath)</dir>
+        <prop id="compare1_home">(loop,backups,@ipath)</prop>
+      </ti>
+            
+      <ti explain="View" 
+          type="call_service" job="Goto-Panorama">
+        <dir id="with">(prop,home)(loop,backups,@ipath)</dir>
+      </ti>                                        
+                                
+
+
+    </ti>
+      
+  </loop>
+
+  <when test="(f,and,(prop,has_limit),(f,gt,(prop,backups_max),(prop,limit)))">
+    <ti label="This list is limited to (prop,limit) entries" padding_top="6px">
+      <ti type="call_job" job="List Backups" explain="See all (prop,backups_max) Backup-Entries">
+          <xml_update 
+            what="(file,api-paras)" 
+            where="." 
+            how="set_attribute" 
+            attribute="limit" 
+            value="0" />  
+
+      </ti>
+    </ti>
+  </when>
+
+  <when test="(f,eq,(prop,backups_max),0)">
+    <ti label="No Backups found" padding_top="6px">
+      <ti>It seems that no backups have been performed until now.</ti>
+    </ti>
+  </when>  
+
+</job>
+
+<job id="List Backups to Compare" joblevel="pro" role="hidden">
+  
+  <need>(dir,compare1) (prop,compare1_home) (file,api-paras) (file,api-dirs)</need>
+  <interpreter watch="0"/>
+  
+  <prop id="home">(f,xpath,(file,api-dirs),.,@dir)</prop>
+     
+  <spirit id="paras" act="open" xml="(file,api-paras)"
+    flag="nuevo"
+    missing_strategy="empty"/>
+  
+  <prop id="backup_label">(f,spirit,paras,@label)</prop>
+  
+  <spirit id="paras" act="close"/>
+  
+  <ti label="List of Backups of: (prop,backup_label)">
+    <ti label="sequence date time"> </ti>
+  </ti>
+
+  
+  <prop id="backups_max">0</prop>      
+  <loop id="backups" xml="(file,api-dirs)" xpath="dir" flag="back">
+    
+    <prop id="backups_max">(loop,backups,#max)</prop> 
+    
+    <prop id="i-back">(f,add,(f,sub,(loop,backups,#max),(loop,backups,#i)),1)</prop>
+    <call_job job="get-list-label"/>
+      <choose>
+        <when test="(f,eq,(prop,home)(loop,backups,@ipath),(dir,compare1))">
+          
+          <ti type="rec" label="(prop,lapel1)" key="#(prop,i-back)">
+            <ti>(prop,lapel2)</ti>
+     
+            <ti x="(f,html,bold,open)(f,html,i,open)Compare ..(f,html,i,close)(f,html,bold,close)" 
+                type="text" 
+                width="70px" align="left">
+            </ti>
+                    
+            <ti explain="View" 
+                type="call_service" job="Goto-Panorama">
+              <dir id="with">(prop,home)(loop,backups,@ipath)</dir>
+            </ti> 
+                
+          </ti>        
+        </when>
+        <otherwise>
+          <ti type="rec" label="(prop,lapel1)" key="#(prop,i-back)">
+            <ti>(prop,lapel2)</ti>
+            
+            <ti explain="(f,html,bold,open)... with(f,html,bold,close)" 
+                type="call_job" 
+                job="Compare Backups" 
+                width="70px" align="left"
+                test="(f,not,(f,eq,(prop,home)(loop,backups,@ipath),(dir,compare1)))">
+              <dir id="compare1">(dir,compare1)</dir>
+              <prop id="compare1_home">(prop,compare1_home)</prop>
+              <dir id="compare2">(prop,home)(loop,backups,@ipath)</dir>
+              <prop id="compare2_home">(loop,backups,@ipath)</prop>
+              <dir id="comparehome">(prop,home)</dir>
+            </ti>
+                        
+            <ti explain="View" 
+                type="call_service" job="Goto-Panorama" 
+                explyyain="See Dir" flag="sixlent" width="40px" align="left">
+              <dir id="with">(prop,home)(loop,backups,@ipath)</dir>
+            </ti>
+                    
+
+    
+          </ti>        
+        </otherwise>
+      </choose>
+      
+  </loop> 
+
+</job>
+
+
+
+<job id="Compare Backups" role="hidden"> 
+  <need>(dir,compare1) (prop,compare1_home) (dir,compare2) (prop,compare2_home) (dir,comparehome)</need>
+  <!-- 
+  <i>NEEDING: 
+  compare1 as dir: [(dir,compare1)] 
+  compare1_home as prop: [(prop,compare1_home)] 
+  compare2 as dir [(dir,compare2)] 
+  compare2_home as prop [(prop,compare2_home)] 
+  comparehome as dir: [(dir,comparehome)]
+  </i> 
+  <ti label="dir temp" x="(dir,filetemp)"/>
+  <i>temporary-dir: (dir,temp-pro-compare)</i>
+  -->
+  
+  <choose>
+    <when test="(f,implement,echnaton)">
+      <dir id="temp-pro-compare">(f,request,dir,new_temp_pro)</dir>
+    </when>
+    <otherwise>
+      <dir id="temp-pro-compare">(dir,filetemp)temp-pro-compare-(f,time)</dir>
+    </otherwise>
+  </choose>
+  
+  <mkdir dir="(dir,temp-pro-compare)"/>
+  
+  <ti type="file" x="(dir,temp-pro-compare)api-comp-dirs.xml" test="0"/>
+  <print id="out" out="(dir,temp-pro-compare)api-comp-dirs.xml" act="open"/>
+  
+  <prop id="nod1">(f,name_of_dir,(dir,compare1))</prop>
+  <prop id="nod2">(f,name_of_dir,(dir,compare2))</prop>
+  
+  <choose>  
+    <when test="(f,lt,(prop,nod1),(prop,nod1))">
+      <dir id="left_dir">(dir,compare1)</dir>
+      <dir id="right_dir">(dir,compare2)</dir>
+      <prop id="left_home">(prop,compare1_home)</prop>
+      <prop id="right_home">(prop,compare2_home)</prop>      
+    </when>
+    <otherwise>
+      <dir id="left_dir">(dir,compare2)</dir>
+      <dir id="right_dir">(dir,compare1)</dir>  
+      <prop id="left_home">(prop,compare2_home)</prop>
+      <prop id="right_home">(prop,compare1_home)</prop>        
+    </otherwise>  
+  </choose>
+
+  <print id="out" act="print">&lt;input left_dir="(x,(dir,left_dir))" right_dir="(x,(dir,right_dir))" home_dir="(x,(dir,comparehome))"  home_left="(x,(prop,left_home))" home_right="(x,(prop,right_home))" /&gt;</print>
+  <print id="out" act="close"/>
+  
+  <copy file="(file,api-dirs)" tofile="(dir,temp-pro-compare)api-comp-dirs-dirlist.xml"/>
+
+  <call_app
+    job="api-compare-dirs"
+    app="Compare"
+    pro_dir="(dir,temp-pro-compare)"
+    pro_id="x"
+    flag="silent"/>
+</job>
+                               
+<job id="get-list-label" role="hidden">
+    <prop id="lapel">(f,substring,(loop,backups,@ipath),0,(f,sub,(f,len,(loop,backups,@ipath)),1))</prop>
+
+    <choose>
+      <when test="(f,gt,(f,len,(prop,lapel)),22)">
+        <prop id="lapel1">(f,substring,(prop,lapel),0,21)</prop>
+        <prop id="lapel2">(f,html,bold,open)(f,substring,(prop,lapel),22)(f,html,bold,close)</prop>   
+      </when>
+      <otherwise>
+        <prop id="lapel1">(prop,lapel)</prop>
+        <prop id="lapel2"></prop>      
+      </otherwise>
+    </choose>
+    <prop id="li">(f,last_index_of,(prop,lapel1),-)</prop>
+    <ti test="0">li=(prop,li)</ti>
+    <when test="(f,eq,(prop,li),18)">
+      <try_catch>
+        <try>
+          <prop id="resi">(f,substring,(prop,lapel1),0,18):(f,substring,(prop,lapel1),19)</prop>    
+          <prop id="lapel1" x="(prop,resi)"/>
+        </try>
+        <catch/>
+      </try_catch>
+      <ti test="0" >resi= [(prop,resi)]</ti>
+    </when>
+    <prop id="lapel1">(f,replace,(prop,lapel1),_,  )</prop>
+</job>
+
+</jobs>

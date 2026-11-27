@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="zsel-see-all" level="ws" role="hidden">
+<try_catch>
+<try>
+<call_job job="hook_zsel_view_begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zsel-view: begin.0">
+<ti> hook_job=hook_zsel_view_begin hook=begin page=view station=0 object=zsel</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="zsel_loop" xml="(file,zsels)" xpath="(prop,zsels_offset)zsel(prop,zsels_where)" sort="(prop,zsels_sort_attribute)" number="(prop,zsels_sort_number)" ignore_case="(prop,zsels_sort_ignore_case)" desc="(prop,zsels_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,zsels_offset_label)),0)">
+<ti label="(prop,zsels_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti flag="" type="call_job" prefix="  " explain="(f,html,bold,open)(f,tk_sel_translate,(loop,zsel_loop,@zblock),(file,zblock-selector))(f,html,bold,close)" job="zsel-see">
+<prop id="zsel_key">(loop,zsel_loop,@row)</prop>
+<file id="zsels">(file,zsels)</file>
+<prop id="zsels_offset">(prop,zsels_offset)</prop>
+<prop id="zsels_offset_label">(prop,zsels_offset_label)</prop>
+<prop id="zsels_offset_new_key">(prop,zsels_offset_new_key)</prop>
+<prop id="zsels_sort_attribute">(prop,zsels_sort_attribute)</prop>
+<prop id="zsels_sort_number">(prop,zsels_sort_number)</prop>
+<prop id="zsels_sort_ignore_case">(prop,zsels_sort_ignore_case)</prop>
+<prop id="zsels_sort_desc">(prop,zsels_sort_desc)</prop>
+<prop id="zsels_where">(prop,zsels_where)</prop>
+<prop id="zsels_return_job">(prop,zsels_return_job)</prop>
+</ti>
+<ti type="call_job" flag="button" explain="Edit" class="fx fxEdit fxEditView fxEditViewZsel" job="zsel-edit">
+<prop id="zsel_key">(loop,zsel_loop,@row)</prop>
+<file id="zsels">(file,zsels)</file>
+<prop id="zsels_offset">(prop,zsels_offset)</prop>
+<prop id="zsels_offset_label">(prop,zsels_offset_label)</prop>
+<prop id="zsels_offset_new_key">(prop,zsels_offset_new_key)</prop>
+<prop id="zsels_sort_attribute">(prop,zsels_sort_attribute)</prop>
+<prop id="zsels_sort_number">(prop,zsels_sort_number)</prop>
+<prop id="zsels_sort_ignore_case">(prop,zsels_sort_ignore_case)</prop>
+<prop id="zsels_sort_desc">(prop,zsels_sort_desc)</prop>
+<prop id="zsels_where">(prop,zsels_where)</prop>
+<prop id="zsels_return_job">(prop,zsels_return_job)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fx fxDelete fxDeleteView fxDeleteViewZsel" explain="Del" job="zsel-del">
+<prop id="zsel_key">(loop,zsel_loop,@row)</prop>
+<file id="zsels">(file,zsels)</file>
+<prop id="zsels_offset">(prop,zsels_offset)</prop>
+<prop id="zsels_offset_label">(prop,zsels_offset_label)</prop>
+<prop id="zsels_offset_new_key">(prop,zsels_offset_new_key)</prop>
+<prop id="zsels_sort_attribute">(prop,zsels_sort_attribute)</prop>
+<prop id="zsels_sort_number">(prop,zsels_sort_number)</prop>
+<prop id="zsels_sort_ignore_case">(prop,zsels_sort_ignore_case)</prop>
+<prop id="zsels_sort_desc">(prop,zsels_sort_desc)</prop>
+<prop id="zsels_where">(prop,zsels_where)</prop>
+<prop id="zsels_return_job">(prop,zsels_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No ZelixBlockSelections found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,zsels_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="button obutton " label=" " type="call_job" explain_nix="zsel-add" class="fx fxAdd fxAddZsel" explain="Add another ZBlockSelection" job="zsel-add">
+<file id="zsels">(file,zsels)</file>
+<prop id="zsels_offset">(prop,zsels_offset)</prop>
+<prop id="zsels_offset_label">(prop,zsels_offset_label)</prop>
+<prop id="zsels_offset_new_key">(prop,zsels_offset_new_key)</prop>
+<prop id="zsels_sort_attribute">(prop,zsels_sort_attribute)</prop>
+<prop id="zsels_sort_number">(prop,zsels_sort_number)</prop>
+<prop id="zsels_sort_ignore_case">(prop,zsels_sort_ignore_case)</prop>
+<prop id="zsels_sort_desc">(prop,zsels_sort_desc)</prop>
+<prop id="zsels_where">(prop,zsels_where)</prop>
+<prop id="zsels_return_job">(prop,zsels_return_job)</prop>
+</ti>
+<ti flag="button" label=" " type="call_job" class="fx fxOrga fxOrgaZsel" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,zsels)</file>
+<prop id="orga_where">(prop,zsels_where)</prop>
+<prop id="orga_view_loop_id">zsel_loop</prop>
+<prop id="orga_finished_job">zsel-see-all</prop>
+<prop id="orga_offset">(prop,zsels_offset)</prop>
+<prop id="orga_offset_label">(prop,zsels_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,zsels_offset_new_key)</prop>
+<prop id="orga_segment_plural">zsels</prop>
+<prop id="orga_segment_singular">zsel</prop>
+<prop id="orga_segment_plural_label">ZelixBlockSelections</prop>
+<prop id="orga_segment_singular_label">ZelixBlockSelection</prop>
+<prop id="orga_sort_attribute">(prop,zsels_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,zsels_sort_number)</prop>
+<prop id="orga_where">(prop,zsels_where)</prop>
+<prop id="orga_name_expression_loop">()(f,tk_sel_translate,(loop,zsel_loop,@zblock),(file,zblock-selector))()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,zsels)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,zsels_offset)),0)">(prop,zsels_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<call_job job="hook_zsel_view_end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zsel-view: end.0">
+<ti> hook_job=hook_zsel_view_end hook=end page=view station=0 object=zsel</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>

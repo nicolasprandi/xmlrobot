@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+                                                                                    
+<jobs>
+<call_job job="prolog" />
+<!-- 
+<job id="Create-Directory" joblevel="pro" role="hidden">
+  <need default="">(dir,home2)</need>
+  <prop id="went-pano" x="0"/>
+  
+  <try_catch>
+    <try>
+      <tk label="Create directory in (f,name_of_dir,(dir,home))">
+      <tk id="dirname" flag="nono" label="Name of directory to create" tip="To this directory will be written. "/>
+      </tk>
+    </try>
+    <catch>
+      <ti>canceld creation</ti>
+      <prop id="went-pano" x="1"/>
+      <call_job job="Panorama Directory">
+            <dir  id="redo_dir" >(dir,home2)</dir> 
+            <prop id="redo_ipath" ></prop>  
+      </call_job>
+    </catch>
+  </try_catch>
+  <when test="(f,not,(prop,went-pano))">
+    <dir id="newdir" x="(dir,home2)(prop,dirname)/"/>
+    <mkdir dir="(dir,newdir)"/>
+      <call_job job="Panorama Directory">
+            <dir  id="redo_dir" >(dir,newdir)</dir> 
+            <prop id="redo_ipath" ></prop>  
+      </call_job>
+  </when>
+</job> 
+<job id="Create-File" joblevel="pro" role="hidden">
+  <need default="">(dir,home2)</need>
+  <prop id="went-pano" x="0"/>
+  <try_catch>
+    <try>
+      <tk label="Create file in (f,name_of_dir,(dir,home))">
+        <tk id="filename" flag="nono" label="Name of file to create" tip="To this file will be written. "/>
+      </tk>
+    </try>
+    <catch>
+      <ti>canceld creation</ti>
+      <prop id="went-pano" x="1"/>
+      <call_job job="Panorama Directory">
+            <dir  id="redo_dir" >(dir,home2)</dir> 
+            <prop id="redo_ipath" ></prop>  
+      </call_job>
+    </catch>
+  </try_catch>
+  <when test="(f,not,(prop,went-pano))">
+    <call_service job="see_file_actions">
+      <file id="with" x="(dir,home2)(prop,filename)"/>
+    </call_service>
+  </when>
+</job>
+   -->
+
+<job id="Create-File" joblevel="pro" role="hidden">
+  <need>(dir,home2)</need>
+  <call_job job="tr_fadd"/>
+
+  <try_catch>
+    <try>
+      <tk label="(prop,_fadd_create_file_in) &apos;(f,name_of_dir,(dir,home2))&apos;">
+        <tk id="filename" flag="nono" label="(prop,_fadd_fn_l)" tip="(prop,_fadd_fn_t)" cols="30"
+            rule="filename"/>
+      </tk>
+      <ti label="(prop,_fadd_conti)"/>
+      <ti type="file" 
+          class_choose="panoChooseFileAccept"
+          call_choose="(prop,_fadd_choose) (f,html,b,o)(prop,filename)(f,html,b,c)"
+          flag="choose button_choose blind">(dir,home2)(prop,filename)</ti>
+                
+      
+    </try>
+    <catch>
+      <ti>(prop,_fadd_cancel)</ti>
+
+      <call_job job="Panorama Directory">
+            <dir  id="redo_dir" >(dir,home2)</dir> 
+            <prop id="redo_ipath" ></prop>  
+      </call_job>
+    </catch>
+  </try_catch>
+
+</job>
+
+<job id="choose-1" joblevel="pro" role="hidden">
+  <need>(dir,home2)</need>
+  <prop id="do-see-the-dir-chooser" x="0"/>
+   
+  <need default="0">(prop,is-first-chooser)</need>
+   <!-- <ti>is-first-chooser=(prop,is-first-chooser)  </ti>    -->
+   <prop id="see-savers" x="0"/>
+   <choose>
+    <when test="(f,guicontroller,choose,file,is-on)">
+      <!-- kopieren begin -->
+      <when test="(f,not,(prop,is-first-chooser))">
+        <ti label="(prop,_rep_choose_file) &apos;(f,guicontroller,choose,file,label)&apos;(f,when,(f,guicontroller,choose,file,has-save), (prop,_rep_towrite),)" />
+        <ti test="(f,has,(f,guicontroller,choose,file,tip))">(f,guicontroller,choose,file,tip)</ti>
+      </when>
+
+      <prop id="cancel-text" x="(prop,_rep_cancel)"/>
+      <when test="(f,guicontroller,choose,file,has-value)">
+        <prop id="cancel-text" x="(prop,_rep_cancelKeep) (f,name_of_file,(f,guicontroller,choose,file,value))"/>
+      </when>
+      
+      <when test="(prop,is-first-chooser)">  
+          <ti_space height="5px" />
+      </when>      
+      <ti type="file" 
+        x="(f,guicontroller,choose,file,value)" 
+        flag="choose label_right button_choose blind" 
+        class_choose="panoChooseFileDecline" call_choose="(prop,cancel-text)" xlabel=" " />    
+        
+      <when test="(f,guicontroller,choose,file,has-save)">
+      
+        <ti type="call_job" 
+            job="Create-File" 
+            explain="(prop,_rep_spec_newfile)" flag=" button obutton" class="PanoAddFileChoosing">
+          <dir id="home2">(dir,home2)</dir>
+        </ti>   
+            
+      </when>          
+      
+    </when>   
+    
+    <when test="(f,guicontroller,choose,dir,is-on)">
+      <when test="(f,not,(prop,is-first-chooser))">
+        <ti label="(prop,_rep_choose_dir) &apos;(f,guicontroller,choose,file,label)&apos;(f,when,(f,guicontroller,choose,file,has-save), (prop,_rep_towrit),)" />
+        <ti test="(f,has,(f,guicontroller,choose,file,tip))">(f,guicontroller,choose,file,tip)</ti>
+      </when>
+
+        <prop id="cancel-text" x="(prop,_rep_cancel)"/>
+        <when test="(f,guicontroller,choose,dir,has-value)">
+          <prop id="cancel-text" x="(prop,_rep_cancelKeep) (f,name_of_file,(f,guicontroller,choose,dir,value))"/>
+        </when>  
+      <prop id="do-see-the-dir-chooser" x="1"/>   
+      <when test="(f,guicontroller,choose,dir,has-value)">
+        <when test="(f,eq_text,(f,guicontroller,choose,dir,has-value),(dir,home2))">
+           <prop id="do-see-the-dir-chooser" x="0"/>
+        </when>
+      </when>
+
+      <!-- 
+      <ti type="dir" x="(dir,home2)" flag="blind choose label_right button_choose  button_plain " class_plain="dirChooseAcceptPlain" explain="Choose: " class_choose="panoChooseDirAccept"    call_choose="Select: (f,html,b,o)(f,name_of_dir,(dir,home2))(f,html,b,c)" xlabel=" "
+        test="(prop,do-see-the-dir-chooser)"
+      />
+      -->
+      <when test="(prop,is-first-chooser)">  
+        <ti_space height="5px" />
+      </when>
+      
+      <ti type="dir" 
+          x="(f,guicontroller,choose,dir,value)" 
+          flag="blind choose label_right button_choose  button_plain " 
+          class_plain="dirChooseDeclinePlain" 
+          class_choose="panoChooseDirDecline" 
+          call_choose="(prop,cancel-text)"/>  
+                        
+      <!-- <prop id="see-savers" x="(f,guicontroller,choose,dir,has-save)"/>  -->
+          
+    </when>    
+   
+   </choose>
+   
+  <when test="(f,not,(prop,is-first-chooser))">   
+    <ti type="call_service" job="present-dirs-for-choose" 
+        explain="(prop,_rep_other_loc)" xlabel=" " 
+        flag="label_right xbutton" xclass="PanoOtherLocation">
+    </ti>   
+  </when>
+ 
+  
+  <!-- <ti_break/> -->
+  <ti_hr_break/>
+  <ti_space height="4px" />
+ 
+
+</job>
+
+
+
+<job id="choose-this-directory" joblevel="pro" role="hidden">
+  <need>(dir,choose-this)</need>
+  <when test="(f,guicontroller,choose,file,is-on)">
+
+  
+                                                       
+
+    </when>   
+   
+
+
+
+</job>
+
+<job id="create-new-file" joblevel="pro" role="hidden">
+  <need>(dir,home2)</need>
+  <tk id="filename" flag="nono" label="Filename to Write"/>
+  <ti type="file" flag="choose" x="(dir,home2)(prop,filename)"/>
+  <ti type="file" label="The file" x="(dir,home2)(prop,filename)" explain="[ CHOOSE ] (dir,home2)(prop,filename)" flag="choose"/>
+</job>
+
+
+<job id="web-dir-action-info" joblevel="pro" role="hidden">
+  <need>(dir,with)</need>
+  <call_service job="Dir-Info-Panorama">
+    <dir id="with">(dir,with)</dir>
+  </call_service>
+  
+</job>
+
+
+<job id="web-dir-action-add" joblevel="pro" role="hidden">
+  <need>(dir,with)</need>
+  <call_job job="tr_dadd"/>
+  
+  <tk label="(prop,_dadd_newdir)">
+  <tk id="dirname" flag="nono" rule="filename" label="(prop,_dadd_name_of_dir)"
+    tip="(prop,_dadd_create) (dir,with)" cols="30"/>
+  </tk>
+  <dir id="newdir">(dir,with)(prop,dirname)</dir>
+  <mkdir dir="(dir,newdir)"/>
+  <ti label="(prop,_dadd_created) (f,name_of_dir,(dir,newdir))"/>
+  <ti_break_hr/>
+
+  
+  <call_job job="Panorama Directory">
+      <dir  id="redo_dir" >(dir,newdir)</dir> 
+      <prop id="redo_ipath" ></prop>   
+  </call_job>
+   
+</job>
+
+</jobs>

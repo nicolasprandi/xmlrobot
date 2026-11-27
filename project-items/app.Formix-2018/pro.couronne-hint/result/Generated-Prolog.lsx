@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="hints">(dir,pro)hints.xml</file>
+<when test="(f,not,(f,exists_file,(file,hints)))">
+<create_file out="(file,hints)">&lt;hints/&gt;</create_file>
+<i>Created: (file,hints)</i>
+</when>
+<prop id="hints_offset">./</prop>
+<prop id="hints_offset_label"/>
+<prop id="hints_offset_new_key">//</prop>
+<prop id="hints_sort_attribute"/>
+<prop id="hints_sort_number"/>
+<prop id="hints_sort_ignore_case"/>
+<prop id="hints_sort_desc"/>
+<prop id="hints_where"/>
+<prop id="hints_return_job">hint-see-all</prop>
+</prolog>

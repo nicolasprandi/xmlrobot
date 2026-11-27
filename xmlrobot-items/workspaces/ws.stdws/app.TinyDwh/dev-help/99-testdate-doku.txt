@@ -1,0 +1,64 @@
+test_data doku
+<call_job job="-db-close-on-purpose-"/>
+<call_job job="-db-kill-">
+  <prop id="killid">(f,...)</prop>
+</call_job>
+1. test_date
+
+CREATE TABLE test_date (
+                date_int INTEGER NOT NULL AUTO_INCREMENT,
+                date_string CHAR(8),
+                day_of_week INTEGER NOT NULL,
+                week_of_year INTEGER NOT NULL,
+                PRIMARY KEY (date_int));
+
+2. test_geoip
+
+Name	Type	Format	Length	Precision	Currency	Decimal	Group	Trim type
+network	String		14		€	,	.	none
+geoname_id	Integer	#	15	0	€	,	.	none
+continent_code	String		2		€	,	.	none
+continent_name	String		6		€	,	.	none
+country_iso_code	String		2		€	,	.	none
+country_name	String		6		€	,	.	none
+is_anonymous_proxy	Integer	#	15	0	€	,	.	none
+is_satellite_provider	String		16		€	,	.	none
+
+
+CREATE TABLE test_geoip (
+                geoip_id INTEGER NOT NULL AUTO_INCREMENT,
+                network VARCHAR(30),
+                geoname_id INTEGER,
+                continent_code CHAR(2),
+                continent_name VARCHAR(100),
+                country_iso_code CHAR(2),
+                country_name VARCHAR(100),
+                is_anonymous_proxy INTEGER,
+                is_satellite_provider CHAR(16),
+                PRIMARY KEY (geoip_id));
+
+
+https://github.com/AndiDittrich/GeoIP-Country-Lists/blob/master/README.md
+
+GeoIP Country Lists
+
+Per Country IP lists useful for bash scripting/filter purpose.
+
+    This product includes GeoLite2 data created by MaxMind, available from http://www.maxmind.com.
+
+
+    This product includes GeoLite2 data created by MaxMind, available from
+<a href="http://www.maxmind.com">http://www.maxmind.com</a>.
+
+
+https://ckan.africadatahub.org/
+
+3. test_cities
+https://github-com.translate.goog/datasets/world-cities?_x_tr_sl=el&_x_tr_tl=en&_x_tr_hl=de
+
+datahub.io/core/world-cities 
+This datapackage only list cities above 15,000 inhabitants. Each city is associated with its country and subcountry to reduce the number of ambiguities. Subcountry can be the name of a state (eg in United Kingdom or the United States of America) or the major administrative section (eg ''region'' in France''). See admin1 field on geonames website for further info about subcountry.
+
+License
+All data is licensed under the Creative Common Attribution License as is the original data from geonames. This means you have to credit geonames when using the data. And while no credit is formally required a link back or credit to Lexman and the Open Knowledge Foundation is much appreciated.
+All source code is licensed under the MIT licence.

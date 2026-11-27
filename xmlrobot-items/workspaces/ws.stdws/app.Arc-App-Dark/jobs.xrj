@@ -1,0 +1,435 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="Go" pri="10" role="hidden">
+
+    <call_job job="go-production"/>
+</job>
+            
+            
+            
+<job id="1. Edit App-Base">
+  <call_job job="tk_appi_edit"/>
+  <call_job job="build-file-selectors"/>
+
+</job>
+<job id="1. Edit App-Base?">
+  <call_job job="tk_appi_print_values"/>
+
+</job>
+
+<job id="App Quality Queck" pri="10">
+  <call_job job="quality-menu"/>
+</job>
+
+<job id="2. Edit Paras">
+  <call_job job="tk_prod_edit"/>
+
+
+</job>
+
+<job id="2. Edit Paras?">
+  <call_job job="tk_prod_print_values"/>
+
+</job>
+
+<job id="3. Edit &amp; Produce">
+  <call_job job="tk_prod_edit"/>
+  <call_job job="go-production"/>
+</job>
+<job id="3. Edit &amp; Produce?">
+  <call_job job="??"/>
+</job>
+<job id="4. Just Produce">
+  <call_job job="go-production"/>
+</job>
+
+<job id="4. Just Produce?">
+  <call_job job="??"/>
+</job>
+
+
+<job id="Signation-Editor" pri="10" >
+
+  <call_job job="see-full-list"/>
+  
+  <call_job job="bit-see-all"/>
+</job>
+<job id="Signation-Editor?">
+  <ti type="file">(file,updater)</ti>
+  <ti_hr/>
+   <ti flag="html catch">&lt;font face="Courier"&gt;(f,escape,_htmlb,(f,file_content,(file,updater)))&lt;font&gt;</ti>
+  <call_job job="see-reusable-files"/>
+</job>
+
+<job id="Signation-Liste" pri="10" role="test">
+
+  <call_job job="bit-see-all"/>
+
+</job>
+
+<job id="Signation-Liste?">
+  <ti type="file">(file,updater)</ti>
+  <ti_hr/>
+  <ti flag="html catch">&lt;font face="Courier"&gt;(f,escape,_htmlb,(f,file_content,(file,updater)))&lt;font&gt;</ti>
+  <call_job job="see-reusable-files"/>
+</job>
+
+<job id="see-reusable-files" role="hidden">
+    <ti label="Reusable Rule-Files in this Project"/>
+    <ti type="file" label="Prolog-Steps:" test="(f,exists_file,(file,prolog-steps))">(file,prolog-steps)</ti>
+    <ti xtype="file" label="Prolog-Steps:" test="(f,not,(f,exists_file,(file,prolog-steps)))">Does not exist in this project</ti>    
+    <ti type="file" label="Signation:" test="(f,exists_file,(file,updater))">(file,updater)</ti>
+    <ti xtype="file" label="Signation:" test="(f,not,(f,exists_file,(file,updater)))">Does not exist in this project</ti>
+    <ti type="file" label="Blurry:" test="(f,exists_file,(file,blurries))">(file,blurries)</ti>
+    <ti xtype="file" label="Blurry:" test="(f,not,(f,exists_file,(file,blurries)))">Does not exist in this project</ti>
+    <ti type="file" label="ProdConf:" test="(f,exists_file,(file,prodconf))">(file,prodconf)</ti>
+    <ti xtype="file" label="ProdConf:" test="(f,not,(f,exists_file,(file,prodconf)))">Does not exist in this project</ti>    
+</job>
+
+<job id="Edit Blurries" pri="10">
+  <file id="files2">(file,blurries)</file>
+  
+  <prop id="files2_offset">./</prop>
+  <prop id="files2_offset_label"/>
+  <prop id="files2_offset_new_key">//</prop>
+  <prop id="files2_sort_attribute"/>
+  <prop id="files2_sort_number"/>
+  <prop id="files2_sort_ignore_case"/>
+  <prop id="files2_sort_desc"/>
+  <prop id="files2_where"/>
+  <prop id="files2_return_job">file2-see-all</prop>
+  <prop id="files2_sort_desc"></prop>
+  
+  <prop id="label">Blurries</prop>
+  
+  <call_job job="file2-see-all"/>
+
+</job>
+
+<job id="Edit Blurries?">
+  <ti type="file">(file,blurries)</ti>
+  <ti_hr/>
+  <ti flag="html catch">&lt;font face="Courier"&gt;(f,escape,_htmlb,(f,file_content,(file,blurries)))&lt;font&gt;</ti>
+  <call_job job="see-reusable-files"/>
+</job>
+
+<job id="Edit Prolog-Steps" pri="10">
+
+  <prop id="to-edit">(f,file_content,(file,prolog-steps))</prop>
+  <prop id="to-edit-original">(prop,to-edit)</prop>
+  <tk type="textblock" label="Prolog-Steps" tip="()Das sind xr-steps die zu beginn ausgefuehrt werden. hier werden variablen produziert die dann irgendwann weiterverwendet werden. entweder werden sie generiert oder aus der produkt-konfiguration genommen. 
+die produkt-konfiguration liegt in dem file (file,#prodconf). Dieses file muss aber auch nicht vorhanden sein. das bedeutet dass es entweder keine konfiguration gibt oder dass 'im test' also direkt aus Arc-App-Dark gearbeitet wird.&#xA;&lt;choose&gt;&#xA;  &lt;when test=&quot;(f,has,file,#prodconf)&quot; &gt;&#xA;  &lt;/when&gt;&#xA;  &lt;otherwise&gt;&#xA;  &lt;/otherwise&gt;&#xA;&lt;/choose&gt;()" id="to-edit" flag="nono big bigbig"/>
+
+<choose>
+  <when test="(f,eq_text,(prop,to-edit),(prop,to-edit-original))">
+    <ti label="Keine Aenderungen."/>
+  </when>
+  <otherwise>
+    <create_file out="(file,prolog-steps)">(prop,to-edit)</create_file>
+    <ti label="Updated"/>
+    <ti type="file">(file,prolog-steps)</ti>
+    <ti flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,(prop,to-edit))&lt;font&gt;</ti>
+  
+  </otherwise>
+
+</choose>
+</job>
+
+<job id="Edit Prolog-Steps?" pri="10">
+  
+  <ti type="file">(file,prolog-steps)</ti>
+  <ti_hr/>
+  <ti flag="html catch">&lt;font face="Courier"&gt;(f,escape,_htmlb,(f,file_content,(file,prolog-steps)))&lt;font&gt;</ti>
+  
+  <call_job job="see-reusable-files"/>
+</job>
+
+<job id="Edit Prod-Conf" pri="10">
+  <file id="files2">(file,prodconf)</file>
+  
+  <prop id="files2_offset">./</prop>
+  <prop id="files2_offset_label"/>
+  <prop id="files2_offset_new_key">//</prop>
+  <prop id="files2_sort_attribute"/>
+  <prop id="files2_sort_number"/>
+  <prop id="files2_sort_ignore_case"/>
+  <prop id="files2_sort_desc"/>
+  <prop id="files2_where"/>
+  <prop id="files2_return_job">file2-see-all</prop>
+  <prop id="files2_sort_desc"></prop>
+  <prop id="label">Prod-Conf</prop>
+  <call_job job="file2-see-all"/>
+
+</job>
+
+<job id="Edit Prod-Conf?">
+  <ti type="file">(file,prodconf)</ti>
+  <ti_hr/>
+  <ti flag="html catch">&lt;font face="Courier"&gt;(f,escape,_htmlb,(f,file_content,(file,prodconf)))&lt;font&gt;</ti>
+  <call_job job="see-reusable-files"/>
+</job>
+
+<job id="Not encrypted xsl-files">
+  <call_job job="tk_noxsl_edit"/>
+</job>
+
+<job id="Not encrypted xsl-files?">
+  <call_job job="tk_noxsl_print_values"/>
+</job>
+
+<job id="Dirs to ignore">
+  <call_job job="tk_dirig_edit"/>
+</job>
+
+<job id="Dirs to ignore?">
+  <call_job job="tk_dirig_print_values"/>
+</job>
+
+<job id="Dirs to ignore?">
+  <call_job job="tk_dirig_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_dirig_clear" explain="Clear this data"/>
+</job>
+
+<job id="Files to ignore">
+  <call_job job="tk_fileig_edit"/>
+</job>
+
+
+<job id="Files to ignore?">
+  <call_job job="tk_fileig_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_fileig_clear" explain="Clear this data"/>
+</job>
+
+<job id="Files with producname">
+  <call_job job="tk_filepd_edit"/>
+</job>
+
+
+<job id="Files with producname?">
+  <call_job job="tk_filepd_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_filepd_clear" explain="Clear this data"/>
+</job>
+
+
+
+
+
+<job id="4) Do produce app?">
+  <call_job job="tk_prod_print_values_tips"/>
+  <when test="(f,and,(f,has,dir,prod_alt_doku),(f,exists_dir,(dir,prod_alt_doku)))">
+    <ti_hr/>
+    <ti type="call_job" job="clear-alt-doku">
+      <dir id="prod_alt_doku" x="(dir,prod_alt_doku)"/>
+    </ti>
+  </when>
+  
+</job>
+
+<job id="just produce app" pri="10" role="hidden">
+  <call_job job="go-production"/>
+
+</job>
+<job id="clear doku" pri="10" role="hidden">
+    <call_job job="clear-alt-doku"/>
+</job>    
+
+<job id="clear-alt-doku" role="hidden">
+    <!-- <call_job job="tk_prod_read"/> -->
+    <ti>Clearing alternative-production-space</ti>
+    <ant level="info">
+     <delete verbose="true">
+      <fileset 
+               dir="(dir,prod_alt_doku)" 
+               includes="**/*.*" 
+               defaultexcludes="false"/>
+     </delete>
+
+     <delete includeemptydirs="true" 
+             verbose="true" >
+      <fileset 
+             dir="(dir,prod_alt_doku)"  
+             includes="**/*" 
+             defaultexcludes="false">
+             <and>
+              <size value="0"/>
+              <type type="dir"/>
+             </and>
+      </fileset>
+     </delete>
+    </ant> 
+    <ti type="dir" label="cleared" x="(dir,prod_alt_doku)"/>
+</job>
+
+<job id="Not Encrypted Xsl-Files?" role="dev">
+  <call_job job="tk_noxsl_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_noxsl_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+
+
+
+<job id="Do: file-see-all" role="hidden">
+
+  <call_job job="file-see-all"/>
+
+</job>
+
+<job id="Do: modo-see-all" role="hidden">
+
+  <call_job job="modo-see-all"/>
+
+</job>
+
+<job id="Build File-Selectors" pri="10">
+  <call_job job="build-file-selectors"/>
+</job>
+
+<job id="See all xsl of app" pri="10" role="hidden">
+  <ti label="See all xls of app"/>
+  <call_job job="tk_appi_read"/>
+  <call_job job="tk_noxsl_read"/>
+  <loop xml="(file,file-selector-xsl)" id="i" xpath="sel">
+    <ti 
+      label="(f,when,(f,has_flag,(prop,noxsl_files),(loop,i)),Not Encrypted, )"
+      type="file" x="(dir,appi_from_app)(loop,i)"/>
+
+  
+  </loop>
+  
+</job>
+
+<job id="build-file-selectors" role="hidden">
+  <ti x=" " key="Building File-Selectors ..." />
+  <call_job job="tk_appi_read"/>
+
+  <file id="x" x="(dir,filetemp)x.xml"/>
+  
+  <scan dir="(dir,appi_from_app)" out="(file,x)" level_limit="1" field="post post2"/>
+  <xslt xml="(file,x)" xsl="(dir,app)make-fileselector-any.xsl" out="(file,file-selector-any)"></xslt>
+  <xslt xml="(file,x)" xsl="(dir,app)make-fileselector-xsl.xsl" out="(file,file-selector-xsl)"></xslt>
+  <xslt xml="(file,x)" xsl="(dir,app)make-fileselector-ignore.xsl" out="(file,file-selector-ignore)"></xslt>
+  
+  <file id="xdirs" x="(dir,filetemp)xdirs.xml"/>
+  
+  <scan dir="(dir,appi_from_app)" out="(file,xdirs)" flag="dirs_only" level_limit="1"/>  
+  
+  <xslt xml="(file,xdirs)" xsl="(dir,app)make-dirselector-ignore.xsl" out="(file,dir-selector-ignore)"></xslt>
+  <interpreter watch="1"/>
+  <file id="prolist" x="(dir,filetemp)prolist.xml"/>
+  <ask out="(file,prolist)" what="apps" app="(prop,app)" style="natural"/>
+  <xslt xml="(file,prolist)" xsl="(dir,app)make-proselektor-dark.xsl" out="(file,pro-selektor-dark)"></xslt>
+  
+  <ti label="Did Create File-Selectors"/>
+  <ti type="file" x="(file,file-selector-any)" label="App-files"/>
+  <ti type="file" x="(file,file-selector-xsl)" label="Xsl Files"/>
+  <ti type="file" x="(file,file-selector-ignore)" label="App Files"/>
+  <ti type="file" x="(file,dir-selector-ignore)" label="Dirs"/>
+  <ti type="file" x="(file,pro-selektor-dark)" label="App-Dark-Pros"/>
+</job>
+
+
+
+
+<!-- 
+<job id="Produce App?">
+  <call_job job="tk_prod_print_values_tips"/>
+</job>
+
+<job id="Encrypt App" role="hidden">
+  <interpreter watch="1"/>
+  <call_job job="tk_appi_edit"/>
+  <scrypt id="a" act="open" type="(prop,appi_key)"/>
+  <file id="data" x="(dir,pro)data.xml"/>
+  <scan out="(file,data)" dir="(dir,appi_from_app)" level_limit="1" field="gfn pre post post2"/>
+  
+  <loop id="x" xml="(file,data)" xpath="file">
+    <when test="(f,or,(f,eq_text,ljx,(loop,x,@post2)),(f,eq_text,xrj,(loop,x,@post2)))">
+    
+      <scrypt id="a" act="encrypt" from="(dir,appi_from_app)(loop,x)" to="(dir,appi_to_app)(loop,x)"/>
+      <tp>encrypted  (loop,x)</tp>
+    </when>
+  </loop>
+  
+   <scrypt id="a" act="close" />
+  
+        <throw>ok</throw>
+  <scrypt id="a" act="open" type="hase"/>
+  <scrypt id="a" act="encrypt" from="(dir,app)jobs.xrj" to="(dir,pro)1-jobs-encrypted.xrj"/>
+  <scrypt id="a" act="decrypt" from="(dir,pro)1-jobs-encrypted.xrj" to="(dir,pro)2-jobs-decrypted.xrj"/>
+  
+  <scrypt id="a" act="close" />
+ 
+</job>
+-->
+
+<job id="ExportFiles" role="hidden">
+  <call_job job="exportfile-see-all"/>
+ 
+
+</job>
+
+<job id="Diverses">
+  <call_job job="Configuration?"/>
+  <ti_hr/>
+  <ti label="ExportFiles"/>
+  <call_job job="exportfile-see-all"/>
+  <ti_hr/>
+  <ti type="call_job" job="See all xsl of app"/>
+</job>
+
+<job id="Configuration" role="hidden">
+  <call_job job="tk_conf_edit"/>
+</job>
+
+<job id="Configuration?" role="hidden">
+  <call_job job="tk_conf_print_values_tips"/>
+  
+  <ti type="call_job" job="tk_conf_edit" explain="Edit" label=" "/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data" label=" "/>
+  
+</job>
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

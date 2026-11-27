@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="update-tk">
+<need default="">(prop,updates_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,updates_tk_control) wrap ">
+<tk label="Titel" id="update_titel" x="" test_first="1" tip="der Titel" type="text" flag=" nono "/>
+<tk label="File Class" id="update_file_class" x="" test_first="1" tip="welches file soll upgedated werden" type="sel" flag=" nono ">
+<sel label="prolog-include">prolog-include</sel>
+<sel label="tkcore">tkcore</sel>
+<sel label="view">view</sel>
+<sel label="tomemory">tomemory</sel>
+<sel label="details">details</sel>
+<sel label="details2">details2</sel>
+<sel label="edit">edit</sel>
+<sel label="delete">delete</sel>
+<sel label="editor">editor</sel>
+<sel label="add">add</sel>
+<sel label="tofile">tofile</sel>
+</tk>
+<tk label="Beschreibung" id="update_desc" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="Suche nach" x="Suche nach" test_first="0" type="msg" flag=" "/>
+<tk label="Suchbegriff" id="update_search" x="" test_first="1" tip="Suchbegriff" type="textblock" flag=" "/>
+<tk label="Typ der Suche" id="update_search_type" x="text" test_first="0" tip="wie soll gesucht und ersetzt werden" type="sel" flag=" nono ">
+<sel label="text">text</sel>
+<sel label="regex">regex</sel>
+</tk>
+<tk label="Anzahl Findings" id="update_expectation" x="1" test_first="0" tip="Anzahl der erwarteten findings" type="text" flag=" nono "/>
+<tk label="Ersetze mit" x="Ersetze mit" test_first="0" type="msg" flag=" "/>
+<tk label="Ersetzen mit" id="update_replace" x="" test_first="1" type="textblock" flag=" "/>
+<tk label="Off" id="update_off" x="" test_first="0" type="bool" flag=" "/>
+</tk>
+</job>

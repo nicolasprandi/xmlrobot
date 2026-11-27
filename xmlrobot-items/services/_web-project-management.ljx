@@ -1,0 +1,367 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2018-2023 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="Project-Database Prepare" role="hidden" joblevel="ws">
+  <i>Project-Database Prepare</i>
+  <interpreter act="check-login"/>
+
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">WebProjectManager out of service</throw>
+  <need>(prop,db_app) (prop,db_conf) (prop,db_ons) (prop,db_bits) (dir,db_pro) (prop,db_pro) (prop,db_pro_extension)</need>            
+  <when test="(f,or,(f,has,prop,db_pro_extension),(f,has,prop,db_pro_commits),(f,has,prop,db_pro_cache))">                                          
+  <ti flag="wrap html">&lt;small&gt;(f,when,(f,has,prop,db_pro_extension),dbExtension=(prop,db_pro_extension) ,)(f,when,(f,has,prop,db_pro_commits),commits=(prop,db_pro_commits) ,)(f,when,(f,has,prop,db_pro_cache),cache=(prop,db_pro_cache) ,)&lt;/small&gt;</ti>    <!-- db_pro=[(prop,db_pro)] -->
+  </when>  
+  
+  <!-- 
+  <ti flag="wrap">db_pro_extension=[(prop,db_pro_extension)] commits=[(prop,db_pro_commits)] cache=[(prop,db_pro_cache)] db_pro=[(dir,db_pro)] db_pro=[(prop,db_pro)]</ti>
+  -->    
+  <ti_break/>
+      
+  <para_split x="(prop,db_conf)" prefix="db_conf_"/>
+   
+  <dir id="wunschziel" x="(prop,db_conf_db_dir)"/>
+  <!-- <dir id="wunschziel" x="(dir,wunschziel)p2"/>  -->
+  <dir id="wunschziel" x="(dir,wunschziel)(prop,db_conf_project_token)/-(prop,db_pro_extension)/main"/>
+
+  <!-- <ti typye="dir" label="(prop,_wdb_prep_yourdblink)">(dir,wunschziel)</ti>  -->
+  <ti type="dir" label="(prop,_wdb_prep_yourdblink)">(dir,wunschziel)</ti>
+  
+  
+  <dir id="wunschziel_backup" x="(prop,db_conf_db_dir)"/>
+  <!-- <dir id="wunschziel_backup" x="(dir,wunschziel_backup)p2"/>  -->
+  <dir id="wunschziel_backup" x="(dir,wunschziel_backup)(prop,db_conf_project_token)/-(prop,db_pro_extension)/backups/(f,time,yyyy-MM-dd)/(f,time,HH-mm-ss)/"/>
+  <ti label="backup in" type="dir" x="(dir,wunschziel_backup)" test="0"/>
+  <when test="(f,not,(f,dir_exists,(dir,wunschziel)))">
+    <mkdir dir="(dir,wunschziel)"/>
+    <ti type="dir" x="(dir,wunschziel)" label="(prop,_wdb_prep_created)"/>
+  </when>
+  <prop id="cn-report" x="1"/>   
+    
+</job>
+
+<job id="remove-empty-dirs" role="hidden">
+
+  <when test="(f,not,(f,has,dir,with))">
+    <tk id="with" tip="(prop,_wdb_red_dir_to_del)" type="dir"/>
+  </when>
+  
+  <file id="y" x="(dir,filetemp)scan12.xml"/>
+  <scan dir="(dir,with)" 
+        out="(file,y)" 
+        level_limit="99"
+        field="files"
+        agg="files"/>
+  <loop id="y" xml="(file,y)" xpath="//dir[@agg_files=0]">
+
+
+    <dir id="weg" x="(dir,with)(loop,y,@ipath)"/>
+    <when test="(f,exists_dir,(dir,weg))">
+      <ti type="dir" label="Deleting" test="0">(dir,weg)</ti>
+      <delete dir="(dir,weg)" test="1"/>
+    </when>     
+
+  </loop>
+</job>
+
+<job id="Project-Database Commit" role="hidden" joblevel="ws">
+<call_service job="tr_wdb"/>
+<ti>(prop,_wdb_com_name)</ti>
+<!-- <dump_ti label="Project-Database Commit"/> -->
+  <interpreter act="check-login"/>
+  <need>(prop,db_app) (prop,db_conf) (prop,db_ons) (prop,db_bits) (dir,db_pro) (prop,db_pro) (prop,db_path) (prop,db_pro_extension) (prop,db_pro_commits) (prop,db_pro_cache)</need>
+  <interpreter watch="0"/>      
+
+  <call_service job="Project-Database Prepare"/>
+
+  <dir id="dbloc" x="(dir,wunschziel)" />
+    
+  <dir id="database-project" x="(dir,wunschziel)"/>
+  
+  <mkdir dir="(dir,database-project)(prop,db_path)"/>
+  <copy uri="(dir,db_pro)(prop,db_path)" touri="(dir,database-project)(prop,db_path)" />
+
+  <copy uri="(dir,database-project)(prop,db_pro_commits)" touri="(dir,db_pro)(prop,db_pro_commits)" />
+</job>
+
+<job id="Project-Database Sync" role="hidden" joblevel="ws">
+  <interpreter act="check-login"/>
+  <call_service job="tr_wdb"/>  
+  <ti>(prop,_wdb_syn_name)</ti>
+  <need>(prop,db_app) (prop,db_conf) (prop,db_ons) (prop,db_bits) (dir,db_pro) (prop,db_pro) (prop,db_pro_extension) (prop,db_pro_commits) (prop,db_pro_cache)</need>     
+
+  <call_service job="Project-Database Prepare"/>
+  
+  <dir id="database-project" x="(dir,wunschziel)"/>
+  <!-- 
+  <mkdir dir="(dir,database-project)(prop,db_path)"/>
+  <copy uri="(dir,db_pro)(prop,db_path)" touri="(dir,database-project)(prop,db_path)" />
+  -->
+  <copy uri="(dir,database-project)(prop,db_pro_commits)" touri="(dir,db_pro)(prop,db_pro_commits)" />
+</job>
+
+<job id="Project-Database Rollback" role="hidden" joblevel="ws">
+  <interpreter act="check-login"/>
+  <call_service job="tr_wdb"/>  
+  <ti>(prop,_wdb_roll_name)</ti>
+  <need>(prop,db_app) (prop,db_conf) (prop,db_ons) (prop,db_bits) (dir,db_pro) (prop,db_pro) (prop,db_path)</need>
+  <need default="">(prop,db_pro_extension)</need>
+  <dump_ti label="Rollback" test="0"/>
+  <call_service job="Project-Database Prepare"/>
+
+  <dir id="database-project" x="(dir,wunschziel)"/>
+  
+  <delete dir="(dir,database-project)(prop,db_path)"/>
+  <delete dir="(dir,db_pro)(prop,db_pro_commits)"/>
+  <copy uri="(dir,database-project)(prop,db_pro_commits)" touri="(dir,db_pro)(prop,db_pro_commits)" />
+
+</job>
+
+
+<!-- 
+<job id="Project-Database Clear" role="hidden" joblevel="ws">
+
+  <when test="(f,ask,exists_job,(prop,db_app),sys_clear)">
+     <call_app
+        app="(prop,db_app)"
+        job="sys_clear"
+        pro_id="(prop,db_pro)"
+        pro_dir="(dir,db_pro)"
+        flag="silent"/>
+  </when>
+  
+</job>      -->
+<job id="db-create-selector" role="hidden">
+
+  <prop id="selector"></prop>
+  
+  <when test="(f,or,(f,has,prop,db_pro_commits),(f,has,prop,db_pro_cache))">
+    <prop id="selector"><![CDATA[<except>]]></prop>   
+
+    <prop id="selector" test="(f,has,prop,db_pro_commits)">(prop,selector)<![CDATA[
+            <file ipath_regex="(prop,db_pro_commits).*" path_level_gt="1"/>
+]]></prop>   
+
+    <prop id="selector" test="(f,has,prop,db_pro_cache)">(prop,selector)<![CDATA[
+            <file ipath_regex="(prop,db_pro_cache).*" path_level_gt="1"/>
+]]></prop>   
+
+    <prop id="selector">(prop,selector)<![CDATA[</except>]]></prop>   
+ 
+  </when>  
+  <!--
+  <ti label="selector">(prop,selector)</ti>
+  <tk type="textblock" id="selector"/>
+  <ti label="selector">(prop,selector)</ti>   -->
+</job>
+<job id="Project-Database Write" role="hidden" joblevel="ws">
+
+  <need>(prop,db_app) (prop,db_conf) (prop,db_ons) (prop,db_bits) (dir,db_pro) (prop,db_pro) (prop,db_pro_extension) (prop,db_pro_commits) (prop,db_pro_cache)</need>
+                            
+  <call_service job="tr_wdb"/>
+  <ti label="(prop,_wdb_wrt_writefrommem) (prop,db_pro_extension)"/>
+  <call_service job="Project-Database Prepare"/>
+
+  <dir id="dbloc" x="(dir,wunschziel)" /> 
+
+  
+    
+  <call_service job="db-create-selector"/>
+  
+  <call_service job="sam">
+      <prop id="sam-request" x="ASK-USER"/>
+      <dir id="sam-source-dir">(dir,db_pro)</dir>
+      <prop id="sam-source-selector">(prop,selector)</prop>
+      <dir id="sam-target-dir">(dir,dbloc)</dir>
+      <prop id="sam-target-selector">(prop,selector)</prop> 
+      <dir id="sam-backup-dir">(dir,wunschziel_backup)</dir>     
+  </call_service>  
+        
+</job>
+
+<job id="Project-Database Download" role="hidden" joblevel="ws">
+  <call_service job="tr_wdb"/>
+      <ti label="(prop,_wdb_down_headline)"/>
+      <ti type="dir" x="(dir,db_pro)" flag="downloadpro"/>
+     
+
+</job>  
+
+<job id="Project-Database Read" role="hidden" joblevel="ws">
+
+  <need>(prop,db_app) (prop,db_conf) (prop,db_ons) (prop,db_bits) (dir,db_pro) (prop,db_pro) (prop,db_pro_extension) (prop,db_pro_commits) (prop,db_pro_cache)</need>
+  <call_service job="tr_wdb"/>    
+  <ti label="(prop,_wdb_read_readfrom) (prop,db_pro_extension)"/>                        
+  <call_service job="Project-Database Prepare"/>
+  <dir id="dbloc" x="(dir,wunschziel)" />  
+
+  
+  
+  <call_service job="db-create-selector"/>    
+  
+  <call_service job="sam">
+      <prop id="sam-request" x="ASK-USER"/>
+      <dir id="sam-source-dir">(dir,dbloc)</dir>
+      <prop id="sam-source-selector">(prop,selector)</prop>
+      <dir id="sam-target-dir">(dir,db_pro)</dir>
+      <prop id="sam-target-selector">(prop,selector)</prop>      
+  </call_service>  
+        
+</job>
+
+
+
+<job id="Project-Database Actions" role="hidden" joblevel="ws">
+
+  <need>(prop,db_app) (prop,db_conf) (prop,db_ons) (prop,db_bits) (dir,db_pro) (prop,db_pro) (prop,db_pro_commits) (prop,db_pro_cache)</need>
+  <call_service job="tr_wdb"/> 
+
+  <ti label="(prop,_wdb_act_what)"/>
+  <when test="(f,has_flag,(prop,db_ons),mayCheckoutProject)">
+    <ti_space height="8px" />
+    <ti type="call_service" job="Project-Database Read" 
+        label="(prop,_wdb_act_readl)"
+        explain="(prop,_wdb_act_read)" 
+        flag="button"
+        class="pdbRead">
+        <prop id="db_app">(prop,db_app)</prop>
+        <prop id="db_conf">(prop,db_conf)</prop>
+        <prop id="db_ons">(prop,db_ons)</prop>
+        <prop id="db_bits">(prop,db_bits)</prop>
+        <dir id="db_pro">(dir,db_pro)</dir>
+        <prop id="db_pro">(prop,db_pro)</prop>
+        <prop id="db_pro_commits">(prop,db_pro_commits)</prop>
+        <prop id="db_pro_cache">(prop,db_pro_cache)</prop> 
+        <prop id="db_pro_extension">(f,vob,prop,db_pro_extension)</prop>    
+    </ti>
+    <ti_space height="8px" />
+  </when>
+
+  <when test="(f,has_flag,(prop,db_ons),mayCheckinProject)">
+    <ti type="call_service" job="Project-Database Write" 
+        label="(prop,_wdb_act_writel)"
+        explain="(prop,_wdb_act_write)"       
+        flag="button"
+        class="pdbWrite">
+        <prop id="db_app">(prop,db_app)</prop>
+        <prop id="db_conf">(prop,db_conf)</prop>
+        <prop id="db_ons">(prop,db_ons)</prop>
+        <prop id="db_bits">(prop,db_bits)</prop>
+        <dir id="db_pro">(dir,db_pro)</dir>
+        <prop id="db_pro">(prop,db_pro)</prop>
+        <prop id="db_pro_commits">(prop,db_pro_commits)</prop>
+        <prop id="db_pro_cache">(prop,db_pro_cache)</prop> 
+        <prop id="db_pro_extension">(f,vob,prop,db_pro_extension)</prop>    
+    </ti>
+    <ti_space height="8px" />   
+  </when>  
+  <!-- 
+  <ti_hr_break/>
+  <ti type="call_service" job="Project-Database Sync" 
+      xlabel="(prop,_wdb_act_syncl)"
+      explain="(prop,_wdb_act_sync)" 
+      test="(f,and,(f,has_flag,(prop,db_ons),mayCheckoutProject),(f,has_flag,(prop,db_ons),mayCheckinProject))"
+      xflag="button"
+      xclass="pdbProjectSync"      >
+      <prop id="db_app">(prop,db_app)</prop>
+      <prop id="db_conf">(prop,db_conf)</prop>
+      <prop id="db_ons">(prop,db_ons)</prop>
+      <prop id="db_bits">(prop,db_bits)</prop>
+      <dir id="db_pro">(dir,db_pro)</dir>
+      <prop id="db_pro">(prop,db_pro)</prop>
+      <prop id="db_pro_commits">(prop,db_pro_commits)</prop>
+      <prop id="db_pro_cache">(prop,db_pro_cache)</prop> 
+      <prop id="db_pro_extension">(f,vob,prop,db_pro_extension)</prop>    
+  </ti>   
+  
+  <ti type="call_service" job="Project-Database Download" 
+      xlabel="(prop,_wdb_act_downl)"
+      explain="(prop,_wdb_act_down)" 
+      test="(f,has_flag,(prop,db_ons),mayDownloadProject)"
+      xflag="button"
+      xclass="pdbProjectDownload">
+      <dir id="db_pro">(dir,db_pro)</dir>
+      <prop id="db_pro">(prop,db_pro)</prop>   
+  </ti>
+   
+  
+  <tk label="What to do ?" >
+    <tk type="sel" id="wtd" label="Your Wish" flag="nono">
+      <sel label="READ: Db &gt;&gt; Memory" test="(f,has_flag,(prop,db_ons),mayCheckoutProject)">out</sel>
+      <sel label="SAVE: Memory &gt;&gt; Db" test="(f,has_flag,(prop,db_ons),mayCheckinProject)">in</sel>
+      <sel label="Synchronize" test="(f,has_flag,(prop,db_ons),mayCheckoutProject)">sync</sel>      
+      <sel label="Download Project" test="(f,has_flag,(prop,db_ons),mayDownloadProject)">prodown</sel>
+    </tk>
+  </tk>
+  -->
+      <!-- 
+      <sel label="RESERVE project in Database" xtest="(f,has_flag,(prop,db_ons),mayCheckinProject)">reserve</sel>
+      <sel label="RELEASE project in Database" xtest="(f,has_flag,(prop,db_ons),mayCheckinProject)">release</sel>
+      <sel label="dump" test="(f,has_flag,(prop,db_ons),mayCheckinProject)">dump</sel>
+      -->  
+  
+  <!-- 
+  <prop id="cn-perform-when-copied"><![CDATA[<?xml version="1.0" ?><steps><call_service job="did-pda-action"/></steps>]]></prop>
+  -->
+  <!--
+  <choose>
+    <when test="(f,eq_text,prodown,(prop,wtd))">
+      <ti label="Project Zip"/>
+      <ti type="dir" x="(dir,db_pro)" flag="downloadfact"/>
+     
+
+    </when>     
+    <when test="(f,eq_text,dump,(prop,wtd))">
+      <dump_ti_all />
+
+    </when>   
+    <when test="(f,eq_text,in,(prop,wtd))">
+      <call_service job="Project-Database Write"/>
+
+    </when>  
+    <when test="(f,eq_text,sync,(prop,wtd))">
+      <call_service job="Project-Database Sync"/>
+
+    </when>     
+    <when test="(f,eq_text,out,(prop,wtd))"> 
+      <call_service job="Project-Database Read"/>
+    </when>
+    
+    <when test="(f,eq_text,reserve,(prop,wtd))">
+      <call_service job="Project-Database Reserve"/>
+
+    </when>  
+    <when test="(f,eq_text,release,(prop,wtd))"> 
+      <call_service job="Project-Database Release"/>
+    </when>    
+    <otherwise>
+      <ti>aha</ti>
+    </otherwise>
+
+  </choose>
+  <dump_ti test="1" label="Welcomes to Project-Database Actions"/>  
+  --> 
+</job>
+<job id="did-pda-action" role="hidden">
+  <ti>we did it</ti>
+</job>
+
+
+
+<job id="TEST Project-Database Actions"  role="test" joblevel="ws">
+  <prop id="db_app" x="Hibiscus"/>
+  <prop id="db_conf">project_token='hibiscus' style='fs1' db_dir='file:///H:/Echnaton-Dbs/db1/'</prop>
+  <prop id="db_ons">mayCheckinProject mayCheckoutProject mayDownloadProject</prop>
+  <prop id="db_pro_extension"></prop>
+  <prop id="db_bits"></prop>
+  <prop id="db_pro_commits"></prop>
+  <prop id="db_pro_cache"></prop>
+  <prop id="db_pro" x="Test-Tk-General-1"/>
+  <dir id="db_pro">file:///H:/XmlRobot-Dev/Echnaton-Scripts/xmlrobot-internals/system/service_apps/app.Hibiscus/pro.leer/</dir>
+  
+  <call_service job="Project-Database Actions"/>
+  
+</job>
+
+ 
+</jobs>

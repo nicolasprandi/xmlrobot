@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="url-read">
+    <need>(prop,url_key)</need>
+    <spirit act="open" missing_strategy="empty" id="urls_spirit_tc" xml="(file,urls)"/>
+    <prop id="url_dt_upd">(f,spirit,urls_spirit_tc,(prop,urls_offset)url[@row=(f,xpath_string,(prop,url_key))],@dt_upd)</prop>
+    <prop id="url_dt_add">(f,spirit,urls_spirit_tc,(prop,urls_offset)url[@row=(f,xpath_string,(prop,url_key))],@dt_add)</prop>
+    <prop id="url_url">(f,spirit,urls_spirit_tc,(prop,urls_offset)url[@row=(f,xpath_string,(prop,url_key))],@url)</prop>
+    <prop id="url_desc">(f,spirit,urls_spirit_tc,(prop,urls_offset)url[@row=(f,xpath_string,(prop,url_key))],@desc)</prop>
+    <prop id="url_history">(f,spirit,urls_spirit_tc,(prop,urls_offset)url[@row=(f,xpath_string,(prop,url_key))],@history)</prop>
+    <spirit act="close" id="urls_spirit_tc"/>
+</job>

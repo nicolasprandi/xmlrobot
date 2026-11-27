@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter and affiliated parties. All rights reserved. -->
+<jobs>
+
+<job id="Backup: PROJECT" pri="10" tip="Makes a backup of the project-data">
+  <call_service job="Backup: Project" flag="silent"/>
+</job>
+
+<job id="Backup: PROJECT?">
+  <ti label="About: Backup: PROJECT">
+    <ti type="ul">Lets you make backups of the project</ti>
+    <ti type="ul">()With this help-button you can also duplicate, rename and delete projects ...()</ti>
+    <ti type="ul">()With this help-button you can also see the project-backups ...()</ti>    
+  </ti>
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <call_service job="Project" flag="silent">
+      <prop id="pro-details" x="0"/>
+      <prop id="pro-backup-things" x="0"/>
+    </call_service>
+    <ti_hr/>
+    <call_service job="See Project Backups" flag="silent"/>
+  </when>
+</job>
+
+
+<job id="Backup: APP" joblevel="app" pri="10" tip="Makes a backup of the application-software" role="admin">
+  <call_service job="Backup: Application" flag="silent"/>
+</job>
+
+<job id="Backup: APP?">
+  <ti label="About: Backup: APP">
+    <ti type="ul">Lets you make backups of the app</ti>
+    <ti type="ul">()With this help-button you can also see the app-backups ...()</ti>         
+  </ti>
+  <when test="(f,has,prop,app)">
+  <ti_hr/>
+  <call_service job="See Application Backups" flag="silent"/>
+  </when>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

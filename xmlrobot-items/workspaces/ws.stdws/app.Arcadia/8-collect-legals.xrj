@@ -1,0 +1,164 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+<job id="Collect Legals?">
+  <call_job job="tk_noto_read"/>
+  <ti type="file" x="(dir,noto_target)NOTICE-RESULT" label="Result" test="(f,exists_file,(dir,noto_target)NOTICE-RESULT)"/>
+  <ti type="dir" x="(dir,noto_target)META-INF" label="Result" test="(f,exists_dir,(dir,noto_target)META-INF)"/>  
+
+</job>
+<job id="Collect Legals" role="admin">
+  <call_job job="noto-create-appsel"/>
+  
+  
+  <call_job job="tk_noto_edit"/>
+  <interpreter watch="1"/>
+  <mkdir dir="(dir,noto_target)"/>
+  <file id="notes" x="(dir,noto_target)NOTICE-RESULT"/>
+  
+  <prop id="clout" x="(prop,noto_intro)"/>
+
+  <tk type="msg" x="A: (prop,clout)" test="0"/>  
+  <call_job job="collect-legals-from-javaitem">
+    <prop id="clfj-names" x="(prop,noto_main_app)"/>
+    <prop id="clfj-stil" x="1"/>
+  </call_job>
+  <tk type="msg" x="B: (prop,clout)" test="0"/>
+  <prop id="clout" x="(prop,clout)&#xA;(prop,noto_between)"
+                   test="(f,has,prop,noto_between)"/>
+  <tk type="msg" x="C: (prop,clout)" test="0"/>
+
+  <call_job job="collect-legals-from-javaitem">
+    <prop id="clfj-names" x="(prop,noto_main_app)"/>
+    <prop id="clfj-stil" x="2"/>
+  </call_job>
+
+
+  <prop id="clout" x="(prop,clout)&#xA;(prop,noto_after)"
+                   test="(f,has,prop,noto_after)"/>
+                   
+   <tk type="msg" x="D: (prop,clout)" txest="0"/>                    
+  <create_file out="(file,notes)">(prop,clout)</create_file>  
+    
+  <!-- single files -->
+  <dir id="raus" x="(dir,noto_target)META-INF"/>
+  <mkdir dir="(dir,raus)"/>
+  <loop id="a" 
+        xml="(file,nca-out)" 
+        xpath="sel[contains(e:o)&quot;(prop,clfj-names)&quot;(e:s)text(e:o)(e:c)(e:c)]">
+    <ti>(loop,a)</ti>
+    <dir id="infos" x="(dir,pro)compile-(loop,a)(prop,fs)COLLECTED-META-INF(prop,fs)META-INF"/>
+    <when test="(f,exists_dir,(dir,infos))">
+      <ant level="info">
+       <copy 
+                  todir="(f,dir,classic,(dir,raus))" 
+                  verbose="true" 
+                  includeemptydirs="false"
+                  overwrite="true" 
+                  preservelastmodified="true">
+        <fileset
+                 dir="(f,dir,classic,(dir,infos))" 
+                 includes="*.*" 
+                 excludes="*-MANIFEST.MF"
+                 defaultexcludes="false"/>
+       </copy>
+      </ant>   
+    </when>
+   </loop>  
+     
+  
+  <ti label="done"/>  
+  <call_job job="Collect Legals?"/>
+</job>
+
+<job id="collect-legals-from-javaitem" role="hidden">
+  <need>(prop,clfj-names)</need>
+  <need>(prop,clfj-stil)</need>     <!-- 1=erster teil 2=zweiter teil -->
+  <need>(prop,clout)</need>
+
+  <loop id="a" 
+        xml="(file,nca-out)" 
+        xpath="sel[contains(e:o)&quot;(prop,clfj-names)&quot;(e:s)text(e:o)(e:c)(e:c)]">
+    <ti>(loop,a)</ti>
+    <choose>
+      <when test="(f,eq,1,(prop,clfj-stil))">
+        <!-- erster teil -->
+        <file id="want-dat" x="(dir,pro)compile-(loop,a)(prop,fs)created-legals(prop,fs)NOTICE-PART-2-B.TXT"/>    
+        <choose>
+          <when test="(f,exists_file,(file,want-dat))">              
+            <!-- erster teil -->
+            <prop id="add" x="(f,replace_regex,(f,file_content,(file,want-dat)),\(e:o)(prop,trash-1)(e:o)\d+(e:c)(prop,trash-2)\(e:c),(e:o)(loop,a,#i).$1(e:c))"/>
+            <prop id="clout" x="(prop,clout)&#xA;(prop,add)"/>
+          </when>
+     
+        </choose>        
+      </when>
+      <when test="(f,eq,2,(prop,clfj-stil))">
+      
+        <file id="want-dat" x="(dir,pro)compile-(loop,a)(prop,fs)created-legals(prop,fs)NOTICE-PART-3-B.TXT"/>    
+        <choose>
+          <when test="(f,exists_file,(file,want-dat))">              
+            <!-- erster teil -->
+            <prop id="add" x="(f,replace_regex,(f,file_content,(file,want-dat)),\(e:o)(prop,trash-1)(e:o)\d+(e:c)(prop,trash-2)\(e:c),(e:o)(loop,a,#i).$1(e:c))"/>
+            <prop id="clout" x="(prop,clout)&#xA;(prop,add)"/>
+          </when>
+     
+        </choose> 
+              
+      </when>      
+    </choose>
+  </loop>
+  
+</job>
+
+<job id="noto-create-appsel" role="hidden">
+  <need>(file,nca-out)</need>
+  
+  <scan out="(dir,temp)a.xml" 
+        dir="(dir,pro)"
+        level_limit="1"/>
+
+  <xslt xml="(dir,temp)a.xml" 
+        xsl="(dir,app)noto-gen.xsl" 
+        out="(file,nca-out)"/>
+        
+  
+
+</job>
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

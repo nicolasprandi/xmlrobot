@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+
+<steps>
+
+  <ti label="License: DATA-STORE"/>
+  <ti type="ul">Copyright &#xA9; 2015-2018 Nicolas Prandstaetter. All rights reserved.</ti> 
+  <ti type="ul">()DATA-STORE is in version 0.6()</ti>
+  <ti type="ul">DATA-STORE is under test.</ti>
+
+
+</steps>

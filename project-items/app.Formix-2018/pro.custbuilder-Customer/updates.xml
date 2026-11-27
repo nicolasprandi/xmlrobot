@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="encrypor-auf-admin" file_class="view" desc="Die darstellung des verschluesselungpasswortes wird in der list ansicht nur fur rolle admin ermoeglicht" search="(loop,custset_loop,@encryptor)" search_type="text" expectation="2" replace="(f,when,(f,role,admin),(loop,custset_loop,@encryptor),***)" off="1" />
+  <update row="2" titel="next-serial" file_class="add" search="&lt;job id=&quot;custset-add&quot; level=&quot;ws&quot; role=&quot;hidden&quot;&gt;" search_type="text" expectation="1" replace="&lt;job id=&quot;custset-add&quot; level=&quot;ws&quot; role=&quot;hidden&quot;&gt;&#xA;&lt;sequence id=&quot;serial&quot; act=&quot;next&quot;/&gt;&#xA;&lt;call_job job=&quot;tk_base_read&quot;/&gt;" desc="Hier wird die serial-sequence bei einer neuanlage hochgezaehlt, sodass der defaultwert passt" />
+  <update row="3" titel="insert_in_begin" file_class="tofile" search="&lt;spirit act=&quot;xml_update&quot; how=&quot;insert_in&quot;" search_type="text" expectation="1" replace="&lt;spirit act=&quot;xml_update&quot; how=&quot;insert_in_begin&quot;" desc="Neue Saetze am Anfang" />
+  <update row="4" titel="serial kurz" file_class="view" search="&quot;Serial-Number&quot;" search_type="text" expectation="1" replace="&quot;Serial&quot;" desc="In der Liste wird die Serial-Number runtergekuerzt" off="1" />
+  <update row="5" titel="follow_job" file_class="tkcore" search="&lt;tk label=&quot;Name&quot;" search_type="text" expectation="1" replace="&lt;tk label=&quot;Name&quot; follow_job=&quot;follow_job_name&quot;" desc="der follow job für den namen&#xA;" />
+</updates>

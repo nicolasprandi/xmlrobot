@@ -1,0 +1,206 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="see-explain" role="hidden">
+  <throw test="(f,not,(f,right,explain))">Braucht explain</throw>
+  <need>(file,explain-to-see)</need>
+  
+  <ti label="Explain" type="file">(file,explain-to-see)</ti>
+  <spirit 
+    id="explains"
+    act="open"
+    file="(file,explain-to-see)"    />
+  <ti>recreate_index=(f,spirit,explains,.,@recreate_index) explain=(f,spirit,explains,.,@explain)  runstats=(f,spirit,explains,.,@runstats)</ti>
+        <!-- 
+          <loop_xml id="row" 
+                  act="open" 
+                  spirit="explains"
+                  xpath="dbRunner[@pos=(f,loop_xml,dbRunner,@pos)]/rows/row"/>  
+                                                                                                
+          <loop id="w" while="()(f,loop_xml,row,has_next?)()">
+            <loop_xml act="next" id="row" />
+            <ti_hr/>                  
+          </loop> 
+          
+          <loop_xml id="row" 
+                  act="close" />      -->
+  
+  <loop_xml id="dbRunner" 
+          act="open" 
+          spirit="explains"
+          xpath="dbRunner"/>  
+                                                                                        
+  <loop id="w" while="()(f,loop_xml,dbRunner,has_next?)()">
+    <loop_xml act="next" id="dbRunner" />
+    <ti type="rec">
+      <ti span="10">(f,html,b,o)(f,loop_xml,dbRunner,@level)(f,html,b,c)-(f,loop_xml,dbRunner,@statementName)-(f,html,b,o)(f,loop_xml,dbRunner,@aktion)(f,html,b,c)</ti>
+    </ti>
+    <ti label="Start">(f,loop_xml,dbRunner,@ts)</ti>
+    <ti label="End" test="(f,loop_xml,dbRunner,exists?,meta/end,@ts)">(f,loop_xml,dbRunner,meta/end,@ts)</ti>
+    <!-- 
+    <ti label="(f,html,b,o)(f,loop_xml,dbRunner,@level)(f,html,b,c)-(f,loop_xml,dbRunner,@statementName)-(f,html,b,o)(f,loop_xml,dbRunner,@aktion)(f,html,b,c)"/>
+    -->
+    <ti label=" ">(f,html,i,o)(f,loop_xml,dbRunner,@statement)(f,html,i,c)</ti>
+   
+    <when test="(f,spirit,explains,exists?,dbRunner[@pos=(f,loop_xml,dbRunner,@pos)]/rows)">
+   
+              <loop_xml id="row" 
+                  act="open" 
+                  spirit="explains"
+                  xpath="dbRunner[@pos=(f,loop_xml,dbRunner,@pos)]/rows/row"/>  
+                                                                                                
+          <loop id="w" while="()(f,loop_xml,row,has_next?)()">
+            <loop_xml act="next" id="row" />
+            
+            <ti xlabel=" ">(f,loop_xml,row,xml?)</ti>
+            <!-- <ti_hr style="2" test="(f,and,(f,not,(f,gt_num,1,(f,loop_xml,row,#i))),(f,lt_num,(f,loop_xml,row,#max),(f,loop_xml,row,#i)))"/>          -->
+                              
+          </loop> 
+          
+          <loop_xml id="row"           
+                  act="close" />     
+    </when>
+    <!--              
+    <ti flag="catch">(f,spirit,explains,xml?,dbRunner[@pos=(f,loop_xml,dbRunner,@pos)]/rows)</ti>-->
+    
+
+    <ti_hr/>                  
+  </loop> 
+  
+  <loop_xml id="dbRunner" 
+          act="close" />    
+  
+  <spirit 
+    id="explains"
+    act="close"    />  
+  
+</job>
+
+<job id="Explain-Report" role="hidden">
+  <throw test="(f,not,(f,right,explain))">Braucht right explain</throw>
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)explainInterview.xrs" />
+    <prop id="joe-in-regex" x="explainInterview" />
+  </call_job>
+  <tk id="explainInterview" type="file" label="Explain to See" flag="nono"/>
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)explainInterview.xrs" />
+    <prop id="joe-in-regex" x="explainInterview" />
+  </call_job>  
+  
+  <call_job job="see-explain">
+    <file id="explain-to-see" x="(file,explainInterview)" />
+  </call_job>    
+  
+</job>
+
+<job id="Export i_wert" role="hidden">
+  <call_job job="cmew">
+    <prop id="cmew-tab">i_wert</prop>
+  </call_job>
+</job>
+
+<job id="cmew-tester-wert" role="hidden">
+  <call_job job="cmew">
+    <prop id="cmew-tab">wert</prop>
+  </call_job>
+</job>
+<job id="cmew-open" role="hidden">
+  <file id="cme">(dir,cme)(prop,titel)-(prop,filenbr)-(prop,cmew-tab).sql</file>
+  <print id="cme-printer" out="(file,cme)" act="open"/>
+  <print id="cme-printer" act="println">LOCK TABLES (prop,cmew-tab) WRITE;</print>  
+</job>
+
+<job id="cmew-close" role="hidden">
+<ti type="file" label="(prop,filenbr)">(dir,cme)(prop,titel)-(prop,filenbr)-(prop,cmew-tab).sql</ti>
+<print id="cme-printer" act="println">UNLOCK TABLES;</print>
+<print id="cme-printer" act="close"/>
+</job>
+
+<job id="cmew" role="hidden">
+  <need>(prop,cmew-tab)</need>
+  
+  <prop id="file-size">100000</prop>
+                                             
+  <tk label="produce (prop,cmew-tab)" flag="sum">
+    <tk id="titel" flag="nono" rule="filename" label="Namensprefix"/>
+    <tk id="file-size" flag="nono" tip="anzahl der inserts je ergebnis-datei"/>
+  </tk>
+  
+  <dir id="cme">(dir,pro)maria-export</dir>
+  <mkdir dir="(dir,cme)"/>
+  <delete content_of_dir="(dir,cme)"/>
+  
+  <prop id="filenbr">1</prop>
+  <prop id="file-counter">0</prop>
+  
+  <call_job job="cmew-open"/>
+  <call_job job="-db-open-"/>
+
+                                                  
+
+  
+  <prop id="cme-select">select * from (prop,cmew-tab);</prop> 
+  
+  <prop id="cme-mod">100</prop>
+
+  <prop id="counter">0</prop>
+  <loop id="cme"  select="(prop,cme-select)"  flag="trim" dbc="(prop,mydbc)" missing_strategy="empty" xlimit="50000">
+    <tp test="(f,eq_num,0,(f,mod,(loop,cme,#i),(prop,cme-mod)))">record (loop,cme,#i) [(prop,filenbr)]</tp> 
+    <prop id="cmew-exists-von">(loop,cme,exists?,@von)</prop>
+    
+    <prop id="cmew-exists-bis">(loop,cme,exists?,@bis)</prop>
+    <print id="cme-printer" act="println">INSERT INTO  
+  (prop,cmew-tab)(e:o) 
+  wert_id(e:s) 
+  attr_id(e:s) 
+  (f,when,(loop,cme,exists?,@syntax_art),syntax_art(e:s),) 
+  inhalt(e:s) 
+  (f,when,(loop,cme,exists?,@inhalt_2),inhalt_2(e:s),)
+  (f,when,(loop,cme,exists?,@von),von(e:s),)
+  (f,when,(loop,cme,exists?,@bis),bis(e:s),)
+  wann(e:s)
+  ist_top(e:s)
+  hat_mehr(e:s)
+  box_id
+  (e:c) 
+  VALUES (e:o)  
+  (loop,cme,@wert_id)(e:s) 
+  (loop,cme,@attr_id)(e:s) 
+  (f,when,(loop,cme,exists?,@syntax_art),(loop,cme,@syntax_art)(e:s),) 
+  &apos;(f,replace,(loop,cme,@inhalt),&apos;,&apos;&apos;)&apos;(e:s)
+  (f,when,(loop,cme,exists?,@inhalt_2),&apos;(f,replace,(loop,cme,@inhalt_2),&apos;,&apos;&apos;)&apos;(e:s),)
+  (f,when,(loop,cme,exists?,@von),&apos;(f,replace,(loop,cme,@von),&apos;,&apos;&apos;)&apos;(e:s),)
+  (f,when,(loop,cme,exists?,@bis),&apos;(f,replace,(loop,cme,@bis),&apos;,&apos;&apos;)&apos;(e:s),)
+  &apos;(f,replace,(loop,cme,@wann),&apos;,&apos;&apos;)&apos;(e:s)
+  (loop,cme,@ist_top)(e:s)
+  (loop,cme,@hat_mehr)(e:s)
+  (loop,cme,@box_id)
+  (e:c);</print>          
+  <prop id="counter">(f,add,1,(prop,counter))</prop>
+  <when test="(f,eq_num,0,(f,mod,(prop,counter),1000))">
+    <prop id="counter">0</prop>
+    <print id="cme-printer" act="println">commit;</print>
+  </when>
+  
+  <prop id="file-counter">(f,add,1,(prop,file-counter))</prop>            
+  <when test="(f,eq_num,0,(f,mod,(prop,file-counter),(prop,file-size)))">
+    <prop id="file-counter">0</prop>
+    
+    <call_job job="cmew-close" />
+    
+    <prop id="filenbr">(f,add,1,(prop,filenbr))</prop>
+    <call_job job="cmew-open" />
+  </when>  
+  </loop>
+  
+  <call_job job="cmew-close" />
+  
+  
+
+</job>
+
+
+
+</jobs>

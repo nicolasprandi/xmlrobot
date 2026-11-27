@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><steps>
+<p id="myclass">レシピ</p>
+<p id="myclassPl">レシピ- 全て</p>
+<p id="myclassAkt">Genzai 現在 レシピ</p>
+<p id="myclassZutat">成分</p>
+<p id="myclassZutatPl">材料</p>
+<p id="myclassZutatVerw">中古 材料</p>
+<p id="mcRezeptname">領収書の名前 - Ryōshū-sho no namae</p>
+<p id="mcDokumentation">ドキュメンテーション- Dokyumentēshon</p>
+
+<p id="mcLogin">ログイン- Roguin</p>
+<p id="mcZutatenbezeichnung">成分 - Seibun . 名 - Na</p>
+<p id="mcMenge">量-Ryō</p>
+<p id="mcEinheit">単位 - Tan'i</p>
+
+<p id="mcZutatenverwendung">慣用 成分 - Seibun</p>
+<p id="mcZutatenOptionen">オプション-Opushon</p>
+
+
+<p id="mcVorgang">プロセス- Purosesu</p>
+
+
+<p id="mcBetrifftZutat">よろしく Yoroshiku 成分 - Seibun</p>
+
+
+<p id="mcAktion">プロセス- Purosesu</p>
+
+
+
+
+
+
+</steps>

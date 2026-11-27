@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="atyp-write">
+<need>(prop,atyp_key) (prop,isAdd)</need>
+<spirit act="open" id="atyps_spirit_tc" xml="(file,atyps)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,atyps_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,atyps_offset),0,(f,sub,(f,len,(prop,atyps_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,atyps_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="atyps_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;atyp row="(prop,atyp_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="atyps_spirit_tc" where="(prop,atyps_offset)atyp[@row='(prop,atyp_key)']" attribute="bez" value="(f,vob,prop,atyp_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="atyps_spirit_tc" where="(prop,atyps_offset)atyp[@row='(prop,atyp_key)']" attribute="intervall" value="(f,vob,prop,atyp_intervall)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="atyps_spirit_tc" where="(prop,atyps_offset)atyp[@row='(prop,atyp_key)']" attribute="beschreibung" value="(f,vob,prop,atyp_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="atyps_spirit_tc" where="(prop,atyps_offset)atyp[@row='(prop,atyp_key)']" attribute="wahrscheinlichkeit" value="(f,vob,prop,atyp_wahrscheinlichkeit)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="atyps_spirit_tc" where="(prop,atyps_offset)atyp[@row='(prop,atyp_key)']" attribute="anmerkung" value="(f,vob,prop,atyp_anmerkung)"/>
+<spirit act="close" flag="save pretty" id="atyps_spirit_tc"/>
+</job>

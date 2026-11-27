@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="xmlf-see-all" level="ws" role="hidden">
+    <need default="">(prop,xmlfs_sort_attribute)</need>
+    <need default="">(prop,xmlfs_sort_number)</need>
+    <need default="">(prop,xmlfs_sort_ignore_case)</need>
+    <need default="">(prop,xmlfs_sort_desc)</need>
+    <need default="">(prop,xmlfs_where)</need>
+    <need default="">(prop,xmlfs_offset_label)</need>
+    <need default="./">(prop,xmlfs_offset)</need>
+    <need default="">(prop,xmlfs_return_job)</need>
+    <need default="//">(prop,xmlfs_offset_new_key)</need>
+    <need default="0">(prop,xmlfs_no_header)</need>
+    <prop id="nothing">(f,not,(prop,xmlfs_no_header))</prop>
+    <loop missing_strategy="empty" id="xmlf_loop" xml="(file,xmlfs)" xpath="(prop,xmlfs_offset)xmlf(prop,xmlfs_where)" sort="(prop,xmlfs_sort_attribute)" number="(prop,xmlfs_sort_number)" ignore_case="(prop,xmlfs_sort_ignore_case)" desc="(prop,xmlfs_sort_desc)">
+        <when test="(prop,nothing)">
+            <when test="(f,gt,(f,len,(prop,xmlfs_offset_label)),0)">
+                <ti label="(prop,xmlfs_offset_label)"/>
+            </when>
+            <prop id="nothing">0</prop>
+        </when>
+        <file flag="cool" z="a" id="xmlf_file_temp_var_formix" x="(loop,xmlf_loop,@file)"/>
+        <unescape id="xmlf_file_temp_var_formix" type="file"/>
+        <translate id="xmlf_file_temp_var_formix" type="file"/>
+        <ti type="rec">
+            <ti flag="" type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,xmlf_loop,@name),20)(f,html,bold,close)" job="xmlf-see">
+                <prop id="xmlf_key">(loop,xmlf_loop,@row)</prop>
+                <file id="xmlfs">(file,xmlfs)</file>
+                <prop id="xmlfs_offset">(prop,xmlfs_offset)</prop>
+                <prop id="xmlfs_offset_label">(prop,xmlfs_offset_label)</prop>
+                <prop id="xmlfs_offset_new_key">(prop,xmlfs_offset_new_key)</prop>
+                <prop id="xmlfs_sort_attribute">(prop,xmlfs_sort_attribute)</prop>
+                <prop id="xmlfs_sort_number">(prop,xmlfs_sort_number)</prop>
+                <prop id="xmlfs_sort_ignore_case">(prop,xmlfs_sort_ignore_case)</prop>
+                <prop id="xmlfs_sort_desc">(prop,xmlfs_sort_desc)</prop>
+                <prop id="xmlfs_where">(prop,xmlfs_where)</prop>
+                <prop id="xmlfs_return_job">(prop,xmlfs_return_job)</prop>
+                <file id="groups">(file,groups)</file>
+                <prop id="groups_offset">(prop,groups_offset)</prop>
+                <prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+                <prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+                <prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+                <prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+                <prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+                <prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+                <prop id="groups_where">(prop,groups_where)</prop>
+                <prop id="groups_return_job">(prop,groups_return_job)</prop>
+                <prop id="group_key">(prop,group_key)</prop>
+                <file id="finds">(file,finds)</file>
+                <prop id="finds_offset">(prop,finds_offset)</prop>
+                <prop id="finds_offset_label">(prop,finds_offset_label)</prop>
+                <prop id="finds_offset_new_key">(prop,finds_offset_new_key)</prop>
+                <prop id="finds_sort_attribute">(prop,finds_sort_attribute)</prop>
+                <prop id="finds_sort_number">(prop,finds_sort_number)</prop>
+                <prop id="finds_sort_ignore_case">(prop,finds_sort_ignore_case)</prop>
+                <prop id="finds_sort_desc">(prop,finds_sort_desc)</prop>
+                <prop id="finds_where">(prop,finds_where)</prop>
+                <prop id="finds_return_job">(prop,finds_return_job)</prop>
+                <prop id="find_key">(prop,find_key)</prop>
+            </ti>
+            <ti test="(f,has,(loop,xmlf_loop,@file))" type="file" x="(file,xmlf_file_temp_var_formix)"/>
+            <ti test="(f,not,(f,has,(loop,xmlf_loop,@file)))"/>
+            <ti type="menu">
+                <ti isFromAction="1" type="call_job" page="view" flag="button" class="fb fbAction fbActionXmlfchoose" explain="[ Execute Xpath ]" job="do-execute-xpath-on-xml">
+                    <prop id="greetings_from_page">view</prop>
+                    <prop id="greetings_from_action">choose</prop>
+                    <prop page="view" id="xmlf_key">(loop,xmlf_loop,@row)</prop>
+                    <file id="xmlfs">(file,xmlfs)</file>
+                    <prop id="xmlfs_offset">(prop,xmlfs_offset)</prop>
+                    <prop id="xmlfs_offset_label">(prop,xmlfs_offset_label)</prop>
+                    <prop id="xmlfs_offset_new_key">(prop,xmlfs_offset_new_key)</prop>
+                    <prop id="xmlfs_sort_attribute">(prop,xmlfs_sort_attribute)</prop>
+                    <prop id="xmlfs_sort_number">(prop,xmlfs_sort_number)</prop>
+                    <prop id="xmlfs_sort_ignore_case">(prop,xmlfs_sort_ignore_case)</prop>
+                    <prop id="xmlfs_sort_desc">(prop,xmlfs_sort_desc)</prop>
+                    <prop id="xmlfs_where">(prop,xmlfs_where)</prop>
+                    <prop id="xmlfs_return_job">(prop,xmlfs_return_job)</prop>
+                    <file id="groups">(file,groups)</file>
+                    <prop id="groups_offset">(prop,groups_offset)</prop>
+                    <prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+                    <prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+                    <prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+                    <prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+                    <prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+                    <prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+                    <prop id="groups_where">(prop,groups_where)</prop>
+                    <prop id="groups_return_job">(prop,groups_return_job)</prop>
+                    <prop id="group_key">(prop,group_key)</prop>
+                    <file id="finds">(file,finds)</file>
+                    <prop id="finds_offset">(prop,finds_offset)</prop>
+                    <prop id="finds_offset_label">(prop,finds_offset_label)</prop>
+                    <prop id="finds_offset_new_key">(prop,finds_offset_new_key)</prop>
+                    <prop id="finds_sort_attribute">(prop,finds_sort_attribute)</prop>
+                    <prop id="finds_sort_number">(prop,finds_sort_number)</prop>
+                    <prop id="finds_sort_ignore_case">(prop,finds_sort_ignore_case)</prop>
+                    <prop id="finds_sort_desc">(prop,finds_sort_desc)</prop>
+                    <prop id="finds_where">(prop,finds_where)</prop>
+                    <prop id="finds_return_job">(prop,finds_return_job)</prop>
+                    <prop id="find_key">(prop,find_key)</prop>
+                </ti>
+                <ti isFromAction="1" type="call_job" page="view" flag="button" class="fb fbAction fbActionXmlfperformxsl" explain="[ Perform Xsl ]" job="do-execute-xsl-on-xml">
+                    <prop id="greetings_from_page">view</prop>
+                    <prop id="greetings_from_action">performxsl</prop>
+                    <prop page="view" id="xmlf_key">(loop,xmlf_loop,@row)</prop>
+                    <file id="xmlfs">(file,xmlfs)</file>
+                    <prop id="xmlfs_offset">(prop,xmlfs_offset)</prop>
+                    <prop id="xmlfs_offset_label">(prop,xmlfs_offset_label)</prop>
+                    <prop id="xmlfs_offset_new_key">(prop,xmlfs_offset_new_key)</prop>
+                    <prop id="xmlfs_sort_attribute">(prop,xmlfs_sort_attribute)</prop>
+                    <prop id="xmlfs_sort_number">(prop,xmlfs_sort_number)</prop>
+                    <prop id="xmlfs_sort_ignore_case">(prop,xmlfs_sort_ignore_case)</prop>
+                    <prop id="xmlfs_sort_desc">(prop,xmlfs_sort_desc)</prop>
+                    <prop id="xmlfs_where">(prop,xmlfs_where)</prop>
+                    <prop id="xmlfs_return_job">(prop,xmlfs_return_job)</prop>
+                    <file id="groups">(file,groups)</file>
+                    <prop id="groups_offset">(prop,groups_offset)</prop>
+                    <prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+                    <prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+                    <prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+                    <prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+                    <prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+                    <prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+                    <prop id="groups_where">(prop,groups_where)</prop>
+                    <prop id="groups_return_job">(prop,groups_return_job)</prop>
+                    <prop id="group_key">(prop,group_key)</prop>
+                    <file id="finds">(file,finds)</file>
+                    <prop id="finds_offset">(prop,finds_offset)</prop>
+                    <prop id="finds_offset_label">(prop,finds_offset_label)</prop>
+                    <prop id="finds_offset_new_key">(prop,finds_offset_new_key)</prop>
+                    <prop id="finds_sort_attribute">(prop,finds_sort_attribute)</prop>
+                    <prop id="finds_sort_number">(prop,finds_sort_number)</prop>
+                    <prop id="finds_sort_ignore_case">(prop,finds_sort_ignore_case)</prop>
+                    <prop id="finds_sort_desc">(prop,finds_sort_desc)</prop>
+                    <prop id="finds_where">(prop,finds_where)</prop>
+                    <prop id="finds_return_job">(prop,finds_return_job)</prop>
+                    <prop id="find_key">(prop,find_key)</prop>
+                </ti>
+            </ti>
+        </ti>
+    </loop>
+    <when test="(prop,nothing)">
+        <ti type="rec">
+            <ti flag="wrap_word">No Test-Files found</ti>
+        </ti>
+    </when>
+    <when test="(f,not,(f,contains,(prop,xmlfs_offset),node(e:o)(e:c)))">
+        <ti type="rec" label=" ">
+            <ti type="menu" span="10">
+                <ti label=" " type="call_job" explain_nix="xmlf-add" flag="xbutton " class="fb fbAdd fbAddXmlf" explain="[ Add another Test-File ]" job="xmlf-add">
+                    <file id="xmlfs">(file,xmlfs)</file>
+                    <prop id="xmlfs_offset">(prop,xmlfs_offset)</prop>
+                    <prop id="xmlfs_offset_label">(prop,xmlfs_offset_label)</prop>
+                    <prop id="xmlfs_offset_new_key">(prop,xmlfs_offset_new_key)</prop>
+                    <prop id="xmlfs_sort_attribute">(prop,xmlfs_sort_attribute)</prop>
+                    <prop id="xmlfs_sort_number">(prop,xmlfs_sort_number)</prop>
+                    <prop id="xmlfs_sort_ignore_case">(prop,xmlfs_sort_ignore_case)</prop>
+                    <prop id="xmlfs_sort_desc">(prop,xmlfs_sort_desc)</prop>
+                    <prop id="xmlfs_where">(prop,xmlfs_where)</prop>
+                    <prop id="xmlfs_return_job">(prop,xmlfs_return_job)</prop>
+                    <file id="groups">(file,groups)</file>
+                    <prop id="groups_offset">(prop,groups_offset)</prop>
+                    <prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+                    <prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+                    <prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+                    <prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+                    <prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+                    <prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+                    <prop id="groups_where">(prop,groups_where)</prop>
+                    <prop id="groups_return_job">(prop,groups_return_job)</prop>
+                    <prop id="group_key">(prop,group_key)</prop>
+                    <file id="finds">(file,finds)</file>
+                    <prop id="finds_offset">(prop,finds_offset)</prop>
+                    <prop id="finds_offset_label">(prop,finds_offset_label)</prop>
+                    <prop id="finds_offset_new_key">(prop,finds_offset_new_key)</prop>
+                    <prop id="finds_sort_attribute">(prop,finds_sort_attribute)</prop>
+                    <prop id="finds_sort_number">(prop,finds_sort_number)</prop>
+                    <prop id="finds_sort_ignore_case">(prop,finds_sort_ignore_case)</prop>
+                    <prop id="finds_sort_desc">(prop,finds_sort_desc)</prop>
+                    <prop id="finds_where">(prop,finds_where)</prop>
+                    <prop id="finds_return_job">(prop,finds_return_job)</prop>
+                    <prop id="find_key">(prop,find_key)</prop>
+                </ti>
+                <ti test="(f,not,(prop,nothing))" label=" " type="call_job" flag="button" class="fb fbOrg fbOrgXmlf" explain="/ Organize /" job="do-org-me">
+                    <file id="orga">(file,xmlfs)</file>
+                    <prop id="orga_where">(prop,xmlfs_where)</prop>
+                    <prop id="orga_view_loop_id">xmlf_loop</prop>
+                    <prop id="orga_finished_job"/>
+                    <prop id="orga_offset">(prop,xmlfs_offset)</prop>
+                    <prop id="orga_offset_label">(prop,xmlfs_offset_label)</prop>
+                    <prop id="orga_offset_new_key">(prop,xmlfs_offset_new_key)</prop>
+                    <prop id="orga_segment_plural">xmlfs</prop>
+                    <prop id="orga_segment_singular">xmlf</prop>
+                    <prop id="orga_segment_plural_label">Test-Files</prop>
+                    <prop id="orga_segment_singular_label">Test-File</prop>
+                    <prop id="orga_sort_attribute">(prop,xmlfs_sort_attribute)</prop>
+                    <prop id="orga_sort_number">(prop,xmlfs_sort_number)</prop>
+                    <prop id="orga_where">(prop,xmlfs_where)</prop>
+                    <prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,xmlf_loop,@name),20)()</prop>
+                    <prop id="orga_desc_expression_loop">()()</prop>
+                    <file id="groups">(file,groups)</file>
+                    <prop id="groups_offset">(prop,groups_offset)</prop>
+                    <prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+                    <prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+                    <prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+                    <prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+                    <prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+                    <prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+                    <prop id="groups_where">(prop,groups_where)</prop>
+                    <prop id="groups_return_job">(prop,groups_return_job)</prop>
+                    <prop id="group_key">(prop,group_key)</prop>
+                    <file id="finds">(file,finds)</file>
+                    <prop id="finds_offset">(prop,finds_offset)</prop>
+                    <prop id="finds_offset_label">(prop,finds_offset_label)</prop>
+                    <prop id="finds_offset_new_key">(prop,finds_offset_new_key)</prop>
+                    <prop id="finds_sort_attribute">(prop,finds_sort_attribute)</prop>
+                    <prop id="finds_sort_number">(prop,finds_sort_number)</prop>
+                    <prop id="finds_sort_ignore_case">(prop,finds_sort_ignore_case)</prop>
+                    <prop id="finds_sort_desc">(prop,finds_sort_desc)</prop>
+                    <prop id="finds_where">(prop,finds_where)</prop>
+                    <prop id="finds_return_job">(prop,finds_return_job)</prop>
+                    <prop id="find_key">(prop,find_key)</prop>
+                </ti>
+            </ti>
+        </ti>
+    </when>
+    <when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+        <ti_hr/>
+        <ti label="Debug Information">
+            <ti label="File:" type="file">(file,xmlfs)</ti>
+            <ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,xmlfs_offset)),0)">(prop,xmlfs_offset)</ti>
+        </ti>
+    </when>
+</job>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="stew-edit">
+<need>(prop,stew_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="stew-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="stew-editor"/>
+<call_job job="stew-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_stew) '(prop,stew_type)'"/>
+</ti>
+<call_job job="stew_event_post_update"/>
+</job>

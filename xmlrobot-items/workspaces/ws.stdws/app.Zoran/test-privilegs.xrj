@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="Test Privilegs" role="public">
+
+<ti label="Calling privileged jobs"/>
+<ti type="call_job" job="test-privilegs-public"/>
+<ti type="call_job" job="test-privilegs-user"/>
+<ti type="call_job" job="test-privilegs-expert"/>
+<ti type="call_job" job="test-privilegs-boss"/>
+<ti type="call_job" job="test-privilegs-admin"/>
+<ti type="call_job" job="test-privilegs-test"/>
+
+<ti type="call_job" job="test-privilegs-unspecified"/>
+
+
+</job>
+
+<job id="test-privilegs-public" role="public">
+  <ti>Doing a public-job</ti>
+</job>
+<job id="test-privilegs-user" role="user">
+  <ti>Doing a user-job</ti>
+</job>
+<job id="test-privilegs-expert" role="expert">
+  <ti>Doing a expert-job</ti>
+</job>
+<job id="test-privilegs-boss" role="boss">
+  <ti>Doing a boss-job</ti>
+</job>
+<job id="test-privilegs-admin" role="admin">
+  <ti>Doing a admin-job</ti>
+</job>
+
+<job id="test-privilegs-test" role="test">
+  <ti>Doing a test-job</ti>
+</job>
+
+<job id="test-privilegs-unspecified" >
+  <ti>Doing a unspecified-job</ti>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

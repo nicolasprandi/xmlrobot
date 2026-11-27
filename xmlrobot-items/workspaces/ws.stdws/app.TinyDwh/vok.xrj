@@ -1,0 +1,369 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="vok-report-attr" role="hidden">
+<call_job job="conf-stat-intro-hori" />
+                                                                                                                    
+  <spirit id="vok" act="open" file="(dir,repo)vok.xml"/>
+  <ti_break class_table="tabLinklistSmall" />
+    <ti type="rec">
+    <ti x="(f,html,b,o)tech_name(f,html,b,c)"/> 
+      <ti x="(f,html,b,o)at(f,html,b,c)"/>    
+        
+      <ti x="(f,html,b,o)id(f,html,b,c)"/>       
+      <ti flag="wrap_word word_wrap" wrap="word" x="(f,html,b,o)used by object(f,html,b,c)"/> 
+      <!-- 
+      <ti x="(f,html,b,o)final(f,html,b,c)"/>
+      <ti x="(f,html,b,o)name(f,html,b,c)"/>
+      <ti x="(f,html,b,o)doku(f,html,b,c)"/>
+      
+      
+      <ti x="final"/>
+      
+      <ti x="name"/>      
+      <ti x="unit"/>
+      
+      <ti x="final_typ"/>
+      <ti x="fp1"/>     
+      <ti x="doku"/>     -->
+    </ti>  
+    
+  <loop id="at" spirit="vok" xpath="ats/at" missing_strategy="empty">
+    
+     <prop id="vra-attr-found">0</prop>
+     <loop id="au" spirit="vok" xpath="aus/au[@attr_typ=(f,xpath_string,(loop,at,@attr_typ))]" missing_strategy="empty">
+      
+      <prop id="vra-attr-found">1</prop>
+      <ti type="rec">
+          <ti test="(f,eq_num,1,(loop,au,#i))" type="call_job" job="vok-report-attr-usg"
+                explain="(loop,at,@tech_name)" >         
+                <prop id="vok-attr-typ">(loop,at,@attr_typ)</prop>
+          </ti> 
+    
+          <ti test="(f,eq_num,1,(loop,au,#i))">(loop,at,@attr_typ)</ti>
+          <ti test="(f,not,(f,eq_num,1,(loop,au,#i)))" span="2"> </ti>
+         <ti>(f,when,(loop,au,@ident),(f,html,b,o)*(f,html,b,c), )</ti>        
+         <ti  type="call_job" job="vok-report-obj" explain="(loop,au,@obj)">
+          <prop id="vro-obj-typ">(loop,au,@obj_typ)</prop>
+         </ti>
+
+          <ti test="(f,eq_num,1,(loop,au,#i))">(loop,at,@final) </ti>   
+          <ti test="(f,eq_num,1,(loop,au,#i))">(loop,at,@fp1) </ti> 
+          <ti test="(f,eq_num,1,(loop,au,#i))">(loop,at,@name) </ti>    
+          <ti test="(f,eq_num,1,(loop,au,#i))">(loop,at,@doku) </ti>     
+      </ti>
+           
+     </loop>
+     <when test="(f,not,(prop,vra-attr-found))">
+        <ti type="rec">
+        
+          
+          <ti type="call_job" job="vok-report-attr-usg"
+                explain="(loop,at,@tech_name)" >         
+                <prop id="vok-attr-typ">(loop,at,@attr_typ)</prop>
+          </ti> 
+                               
+          <ti x="(loop,at,@attr_typ) "/>
+          <ti x=" "/> 
+          <ti x=" "/>    
+          <ti>(loop,at,@final) </ti>   
+          <ti>(loop,at,@name) </ti>    
+          <ti>(loop,at,@doku) </ti>              
+    
+        </ti>        
+     </when>
+     
+  </loop>
+  
+  
+  <spirit id="vok" act="close" />
+</job>
+
+<job id="vok-report-attr-usg" role="hidden">
+<call_job job="conf-stat-intro-hori" />
+  <need>(prop,vok-attr-typ)</need>
+  <spirit id="vok" act="open" file="(dir,repo)vok.xml"/>
+  
+  <loop id="at" spirit="vok" xpath="ats/at[@attr_typ=(f,xpath_string,(prop,vok-attr-typ))]" missing_strategy="empty">
+    <ti label="(loop,at,@tech_name)"/>
+    <ti label="attr_typ" x="(loop,at,@attr_typ) "/>
+    <ti label="tech_name" x="(loop,at,@tech_name) "/>
+    <ti label="vartype" x="(loop,at,@vartype) "/>
+    <ti label="name" x="(loop,at,@name) "/>
+    <ti label="unit" x="(loop,at,@unit) "/>
+    <ti label="doku" x="(loop,at,@doku) "/>
+    <ti label="vartype" x="(loop,at,@vartype) "/>
+    <ti label="final" x="(loop,at,@final) "/>
+    <ti label="final_typ" x="(loop,at,@final_typ) "/>
+    <ti label="fp1" x="(loop,at,@fp1) "/>      
+  </loop>
+  
+  
+  <spirit id="vok" act="close" />
+</job>
+
+<job id="vok-report-obj" role="hidden">
+<call_job job="conf-stat-intro-hori" />
+
+<spirit id="vok" act="open" file="(dir,repo)vok.xml"/>
+
+<choose>
+  <when test="(f,has,prop,vro-obj-typ)">
+    <!-- es gibt einen objekttyp: keine vorweg-objektliste machen -->
+    <prop id="vro-xpath">ots/ot[@obj_typ=(f,xpath_string,(prop,vro-obj-typ))]</prop>
+
+    
+  </when>
+  <otherwise>    
+    <prop id="vro-xpath">ots/ot</prop>
+    
+    <ti label="Object-Short-List"/>
+    <ti_break class_table="tabLinklistSmall" />
+    
+      <ti type="rec">
+         <ti flag="block">(f,html,b,o)tech_name(f,html,b,c)</ti>
+         <ti>(f,html,b,o)ot(f,html,b,c)</ti>
+         <ti>(f,html,b,o)name(f,html,b,c)</ti>
+      </ti>
+          
+    <loop id="ot" spirit="vok" xpath="ots/ot" missing_strategy="empty">
+    
+      <ti type="rec">
+         <ti flag="block" type="call_job" job="vok-report-obj" explain="(loop,ot,@tech_name)">
+          <prop id="vro-obj-typ">(loop,ot,@obj_typ)</prop>
+         </ti>
+         <ti>(loop,ot,@obj_typ)</ti>
+         <ti>(loop,ot,@name)</ti>
+      </ti>
+      
+     
+    </loop>    
+    <ti_hr_break/>
+    <ti_hr_break/>
+  </otherwise>
+</choose>
+
+
+
+<loop id="ot" spirit="vok" xpath="(prop,vro-xpath)" missing_strategy="empty">
+  <ti_hr test="(f,not,(f,eq_num,1,(loop,ot,#i)))"/>
+  <ti label="Obj: (loop,ot,@name)"/>
+  <ti label="obj_typ" x="(loop,ot,@obj_typ) "/>
+  <ti label="tech_name" x="(loop,ot,@tech_name) "/>
+  <ti label="name" x="(loop,ot,@name) "/>
+  <ti label="name_plural" x="(loop,ot,@name_plural) "/>
+  <ti label="doku" x="(loop,ot,@doku) "/>
+  <ti label="kopf_attr" x="(loop,ot,@kopf_attr) "/>
+  <ti label="kopf_attr_typ" x="(loop,ot,@kopf_attr_typ) "/>
+
+  
+  <ti type="rec">
+     <ti flag="(f,when,(f,has,prop,vro-obj-typ), ,block)">(f,html,b,o)Attribute-Usages(f,html,b,c)</ti>
+     <ti >(f,html,b,o)typ(f,html,b,c)</ti>
+     <ti >(f,html,b,o)id(f,html,b,c)</ti>
+     <ti >(f,html,b,o)final(f,html,b,c)</ti>
+     <ti >(f,html,b,o)fp1(f,html,b,c)</ti>
+     <ti></ti>
+
+  </ti>
+      
+  <loop id="au" spirit="vok" xpath="aus/au[@obj_typ=(f,xpath_string,(loop,ot,@obj_typ))]" missing_strategy="empty">
+    <prop id="fp1-rec"></prop>
+    <prop id="fp1-rec" flag="catch">(f,spirit,vok,ats/at[@attr_typ=(f,xpath_string,(loop,au,@attr_typ))],@fp1)</prop>
+    <ti type="rec">
+       <ti flag="block" type="call_job" job="vok-report-attr-usg" explain="(loop,au,@attr)">
+        <prop id="vok-attr-typ">(loop,au,@attr_typ)</prop>
+       </ti>
+       <ti >(loop,au,@attr_typ)</ti>
+       <ti >(f,when,(loop,au,@ident),(f,html,b,o)*(f,html,b,c), )</ti>
+       <ti >(f,spirit,vok,ats/at[@attr_typ=(f,xpath_string,(loop,au,@attr_typ))],@final)</ti>
+       <ti >(prop,fp1-rec)</ti>
+    </ti>
+    
+
+   
+  </loop>  
+  
+</loop>
+<spirit id="vok" act="close" />
+</job>
+
+<job id="vok-report-bez" role="hidden">
+<call_job job="conf-stat-intro-hori" />
+
+<!-- maybe vrb-bez-typ -->
+<spirit id="vok" act="open" file="(dir,repo)vok.xml"/>
+
+<choose>
+  <when test="(f,has,prop,vrb-bez-typ)">
+    <!-- es gibt einen bez: keine vorweg-objektliste machen -->
+    <prop id="vrb-xpath">bts/bt[@bez_typ=(f,xpath_string,(prop,vrb-bez-typ))]</prop>
+
+    
+  </when>
+  <otherwise>    
+    <prop id="vrb-xpath">bts/bt</prop>
+    
+    <ti label="Beziehungs-Short-List"/>
+    <ti_break class_table="tabLinklistSmall" />
+      <ti type="rec">
+         <ti flag="block">(f,html,b,o)tech_name(f,html,b,c)</ti>
+         <ti>(f,html,b,o)bt(f,html,b,c)</ti>
+         <ti>(f,html,b,o)name(f,html,b,c)</ti>
+      </ti>
+          
+    <loop id="bt" spirit="vok" xpath="bts/bt" missing_strategy="empty">
+    
+      <ti type="rec">
+         <ti flag="block" type="call_job" job="vok-report-bez" explain="(loop,bt,@tech_name)">
+          <prop id="vrb-bez-typ">(loop,bt,@bez_typ)</prop>
+         </ti>
+         <ti>(loop,bt,@bez_typ)</ti>
+         <ti>(loop,bt,@name)</ti>
+      </ti>
+      <ti_space height="2px"/>
+      
+    </loop>    
+    <ti_hr_break/>
+    <ti_hr_break/>
+  </otherwise>
+</choose>
+
+
+<loop id="bt" spirit="vok" xpath="(prop,vrb-xpath)" missing_strategy="empty">
+  <ti_hr test="(f,not,(f,eq_num,1,(loop,bt,#i)))"/>
+  <ti label="Bez: (loop,bt,@name) "/>
+  <ti label="bez_typ" x="(loop,bt,@bez_typ) "/>
+  <ti label="tech_name" x="(loop,bt,@tech_name) "/>
+  <ti label="name" x="(loop,bt,@name) "/>
+  <ti label="name_plural" x="(loop,bt,@name_plural) "/>
+  <ti label="text_ab" x="(loop,bt,@text_ab) "/>
+  <ti label="text_ba" x="(loop,bt,@text_ba) "/>
+  <ti label="satz_ab" x="(loop,bt,@satz_ab) "/>
+  <ti label="satz_ba" x="(loop,bt,@satz_ba) "/>
+  <ti label="doku_a" x="(loop,bt,@doku_a) "/>
+  <ti label="doku_b" x="(loop,bt,@doku_b) "/>
+
+
+</loop>
+
+<spirit id="vok" act="close" />
+</job>
+
+
+
+
+
+<job id="vok-upload" role="hidden"> 
+  <throw test="(f,not,(f,right,load))">Diese Funktion ist mit diesen Privilegien nicht moeglich. bpLoad</throw>
+  <tk type="msg">Sure to upload vokabulary ?
+Das Vokabular wirklich in die Datenbank hochladen ? </tk>
+  <call_job job="-db-open-"/> 
+ 
+  <try_catch>
+    <try>
+      <call_job job="vok-upload-inner" />
+    </try>
+    <catch>
+      <ti label="Db-Problem"/>
+      <ti label="Error">(prop,catched_msg)</ti>
+      <call_job job="-db-rollback-"/>
+    </catch>
+  </try_catch>
+  <call_job job="-db-close-"/>
+
+</job>
+
+<job id="vok-upload-inner" role="hidden">
+
+<call_job job="tr_voku"/>
+
+<ti label="(prop,_voku_up_vok)"/>
+<ti label="(prop,_voku_vok):" type="file" >(file,vok)</ti>
+<ti label="(prop,_voku_report)"/>
+
+<dbc id="(prop,mydbc)" act="update">TRUNCATE t_b;</dbc> 
+<dbc id="(prop,mydbc)" act="update">TRUNCATE t_o;</dbc>
+<dbc id="(prop,mydbc)" act="update">TRUNCATE t_a;</dbc>
+<dbc id="(prop,mydbc)" act="update">TRUNCATE t_u;</dbc>
+
+
+<!-- beziehungen -->
+<prop id="cnt-upl-b">0</prop>
+<loop id="bez" xml="(file,vok)" xpath="bts/bt">     
+   <dbc id="(prop,mydbc)" act="update"
+   >()INSERT INTO t_b ( bez_typ) VALUES (  ()(loop,bez,@bez_typ)() );()</dbc>
+   <prop id="cnt-upl-b">(loop,bez,#i)</prop>
+</loop>
+<ti label="(prop,_voku_cbez):">(prop,cnt-upl-b)</ti>
+
+<!-- objekte -->
+<prop id="cnt-upl-o">0</prop>
+<loop id="obj" xml="(file,vok)" xpath="ots/ot">     
+   <dbc id="(prop,mydbc)" act="update"
+   >()INSERT INTO t_o ( obj_typ, kopf_attr_typ) VALUES (  ()(loop,obj,@obj_typ)(), ()(loop,obj,@kopf_attr_typ)() );()</dbc>
+   <prop id="cnt-upl-o">(loop,obj,#i)</prop>
+</loop>
+<ti label="(prop,_voku_cobj):">(prop,cnt-upl-o)</ti>
+
+<!-- attribute -->
+<prop id="cnt-upl-a">0</prop>
+<prop id="attr-default-final-typ"></prop>
+<prop id="attr-default-format"></prop>
+<loop id="attr" xml="(file,vok)" xpath="ats/at" missing_strategy="empty">     
+
+           
+   <dbc id="(prop,mydbc)" act="update"
+   >()INSERT INTO t_a 
+      ( attr_typ,
+        final_typ ) 
+      VALUES (  
+          ()(loop,attr,@attr_typ)(), 
+          ()(loop,attr,@final_typ)()                    
+      );()</dbc>            
+   <prop id="cnt-upl-a">(loop,attr,#i)</prop>
+</loop>
+<ti label="(prop,_voku_cattr):">(prop,cnt-upl-a)</ti>
+ 
+
+<!-- usages -->
+<prop id="cnt-upl-u">0</prop>
+<loop id="usg" xml="(file,vok)" xpath="aus/au" missing_strategy="empty">     
+
+  <prop id="ident">0</prop>
+  <when test="(loop,usg,exists?,@ident)">    
+    <when test="(f,eq_text,ja,(loop,usg,exists?,@ident))">
+      <prop id="ident">1</prop>
+    </when>       
+  </when>
+
+   
+   <prop id="dg">()INSERT INTO t_u 
+      ( attr_typ, 
+        obj_typ,
+        ident ) 
+      VALUES (  
+          ()(loop,usg,@attr_typ)(),
+          ()(loop,usg,@obj_typ)(),
+          ()(loop,usg,@ident)()
+      );()</prop>        
+  
+    
+   <dbc id="(prop,mydbc)" act="update"
+   >(prop,dg)</dbc>            
+   <prop id="cnt-upl-u">(loop,usg,#i)</prop>
+</loop>
+
+<ti label="(prop,_voku_cusg):">(prop,cnt-upl-u)</ti>
+  
+<call_job job="-db-commit-"/>  
+<ti label="(prop,_voku_good)"/>
+
+
+</job>
+
+
+
+
+</jobs>

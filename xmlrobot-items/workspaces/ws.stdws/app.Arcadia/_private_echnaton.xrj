@@ -1,0 +1,546 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+ <job id="systema-echnaton-hibiscus" role="hidden">
+  <prop id="is-reco-core">0</prop>
+  <call_job job="systema-reco-hibiscus"/>
+</job>  
+
+<job id="systema-echnaton" role="hidden">
+  <need>(dir,systema-dir)</need>
+  <need>(file,systema-scan)</need>
+  <need>(prop,systema-encoding)</need>
+  <need>(dir,systema-residence)</need>
+  
+  <file id="systema-residence" x="(dir,systema-residence)echnaton-core.xrs"/>
+  <ti_hr/>
+  <!-- 
+  <tk type="msg">del c723</tk>
+   <ti label="deleting [C723]" type="dir">(dir,systema-dir)at/nicolas/webwalk/</ti>
+   <delete dir="(dir,systema-dir)at/nicolas/webwalk/"/>   -->
+  <call_job job="tk_ole_edit">
+    <file id="ole-data" x="(file,systema-residence)"/>
+    <prop id="ole-regex" x="ole_.*"/>
+    <prop id="olecoreon" x="1"/> 
+  <prop id="oledoku">trace in: at/nicolas/x/int_interpreter/Interpreter.java
+sicherheitsstufe in: at/nicolas/x/int_interpreter/Interpreter.java
+app encryption in: at/nicolas/x/int_db/DbJm.java
+</prop>    
+  </call_job>
+
+                             
+  <ti type="dir" x="(dir,systema-dir)"/>
+  <ti type="file" x="(file,systema-scan)"/>
+  
+  
+  
+   <prop id="rs-encoding">(prop,systema-encoding)</prop>
+   
+
+   
+   <need default="0">(prop,ole_ant)</need>
+
+
+    <call_job job="rs">
+      <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/PlugTryTask.java</file>
+      <prop id="rs-search">/*[echnaton-really-ant]*/</prop>
+      <prop id="rs-replace"> &amp;&amp; (f,when,(prop,ole_ant),true,false) </prop> 
+      <prop id="rs-expected">1</prop>       
+    </call_job>
+
+      
+   <need default="0">(prop,ole_trace)</need>
+   <when test="(f,not,(prop,ole_trace))">
+      <call_job job="rs">
+        <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+        <prop id="rs-search">/* sicherheitsstufe */ if (e:o)isitzung.hasPrivTrace(e:o)(e:c)(e:c) {</prop>
+        <prop id="rs-replace">/* sicherheitsstufe */ if (e:o) false (e:c) {</prop> 
+        <prop id="rs-expected">1</prop>       
+      </call_job>
+   </when>
+
+   <need default="0">(prop,ole_exe)</need>
+   <when test="(f,not,(prop,ole_exe))">
+      <call_job job="rs">
+        <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/PlugTryTask.java</file>
+        <prop id="rs-search">()classMap.put(&quot;exe&quot;,Exe.class);()</prop>
+        <prop id="rs-replace"> </prop> 
+        <prop id="rs-expected">1</prop>       
+      </call_job>
+      <delete file="(dir,systema-dir)at/nicolas/x/tasks/Exe.java"/>    
+      <xml_update
+        what="(file,systema-scan)"
+        how="remove"
+        where="//file[text(e:o)(e:c)=&apos;Exe.java&apos;]"/> 
+ 
+   </when>  
+    
+   <!--    
+   <when test="(f,has,prop,ole_sicherheitsstufe)">
+      <call_job job="rs">
+        <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_interpreter/Interpreter.java</file>
+        <prop id="rs-search">/* sicherheiststufe */ final int sicherheitsstufe = 4;</prop>
+        <prop id="rs-replace">/* sicherheitsstufe */ final int sicherheitsstufe = (prop,ole_sicherheitsstufe);</prop>
+        <prop id="rs-expected">1</prop>        
+      </call_job>
+   </when>   
+   -->
+  
+   <when test="(f,has,prop,ole_app_encryptor)">
+      <call_job job="rs">
+        <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbJm.java</file>
+        <prop id="rs-search">/* sicherheitsstufe */ cb = new CryptoBase(e:o)&quot;q=EvE%Mt2?F44*+-&quot;(e:c);</prop>
+        <prop id="rs-replace">/* sicherheitsstufe */ cb = new CryptoBase(e:o)&quot;(f,escape,java,(prop,ole_app_encryptor))&quot;(e:c);</prop>
+        <prop id="rs-expected">1</prop>        
+      </call_job>
+   </when>    
+   
+   <when test="(f,has,prop,ole_force_script_decryption)">
+      <call_job job="rs">
+        <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_db/DbJm.java</file>
+        <prop id="rs-search">int force_script_decryption = 4; /*caution*/</prop>
+        <prop id="rs-replace">int force_script_decryption = (f,escape,java,(prop,ole_force_script_decryption)); /*caution*/</prop>
+        <prop id="rs-expected">1</prop>        
+      </call_job>
+   </when>  
+   
+   <!-- productname: ole_sw_name -->
+   
+    <call_job job="rs">
+      <file id="rs-file">(dir,systema-dir)at/nicolas/x/int_run/JobConsoleGui.java</file>
+      <prop id="rs-search">/*[echnaton-productname1]*/</prop>
+      <prop id="rs-replace"> &quot;(f,escape,java,(prop,ole_sw_name))&quot; //</prop> 
+      <prop id="rs-expected">1</prop>       
+    </call_job>
+    
+    <call_job job="rs">
+      <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_map/Map_ContextViewerApp.java</file>
+      <prop id="rs-search">/*[echnaton-productname2]*/</prop>
+      <prop id="rs-replace"> &quot;(f,escape,java,(prop,ole_sw_name))&quot; //</prop> 
+      <prop id="rs-expected">1</prop>       
+    </call_job>    
+         
+    <call_job job="rs">
+      <file id="rs-file">(dir,systema-dir)at/nicolas/x/term_map/Map_JobButtonsDb.java</file>
+      <prop id="rs-search">/*[echnaton-productname3]*/</prop>
+      <prop id="rs-replace"> &quot;(f,escape,java,(prop,ole_sw_name))&quot; //</prop> 
+      <prop id="rs-expected">1</prop>       
+    </call_job> 
+       
+   <call_job job="systema-echnaton-commons">
+    <prop id="count-timer-must">6</prop>
+    <prop id="count-customer-must">3</prop>
+    <prop id="count-crypto-must">6</prop>
+    <prop id="count-just-time-must">9</prop>
+  </call_job>  
+
+</job>                                                 
+<job id="systema-echnaton-commons" role="hidden">
+  <need>(prop,count-timer-must) (prop,count-customer-must) (prop,count-crypto-must) (prop,count-just-time-must)</need>
+    
+  <ti_hr/>
+  <ti label="echnaton-commons replacements"/>
+
+  <prop id="timer-insert">
+		if (e:o)new java.util.Date(e:o)(e:c).getTime(e:o)(e:c)() &gt; 
+			new java.text.SimpleDateFormat(&quot;yyyyMMdd&quot;).parse()(e:o)&quot;(prop,ole_ablaufdatum)&quot;(e:c).getTime(e:o)(e:c)(e:c) {
+			throw new Exception(e:o)&quot;This is the end of software!&quot;(e:c);
+		}        
+ </prop> 
+ 
+   <!-- customer insert -->
+   <prop id="customer-insert">        
+      System.out.println(e:o)&quot;(f,escape,java,(prop,ole_sw_name)-(f,time,YYYY-MM-dd HH:mm:ss)-Testversion). Copyright 2015-2020 Nicolas Prandstaetter. All rights reserved.&quot;(e:c);           
+      System.out.println(e:o)&quot;Customer:    (f,escape,java,(prop,ole_customer)(f,when,(f,has,prop,ole_customer_notice),; (prop,ole_customer_notice),))&quot;(e:c);  
+      </prop>
+   
+   <prop id="customer-insert">(prop,customer-insert)        
+      System.out.println(e:o)&quot;Expiry:      (f,escape,java,(prop,ole_ablaufdatum)) &quot;(e:c);
+     /* System.out.println(e:o)&quot;Production:  (f,escape,java,(f,time,YYYY-MM-dd HH:mm:ss))&quot;(e:c);   */
+      </prop>           
+    <prop id="just-time-search">&quot;20300101&quot;</prop>  
+    <prop id="just-time">&quot;(prop,ole_ablaufdatum)&quot;</prop>                            
+    
+   <prop id="crypto-insert">
+    try { new at.nicolas.x.int_coop.CryptoBase(e:o)</prop>  
+   <prop id="crypto-insert-post">
+    (e:c);} catch (e:o)Exception ecatched(e:c) {}</prop>       
+       
+           
+    <ti label="Insert Specifications"/>     
+    <ti label="timer-insert:" key="/*[echnaton-timer]*/">(prop,timer-insert)</ti>
+    <ti label="customer-insert:" key="/*[echnaton-customer]*/">(prop,customer-insert)</ti>
+    <ti label="just-time:" key="(prop,just-time)">(prop,just-time-search)</ti>
+<ti label="crypto-insert:" key="/*[echnaton-crypto]*/">(prop,crypto-insert)&quot;XXXXXXXX?XXXXXXX&quot;(e:c);</ti>    
+    
+    <ti label="Performed Inserts"/> 
+    <!-- <prop id="did-do-app-decoder" x="0"/> -->
+    <file id="sk" x="(file,systema-scan)"/>
+    <prop id="count-timer">0</prop>
+    <prop id="count-customer">0</prop>
+    <prop id="count-just-time">0</prop>
+    <prop id="count-crypto">0</prop>
+    <loop id="m" xml="(file,sk)" xpath="//file" missing_strategy="empty">
+      <when test="(f,eq_text,java,(loop,m,@ext))">
+        
+        <prop id="rt">(f,file_content,(loop,m,@fn),(prop,systema-encoding))</prop>
+        
+        <when test="(f,contains,(prop,rt),/*[echnaton-timer]*/)">
+     
+          <prop id="rt">(f,replace,(prop,rt),/*[echnaton-timer]*/,(prop,timer-insert))</prop>
+          <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+          <ti label="timer" type="file">(loop,m,@fn)</ti>
+          <prop id="count-timer">(f,add,1,(prop,count-timer))</prop>
+        </when>
+        
+        <when test="(f,contains,(prop,rt),/*[echnaton-customer]*/)">
+          <prop id="rt">(f,replace,(prop,rt),/*[echnaton-customer]*/,(prop,customer-insert))</prop>
+          <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+          <ti label="customer" flag="label_right" type="file">(loop,m,@fn)</ti>
+          <prop id="count-customer">(f,add,1,(prop,count-customer))</prop>
+        </when>     
+        
+        <when test="(f,contains,(prop,rt),(prop,just-time-search))">
+          <prop id="rt">(f,replace,(prop,rt),(prop,just-time-search),(prop,just-time))</prop>
+          <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+          <ti label="just-time"  type="file">(loop,m,@fn)</ti>
+          <prop id="count-just-time">(f,add,1,(prop,count-just-time))</prop>
+        </when>         
+        
+        <when test="(f,contains,(prop,rt),/*[echnaton-crypto]*/)">
+          
+          <prop id="rt">(f,replace,(prop,rt),/*[echnaton-crypto]*/,(prop,crypto-insert)&quot;(f,escape,java,(f,random_text,16))&quot;(prop,crypto-insert-post))</prop>
+          <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+          <prop id="count-crypto">(f,add,1,(prop,count-crypto))</prop>
+          <ti label="crypto"  type="file">(loop,m,@fn)</ti>
+        </when>        
+        
+              
+        <!-- 
+        <when test="(prop,is-reco-core)">
+        <when test="(f,contains,(prop,rt),/*[requo-crypto]*/)">
+          <ti label="requo-crypto:" type="file">(loop,m,@fn)</ti>
+          <prop id="rt">(f,replace,(prop,rt),/*[requo-crypto]*/,(prop,crypto-insert)&quot;(f,escape,java,(f,random_text,16))&quot;(e:c);)</prop>
+          <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+        </when>
+        </when>    
+        -->               
+        
+      </when>
+
+                
+    </loop> 
+    <ti label="Summary of common replacements"/>
+    <ti label="/*[echnaton-timer]*/">(prop,count-timer)</ti>
+    <ti label="/*[echnaton-customer]*/">(prop,count-customer)</ti>
+    <ti label="/*[echnaton-crypto]*/">(prop,count-crypto)</ti>
+    <ti label="(prop,just-time-search)" key="(prop,just-time)">(prop,count-just-time)</ti>
+    
+    <throw test="(f,not,(f,eq_num,(prop,count-timer),(prop,count-timer-must)))">Failed expected number of replacements for [timer]. requested [(prop,count-timer-must)]. had [(prop,count-timer)].</throw>
+    <throw test="(f,not,(f,eq_num,(prop,count-customer),(prop,count-customer-must)))">Failed expected number of replacements for [customer]. requested [(prop,count-customer-must)]. had [(prop,count-customer)].</throw>
+    <throw test="(f,not,(f,eq_num,(prop,count-crypto),(prop,count-crypto-must)))">Failed expected number of replacements for [crypto]. requested [(prop,count-crypto-must)]. had [(prop,count-crypto)].</throw>
+    <throw test="(f,not,(f,eq_num,(prop,count-just-time),(prop,count-just-time-must)))">Failed expected number of replacements for [justtime]. requested [(prop,count-just-time-must)]. had [(prop,count-just-time)].</throw>
+    
+      
+    <ti_hr/>
+    <when test="(f,lt,(prop,count-timer),3)">
+      <throw>Timer /*[echnaton-timer]*/ muss zumindest 3 mal ersetzt werden(e:s) wurder aber nur [(prop,count-timer)] mal ersetzt</throw> 
+    </when> 
+    <when test="(f,lt,(prop,count-customer),3)">
+      <throw>Customer /*[echnaton-customer]*/ muss zumindest 3 mal ersetzt werden(e:s) wurder aber nur [(prop,count-customer)] mal ersetzt</throw> 
+    </when>      
+</job>
+<job id="systema-echnaton-web" role="hidden">
+  <need>(dir,systema-dir)</need>
+  <need>(file,systema-scan)</need>
+  <need>(prop,systema-encoding)</need>
+  <need>(dir,systema-residence)</need>
+    
+
+  <file id="systema-residence" x="(dir,systema-residence)echnaton-web.xrs"/>
+  <ti_hr/>                                    
+
+  <call_job job="tk_ole_edit">
+    <file id="ole-data" x="(file,systema-residence)"/>
+    <prop id="ole-regex" x="ole_.*"/> 
+    <prop id="olecoreon" x="0"/>
+    <prop id="oledoku">url(e:s) 
+user(e:s) 
+password(e:s) 
+pwdCrypto:         at/nicolas/x/web/EeSystem.java
+database location: at/nicolas/x/web/OnlineSitzung.java
+</prop>    
+  </call_job>
+  <!--      <tk type="msg">residence is  (file,systema-residence)</tk>
+   <dump_ti label="olejjjjjjjjjjjjjjjj" test="1"/>
+  
+  
+  <dump_ti label="ole" test="1"/>             -->
+                             
+  <ti type="dir" x="(dir,systema-dir)"/>
+  <ti type="file" x="(file,systema-scan)"/>
+  <prop id="rs-encoding">(prop,systema-encoding)</prop>
+  
+  <when test="(f,gt_num,(prop,ole_sql_do),0)">       
+   <dump_ti label="ole" test="0"/>
+   <choose>
+    <when test="(f,eq,3,(prop,ole_sql_do))">
+      <prop id="webserver-translate">1</prop>
+    </when>
+    <otherwise>
+      <prop id="webserver-translate">0</prop>
+    </otherwise>
+   </choose>
+   
+   <!-- sql_repotype -->
+    <throw test="(f,not,(f,has,prop,ole_sql_repotype(prop,ole_sql_do)))">Its requested to define the User-Repo-Type of Set-(prop,ole_sql_do)</throw>
+    <prop id="webserver_sql_repotype">(f,vob,prop,ole_sql_repotype(prop,ole_sql_do))</prop> <!-- (prop,webserver_sql_repotype) -->
+    <when test="(prop,webserver-translate)">
+      <unescape id="webserver_sql_repotype" type="prop"/>
+      <translate id="webserver_sql_repotype" type="prop"/>
+      <ti label="ParaWebServer:repotype:">(f,vob,prop,ole_sql_repotype(prop,ole_sql_do)) =&gt; (prop,webserver_sql_repotype)</ti>
+    </when>    
+    
+    <!-- entsprechend des repotypes weiter und nur entsprechende felder veraendern -->    
+    <choose>                                                              
+      <when test="(f,eq_text,file,(prop,webserver_sql_repotype))">
+        <!-- file-basiertes user-repo -->
+        
+        <!-- sql_repodir -->
+        <throw test="(f,not,(f,has,prop,ole_sql_repodir(prop,ole_sql_do)))">Its requested to define the repodir of Set-(prop,ole_sql_do)</throw>
+        <prop id="webserver_sql_repodir">(f,vob,prop,ole_sql_repodir(prop,ole_sql_do))</prop> <!-- (prop,webserver_sql_repodir) -->
+        <when test="(prop,webserver-translate)">
+          <unescape id="webserver_sql_repodir" type="prop"/>
+          <translate id="webserver_sql_repodir" type="prop"/>
+          <ti label="ParaWebServer:repodir:">(f,vob,prop,ole_sql_repodir(prop,ole_sql_do)) =&gt; (prop,webserver_sql_repodir)</ti>
+        </when>
+        
+        <call_job job="rs">
+          <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+          <prop id="rs-search">/*[replace-offlineUserRepoDir]*/</prop>
+          <prop id="rs-replace">&quot;(f,escape,java,(prop,webserver_sql_repodir))&quot;; // </prop> 
+          <prop id="rs-expected">1</prop>       
+        </call_job>        
+        
+        <remove type="prop" id="webserver_sql_repodir"/>        
+            
+      </when>
+      <!--
+      <when test="(f,eq_text,db,(prop,webserver_sql_repotype))">
+        db-basiertes user-repo
+        
+        sql_db
+        <throw test="(f,not,(f,has,prop,ole_sql_db(prop,ole_sql_do)))">Its requested to define the DbSystem of Set-(prop,ole_sql_do)</throw>
+        <prop id="webserver_sql_db">(f,vob,prop,ole_sql_db(prop,ole_sql_do))</prop> 
+        <when test="(prop,webserver-translate)">
+          <unescape id="webserver_sql_db" type="prop"/>
+          <translate id="webserver_sql_db" type="prop"/>
+          <ti label="ParaWebServer:dbms:">(f,vob,prop,ole_sql_db(prop,ole_sql_do)) =&gt; (prop,webserver_sql_db)</ti>
+        </when>
+    
+        <choose>
+          <when test="(f,eq_text,postgres,(prop,webserver_sql_db))">
+            <prop id="driver-to-use">org.postgresql.Driver</prop>
+            <prop id="driver-bit-to-use">false</prop>
+          </when>
+          <when test="(f,eq_text,mysql,(prop,webserver_sql_db))">
+            <prop id="driver-to-use">com.mysql.jdbc.Driver</prop>
+            <prop id="driver-bit-to-use">true</prop>
+          </when>      
+          <when test="(f,eq_text,maria,(prop,webserver_sql_db))">
+            <prop id="driver-to-use">org.mariadb.jdbc.Driver</prop>
+            <prop id="driver-bit-to-use">true</prop>
+          </when>            
+          <otherwise>
+            <throw>Unbekannter wert in prop [ole_sql_db(prop,ole_sql_do)]=(f,vob,prop,ole_sql_db(prop,ole_sql_do))</throw>
+          </otherwise>
+        </choose>
+        
+        <call_job job="rs">
+          <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+          <prop id="rs-search">driverClass =&quot;org.postgresql.Driver&quot;; /*[replace]*/</prop>
+          <prop id="rs-replace">driverClass = &quot;(f,escape,java,(prop,driver-to-use))&quot;;</prop> 
+          <prop id="rs-expected">1</prop>       
+        </call_job>
+        
+        <call_job job="rs">
+          <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+          <prop id="rs-search">boolean usesMySql = false; /*[replace]*/</prop>
+          <prop id="rs-replace">boolean usesMySql = (prop,driver-bit-to-use); /*[replaced]*/</prop> 
+          <prop id="rs-expected">1</prop>       
+        </call_job>    
+        
+        sql_url
+        <throw test="(f,not,(f,has,prop,ole_sql_url(prop,ole_sql_do)))">Its requested to define the Jdbc-Url of Set-(prop,ole_sql_do)</throw>
+        <prop id="webserver_sql_url">(f,vob,prop,ole_sql_url(prop,ole_sql_do))</prop> 
+        <when test="(prop,webserver-translate)">
+          <unescape id="webserver_sql_url" type="prop"/>
+          <translate id="webserver_sql_url" type="prop"/>
+          <ti label="ParaWebServer:url:">(f,vob,prop,ole_sql_url(prop,ole_sql_do)) =&gt; (prop,webserver_sql_url)</ti>
+    
+        </when>
+          
+        <call_job job="rs">
+          <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+          <prop id="rs-search">url = &quot;jdbc:postgresql://localhost:5432/formixat001&quot;; /*[replace]*/</prop>
+          <prop id="rs-replace">url = &quot;(f,escape,java,(prop,webserver_sql_url))&quot;;</prop> 
+          <prop id="rs-expected">1</prop>       
+        </call_job>
+    
+        sql_tabprefix
+        <throw test="(f,not,(f,has,prop,ole_sql_tabprefix(prop,ole_sql_do)))">Its requested to define the Tabel-Prefix of Set-(prop,ole_sql_do)</throw>
+        <prop id="webserver_sql_tabprefix">(f,vob,prop,ole_sql_tabprefix(prop,ole_sql_do))</prop> 
+        <when test="(prop,webserver-translate)">
+          <unescape id="webserver_sql_tabprefix" type="prop"/>
+          <translate id="webserver_sql_tabprefix" type="prop"/>
+          <ti label="ParaWebServer:tabprefix:">(f,vob,prop,ole_sql_tabprefix(prop,ole_sql_do)) =&gt; (prop,webserver_sql_tabprefix)</ti>
+        </when>
+              
+        <call_job job="rs">
+          <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+          <prop id="rs-search">= &quot;formixat001.&quot;; /*[replace]*/</prop>
+          <prop id="rs-replace">= &quot;(f,escape,java,(prop,webserver_sql_tabprefix))&quot;;</prop> 
+          <prop id="rs-expected">2</prop>       
+        </call_job>    
+        
+        sql_user
+        <throw test="(f,not,(f,has,prop,ole_sql_user(prop,ole_sql_do)))">Its requested to define the User of Set-(prop,ole_sql_do)</throw>
+        <prop id="webserver_sql_user">(f,vob,prop,ole_sql_user(prop,ole_sql_do))</prop> 
+        <when test="(prop,webserver-translate)">
+          <unescape id="webserver_sql_user" type="prop"/>
+          <translate id="webserver_sql_user" type="prop"/>
+          <ti label="ParaWebServer:user:">(f,vob,prop,ole_sql_user(prop,ole_sql_do)) =&gt; (prop,webserver_sql_user)</ti>
+        </when>   
+    
+        <call_job job="rs">
+          <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+          <prop id="rs-search">user = &quot;postgres&quot;; /*[replace]*/</prop>
+          <prop id="rs-replace">user = &quot;(f,escape,java,(prop,webserver_sql_user))&quot;;</prop>
+          <prop id="rs-expected">1</prop>        
+        </call_job>
+    
+        sql_pass
+        <throw test="(f,not,(f,has,prop,ole_sql_pass(prop,ole_sql_do)))">Its requested to define the Password of Set-(prop,ole_sql_do)</throw>
+    
+        <prop id="webserver_sql_pass">(f,vob,prop,ole_sql_pass(prop,ole_sql_do))</prop> 
+        <when test="(prop,webserver-translate)">
+          <unescape id="webserver_sql_pass" type="prop"/>
+          <translate id="webserver_sql_pass" type="prop"/>
+          <ti label="ParaWebServer:pass:">(f,vob,prop,ole_sql_pass(prop,ole_sql_do)) =&gt; (prop,webserver_sql_pass)</ti>
+        </when>   
+           
+        <call_job job="rs">
+          <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+          <prop id="rs-search">password = &quot;servas&quot;; /*[replace]*/</prop>
+          <prop id="rs-replace">password = &quot;(f,escape,java,(prop,webserver_sql_pass))&quot;;</prop>
+          <prop id="rs-expected">1</prop>        
+        </call_job>
+       
+        <remove type="prop" id="webserver_sql_db"/>
+        <remove type="prop" id="webserver_sql_url"/>
+        <remove type="prop" id="webserver_sql_tabprefix"/>
+        <remove type="prop" id="webserver_sql_user"/>
+        <remove type="prop" id="webserver_sql_pass"/>        
+        
+      </when>    
+      -->
+      <otherwise>
+        <throw>Unbekannter Repo-Type [(prop,webserver_sql_repotype)](e:s) muss file oder db sein!</throw>      
+      </otherwise>
+    </choose>  
+    
+    <!-- repotype in source verdrahten -->
+    <call_job job="rs">
+      <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+      <prop id="rs-search">/*[replace-hasOfflineUserRepo]*/</prop>
+      <prop id="rs-replace">(f,when,(f,eq_text,file,(prop,webserver_sql_repotype)),true,false); // </prop> 
+      <prop id="rs-expected">1</prop>       
+    </call_job>
+       
+    
+     
+    <!-- sql_crypto -->
+   <throw test="(f,not,(f,has,prop,ole_sql_crypto(prop,ole_sql_do)))">Its requested to define the Password-Encryptor of Set-(prop,ole_sql_do)</throw>
+
+    <prop id="webserver_sql_crypto">(f,vob,prop,ole_sql_crypto(prop,ole_sql_do))</prop> <!-- (prop,webserver_sql_crypto) -->
+    <when test="(prop,webserver-translate)">
+      <unescape id="webserver_sql_crypto" type="prop"/>
+      <translate id="webserver_sql_crypto" type="prop"/>
+      <ti label="ParaWebServer:crypto:">(f,vob,prop,ole_sql_crypto(prop,ole_sql_do)) =&gt; (prop,webserver_sql_crypto)</ti>
+    </when> 
+    
+    <call_job job="rs">
+      <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+      <prop id="rs-search">/*crypto_id*/</prop>
+      <prop id="rs-replace">&quot;(f,escape,java,(prop,webserver_sql_crypto))&quot;; //</prop>
+      <prop id="rs-expected">1</prop>        
+    </call_job>
+    
+    <!--
+    <call_job job="rs">
+      <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeSystem.java</file>
+      <prop id="rs-search">new CryptoBase(e:o)&quot;mariandel&quot;(e:c); /*[replace]*/</prop>
+      <prop id="rs-replace">new CryptoBase(e:o)&quot;(f,escape,java,(prop,webserver_sql_crypto))&quot;(e:c);</prop>
+      <prop id="rs-expected">2</prop>        
+    </call_job>
+    -->
+  
+
+    <!-- db -->
+   <throw test="(f,not,(f,has,prop,ole_db(prop,ole_sql_do)))">Its requested to define a project-database of Set-(prop,ole_sql_do)</throw>
+
+    <prop id="webserver_db">(f,vob,prop,ole_db(prop,ole_sql_do))</prop> <!-- (prop,webserver_db) -->
+    <when test="(prop,webserver-translate)">
+      <unescape id="webserver_db" type="prop"/>
+      <translate id="webserver_db" type="prop"/>
+      <ti label="ParaWebServer:db:">(f,vob,prop,ole_db(prop,ole_sql_do)) =&gt; (prop,webserver_db)</ti>
+    </when> 
+       
+   <when test="(f,has,prop,ole_db(prop,ole_sql_do))">
+      <call_job job="rs">
+        <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/OnlineSitzung.java</file>
+        <prop id="rs-search">/* sicherheitsstufe */ if  (e:o) false (e:c) throw new FileSystemException</prop>
+        <prop id="rs-replace">if  (e:o) !theDatabaseLinkUri.startsWith(e:o)&quot;(f,escape,java,(prop,webserver_db))&quot;(e:c) (e:c) throw new FileSystemException</prop>        
+        <prop id="rs-expected">1</prop>
+      </call_job>
+   </when>    
+   
+    <!-- upload temp -->
+   <throw test="(f,not,(f,has,prop,ole_uptemp(prop,ole_sql_do)))">Its requested to define a temp-dir for uploads of Set-(prop,ole_sql_do)</throw>
+
+    <prop id="webserver_uploadtemp">(f,vob,prop,ole_uptemp(prop,ole_sql_do))</prop> <!-- (prop,webserver_uploadtemp) -->
+    <when test="(prop,webserver-translate)">
+      <unescape id="webserver_uploadtemp" type="prop"/>
+      <translate id="webserver_uploadtemp" type="prop"/>
+      <ti label="ParaWebServer:uploadtemp:">(f,vob,prop,ole_uptemp(prop,ole_sql_do)) =&gt; (prop,webserver_uploadtemp)</ti>
+    </when> 
+       
+   <when test="(f,has,prop,ole_uptemp(prop,ole_sql_do))">
+      <call_job job="rs">
+        <file id="rs-file">(dir,systema-dir)at/nicolas/x/web/EeProject.java</file>
+        <prop id="rs-search">/*[echnaton-upload-temp-folder-classic]*/</prop>
+        <prop id="rs-replace">uploadTempFolder = &quot;(f,escape,java,(prop,webserver_uploadtemp))&quot;;</prop>        
+        <prop id="rs-expected">1</prop>
+      </call_job>
+   </when>      
+   
+  <remove type="prop" id="webserver-translate"/>
+  <remove type="prop" id="webserver_sql_repotype"/>  
+  <remove type="prop" id="webserver_sql_crypto"/>
+  <remove type="prop" id="webserver_db"/>
+  <remove type="prop" id="webserver_uploadtemp"/>
+        
+  </when>         
+ 
+  <call_job job="systema-echnaton-commons">
+    <prop id="count-timer-must">4</prop>
+    <prop id="count-customer-must">3</prop>
+    <prop id="count-crypto-must">2</prop>
+    <prop id="count-just-time-must">4</prop>
+  </call_job>
+  
+</job>
+
+
+</jobs>

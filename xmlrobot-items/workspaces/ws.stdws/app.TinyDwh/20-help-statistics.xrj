@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Statistics?" lang="en">
+
+  <ti label="Job &apos;Statistics&apos;"/>
+  <ti type="ul">Diverse Statistiken</ti>
+
+
+</job>
+
+
+</jobs>

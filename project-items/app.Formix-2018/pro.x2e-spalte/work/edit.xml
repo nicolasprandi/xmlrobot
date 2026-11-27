@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="spalte-edit">
+<need>(prop,spalte_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="spalte-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="spalte-editor"/>
+<call_job job="spalte-write"/>
+<ti align="right" x="Did update Spalte '(f,text,cut_nice,(prop,spalte_name),20)'"/>
+<call_job job="spalte-see"/>
+</job>

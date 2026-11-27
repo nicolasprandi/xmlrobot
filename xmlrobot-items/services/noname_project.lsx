@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<steps>
+  <when test="(f,not,(f,exists,prop,pro))">
+    <prop id="pro">(f,file_content,(dir,services)noname.txt,UTF-8,)</prop>
+    <dir id="pro">(dir,app)pro_(prop,pro)</dir>
+    <mkdir dir="(dir,pro)" />
+    <i>Effective Project-Dir: (dir,pro)</i>
+  </when>
+</steps>

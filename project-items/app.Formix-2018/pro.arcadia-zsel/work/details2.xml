@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zsel-see-more">
+<need>(prop,zsel_key)</need>
+<call_job job="zsel-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="zsels_tk_control"/>
+<prop id="zsel_default_label" x="(f,html,bold,open)(f,tk_sel_translate,(prop,zsel_zblock),(file,zblock-selector))(f,html,bold,close)(f,when,(f,has,(prop,zsels_offset_label)), - (prop,zsels_offset_label),)"/>
+<call_job job="zsel-tk"/>
+<ti_hr/>
+<ti type="rec" label=" ">
+<ti type="call_job" flag="button" class="fx fxEditInfo fxEditInfoZsel" explain="Edit" job="zsel-edit">
+<prop id="zsel_key">(prop,zsel_key)</prop>
+<file id="zsels">(file,zsels)</file>
+<prop id="zsels_offset">(prop,zsels_offset)</prop>
+<prop id="zsels_offset_label">(prop,zsels_offset_label)</prop>
+<prop id="zsels_offset_new_key">(prop,zsels_offset_new_key)</prop>
+<prop id="zsels_sort_attribute">(prop,zsels_sort_attribute)</prop>
+<prop id="zsels_sort_number">(prop,zsels_sort_number)</prop>
+<prop id="zsels_sort_ignore_case">(prop,zsels_sort_ignore_case)</prop>
+<prop id="zsels_sort_desc">(prop,zsels_sort_desc)</prop>
+<prop id="zsels_where">(prop,zsels_where)</prop>
+<prop id="zsels_return_job">(prop,zsels_return_job)</prop>
+</ti>
+</ti>
+</job>

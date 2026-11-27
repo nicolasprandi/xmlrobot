@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+    <!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+    <file id="finds">(dir,pro)finds.xml</file>
+    <when test="(f,not,(f,exists_file,(file,finds)))">
+        <create_file out="(file,finds)">&lt;finds/&gt;</create_file>
+        <i>Created: (file,finds)</i>
+    </when>
+    <prop id="finds_offset">./</prop>
+    <prop id="finds_offset_label"/>
+    <prop id="finds_offset_new_key">//</prop>
+    <prop id="finds_sort_attribute"/>
+    <prop id="finds_sort_number"/>
+    <prop id="finds_sort_ignore_case"/>
+    <prop id="finds_sort_desc"/>
+    <prop id="finds_where"/>
+    <prop id="finds_return_job">find-see-all</prop>
+</prolog>

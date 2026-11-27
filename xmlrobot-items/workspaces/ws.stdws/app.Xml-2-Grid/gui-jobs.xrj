@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="Spalten Editor" role="user">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+     <call_job job="??"/>
+
+</job>
+
+<job id="Run" role="user">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+     <call_job job="tk_para_edit"/>
+     <tk type="msg" x="Continue with core-operation ..." test="0"/>
+     <call_job job="core-perform-build"/>
+     <ti>Did run</ti>
+     <create_file file="(file,project-exists)">yes</create_file>
+</job>
+<job id="Check Spalten" role="user">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+     <call_job job="core-perform-fields"/>
+     <ti>Did run</ti>
+     <create_file file="(file,project-exists)">yes</create_file>
+</job>
+<job id="Check Xpath" role="user">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+     <call_job job="tk_para_edit"/>
+     <tk type="msg" x="Continue with core-operation ..." test="0"/>
+     <call_job job="core-perform-xpath"/>
+     <ti>Did run</ti>
+     <create_file file="(file,project-exists)">yes</create_file>
+</job>
+
+
+
+<job id="Run?">
+   <call_job job="tk_para_print_values_tips"/>
+   <call_job job="tk_stat_print_values_tips"/>
+</job>
+
+<job id="Edit Parameters">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+      <create_file file="(file,project-exists)">yes</create_file>
+      <call_job job="tk_para_edit"/>
+      
+</job>
+
+<job id="Edit Parameters?">
+     <call_job job="tk_para_print_values_tips"/>
+</job>
+
+
+
+
+
+
+</jobs>

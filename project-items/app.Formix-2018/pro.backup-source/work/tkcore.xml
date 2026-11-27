@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="source-tk">
+<need default="">(prop,sources_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,sources_tk_control) wrap ">
+<tk label="Folder to Backup" id="source_dir_rel" x="" test_first="1" type="dir" flag=" "/>
+<tk label="Name" id="source_name" x="" test_first="1" tip="Technischer Name" type="text" flag=" "/>
+<tk label="Include" id="source_includes" x="**/*.*" test_first="1" tip="Der Dahm-Ausdruck; loop in" type="text" flag=" "/>
+<tk label="Exclude" id="source_excludes" x="" test_first="0" type="text" flag=" "/>
+</tk>
+</job>

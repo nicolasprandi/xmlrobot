@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="taste-write">
+<need>(prop,taste_key) (prop,isAdd)</need>
+<spirit act="open" id="tastes_spirit_tc" xml="(file,tastes)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,tastes_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,tastes_offset),0,(f,sub,(f,len,(prop,tastes_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,tastes_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="tastes_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;taste row="(prop,taste_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="was" value="(f,vob,prop,taste_was)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="getestetes_lokal" value="(f,vob,prop,taste_getestetes_lokal)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="wer_testet" value="(f,vob,prop,taste_wer_testet)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="getesteter_koch" value="(f,vob,prop,taste_getesteter_koch)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="todo" value="(f,vob,prop,taste_todo)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="notiz" value="(f,vob,prop,taste_notiz)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="note" value="(f,vob,prop,taste_note)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="status" value="(f,vob,prop,taste_status)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="date_active" value="(f,vob,prop,taste_date_active)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="date_build" value="(f,vob,prop,taste_date_build)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="date_closed" value="(f,vob,prop,taste_date_closed)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="types" value="(f,vob,prop,taste_types)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="sum" value="(f,vob,prop,taste_sum)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="details" value="(f,vob,prop,taste_details)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tastes_spirit_tc" where="(prop,tastes_offset)taste[@row='(prop,taste_key)']" attribute="name" value="(f,vob,prop,taste_name)"/>
+<spirit act="close" flag="save pretty" id="tastes_spirit_tc"/>
+</job>

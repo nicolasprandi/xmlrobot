@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rezs>
+  <rez row="1" bez="Omlett a la Thai" logo="(dir,libro)thai/thai1/2b.jpg" logo_max_y="70">
+    <komp row="1" bez="Omlett a la Thai">
+      <ephase row="1" zut_key="3 5 " besch="Anbraten" phase="40" />
+      <ephase row="2" zut_key="1 " besch="Omlett machen" phase="40" />
+      <ephase row="3" zut_key="2 4 " besch="Drüberstreuen" phase="40" />
+    </komp>
+    <rezpic row="1" pic="(dir,libro)thai/thai1/3b.jpg" bez="Mit Topf" max_y_px="200" />
+    <rezpic row="2" pic="(dir,libro)thai/thai1/5b.jpg" bez="Braten 1" max_y_px="210" />
+    <rezpic row="3" pic="(dir,libro)thai/thai1/6b.jpg" bez="Braten 2" max_y_px="180" />
+    <rezpic row="4" pic="(dir,libro)thai/thai1/2b.jpg" bez="Teller" max_y_px="200" />
+    <zut row="1" bez="Eier" menge="2" einheit="st" />
+    <kompzut row="1" zut_key="1" komp_key="1" />
+    <zut row="2" bez="Sojabohnen" />
+    <kompzut row="2" zut_key="2" komp_key="1" />
+    <zut row="3" bez="Hackfleisch" />
+    <kompzut row="3" zut_key="3" komp_key="1" />
+    <zut row="4" bez="Kräuter" />
+    <kompzut row="4" zut_key="4" komp_key="1" />
+    <zut row="5" bez="Chilli-Schoten" />
+    <kompzut row="5" zut_key="5" komp_key="1" />
+  </rez>
+  <rez row="2" bez="Glassnoodle Sea Salad" character="Hearty" logo="(dir,libro)thai/thai2/9b.jpg" logo_max_y="70">
+    <komp row="2" bez="Glassnoodle Sea Salad" />
+    <rezpic row="4" pic="(dir,libro)thai/thai2/10b.jpg" bez="x" max_y_px="170" />
+    <rezpic row="23" pic="(dir,libro)thai/thai9/10b.jpg" bez="Salat1" max_y_px="230" />
+    <rezpic row="5" pic="(dir,libro)thai/thai2/11b.jpg" bez="z" max_y_px="200" />
+    <rezpic row="24" pic="(dir,libro)thai/thai9/11b.jpg" bez="Salat2" max_x_px="100" />
+    <rezpic row="4" pic="(dir,libro)thai/thai2/9b.jpg" bez="x" max_y_px="180" />
+    <rezpic row="6" pic="(dir,libro)thai/thai2/8b.jpg" bez="k" max_y_px="210" />
+  </rez>
+  <rez row="3" bez="Sweet Steamed Rice Cake" logo="(dir,libro)thai/thai7/11b.jpg" logo_max_y="70">
+    <komp row="3" bez="Sweet Steamed Rice Cake" />
+    <rezpic row="7" pic="(dir,libro)thai/thai4/14b.jpg" bez="f" max_y_px="200" />
+    <rezpic row="10" pic="(dir,libro)thai/thai4/13b.jpg" bez="Brown" max_y_px="180" />
+    <rezpic row="11" pic="(dir,libro)thai/thai7/11b.jpg" bez="Yellow" max_y_px="220" />
+    <rezpic row="32" pic="(dir,libro)thai/thai11/9b.JPG" bez="Am Dampfen" max_x_px="210" />
+    <rezpic row="34" pic="(dir,libro)thai/thai11/69b.JPG" bez="Im Schrank" max_y_px="230" />
+  </rez>
+  <rez row="4" bez="Thai Classic Always Ultra" logo="(dir,libro)thai/thai7/7b.jpg" logo_max_y="70">
+    <komp row="4" bez="Thai Classic Always Ultra" />
+    <rezpic row="8" pic="(dir,libro)thai/thai7/6b.jpg" bez="r" max_x_px="190" />
+    <rezpic row="10" pic="(dir,libro)thai/thai7/7b.jpg" bez="s" max_x_px="220" />
+    <rezpic row="9" pic="(dir,libro)thai/thai7/5b.jpg" bez="x" max_y_px="200" />
+  </rez>
+  <rez row="5" bez="Frutas" logo="(dir,libro)thai/thai9/4b.jpg" logo_max_y="70">
+    <komp row="5" bez="Frutas" />
+    <rezpic row="11" pic="(dir,libro)thai/thai5/5b.jpg" bez="Früchtchen" max_x_px="170" />
+    <rezpic row="22" pic="(dir,libro)thai/thai9/4b.jpg" bez="Ananas" max_y_px="170" />
+    <rezpic row="30" pic="(dir,libro)thai/thai10/56b.JPG" bez="Oma-Zitronen" max_y_px="150" />
+    <rezpic row="31" pic="(dir,libro)thai/thai11/6b.JPG" bez="Keine Ahnung wie die heissen" max_y_px="160" />
+  </rez>
+  <rez row="10" bez="Verduras" logo="(dir,libro)thai/thai5/28b1.jpg" logo_max_y="70">
+    <komp row="10" bez="Verduras" />
+    <rezpic row="12" pic="(dir,libro)thai/thai5/6b.jpg" bez="Marktstand" max_y_px="190" />
+    <rezpic row="15" pic="(dir,libro)thai/thai5/28b1.jpg" bez="Sieb" max_x_px="220" />
+    <rezpic row="13" pic="(dir,libro)thai/thai5/10b.jpg" bez="Knollen" max_y_px="180" />
+    <rezpic row="14" pic="(dir,libro)thai/thai5/15b.jpg" bez="Rhabarber" max_y_px="170" />
+    <rezpic row="27" pic="(dir,libro)thai/thai9/27b.jpg" bez="Schüssel" max_y_px="150" />
+    <rezpic row="28" pic="(dir,libro)thai/thai10/10b.JPG" bez="Thai Curry Gewürze" max_y_px="220" />
+    <rezpic row="33" pic="(dir,libro)thai/thai11/20b.JPG" bez="Fisolen" max_y_px="220" />
+    <rezpic row="42" pic="(dir,libro)thai/thai13/12b.JPG" bez="Bamboo" max_y_px="170" />
+  </rez>
+  <rez row="6" bez="Sweet Soups" logo="(dir,libro)thai/thai3/6b.jpg" logo_max_y="70">
+    <komp row="6" bez="Sweet Soups" />
+    <rezpic row="15" pic="(dir,libro)thai/thai1/12b.jpg" bez="Selection" max_y_px="190" />
+    <rezpic row="16" pic="(dir,libro)thai/thai2/6b.jpg" bez="sdf" max_y_px="230" />
+    <rezpic row="17" pic="(dir,libro)thai/thai2/7b.jpg" bez="afs" max_y_px="190" />
+    <rezpic row="20" pic="(dir,libro)thai/thai1/13b.jpg" bez="afsx" max_y_px="250" />
+    <rezpic row="18" pic="(dir,libro)thai/thai3/6b.jpg" bez="432" max_x_px="200" />
+    <rezpic row="19" pic="(dir,libro)thai/thai3/7b.jpg" bez="asdf" max_y_px="150" />
+  </rez>
+  <rez row="7" bez="Grilled Fish" logo="(dir,libro)thai/thai2/3b.jpg" logo_max_y="70">
+    <komp row="7" bez="Grilled Fish" />
+    <rezpic row="20" pic="(dir,libro)thai/thai2/1b.jpg" bez="asdf" max_y_px="200" />
+    <rezpic row="21" pic="(dir,libro)thai/thai2/3b.jpg" bez="asdfb" max_y_px="180" />
+  </rez>
+  <rez row="8" bez="Just Thai-Food" logo="(dir,libro)thai/thai1/10b.jpg" logo_max_y="70">
+    <komp row="8" bez="Fried Pans" />
+    <rezpic row="21" pic="(dir,libro)thai/thai1/10b.jpg" bez="Ne Pfanne" max_y_px="180" />
+    <rezpic row="37" pic="(dir,libro)thai/thai10/57b.JPG" bez="Green Curry" max_y_px="230" />
+    <rezpic row="38" pic="(dir,libro)thai/thai10/45b.JPG" bez="Grilled Fish with Vegetables" max_y_px="170" />
+    <rezpic row="44" pic="(dir,libro)thai/thai13/14b.JPG" bez="Schweinsbraten" max_y_px="170" />
+  </rez>
+  <rez row="9" bez="Bananas" logo="(dir,libro)thai/thai9/22b.jpg" logo_max_y="70">
+    <komp row="9" bez="Bananas" />
+    <rezpic row="25" pic="(dir,libro)thai/thai9/21b.jpg" bez="im korb" max_y_px="150" />
+    <rezpic row="26" pic="(dir,libro)thai/thai9/22b.jpg" bez="Stangen" max_x_px="160" />
+    <rezpic row="29" pic="(dir,libro)thai/thai10/1b.JPG" bez="am Tisch" max_y_px="150" />
+  </rez>
+  <rez row="11" bez="Market" logo="(dir,libro)thai/thai11/44b.JPG" logo_max_y="70">
+    <komp row="11" bez="Market" />
+    <rezpic row="35" pic="(dir,libro)thai/thai11/76b.JPG" bez="Obststand" max_y_px="230" />
+    <rezpic row="36" pic="(dir,libro)thai/thai11/44b.JPG" bez="Nudelstand" max_y_px="200" />
+    <rezpic row="39" pic="(dir,libro)thai/thai13/5b.JPG" bez="Monk Shop" max_y_px="200" />
+    <rezpic row="40" pic="(dir,libro)thai/thai13/10b.JPG" bez="Chilli" max_y_px="190" />
+    <rezpic row="41" pic="(dir,libro)thai/thai13/11b.JPG" bez="Lotteri" max_y_px="160" />
+    <rezpic row="43" pic="(dir,libro)thai/thai13/13b.JPG" bez="Coffee" max_y_px="170" />
+  </rez>
+</rezs>

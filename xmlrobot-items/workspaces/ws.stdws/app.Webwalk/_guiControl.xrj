@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+<!-- 
+<job id="See Values: conf_" role="dev">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>  
+</job>   
+ <job id="Refresh">
+  <call_job job="go-refresh"/>
+</job>
+   -->
+   
+<job id="see-filters" role="hidden">
+  <loop id="groups" xml="(file,groups)" xpath="group">
+    <!-- <ti label="(loop,groups,#i) (loop,groups,@titel)"/>  -->
+    <prop id="finds_offset">group[@row='(loop,groups,@row)']/</prop>
+    <prop id="finds_offset_label">(loop,groups,@titel)</prop>
+    <prop id="group_key">(loop,groups,@row)</prop>
+    <ti type="rec">
+    <ti x="(f,html,i,o)(prop,finds_offset_label)(f,html,i,c)" />
+    </ti>
+    <call_job job="find-see-all"/>
+    <!-- <ti_space height="2px" test="(f,lt,(loop,groups,#i),(loop,groups,#max))"/> -->
+  </loop>
+  
+  <ti type="call_job" job="group-see-all" explain="Manage Groups" label=" "/>
+</job>
+   
+<job id="new_tab" role="hidden">
+  <tk id="new_tab_id"/>
+  <wdriver act="new_tab" new_tab_id="(prop,new_tab_id)"/>
+  
+  <ti>  (prop,new_tab_id)</ti>
+</job>
+
+
+<job id="News" role="hidden">
+  <ti type="call_job" job="new-windows" />
+  <ti type="call_job" job="new-switch-window-index" />
+  <ti type="call_job" job="new-switch-window-id" />
+  <!-- <ti type="call_job" job="new-switch-window-pos" /> -->
+</job>
+<job id="new-windows" role="hidden">
+
+  <wdriver act="get_windows" to_file="(dir,pro)windows.xml"/>
+  <ti type="file" x="(dir,pro)windows.xml"/>
+  
+</job>
+<job id="Goto URL">
+     <call_job job="url-see-all"/>
+     
+
+</job>
+
+
+
+
+<job id="find-see-all2" role="hidden">
+<call_job job="post-action"/>
+
+ 
+</job>
+
+
+<job id="Find TAG">
+  <call_job job="see-filters"/>
+</job>
+
+<job id="&gt;&gt; Find Elements" role="hidden">
+  <call_job job="see-filters"/>
+</job>
+
+  
+<job id="tab-navigation" role="hidden">
+    <ti label="Tabs"/>
+    <prop id="my-tab-id">(f,wdriver,?,get_tab_id)</prop>          
+    
+    <choose>
+    <when test="(f,exists_file,(dir,pro)tabs.xml)">
+      <loop id="r" xml="(dir,pro)tabs.xml" xpath="window">
+
+        <prop id="curtab">(f,eq_text,(prop,my-tab-id),(loop,r))</prop>
+
+        <ti type="rec" label="#(loop,r,#i)">
+
+         
+         <ti label="(loop,r,#i)" type="call_job" job="new-switch-window-index" explain="[ Switch ]"
+             test="(f,not,(prop,curtab))">
+          <prop id="index" x="(loop,r,#i)"/>
+         </ti> 
+         <ti test="(prop,curtab)" >active</ti>
+         <ti  x="(loop,r)"/>         
+        </ti>    
+      </loop>
+
+    </when>
+    <otherwise>
+      <ti>no ()(dir,pro)tabs.xml()</ti>
+    </otherwise>
+    </choose>
+        
+  
+    <!-- <ti x="(f,html,i,o)Tab-Actions(f,html,i,c)"/>     -->
+    <ti type="call_job" job="new-switch-window-index" explain="by postion-number" label="Switch Tab"/>
+   
+    <ti type="call_job" job="new-switch-window-id"  explain="by tab-id" label=" "/>
+  
+    <ti type="call_job" job="new-close-tab"  explain="Close the current tab '(f,wdriver,?,get_tab_id)'" label="Close">
+      <tk type="msg">The current tab will be closed.
+  The system does not automatically switch to another tab.
+  You have to switch to a tab manually!</tk>
+    </ti>
+ 
+      <ti type="rec" label="Xml-Tablist" test="(f,exists_file,(dir,pro)tabs.xml)">
+
+      <ti type="file" x="(dir,pro)tabs.xml" /> 
+      </ti>  
+</job>
+
+
+<job id="??">            
+
+  <when test="(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid))">
+
+    <call_job job="record">
+        <prop id="steps"><![CDATA[()    <ti label="Current Situation"/>
+    <ti label="Url" x="(f,wdriver,?,get_url)"/>
+    <ti label="Title" x="(f,wdriver,?,get_title)"/>      
+         ()]]></prop>      
+    </call_job>
+    <ti_break/> 
+  </when> 
+    <!--
+    <call_job job="record">
+        <prop id="steps"><![CDATA[()    <ti label="Current Situation"/>
+    <ti label="Url" x="(f,wdriver,?,get_url)"/>
+    <ti label="Title" x="(f,wdriver,?,get_title)"/>
+    <ti label="Tab Id" x="(f,wdriver,?,get_tab_id)"/>
+    <ti label="Tab Count" x="(f,wdriver,?,get_tab_count)"/>      
+         ()]]></prop>      
+    </call_job>    
+    
+    <call_job job="record">
+        <prop id="steps"><![CDATA[()    <wdriver act="get_windows" to_file="(dir,pro)tabs.xml"/>
+         ()]]></prop>      
+    </call_job>  
+    
+    <call_job job="tab-navigation" />
+              
+    <ti_hr_break/>
+    
+    <call_job job="frame-navigation"/>
+     <ti_hr_break/>
+    <call_job job="extension-jobs"/>
+    
+        <call_job job="Config"/>
+    
+    <ti_hr/>
+    
+    -->
+    
+
+    
+    <ti label="Folders"/>
+    <ti type="rec" label="()results()">
+      <ti type="dir" x="(dir,results)"/>
+      <ti type="call_service" job="Goto-Panorama" label=" " explain="See">
+        <dir id="with">(dir,results)</dir>
+      </ti> 
+    </ti> 
+    
+    <ti type="rec" label="()Pages (html,xml)()">
+    <ti type="dir" x="(dir,pages)"/>
+    <ti type="call_service" job="Goto-Panorama" label=" " explain="See">
+      <dir id="with">(dir,pages)</dir>
+    </ti>
+    </ti>
+    <ti type="rec" label="()Smart-Info (lists of knowledge)()">
+      <ti type="dir" x="(dir,smart)"/>
+      <ti type="call_service" job="Goto-Panorama" label=" " explain="See">
+        <dir id="with">(dir,smart)</dir>
+      </ti> 
+    </ti> 
+    
+    <ti type="rec" label="()Extracted Xml Data()">
+      <ti type="dir" x="(dir,extracted)"/>
+      <ti type="call_service" job="Goto-Panorama" label=" " explain="See">
+        <dir id="with">(dir,extracted)</dir>
+      </ti> 
+    </ti>     
+  
+
+  
+  
+</job>
+
+
+
+
+
+<job id="Goto Url" role="hidden">
+  <call_job job="tk_gourl_edit"/>
+  
+  <throw test="(f,eq_text,none,(prop,gourl_dest))">Thanks</throw>
+  
+  <prop id="go-url"
+        x="(prop,gourl_u1)"
+        test="(f,eq,1,(prop,gourl_dest))"/>
+  
+  <prop id="go-url"
+        x="(prop,gourl_u2)"
+        test="(f,eq,2,(prop,gourl_dest))"/>  
+        
+  <prop id="go-url"
+        x="(prop,gourl_u3)"
+        test="(f,eq,3,(prop,gourl_dest))"/> 
+        
+  <prop id="go-url"
+        x="(prop,gourl_u4)"
+        test="(f,eq,4,(prop,gourl_dest))"/>  
+        
+  <prop id="go-url"
+        x="(prop,gourl_u5)"
+        test="(f,eq,5,(prop,gourl_dest))"/>                         
+
+  <call_job job="go-somewhere"/>
+    
+</job>
+
+
+
+
+
+
+
+</jobs>

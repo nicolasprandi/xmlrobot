@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="add-debug-flag" joblevel="ws" role="hidden">
+  <tk type="msg" msg="Sure about seeing the Enhanced-Logging ?" />
+  <tk id="in-takoff-tup" x="(file,takeoff)" type="file" extension=".xrt" />
+  <xml_update 
+    what="(file,in-takoff-tup)"
+    how="append">
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <log dir="xmlrobot-internals/museum/log" flag="create" base="user" debug="1"/>
+    ]]>
+    </inline>    
+  </xml_update>
+
+  <ti type="file" x="(file,in-takoff-tup)"/>
+  <tk type="msg" msg="We are going to restart(e:s) debugging will be availabel after restart ..."/>
+  <restart/>
+ </job>
+ 
+
+</jobs>

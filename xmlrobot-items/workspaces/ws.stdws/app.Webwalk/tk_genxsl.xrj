@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+
+
+<!-- setting the default-values -->
+<job id="tk_genxsl_default" role="hidden">
+  <need default="(dir,xsl)">(dir,genxsl_dir)</need>
+  <need default=".xsl">(prop,genxsl_filename)</need>
+</job>
+
+
+<!-- genxsl-core, make your changes here -->
+<job id="tk_genxsl_core" role="hidden" tip="genxsl_: Tk Internal">
+
+  <need default="">(prop,tk_genxsl_add_flag)</need>
+
+  <tk label="Generate Xsl" 
+      flag="(prop,tk_genxsl_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+    <tk id="genxsl_dir" 
+        type="dir" 
+        label="Target-Directory"  
+        flag="nono"                 
+        tip="()Target Folder()"
+        test_first="0"/>
+        
+     <tk id="genxsl_filename" 
+        type="text" 
+        label="Filename"  
+        flag="nono"                 
+        tip="()Filename()"/>       
+  
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_genxsl_edit" tip="genxsl_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,genxsl-data))">
+      <!-- data exists already -->
+      <prop id="tk_genxsl_add_flag" x="sum print"/>
+      <call_job job="tk_genxsl_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_genxsl_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_genxsl_default"/>
+  <!-- doing input -->
+  <call_job job="tk_genxsl_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_genxsl_write"/>
+
+</job>
+
+
+
+<job id="tk_genxsl_print_values" tip="genxsl_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_genxsl_read"/>
+  
+  <call_job job="tk_genxsl_core">
+    <prop id="tk_genxsl_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_genxsl_print_values_tips" tip="genxsl_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_genxsl_read"/>
+  
+  <call_job job="tk_genxsl_core">
+    <prop id="tk_genxsl_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_genxsl_print_help" tip="genxsl_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_genxsl_core">
+    <prop id="tk_genxsl_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_genxsl_read" role="hidden">
+  <call_job job="go-joe-read">
+    <prop id="joe-in-regex" x="(prop,genxsl-regex)" />  
+    <file id="joe-in-store" x="(file,genxsl-data)" />
+  </call_job>
+  <call_job job="tk_genxsl_default"/>
+  
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_genxsl_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,genxsl-data)" />
+    <prop id="joe-in-regex" x="(prop,genxsl-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_genxsl_clear"  tip="genxsl_: Clears the data" role="hidden">
+  <delete file="(file,genxsl-data)"/>
+</job>
+
+
+</jobs>

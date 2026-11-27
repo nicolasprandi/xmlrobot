@@ -1,0 +1,424 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+
+<job id="mm-tester-bulks" role="hidden">
+  <choose>
+    <when test="(f,eq_text,(prop,ling),de)" lang="de">
+      <prop id="mm-singular">Stapel</prop>
+      <prop id="mm-plural">Stapel</prop>    
+    </when>
+    <when test="1" lang="en">
+      <prop id="mm-singular">Bulks</prop>
+      <prop id="mm-plural">Bulks</prop>      
+    </when>
+  </choose>
+      
+  <call_job job="mm-master">
+    <dir id="mm-home">(dir,goMoon)bulks/</dir>
+    <prop id="mm-postfix">bulks</prop>
+    <prop id="mm-ojob">mm-op-bulks</prop> 
+ </call_job>
+</job> 
+
+<job id="mm-tester-squeries" role="hidden">
+
+  <choose>
+    <when test="(f,eq_text,(prop,ling),de)" lang="de">
+      <prop id="mm-singular">Abfragen</prop>
+      <prop id="mm-plural">Abfragen</prop>       
+    </when>
+    <when test="1" lang="en">
+      <prop id="mm-singular">Queries</prop>
+      <prop id="mm-plural">Queries</prop>    
+    </when>
+  </choose>
+      
+  <call_job job="mm-master">
+    <dir id="mm-home">(dir,goMoon)queries/</dir>
+    <prop id="mm-postfix">queries</prop>
+    <prop id="mm-ojob">mm-op-queries</prop> 
+ </call_job>
+ 
+</job> 
+
+<job id="mm-tester-hints" role="hidden">
+
+  <choose>
+    <when test="(f,eq_text,(prop,ling),de)" lang="de">
+      <prop id="mm-singular">Kompositionen</prop>
+      <prop id="mm-plural">Kompositionen</prop>    
+    </when>
+    <when test="1" lang="en">
+      <prop id="mm-singular">Compositions</prop>
+      <prop id="mm-plural">Compositions</prop>    
+    </when>
+  </choose>
+      
+      
+  <call_job job="mm-master">
+    <dir id="mm-home">(dir,goCompos)</dir>
+    <prop id="mm-postfix">compos</prop>
+    <prop id="mm-ojob">mm-op-hints</prop>  
+ </call_job>
+</job> 
+
+<job id="mm-tester-dbcis" role="hidden">
+
+  <choose>
+    <when test="(f,eq_text,(prop,ling),de)" lang="de">
+      <prop id="mm-singular">Db-Credential</prop>
+      <prop id="mm-plural">Db-Credentials</prop>    
+    </when>
+    <when test="1" lang="en">
+      <prop id="mm-singular">Db-Credential</prop>
+      <prop id="mm-plural">Db-Credentials</prop>    
+    </when>
+  </choose>
+      
+      
+  <call_job job="mm-master">
+    <dir id="mm-home">(dir,goCredit)</dir>
+    <prop id="mm-postfix">dbcis</prop>
+    <prop id="mm-ojob">mm-op-dbcis</prop>  
+ </call_job>
+</job> 
+
+<job id="mm-tester-pgen" role="hidden">
+
+  <choose>
+    <when test="(f,eq_text,(prop,ling),de)" lang="de">
+      <prop id="mm-singular">PDI-Generatoren</prop>
+      <prop id="mm-plural">PDI-Generatoren</prop>    
+    </when>
+    <when test="1" lang="en">
+      <prop id="mm-singular">PDI-Generators</prop>
+      <prop id="mm-plural">PDI-Generators</prop>    
+    </when>
+  </choose>
+      
+      
+  <call_job job="mm-master">
+    <dir id="mm-home">(dir,pro)xDb/pdigens/</dir>
+    <prop id="mm-postfix">pdigens</prop>
+    <prop id="mm-ojob">mm-op-pgens</prop>   
+ </call_job> 
+
+
+</job>
+
+<job id="mm-tester-testdata" role="hidden">      
+
+  <choose>
+    <when test="(f,eq_text,(prop,ling),de)" lang="de">
+      <prop id="mm-singular">Testdaten</prop>
+      <prop id="mm-plural">Testdaten</prop>        
+    </when>
+    <when test="1" lang="en">
+      <prop id="mm-singular">Testdata</prop>
+      <prop id="mm-plural">Testdata</prop>     
+    </when>
+  </choose>
+       
+  <call_job job="mm-master">
+    <dir id="mm-home">(dir,goTestdata)</dir>
+    <prop id="mm-postfix">testdata</prop>
+    <prop id="mm-ojob">mm-op-testdata</prop> 
+ </call_job> 
+
+
+</job>
+
+
+<job id="mm-op-pgens" role="hidden">
+  <need>(prop,mm-what)</need>
+  <when test="(f,not,(f,exists_file,(file,mm-liste)))">
+    <create_file out="(file,mm-liste)">&lt;pgen/&gt;</create_file>
+  </when>
+  
+  <call_job job="tr_oppgen"/>
+    
+  <choose>
+    <when test="(f,eq_text,all,(prop,mm-what))">
+      <choose>
+        <when test="(f,file_exists,(file,mm-info))">
+          <call_job job="tk_pgen_print_values">
+            <file id="pgen-data" x="(file,mm-info)"/>
+          </call_job>
+          
+          <ti type="menu" first_cell="2">
+            <ti type="call_job" job="call-and-go" explain="(prop,_x_edit)" label=" " flag="button" class="fb fbEdit">
+   
+              <prop id="cg-call">tk_pgen_edit</prop>
+              <file id="pgen-data" x="(file,mm-info)"/>
+              
+              <prop id="cg-go">mm-op-pgens</prop>
+              <prop id="mm-what">(prop,mm-what)</prop>
+              <file id="mm-liste">(file,mm-liste)</file>
+              <file id="mm-info">(file,mm-info)</file>
+            
+            </ti> 
+        
+            <ti type="call_job" job="call-and-go" 
+                flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)">
+                
+              <prop id="cg-call">tk_pgen_print_values_tips_vorlauf</prop>  
+              <file id="pgen-data" x="(file,mm-info)"/>
+              
+              <!-- <prop id="cg-go">mm-op-pgens</prop>     -->
+              <prop id="mm-what">(prop,mm-what)</prop>
+              <file id="mm-liste">(file,mm-liste)</file>
+              <file id="mm-info">(file,mm-info)</file>
+            </ti>    
+          </ti>
+              
+
+         
+        </when>
+        <otherwise>
+          <ti type="rec">
+            <ti type="call_job" job="call-and-go" explain="(prop,_x_edit)" label=" " flag="button" class="fx fxEdit fxEditDetail">
+   
+              <prop id="cg-call">tk_pgen_edit</prop>
+              <file id="pgen-data" x="(file,mm-info)"/>
+              
+              <prop id="cg-go">mm-op-pgens</prop>
+              <prop id="mm-what">(prop,mm-what)</prop>
+              <file id="mm-liste">(file,mm-liste)</file>
+              <file id="mm-info">(file,mm-info)</file>
+            
+            </ti>
+            <ti flag="wrap">(prop,_oppgen_festlegen)</ti>
+          </ti>
+        </otherwise>
+      
+      </choose>
+      <ti_hr/>
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/> -->
+      
+      <prop id="greetings-mm-op-pgens">1</prop>
+       
+      <call_job job="pgo-see-all">
+         <file id="pgos">(file,mm-liste)</file>
+      </call_job>    
+      
+      <ti_space height="5px"/>
+      
+      <call_job job="pgb-see-all">
+         <file id="pgbs">(file,mm-liste)</file>
+      </call_job>          
+      
+    <ti_hr/>
+    
+   
+    <ti type="rec" label=" ">
+      <ti type="call_job" job="pgen-create-pdi-temlate" explain="(prop,_oppgen_create)" flag="button" class="fxAction">
+        <file id="mm-liste">(file,mm-liste)</file>
+        <file id="mm-info">(file,mm-info)</file>
+      </ti>        
+    </ti>
+    
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec" >
+    <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button obutton" align="right" class="fx fxAction justup" job="mm-tester-pgen"/>  
+  </ti>      
+      
+    </when>  
+      
+  </choose>
+</job>
+
+<job id="tk_pgen_print_values_tips_vorlauf" role="hidden">
+   <call_job job="tk_pgen_print_values_tips" />
+
+          <ti type="menu" first_cell="2">
+            <ti type="call_job" job="call-and-go" explain="(prop,_x_edit)" label=" " flag="button" class="fb fbEdit">
+   
+              <prop id="cg-call">tk_pgen_edit</prop>
+              <file id="pgen-data" x="(file,mm-info)"/>
+              
+              <prop id="cg-go">mm-op-pgens</prop>
+              <prop id="mm-what">(prop,mm-what)</prop>
+              <file id="mm-liste">(file,mm-liste)</file>
+              <file id="mm-info">(file,mm-info)</file>
+            
+            </ti> 
+          </ti>   
+      
+</job>
+
+<job id="mm-op-bulks" role="hidden">
+  <need>(prop,mm-what)</need>
+  <when test="(f,not,(f,exists_file,(file,mm-liste)))">
+    <create_file out="(file,mm-liste)">&lt;bulks/&gt;</create_file>
+  </when>
+  <file id="bulks">(file,mm-liste)</file>
+  <choose>
+    <when test="(f,eq_text,all,(prop,mm-what))">
+      
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="bulk-see-all">
+         <file id="bulks">(file,mm-liste)</file>
+      </call_job>
+      
+    </when>  
+  
+    <when test="(f,eq_text,key,(prop,mm-what))">
+    
+      <call_job job="bulk-see">
+         <file id="bulks">(file,mm-liste)</file>
+         <prop id="bulk_key">(prop,mm-key)</prop>
+      </call_job>
+      
+    </when>  
+      
+  </choose>
+</job>
+
+<job id="mm-op-queries" role="hidden">
+  <need>(prop,mm-what)</need>
+  <when test="(f,not,(f,exists_file,(file,mm-liste)))">
+    <create_file out="(file,mm-liste)">&lt;queries/&gt;</create_file>
+  </when>
+  <file id="squerys">(file,mm-liste)</file>
+  <choose>
+    <when test="(f,eq_text,all,(prop,mm-what))">
+      
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="squery-see-all">
+         <file id="squerys">(file,mm-liste)</file>
+      </call_job>
+      
+    </when>  
+  
+    <when test="(f,eq_text,key,(prop,mm-what))">
+    
+      <call_job job="squery-see">
+         <file id="squerys">(file,mm-liste)</file>
+         <prop id="squery_key">(prop,mm-key)</prop>
+      </call_job>
+      
+    </when>  
+      
+  </choose>
+</job>
+
+<job id="mm-op-testdata" role="hidden">
+  <need>(prop,mm-what)</need>
+  <when test="(f,not,(f,exists_file,(file,mm-liste)))">
+    <create_file out="(file,mm-liste)">&lt;testdata/&gt;</create_file>
+  </when>
+  <choose>
+    <when test="(f,eq_text,all,(prop,mm-what))">
+    
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="dsi-see-all">
+         <file id="dsis">(file,mm-liste)</file>
+      </call_job>
+      
+    </when>  
+  
+    <when test="(f,eq_text,key,(prop,mm-what))">
+    
+      <call_job job="dsi-see">
+         <file id="dsis">(file,mm-liste)</file>
+         <prop id="dsi_key">(prop,mm-key)</prop>
+      </call_job>
+      
+    </when>  
+      
+  </choose>
+</job>
+
+<job id="mm-op-hints" role="hidden">
+  <need>(prop,mm-what)</need>
+  <when test="(f,not,(f,exists_file,(file,mm-liste)))">
+    <create_file out="(file,mm-liste)">&lt;compos/&gt;</create_file>
+  </when>
+  <choose>
+    <when test="(f,eq_text,all,(prop,mm-what))">
+    
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="hint-see-all">
+         <file id="hints">(file,mm-liste)</file>
+      </call_job>
+      
+    </when>  
+  
+    <when test="(f,eq_text,key,(prop,mm-what))">
+    
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="hint-see">
+         <file id="hints">(file,mm-liste)</file>
+         <prop id="hint_key">(prop,mm-key)</prop>
+      </call_job>
+      
+    </when>  
+      
+  </choose>
+</job>
+
+<job id="mm-op-dbcis" role="hidden">
+  <need>(prop,mm-what)</need>
+  <when test="(f,not,(f,exists_file,(file,mm-liste)))">
+    <create_file out="(file,mm-liste)">&lt;dbcis/&gt;</create_file>
+  </when>
+  <choose>
+    <when test="(f,eq_text,all,(prop,mm-what))">
+    
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="dbci-see-all">
+         <file id="dbcis">(file,mm-liste)</file>
+      </call_job>
+      
+    </when>  
+  
+    <when test="(f,eq_text,key,(prop,mm-what))">
+    
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="dbci-see">
+         <file id="dbcis">(file,mm-liste)</file>
+         <prop id="dbci_key">(prop,mm-key)</prop>
+      </call_job>
+      
+    </when>  
+      
+  </choose>
+</job>
+
+<job id="mm-see-compositions" role="hidden">
+ <file id="hintlist" x="(dir,filetemp)hintlist.xml"/>
+  <scan out="(file,hintlist)" 
+        dir="(dir,hints)"
+        level_limit="1"
+        field="fn pre" />
+  <ti label="(prop,_hints_intro_coll_pl)"/>      
+  <loop id="hintlist" xml="(file,hintlist)" xpath="file">
+    <ti type="rec" label="(loop,hintlist,#i)." flag="label_right">
+    <ti type="call_job" job="hint-see-all" explain="(loop,hintlist,@pre)">
+      <file id="hints">(loop,hintlist,@fn)</file>
+      <prop id="hints_offset">./</prop>
+      <prop id="hints_offset_label"/>
+      <prop id="hints_offset_new_key">//</prop>
+      <prop id="hints_sort_attribute"/>
+      <prop id="hints_sort_number"/>
+      <prop id="hints_sort_ignore_case"/>
+      <prop id="hints_sort_desc"/>
+      <prop id="hints_where"/>
+      <prop id="hints_return_job">hint-see-all</prop>
+    </ti>
+    </ti>
+  </loop>
+</job>
+
+</jobs>

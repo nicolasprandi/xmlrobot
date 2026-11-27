@@ -1,0 +1,2677 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="_configurations_header2" role="hidden">
+  <prop id="return-job">_configurations_header2</prop>
+   
+
+   <call_job job="-db-close-on-purpose-" />
+  <call_job job="tr_dwi"/>
+  <prop id="xblock"></prop>
+  <prop id="xblock" test="(f,not,(f,implement,online))">block</prop>
+
+  <choose>
+  <when test="(f,exists_file,(dir,pro)icl.xrs)">
+    <ti type="rec" >   
+      <ti></ti>
+                         
+      <ti type="call_job" explain="(f,when,(f,eq_text,(f,interpreter,lang),de),Verbindung zur Db trennen,Disconnect from Db)" flxag="button"  job="stop-dbc-real">  
+      <prop id="return-job">(f,vob,prop,return-job)</prop>
+      </ti> 
+    </ti>  
+    <ti label="(prop,_dwi_last_int)"/>
+    <remove type="file" id="integration-log" flag="catch" />
+    <remove type="prop" id="explain-para" flag="catch" />
+    
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(dir,pro)icl.xrs" />
+      <prop id="joe-in-regex" x="integration-log|explain-para" />
+    </call_job>  
+    
+    <when test="(f,has,file,integration-log)">
+      <ti type="rec" xlabel="(prop,_dwi_int_log)">
+        <ti type="call_job" job="see-log-file" explain="(prop,_dwi_see_log)" flag="button (prop,xblock)" class="fx"> 
+          <file id="logging">(file,integration-log)</file>
+        </ti>    
+        <ti type="file" >(file,integration-log)</ti>
+        <ti >(f,name_of_dir,(f,dir_of_file,(file,integration-log)))</ti>
+      </ti>    
+    </when>
+    
+    <when test="(f,has,prop,explain-para)">
+    
+      <ti xlabel="(prop,_dwi_expl_report)" type="rec">
+        <ti type="call_job" job="see-explain" explain="(prop,_dwi_explain_expl)" flag="button (prop,xblock)" 
+            class="fx fxAdd">
+          <file id="explain-to-see">(prop,explain-para)</file>
+        </ti>
+        <ti type="file" >(prop,explain-para)</ti>  
+        <ti >(f,name_of_dir,(f,dir_of_file,(prop,explain-para)))</ti>             
+      </ti>
+          
+    </when>    
+      
+  </when> 
+  <otherwise> 
+  <call_job job="stop-dbc-gui"/>
+ 
+  </otherwise>       
+  </choose>
+   
+  <ti label="Integration" />   
+  <ti type="rec"> 
+    <ti type="call_job" job="_integrate"  flag="button (prop,xblock) "    
+        explain="(prop,_dwi_integrate)"  class="fx fxEdit justgo" test="(f,right,int)"/>
+  </ti>    
+
+  <ti type="rec">
+
+        <ti type="call_job" explain="Laufende Prozesse"  flag="button (prop,xblock)" 
+            job="process-admin"
+             class="fx redButton" />   
+
+  </ti> 
+
+
+  
+   <when test="(prop,bpRebuild)">     
+   <ti label="Parameter-Datei" />    
+    <ti type="rec">
+   
+        <ti type="call_job" job="ipaxx-print"  flag="button  (prop,xblock)" explain="(f,when,(f,eq_text,(prop,ling),de),Speicherort der Parameter der Massen-Integration,Location of Full-Integration-Parameters)" 
+              class="fx fxAdd" />     
+   
+     </ti>
+     </when>  
+
+
+ 
+  <ti label="Dies und Das" />   
+                   
+    <ti type="rec">
+    
+      <ti type="call_job" job="-db-request-import-return"   test="(f,right,import)"
+          explain="(prop,_dwi_requ_import)"  class="fx fxAdd" flag="button  (prop,xblock)">
+          <prop id="db-import-post-job">_dwh</prop>
+      </ti>   
+          
+        
+    </ti>
+    
+  <ti type="rec">
+      <ti type="call_job" job="-db-giveback-import-return"  flag="button (prop,xblock)"   
+          test="(f,right,import)"
+          explain="(prop,_dwi_fin_import)"  class="fx fxAdd" >
+          <prop id="db-import-post-job">_dwh</prop>
+      </ti>          
+
+  </ti>
+  
+   
+<when test="(f,right,explain)">     
+  <ti type="rec">
+    <ti type="call_job" job="Explain-Report"  flag="button  (prop,xblock)" explain="Alten Explain-Bericht anzeigen" 
+        class="fx fxAdd" />     
+  </ti>
+</when>   
+ <!-- 
+  <ti type="rec">
+      <ti explain="(prop,_dwi_trunc_central)"
+          flag="(prop,xblock) button" class="fx fxEdit"
+          type="call_job"
+          job="clear-tables"
+          test="(f,right,clear)">
+            <prop id="clear-this">int</prop>
+            <prop id="clear-this-explain">(prop,_dwi_d_lab)</prop>
+      </ti>    
+  </ti>
+ 
+  <ti type="rec">
+      <ti explain="Disconnect from Db"
+          flag="(prop,xblock) button" class="fx fxEdit"
+          type="call_job"
+          job="stop-dbc-real">              fb fbEdit cstat
+            <prop id="return-job">_configurations_header2</prop>
+      </ti>    
+  </ti>       -->
+  <!--
+  <ti label="Statistiken" /> 
+  <ti type="rec">
+  
+      <ti type="call_job" 
+          job="sql-run" 
+          flag="button (prop,xblock)" class="fx fxAdd"
+          explain="Boxen-Liste (e:o)Objektanzahl(e:c)" >
+          <file id="sr-file">(dir,app)sql-boxes/1-Count-ObjectsPerBox.sql</file>   
+          <dir id="sr-dir">(dir,app)sql-boxes</dir>     
+          <prop id="sr-label">Import-Boxen</prop>   
+          <prop id="sr-translator">sql-box</prop> 
+          <prop id="sr-class">c</prop> 
+          <prop id="sr-file-name">Liste der Boxen</prop>      
+      </ti>      
+  </ti>  
+  
+  <ti type="rec">
+      <ti type="call_job" 
+          job="sql-run" 
+          flag="button (prop,xblock)" class="fx fxEdit cstat"
+          explain="Anzahl der Boxen je Zustand" >
+          <file id="sr-file">(dir,app)sql-boxes/2-Count-BoxStatus.sql</file>   
+          <dir id="sr-dir">(dir,app)sql-boxes/</dir>     
+          <prop id="sr-label">Import-Boxen</prop>  
+          <prop id="sr-translator">sql-box</prop> 
+          <prop id="sr-class">c</prop> 
+          <prop id="sr-file-name">Anzahl der Boxen je Zustand</prop>
+          
+              
+      </ti>           
+  </ti>
+
+  <ti type="rec">
+      <ti type="call_job" 
+          job="sql-run" 
+          flag="button (prop,xblock)" class="fx fxEdit cstat"
+          explain="DB Sitzungen" >
+          <file id="sr-file">(dir,app)sql-diverse/48-Connections.sql</file>   
+          <dir id="sr-dir">(dir,app)sql-diverse/</dir>     
+          <prop id="sr-label">Connections</prop>  
+          <prop id="sr-translator">sql-box</prop> 
+          <prop id="sr-class">c</prop> 
+          <prop id="sr-file-name">DB-Sitzungen</prop>
+          
+                
+      </ti>           
+  </ti>               
+  -->
+    <!-- 
+    <ti type="rec">
+    
+                    
+
+      <ti type="call_job" job="_mat_views" explain="Materialized Views" test="(f,role,expert)"
+          flag="button " class="fx fxEdit" />            
+      
+      
+    </ti>            
+    <remove type="file" id="the-last-integration" />  --> 
+    <remove type="prop" id="xblock" />
+
+
+</job>
+
+
+
+<job id="_configurations" role="hidden">
+
+  <prop id="return-job">_configurations</prop>
+   <call_job job="stop-dbc-gui"/>
+
+   <call_job job="-db-close-on-purpose-" />
+  
+  <when test="(f,or,(prop,bpDb),(f,right,stat))">  
+        <ti type="menu" >
+        <ti type="call_job" explain="DBCI-Connectoren"  flag="button block" 
+            job="_credits"
+             class="fb " />     
+     </ti> 
+  </when>
+
+  <when test="(f,and,(f,right,mymenu),(f,exists_file,(dir,pro)mysystem.xml))">
+    <try_catch>
+      <try>
+        <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+        <interpreter turbo="0"/>
+        <include file="(dir,pro)mysystem.xml"  />
+        <interpreter turbo="(prop,turbo-antes)"/>      
+        
+      </try>
+      <catch>
+        <ti label="Problem with mysystem.xml"/>
+        <ti label="Error:">(prop,catched_msg)</ti>
+        <ti label="File" type="file">(dir,pro)myhome.xml</ti>
+      </catch>
+    </try_catch>
+  
+  </when>
+        
+  <prop id="techhead">(f,or,(f,right,index),(f,right,mv),(f,right,stat),(f,right,clear))</prop>
+
+  <call_job job="tr_conf"/>
+
+  
+  <ti_break />
+  <ti label="(prop,_sl_conf_main_interface)"/> 
+  
+    
+  <ti type="menu" >
+    <ti type="call_job" job="Nav Conf" flag="button block" class="fb fbEdit " explain="(prop,_sl_conf_conf_navi)" />
+    <ti type="call_job" job="Nav Conf?" explain="(prop,_label_ask)"  
+        flag="button" class="fb fbAsk"/>        
+  </ti>        
+  <ti type="menu">  
+    <ti type="call_job" job="Limit Conf" flag="button block" class="fb fbEdit " explain="(prop,_sl_conf_conf_limits)" />
+    <ti type="call_job" job="Limit Conf?" explain="(prop,_label_ask)" 
+        flag="button" class="fb fbAsk"/>
+  </ti>   
+  
+                        
+   
+  
+
+  
+ 
+  <call_job job="tr_first" />
+
+  <call_job job="tr_setup" />  
+         
+  
+  <when  test="(f,role,user)" >
+  <ti label="(prop,_sl_conf_spec_gui)"/>
+      
+    <ti type="menu" test="(f,role,expert)">    
+      <ti type="call_job" flag="button block"   class="fb fbEdit xjustgui justswitch"                       
+          job="conf-swap-wide"  explain="(f,when,(f,exists_file,(dir,pro)gui/wideoff.txt),(prop,_sl_conf_widewrap_goon),(prop,_sl_conf_widewrap_gooff))">
+      </ti>       
+    </ti>        
+    
+  
+    
+    <ti type="menu">
+    
+      <ti test="(f,role,expert2)"
+          type="call_job" flag="button block"   
+          class="fb fbEdit xjustgui justswitch"                       
+          job="conf-swap-allja" 
+          explain="(f,when,(f,exists_file,(dir,pro)gui/allja.txt),(prop,_sl_conf_allja_goon),(prop,_sl_conf_allja_gooff))" >
+      </ti> 
+      <ti test="(f,not,(f,role,expert2))"
+          type="call_job" flag="button block"   
+          class="fb fbEdit xjustgui justswitch"                       
+          job="conf-swap-allja" 
+          explain="(f,when,(f,exists_file,(dir,pro)gui/allja.txt),(prop,_sl_conf_allja_goon_exp),(prop,_sl_conf_allja_gooff_exp))" >
+      </ti>       
+      
+    </ti>      
+  </when>
+  <!-- <call_job job="conf-stat-intro" test="(f,role,user)"/>   -->
+
+    
+  <when test="(f,and,(f,right,dev),(f,role,expert))" >
+    <ti_hr/>
+    <ti label="(prop,_ex_dev_bulk)"/>
+    <!--
+    <ti label="(prop,_ex_dev_all)"/>
+    <ti >(f,html,b,o)(prop,_ex_dev_bulk)(f,html,b,c)</ti>
+    -->
+    <ti label="(prop,_ex_dev_prop)" type="rec">
+      <ti type="menu">
+        <ti  type="call_job"                 
+        job="bulk-create-all" explain="(prop,_fresh)" flag="button" class="fb fbEdit">
+        <prop id="refresh-back-job">_configurations</prop>
+    </ti>           
+      </ti>
+    </ti>   
+    <!--
+    <ti label="(prop,_ex_dev_prop)" type="call_job"                 
+        job="bulk-create-all" explain="(prop,_fresh)" flag="button block" class="fx fxEdit">
+        <prop id="refresh-back-job">_configurations</prop>
+    </ti>          
+    -->
+        
+    <ti label="(prop,_ex_dev_pub)" type="rec">
+      <ti type="menu">
+        <ti  type="call_job" flag="button"   class="fb fbEdit"              
+            job="sqli-build-zeppelin" explain="(prop,_sl_conf_spec_zeppelin)">
+        </ti>         
+      </ti>
+    </ti>   
+    <ti label="(prop,_ex_dev_all)"/>
+   <ti label="Warten" type="rec"> 
+      <ti type="menu" >
+        <ti type="call_job" explain="(prop,_ex_pid_explain)"  flag="button " 
+            job="process-admin"
+             class="fb redButton" />     
+     </ti>    
+     </ti>           
+    <ti label="(prop,_ex_run_label)" type="rec">
+      <ti type="menu">
+      <!--
+        <ti 
+        type="call_job" 
+        job="run-script-file" 
+         class="fb fbEdit"  flag="button"
+        explain="(prop,_ex_run_explain)" />           -->
+        
+        <ti 
+        type="call_job" 
+        job="run-script-file?" 
+         class="fb fbEdit "  flag="button"         
+        explain="(prop,_ex_run_explain)" />         
+      </ti>
+    </ti>    
+    <ti label="(prop,_ex_dev_learn)" type="rec">
+      <ti type="menu">
+       <ti type="call_job" 
+          job="dev-help" 
+           class="fb fbAdd"  flag="button"
+          explain="(prop,_ex_setup_snip)" />       
+      </ti>
+    </ti>   
+    
+  </when>
+             
+  <when test="(f,role,user)">
+    <ti_hr/> 
+    <when test="(f,or,(f,right,repo),(f,right,db),(f,right,dev),(f,right,ref),(f,right,ipr))" >
+      <call_job job="Competence Center Conf?" />
+    </when>  
+      
+    <call_job job="ps-privilegien" />
+    
+    
+
+    <ti_hr/>
+    <call_job job="Configuration-Paras-2"/>      
+  </when>
+  
+  <ti_hr/>
+  <call_job job="ps-sprachen" />
+  <call_job job="ps-welcome" test="(f,not,(f,has,prop,conf-redo))"/>
+  
+  <when test="(f,role,user)">
+    <call_job job="ps-install"  test="(f,not,(f,has,prop,conf-redo))"/>     
+   </when>  
+   
+  <call_job job="ps-file-report"  test="(f,role,user)"/>  
+    <ti_hr_break/>
+     <ti type="menu" test="(f,role,expert)" >    
+      <ti type="call_job" flag="button "   class="fb fbEdit xjustgui justswitch"                       
+          job="conf-swap-pk"  explain="(f,when,(f,exists_file,(dir,pro)pk.txt),Turn Passwords On,Turn Passwords Off)">
+      </ti>       
+    </ti>     
+
+     <ti type="menu" test="(f,role,expert)" >    
+      <ti type="call_job" flag="button "   class="fb fbEdit xjustgui justswitch"                       
+          job="conf-swap-dc"  explain="(f,when,(f,exists_file,(dir,pro)dc.txt),TURN db-purpose-close Off,TURN db-purpose-close ON)">
+      </ti>       
+    </ti>        
+</job>
+<!--
+ Index-Szenario-File=
+file:///C:/Users/nicol/Documents/Dev-Stick/XmlRobot-Dev/Echnaton-Scripts/xmlrobot-internals/system/service_apps/app.Hibiscus/starter-set/standard-indexpoints-maria-mysql.xml 
+-->
+<job id="process-kill-pid" role="hidden">
+  <tk label="#(prop,pid)">
+  <tk type="msg">Stop background-process 
+#(prop,pid) 
+really?</tk>    </tk>
+  <ti_hr_break/>
+  <process act="kill" pid="(prop,pid)"/>
+  <ti label="Process #(prop,pid) will be stopped at next occasion" />
+  <ti_hr_break/>
+  <call_job job="process-admin"/>
+</job>
+<job id="process-admin" role="hidden">
+  <ti label="List of Processes"/>
+  <file id="plist">(dir,pro)cache/processlist.xml</file>
+  <process act="list_all" file="(file,plist)"/>
+  <prop id="found">0</prop>
+  <prop id="now"></prop>
+  <loop id="plist" xpath="proc" missing_strategy="empty" xml="(file,plist)">
+    <prop id="found">(loop,plist,#i)</prop>
+    <when test="(f,eq_num,1,(loop,plist,#i))">
+      
+      <prop id="now">(loop,plist,..,@now)</prop>
+      <ti type="rec">
+        <ti> </ti>
+        <ti>(f,html,b,o)pid(f,html,b,c)</ti>
+        <ti>(f,html,b,o)state(f,html,b,c)</ti>
+        <ti>(f,html,b,o)type(f,html,b,c)</ti>
+        <ti>(f,html,b,o)started(f,html,b,c)</ti>
+        <ti>(f,html,b,o)user(f,html,b,c)</ti>
+        <ti>(f,html,b,o)details(f,html,b,c)</ti>
+        
+        
+      </ti>    
+    </when>
+    <ti type="rec">
+      <ti type="call_job" job="process-kill-pid" explain="stop" flag="block button" class="fx redButton">
+        <prop id="pid">(loop,plist,@pid)</prop>
+      </ti>
+      <ti>(loop,plist,@pid)</ti>
+      <ti flag="wrap_xword">(f,html,i,o)(loop,plist,@state)(f,html,i,c)</ti>
+      
+      <ti>(loop,plist,@type)</ti>
+      <ti>(loop,plist,@start)</ti>   
+      <ti>(loop,plist,@user)</ti>  
+      <ti>(loop,plist,@details)</ti>
+      
+      <ti test="(f,eq,0,(loop,plist,@alive))">process not alive!</ti>
+    </ti>
+  </loop>
+  <ti_hr />
+  <ti label="Found:">(f,html,b,o)(prop,found)(f,html,b,c) process(f,plural,(prop,found),es)</ti>
+  <ti label="Now:" test="(f,has,prop,now)">(prop,now)</ti>
+  <ti label="File:" type="rec" test="(f,role,test)">
+    <ti type="file">(file,plist)</ti>
+  </ti>
+  <ti_hr style="2"/>                                              
+  <ti label=" " type="call_job" job="process-admin" explain="Refresh" flag="button" class="fx"/>
+
+</job>
+<job id="run-script-file-editrun" role="hidden">
+  <call_job job="File-Edit">
+    <file id="with">(file,with)</file>
+    <prop id="file-edit-encoding">UTF-8</prop>
+  </call_job>
+  <ti_hr_break/>
+  <call_job job="run-script-file">
+    <prop id="do-not-input">1</prop>
+  </call_job>
+
+</job>
+
+<job id="edit-script-file" role="hidden">
+  <call_job job="File-Edit">
+    <file id="with">(file,with)</file>
+    <prop id="file-edit-encoding">UTF-8</prop>
+  </call_job>
+  <ti_hr_break/>
+  <call_job job="run-script-file?">
+  
+  </call_job>
+
+</job>
+<job id="run-script-file-but" role="hidden">
+
+    <ti type="call_job" job="run-script-file" explain="Run Script-File" class="fx fxEdit justgo"  flag="button"     />    
+<ti_space height="5px" /> 
+
+    <ti type="call_job" job="edit-script-file" explain="Edit content of this file" class="fx fxEdit "  flag="button"  >
+      <file id="with">(file,scriptFile)</file>
+      <prop id="file-edit-encoding">UTF-8</prop>
+    </ti>
+<ti_space height="5px" /> 
+    <ti type="call_job" job="run-script-file-editrun" explain="Edit content &amp; Run" class="fx fxEdit justgo"  flag="button"  >
+      <file id="with">(file,scriptFile)</file>
+    </ti>    
+<ti_space height="5px" />    
+    <ti type="call_job" job="run-script-file" explain="Just change File-Reference" class="fx fxEdit "  flag="button"  >
+     <prop id="do-not-run">1</prop>
+    </ti> 
+    
+</job>
+<job id="run-script-file?" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)run-script-file.xml" />
+    <prop id="joe-in-regex" x="scriptFile" />
+  </call_job>  
+  
+    <tk flag="print_only" label="Run Script-File" tk_id="0">
+    <tk type="file" id="scriptFile" label="Script to run" tip="*.xrs" flag="nono"/>
+    </tk>
+    <ti_hr/>  
+
+    <call_job job="run-script-file-but"/>
+
+
+
+</job>
+
+<job id="run-script-file" role="hidden">
+  <need default="0">(prop,do-not-input)</need>
+  <need default="0">(prop,do-not-run)</need>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)run-script-file.xml" />
+    <prop id="joe-in-regex" x="scriptFile" />
+  </call_job>   
+  
+  <when test="(f,not,(prop,do-not-input))">
+    <prop id="top-flag">(f,when,(f,exists_file,(dir,pro)run-script-file.xml),sum_only,sum)</prop>
+    <tk flag="(prop,top-flag) print" label="Run">
+    <tk type="file" id="scriptFile" label="Script to run" tip="*.xrs" flag="nono"/>
+    </tk>
+    <ti_hr/>
+    <call_job job="go-joe-write">
+      <file id="joe-in-store" x="(dir,pro)run-script-file.xml" />         
+      <prop id="joe-in-regex" x="scriptFile" />
+    </call_job>     
+  </when>
+
+  <call_job job="run-script-file-but"/>
+  <!-- 
+    <ti type="call_job" job="run-script-file" explain="Run Script-File again" class="fx fxEdit justgo"  flag="button" />
+
+
+    <ti type="call_job" job="File-Edit" explain="Edit content of this file" >
+      <file id="with">(file,scriptFile)</file>
+      <prop id="file-edit-encoding">UTF-8</prop>
+    </ti>
+
+    <ti type="call_job" job="run-script-file-editrun" explain="Edit content &amp; Run" >
+      <file id="with">(file,scriptFile)</file>
+    </ti>
+     
+    <ti type="call_job" job="run-script-file" explain="Just change File-Reference" >
+     <prop id="do-not-run">1</prop>
+    </ti> 
+
+    -->
+ 
+   <when test="(f,not,(prop,do-not-run))">
+  <ti_hr_break/>
+  
+  
+        <choose>
+          <when test="(f,right,fork)">
+          
+            <call_job job="go-joe-read">
+              <file id="joe-in-store" x="(dir,pro)run-script-how.xml" />
+              <prop id="joe-in-regex" x="run-sqli-as-fork" />
+            </call_job>   
+            
+            <tk label="Run: (f,name_of_file,(file,scriptFile))" flag="sum">
+            <tk type="sel" id="run-sqli-as-fork" x="0" flag="nono" label="Execution-Mode"
+                tip="ForeGround will make you wait. &#xA;BackGround runs the script in kind of 'parallel' mode. That means you can do meanwhile other things. BackGround-Mode will ignore all user-dialogs within the script. Use the Process-Administration to stop background-processes.">
+               <sel label="Run in Foreground">0</sel>
+               <sel label="Run in Background">2</sel>
+            </tk>
+            </tk>
+            
+            <call_job job="go-joe-write"/>
+            
+            <choose>
+              <when test="(f,eq_num,0,(prop,run-sqli-as-fork))">
+                <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+                <interpreter turbo="0"/>
+                <include file="(file,scriptFile)"/>
+                <interpreter turbo="(prop,turbo-antes)"/>              
+                
+              </when>
+              
+              <when test="(f,eq_num,1,(prop,run-sqli-as-fork))">
+                <call_app 
+                  app="(prop,app)"
+                  pro_id="(prop,pro)"
+                  pro_dir="(dir,pro)"
+                  job="do-fork-include">
+                  <file id="to-include">(file,scriptFile)</file>
+                </call_app>
+              </when>
+                            
+              <otherwise>
+                <!-- <tk type="msg">Going to do the fork ...</tk>   -->
+                <call_app 
+                  app="(prop,app)"
+                  pro_id="(prop,pro)"
+                  pro_dir="(dir,pro)"
+                  job="do-fork-include"
+                  flag="fork">
+                  <file id="to-include">(file,scriptFile)</file>
+                </call_app>
+                
+                <call_job job="process-admin" />
+              </otherwise>
+            </choose>
+          </when>
+          <otherwise>
+            <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+            <interpreter turbo="0"/>
+            <include file="(file,scriptFile)"/>
+            <interpreter turbo="(prop,turbo-antes)"/>          
+            
+          </otherwise>
+        </choose>
+     </when>
+</job>
+
+<job id="File-Edit" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_job job="tr_fedit"/>
+  <prop id="encoding">UTF-8</prop>
+  
+  <prop id="content" x="(f,file_content,(file,with),(prop,encoding))"/>
+  <prop id="content_before" x="(prop,content)"/>
+  <tk>
+  <tk type="textblock" flag="big bigbig wrap wide" id="content" label="(prop,_fedit_edit_label) (f,name_of_file,(file,with))"/>
+  </tk>
+  <choose>
+  <when test="(f,not,(f,eq_text,(prop,content),(prop,content_before)))">
+    
+     <prop id="delete-pro-2" x="1"/>                
+    <tk label="(prop,_fedit_sure)" 
+    	type="accept" 
+    	id="delete-pro-1" 
+    	x="(prop,_fedit_sure2)&#xA;(file,with)&#xA;(prop,_fedit_sure3)" 
+    	label_accept="(prop,_fedit_overwrite)" 
+    	label_decline="(prop,_fedit_forget)" 
+    	width="300" height="150">
+    	<q id="delete-pro-2" label="(prop,_fedit_iknow)"  flag="load"/>
+    </tk>
+    
+    <!-- fail if question not answered properly -->
+    <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+      <ti>(prop,_fedit_terminated)</ti>
+    	<throw>(prop,_fedit_terminated)</throw>
+    </when> 
+    <create_file out="(file,with)">(prop,content)</create_file>
+
+    <ti>(prop,content)</ti>   
+  </when>
+  <otherwise>
+    <ti>(prop,_fedit_not_updated)</ti>
+  </otherwise>
+  </choose>
+  
+</job>
+
+<job id="tr_fedit" role="hidden">
+ <!--
+ (prop,) (prop,_fedit_) (prop,_fedit__) 
+ <call_service job="tr_fedit"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fedit_edit">Bearbeiten</prop>
+      <prop id="_fedit_encoding">Encoding</prop>
+      <prop id="_fedit_edit_label">Bearbeiten Sie den Inhalt der Datei</prop>
+      <prop id="_fedit_before">Original:</prop>
+      <prop id="_fedit_new">Neu:</prop>
+      <prop id="_fedit_sure">Sind Sie sich betreffend der &#196;nderungen sicher?</prop>
+      <prop id="_fedit_sure2">Sie haben eine Ver&#228;nderung der folgenden Datei angestossen</prop>
+      <prop id="_fedit_sure3">Sind Sie sich sicher???</prop>
+      <prop id="_fedit_overwrite">&#220;berschreiben</prop>
+      <prop id="_fedit_forget">Vergiss es</prop>
+      <prop id="_fedit_iknow">()Ja, mir ist bewusst, dass die alten Inhalte der Datei f&#252;r immer verloren sein werden.()</prop>
+      <prop id="_fedit_terminated">Vorgang auf Wunsch abgebrochen.</prop>
+      <prop id="_fedit_created">Erzeugt</prop>
+      <prop id="_fedit_not_updated">Die Datei wurde nicht ver&#228;ndert und bleibt erhalten.</prop>
+   
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fedit_edit">Edit</prop>
+      <prop id="_fedit_encoding">Encoding</prop>
+      <prop id="_fedit_edit_label">Edit the files content</prop>
+      <prop id="_fedit_before">Original:</prop>
+      <prop id="_fedit_new">New:</prop>
+      <prop id="_fedit_sure">Sure about updating?</prop>
+      <prop id="_fedit_sure2">You commanded to update the file</prop>
+      <prop id="_fedit_sure3">Are you sure about that???</prop>
+      <prop id="_fedit_overwrite">Overwrite it</prop>
+      <prop id="_fedit_forget">Forget it</prop>
+      <prop id="_fedit_iknow">()Yes, I know that the old content of the updated files will be gone forever()</prop>
+      <prop id="_fedit_terminated">Operation terminated on request.</prop>
+      <prop id="_fedit_created">Created</prop>
+      <prop id="_fedit_not_updated">File was not updated and not saved</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="_configurations_header" role="hidden">
+   <call_job job="-db-close-on-purpose-" />
+  <call_job job="tr_dwi"/>
+  <prop id="xblock"></prop>
+  <prop id="xblock" test="(f,not,(f,implement,online))">block</prop>
+
+
+  <when test="(f,exists_file,(dir,pro)icl.xrs)">
+    <ti label="(prop,_dwi_last_int)"/>
+    <remove type="file" id="integration-log" flag="catch" />
+    <remove type="prop" id="explain-para" flag="catch" />
+    
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(dir,pro)icl.xrs" />
+      <prop id="joe-in-regex" x="integration-log|explain-para" />
+    </call_job>  
+    
+    <when test="(f,has,file,integration-log)">
+      <ti type="rec" label="(prop,_dwi_int_log)">
+        <ti type="call_job" job="see-log-file" explain="(prop,_dwi_see_log)" flag="silent button" class="fx"> 
+          <file id="logging">(file,integration-log)</file>
+        </ti>    
+        <ti type="file" >(file,integration-log)</ti>
+        <ti >(f,name_of_dir,(f,dir_of_file,(file,integration-log)))</ti>
+      </ti>    
+    </when>
+    
+    <when test="(f,has,prop,explain-para)">
+    
+      <ti label="(prop,_dwi_expl_report)" type="rec">
+        <ti type="call_job" job="see-explain" explain="(prop,_dwi_explain_expl)" >
+          <file id="explain-to-see">(prop,explain-para)</file>
+        </ti>
+        <ti type="file" >(prop,explain-para)</ti>  
+        <ti >(f,name_of_dir,(f,dir_of_file,(prop,explain-para)))</ti>             
+      </ti>
+          
+    </when>    
+      
+  </when>       
+    
+  <ti label="(prop,_dwi_panel)" /> 
+  <ti type="rec"> 
+    <ti type="call_job" job="_integrate"  flag="button (prop,xblock) "    
+        explain="(prop,_dwi_integrate)"  class="fx fxEdit justgo" test="(f,right,int)"/>
+
+      <ti type="call_job" 
+          job="sql-run" 
+          flag="button  (f,when,(f,not,(f,right,int)),(prop,xblock),)" class="fx fxEdit cstat"
+          explain="Boxen-Liste (e:o)Objektanzahl(e:c)" >
+          <file id="sr-file">(dir,app)sql-boxes/1-Count-ObjectsPerBox.sql</file>   
+          <dir id="sr-dir">(dir,app)sql-boxes</dir>     
+          <prop id="sr-label">Import-Boxen</prop>   
+          <prop id="sr-translator">sql-box</prop> 
+          <prop id="sr-class">c</prop> 
+          <prop id="sr-file-name">Liste der Boxen</prop>      
+      </ti>    
+
+  </ti>      
+    
+    <ti type="rec">
+          
+      <ti type="call_job" 
+          job="stop-dbc-real" 
+          class="fx fxEdit "  flag="button (prop,xblock)"
+          explain="(prop,_closedb)" ></ti>    
+                    
+      <ti type="call_job" 
+          job="sql-run" 
+          flag="button" class="fx fxEdit cstat"
+          explain="Anzahl der Boxen je Zustand" >
+          <file id="sr-file">(dir,app)sql-boxes/2-Count-BoxStatus.sql</file>   
+          <dir id="sr-dir">(dir,app)sql-boxes/</dir>     
+          <prop id="sr-label">Import-Boxen</prop>  
+          <prop id="sr-translator">sql-box</prop> 
+          <prop id="sr-class">c</prop> 
+          <prop id="sr-file-name">Anzahl der Boxen je Zustand</prop>
+          
+          <!-- <prop id="sr-no-stat-menu">1</prop> -->         
+      </ti>         
+              
+           
+    </ti>
+    
+    <ti type="rec">
+    
+      <ti type="call_job" job="-db-request-import-return"   test="(f,right,import)"
+          explain="(prop,_dwi_requ_import)"  class="fx fxAdd" flag="button  (prop,xblock)">
+          <prop id="db-import-post-job">_dwh</prop>
+      </ti>   
+          
+      <ti type="call_job" job="-db-giveback-import-return"  flag="button"   
+          test="(f,right,import)"
+          explain="(prop,_dwi_fin_import)"  class="fx fxAdd" >
+          <prop id="db-import-post-job">_dwh</prop>
+      </ti>                  
+    </ti>    
+    <!-- 
+    <ti type="rec">
+    
+      <ti explain="(prop,_dwi_trunc_central)"
+          flag="(prop,xblock) button" class="fx fxEdit"
+          type="call_job"
+          job="clear-tables"
+          test="(f,right,clear)">
+            <prop id="clear-this">int</prop>
+            <prop id="clear-this-explain">(prop,_dwi_d_lab)</prop>
+      </ti>                      
+
+      <ti type="call_job" job="_mat_views" explain="Materialized Views" test="(f,role,expert)"
+          flag="button " class="fx fxEdit" />            
+      
+      
+    </ti>            
+    <remove type="file" id="the-last-integration" />  --> 
+    <remove type="prop" id="xblock" />
+
+
+</job>
+
+ 
+
+
+<job id="ps-file-report" role="hidden">
+     
+     <!-- <ti_hr/>  -->
+    <ti label="(prop,_sl_conf_locs)"/>
+
+    <ti label="(f,html,b,o)(e:o)dir(e:s)pro(e:c)(f,html,b,c)(f,html,b,c)">(f,html,b,o)(prop,_sl_conf_proj)(f,html,b,c)</ti> 
+    <ti label=" " type="dir">(dir,pro)</ti> 
+    <ti label=" " flag="wrap">(dir,pro)</ti>
+          
+    <!-- <ti label="Queries and Bulks (e:o)Scripting(e:c)" />      -->
+    <ti label="(f,html,b,o)(e:o)dir(e:s)goMoon(e:c)(f,html,b,c)" >(f,html,b,o)(prop,_sl_conf_moon)(f,html,b,c)</ti>
+    <ti label=" " type="dir">(dir,goMoon)</ti>    
+    <ti label=" " flag="wrap">(dir,goMoon)</ti>
+    <!-- <ti_break/>-->
+    
+    <when test="(f,has,dir,cc_ref)">
+      <ti label="(f,html,b,o)(prop,_sl_conf_refs)(f,html,b,c)" type="dir" >(dir,cc_ref)</ti>      
+      <ti label=" " flag="wrap">(dir,cc_ref)</ti>
+    </when>
+    
+    <!--<ti_hr_break/> <ti label="Compositions and Testdata" />          -->
+    <ti label="(f,html,b,o)(e:o)dir(e:s)goTestdata(e:c)(f,html,b,c)" >(f,html,b,o)(prop,_sl_conf_testdata)(f,html,b,c)</ti>
+    <ti label=" " type="dir">(dir,goTestdata)</ti>
+    <ti label=" " flag="wrap">(dir,goTestdata)</ti>
+    
+    <ti label="(f,html,b,o)(e:o)dir(e:s)goCompos(e:c)(f,html,b,c)" >(f,html,b,o)(prop,_sl_conf_compos)(f,html,b,c)</ti>
+    <ti label=" " type="dir">(dir,goCompos)</ti>
+   
+    <ti label=" " flag="wrap">(dir,goCompos)</ti>
+
+    <ti_hr/>
+    
+    <ti label="(prop,_sl_conf_runtime)"/>
+    
+    <ti label="(f,html,b,o)(prop,_sl_conf_paras)(f,html,b,c)" type="dir">(dir,phome)</ti>  
+    <ti label=" " flag="wrap">(dir,phome)</ti>
+
+    <ti label="(f,html,b,o)(prop,_sl_conf_res)(f,html,b,c)" type="dir">(dir,rhome)</ti>
+    <ti label=" " flag="wrap">(dir,rhome)</ti>
+
+    <ti label="(f,html,b,o)(prop,_sl_conf_guic)(f,html,b,c)" type="dir">(dir,ghome)</ti>
+    <ti label=" " flag="wrap">(dir,ghome)</ti>
+    <ti_break/>
+
+</job>
+
+
+            <!--  (prop,_sl_conf_main_systems) -->
+<job id="Configuration-Paras-2" pri="10" role="hidden">
+  
+
+  <call_job job="tk_db_read_dbms"/>
+  <choose>
+    <when test="(f,not,(f,has,prop,db_dbms))">
+      <prop id="dbms-to-print"></prop>
+    </when>  
+    <when test="(f,eq_text,(prop,db_dbms),maria)">
+      <prop id="dbms-to-print">: MariaDb</prop>
+    </when>
+    <when test="(f,eq_text,(prop,db_dbms),mysql)">
+      <prop id="dbms-to-print">: MySql</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,db_dbms),postgres)">
+      <prop id="dbms-to-print">: Postgres</prop>
+    </when>       
+    <otherwise>
+      <prop id="dbms-to-print">: (prop,db_dbms)</prop>
+    </otherwise>
+  </choose>
+  <ti label="Vokabular"/>
+  
+    <when test="(prop,bpRepo)">
+      <ti type="menu" >                            
+        <ti type="call_job" job="_vokabular" xxjob="Select Excel" 
+            explain="(prop,_sl_conf_select_excel)"  flag="button block" class="fb fbEdit">
+          <prop id="tk-para-edit-and-links">1</prop>
+          <prop id="sel-excel-from-conf">1</prop>
+        </ti>
+      </ti> 
+    
+        <ti type="menu">  
+          <ti type="call_job" job="Lingua Conf" flag="button block" class="fb fbEdit fbConf" 
+                   
+          explain="(prop,_sl_conf_sprache_repo)" />
+          
+          <ti type="call_job" job="Lingua Conf?" explain="(prop,_label_ask)"
+              flag="button" class="fb fbAsk" />
+        </ti> 
+       </when>         
+    <when  test="(f,role,user)">>
+    
+      <ti type="menu">
+          <ti type="call_job" job="vok-report-obj" explain="Stat: Obj" flag="button block" class="fb fbEdit cstat"/>
+          <ti type="call_job" job="vok-report-attr" explain="Stat: Attr" flag="button" class="fb fbEdit cstat"/>
+          <ti type="call_job" job="vok-report-bez" explain="Stat: Bez" flag="button" class="fb fbEdit cstat"/>  
+      </ti>    
+    
+    </when>
+
+  <ti label="(prop,_sl_conf_config_db_explain)(prop,dbms-to-print)"
+      test="(f,or,(prop,bpDb),(f,right,stat))"/>
+   
+
+    <when test="(prop,bpDb)" >
+
+        <ti type="menu">      
+          <ti type="call_job" job="Db Conf" flag="button wrap block" class="fb fbEdit" explain="(prop,_sl_conf_config_db)" />
+          <ti type="call_job" job="Db Conf?" explain="(prop,_label_ask)" 
+          flag="button" class="fb fbAsk"/>
+        </ti>
+
+    </when> 
+  
+     <when test="(f,right,stat)" >
+    <ti type="menu">
+        <ti type="call_job" job="_new_stat" 
+            explain="Db-Stats"  flag="button block " class="fb fbEdit cstat" />         
+    </ti>
+    </when>     
+
+      <ti type="menu" >
+        <ti type="call_job" explain="DBCI-Connectoren"  flag="button block" 
+            job="_credits"
+             class="fb " />     
+     </ti>      
+
+
+     <!-- 
+    <ti type="menu">
+          
+      <ti type="call_job" 
+          job="stop-dbc-real" 
+          class="fb fbEdit "  flag="button block"
+          explain="(prop,_closedb)" ></ti>    
+                              
+    </ti>            -->
+          
+
+
+    
+     
+    <ti label="(prop,_sl_conf_config_kitchen_explain)" test="(f,or,(f,right,load),(f,right,pdi))"/>    
+    <when test="(f,right,load)">
+
+        <ti type="menu"> 
+          <ti type="call_job" job="Kitchen Conf" flag="button block" class="fb fbEdit" explain="(prop,_sl_conf_config_kitchen)"/>
+          <ti type="call_job" job="Kitchen Conf?" explain="(prop,_label_ask)"        
+          flag="button" class="fb fbAsk"/>
+        </ti>
+   
+    
+      <ti type="menu" >
+        <ti type="call_job" job="_load_data"  flag="button block"
+            explain="(prop,_sl_conf_config_pjobs)"  class="fb fbEdit"/>
+      
+      </ti> 
+   </when>            
+   <when test="(f,right,pdi)">
+      <ti type="menu"   >
+
+          <ti type="call_job" job="_programming" flag="button block" class="fb fbEdit" explain="Pdi/Kettle/Ktr-Generator"/>
+
+        </ti>
+ 
+      <ti type="menu" >
+ 
+        <ti type="call_job" explain="(prop,_ex_setup_iwert)"  flag="button block" 
+            job="Export i_wert"
+             class="fb fbAdd" />     
+
+     </ti>      
+   </when>
+   
+
+
+
+</job>
+
+<job id="Competence Center Conf?" role="hidden">
+ 
+  
+  <when test="(f,has,prop,pro)">
+    <call_job job="tk_cc_print_values" />
+    
+    
+    <ti type="menu" first_cell="2">
+
+      <ti type="call_job" job="Competence Center Conf" explain="(prop,_x_edit)" 
+          flag="button" class="fb fbEdit"/>      
+    
+  
+      <ti type="call_job" job="tk_cc_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)">
+          <prop id="print-cc-all-fields">1</prop>
+      </ti>    
+    </ti>
+            
+  </when>  
+</job>
+
+<job id="Competence Center Conf" role="hidden">
+  <call_job job="tk_cc_edit"/>
+  <call_job job="prolog"/>
+  <ti_hr/>
+  <call_job job="_configurations" />
+
+</job>
+
+<job id="ps-privilegien" role="hidden">
+
+  <ti label="(prop,_ex_setup_berecht)"/>    
+  <ti label="(prop,_ex_setup_aktrolle):">(f,role)</ti>
+  <ti label=" " type="call_job" job="see-my-rights" explain="(prop,_ex_setup_aktrights)" test="(f,role,user)"/>
+  
+  
+</job>
+
+<job id="see-my-rights"  role="hidden">
+  <call_job job="tr_setup" />
+  <ti label="(prop,_ex_setup_aktrights)"/>
+  <loop id="r" xml="(dir,app)rights.xml" xpath="r" missing_strategy="empty">
+    <prop id="hasit">(f,when,(f,right,(loop,r,@id)),ok,x)</prop>
+    <ti label="(loop,r,@id)" type="rec">
+      <ti>(prop,hasit)</ti>
+      <ti flag="wrap_word">(loop,r,(prop,ling))</ti>
+    </ti>
+  
+  </loop>
+
+</job>
+
+<job id="conf-swap-wide"  role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(dir,pro)gui/wideoff.txt)">
+      <delete file="(dir,pro)gui/wideoff.txt"/>
+    </when>
+    <otherwise>
+      <create_file out="(dir,pro)gui/wideoff.txt">do-align</create_file>
+    </otherwise>
+  </choose>
+  <call_job job="_configurations"/>
+</job>
+
+<job id="conf-swap-pk"  role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(dir,pro)pk.txt)">
+      <delete file="(dir,pro)pk.txt"/>
+    </when>
+    <otherwise>
+      <create_file out="(dir,pro)pk.txt">pk</create_file>
+    </otherwise>
+  </choose>
+  <call_job job="_configurations"/>
+</job>
+
+<job id="conf-swap-dc"  role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(dir,pro)dc.txt)">
+      <delete file="(dir,pro)dc.txt"/>
+    </when>
+    <otherwise>
+      <create_file out="(dir,pro)dc.txt">dc</create_file>
+    </otherwise>
+  </choose>
+  <call_job job="_configurations"/>
+</job>
+
+
+
+
+<job id="conf-swap-allja"  role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(dir,pro)gui/allja.txt)">
+      <delete file="(dir,pro)gui/allja.txt"/>
+    </when>
+    <otherwise>
+      <create_file out="(dir,pro)gui/allja.txt">do-alway-show</create_file>
+    </otherwise>
+  </choose>
+  <call_job job="_configurations"/>
+</job>
+
+
+
+<job id="_vokabular"  role="hidden">
+
+ <call_job job="tk_para_read"/>
+ <call_job job="tr_vokabulary"/>
+ <choose>
+ 
+  <when test="(f,not,(f,has,file,para_file_vok))">
+    <ti label="(prop,_vok_problem)">(prop,_vok_novokdefined)</ti>
+    <ti label="(prop,_vok_repair)" type="call_job" job="Select Excel"/>
+  </when>
+  <otherwise>
+     <ti label="(prop,_vok_vok_files)"/>
+     
+      <ti type="file" label="(prop,_vok_excel_input_l)" x="(f,vob,file,para_file_vok)" test="(f,file_exists,(file,para_file_vok))"/>
+      <ti             label="(prop,_vok_excel_input_l)" x="(prop,_vok_noexcel)" test="(f,not,(f,file_exists,(file,para_file_vok)))"/>
+         
+      <ti type="file" label="(prop,_vok_xml_vok_l)" x="(f,vob,file,vok)" test="(f,file_exists,(file,vok))"/>
+      <ti             label="(prop,_vok_xml_vok_l):" x="(prop,_vok_noxml)" test="(f,not,(f,file_exists,(file,vok)))"/>
+  
+
+  </otherwise>
+  </choose>
+
+
+  <call_job job="vok-aktionen">
+    <prop id="vok-aktionen-typ">1</prop>
+  </call_job>
+
+</job>   
+
+<job id="vok-aktionen" xpri="10" role="hidden">
+  <need>(prop,vok-aktionen-typ)</need>    <!--  1 = alle 3
+                                                2 = letzten 2 
+                                                3 = letzten -->
+  <call_job job="tr_vokabulary"/>
+  
+  
+  <prop id="had-aktionen-header">0</prop>
+  
+
+  
+  <when test="(f,lte_num,(prop,vok-aktionen-typ),1)">   
+      <when test="(f,not,(prop,had-aktionen-header))">
+          <ti label="(prop,_vok_aktionen)"/>
+          <prop id="had-aktionen-header">1</prop>
+      </when>    
+     <ti type="call_job" job="Select Excel" label="1. " flag="label_right" explain="(prop,_vok_select_excel_l)">
+      <prop id="tk-para-edit-and-links">1</prop>
+     </ti> 
+  </when> 
+  
+  <when test="(f,lte_num,(prop,vok-aktionen-typ),2)">    
+      <when test="(f,not,(prop,had-aktionen-header))">
+          <ti label="(prop,_vok_aktionen)"/>
+          <prop id="had-aktionen-header">1</prop>
+      </when>   
+     <ti type="call_job" job="Import Excel-Vokabular" label="2. " flag="label_right" explain="(prop,_vok_import_excel_l)">
+      <prop id="import-excel-and-links">1</prop>
+     </ti> 
+     
+  </when>   
+                                                             
+  <when test="(f,and,(f,lte_num,(prop,vok-aktionen-typ),3),(f,right,load))">     
+      <when test="(f,not,(prop,had-aktionen-header))">
+          <ti label="(prop,_vok_aktionen)"/>
+          <prop id="had-aktionen-header">1</prop>
+      </when>                                                  
+      
+
+            
+      <ti type="call_job" job="vok-upload" label="3." explain="(prop,_vok_load_l)" flag="label_right">
+        <!-- <file id="pentaho-job-to-run">(dir,app_pdi)job-LOAD-VOK.kjb</file> -->
+      </ti> 
+  </when>     
+  
+  <remove type="prop" id="had-aktionen-header"/>
+ 
+</job>
+
+
+
+<job id="Nav Conf" role="hidden">
+   <call_job job="tk_nav_edit"/>
+   <call_job job="did-edit-a-conf" />
+</job>
+
+<job id="Nav Conf?" role="hidden">
+
+  <ti_break class_table="tabNavigator"/>
+
+  <ti type="rec">
+    <ti type="call_job" job="_configurations" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" />
+  </ti>  
+     
+  <ti_break/>   
+  <when test="(f,has,prop,pro)">
+    <call_job job="tk_nav_print_values" test="(f,has,prop,pro)"/>
+    <ti_hr/>  
+    
+    <ti type="menu" first_cell="2">
+      <ti type="call_job" job="Nav Conf" explain="(prop,_x_edit)" 
+          flag="button" class="fb fbEdit"/>
+  
+      <ti type="call_job" job="tk_nav_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)"/>   
+    </ti>
+    
+    
+  </when>
+        
+</job>
+
+<job id="Gpref Conf" role="hidden">
+   <call_job job="tk_gpref_edit"/>
+   <call_job job="did-edit-a-conf" />
+</job>
+
+<job id="Gpref Conf?" role="hidden">
+
+   
+  <when test="(f,has,prop,pro)">
+    <call_job job="tk_gpref_print_values" test="(f,has,prop,pro)"/>
+    <ti_hr/>  
+    
+    <ti type="menu" first_cell="2">
+      <ti type="call_job" job="Gpref Conf" explain="(prop,_x_edit)" 
+          flag="button" class="fb fbEdit"/>
+  
+      <ti type="call_job" job="tk_gpref_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)"/>    
+    </ti>
+    
+    
+  </when>
+        
+</job>
+
+<job id="Lingua Conf" role="hidden">
+   <call_job job="tk_lingua_edit"/>
+   <call_job job="did-edit-a-conf" />
+</job>
+
+<job id="Lingua Conf?" role="hidden">
+
+  <ti_break class_table="tabNavigator"/>
+
+  <ti type="rec">
+    <ti type="call_job" job="_configurations" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" />
+  </ti>  
+     
+  <ti_break/>
+  <when test="(f,has,prop,pro)">
+    <call_job job="tk_lingua_print_values" test="(f,has,prop,pro)"/>
+    <ti_hr/>  
+    
+    <ti type="menu" first_cell="2">
+      <ti type="call_job" job="Lingua Conf" explain="(prop,_x_edit)" 
+          flag="button" class="fb fbEdit"/>
+  
+      <ti type="call_job" job="tk_lingua_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)"/>    
+    </ti>
+        
+  </when>
+        
+</job>
+
+<job id="Select Excel" pri="10" role="hidden">
+  <need default="0">(prop,sel-excel-from-conf)</need>
+   <call_job job="tk_para_edit"/>
+
+ <call_job job="return-to-sender" />
+ <when test="(prop,sel-excel-from-conf)" >
+
+  <call_job job="did-edit-a-conf"/>
+ </when>
+</job>
+
+<job id="Select Excel?">
+
+  <when test="(f,has,prop,pro)">
+    <call_job job="tk_para_print_values" test="(f,has,prop,pro)"/>
+    <ti_hr/>  
+    
+   
+    <!--
+    <ti type="rec" > 
+      <ti> </ti>
+      <ti type="call_job" xxjob="_vokabular" job="Select Excel" explain="(prop,_x_edit)" flag="button" class="fx fxEdit fxEditDetail fxEditDetailConf" label=" ">
+        <prop id="tk-para-edit-and-links">1</prop>
+        <prop id="sel-excel-from-conf">1</prop>
+        
+      </ti>
+      <ti type="call_job" job="" flag="button" class="fx fxAskAsk fxAskAskConf" explain="(prop,_label_askask)" label=" " align="right"/>    
+    </ti>
+    -->  
+    <ti type="menu" first_cell="2">
+      <ti type="call_job" job="Select Excel" explain="(prop,_x_edit)" flag="button" class="fb fbEdit" >
+        <prop id="tk-para-edit-and-links">1</prop>
+        <prop id="sel-excel-from-conf">1</prop>
+        
+      </ti>
+            
+      <ti type="call_job" job="tk_para_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)"/>    
+    </ti> 
+    
+  </when>
+  
+
+</job>
+<job id="did-edit-a-conf" role="hidden">
+
+  <when test="(f,not,(f,has,prop,from-sender))">
+    <!-- <ti_hr_break/> -->
+    <ti_hr_break/>
+    <prop id="conf-redo">1</prop>
+    <call_job job="_configurations"/>
+                          
+  </when>
+  
+</job>
+
+<job id="Db Conf" pri="10" role="hidden">
+   <call_job job="tk_db_edit" test="(f,has,prop,pro)"/>
+   <call_job job="return-to-sender" />
+   <call_job job="did-edit-a-conf" />
+</job>
+
+<job id="Db Conf?">
+
+  <ti_break class_table="tabNavigator"/>
+
+  <ti type="rec">
+    <ti type="call_job" job="_configurations" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" />
+  </ti>  
+     
+  <ti_break/>
+  
+  <when test="(f,has,prop,pro)">
+    <call_job job="tk_db_print_values" test="(f,has,prop,pro)"/>
+    <ti_hr/>  
+    
+    <ti type="menu" first_cell="2">
+      <ti type="call_job" job="Db Conf" explain="(prop,_x_edit)" 
+          flag="button" class="fb fbEdit"/>
+  
+      <ti type="call_job" job="tk_db_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)"/>    
+    </ti>
+        
+  </when>
+</job>
+
+<job id="Limit Conf" pri="10" role="hidden">
+  <when test="(f,has,prop,pro)">
+   <call_job job="tk_limit_edit"/>
+   <call_job job="did-edit-a-conf" />
+  </when>
+</job>
+
+<job id="Limit Conf?">
+
+  <ti_break class_table="tabNavigator"/>
+
+  <ti type="rec">
+    <ti type="call_job" job="_configurations" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" />
+  </ti>  
+     
+  <ti_break/>
+  <when test="(f,has,prop,pro)">
+    <call_job job="tk_limit_print_values" test="(f,has,prop,pro)"/>
+    <ti_hr/>  
+    
+    <ti type="menu" first_cell="2">
+      <ti type="call_job" job="Limit Conf" explain="(prop,_x_edit)" 
+          flag="button" class="fb fbEdit"/>
+  
+      <ti type="call_job" job="tk_limit_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)"/>    
+    </ti>
+
+  </when>
+</job>
+
+
+
+
+
+
+<job id="config-einfaedler" role="hidden">
+  <ti type="call_job" job="??" explain="See then here again ..." test="0"/>
+  <call_job job="Db Conf"/>
+  <call_job job="??"/>
+</job>
+
+
+<job id="return-to-sender" role="hidden">
+  <when test="(f,has,prop,from-sender)">
+    <ti_hr_break/>
+    <call_job job="(prop,guided-setup-job)"/>
+  </when>
+</job>
+
+     
+<job id="guided-setup-simple" tip="connecting to a existing database" role="hidden" pri="10">
+    <need default="00">(prop,from-sender)</need>
+    <prop id="guided-setup-job">guided-setup-simple</prop>
+    <prop id="next-sender">(f,add,1,(prop,from-sender))</prop>
+    <call_job job="tr_gs"/>
+    <!-- 
+    <ti label="from-sender">(prop,from-sender)</ti>
+    <ti label="next-sender">(prop,next-sender)</ti>    -->
+    <choose>
+      <when test="(f,eq_num,0,(prop,from-sender))">
+        <ti label="(prop,_ex_gs_setup_simple)"/>
+        <ti flag="wrap">(prop,_ex_gs_follow)</ti>
+      </when>
+      <otherwise>
+        <prop id="simple-ist-fertig">0</prop>
+        <choose>
+          <when test="(f,and,(prop,bpRepo),(prop,bpDb))">
+              <prop id="simple-ist-fertig" test="(f,eq_num,(prop,next-sender),22)">1</prop>
+          </when>      
+          <when test="(prop,bpDb)">
+              <prop id="simple-ist-fertig" test="(f,eq_num,(prop,next-sender),13)">1</prop>
+          </when>     
+          <when test="(prop,bpRepo)">
+              <prop id="simple-ist-fertig" test="(f,eq_num,(prop,next-sender),22)">1</prop>
+          </when>                                 
+        </choose>
+        <choose>
+          <when test="(prop,simple-ist-fertig)">
+            <ti label="(prop,_ex_gs_5_fertig)" />
+            <ti>(prop,_ex_gs_5_liste):</ti>
+            <call_job job="_objects"/>
+            <ti_hr/>     
+          
+             <ti label="(prop,_ex_gs_5al)" type="call_job" job="_objects" xflag="label_right" explain="(prop,_ex_gs_5at)"/>
+             <ti label="(prop,_ex_gs_5bl)" type="call_job" job="_search" explain="(prop,_ex_gs_5bt)"
+                  />
+             <ti label="(prop,_ex_gs_6bl)" type="call_job" job="_new_stat" explain="(prop,_ex_gs_6bt)"
+                  test="(f,or,(f,right,stat),(f,right,clear))"/>
+          </when>
+          <otherwise>
+            <ti label="(prop,_ex_gs_continue_simple) (prop,_ex_gs_next)"/>
+    
+            <ti_hr_break/>          
+          </otherwise>
+        
+        </choose>
+        <remove id="simple-ist-fertig" type="prop"/>
+      </otherwise>
+    </choose>
+    
+    
+  <when test="(prop,bpDb)">  
+  <when test="(f,lt_num,(prop,next-sender),13)">
+    <ti>(f,html,b,o)(prop,_ex_gs_1)(f,html,b,c)</ti>
+    <when test="(f,lt_num,(prop,next-sender),12)">
+       <ti label="a(e:c) (f,html,i,o)(prop,_ex_gs_1cl)(f,html,i,c)" type="call_job" job="Db Conf" explain="(prop,_ex_gs_1ct)">
+        <prop id="from-sender">11</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+       </ti>
+       <ti label=" " type="ul">(prop,_ex_gs_1ct2)</ti>  
+    </when>
+    <when test="(f,lt_num,(prop,next-sender),13)">
+       <ti label="b(e:c) (f,html,i,o)(prop,_ex_gs_1dl)(f,html,i,c)" type="call_job" job="-db-verify-" explain="(prop,_ex_gs_1dt)">
+        <prop id="from-sender">12</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+       </ti>
+       <ti label=" " type="ul">(prop,_ex_gs_1dt2)</ti>  
+       <!-- 
+       <ti label=" " type="ul">(prop,_ex_gs_1dt3)</ti>
+       <ti label=" " type="ul">(prop,_ex_gs_1dt4)</ti>        -->
+    
+       <ti> </ti>
+     </when>
+  </when>
+  </when>
+  
+  <when test="(prop,bpRepo)">
+    <when test="(f,lt_num,(prop,next-sender),22)">
+       <ti>(f,html,b,o)2. (prop,_ex_gs_2)(f,html,b,c)</ti>
+       <when test="(f,lt_num,(prop,next-sender),21)">   
+         <ti label="a(e:c) (f,html,i,o)(prop,_ex_gs_2al)(f,html,i,c)" type="call_job" job="Select Excel" explain="(prop,_ex_gs_2at)">
+          <prop id="from-sender">20</prop>
+          <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+         </ti>
+         <ti label=" " type="ul">(prop,_ex_gs_2at2)</ti>
+         <ti label=" " type="ul">(prop,_ex_gs_2at3)</ti>
+         <ti label=" " type="file"  >(dir,app)vokabular.xls</ti>        
+       </when>
+       <when test="(f,lt_num,(prop,next-sender),22)"> 
+         <ti label="b(e:c) (f,html,i,o)(prop,_ex_gs_2bl)(f,html,i,c)" type="call_job" job="Import Excel-Vokabular" explain="(prop,_ex_gs_2bt)">
+          <prop id="from-sender">21</prop>
+          <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+         </ti>
+         <ti label=" " type="ul">(prop,_ex_gs_2bt2)</ti>
+       </when> 
+       <ti> </ti>
+    </when>
+    
+        
+  </when>
+
+
+</job>
+
+     
+<job id="guided-setup" tip="setup a complete new database" role="hidden" pri="10">
+    <need default="00">(prop,from-sender)</need>
+    <need default="0">(prop,from-shortcut)</need>
+    <prop id="guided-setup-job">guided-setup</prop>
+    <prop id="next-sender">(f,add,1,(prop,from-sender))</prop>
+    <!-- <ti>next-sender=(prop,next-sender)</ti> -->
+    <call_job job="tr_gs"/>
+
+    <choose>
+      <when test="(f,eq_num,0,(prop,from-sender))">
+        <ti label="(prop,_ex_gs_setup_full)"/>
+        <ti flag="wrap">(prop,_ex_gs_follow)</ti>
+      </when>
+      <otherwise>
+        
+        <ti label="(prop,_ex_gs_continue) (f,when,(prop,from-shortcut), (e:o)(prop,_ex_gs_continue_shortcut)(e:c),) ... (prop,_ex_gs_next)"/>
+
+        <ti_hr_break/>
+      </otherwise>
+    </choose>
+    
+   <when test="(f,lt_num,(prop,next-sender),13)">
+     <ti test="(f,or,(f,lt_num,(prop,next-sender),11),(f,and,(prop,bpDb),(f,or,(f,lt_num,(prop,next-sender),12),(f,lt_num,(prop,next-sender),13))))">(f,html,b,o)(prop,_ex_gs_1)(f,html,b,c)</ti>
+     
+     <when test="(f,lt_num,(prop,next-sender),11)">
+       <ti label="a(e:c) (f,html,i,o)(prop,_ex_gs_1al)(f,html,i,c)">(prop,_ex_gs_1at)</ti>
+
+       <ti label="b(e:c) (f,html,i,o)(prop,_ex_gs_1bl)(f,html,i,c)" >(prop,_ex_gs_sc_2moeg):</ti>
+              
+       <ti label="(e:o)b1(e:c)" type="call_job" job="setup-define-database" explain="(prop,_ex_gs_1bt)" flag="label_right wrap">
+        <prop id="from-sender">10</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+       </ti>
+       
+       <ti label=" " type="ul">(prop,_ex_gs_1bt2)</ti>
+       <ti label=" " type="ul">(prop,_ex_gs_1bt3)</ti>
+       
+       <ti label="(prop,_ex_gs_sc_oder) (e:o)b2(e:c):" type="call_job" job="setup-define-database-shortcut" 
+           explain="(prop,_ex_gs_sc_header)" flag="label_right wrap">
+        <prop id="from-sender">10</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+       </ti>
+
+       <ti label=" " type="ul">(prop,_ex_gs_sc_tip1)</ti>
+       <ti label=" " type="ul">(prop,_ex_gs_sc_tip2)</ti>
+              
+    </when>
+    
+    <when test="(prop,bpDb)">
+    <when test="(f,lt_num,(prop,next-sender),12)">
+       <ti label="c(e:c) (f,html,i,o)(prop,_ex_gs_1cl)(f,html,i,c)" type="call_job" job="Db Conf" explain="(prop,_ex_gs_1ct)" flag="wrap">
+        <prop id="from-sender">11</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+        <prop id="from-shortcut">(prop,from-shortcut)</prop>
+       </ti>
+       <ti label=" " type="ul">(prop,_ex_gs_1ct2)</ti>  
+    </when>
+    <when test="(f,lt_num,(prop,next-sender),13)">
+       <ti label="d(e:c) (f,html,i,o)(prop,_ex_gs_1dl)(f,html,i,c)" type="call_job" job="-db-verify-" explain="(prop,_ex_gs_1dt)" flag="wrap">
+        <prop id="from-sender">12</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+        <prop id="from-shortcut">(prop,from-shortcut)</prop>
+       </ti>                                                             
+       <ti label=" " type="ul">(prop,_ex_gs_1dt2)</ti>  
+       <!-- 
+       <ti label=" " type="ul">(prop,_ex_gs_1dt3)</ti>
+       <ti label=" " type="ul">(prop,_ex_gs_1dt4)</ti>        -->
+    
+       <ti> </ti>
+     </when>
+  </when>
+  </when>
+  
+  <when test="(prop,bpRepo)">
+  <when test="(f,lt_num,(prop,next-sender),23)">
+    <choose>
+      <when test="(f,not,(prop,from-shortcut))">
+        <ti>(f,html,b,o)2. (prop,_ex_gs_2)(f,html,b,c)</ti>
+      </when>
+      <otherwise>
+        <when test="(f,lt_num,(prop,next-sender),22)">
+          <ti>(f,html,b,o)2. (prop,_ex_gs_2)(f,html,b,c)</ti>
+        </when>
+      </otherwise>
+    </choose>
+    
+     <when test="(f,lt_num,(prop,next-sender),21)">   
+       <ti label="a(e:c) (f,html,i,o)(prop,_ex_gs_2al)(f,html,i,c)" type="call_job" job="Select Excel" 
+          explain="(prop,_ex_gs_2at)" flag="wrap">
+        <prop id="from-sender">20</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+        <prop id="from-shortcut">(prop,from-shortcut)</prop>
+       </ti>
+       <ti label=" " type="ul">(prop,_ex_gs_2at2)</ti>
+       <ti label=" " type="ul">(prop,_ex_gs_2at3)</ti>
+       <ti label=" " type="file"  >(dir,app)vokabular.xls</ti>
+     </when>
+     <when test="(f,lt_num,(prop,next-sender),22)"> 
+       <ti label="b(e:c) (f,html,i,o)(prop,_ex_gs_2bl)(f,html,i,c)" type="call_job" job="Import Excel-Vokabular" 
+          explain="(prop,_ex_gs_2bt)" flag="wrap">
+        <prop id="from-sender">(f,when,(prop,from-shortcut),22,21)</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+        <prop id="from-shortcut">(prop,from-shortcut)</prop>
+       </ti>
+       <ti label=" " type="ul">(prop,_ex_gs_2bt2)</ti>
+     </when> 
+     <when test="(f,right,load)">
+     <when test="(f,not,(prop,from-shortcut))">
+     <when test="(f,lt_num,(prop,next-sender),23)">
+      <ti type="call_job" job="run-etl-vok-byinst" label="c(e:c) (f,html,i,o)(prop,_ex_gs_4bt3B)(f,html,i,c)" 
+        explain="(prop,_ex_gs_4bt3)"  flag="wrap">
+        <prop id="from-sender">22</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+      </ti>
+      <ti label=" " type="ul">(prop,_ex_gs_4bt3C)</ti>
+      
+     </when>
+     </when>     
+     </when>
+     <ti> </ti>
+     
+  </when>
+  </when>
+  
+  <when test="(f,right,load)">
+  <when test="(f,not,(prop,from-shortcut))">
+  <when test="(f,lt_num,(prop,next-sender),30)">
+    
+    <call_job job="tk_db_read_dbms">
+      <prop id="ask-user-for-dbms">0</prop>
+    </call_job>
+    
+    <ti>(f,html,b,o)3. (prop,_ex_gs_3)(f,html,b,c)</ti>
+    <choose>
+    
+      <when test="(f,not,(f,has,prop,db_dbms))">
+        <ti>(prop,_ex_gs_3_wait)</ti>
+        <ti> </ti>
+      </when>
+      
+      <otherwise>
+      
+       <ti label="a(e:c) (f,html,i,o)(prop,_ex_gs_3al)(f,html,i,c)" xtype="ul" x="(prop,_ex_gs_3at)"/>
+       <ti label="b(e:c) (f,html,i,o)(prop,_ex_gs_4al)(f,html,i,c)" type="call_job" job="internal-kitchen-conf" explain="(prop,_ex_gs_4at)">
+        <prop id="from-sender">30</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+       </ti>
+       <ti label=" " type="ul">(prop,_ex_gs_4at2)</ti>
+       <ti label=" " type="ul">(prop,_ex_gs_4at3)</ti> 
+              
+       <ti> </ti>      
+      </otherwise>
+    
+    </choose>
+        
+  </when>
+  <!-- <ti label="next-sender">(prop,next-sender)</ti>   -->
+  <when test="(f,lt_num,(prop,next-sender),42)">   
+   <ti>(f,html,b,o)4. (prop,_ex_gs_4)(f,html,b,c)</ti>
+   
+          
+    <when test="(f,lt_num,(prop,next-sender),41)">    
+      <ti type="call_job" job="run-etl-all-byinst" label="a(e:c) (f,html,i,o)(prop,_ex_gs_4bt4_td_load)(f,html,i,c)" explain="(prop,_ex_gs_4bt4)" >
+        <prop id="from-sender">40</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+      </ti>
+      <ti label=" " type="ul">(prop,_ex_gs_4bt4_td_info)</ti>      
+    </when>
+    
+    <when test="(f,right,int)"> 
+    <when test="(f,lt_num,(prop,next-sender),42)">        
+      <ti type="call_job" job="do-the-integration" label="b(e:c) (f,html,i,o)(prop,_ex_gs_4bt5_merge)(f,html,i,c)" 
+          explain="(prop,_ex_gs_4bt5)" flag="wrap">
+        <prop id="from-sender">41</prop>
+        <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+        <tk label="(prop,_ex_gs_4bt5_close)">
+        <tk type="msg">(prop,_ex_gs_4bt6)</tk>
+        </tk>
+      </ti>
+   
+  
+   <!-- 
+   </when>
+    
+   
+   <when test="(f,lt_num,(prop,next-sender),43)">     -->
+
+       <ti label=" " type="ul">(prop,_ex_gs_4bt)</ti>
+       <ti label=" " type="ul">(prop,_ex_gs_4bt2)</ti>
+             
+       <ti> </ti>
+    </when>
+    </when>
+    </when>
+       
+  </when>
+  </when>
+  
+  <when test="(f,lte_num,(prop,next-sender),50)">  
+  <ti>(f,html,b,o)5. (prop,_ex_gs_5)(f,html,b,c)</ti>     
+
+   <ti label="(prop,_ex_gs_5al)" type="call_job" job="_objects" xflag="label_right" explain="(prop,_ex_gs_5at)"/>
+   <ti label="(prop,_ex_gs_5bl)" type="call_job" job="_search" explain="(prop,_ex_gs_5bt)"
+        />
+   <ti label="(prop,_ex_gs_6bl)" type="call_job" job="_new_stat" explain="(prop,_ex_gs_6bt)"
+        test="(f,or,(f,right,stat),(f,right,clear))"/>
+  </when>
+  
+   
+</job>
+
+
+
+<job id="internal-kitchen-conf" pri="10" role="hidden">
+   <call_job job="Kitchen Conf" test="(f,has,prop,pro)"/>
+   <call_job job="return-to-sender" />
+</job>
+
+<job id="setup-copy-pentaho-links" role="hidden">
+   <call_job job="tr_gs"/>
+  <tk label="(prop,_ex_pdiset_pdilinks)">
+    <tk type="msg" tip="(prop,_ex_pdiset_tip)" msg_type="c" label="(prop,_ex_pdiset_specs)" cols="70" rows="4">(prop,pl)</tk>
+  </tk>  
+     
+  <call_job job="return-to-sender"/>
+</job>  
+
+<job id="setup-define-database"  role="hidden"> 
+
+   <call_job job="setup-define-database-inner"/>
+
+   <call_job job="return-to-sender" />
+</job> 
+
+<job id="setup-define-database-inner"  role="hidden"> 
+
+   <call_job job="tr_gs"/>
+      
+   <prop id="t2">(prop,_ex_dbset_alltip)</prop>
+   <prop id="create_database">(prop,_ex_dbset_intro1)</prop>
+	 <tk label="(prop,_ex_dbset_dbdef)">	
+    	<tk label="(prop,_ex_dbset_todo1of5)" 
+					type="accept" 
+					id="donex" 
+					x="(prop,create_database)" 
+					label_accept="(prop,_ex_dbset_weiter)" 
+					label_decline="(prop,_ex_dbset_abbruch)" 
+					width="600" height="300">
+			</tk>
+    </tk>
+   <throw test="(f,not,(prop,donex))">(prop,_ex_dbset_stopped)</throw>
+
+    <call_job job="tk_db_read_dbms">
+      <prop id="ask-user-for-dbms">1</prop>
+      <prop id="ask-user-always-for-dbms">1</prop>
+      
+    </call_job>
+    
+  <call_job job="get-ddl">
+    <prop id="get-ddl-dbms">(prop,db_dbms)</prop>
+  </call_job>    
+  
+  <tk label="(prop,_ex_dbset_dbdef)">
+    <tk type="msg" tip="(prop,t2)" msg_type="c" label="(prop,_ex_dbset_todo2of5)">(prop,ddl)</tk>
+  </tk>  
+   
+</job> 
+
+
+<job id="setup-define-database-shortcut" role="hidden">
+  <call_job job="setup-define-database-inner"/>
+  
+  <call_job job="tr_shorty"/>
+  <ti label="(prop,_shorty_todo)"/>
+  <ti test="(f,implement,online)" xtype="ul">(prop,_shorty_waehlensie):</ti>
+  <ti  xtype="(f,when,(f,implement,online),ul,text)">(prop,_shorty_waehlensie2):</ti>
+  <ti_space height="5px" />
+  
+  <ti type="dir">(dir,app)load-by-sql/(prop,2db_dbms)</ti> 
+  <!-- 
+  <ti type="file" label="MySql:" flag="download ">(dir,app)mysql-complete-db-setup.sql</ti>
+  -->
+   <!--        
+   <choose>
+      <when test="(f,implement,online)">
+      
+        <ti type="file" label="Postgres:" flag="download blind" download_as="postgres-complete-db-setup.sql">(dir,app)postgres-complete-db-setup.xsl</ti> 
+        <ti type="file" label="MySql:" flag="download blind" download_as="mysql-complete-db-setup.sql">(dir,app)mysql-complete-db-setup.xsl</ti>      
+
+      </when>
+      <otherwise>
+      
+        <ti type="file" label="Postgres:" flag="download blind">(dir,app)postgres-complete-db-setup.sql</ti> 
+        <ti type="file" label="MySql:" flag="download blind">(dir,app)mysql-complete-db-setup.sql</ti>
+              
+      </otherwise>
+  </choose>  
+  -->   
+  
+ 
+  <ti_space height="5px" />
+  <ti label="(prop,_shorty_done)"/>
+  <ti type="call_job" job="return-to-sender" explain="(prop,_shorty_weiter) ...">
+    <prop id="from-shortcut">1</prop>
+    <prop id="from-sender">(prop,from-sender)</prop>
+    <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+  </ti>
+<!-- 
+  <ti_space height="5" />
+  <ti label="DBMS: Postgres"/>
+  <ti type="file" label="(prop,_shorty_inorig):" flag="download blind">(dir,shortcuts)postgres-complete-db-setup.sql</ti>
+  <ti type="file" label="(prop,_shorty_from_pg_bu):" flag="download blind">(dir,shortcuts)postgres-complete-db-backup.sql</ti>
+  <ti_space height="5" />
+  <ti label="DBMS: MySql"/>
+  <ti type="file" label="(prop,_shorty_inorig):" flag="download blind">(dir,shortcuts)mysql-complete-db-setup.sql</ti>
+  <ti type="file" label="(prop,_shorty_from_ms_bu):" flag="download blind">(dir,shortcuts)mysql-complete-db-backup.sql</ti>  
+  
+  <ti_space height="5" />
+  
+  <ti label="(prop,_shorty_done)"/>
+  <ti type="call_job" job="return-to-sender" explain="(prop,_shorty_weiter) ...">
+    <prop id="from-shortcut">1</prop>
+    <prop id="from-sender">(prop,from-sender)</prop>
+    <prop id="guided-setup-job">(prop,guided-setup-job)</prop>
+  </ti>
+  
+<ti_hr/>
+  <ti label="(prop,_shorty_erklaer)"/>
+  <ti xtype="ul" label="(prop,_shorty_inorig):">(prop,_shorty_erklaer_orig)</ti>  
+  <ti xtype="ul" label="(prop,_shorty_erklaer_bu):">(prop,_shorty_erklaer_bu2)</ti>  
+  
+-->
+</job>
+
+
+<job id="get-ddl" role="hidden">
+  <need>(prop,get-ddl-dbms)</need>
+  <tk type="msg">get-ddl recieves (prop,get-ddl-dbms)</tk>
+  <prop id="get-ddl-dbms2">(prop,get-ddl-dbms)</prop>
+  <tk id="get-ddl-dbms2" type="sel">
+    <sel>postgres</sel>
+    <sel>mysql</sel>
+    <sel>maria</sel>
+  </tk>
+  <prop id="get-ddl-dbms">(prop,get-ddl-dbms2)</prop>
+  <choose>
+    <when test="(f,eq_text,postgres,(prop,get-ddl-dbms))">
+      <prop id="ddl">()-- Copyright © 2023 Red-Shark-Formation. All rights reserved.
+-- postgres
+-- beziehungstypen
+CREATE TABLE t_b (
+                bez_typ smallint NOT NULL
+);
+
+-- objekttypen
+CREATE TABLE t_o (
+                obj_typ smallint NOT NULL,
+                kopf_attr_typ smallint
+);
+
+-- attributtypen
+CREATE TABLE t_a (
+                attr_typ smallint NOT NULL,  
+                final_typ smallint NOT NULL         
+);
+
+-- attribute usage    object x attribute
+CREATE SEQUENCE t_u_seq;      
+CREATE TABLE t_u (
+                attr_usg_id INTEGER NOT NULL DEFAULT nextval('t_u_seq'),
+                attr_typ smallint NOT NULL,
+                obj_typ smallint NOT NULL,
+                ident smallint  NOT NULL
+);
+
+-- objekt report
+CREATE TABLE r_o (
+                obj_typ smallint NOT NULL,
+                anzahl INTEGER NOT NULL
+);
+
+
+()</prop>
+      <prop id="ddl-import">()-- Copyright © 2023 Red-Shark-Formation. All rights reserved.
+-- box noch zu testen
+CREATE SEQUENCE #box_seq;
+CREATE TABLE #box (
+                box_id INTEGER NOT NULL DEFAULT nextval('#box_seq'),
+                zustand smallint NOT NULL DEFAULT 1,                   
+                kurzname CHAR(20),
+                titel CHAR(60),
+                beschreibung VARCHAR,
+                uri VARCHAR,
+                werte VARCHAR,              
+                qualitaet smallint,             
+                zeit_import TIMESTAMP,
+                zeit_qk TIMESTAMP,
+                zeit_export TIMESTAMP,                 
+                CONSTRAINT #box_pk PRIMARY KEY (box_id)
+);
+
+-- attr
+CREATE SEQUENCE #attr_seq;
+CREATE TABLE #attr (
+                attr_id INTEGER NOT NULL DEFAULT nextval('#attr_seq'),
+                obj_id INTEGER NOT NULL,
+                attr_typ smallint NOT NULL,
+                top_aktuell smallint DEFAULT 0,                  
+                box_id INTEGER NOT NULL,               
+                CONSTRAINT #attr_pk PRIMARY KEY (attr_id)
+);
+
+
+-- wert
+CREATE SEQUENCE #wert_seq;
+CREATE TABLE #wert (
+                wert_id INTEGER NOT NULL DEFAULT nextval('#wert_seq'),
+                attr_id INTEGER NOT NULL,
+                syntax_art smallint,
+                inhalt CHAR(60) NOT NULL,
+                inhalt2 CHAR(60),
+                von TIMESTAMP,
+                bis TIMESTAMP,
+                wann TIMESTAMP DEFAULT now()(e:o)(e:c)() NOT NULL,
+                ist_top smallint DEFAULT 0 NOT NULL,
+                hat_mehr smallint DEFAULT 0 NOT NULL,
+                box_id INTEGER NOT NULL,                   
+                CONSTRAINT #wert_pk PRIMARY KEY (wert_id)
+);
+
+-- schlecht
+CREATE SEQUENCE #schlecht_seq;
+CREATE TABLE #schlecht (
+                schlecht_id INTEGER NOT NULL DEFAULT nextval('#schlecht_seq'),
+                wert_id INTEGER NOT NULL,
+                datum TIMESTAMP DEFAULT now()(e:o)(e:c)() NOT NULL,
+                grund varchar(200),
+                box_id INTEGER NOT NULL,                   
+                CONSTRAINT #schlecht_pk PRIMARY KEY (schlecht_id)
+);
+
+-- mehr
+CREATE TABLE #mehr (
+                wert_id INTEGER NOT NULL,
+                inhalt VARCHAR,
+                box_id INTEGER NOT NULL,                  
+                CONSTRAINT #mehr_pk PRIMARY KEY (wert_id)
+);
+
+-- obj
+CREATE SEQUENCE #obj_seq;
+CREATE TABLE #obj (
+                obj_id INTEGER NOT NULL DEFAULT nextval('#obj_seq'),
+                obj_typ smallint NOT NULL,              
+                box_id INTEGER NOT NULL,               
+                CONSTRAINT #obj_pk PRIMARY KEY (obj_id)
+);
+
+
+-- bez
+CREATE SEQUENCE #bez_seq;
+CREATE TABLE #bez (
+                bez_id INTEGER NOT NULL DEFAULT nextval('#bez_seq'),
+                bez_typ smallint NOT NULL,
+                obj_id_a INTEGER NOT NULL,
+                obj_id_b INTEGER NOT NULL,
+                box_id INTEGER NOT NULL,                
+                CONSTRAINT #bez_pk PRIMARY KEY (bez_id)
+);
+
+-- qk-attr-wert
+CREATE SEQUENCE #qk_attr_wert_seq;
+CREATE TABLE #qk_attr_wert (
+                id INTEGER NOT NULL DEFAULT nextval('#qk_attr_wert_seq'),
+                attr_typ smallint NOT NULL,
+                syntax_art smallint,                
+                inhalt VARCHAR,
+                von TIMESTAMP,
+                bis TIMESTAMP,
+                wann TIMESTAMP NOT NULL DEFAULT now()(e:o)(e:c)(),
+                box_id INTEGER NOT NULL, 
+                obj_id INTEGER NOT NULL,                                                               
+                attr_id INTEGER,
+                wert_id INTEGER,
+                done smallint NOT NULL DEFAULT 0,                 
+                CONSTRAINT #qk_attr_wert_pk PRIMARY KEY (id)
+);
+
+-- mig_obj
+CREATE SEQUENCE #mig_obj_seq;
+CREATE TABLE #mig_obj (               
+                mig_obj_id INTEGER NOT NULL DEFAULT nextval('#mig_obj_seq'),
+                obj_typ smallint NOT NULL,
+                ison smallint NOT NULL DEFAULT 1,
+                datum TIMESTAMP NOT NULL DEFAULT now()(e:o)(e:c)(),
+                uk VARCHAR NOT NULL,
+                uk_attr_usg_id INTEGER NOT NULL,
+                uk_inhalt VARCHAR NOT NULL,
+                master_obj_id INTEGER NOT NULL,
+                slave_obj_id INTEGER NOT NULL,
+                slave_wert_id INTEGER NOT NULL,
+                CONSTRAINT #mig_obj_pk PRIMARY KEY (mig_obj_id)
+);
+
+-- mig_obj_hist
+CREATE TABLE #mig_obj_hist (               
+                mig_obj_id INTEGER,
+                obj_typ smallint NOT NULL,
+                ison smallint NOT NULL DEFAULT 1,
+                datum TIMESTAMP,
+                uk VARCHAR NOT NULL,
+                uk_attr_usg_id INTEGER NOT NULL,
+                uk_inhalt VARCHAR NOT NULL,
+                master_obj_id INTEGER NOT NULL,
+                slave_obj_id INTEGER NOT NULL,
+                slave_wert_id INTEGER NOT NULL,
+                CONSTRAINT #mig_obj_hist_pk PRIMARY KEY (mig_obj_id)
+);
+
+-- attr
+CREATE INDEX #idx_attr_obj_id ON #attr (obj_id);
+CREATE INDEX #idx_attr_attr_typ ON #attr (attr_typ);
+CREATE INDEX #idx_attr_top_aktuell ON #attr (top_aktuell);
+
+-- wert
+CREATE INDEX #idx_wert_attr_id ON #wert (attr_id);
+CREATE INDEX #idx_wert_wann ON #wert (wann);
+CREATE INDEX #idx_wert_heal_double_werte ON #wert (attr_id, inhalt, von, bis);
+CREATE INDEX #idx_wert_top ON #wert (attr_id, wann desc);
+
+-- obj
+
+
+-- qk_attr_wert
+-- CREATE INDEX  #idx_qk_attr_wert_done ON  #qk_attr_wert (done);
+                                                         
+CREATE INDEX  #idx_qk_attr_wert_sort ON  #qk_attr_wert (done,obj_id, attr_typ);
+
+-- index auf box_id
+-- box: obj
+CREATE INDEX #idx_obj_box_id ON #obj (box_id);
+
+-- box: bez
+CREATE INDEX #idx_bez_box_id ON #bez (box_id);
+
+-- box: attr
+CREATE INDEX #idx_attr_box_id ON #attr (box_id);
+
+-- box: wert
+CREATE INDEX #idx_wert_box_id ON #wert (box_id, attr_id);
+
+-- box: mehr
+CREATE INDEX #idx_mehr_box_id ON #mehr (box_id);
+
+
+()</prop>    
+<!-- gibts nicht mehr: war oben bei postgres 
+
+CREATE VIEW #kopf AS
+ SELECT n1.obj_id,
+    n1.obj_typ,
+    n2.kopf
+   FROM ( SELECT obj.obj_id,
+            obj.obj_typ,
+            ot.kopf_attr_typ
+           FROM #obj obj,
+            t_o ot
+          WHERE obj.obj_typ = ot.obj_typ) n1
+     LEFT JOIN ( SELECT attr.obj_id,
+            attr.attr_typ,
+            wert.inhalt AS kopf
+           FROM #attr attr,
+            #wert wert
+          WHERE attr.attr_id = wert.attr_id AND wert.ist_top = 1) n2 ON n1.obj_id = n2.obj_id AND n1.kopf_attr_typ = n2.attr_typ;
+-->
+    </when>
+    <when test="(f,or,(f,eq_text,mysql,(prop,get-ddl-dbms)),(f,eq_text,maria,(prop,get-ddl-dbms)))">
+      <!-- kopf gibts nur noch als feld im objekt
+      <prop id="ddl-kopf-allin">()CREATE VIEW kopf AS
+ SELECT n1.obj_id,
+    n1.obj_typ,
+    n2.kopf
+   FROM ( SELECT obj.obj_id,
+            obj.obj_typ,
+            ot.kopf_attr_typ
+           FROM obj obj,
+            t_o ot
+          WHERE obj.obj_typ = ot.obj_typ) n1
+     LEFT JOIN ( SELECT attr.obj_id,
+            attr.attr_typ,
+            wert.inhalt AS kopf
+           FROM attr attr,
+            wert wert
+          WHERE attr.attr_id = wert.attr_id AND wert.ist_top = 1) n2 ON n1.obj_id = n2.obj_id AND n1.kopf_attr_typ = n2.attr_typ;()</prop>
+          
+      <choose>
+        <when test="(f,eq_text,maria,(prop,get-ddl-dbms))">
+          <tk type="bool" id="q-all-in" label="All-In-Version inkl Kopf-view" flag="nono" x="1"/>
+          <choose>
+            <when test="(prop,q-all-in)">
+              <prop id="ddl-kopf">(prop,ddl-kopf-allin)</prop>
+            </when>
+            <otherwise>
+                <prop id="ddl-kopf">()CREATE VIEW kopf1 AS   
+     SELECT obj.obj_id,
+            obj.obj_typ,
+            ot.kopf_attr_typ
+           FROM obj obj,
+            t_o ot
+          WHERE obj.obj_typ = ot.obj_typ;      
+          
+ CREATE VIEW kopf2 AS
+ SELECT attr.obj_id,
+            attr.attr_typ,
+            wert.inhalt AS kopf
+           FROM attr attr,
+            wert wert
+          WHERE attr.attr_id = wert.attr_id AND wert.ist_top = 1;
+                                                        
+CREATE VIEW kopf3 AS
+ SELECT n1.obj_id as obj_id,
+    n1.obj_typ as obj_typ,
+    n2.kopf as kopf
+   FROM kopf1 n1
+     LEFT JOIN kopf2 n2 ON n1.obj_id = n2.obj_id AND n1.kopf_attr_typ = n2.attr_typ;      
+     
+CREATE TABLE kopf (
+  obj_id INTEGER NOT NULL,
+  obj_typ smallint NOT NULL,
+  kopf TEXT(60) NOT NULL DEFAULT '?'       
+);
+         
+          ()</prop>
+            </otherwise>          
+          </choose>          
+          <remove id="q-all-in" type="prop"/>
+        </when>
+        <otherwise>
+            <prop id="ddl-kopf">(prop,ddl-kopf-allin)</prop>
+        </otherwise>
+      
+      </choose>
+      
+      <remove id="ddl-kopf-allin" type="prop"/>
+      -->
+      <prop id="ddl">()-- Copyright © 2023 Red-Shark-Formation. All rights reserved.
+-- beziehungstypen mysql
+
+CREATE TABLE t_b (
+                bez_typ smallint NOT NULL
+);
+
+-- objekttypen
+CREATE TABLE t_o (
+                obj_typ smallint NOT NULL,
+                kopf_attr_typ smallint
+);
+
+-- attributtypen
+CREATE TABLE t_a (
+                attr_typ smallint NOT NULL,  
+                final_typ smallint  NOT NULL       
+);
+
+-- attribute usage    object x attribute
+CREATE TABLE t_u (
+                attr_usg_id INTEGER NOT NULL AUTO_INCREMENT,
+                attr_typ smallint NOT NULL,
+                obj_typ smallint NOT NULL,
+                ident smallint  NOT NULL,
+                PRIMARY KEY (attr_usg_id)
+);
+
+-- objekt report
+CREATE TABLE r_o (
+                obj_typ smallint NOT NULL,
+                anzahl INTEGER NOT NULL
+);
+
+
+
+-- qk-attr-wert
+CREATE TABLE i_qk_attr_wert (
+                id INTEGER NOT NULL AUTO_INCREMENT,
+                attr_typ smallint NOT NULL,
+                syntax_art smallint,                
+                inhalt VARCHAR(5000),
+                von TIMESTAMP,
+                bis TIMESTAMP,
+                wann TIMESTAMP NOT NULL DEFAULT now()(e:o)(e:c)(),
+                box_id INTEGER NOT NULL, 
+                obj_id INTEGER NOT NULL,                                                               
+                attr_id INTEGER,
+                wert_id INTEGER,
+                done smallint NOT NULL DEFAULT 0,                 
+                PRIMARY KEY (id)
+);
+
+-- indizies import
+                                                    
+CREATE INDEX i_idx_qk_attr_wert_sort ON i_qk_attr_wert (done,obj_id, attr_typ);
+CREATE INDEX i_idx_obj_box_id ON i_obj (box_id);
+CREATE INDEX i_idx_bez_box_id ON i_bez (box_id);
+CREATE INDEX i_idx_attr_box_id ON i_attr (box_id);
+CREATE INDEX i_idx_wert_box_id ON i_wert (box_id, attr_id);
+CREATE INDEX i_idx_mehr_box_id ON i_mehr (box_id);   
+
+-- indizes central
+
+-- attr
+CREATE INDEX idx_attr_obj_id ON attr (obj_id);
+CREATE INDEX idx_attr_attr_typ ON attr (attr_typ);
+CREATE INDEX idx_attr_top_aktuell ON attr (top_aktuell);
+
+-- wert
+CREATE INDEX idx_wert_attr_id ON wert (attr_id);
+CREATE INDEX idx_wert_wann ON wert (wann);
+CREATE INDEX idx_wert_heal_double_werte ON wert (attr_id, inhalt(60), von, bis);
+CREATE INDEX idx_wert_top ON wert (attr_id, wann desc);
+
+-- obj
+CREATE INDEX idx_obj_obj_typ ON obj (obj_typ);
+
+-- singles
+CREATE TABLE integration_running (
+                beginningWas VARCHAR(50));
+CREATE TABLE import_running (
+                beginningWas VARCHAR(50));      
+                
+CREATE TABLE frisch (
+                obj_id INTEGER NOT NULL,
+                obj_typ smallint NOT NULL
+);    
+CREATE INDEX idx_frisch_obj_id ON frisch (obj_id);         
+
+-- mig_obj
+CREATE TABLE mig_obj (               
+                mig_obj_id INTEGER NOT NULL AUTO_INCREMENT,
+                obj_typ smallint NOT NULL, 
+                ison smallint NOT NULL DEFAULT 1,
+                datum TIMESTAMP NOT NULL DEFAULT now()(e:o)(e:c)(),
+                uk TEXT(80) NOT NULL,
+                uk_attr_usg_id INTEGER NOT NULL,
+                uk_inhalt TEXT(80) NOT NULL,
+                master_obj_id INTEGER NOT NULL,
+                slave_obj_id INTEGER NOT NULL,
+                slave_wert_id INTEGER NOT NULL,
+                PRIMARY KEY (mig_obj_id)
+);
+
+-- mig_obj_hist
+CREATE TABLE mig_obj_hist (               
+                mig_obj_id INTEGER,
+                obj_typ smallint NOT NULL, 
+                ison smallint NOT NULL DEFAULT 1,
+                datum TIMESTAMP,
+                uk TEXT(80) NOT NULL,
+                uk_attr_usg_id INTEGER NOT NULL,
+                uk_inhalt TEXT(80) NOT NULL,
+                master_obj_id INTEGER NOT NULL,
+                slave_obj_id INTEGER NOT NULL,
+                slave_wert_id INTEGER NOT NULL,
+                PRIMARY KEY (mig_obj_id)
+);     
+
+
+-- schlecht
+CREATE TABLE i_schlecht (
+                schlecht_id INTEGER NOT NULL AUTO_INCREMENT,
+                wert_id INTEGER NOT NULL,
+                datum TIMESTAMP DEFAULT now()(e:o)(e:c)() NOT NULL,
+                grund varchar(200),
+                box_id INTEGER NOT NULL,                   
+                PRIMARY KEY (schlecht_id)
+);           
+    
+()</prop>
+  <!-- <remove id="ddl-kopf" type="prop" />  -->
+  <when test="(f,gt_num,(prop,pronto),0)">
+    <prop id="ddl">(prop,ddl)()CREATE INDEX idx_wert_pronto1 ON wert (attr_usg_id, inhalt2(60), obj_id);()</prop>
+  </when>
+      <prop id="ddl-import">()-- Copyright © 2023 Red-Shark-Formation. All rights reserved.
+-- box
+CREATE TABLE #box (
+                box_id INTEGER NOT NULL AUTO_INCREMENT,
+                zustand smallint NOT NULL DEFAULT 1,                 
+                kurzname TEXT(20),
+                titel TEXT(60),
+                beschreibung VARCHAR(500),
+                uri VARCHAR(500),                               
+                werte VARCHAR(500),
+                qualitaet smallint,
+                zeit_import TIMESTAMP,
+                zeit_qk TIMESTAMP,
+                zeit_export TIMESTAMP,                
+                PRIMARY KEY (box_id)
+);
+
+-- attr
+CREATE TABLE #attr (
+                attr_id INTEGER NOT NULL AUTO_INCREMENT,
+                obj_id INTEGER NOT NULL,
+                attr_typ smallint NOT NULL,
+                box_id INTEGER NOT NULL,   
+                top_aktuell smallint DEFAULT 0,                             
+                PRIMARY KEY (attr_id)
+);
+
+
+
+
+
+-- mehr
+CREATE TABLE #mehr (
+                wert_id INTEGER NOT NULL,
+                inhalt TEXT,
+                box_id INTEGER NOT NULL,                  
+                PRIMARY KEY (wert_id)
+);
+
+-- obj
+CREATE TABLE #obj (
+                obj_id INTEGER NOT NULL AUTO_INCREMENT,
+                obj_typ smallint NOT NULL,     
+                kopf VARCHAR(60) NOT NULL DEFAULT '_?_',          
+                box_id INTEGER NOT NULL,               
+                PRIMARY KEY (obj_id)
+);
+
+
+-- bez
+CREATE TABLE #bez (
+                bez_id INTEGER NOT NULL AUTO_INCREMENT,
+                bez_typ smallint NOT NULL,
+                obj_id_a INTEGER NOT NULL,
+                obj_id_b INTEGER NOT NULL,
+                box_id INTEGER NOT NULL,                
+                PRIMARY KEY (bez_id)
+);
+
+
+
+()</prop>
+  <choose>
+    <when test="(f,gt_num,(prop,pronto),0)">
+      <prop id="ddl-import">(prop,ddl-import)()
+-- wert
+CREATE TABLE #wert (
+                wert_id INTEGER NOT NULL AUTO_INCREMENT,
+                attr_id INTEGER NOT NULL,
+                syntax_art smallint,
+                inhalt TEXT(60) NOT NULL,
+                inhalt2 TEXT(60),
+                von TIMESTAMP,
+                bis TIMESTAMP,
+                wann TIMESTAMP DEFAULT now()(e:o)(e:c)() NOT NULL,
+                ist_top smallint DEFAULT 0 NOT NULL,
+                hat_mehr smallint DEFAULT 0 NOT NULL,
+                box_id INTEGER NOT NULL,
+                attr_usg_id INTEGER,
+                obj_id INTEGER,
+                ident smallint NOT NULL DEFAULT 0,                                   
+                PRIMARY KEY (wert_id)
+);
+()</prop>
+    </when>   
+    <otherwise>
+      <prop id="ddl-import">(prop,ddl-import)()
+-- wert
+CREATE TABLE #wert (
+                wert_id INTEGER NOT NULL AUTO_INCREMENT,
+                attr_id INTEGER NOT NULL,
+                syntax_art smallint,
+                inhalt TEXT(60) NOT NULL,
+                inhalt2 TEXT(60),
+                von TIMESTAMP,
+                bis TIMESTAMP,
+                wann TIMESTAMP DEFAULT now()(e:o)(e:c)() NOT NULL,
+                ist_top smallint DEFAULT 0 NOT NULL,
+                hat_mehr smallint DEFAULT 0 NOT NULL,
+                box_id INTEGER NOT NULL,                   
+                PRIMARY KEY (wert_id)
+);
+()</prop>    
+    </otherwise>
+   </choose>    
+
+    </when>    
+    <otherwise>
+      <throw>get-ddl mit unbekanntem  dbms aufgerufen:(prop,get-ddl-dbms) </throw>
+    </otherwise>
+  </choose>
+  
+  
+  <prop id="ddl-int">(prop,ddl-import)</prop>
+  
+  <prop id="ddl-import" x="(f,replace,(prop,ddl-import),#,i_)" />
+  <prop id="ddl-int" x="(f,replace,(prop,ddl-int),#,)" />
+  <prop id="ddl">(prop,ddl-int)  
+(prop,ddl-import)
+(prop,ddl)
+</prop>
+
+  <when test="(f,eq_text,maria,(prop,get-ddl-dbms))">
+    <prop id="ddl-maria-search">()(?i)timestamp(\s*)\,()</prop>            
+    <prop id="ddl-maria-count">(f,count_regex,(prop,ddl),(prop,ddl-maria-search))</prop>
+    <throw test="(f,not,(f,eq_num,14,(prop,ddl-maria-count)))">Internes Problem bei der Generierung der der MariaDb-Ddl. Anzahl der gefundenen timestamps=(prop,ddl-maria-count)(e:s) erwartet wurden jedoch 14 timestamps!</throw>
+    <prop id="ddl">(f,replace_regex,(prop,ddl),(prop,ddl-maria-search),timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'(e:s))</prop>
+    <remove id="ddl-maria-search" type="prop"/>
+    <remove id="ddl-maria-count" type="prop"/>
+  </when>
+
+  <remove id="ddl-import" type="prop"/>
+  <remove id="ddl-int" type="prop"/>
+  
+  
+
+  <need>(prop,ddl)</need>
+
+</job>
+
+
+<job id="Configuration-Paras-v1" pri="10" role="hidden">
+  <call_job job="tr_conf"/>
+  
+  <ti_break />
+  <ti label="(prop,_sl_conf_main_interface)"/> 
+
+  
+  <ti type="rec" label="(prop,_sl_conf_conf_navi_explain)">
+    <ti type="menu">
+      <ti type="call_job" job="Nav Conf" flag="button" class="fb fbEdit" explain="(prop,_sl_conf_conf_navi)" />
+      <ti type="call_job" job="Nav Conf?" explain="(prop,_label_askask)"  
+          flag="button" class="fb fbAskAsk"/>        
+    </ti>
+  </ti>   
+
+  
+  <ti type="rec" label="(prop,_sl_conf_sprache_begriffe_explain)">
+    <ti type="menu">  
+      <ti type="call_job" job="Lingua Conf" flag="button" class="fb fbEdit" explain="(prop,_sl_conf_sprache_begriffe)" />
+      <ti type="call_job" job="Lingua Conf?" explain="(prop,_label_askask)"
+          flag="button" class="fb fbAskAsk" />
+    </ti>    
+  </ti>   
+  
+  <ti type="rec" label="(prop,_sl_conf_conf_limits_explain)">
+    <ti type="menu">  
+      <ti type="call_job" job="Limit Conf" flag="button" class="fb fbEdit" explain="(prop,_sl_conf_conf_limits)" />
+      <ti type="call_job" job="Limit Conf?" explain="(prop,_label_askask)" 
+          flag="button" class="fb fbAskAsk"/>
+    </ti>    
+  </ti>                                 
+    
+  
+  <ti label="(prop,_sl_conf_main_systems)"/>
+
+  <call_job job="tk_db_read_dbms"/>
+  <prop id="dbms-to-print">(prop,_sl_conf_config_db_explain):</prop>
+  <choose>
+    <when test="(f,not,(f,has,prop,db_dbms))">
+      <prop id="dbms-to-print">(prop,dbms-to-print) ???</prop>
+    </when>  
+    <when test="(f,eq_text,(prop,db_dbms),maria)">
+      <prop id="dbms-to-print">(prop,dbms-to-print) MariaDb</prop>
+    </when>
+    <when test="(f,eq_text,(prop,db_dbms),mysql)">
+      <prop id="dbms-to-print">(prop,dbms-to-print) MySql</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,db_dbms),postgres)">
+      <prop id="dbms-to-print">(prop,dbms-to-print) Postgres</prop>
+    </when>       
+    <otherwise>
+      <prop id="dbms-to-print">(prop,dbms-to-print) (prop,db_dbms)</prop>
+    </otherwise>
+  </choose>
+
+  
+    <ti type="rec" label="(prop,_sl_conf_select_excel_explain)" test="(prop,bpRepo)">                            
+      <ti type="call_job" job="_vokabular" xxjob="Select Excel" 
+          explain="(prop,_sl_conf_select_excel)"  flag="button" class="fx fxEdit">
+        <prop id="tk-para-edit-and-links">1</prop>
+        <prop id="sel-excel-from-conf">1</prop>
+      </ti>
+     
+      <!-- 
+      <ti type="call_job" job="Help-Vocabular" xxjob="Select Excel?" flag="button" class="fx fxAsk fxAskConf" explain="(prop,_label_ask)" />      -->
+    </ti>
+    
+    <ti type="rec" label="(prop,_sl_conf_config_kitchen_explain)"  test="(f,right,load)">
+      <ti type="menu"> 
+        <ti type="call_job" job="Kitchen Conf" flag="button" class="fb fbEdit" explain="(prop,_sl_conf_config_kitchen)"/>
+        <ti type="call_job" job="Kitchen Conf?" explain="(prop,_label_askask)"        
+        flag="button" class="fb fbAskAsk"/>
+    </ti>         
+      
+    </ti> 
+    <prop id="inhalte-to-print">(prop,_sl_conf_config_inhalte)</prop>
+    <when test="(f,right,load)">
+    
+      <ti type="rec" label="(prop,inhalte-to-print)" >
+        <ti type="call_job" job="_load_data"  flag="button"
+            explain="(prop,_sl_conf_config_pjobs)"  class="fx fxEdit"/>
+      
+      </ti>    
+      <prop id="inhalte-to-print"> </prop>   
+    
+    </when>
+    
+    <when test="(f,right,int)">
+    
+      <ti type="rec" label="(prop,inhalte-to-print)" >
+        <ti type="call_job" job="_integrate"  flag="button" 
+            explain="Integration"  class="fx fxEdit"/>
+       
+      </ti>    
+      <prop id="inhalte-to-print"> </prop>   
+    
+    </when>    
+
+<!-- 
+    <ti type="menu">  
+      <ti type="call_job" job="Limit Conf" flag="button" class="fb fbEdit" explain="(prop,_sl_conf_conf_limits)" />
+      <ti type="call_job" job="Limit Conf?" explain="(prop,_label_askask)" 
+          flag="button" class="fb fbAskAsk"/>
+    </ti>   
+--> 
+    
+    <when test="(prop,bpDb)" >
+      <ti type="rec" label="(prop,dbms-to-print)">
+        <ti type="menu">      
+          <ti type="call_job" job="Db Conf" flag="button wrap" class="fb fbEdit" explain="(prop,_sl_conf_config_db)" />
+          <ti type="call_job" job="Db Conf?" explain="(prop,_label_askask)" 
+          flag="button" class="fb fbAskAsk"/>
+        </ti>
+        
+      </ti>
+      <prop id="dbms-to-print"> </prop>     
+    </when> 
+    
+    <when test="(f,or,(f,right,stat),(f,right,clear))">
+      <ti type="rec" label="(prop,dbms-to-print)" >
+        <ti type="call_job" job="_admin_db"  flag="button" 
+            explain="(prop,_sl_conf_config_db_tab_mgmt)"  class="fx fxEdit"/>
+     
+      </ti>        
+      <ti type="rec" label=" " test="(f,right,stat)">
+        <ti type="call_job" job="_new_stat"  flag="button" 
+            explain="(prop,_sl_conf_config_stats)"  class="fx fxEdit"/>
+    
+      </ti>          
+
+            
+      <prop id="dbms-to-print"> </prop>
+    </when> 
+    <ti type="rec" label="(prop,dbms-to-print)">
+      <ti type="call_job" 
+          job="-db-close-on-purpose-" 
+           class="fx fxEdit"  flag="button"
+          explain="(prop,_closedb)" />       
+   
+    </ti>
+    <prop id="dbms-to-print"> </prop>
+
+  <when test="(f,right,import)">
+    <ti type="rec" label="Import-Update">
+      <ti  type="call_job" 
+          explain="(prop,_sl_conf_config_imp_r)"
+          job="-db-request-import-" 
+          flag="button"
+       class="fx fxEdit"/> 
+  
+    </ti>    
+    <ti type="rec" label=" ">
+      <ti  type="call_job" 
+          explain="(prop,_sl_conf_config_imp_g)"
+          job="-db-giveback-import-" 
+          flag="button"
+       class="fx fxEdit"/> 
+      <ti> </ti>
+    </ti>        
+  </when>
+
+
+</job>
+
+<job id="dev-help" pri="10" role="hidden">
+
+    <ti label="Developer-Snippets"/>
+    <scan dir="(dir,app)dev-help" out="(dir,filetemp)dev-help.xml" level_limit="1" field="fn"/>
+    
+    <loop id="dh" xml="(dir,filetemp)dev-help.xml" xpath="file" sort="text" ignore_case="text">
+      <!-- <ti_space height="5px"/> -->
+      <ti_hr xtest="(f,gt_num,(loop,dh,#i),1)"/>
+      <ti label="(f,substring_before,(loop,dh),.txt)"/>
+      <!-- <ti flag="wrap_word">(f,file_content,(loop,dh,@fn))</ti>  -->
+      
+      <ti flag="html" x="&lt;font face=&quot;Courier&quot;&gt;(f,escape,_htmlb,(f,file_content,(loop,dh,@fn),UTF-8))&lt;font&gt;" />
+      
+     
+    </loop>
+
+</job>
+
+<job id="conf-stat-intro" role="hidden">
+  <ti label="Statistics"/>
+  <ti type="menu">
+      <ti type="call_job" job="vok-report-obj" explain="Vok: Obj" flag="button block" class="fb fbEdit cstat"/>
+      <ti type="call_job" job="vok-report-attr" explain="Vok: Attr" flag="button" class="fb fbEdit cstat"/>
+      <ti type="call_job" job="vok-report-bez" explain="Vok: Bez" flag="button" class="fb fbEdit cstat"/>  
+  </ti>  
+  <ti type="menu">
+      <ti type="call_job" job="_new_stat" 
+          test="(f,right,stat)"
+          explain="Stat: Datenbank"  flag="button block" class="fb fbEdit cstat" />    
+    
+  </ti>
+
+
+</job>
+
+<job id="conf-stat-intro-hori" role="hidden">
+
+  <ti type="menu">
+      <ti type="call_job" job="vok-report-obj" explain="Vok: Obj" flag="button" class="fb fbEdit cstat"/>
+      <ti type="call_job" job="vok-report-attr" explain="Vok: Attr" flag="button" class="fb fbEdit cstat"/>
+      <ti type="call_job" job="vok-report-bez" explain="Vok: Bez" flag="button" class="fb fbEdit cstat"/>  
+      <ti type="call_job" job="_new_stat" 
+          test="(f,right,stat)"
+          explain="Db-Stats"  flag="button" class="fb fbEdit cstat" /> 
+  </ti>
+  <ti_hr_break/>
+  <!-- <ti_space height="6px"/> -->
+</job>
+</jobs>

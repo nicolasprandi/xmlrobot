@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions sheet_name="actions" sheet_index="5"><action id="Editrun" label="(prop,_bulk_act_editnrun)" hook_job="bulk-hook-edit-run" view="0" details="0" sort="2" view_prolog="0" view_first="0" /><action id="Run" label="(prop,_bulk_act_run)" hook_job="bulk-hook-run" view="0" details="1" sort="1" view_prolog="0" view_first="1" /><action id="Detilas" label="Details" hook_job="bulk-see" view="0" details="0" sort="2" /></actions>

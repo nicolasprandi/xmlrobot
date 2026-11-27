@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="playback-write">
+<need>(prop,playback_key) (prop,isAdd)</need>
+<spirit act="open" id="playbacks_spirit_tc" xml="(file,playbacks)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,playbacks_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,playbacks_offset),0,(f,sub,(f,len,(prop,playbacks_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,playbacks_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="playbacks_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;playback row="(prop,playback_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="playbacks_spirit_tc" where="(prop,playbacks_offset)playback[@row='(prop,playback_key)']" attribute="target" value="(f,vob,prop,playback_target)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="playbacks_spirit_tc" where="(prop,playbacks_offset)playback[@row='(prop,playback_key)']" attribute="desc" value="(f,vob,prop,playback_desc)"/>
+<spirit act="close" flag="save pretty" id="playbacks_spirit_tc"/>
+</job>

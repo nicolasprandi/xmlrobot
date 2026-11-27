@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="Panorama-File-Activity-GUTENTAG" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <tk type="msg">guten tag (file,with)</tk>
+</job>
+<job id="Panorama-File-Activity-EDIT" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <tk id="encoding" x="UTF-8"/>
+  <prop id="content" x="(f,file_content,(file,with),(prop,encoding))"/>
+  <prop id="content_before" x="(prop,content)"/>
+  <tk type="textblock" flag="big" id="content" label="Edit the files content (f,name_of_file,(file,with))"/>
+  <choose>
+  <when test="(f,not,(f,eq_text,(prop,content),(prop,content_before)))">
+    <tk label="Sure about updating?" 
+    	type="accept" 
+    	id="delete-pro-1" 
+    	x="You commanded to update  the file &#xA;(file,with)&#xA;Are you sure about that???" 
+    	label_accept="Overwrite it" 
+    	label_decline="Forget it" 
+    	width="300" height="150">
+    	<q id="delete-pro-2" label="()Yes, I know that the old content of the updated files will be gone forever()"/>
+    </tk>
+    
+    <!-- fail if question not answered properly -->
+    <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+      <ti>Operation terminated.</ti>
+    	<throw>Operation terminated on request.</throw>
+    </when> 
+    <create_file out="(file,with)">(prop,content)</create_file>
+    <ti type="file" label="created" x="(file,with)"/>
+  </when>
+  <otherwise>
+    <ti>file was not updated and not saved</ti>
+  </otherwise>
+  </choose>
+</job>
+
+<job id="Panorama-Dir-Activity-VFS" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <file id="with" x="(dir,with)" />
+  <call_service job="Panorama-File-Activity-VFS"/>
+  
+</job>
+
+<job id="Panorama-Dir-Activity-VFS2" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <file id="with" x="(dir,with)" />
+  <call_service job="Panorama-File-Activity-VFS"/>
+  
+  
+</job>
+<job id="Panorama-File-Activity-VFS" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+  <prop id="src" x="(file,with)"/>
+ <ti>(f,html,b,o)Infos(f,html,b,c)</ti>
+  <ti label="scheme" x="(f,vfs,(prop,src),scheme)" flag="catch"/>  
+  <ti label="type" x="(f,vfs,(prop,src),type)" flag="catch"/>
+ 
+  <ti label="base" x="(f,vfs,(prop,src),base)" flag="catch"/>
+  <ti label="extension" x="(f,vfs,(prop,src),extension)" flag="catch"/>
+  <ti label="depth" x="(f,vfs,(prop,src),depth)" flag="catch"/>   
+    
+  <ti>(f,html,b,o)URL &amp; URI(f,html,b,c)</ti>
+  <ti label="uri" x="(f,vfs,(prop,src),uri)" flag="catch"/>                  
+  <ti label="friendly_uri" x="(f,vfs,(prop,src),friendly_uri)" flag="catch"/>   
+  <ti label="url" x="(f,vfs,(prop,src),url)" flag="catch"/>  
+  <ti label="url_prot" x="(f,vfs,(prop,src),url_prot)" flag="catch"/> 
+   
+  
+
+
+  <ti>(f,html,b,o)Path(f,html,b,c)</ti>
+  <ti label="path" x="(f,vfs,(prop,src),path)" flag="catch"/>
+  <ti label="path_decoded" x="(f,vfs,(prop,src),path_decoded)" flag="catch"/> 
+
+
+
+  
+  <ti>(f,html,b,o)Root(f,html,b,c)</ti>
+  <ti label="root_path" x="(f,vfs,(prop,src),root_path)" flag="catch"/>  
+  <ti label="root_path_decoded" x="(f,vfs,(prop,src),root_path_decoded)" flag="catch"/>
+  <ti label="root_base" x="(f,vfs,(prop,src),root_base)" flag="catch"/>
+  <ti label="root_uri" x="(f,vfs,(prop,src),root_uri)" flag="catch"/>
+       
+  <ti>(f,html,b,o)Bits(f,html,b,c)</ti>  
+  <ti label="name_is_file" x="(f,vfs,(prop,src),name_is_file)" flag="catch"/>   
+  <ti label="exists" x="(f,vfs,(prop,src),exists)" flag="catch"/>  
+  <ti label="is_attached" x="(f,vfs,(prop,src),is_attached)" flag="catch"/>
+  <ti label="is_content_open" x="(f,vfs,(prop,src),is_content_open)" flag="catch"/>
+
+  <ti label="is_executable" x="(f,vfs,(prop,src),is_executable)" flag="catch"/>
+  <ti label="is_file" x="(f,vfs,(prop,src),is_file)" flag="catch"/>
+  <ti label="is_folder" x="(f,vfs,(prop,src),is_folder)" flag="catch"/>  
+  
+  <ti label="is_hidden" x="(f,vfs,(prop,src),is_hidden)" flag="catch"/>
+  <ti label="is_readable" x="(f,vfs,(prop,src),is_readable)" flag="catch"/>
+  <ti label="is_writable" x="(f,vfs,(prop,src),is_writable)" flag="catch"/>   
+    
+  
+</job>
+
+<job id="Panorama-Dir-Activity-SEE-ALL-FILES" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <dir id="temp-pro" x="(dir,filetemp)temp-pro-Panorama-(f,time)"/>
+  <file id="para" x="(dir,temp-pro)api-2.xml"/>
+  <mkdir dir="(dir,temp-pro)"/>
+  
+  <create_file out="(file,para)" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <api2 dir_to_see="(x,(dir,with))"/>]]></create_file>        
+  <call_app
+    job="api-2"
+    app="Panorama"
+    pro_dir="(dir,temp-pro)"
+    pro_id="Panorama-Temporary"
+    flag="silent"/> 
+</job>
+
+<job id="Panorama-File-Activity-CHECKSUM" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+
+  <ti_break/>
+  <ti label="File Checksums ...">
+    <ti label="md5:">(f,file_info,hash,md5,(file,with))</ti>
+    <ti label="md2:">(f,file_info,hash,md2,(file,with))</ti>
+    <ti label="sha1:">(f,file_info,hash,sha1,(file,with))</ti>
+    <ti label="sha256:">(f,file_info,hash,sha256,(file,with))</ti>
+    <ti label="sha384:">(f,file_info,hash,sha384,(file,with))</ti>
+    <ti label="sha512:">(f,file_info,hash,sha512,(file,with))</ti>
+    
+  </ti>
+  
+</job>
+<job id="Panorama-File-Activity-EXTRACTZIP-XXX" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <tk id="extract-to-dir" type="dir" x="(f,dir_of_file,(file,with))" label="Specify Target Directory to extract to" />
+  
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-unzip-ic.lsx</file>  
+  </call_service>
+  
+  <tk type="sel" id="what-target" label="Final Target Directory" flag="nono" x="here">
+    <sel label="(f,name_of_dir,(dir,extract-to-dir))">here</sel>
+    <sel label="(f,name_of_dir,(dir,extract-to-dir))(prop,fs)(f,name_of_file2,(file,with))">there</sel>
+    <sel label="(f,name_of_dir,(dir,extract-to-dir))(prop,fs)(f,replace,(f,name_of_file,(file,with)),.,-)">over</sel>
+ <sel label="(f,name_of_dir,(dir,extract-to-dir))(prop,fs) [ something else ...]">else</sel>
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">what-target</prop>  
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-unzip-ic.lsx</file>  
+  </call_service>  
+
+  <when test="(f,eq,else,(prop,what-target))">
+    <echo type="dir" id="extract-to-dir" label="vor"/>
+    <tk id="else" x="(f,replace,(f,name_of_file,(file,with)),.,-)" />
+    <dir id="extract-to-dir">(dir,extract-to-dir)(prop,else)</dir>
+    <echo type="dir" id="extract-to-dir" label="nach"/>
+    
+  </when>
+  <when test="(f,eq,there,(prop,what-target))">
+    <echo type="dir" id="extract-to-dir" label="vor"/>
+    <dir id="extract-to-dir">(dir,extract-to-dir)(f,name_of_file2,(file,with))</dir>
+    <echo type="dir" id="extract-to-dir" label="nach"/>
+    
+  </when>
+  
+  <when test="(f,eq,over,(prop,what-target))">
+    <echo type="dir" id="extract-to-dir" label="vor"/>
+    <dir id="extract-to-dir">(dir,extract-to-dir)(f,replace,(f,name_of_file,(file,with)),.,-)</dir>
+    <echo type="dir" id="extract-to-dir" label="nach"/>
+    
+  </when>  
+  
+  <tk type="msg" 
+      x="Going to extract to: &#xA;(dir,extract-to-dir) (f,when,(f,exists_dir,(dir,extract-to-dir)),&#xA;WARNING: Directory Exists already,)"
+      msg_type="(f,when,(f,exists_dir,(dir,extract-to-dir)),w,i)"/>
+  <mkdir dir="(dir,extract-to-dir)" flag="cascade"/>
+  <tp>Extracting: (f,name_of_file,(file,with)) to: (dir,extract-to-dir)</tp>
+  <echo type="dir" id="extract-to-dir" label="final"/>
+
+    <mkdir dir="(dir,extract-to-dir)"/>
+    <unzip file="(file,with)" todir="(dir,extract-to-dir)"/>
+
+  <echo type="dir" id="extract-to-dir" label="finalissimo"/>
+  <ti label="Did Extraction">
+    <ti type="file" label="From Zip File:">(file,with)</ti>
+  </ti>
+  <ti_break/>
+    <ti type="dir" label="To Directory:">(dir,extract-to-dir)</ti>
+
+    <ti type="call_service" job="Goto-Panorama" label=" " explain="See with Panorama">
+      <dir id="with" x="(dir,extract-to-dir)"/>
+    </ti>  
+
+  
+  </job>
+  
+<job id="Panorama-Dir-Activity-PANORAMA" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <ti type="dir" label="go to panorama" x="(dir,with)"/>
+  <call_service job="Goto-Panorama" />
+</job>
+
+<job id="Panorama-File-Activity-PANORAMA" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <ti type="file" label="go to panorama" x="(file,with)"/>
+  <dir id="with">(f,dir_of_file,(file,with))</dir>
+  <call_service job="Goto-Panorama" />
+</job>
+
+<job id="Panorama-File-Activity-COPY" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+
+  <prop id="nof">(f,name_of_file,(file,with))</prop>
+
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-copy-x-ic.lsx</file>  
+  </call_service>
+ 
+  <when test="(f,not,(f,has,dir,target))">
+    <dir id="target" x="(f,dir_of_file,(file,with))" />
+  </when>
+ 
+  <ti_flush/>
+  
+  <tk id="target" label="Target Directory" type="dir" flag="nono"/>
+  <tk id="nof" label="Filename" type="text" flag="nono"/>
+  <file id="new">(dir,target)(prop,nof)</file>
+  <tk label="Target of Copy" flag="sum_only">    
+    <tk id="new" type="file" label="File to write" flag="nono save"/>
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">target</prop>  
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-copy-x-ic.lsx</file>  
+  </call_service>
+
+  <when test="(f,file_exists,(file,new))">
+    <tk type="msg" x="Going to overwrite: (file,new)" msg_type="w"/>
+  </when>
+  
+    <copy file="(file,with)" tofile="(file,new)"/>
+
+  <ti label="Copy performed...">
+    <ti type="file" label="From:" x="(file,with)" />
+    <ti type="file" label="To:" x="(file,new)" />
+  </ti>
+</job>  
+
+</jobs>

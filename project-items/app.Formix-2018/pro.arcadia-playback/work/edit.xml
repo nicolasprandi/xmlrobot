@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="playback-edit">
+<need>(prop,playback_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="playback-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="playback-editor"/>
+<call_job job="playback-write"/>
+<ti align="right" x="Did update Playback '(prop,playback_target)'"/>
+<call_job job="hook_playback_orga_finished"/>
+</job>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jobs>  
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<call_job job="prolog"/><job id="View File-Extensions" joblevel="ws" role="hidden" tip="Lists all File-Extensions">
+<prop id="nothing">1</prop>
+<loop id="i" xml="(file,extensions)" xpath="(prop,extensions_offset)extension(prop,extensions_where)" sort="(prop,extensions_sort_attribute)" number="(prop,extensions_sort_number)" ignore_case="(prop,extensions_sort_ignore_case)" desc="(prop,extensions_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,extensions_offset_label)),0)">
+<ti>(f,html,bold,open)(prop,extensions_offset_label): (f,html,bold,close)</ti>
+</when>
+<ti type="rec" label=" ">
+<ti x="Active" />
+<ti x=" " />
+<ti x=" " />
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec" label="(f,html,bold,open)(loop,i,@extension)(f,html,bold,close)">
+<ti type="text" x="(f,when,(loop,i,exists?,@active),(f,when,(loop,i,@active),Yes,No),?)" />
+<ti type="call_job" explain="Edit" job="Edit File-Extension">
+<prop id="extension_key">(loop,i,@id)</prop>
+<file id="extensions">(file,extensions)</file>
+<prop id="extensions_offset">(prop,extensions_offset)</prop>
+<prop id="extensions_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="extensions_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="extensions_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="extensions_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="extensions_where">(prop,extensions_where)</prop>
+<prop id="extensions_return_job">(prop,extensions_return_job)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+<prop id="group_key">(prop,group_key)</prop>
+</ti>
+<ti type="call_job" explain="Delete" job="Del File-Extension">
+<prop id="extension_key">(loop,i,@id)</prop>
+<file id="extensions">(file,extensions)</file>
+<prop id="extensions_offset">(prop,extensions_offset)</prop>
+<prop id="extensions_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="extensions_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="extensions_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="extensions_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="extensions_where">(prop,extensions_where)</prop>
+<prop id="extensions_return_job">(prop,extensions_return_job)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+<prop id="group_key">(prop,group_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti>No File-Extensions found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,extensions_offset),node(e:o)(e:c)))">
+<ti label=" " type="call_job" explain="Add another File-Extension" explain_alt="Add another File-Extension(prop,extensions_offset_label)" job="Add another File-Extension">
+<file id="extensions">(file,extensions)</file>
+<prop id="extensions_offset">(prop,extensions_offset)</prop>
+<prop id="extensions_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="extensions_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="extensions_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="extensions_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="extensions_where">(prop,extensions_where)</prop>
+<prop id="extensions_return_job">(prop,extensions_return_job)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+<prop id="group_key">(prop,group_key)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,info,level))">
+<ti_hr />
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,extensions)</ti>
+<ti label="Xml-Offset:" test="(f,gt,(f,len,(prop,extensions_offset)),0)">(prop,extensions_offset)</ti>
+</ti>
+</when>
+<call_job job="pnx_hook_view_extensions_end" />
+
+</job><job role="hidden" id="To Memory File-Extension">
+<need>(prop,extension_key)</need>
+<spirit act="open" id="extensions_spirit_tc" xml="(file,extensions)"  
+  flag="nuevo"
+  missing_strategy="empty"/>
+<prop id="extension_dt_upd">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@id='(prop,extension_key)'],@dt_upd)</prop>
+<prop id="extension_dt_add">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@id='(prop,extension_key)'],@dt_add)</prop>
+<prop id="extension_extension">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@id='(prop,extension_key)'],@extension)</prop>
+<prop id="extension_active">(f,spirit,extensions_spirit_tc,(prop,extensions_offset)extension[@id='(prop,extension_key)'],@active)</prop>
+<spirit act="close" id="extensions_spirit_tc" />
+</job><job role="hidden" id="See File-Extension">
+<need>(prop,extension_key)</need>
+<call_job job="To Memory File-Extension" />
+<ti_hr />
+<ti label="[ (prop,extension_extension) ]" key="#(prop,extension_key)" />
+<ti padding_top="0px" laxxbel="(prop,extension_extension)(prop,extensions_offset_label)">
+<ti label="Extension:" type="text" test="(f,has,prop,extension_extension)">(prop,extension_extension)</ti>
+<ti label="Active:" type="text" test="(f,has,prop,extension_active)">(f,when,(prop,extension_active),Yes,No)</ti>
+</ti>
+</job><job role="hidden" id="Edit File-Extension">
+<need>(prop,extension_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="To Memory File-Extension" />
+<prop id="isAdd">0</prop>
+<call_job job="File-Extension Editor" />
+<call_job job="To File File-Extension" />
+<ti label="Did update File-Extension:" x="(f,html,bold,open)(prop,extension_extension)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_job job="(prop,extensions_return_job)" />
+</when>
+</job><job role="hidden" id="Del File-Extension">
+<need>(prop,extension_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="To Memory File-Extension" />
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting [ (prop,extension_extension) (prop,extensions_offset_label)] ?" x="()Do you really want to delete that?&#xA;If you are not sure, make a backup of the project.()">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()" />
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,extensions)" where="(prop,extensions_offset)extension[@id='(prop,extension_key)']" />
+<i>Deleted (prop,extension_extension) #(prop,extension_key) (prop,extension_extension)</i>
+<ti label="Did delete File-Extension:" x="(f,html,bold,open)(prop,extension_extension)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_job job="(prop,extensions_return_job)" />
+</when>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+</job><job role="hidden" id="File-Extension Editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new File-Extension(prop,extensions_offset_label)" />
+<tk label="Extension" id="extension_extension" x="pdf" tip="eg xml xsl" type="text" flag="nono" />
+<tk label="(prop,label)" flag="sum_only">
+<tk label="Extension" id="extension_extension" x="pdf" tip="eg xml xsl" type="text" flag="nono" />
+<tk label="Active" id="extension_active" x="1" type="bool" flag="nono" />
+</tk>
+</when>
+<otherwise>
+<need>(prop,extension_key)</need>
+<prop id="label" x="(prop,extension_extension)(prop,extensions_offset_label)" />
+<tk label="Update: (prop,label)" flag="sum_only">
+<tk label="Extension" id="extension_extension" x="pdf" tip="eg xml xsl" type="text" flag="nono" />
+<tk label="Active" id="extension_active" x="1" type="bool" flag="nono" />
+</tk>
+</otherwise>
+</choose>
+</job><job id="Add another File-Extension" joblevel="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="File-Extension Editor" />
+<prop id="extension_key">1</prop>
+<when test="(f,not,(f,exists,prop,extensions_offset_new_key))">
+<prop id="extensions_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,extensions)" sort="@id" number="@id" xpath="(prop,extensions_offset_new_key)extension">
+<trace>max key=(loop,max,@id)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="extension_key">(f,add,(loop,max,@id),1)</prop>
+</loop>
+<i>Generated Key for new File-Extension: #(prop,extension_key)</i>
+<call_job job="To File File-Extension" />
+<ti label="Did add File-Extension:" x="(f,html,bold,open)(prop,extension_extension)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_job job="(prop,extensions_return_job)" />
+</when>
+</job><job role="hidden" id="To File File-Extension">
+<need>(prop,extension_key) (prop,isAdd)</need>
+<spirit act="open" id="extensions_spirit_tc" xml="(file,extensions)" flag="nuevo" />
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,extensions_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,extensions_offset),0,(f,sub,(f,len,(prop,extensions_offset)),1))" />
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,extensions_offset)" />
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="extensions_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;extension id="(prop,extension_key)" /&gt;</inline>
+</spirit>
+<spirit act="xml_update" how="set_attribute" attribute="dt_add" id="extensions_spirit_tc" where="(prop,extensions_offset)extension[@id='(prop,extension_key)']" value="(f,time)" />
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" attribute="dt_upd" id="extensions_spirit_tc" where="(prop,extensions_offset)extension[@id='(prop,extension_key)']" value="(f,time)" />
+<spirit act="xml_update" how="set_attribute" id="extensions_spirit_tc" where="(prop,extensions_offset)extension[@id='(prop,extension_key)']" attribute="extension" value="(prop,extension_extension)" />
+<spirit act="xml_update" how="set_attribute" id="extensions_spirit_tc" where="(prop,extensions_offset)extension[@id='(prop,extension_key)']" attribute="active" value="(prop,extension_active)" />
+<spirit act="close" flag="save" id="extensions_spirit_tc" />
+</job></jobs>

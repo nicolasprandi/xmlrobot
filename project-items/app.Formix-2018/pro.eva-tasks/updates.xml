@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="wrap" file_class="view" search="&lt;ti test=&quot;(f,has,(loop,task_loop,@classes))&quot; type=&quot;text&quot; x=&quot;(loop,task_loop,@classes)&quot;/&gt;" search_type="text" expectation="1" replace="&lt;ti test=&quot;(f,has,(loop,task_loop,@classes))&quot; type=&quot;text&quot; x=&quot;(loop,task_loop,@classes)&quot; flag=&quot;wrap&quot;/&gt;" off="1" />
+</updates>

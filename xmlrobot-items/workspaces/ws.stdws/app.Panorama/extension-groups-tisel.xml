@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><sels>
+<sel label="Others">o</sel>
+<sel label="Echnaton Jobs">1</sel>
+<sel label="Echnaton Steps">2</sel>
+<sel label="Echnaton Takeoff">3</sel>
+<sel label="Pentaho">4</sel>
+<sel label="Xsl">5</sel>
+<sel label="Java">6</sel>
+<sel label="Windows-Executable">7</sel>
+<sel label="Shell Scripting">8</sel>
+<sel label="Xml">9</sel>
+<sel label="Database">10</sel>
+<sel label="Data Sheets">11</sel>
+<sel label="Html Css Php Js">12</sel>
+<sel label="Text, Rtf">13</sel>
+<sel label="Pdf">14</sel>
+<sel label="Layoutet Documents">15</sel>
+<sel label="Animations, Geometric Design">16</sel>
+<sel label="Media Movies">17</sel>
+<sel label="Media Audio">18</sel>
+<sel label="Media Pictures">19</sel>
+<sel label="Archives">20</sel>
+<sel label="Links">21</sel>
+<sel label="Software Source Code">22</sel>
+<sel label="Software Components">23</sel>
+<sel label="Software Control">24</sel>
+</sels>

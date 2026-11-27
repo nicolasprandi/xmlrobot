@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>  
+
+<include file="(dir,services)computers-prolog.lsx" /><job id="View Computers" joblevel="ws" role="hidden" tip="Lists all Computers">
+<try_catch>
+<try>
+<trace>()Hook Station, page=view station=0 hook=begin hook_job=compi_hook_view_computer_begin()</trace>
+<call_service job="compi_hook_view_computer_begin" />
+</try>
+<catch>
+<ti label="Hook must be implemented: computer-view: begin.0">
+<ti> hook_job=compi_hook_view_computer_begin hook=begin page=view station=0 object=computer</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop id="i" xml="(file,computers)" xpath="(prop,computers_offset)computer(prop,computers_where)" sort="(prop,computers_sort_attribute)" number="(prop,computers_sort_number)" ignore_case="(prop,computers_sort_ignore_case)" desc="(prop,computers_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,computers_offset_label)),0)">
+<ti>(f,html,bold,open)(prop,computers_offset_label): (f,html,bold,close)</ti>
+</when>
+<ti type="rec" label=" ">
+<ti x="Operating System" />
+<ti x=" " />
+<ti x=" " />
+<ti x=" " />
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec" label="(f,html,bold,open)(loop,i,@computer)(f,html,bold,close)(f,when,(f,eq,(prop,computer),(loop,i,@computer)), *,)">
+<ti type="text" x="(loop,i,@os)" />
+<ti type="call_service" explain="See" job="See Computer">
+<prop id="computer_key">(loop,i,@row)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+<ti type="call_service" explain="Edit" job="Edit Computer">
+<prop id="computer_key">(loop,i,@row)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+<ti type="call_service" explain="Delete" job="Del Computer">
+<prop id="computer_key">(loop,i,@row)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti>No Computers found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,computers_offset),node(e:o)(e:c)))">
+<ti label=" " type="call_service" explain="Add another Computer" explain_alt="Add another Computer(prop,computers_offset_label)" job="Add another Computer">
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,info,level))">
+<ti_hr />
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,computers)</ti>
+<ti label="Xml-Offset:" test="(f,gt,(f,len,(prop,computers_offset)),0)">(prop,computers_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>()Hook Station, page=view station=0 hook=end hook_job=compi_hook_view_computer_end()</trace>
+<call_service job="compi_hook_view_computer_end" />
+</try>
+<catch>
+<ti label="Hook must be implemented: computer-view: end.0">
+<ti> hook_job=compi_hook_view_computer_end hook=end page=view station=0 object=computer</ti>
+</ti>
+</catch>
+</try_catch>
+</job><job role="hidden" id="To Memory Computer">
+<need>(prop,computer_key)</need>
+<spirit act="open" id="computers_spirit_tc" xml="(file,computers)" 
+  flag="nuevo"
+  missing_strategy="empty"/>
+<prop id="computer_dt_upd">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row='(prop,computer_key)'],@dt_upd)</prop>
+<prop id="computer_dt_add">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row='(prop,computer_key)'],@dt_add)</prop>
+<prop id="computer_computer">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row='(prop,computer_key)'],@computer)</prop>
+<prop id="computer_os">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row='(prop,computer_key)'],@os)</prop>
+<spirit act="close" id="computers_spirit_tc" />
+</job><job role="hidden" id="See Computer">
+<need>(prop,computer_key)</need>
+<call_service job="To Memory Computer" />
+<ti_hr />
+<ti label="[ (prop,computer_computer) ]" key="#(prop,computer_key)" />
+<ti padding_top="0px" laxxbel="(prop,computer_computer)(prop,computers_offset_label)">
+<ti label="Computer:" type="text" test="(f,has,prop,computer_computer)">(prop,computer_computer)</ti>
+<ti label="Operating System:" type="text" test="(f,has,prop,computer_os)">(prop,computer_os)</ti>
+</ti>
+
+<trace>()Hook Station, page=details station=0 hook=end hook_job=compi_hook_see_computer_end()</trace>
+<call_service job="compi_hook_see_computer_end" />
+
+</job><job role="hidden" id="Edit Computer">
+<need>(prop,computer_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Computer" />
+<prop id="isAdd">0</prop>
+<call_service job="Computer Editor" />
+<call_service job="To File Computer" />
+<i label="Updated:" x="Computer #(prop,computer_key)" />
+<ti label=" " x="(prop,computer_computer)" />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,computers_return_job)" />
+</when>
+</job><job role="hidden" id="Del Computer">
+<need>(prop,computer_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Computer" />
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting [ (prop,computer_computer) (prop,computers_offset_label)] ?" x="()Do you really want to delete that?&#xA;If you are not sure, make a backup of the services.()">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()" />
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,computers)" where="(prop,computers_offset)computer[@row='(prop,computer_key)']" />
+<i>Deleted (prop,computer_computer) #(prop,computer_key) (prop,computer_computer)</i>
+<ti label="Did delete Computer:" x="(f,html,bold,open)(prop,computer_computer)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,computers_return_job)" />
+</when>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+<try_catch>
+<try>
+<trace>()Hook Station, page=delete station=0 hook=end hook_job=compi_hook_del_computer()</trace>
+<call_service job="compi_hook_del_computer" />
+</try>
+<catch>
+<ti label="Hook must be implemented: computer-delete: end.0">
+<ti> hook_job=compi_hook_del_computer hook=end page=delete station=0 object=computer</ti>
+</ti>
+</catch>
+</try_catch>
+</job><job role="hidden" id="Computer Editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Computer(prop,computers_offset_label)" />
+<tk label="(prop,label)">
+<tk label="Computer" id="computer_computer" tip="Computers Name" type="text"  flag="nono" rule="filename_with_blanks"/>
+</tk>
+<tk label="(prop,label)" flag="sum_only">
+<tk label="Computer" id="computer_computer" tip="Computers Name" type="text" flag="nono" rule="filename_with_blanks"/>
+<tk label="Operating System" id="computer_os" x="(prop,os)" tip="Operating System running on this Computer" type="sel" flag=" ">
+<sel label="win">win</sel>
+<sel label="mac">mac</sel>
+<sel label="linux">linux</sel>
+</tk>
+</tk>
+</when>
+<otherwise>
+<need>(prop,computer_key)</need>
+<prop id="label" x="(prop,computer_computer)(prop,computers_offset_label)" />
+<tk label="Update: (prop,label)" flag="sum">
+<tk label="Computer" id="computer_computer" tip="Computers Name" type="text" flag="nono" rule="filename_with_blanks"/>
+<tk label="Operating System" id="computer_os" x="(prop,os)" tip="Operating System running on this Computer" type="sel" flag=" ">
+<sel label="win">win</sel>
+<sel label="mac">mac</sel>
+<sel label="linux">linux</sel>
+</tk>
+</tk>
+</otherwise>
+</choose>
+</job><job id="Add another Computer" joblevel="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="Computer Editor" />
+<prop id="computer_key">1</prop>
+<when test="(f,not,(f,exists,prop,computers_offset_new_key))">
+<prop id="computers_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,computers)" sort="@row" number="@row" xpath="(prop,computers_offset_new_key)computer">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="computer_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Computer: #(prop,computer_key)</i>
+<call_service job="To File Computer" />
+<ti label="Did add Computer:" x="(f,html,bold,open)(prop,computer_computer)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,computers_return_job)" />
+</when>
+</job><job role="hidden" id="To File Computer">
+<need>(prop,computer_key) (prop,isAdd)</need>
+<spirit act="open" id="computers_spirit_tc" xml="(file,computers)"  flag="nuevo"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,computers_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,computers_offset),0,(f,sub,(f,len,(prop,computers_offset)),1))" />
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,computers_offset)" />
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="computers_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;computer row="(prop,computer_key)" /&gt;</inline>
+</spirit>
+<spirit act="xml_update" how="set_attribute" attribute="dt_add" id="computers_spirit_tc" where="(prop,computers_offset)computer[@row='(prop,computer_key)']" value="(f,time)" />
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" attribute="dt_upd" id="computers_spirit_tc" where="(prop,computers_offset)computer[@row='(prop,computer_key)']" value="(f,time)" />
+<spirit act="xml_update" how="set_attribute" id="computers_spirit_tc" where="(prop,computers_offset)computer[@row='(prop,computer_key)']" attribute="computer" value="(prop,computer_computer)" />
+<spirit act="xml_update" how="set_attribute" id="computers_spirit_tc" where="(prop,computers_offset)computer[@row='(prop,computer_key)']" attribute="os" value="(prop,computer_os)" />
+<spirit act="close" flag="save" id="computers_spirit_tc" />
+</job></jobs>

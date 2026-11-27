@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2023 Nicolas Prandstaetter. All rights reserved. -->
+<app-info role="user" tip="Testdata-Generator &amp; Spreadsheet-Converter" pro_data_dir="Exports" 
+  cache="cache/"
+  flag="has_static_project" sort="5 Generator">
+
+</app-info>

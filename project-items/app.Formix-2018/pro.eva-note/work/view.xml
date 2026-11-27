@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="note-see-all" level="ws" role="hidden" tip="Lists all Noten">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-note-view-begin</trace>
+<call_job job="hook-note-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: note-view: begin.0">
+<ti> hook_job=hook-note-view-begin hook=begin page=view station=0 object=note</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="note_loop" xml="(file,notes)" xpath="(prop,notes_offset)note(prop,notes_where)" sort="(prop,notes_sort_attribute)" number="(prop,notes_sort_number)" ignore_case="(prop,notes_sort_ignore_case)" desc="(prop,notes_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,notes_offset_label)),0)">
+<ti label="(prop,notes_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Note"/>
+<ti x="Verbal"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,tk_sel_translate,(loop,note_loop,@aspect),(dir,pro)aspect-selector-gui.xml)(f,html,bold,close)" job="note-see">
+<prop id="note_key">(loop,note_loop,@row)</prop>
+<file id="notes">(file,notes)</file>
+<prop id="notes_offset">(prop,notes_offset)</prop>
+<prop id="notes_offset_label">(prop,notes_offset_label)</prop>
+<prop id="notes_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="notes_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="notes_sort_number">(prop,notes_sort_number)</prop>
+<prop id="notes_where">(prop,notes_where)</prop>
+<prop id="notes_return_job">(prop,notes_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,note_loop,@note))" type="text" x="(f,when,(f,has_flag,(loop,note_loop,@note),1),1 - Sehr Gut(e:s),)(f,when,(f,has_flag,(loop,note_loop,@note),2),2 - Gut(e:s),)(f,when,(f,has_flag,(loop,note_loop,@note),3),3 - Befriedigend(e:s),)(f,when,(f,has_flag,(loop,note_loop,@note),4),4 - genuegend(e:s),)(f,when,(f,has_flag,(loop,note_loop,@note),5),5 - nicht genuegend(e:s),)"/>
+<ti test="(f,not,(f,has,(loop,note_loop,@note)))"/>
+<ti test="(f,has,(loop,note_loop,@note_verbal))" type="text" x="(loop,note_loop,@note_verbal)"/>
+<ti test="(f,not,(f,has,(loop,note_loop,@note_verbal)))"/>
+<ti test="(f,role,expert)" type="call_job" explain="Edit" job="note-edit">
+<prop id="note_key">(loop,note_loop,@row)</prop>
+<file id="notes">(file,notes)</file>
+<prop id="notes_offset">(prop,notes_offset)</prop>
+<prop id="notes_offset_label">(prop,notes_offset_label)</prop>
+<prop id="notes_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="notes_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="notes_sort_number">(prop,notes_sort_number)</prop>
+<prop id="notes_where">(prop,notes_where)</prop>
+<prop id="notes_return_job">(prop,notes_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Noten found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,notes_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="note-add" explain="Benoten" job="note-add">
+<file id="notes">(file,notes)</file>
+<prop id="notes_offset">(prop,notes_offset)</prop>
+<prop id="notes_offset_label">(prop,notes_offset_label)</prop>
+<prop id="notes_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="notes_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="notes_sort_number">(prop,notes_sort_number)</prop>
+<prop id="notes_where">(prop,notes_where)</prop>
+<prop id="notes_return_job">(prop,notes_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,notes)</file>
+<prop id="orga_where">(prop,notes_where)</prop>
+<prop id="orga_view_loop_id">note_loop</prop>
+<prop id="orga_finished_job">note-see-all</prop>
+<prop id="orga_offset">(prop,notes_offset)</prop>
+<prop id="orga_offset_label">(prop,notes_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="orga_segment_plural">notes</prop>
+<prop id="orga_segment_singular">note</prop>
+<prop id="orga_segment_plural_label">Noten</prop>
+<prop id="orga_segment_singular_label">Note</prop>
+<prop id="orga_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,notes_sort_number)</prop>
+<prop id="orga_where">(prop,notes_where)</prop>
+<prop id="orga_name_expression_loop">()(f,tk_sel_translate,(loop,note_loop,@aspect),(dir,pro)aspect-selector-gui.xml)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,notes)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,notes_offset)),0)">(prop,notes_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-note-view-end</trace>
+<call_job job="hook-note-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: note-view: end.0">
+<ti> hook_job=hook-note-view-end hook=end page=view station=0 object=note</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

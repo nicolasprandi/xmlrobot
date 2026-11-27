@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="monat-add" level="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="monat-editor"/>
+<prop id="monat_key">1</prop>
+<when test="(f,not,(f,exists,prop,monate_offset_new_key))">
+<prop id="monate_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,monate)" sort="@row" number="@row" xpath="(prop,monate_offset_new_key)monat">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="monat_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Monat: #(prop,monat_key)</i>
+<call_job job="monat-write"/>
+<ti label="Did add Monat:" x="(f,html,bold,open)(f,text,cut_nice,(prop,monat_monat),30)(f,html,bold,close)"/>
+<ti_hr/>
+<when test="(prop,do_return_job)"/>
+<call_job job="monat-see-all"/>
+</job>

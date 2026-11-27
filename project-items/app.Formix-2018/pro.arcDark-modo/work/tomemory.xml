@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo-read">
+<need>(prop,modo_key)</need>
+<spirit act="open" missing_strategy="empty" id="modos_spirit_tc" xml="(file,modos)"/>
+<prop id="modo_dt_upd">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@dt_upd)</prop>
+<prop id="modo_dt_add">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@dt_add)</prop>
+<prop id="modo_how">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@how)</prop>
+<prop id="modo_where">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@where)</prop>
+<prop id="modo_with">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@with)</prop>
+<prop id="modo_with_what">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@with_what)</prop>
+<prop id="modo_attribute">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@attribute)</prop>
+<prop id="modo_value">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@value)</prop>
+<prop id="modo_flag">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@flag)</prop>
+<prop id="modo_off">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@off)</prop>
+<prop id="modo_count">(f,spirit,modos_spirit_tc,(prop,modos_offset)modo[@row=(f,xpath_string,(prop,modo_key))],@count)</prop>
+<spirit act="close" id="modos_spirit_tc"/>
+</job>

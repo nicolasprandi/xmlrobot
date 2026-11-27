@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="groups">(dir,pro)groups.xml</file>
+<when test="(f,not,(f,exists_file,(file,groups)))">
+<create_file out="(file,groups)">&lt;groups/&gt;</create_file>
+<i>Created: (file,groups)</i>
+</when>
+<prop id="groups_offset">./</prop>
+<prop id="groups_offset_label"/>
+<prop id="groups_offset_new_key">//</prop>
+<prop id="groups_sort_attribute"/>
+<prop id="groups_sort_number"/>
+<prop id="groups_sort_ignore_case"/>
+<prop id="groups_sort_desc"/>
+<prop id="groups_where"/>
+<prop id="groups_return_job">group-see-all</prop>
+</prolog>

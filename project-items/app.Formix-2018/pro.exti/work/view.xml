@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="exti-see-all" level="ws" role="hidden" tip="Lists all ExtendecConfs">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="exti_loop" xml="(file,extis)" xpath="(prop,extis_offset)exti(prop,extis_where)" sort="(prop,extis_sort_attribute)" number="(prop,extis_sort_number)" ignore_case="(prop,extis_sort_ignore_case)" desc="(prop,extis_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,extis_offset_label)),0)">
+<ti label="(prop,extis_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Extended Bits"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,tk_sel_translate,(loop,exti_loop,@ons),(dir,app)sel-ons.xml)(f,html,bold,close)" job="exti-see">
+<prop id="exti_key">(loop,exti_loop,@row)</prop>
+<file id="extis">(file,extis)</file>
+<prop id="extis_offset">(prop,extis_offset)</prop>
+<prop id="extis_offset_label">(prop,extis_offset_label)</prop>
+<prop id="extis_offset_new_key">(prop,extis_offset_new_key)</prop>
+<prop id="extis_sort_attribute">(prop,extis_sort_attribute)</prop>
+<prop id="extis_sort_number">(prop,extis_sort_number)</prop>
+<prop id="extis_where">(prop,extis_where)</prop>
+<prop id="extis_return_job">(prop,extis_return_job)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+<prop id="appconf_key">(prop,appconf_key)</prop>
+</ti>
+<ti test="(f,has,(loop,exti_loop,@ebits))" type="text" x="(f,tk_sel_translate,(loop,exti_loop,@ebits),(dir,app)sel-ebits.xml)"/>
+<ti test="(f,not,(f,has,(loop,exti_loop,@ebits)))"/>
+<ti type="call_job" explain="Edit" job="exti-edit">
+<prop id="exti_key">(loop,exti_loop,@row)</prop>
+<file id="extis">(file,extis)</file>
+<prop id="extis_offset">(prop,extis_offset)</prop>
+<prop id="extis_offset_label">(prop,extis_offset_label)</prop>
+<prop id="extis_offset_new_key">(prop,extis_offset_new_key)</prop>
+<prop id="extis_sort_attribute">(prop,extis_sort_attribute)</prop>
+<prop id="extis_sort_number">(prop,extis_sort_number)</prop>
+<prop id="extis_where">(prop,extis_where)</prop>
+<prop id="extis_return_job">(prop,extis_return_job)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+<prop id="appconf_key">(prop,appconf_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No ExtendecConfs found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,extis_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="exti-add" explain="Add another" job="exti-add">
+<file id="extis">(file,extis)</file>
+<prop id="extis_offset">(prop,extis_offset)</prop>
+<prop id="extis_offset_label">(prop,extis_offset_label)</prop>
+<prop id="extis_offset_new_key">(prop,extis_offset_new_key)</prop>
+<prop id="extis_sort_attribute">(prop,extis_sort_attribute)</prop>
+<prop id="extis_sort_number">(prop,extis_sort_number)</prop>
+<prop id="extis_where">(prop,extis_where)</prop>
+<prop id="extis_return_job">(prop,extis_return_job)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+<prop id="appconf_key">(prop,appconf_key)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="" job="do-org-me">
+<file id="orga">(file,extis)</file>
+<prop id="orga_where">(prop,extis_where)</prop>
+<prop id="orga_view_loop_id">exti_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,extis_offset)</prop>
+<prop id="orga_offset_label">(prop,extis_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,extis_offset_new_key)</prop>
+<prop id="orga_segment_plural">extis</prop>
+<prop id="orga_segment_singular">exti</prop>
+<prop id="orga_segment_plural_label">ExtendecConfs</prop>
+<prop id="orga_segment_singular_label">ExtendedConf</prop>
+<prop id="orga_sort_attribute">(prop,extis_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,extis_sort_number)</prop>
+<prop id="orga_where">(prop,extis_where)</prop>
+<prop id="orga_name_expression_loop">()(f,tk_sel_translate,(loop,exti_loop,@ons),(dir,app)sel-ons.xml)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+<prop id="appconf_key">(prop,appconf_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,extis)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,extis_offset)),0)">(prop,extis_offset)</ti>
+</ti>
+</when>
+</job>

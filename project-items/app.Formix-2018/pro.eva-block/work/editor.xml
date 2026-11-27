@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="block-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Block(prop,blocks_offset_label)"/>
+<prop x="sum" id="blocks_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,block_key)</need>
+<prop id="label" x="Block [(prop,block_name)](prop,blocks_offset_label)"/>
+<prop x="sum_only" id="blocks_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="block-tk"/>
+</job>

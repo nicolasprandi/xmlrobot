@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="squery-edit">
+<need>(prop,squery_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="squery-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="squery-editor"/>
+<call_job job="squery-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_squery) '(f,text,cut_nice,(prop,squery_id),50)'"/>
+</ti>
+<call_job job="event_post_update_squery"/>
+</job>

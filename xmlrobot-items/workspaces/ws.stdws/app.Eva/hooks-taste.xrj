@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+<job id="hook-taste-view-begin" role="hidden">
+
+  <ti label="Verkostungen"/>
+
+</job>
+
+<job id="hook-taste-details-end" role="hidden">
+
+
+<!-- 
+<file id="notes">(dir,pro)tastes.xml</file>
+<prop id="notes_offset_label"></prop>
+<prop id="notes_offset_new_key">//</prop>
+<prop id="notes_sort_attribute"/>
+<prop id="notes_sort_number"/>
+<prop id="notes_sort_ignore_case"/>
+<prop id="notes_sort_desc"/>
+<prop id="notes_where"/>
+<prop id="notes_return_job">note-see-all</prop>
+-->
+<prop id="notes_offset">taste[@row='(prop,taste_key)']/</prop>
+
+   <call_job job="note-see-all"/>
+
+   <ti_hr/>
+   <ti label=" " type="call_job" job="taste-see-all" explain="Alle Verkostungen sehen ..."/>
+   
+</job>
+
+
+
+<job id="hook-taste-view-end" role="hidden">
+   
+   
+
+         
+</job>
+
+
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

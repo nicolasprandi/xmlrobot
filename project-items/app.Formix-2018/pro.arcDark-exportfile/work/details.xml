@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exportfile-see">
+<need>(prop,exportfile_key)</need>
+<call_job job="exportfile-read"/>
+<prop x="print print_only" id="exportfiles_tk_control"/>
+<prop id="label" x="Export File: (f,html,bold,open)(prop,exportfile_desc)(f,html,bold,close)(f,when,(f,has,(prop,exportfiles_offset_label)), - (prop,exportfiles_offset_label),)"/>
+<call_job job="exportfile-tk"/>
+<ti_space height="3px"/>
+<ti type="rec">
+<ti type="call_job" explain="Edit" job="exportfile-edit">
+<prop id="exportfile_key">(prop,exportfile_key)</prop>
+<file id="exportfiles">(file,exportfiles)</file>
+<prop id="exportfiles_offset">(prop,exportfiles_offset)</prop>
+<prop id="exportfiles_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="exportfiles_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="exportfiles_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="exportfiles_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="exportfiles_where">(prop,exportfiles_where)</prop>
+<prop id="exportfiles_return_job">(prop,exportfiles_return_job)</prop>
+</ti>
+<ti type="call_job" explain="[ ? ]" job="exportfile-see-more">
+<prop id="exportfile_key">(prop,exportfile_key)</prop>
+<file id="exportfiles">(file,exportfiles)</file>
+<prop id="exportfiles_offset">(prop,exportfiles_offset)</prop>
+<prop id="exportfiles_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="exportfiles_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="exportfiles_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="exportfiles_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="exportfiles_where">(prop,exportfiles_where)</prop>
+<prop id="exportfiles_return_job">(prop,exportfiles_return_job)</prop>
+</ti>
+</ti>
+<ti flag="no_arrow" type="call_job" explain="Del" job="exportfile-del">
+<prop id="exportfile_key">(prop,exportfile_key)</prop>
+<file id="exportfiles">(file,exportfiles)</file>
+<prop id="exportfiles_offset">(prop,exportfiles_offset)</prop>
+<prop id="exportfiles_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="exportfiles_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="exportfiles_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="exportfiles_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="exportfiles_where">(prop,exportfiles_where)</prop>
+<prop id="exportfiles_return_job">(prop,exportfiles_return_job)</prop>
+</ti>
+</job>

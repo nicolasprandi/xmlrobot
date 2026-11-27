@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="on-off-liste" file_class="view" search="x=&quot;(loop,imp_loop,@on)&quot;" search_type="text" expectation="1" replace="x=&quot;(f,when,(loop,imp_loop,@on), ,(f,html,b,o)Off(f,html,b,c))&quot;" />
+</updates>

@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="interface-a" role="hidden">
+  <need>(dir,source)</need>
+  <need>(prop,pwd)</need>
+  <need>(dir,target)</need>
+  
+  <dir id="appi_from_app">(dir,source)</dir>
+  <call_job job="tk_appi_write"/>
+  
+  <prop id="prod_doku">0</prop>
+  <prop id="prod_pwd">(prop,pwd)</prop>
+  <prop id="prod_serial_nbr"></prop>
+  <prop id="prod_target_clear">1</prop>
+  <prop id="prod_type">e</prop>
+  <prop id="prod_xslencrytion">0</prop>
+  <file id="prod_alt_sig_def"></file>
+  <file id="prod_target_zip"></file>
+  <dir id="prod_alt_doku"></dir>
+  <dir id="prod_target">(dir,target)</dir> 
+  <call_job job="tk_prod_write"/> 
+  <ti label="call core"/>
+  <call_job job="just produce app"/> 
+
+  
+
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

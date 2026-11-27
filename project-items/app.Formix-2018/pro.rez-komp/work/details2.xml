@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="komp-see-more">
+<need>(prop,komp_key)</need>
+<call_job job="komp-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="komps_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,komp_bez),20)(f,html,bold,close)(f,when,(f,has,(prop,komps_offset_label)), - (prop,komps_offset_label),)"/>
+<call_job job="komp-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="[ Edit ]" job="komp-edit">
+<prop id="komp_key">(prop,komp_key)</prop>
+<file id="komps">(file,komps)</file>
+<prop id="komps_offset">(prop,komps_offset)</prop>
+<prop id="komps_offset_label">(prop,komps_offset_label)</prop>
+<prop id="komps_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="komps_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="komps_sort_number">(prop,komps_sort_number)</prop>
+<prop id="komps_where">(prop,komps_where)</prop>
+<prop id="komps_return_job">(prop,komps_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+</job>

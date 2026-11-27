@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="kjobs">(dir,pro)kjobs.xml</file>
+<when test="(f,not,(f,exists_file,(file,kjobs)))">
+<create_file out="(file,kjobs)">&lt;kjobs/&gt;</create_file>
+<i>Created: (file,kjobs)</i>
+</when>
+<prop id="kjobs_offset">./</prop>
+<prop id="kjobs_offset_label"/>
+<prop id="kjobs_offset_new_key">//</prop>
+<prop id="kjobs_sort_attribute"/>
+<prop id="kjobs_sort_number"/>
+<prop id="kjobs_sort_ignore_case"/>
+<prop id="kjobs_sort_desc"/>
+<prop id="kjobs_where"/>
+<prop id="kjobs_return_job">kjob-see-all</prop>
+</prolog>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="spalte-read">
+<need>(prop,spalte_key)</need>
+<spirit act="open" missing_strategy="empty" id="spalten_spirit_tc" xml="(file,spalten)"/>
+<prop id="spalte_dt_upd">(f,spirit,spalten_spirit_tc,(prop,spalten_offset)spalte[@row=(f,xpath_string,(prop,spalte_key))],@dt_upd)</prop>
+<prop id="spalte_dt_add">(f,spirit,spalten_spirit_tc,(prop,spalten_offset)spalte[@row=(f,xpath_string,(prop,spalte_key))],@dt_add)</prop>
+<prop id="spalte_name">(f,spirit,spalten_spirit_tc,(prop,spalten_offset)spalte[@row=(f,xpath_string,(prop,spalte_key))],@name)</prop>
+<prop id="spalte_expr">(f,spirit,spalten_spirit_tc,(prop,spalten_offset)spalte[@row=(f,xpath_string,(prop,spalte_key))],@expr)</prop>
+<prop id="spalte_desc">(f,spirit,spalten_spirit_tc,(prop,spalten_offset)spalte[@row=(f,xpath_string,(prop,spalte_key))],@desc)</prop>
+<spirit act="close" id="spalten_spirit_tc"/>
+</job>

@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<job id="prolog" role="hidden">
+<interpreter turbo="1"/>
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is Check</throw>
+  
+   <when test="(f,has,prop,pro)">  
+    <file id="dbapp-data" x="(dir,pro)dbapp-data.xml"/>
+    <prop id="dbapp-regex" x="dbapp_.+"/>
+       
+    <file id="dbuser-data" x="(dir,pro)cache/dbuser-data.xml"/>
+    <prop id="dbuser-regex" x="dbuser_.+"/>   
+    
+    <file id="secret-data" x="(dir,pro)cache/secret-data.xml" test="(f,not,(f,guicontroller,general,is-web,))"/>
+    <file id="secret-data" x="(f,request,dir,session_home_mem)app-sabia/secret-data.xml" test="(f,guicontroller,general,is-web,)"/>    
+    
+    <prop id="secret-regex" x="secret_.+"/>
+  
+    <file id="conf-data" x="(dir,pro)conf-data.xml"/>
+    <prop id="conf-regex" x="conf_.+"/>
+    
+    
+    <file id="apps">(dir,pro)apps.xml</file>
+    <when test="(f,not,(f,exists_file,(file,apps)))">
+    <create_file out="(file,apps)">&lt;apps/&gt;</create_file>
+    <i>Created: (file,apps)</i>
+    </when>
+    <prop id="apps_offset">./</prop>
+    <prop id="apps_offset_label"/>
+    <prop id="apps_offset_new_key">//</prop>
+    <prop id="apps_sort_attribute"/>
+    <prop id="apps_sort_number"/>
+    <prop id="apps_sort_ignore_case"/>
+    <prop id="apps_sort_desc"/>
+    <prop id="apps_where"/>
+    <prop id="apps_return_job">app-see-all</prop> 
+    
+    <file id="users">(dir,pro)users.xml</file>
+    <when test="(f,not,(f,exists_file,(file,users)))">
+    <create_file out="(file,users)">&lt;users/&gt;</create_file>
+    <i>Created: (file,users)</i>
+    </when>
+    <prop id="users_offset">./</prop>
+    <prop id="users_offset_label"/>
+    <prop id="users_offset_new_key">//</prop>
+    <prop id="users_sort_attribute"/>
+    <prop id="users_sort_number"/>
+    <prop id="users_sort_ignore_case"/>
+    <prop id="users_sort_desc"/>
+    <prop id="users_where"/>
+    <prop id="users_return_job">user-see-all</prop>    
+    
+    <file id="tasks">(dir,pro)tasks.xml</file>
+    <when test="(f,not,(f,exists_file,(file,tasks)))">
+    <create_file out="(file,tasks)">&lt;tasks/&gt;</create_file>
+    <i>Created: (file,tasks)</i>
+    </when>
+    <prop id="tasks_offset">./</prop>
+    <prop id="tasks_offset_label"/>
+    <prop id="tasks_offset_new_key">//</prop>
+    <prop id="tasks_sort_attribute"/>
+    <prop id="tasks_sort_number"/>
+    <prop id="tasks_sort_ignore_case"/>
+    <prop id="tasks_sort_desc"/>
+    <prop id="tasks_where"/>
+    <prop id="tasks_return_job">task-see-all</prop>    
+  
+  </when> 
+</job>
+
+</jobs>
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog" />
+<job id="Encrypt Password"  role="hidden" level="pro" pri="10" tip="Let's you encrypt a password by the algorithm of your desire.">
+  <call_job job="encrypt-password"/>
+</job>
+
+
+</jobs>

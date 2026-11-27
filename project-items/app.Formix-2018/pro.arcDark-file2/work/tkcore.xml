@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="file2-tk">
+<need default="">(prop,files2_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" flag="(prop,files2_tk_control) wrap ">
+<tk label="File" id="file2_thefile" x="" test_first="1" tip="File to blur" type="sel" flag=" nono " xml="(file,file-selector-any)"/>
+<tk label="Probability" id="file2_prob" x="" test_first="1" tip="Probability [0-100]" regex="\d+" type="text" flag=" "/>
+</tk>
+</job>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="ass-see-all" level="ws" role="hidden" tip="Lists all Arbeitsschritte">
+<prop id="nothing">1</prop>
+<loop id="i" missing_strategy="empty" xml="(file,asss)" xpath="(prop,asss_offset)ass(prop,asss_where)" sort="(prop,asss_sort_attribute)" number="(prop,asss_sort_number)" ignore_case="(prop,asss_sort_ignore_case)" desc="(prop,asss_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,asss_offset_label)),0)">
+<ti label="(prop,asss_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti align="right" type="call_job" postfix=" :" explain="(f,html,bold,open)(loop,i,@bez)(f,html,bold,close)" job="ass-see">
+<prop id="ass_key">(loop,i,@row)</prop>
+<file id="asss">(file,asss)</file>
+<prop id="asss_offset">(prop,asss_offset)</prop>
+<prop id="asss_offset_label">(prop,asss_offset_label)</prop>
+<prop id="asss_offset_new_key">(prop,asss_offset_new_key)</prop>
+<prop id="asss_sort_attribute">(prop,asss_sort_attribute)</prop>
+<prop id="asss_sort_number">(prop,asss_sort_number)</prop>
+<prop id="asss_where">(prop,asss_where)</prop>
+<prop id="asss_return_job">(prop,asss_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,i,@beschreibung),40)</ti>
+<ti test="(f,has,(loop,i,@dauer))" type="text" x="(loop,i,@dauer)"/>
+<ti test="(f,not,(f,has,(loop,i,@dauer)))"/>
+<ti test="(f,has,(loop,i,@einheit))" type="text" x="(f,when,(f,has_flag,(loop,i,@einheit),1),Minuten(e:s),)(f,when,(f,has_flag,(loop,i,@einheit),2),Stunden(e:s),)"/>
+<ti test="(f,not,(f,has,(loop,i,@einheit)))"/>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine Arbeitsschritte gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,asss_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain_nix="ass-add" explain="[ + Arbeitsschritt ]" job="ass-add">
+<file id="asss">(file,asss)</file>
+<prop id="asss_offset">(prop,asss_offset)</prop>
+<prop id="asss_offset_label">(prop,asss_offset_label)</prop>
+<prop id="asss_offset_new_key">(prop,asss_offset_new_key)</prop>
+<prop id="asss_sort_attribute">(prop,asss_sort_attribute)</prop>
+<prop id="asss_sort_number">(prop,asss_sort_number)</prop>
+<prop id="asss_where">(prop,asss_where)</prop>
+<prop id="asss_return_job">(prop,asss_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_service" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,asss)</file>
+<prop id="orga_offset">(prop,asss_offset)</prop>
+<prop id="orga_offset_label">(prop,asss_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,asss_offset_new_key)</prop>
+<prop id="orga_segment_plural">asss</prop>
+<prop id="orga_segment_singular">ass</prop>
+<prop id="orga_segment_plural_label">Arbeitsschritte</prop>
+<prop id="orga_segment_singular_label">Arbeitsschritt</prop>
+<prop id="orga_sort_attribute">(prop,asss_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,asss_sort_number)</prop>
+<prop id="orga_where">(prop,asss_where)</prop>
+<prop id="orga_name_expression_loop">()(f,html,bold,open)(loop,i,@bez)(f,html,bold,close)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,i,@beschreibung),40)()</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,asss)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,asss_offset)),0)">(prop,asss_offset)</ti>
+</ti>
+</when>
+</job>

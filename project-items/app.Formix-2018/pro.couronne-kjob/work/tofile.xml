@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kjob-write">
+<need>(prop,kjob_key) (prop,isAdd)</need>
+<need default="./">(prop,kjobs_offset)</need>
+<spirit act="open" id="kjobs_spirit_tc" xml="(file,kjobs)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,kjobs_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,kjobs_offset),0,(f,sub,(f,len,(prop,kjobs_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,kjobs_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in_begin" id="kjobs_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;kjob row="(prop,kjob_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<file id="jack-in" x="(file,kjob_jobfile)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kjobs_spirit_tc" where="(prop,kjobs_offset)kjob[@row='(prop,kjob_key)']" attribute="jobfile" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kjobs_spirit_tc" where="(prop,kjobs_offset)kjob[@row='(prop,kjob_key)']" attribute="id" value="(f,vob,prop,kjob_id)"/>
+<file id="jack-in" x="(file,kjob_datafile)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kjobs_spirit_tc" where="(prop,kjobs_offset)kjob[@row='(prop,kjob_key)']" attribute="datafile" value="(prop,jack-result)"/>
+<dir id="jack-in" x="(dir,kjob_datafolder)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-dir" flag="silent">
+<dir id="jack-in" x="(dir,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kjobs_spirit_tc" where="(prop,kjobs_offset)kjob[@row=(f,xpath_string,(prop,kjob_key))]" attribute="datafolder" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kjobs_spirit_tc" where="(prop,kjobs_offset)kjob[@row='(prop,kjob_key)']" attribute="desc" value="(f,vob,prop,kjob_desc)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kjobs_spirit_tc" where="(prop,kjobs_offset)kjob[@row='(prop,kjob_key)']" attribute="hist" value="(f,vob,prop,kjob_hist)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="kjobs_spirit_tc" where="(prop,kjobs_offset)kjob[@row='(prop,kjob_key)']" attribute="uri" value="(f,vob,prop,kjob_uri)"/>
+<spirit act="close" flag="save pretty" id="kjobs_spirit_tc"/>
+</job>

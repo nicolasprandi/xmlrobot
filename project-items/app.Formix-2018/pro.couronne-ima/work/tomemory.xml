@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ima-read">
+<need>(prop,ima_key)</need>
+<spirit act="open" missing_strategy="empty" id="imas_spirit_tc" xml="(file,imas)"/>
+<prop id="ima_dt_upd">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@dt_upd)</prop>
+<prop id="ima_dt_add">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@dt_add)</prop>
+<prop id="ima_cmd">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@cmd)</prop>
+<prop id="ima_type">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@type)</prop>
+<prop id="ima_catch">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@catch)</prop>
+<prop id="ima_on">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@on)</prop>
+<prop id="ima_cond">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@cond)</prop>
+<prop id="ima_pronto">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@pronto)</prop>
+<prop id="ima_dbms">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@dbms)</prop>
+<prop id="ima_cust_flag">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@cust_flag)</prop>
+<prop id="ima_cust_how">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@cust_how)</prop>
+<prop id="ima_name">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@name)</prop>
+<prop id="ima_desc">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@desc)</prop>
+<prop id="ima_work">(f,spirit,imas_spirit_tc,(prop,imas_offset)ima[@row=(f,xpath_string,(prop,ima_key))],@work)</prop>
+<spirit act="close" id="imas_spirit_tc"/>
+</job>

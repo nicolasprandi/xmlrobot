@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog"/>
+
+<job id="need_source" joblevel="pro" role="hidden">
+  <interpreter watch="0"/>
+  <prop id="have_source">(f,exists_file,(file,sources))</prop>
+
+  <when test="(prop,have_source)">
+    <prop id="source_counter">(f,xsl,(file,sources),count(e:o)//source(e:c))</prop>
+    <prop id="have_source">(f,gt,(prop,source_counter),0)</prop>
+  </when>
+
+
+  <choose>
+    <when test="(f,not,(prop,have_source))">
+    
+      <ti label="No Backup Specification found!">         
+        <ti type="ul" laybel=" ">Until now there are no definitions found for project '(f,html,bold,open)(prop,pro)(f,html,bold,close)'</ti>
+        <ti type="ul" laybel=" ">Define the backup-sources now ...</ti>
+        <ti type="ul" laybel=" ">Click on 'Add another Source' to define the folders you want to make a backup of</ti>
+        <ti laybel=" " type="call_job" job="Add another Source"
+            test="(f,has,prop,pro)"/>
+      </ti>
+      <ti_hr/>
+      <call_job job="Tell Input Info"/>
+    
+      <prop id="need_source_ok">0</prop>
+      
+    </when>
+    <otherwise>
+      <prop id="need_source_ok">1</prop>
+    </otherwise>
+  </choose>
+  
+</job>
+
+<job id="get_dir_backups_pkg" joblevel="app" role="hidden">
+  <need>(prop,pkg)</need>
+  <dir id="backups_pkg">(dir,backups)(prop,pkg)</dir>
+  
+  <when test="(f,not,(f,dir_exists,(dir,backups_pkg)))">
+    <mkdir dir="(dir,backups_pkg)" />
+    <i>(dir,backups_pkg) created</i>
+  </when>
+
+</job>
+
+<job id="get_prop_count_pkg" joblevel="app" role="hidden">
+  
+  <file id="get_prop_count_pkg">(dir,filetemp)get_prop_count_pkg.xml</file>
+  
+  <scan
+    dir="(dir,conf)"
+    out="(file,get_prop_count_pkg)"
+    file_extension=".pkg.xml"
+    level_limit="1"
+     field="fn pre post" />
+    
+  <prop id="count_pkg">(f,xsl,(file,get_prop_count_pkg),count(//file))</prop>
+
+  <ti label="count_pkg:" test="(prop,debug)">(prop,count_pkg)</ti>
+</job>
+
+</jobs>

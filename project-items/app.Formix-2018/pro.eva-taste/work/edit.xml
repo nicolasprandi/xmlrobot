@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="taste-edit">
+<need>(prop,taste_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="taste-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="taste-editor"/>
+<call_job job="taste-write"/>
+<ti align="right" x="Did update Verkostung '(f,tk_sel_translate,(prop,taste_was),(dir,pro)plate-selector-gui.xml)'"/>
+<call_job job="taste-see"/>
+</job>

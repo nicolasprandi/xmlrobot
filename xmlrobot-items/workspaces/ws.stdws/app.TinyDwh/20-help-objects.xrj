@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+
+<job id="Objects?" lang="en">
+
+
+  <ti label="Job &apos;Objects&apos;"/>  
+  <ti type="ul">An overview of the available objects</ti>
+  <ti type="ul">Firstly(e:s) it lists the object-types and the total number of object for that type</ti>
+  <ti type="ul">Secondly(e:s) you see all objects of the type you selected</ti>
+  <ti type="ul">Remark: Only those types are listed(e:s) for which there really exist objects</ti>
+  
+  <when test="(f,has,prop,pro)">
+      <ti label="List of Object-Types"/>
+      <ti type="call_job" job="_list_of_object_types" explain="See ALL Object-Types here ..."/>
+
+  </when>     
+
+</job>
+
+<job id="Objekte?" lang="de">
+
+  <ti label="Job &apos;Objekte&apos;"/>
+  <ti type="rec"><ti flag="wrap">Eine &#220;bersicht der effektiv vorhandenen Objekte</ti></ti>
+
+  <ti type="ul">Stufe 1
+Listet die Objekt-Typen mit der Anzahl der vorhandenen Objekte. Es werden nur jene Typen gelistet(e:s) fuer die auch Objekte existieren.</ti>
+  <ti type="ul">Stufe 2
+Nach der Auswahl eines Objekt-Typs erhalten Sie die Liste der vorhandenen Objekte zum gew&#228;hlten Typ.</ti>
+  <ti type="ul">Stufe 3
+W&#228;hlen Sie ein konkretes Objekt aus.</ti>
+  <ti type="ul">Stufe 4
+Springen Sie vom ausgew&#228;hlten Objekt zu einem anderen(e:s) damit verbundenen Objekt indem Sie eine der Beziehung anklicken.</ti>
+  <ti_hr/>
+  <call_job job="?objekt-navigator-de?"/>
+
+  <ti_hr/>
+  <when test="(f,has,prop,pro)">
+      <ti label="Liste der Objekt-Typen"/>
+      <ti type="call_job" job="_list_of_object_types" explain="Sehen Sie ALLE Objekt-Typen hier ..."/>
+
+  </when>     
+
+</job>
+
+<job id="?objekt-navigator-de?">
+  <call_job job="tr_conf"/>
+  <call_job job="tr_lingua"/>
+  <call_job job="tr_nav"/>
+  <!-- <call_job job="tr_basic_terms"/>    -->
+  <ti label="Darstellung von Objekten"/>
+  <ti type="rec"><ti flag="wrap">Bei der '(prop,_sl_conf_conf_navi)' werden Ihnen zuerst die Attribute mit den Werten angezeigt:</ti></ti>
+
+  <ti type="ul">()Bei der Benennung der Attribute haben Sie folgende M&#246;glichkeiten: 
+(a)() (prop,_nav_naming_attribute_tech_l) oder 
+()(b)() (prop,_nav_naming_attribute_name_l).
+Verwenden Sie dazu die Konfiguration '(prop,_sl_conf_sprache_begriffe_explain)'.</ti>
+  <ti type="ul">Bei dem angezeigten Umfang der gelisteten Werte haben Sie folgende M&#246;glichkeiten:
+()(a)() (prop,_nav_only_latest_values_0_l) oder
+()(b)() (prop,_nav_only_latest_values_1_l).
+Verwenden Sie dazu die Konfiguration '(prop,_nav_l)'.</ti>
+
+  <ti type="rec"><ti flag="wrap">Nach den Attributen werden Ihnen die Beziehung des Objektes zu anderen Objekten angezeigt:</ti></ti>
+
+  <ti type="ul">()Klicken Sie auf die gew&#252;nschte Beziehung, um das verbunden Objekt anzuzeigen.()</ti>
+  <ti type="rec"><ti flag="wrap">Letztendlich wird Ihnen ein Link '(prop,_sl_conf_ui)' angeboten. Hier k&#246;nne Sie:</ti></ti>  
+  <ti type="ul">()sich zu einer Auswahl von Konfigurationen direkt weiterleiten lassen oder()</ti>
+  <ti type="ul">()das aktuelle Objekt in die zuletzt bearbeitet Objekt-Komposition einbinden.()</ti>
+  <ti type="rec"><ti flag="wrap">Abschliessende Tips</ti></ti>
+  <ti type="ul">()Um weitere Parameterisierungen vorzunehmen,() werfen Sie bitte einen Blick in die Konfiguration '(prop,_nav_l)'. Dort k&#246;nnen Sie festlegen(e:s) ob gewisse technische Dat&#252;mer aus der Datenbank angezeigt werden.</ti>   
+  <ti type="ul">Mehrere mengenm&#228;ssige Begrenzungen k&#246;nnen in der Konfiguration 'Limits' vorgenommen werden.</ti>    
+</job>
+
+<job id="List of Object-Types?">
+
+  <ti label="Job &apos;List of Object-Types&apos;"/>
+  <ti type="ul">Listet alle potentiell vorhandenen Objekt-Typen ungeachtet dessen(e:s) ob nun konkrete Objekte vorhanden sind oder nicht</ti>
+ 
+
+</job>
+
+
+
+
+</jobs>

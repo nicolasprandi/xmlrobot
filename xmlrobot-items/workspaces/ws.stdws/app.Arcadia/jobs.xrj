@@ -1,0 +1,449 @@
+<?xml version="1.0" ?>  
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+<job id="do-create-project" role="hidden">
+  <create_file out="(file,project-exists)">yes</create_file>
+</job>
+
+<job id="want-compiler" role="hidden">
+  <call_job job="tk_jvcp_read"/>
+  <prop id="shit" x="1"/>
+  <when test="(f,has,file,jvcp_javac)">
+  <when test="(f,exists_file,(file,jvcp_javac))">
+    <prop id="shit" x="0"/>
+  </when>  
+  </when>
+  <when test="(prop,shit)">
+    <tk type="msg" x="We need a compiler. Edit in the following window the field called 'javac.exe'"/>
+    <call_job job="tk_jvcp_edit"/>
+
+    <stop>Thank you(e:s) Try it again!</stop>
+  </when>
+</job
+>
+<job id="unzip-files" role="hidden">
+  <need>(dir,what)</need>
+  <need>(dir,target)</need>
+
+  <file id="wi" x="(dir,temp)what.xml"/>
+  <scan dir="(dir,what)" out="(file,wi)" field="fn"/>
+  
+  <loop id="wi" xml="(file,wi)" xpath="//file">
+    <when test="(f,or,(f,ends_with,(loop,wi),.zip),(f,ends_with,(loop,wi),.jar))">
+
+      <tp>[(loop,wi,#i)] unzip (loop,wi,@fn)</tp>
+ 
+      <ant level="debug">
+        <unzip 
+        src="(f,file,classic,(loop,wi,@fn))" 
+        dest="(f,dir,classic,(dir,target))"/>
+      </ant>   
+    </when>
+  
+  </loop>   
+  
+</job>
+
+<job id="get-orig-libname" role="hidden">
+  <need>(prop,gol-libname)</need>
+
+  <prop id="orig-libname" x="(f,substring,(prop,gol-libname),0,(f,sub,(f,len,(prop,gol-libname)),4))"/>
+
+  <prop id="li_open" x="(f,last_index_of,(prop,gol-libname),[)"/>
+  <prop id="li_close" x="(f,last_index_of,(prop,gol-libname),])"/>
+  <when test="(f,and,(f,gt_num,(prop,li_open),-1),(f,gt_num,(prop,li_close),-1),(f,gt_num,(prop,li_close),(prop,li_open)))">
+    <when test="(f,eq_num,(prop,li_close),(f,sub,(f,len,(prop,gol-libname)),5))">
+      <prop id="index_part" x="(f,substring,(prop,gol-libname),(prop,li_open),(f,add,1,(prop,li_close)))"/>
+      <when test="(f,matches_regex,(prop,index_part),\[\-\d+\-\])">
+        <prop id="orig-libname" x="(f,substring,(prop,gol-libname),0,(f,sub,(prop,li_open),0))"/>                                                             
+      </when>
+    </when>
+  </when>
+  <remove id="li_open" type="prop"/> 
+  <remove id="li_close"  type="prop"/> 
+  <remove id="index_part"  type="prop" flag="catch"/>
+  <need>(prop,orig-libname)</need>
+</job>
+
+<job id="load" role="hidden">
+  <need>(prop,load-type)</need>
+  <!-- 
+  <ti_hr/>
+  <ti label="loooooooooad"/>
+  <ti label="load">prop xr-java-items is '(prop,xr-java-items)' load-type is'(prop,load-type)'</ti>
+  -->
+  <dump_ti label="Load Begin" test="0"/>
+  <choose>
+    <when test="(f,eq_text,core,(prop,load-type))">
+      <dir id="cc" x="(dir,pro)compile-xmlrobot-core"/>
+      <prop id="cc-name" x="xmlrobot-core"/>
+      <prop id="javaitem_path" x="(prop,xr-java-items)/xmlrobot-core"/> 
+      <prop id="itemname" x="XmlRobot Core"/>      
+    </when>
+    <when test="(f,eq_text,ant,(prop,load-type))">
+      <prop id="cc-name" x="adapter-ant"/>
+      <dir id="cc" x="(dir,pro)compile-adapter-ant"/>
+      <prop id="javaitem_path" x="(prop,xr-java-items)/adapter-ant"/> 
+      <prop id="itemname" x="Ant Adapter"/>      
+    </when>    
+    <when test="(f,eq_text,poi,(prop,load-type))">
+      <prop id="cc-name" x="adapter-poi"/>
+      <dir id="cc" x="(dir,pro)compile-adapter-poi"/>
+      <prop id="javaitem_path" x="(prop,xr-java-items)/adapter-poi"/> 
+      <prop id="itemname" x="Poi Adapter"/>      
+    </when>      
+    <when test="(f,eq_text,compare,(prop,load-type))">
+      <dir id="cc" x="(dir,pro)compile-app.Compare"/>
+      <prop id="cc-name" x="app.Compare"/>
+      <prop id="javaitem_path" x="(prop,xr-java-items)/app.Compare"/> 
+      <prop id="itemname" x="Extension app.Compare"/>      
+    </when>    
+    <when test="(f,eq_text,panorama,(prop,load-type))">
+      <dir id="cc" x="(dir,pro)compile-app.Panorama"/>
+      <prop id="cc-name" x="app.Panorama"/>
+      <prop id="javaitem_path" x="(prop,xr-java-items)/app.Panorama"/> 
+      <prop id="itemname" x="Extension app.Panorama"/>      
+    </when>  
+    <when test="(f,eq_text,parameters,(prop,load-type))">
+      <prop id="cc-name" x="(prop,paras-app-name)"/>
+      <dir id="cc" x="(dir,pro)compile-(prop,paras-app-id)"/>
+      
+      <prop id="javaitem_path" x="(prop,paras-app-gh-path)"/> 
+      <prop id="itemname" x="(prop,paras-app-name)"/> 
+      
+      <when test="(f,not,(f,file_exists,(file,jc-hist)))">
+        <create_file file="(file,jc-hist)" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+        <history />]]></create_file>
+      </when>
+      
+      <xml_update how="append" with_what="root" 
+      what="(file,jc-hist)" 
+       flag="save">
+        <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <did name="(x,(prop,paras-app-name))" id="(x,(prop,paras-app-id))" path="(x,(prop,paras-app-gh-path))"
+    time="(x,(f,time))" />]]></inline>
+      </xml_update>     
+    </when>              
+  </choose>
+    <!--
+  <ti label="load-result dir cc">(dir,cc)</ti>
+  <ti label="load-result prop cc-name">(prop,cc-name)</ti>
+  <ti label="load-result javaitem_path">(prop,javaitem_path)</ti>
+  <ti label="load-result itemname">(prop,itemname)</ti>
+
+        <dir id="cc" x="(dir,pro)compile-app.Panorama"/>
+      <prop id="cc-name" x="app.Panorama"/>
+      <prop id="javaitem_path" x="(prop,xr-java-items)/app.Panorama"/> 
+      <prop id="itemname" x="Extension app.Panorama"/>   
+  -->
+  <dir id="working" x="(dir,cc)working"/>
+  <dir id="ff" x="(dir,cc)build-collection"/>  
+  <file id="notice-gen" x="(dir,cc)NOTICE"/>
+        
+  <file id="notice-gen-p1" x="(dir,cc)NOTICE-PART-1.TXT"/>
+  <file id="notice-gen-p2" x="(dir,cc)NOTICE-PART-2.TXT"/>
+  <file id="notice-gen-p3" x="(dir,cc)NOTICE-PART-3.TXT"/>
+
+  <file id="notice-gen-p2b" x="(dir,cc)NOTICE-PART-2-B.TXT"/>
+  <file id="notice-gen-p3b" x="(dir,cc)NOTICE-PART-3-B.TXT"/>  
+   
+  <file id="l" x="(dir,working)list-of-sources.xml"/> 
+  <dir id="src" x="(dir,cc)src"/>
+  <dir id="bin" x="(dir,cc)bin"/>   
+  <prop id="3rd_path" x="(prop,javaitem_path)/3rd-party-libs/bins"/>   
+
+  <prop id="github_http" x="https://github.com/UdoScotti/github-xmlrobot-test1/tree/master/(prop,javaitem_path)"/>
+
+  <dir id="build-process" x="(dir,cc)build-process"/>
+  <dir id="material-build" x="(dir,cc)material"/>
+  <file id="noticeintro" x="(dir,material-build)NOTICE-INTRO.TXT"/> 
+  <dir id="created-legals" x="(dir,cc)created-legals"/>
+  <file id="notice-gen-p1" x="(dir,created-legals)NOTICE-PART-1.TXT"/>
+  <file id="notice-gen-p2" x="(dir,created-legals)NOTICE-PART-2.TXT"/>
+  <file id="notice-gen-p3" x="(dir,created-legals)NOTICE-PART-3.TXT"/>
+  <file id="notice-gen-p2b" x="(dir,created-legals)NOTICE-PART-2-B.TXT"/>
+  <file id="notice-gen-p3b" x="(dir,created-legals)NOTICE-PART-3-B.TXT"/>  
+    
+  <dir id="bb" x="(dir,cc)application-jar-pot"/>
+  <dir id="bbx" x="(dir,cc)application-jar-extracted"/>  
+  <dir id="d1" x="(dir,pro)working(prop,fs)(f,time)(prop,fs)d1"/>
+  <file id="final-build" x="(dir,cc)application-complete.jar"/>
+  <dir id="final-build" x="(dir,cc)application-complete/"/>
+  <dir id="bindown" x="(dir,cc)bin_download"/>
+  <dir id="binextr" x="(dir,cc)bin_extract"/>
+  <file id="bincomplete" x="(dir,cc)3rd-party-bin.jar"/> 
+  <file id="compiled-bin" x="(dir,cc)compiled-bin.jar"/> 
+  <file id="compiled-bin-original" x="(dir,cc)compiled-bin-original.jar"/>
+  <file id="store-compile" x="(dir,pro)user-data-compile-(prop,cc-name).xrs"/> 
+  <file id="store-build" x="(dir,pro)user-data-build-(prop,cc-name).xrs"/>  
+  <file id="store-replace-paras" x="(dir,pro)store-replace-paras-(prop,cc-name).xrs"/>
+  <dir  id="store-root" x="(dir,pro)-store-(prop,cc-name)" />
+  <dir id="sammler" x="(dir,cc)COLLECTED-META-INF"/> 
+  <file id="store-prolog-specdef">(dir,store-root)prolog-specdef.xml</file>
+  <dump_ti label="Load End" test="0"/>
+</job>  
+
+ <job id="Download files from GHub" tip="Downloads any folder from GitHub">
+  <call_job job="tk_caft_edit"/>
+  
+  <prop id="caf-path" x="(prop,caft_path)"/>
+  <dir id="caf-target" x="(dir,caft_target_dir)"/>
+  <when test="(f,has,prop,caft_level)">
+    <prop id="caf-level" x="(prop,caft_level)"/>
+  </when>
+  <prop id="caf-retry" x="1"/>
+  <call_job job="connect"/>                                    
+  <call_job job="caf"/>
+  
+  <ti label="Did download">
+    <ti type="dir" label="Saved in:" x="(dir,caft_target_dir)"/>
+    <ti label="Path:" x="(prop,caft_path)"/>
+    <ti label="Level:" x="(f,vob,prop,caft_level)" test="(f,has,prop,caft_level)"/>
+  </ti>
+ 
+</job>
+ 
+
+<job id="caf" role="hidden">
+  <need>(prop,caf-path)</need>
+  <need>(dir,caf-target)</need>
+  <need default="999">(prop,caf-level)</need>
+  <need default="1">(prop,caf-retry)</need>
+  
+  <choose>
+    <when test="(f,not,(f,has,prop,caf-info))">
+      <prop id="caf-iinfo" x="(prop,caf-path)"/>
+    </when>
+    <otherwise>
+      <prop id="caf-iinfo" x="(prop,caf-info)"/>
+    </otherwise>
+  </choose>
+
+    <mkdir dir="(dir,caf-target)"/>    
+
+    <file id="k" x="(dir,temp)list.xml"/> <!-- <file id="k" x="(dir,status)list.xml"/>   -->     
+    <dump_ti test="0" label="CAFF"/>
+    <!-- 
+    <ti>caf out=(file,k)</ti>
+    <ti>path=(prop,caf-path)</ti>
+    <ti>level=(prop,caf-level)</ti>
+    <ti label="Caf::" type="file" x="(file,k)" test="1"/>
+    -->
+    <try_catch>
+      <try>
+    <xrghub act="list" 
+            out="(file,k)"
+            path="(prop,caf-path)"
+            level="(prop,caf-level)"/>
+            <!-- 
+            <ti type="file" x="(file,k)" label="###########"/>
+            <ti>(f,file_content,(file,k))</ti>
+            -->
+      </try>
+      <catch>
+  
+        <create_file out="(file,k)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+        <nichts></nichts>
+        ]]></create_file>        
+      </catch>
+     </try_catch>  
+    
+                                               
+    <prop id="lange" x="(f,len,(prop,caf-path))"/>
+    <!-- ein problem -->
+    <when test="(f,eq_text,fs,(prop,jvcp_repo_type))">
+      <prop id="lange" x="(f,add,1,(prop,lange))"/>
+    </when>
+    
+    <loop id="l1" xml="(file,k)" xpath="//file">
+
+        <tp>(e:o)(loop,l1,#i)(e:c) (f,text,fill_right,(loop,l1,@name),20, ) ... (f,text,fill_right,(loop,l1,@path),30, ) Copy from github to local drive</tp>
+        <when test="(f,eq_num,0,(f,mod,(loop,l1,#i),10))">
+          <tp>- - - (prop,caf-iinfo) - - - - - - - - - - - - - </tp>
+        </when>
+        <ti test="0">
+prop.caf-path  = [(prop,caf-path)]        
+dir.caf-target = [(dir,caf-target)]
+path of loop   = [(loop,l1,@path)]
+out            = [(dir,caf-target)(f,substring,(loop,l1,@path),(prop,lange))]
+----------------------------------</ti>
+        <mkdir dir="(f,dir_of_file,(dir,caf-target)(f,substring,(loop,l1,@path),(prop,lange)))"/>
+        <xrghub  
+                act="save" 
+                out="(dir,caf-target)(f,substring,(loop,l1,@path),(prop,lange))"
+                path="(loop,l1,@path)"/>            
+    </loop>
+      
+    <when test="(prop,caf-retry)">
+      <call_job job="do-retry"/>
+    </when>
+    <remove id="caf-iinfo" type="prop"/>
+</job>
+
+
+
+<job id="connect" role="hidden">
+
+ <call_job job="tk_jvcp_read"/>
+ 
+<try_catch>
+  <try>  
+  <choose>
+  <when test="(prop,jvcp_dont_connect_at_all)">
+    <ti>do not connect</ti>
+  </when>
+  <when test="(f,not,(prop,connected))">
+    <choose>
+      <when test="(f,eq_text,fs,(prop,jvcp_repo_type))">
+      
+        <coopdef xxxclassloader="ghub-classloader" xjar="(dir,app)result.jar"> 
+           <jar>(dir,app)xr-ghub-fs.jar</jar>                                      
+          <taskdef 
+            id="xrghub"              
+            class="at.nicolas.x.githubfs.CoopKioskFsActs"
+            shaky_prob="1"/>     
+            
+          <fundef 
+            id="xrghub"              
+            class="at.nicolas.x.githubfs.CoopGHubFunctions"
+            />                
+        </coopdef>    
+              
+      </when>
+      <when test="(f,eq_text,gh,(prop,jvcp_repo_type))">
+      
+        <coopdef xxxclassloader="ghub-classloader" xjar="(dir,app)result.jar"> 
+          <jar>(dir,app)xr-ghub[-1-].jar</jar>
+          <jar>(dir,app)xr-ghub[-2-].jar</jar>
+          <jar>(dir,app)xr-ghub[-3-].jar</jar>
+          <jar>(dir,app)xr-ghub[-4-].jar</jar>
+          <jar>(dir,app)xr-ghub[-5-].jar</jar>                                       
+          <taskdef 
+            id="xrghub"              
+            class="at.nicolas.x.github.CoopGHubActs"
+            shaky_prob="1"/>     
+            
+          <fundef 
+            id="xrghub"              
+            class="at.nicolas.x.github.CoopGHubFunctions"
+            />                
+        </coopdef>     
+        
+        <tk label="No Github-Repo defined">
+        <tk type="msg" x="no github-repository defined until now. &#xA;We are going to ask you that now(e:s) &#xA;Continue ?" 
+            test="(f,not,(f,has,prop,jvcp_repo))"/>
+        </tk>
+        <call_job job="tk_jvcp_edit_repo" test="(f,not,(f,has,prop,jvcp_repo))"/>         
+      </when>      
+    </choose>
+  
+      
+    <choose>
+      <when test="(f,eq_text,fs,(prop,jvcp_repo_type))">
+            <xrghub 
+              id="xr" 
+              act="connect" 
+              dir="(dir,jvcp_fs)"/>        
+      </when>
+      <when test="(f,eq_text,gh,(prop,jvcp_repo_type))">
+        <tp>connecting to repo  (prop,jvcp_repo)</tp>
+        <choose>
+          <when test="(f,and,(f,has,prop,jvcp_connectA),(f,has,prop,jvcp_connectB))">
+            <tp>with credentials</tp>
+            <xrghub 
+              id="xr" 
+              act="connect" 
+              repo="(prop,jvcp_repo)"
+              connectA="(prop,jvcp_connectA)"
+              connectB="(prop,jvcp_connectB)"/>    
+          </when>
+          <otherwise>
+            <tp>without credentials</tp>
+            <try_catch>
+              <try>
+                <xrghub 
+                  id="xr" 
+                  act="connect" 
+                  repo="(prop,jvcp_repo)"/>         
+              </try>
+              <catch>
+                <tk label="Could not connect to github">
+                <tk type="msg" 
+                    msg_type="e"
+                    x="Problem in connecting to repo '(prop,jvcp_repo)'. &#xA;We tried without credentials(e:s) maybe thats the problem.&#xA;Credentials are username and password."/>
+                </tk>
+                <ti label="Solve the problem"/>
+                <ti label=" " type="call_job" job="Edit: Configuration" explain="()Edit user and password here.()"/>
+                <ti label="Tip:" flag="label_right" type="ul" x="()Edit there the fields ConnectA and ConnectB.()"/>
+                <ti label=" "  type="ul"  x="()Connect A is the username and Connect B is the password!()"/>
+                <ti_hr/>
+                <throw>Something with github-repo and password !</throw>
+              </catch>
+            </try_catch>
+          
+          
+          </otherwise>
+        </choose>              
+      </when>      
+    </choose>  
+ 
+
+                          
+    <tp>Did connect to repo</tp> 
+    <prop id="connected" x="1"/>
+    <xrghub 
+      act="set_default_id" 
+      default_id="xr"/>
+      <tp>Did set default_id to [xr]</tp>   
+  </when>
+  <otherwise>
+    <tp>Seems to be already connected-another attempt ;-(e:c)</tp>
+  </otherwise>
+  </choose>
+</try>
+<catch>
+  <throw_again test="(f,not,(f,eq,(f,vob,prop,jvcp_dont_fail),1))" />
+</catch>
+</try_catch>          
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+<job id="Administrate" role="hidden">
+  <ti label="Administration" type="file" x="(dir,app)admin.xls"/>
+</job>
+
+
+</jobs>

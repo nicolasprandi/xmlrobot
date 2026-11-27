@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="vi-write">
+    <need>(prop,vi_key) (prop,isAdd)</need>
+    <need default="./">(prop,vis_offset)</need>
+    <spirit act="open" id="vis_spirit_tc" xml="(file,vis)"/>
+    <when test="(prop,isAdd)">
+        <choose>
+            <when test="(f,ends_with,(prop,vis_offset),/)">
+                <prop id="offset2" x="(f,substring,(prop,vis_offset),0,(f,sub,(f,len,(prop,vis_offset)),1))"/>
+            </when>
+            <otherwise>
+                <prop id="offset2" x="(prop,vis_offset)"/>
+            </otherwise>
+        </choose>
+        <spirit act="xml_update" how="insert_in" id="vis_spirit_tc" where="(prop,offset2)">
+            <inline attribute="with">&lt;vi row="(prop,vi_key)" /&gt;</inline>
+        </spirit>
+        <i>Added a new record</i>
+    </when>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="firstname" value="(f,vob,prop,vi_firstname)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="lastname" value="(f,vob,prop,vi_lastname)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="area" value="(f,vob,prop,vi_area)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="phone" value="(f,vob,prop,vi_phone)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="email" value="(f,vob,prop,vi_email)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="street" value="(f,vob,prop,vi_street)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="house" value="(f,vob,prop,vi_house)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="door" value="(f,vob,prop,vi_door)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="zip" value="(f,vob,prop,vi_zip)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="tit1" value="(f,vob,prop,vi_tit1)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="vis_spirit_tc" where="(prop,vis_offset)vi[@row='(prop,vi_key)']" attribute="tit2" value="(f,vob,prop,vi_tit2)"/>
+    <spirit act="close" flag="save pretty" id="vis_spirit_tc"/>
+</job>

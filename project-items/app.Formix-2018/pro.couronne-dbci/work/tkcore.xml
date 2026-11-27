@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dbci-tk">
+<call_job job="tr_dbci"/>
+<need default="">(prop,dbcis_tk_control)</need>
+<when test="(f,has_flag,(prop,dbcis_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,dbcis_tk_control),print_all_fields)">
+<ti label="(prop,dbci_default_label_class) (prop,dbci_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,dbci_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+
+<when test="(f,not,(f,has_flag,(prop,dbcis_tk_control),print_only))">
+<when test="(f,exists,coop2,_cry,(prop,cic_id))">
+<when test="(f,has,prop,dbci_password)">
+<crypto id="(prop,cic_id)" act="decrypt" in="(prop,dbci_password)" out="dbci_password"/>
+  <ti>password was decrypted</ti>
+</when>
+</when>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,dbcis_tk_control),print_only),,(prop,dbci_default_label_class)(f,when,(f,has,prop,dbci_default_label_name), (prop,dbci_default_label_name),))" tip="(prop,_dbci_tip)" tk_id="26" flag="(prop,dbcis_tk_control) wrap ">
+<tk label="Coop" x="Coop" test_first="0" type="msg" flag=" "/>
+<tk label="Coop-Id" id="dbci_id" x="" test_first="1" type="text" cols="30" flag=" nono "/>
+<tk label="App-Id" id="dbci_app" x="" test_first="1" type="text" cols="30" flag=" "/>
+<tk label="Titel" id="dbci_titel" x="" test_first="1" type="text" flag=" "/>
+<tk label="Credentials" x="Credentials" test_first="0" type="msg" flag=" "/>
+<tk label="Dbms" id="dbci_db" x="" test_first="1" type="sel" flag=" nono ">
+<sel label="MySql">mysql</sel>
+<sel label="MariaDb">maria</sel>
+<sel label="Postgres">postgres</sel>
+</tk>
+<tk label="Url" id="dbci_url" x="" test_first="1" tip="jdbc:mariadb://onhp-db1.iron.bsa.oriented.ch:3306/formixat003?zeroDateTimeBehavior=convertToNull jdbc:postgresql://localhost:5432/hibiscus  jdbc:mysql://localhost:3306/hibiscus  jdbc:mysql://localhost:3307/hibiscus?zeroDateTimeBehavior=convertToNull" type="text" cols="130" flag=" nono "/>
+<tk label="User" id="dbci_user" x="" test_first="1" type="text" cols="30" flag=" nono "/>
+<tk label="Password" id="dbci_password" x="" test_first="1" type="text" cols="30" flag="  password "/>
+<tk label="Autocommit" id="dbci_autocommit" x="0" test_first="0" type="bool" flag=" nono "/>
+<tk label="Admin" x="Admin" test_first="0" type="msg" flag=" "/>
+<tk label="Doku" id="dbci_doku" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="Status" id="dbci_off" x="0" test_first="0" type="sel" flag=" nono ">
+<sel label="On">0</sel>
+<sel label="Off">1</sel>
+</tk>
+<tk label="Use Encryption" id="dbci_crypto" x="1" test_first="0" type="sel" flag=" nono ">
+<sel label="Password-Encryption">1</sel>
+<sel label="Password-Is-UNENCRYPTED">0</sel>
+</tk>
+<tk label="Test-Connect" id="dbci_request" x="0" test_first="0" tip="Request a connection when starting the dbci for testing-purposes" type="bool" flag=" nono "/>
+</tk>
+<prop id="did-decrypt">0</prop>
+<when test="(f,not,(f,has_flag,(prop,dbcis_tk_control),print_only))">
+<when test="(f,exists,coop2,_cry,(prop,cic_id))">
+<when test="(f,has,prop,dbci_password)">
+<crypto id="(prop,cic_id)" act="encrypt" in="(prop,dbci_password)" out="dbci_password"/>
+  <ti>password was decrypted</ti>
+  <prop id="did-decrypt">1</prop>
+</when>
+</when>
+<when test="(prop,dbci_crypto)">
+  <when test="(f,not,(prop,did-decrypt))">      
+    <remove id="did-decrypt" type="prop"/>
+    <tk label="Encryption Problem">
+    <tk type="bool" id="stop"  label="Do quit" x="1"
+        tip="Encryption requestd but not performed"/>
+    </tk>
+    <when test="(prop,stop)">
+      <throw>ok stopped</throw>
+    </when>
+  </when>
+</when>
+</when>
+
+</job>

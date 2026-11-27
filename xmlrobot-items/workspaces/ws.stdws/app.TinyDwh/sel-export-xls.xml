@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<sel>
+  <sel label="Excel-Xls">e</sel>       
+  <sel label="Csv">c</sel>
+  <sel label="Xml-Attribute">xa</sel> 
+  <sel label="Xml-Element">xe</sel>
+</sel>

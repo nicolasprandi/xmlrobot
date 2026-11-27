@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="Replace File" role="hidden">
+  <need>(prop,requ_file_id)</need>
+  
+  <call_job job="read-ic-search" />
+  <call_job job="edit-replacer" />
+  
+  <call_job job="replace-in-file" />
+  
+</job>
+
+<job id="Replace All Files" role="hidden">
+  <call_job job="read-ic-search" />
+  <call_job job="edit-replacer" />
+
+  <loop id="files" xml="(file,result)" xpath="file" sort="@filename" ignore_case="@filename">
+    <prop id="requ_file_id" x="(loop,files,@file_id)" />
+    <call_job job="replace-in-file" />
+  </loop>
+  
+</job>
+
+<job id="replace-in-file" role="hidden">
+  <need>(prop,requ_file_id) (dir,search_dir) (prop,search_for) (prop,search_type) (prop,search_encoding) (prop,replace_text)</need>
+  
+  <choose>
+    <when test="(f,eq,text,(prop,search_type))">
+      <prop id="search_regex">(f,text_to_regex,(prop,search_for))</prop>
+    </when>
+    <otherwise>
+      <prop id="search_regex">(prop,search_for)</prop>
+    </otherwise>
+  </choose> 
+  <file id="requ_file">(dir,search_dir)(f,xpath,(file,result),file[@file_id=(f,xpath_string,(prop,requ_file_id))],@fn_rel)</file>
+  
+  <ti label="Replacing ..." type="file" x="(file,requ_file)"/>
+  <ti_flush/>
+  <prop id="requ_times">(f,xpath,(file,result),file[@file_id=(f,xpath_string,(prop,requ_file_id))],@times)</prop>
+  <prop id="real_times">(f,file_count_regex,(file,requ_file),(prop,search_regex),(prop,search_encoding))</prop>
+  <when test="(f,not,(f,eq,(prop,requ_times),(prop,real_times)))">
+    <throw>Expectations in file (file,requ_file) not fullfilled, Expected-times: (prop,requ_times), Found-times: (prop,real_times)
+    </throw>
+  </when>
+  
+  
+  <tp>Replacing in (file,requ_file)</tp>
+ 
+                                                                                                                             
+  <prop id="g" 
+  x="(f,replace_regex,(f,file_content,(file,requ_file),(prop,search_encoding)),(prop,search_regex),(prop,replace_text))"/>
+  <copy file="(file,requ_file)" intodir="(dir,temp)"/>
+  <create_file out="(file,requ_file)" encoding="(prop,search_encoding)">(prop,g)</create_file>
+  
+</job>
+
+
+<job id="edit-replacer" role="hidden">
+
+  <call_job job="read-ic-replace" />
+  
+  <tk label="Replace" flag="sum">
+    <tk id="replace_text" type="textblock" label="New Text for '(prop,search_for)' "
+        tip="This will replace your search '(prop,search_for)' (f,when,(f,eq,regex,(prop,search_type)),(e:o)Regular Expression(e:c),) "/>
+  </tk>
+  
+  <when test="(f,eq,,(prop,replace_text))">
+    <tk type="msg" msg_type="w" x="You entered an EMPTY Text&#xA;That will delete all occurences of '(prop,search_for)'&#xA;Is this what you want and do you agree?"/>
+  </when>
+  
+  <!-- asking for security reasons --> 
+  
+  <tk label="Sure about replacing ?" 
+      type="accept" 
+      id="delete-pro-1" 
+      x="It is adviced to make a backup of the files in question before the replacement. &#xA;The application 'Search' does no backup for you!" 
+      label_accept="Replace" 
+      label_decline="Forget it" 
+      width="300" 
+      height="150">
+      <q id="delete-pro-2" label="()Yes, I know that the file(s) will be updated()"/> 
+  </tk>
+  
+  <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+    <throw>Replacement terminated on request.</throw>
+  </when> 
+  
+  <call_job job="write-ic-replace" />
+
+</job>
+
+</jobs>

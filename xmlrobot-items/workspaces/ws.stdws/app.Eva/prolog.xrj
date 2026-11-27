@@ -1,0 +1,189 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<job id="prolog" role="hidden">
+
+  <interpreter turbo="1"/> 
+  <when test="(f,eq,1,(f,sissi))">
+    <when test="(f,not,(f,has,prop,pro))"  >
+      <choose>
+        <when test="(f,ask,app_has_static_pro,(prop,app))"  >
+          <prop id="pro" x="Standard-Project" />
+          <dir id="pro" x="(dir,pro_home)pro_standard" />
+          <when test="(f,not,(f,dir_exists,(dir,pro)))">
+            <mkdir dir="(dir,pro)" />
+            <!-- <restart app="(prop,app)" pro="(prop,pro)"/> -->
+          </when>
+        </when>
+        <otherwise>
+          <i>kein standard-project</i>
+        </otherwise>
+      </choose>
+    </when>
+  </when>
+  
+   <when test="(f,has,prop,pro)">  
+  
+  <file id="dbapp-data" x="(dir,pro)dbapp-data.xml"/>
+  <prop id="dbapp-regex" x="dbapp_.+"/>
+     
+  <file id="dbuser-data" x="(dir,pro)cache/dbuser-data.xml"/>
+  <prop id="dbuser-regex" x="dbuser_.+"/>   
+    
+    <file id="secret-data" x="(dir,pro)cache/secret-data.xml" test="(f,not,(f,guicontroller,general,is-web,))"/>
+    <file id="secret-data" x="(f,request,dir,session_home_mem)app-sabia/secret-data.xml" test="(f,guicontroller,general,is-web,)"/>    
+    
+    <prop id="secret-regex" x="secret_.+"/>
+  
+    <file id="conf-data" x="(dir,pro)conf-data.xml"/>
+    <prop id="conf-regex" x="conf_.+"/>
+    
+    <file id="stat-data" x="(dir,pro)stat-data.xml"/>
+    <prop id="stat-regex" x="stat_.+"/>  
+      
+    <file id="project-exists" x="(dir,pro)project-exists.txt"/>
+      
+
+    <file id="blocks">(dir,pro)blocks.xml</file>
+    <when test="(f,not,(f,exists_file,(file,blocks)))">
+    <create_file out="(file,blocks)">&lt;blocks/&gt;</create_file>
+    <i>Created: (file,blocks)</i>
+    </when>
+    <prop id="blocks_offset">./</prop>
+    <prop id="blocks_offset_label"/>
+    <prop id="blocks_offset_new_key">//</prop>
+    <prop id="blocks_sort_attribute"/>
+    <prop id="blocks_sort_number"/>
+    <prop id="blocks_sort_ignore_case"/>
+    <prop id="blocks_sort_desc"/>
+    <prop id="blocks_where"/>
+    <prop id="blocks_return_job">block-see-all</prop>  
+    
+    <file id="plates">(file,blocks)</file>
+    <prop id="plates_offset">./</prop>
+    <prop id="plates_offset_label"/>
+    <prop id="plates_offset_new_key">//</prop>
+    <prop id="plates_sort_attribute"/>
+    <prop id="plates_sort_number"/>
+    <prop id="plates_sort_ignore_case"/>
+    <prop id="plates_sort_desc"/>
+    <prop id="plates_where"/>
+    <prop id="plates_return_job">plate-see-all</prop>    
+    
+    
+    <file id="aspects">(dir,pro)aspects.xml</file>
+    <when test="(f,not,(f,exists_file,(file,aspects)))">
+    <create_file out="(file,aspects)">&lt;aspects/&gt;</create_file>
+    <i>Created: (file,aspects)</i>
+    </when>
+    <prop id="aspects_offset">./</prop>
+    <prop id="aspects_offset_label"/>
+    <prop id="aspects_offset_new_key">//</prop>
+    <prop id="aspects_sort_attribute"/>
+    <prop id="aspects_sort_number"/>
+    <prop id="aspects_sort_ignore_case"/>
+    <prop id="aspects_sort_desc"/>
+    <prop id="aspects_where"/>
+    <prop id="aspects_return_job">aspect-see-all</prop>    
+    
+    <file id="persons">(dir,pro)persons.xml</file>
+    <when test="(f,not,(f,exists_file,(file,persons)))">
+    <create_file out="(file,persons)">&lt;persons/&gt;</create_file>
+    <i>Created: (file,persons)</i>
+    </when>
+    <prop id="persons_offset">./</prop>
+    <prop id="persons_offset_label"/>
+    <prop id="persons_offset_new_key">//</prop>
+    <prop id="persons_sort_attribute"/>
+    <prop id="persons_sort_number"/>
+    <prop id="persons_sort_ignore_case"/>
+    <prop id="persons_sort_desc"/>
+    <prop id="persons_where"/>
+    <prop id="persons_return_job">person-see-all</prop>
+    
+    <file id="tasks">(dir,pro)tasks.xml</file>
+    <when test="(f,not,(f,exists_file,(file,tasks)))">
+    <create_file out="(file,tasks)">&lt;tasks/&gt;</create_file>
+    <i>Created: (file,tasks)</i>
+    </when>
+    <prop id="tasks_offset">./</prop>
+    <prop id="tasks_offset_label"/>
+    <prop id="tasks_offset_new_key">//</prop>
+    <prop id="tasks_sort_attribute">@status</prop>
+    <prop id="tasks_sort_number"/>
+    <prop id="tasks_sort_ignore_case"/>
+    <prop id="tasks_sort_desc"/>
+    <prop id="tasks_where"/>
+    <prop id="tasks_return_job">task-see-all</prop>    
+
+    <file id="tastes">(dir,pro)tastes.xml</file>
+    <when test="(f,not,(f,exists_file,(file,tastes)))">
+    <create_file out="(file,tastes)">&lt;tastes/&gt;</create_file>
+    <i>Created: (file,tastes)</i>
+    </when>
+    <prop id="tastes_offset">./</prop>
+    <prop id="tastes_offset_label"/>
+    <prop id="tastes_offset_new_key">//</prop>
+    <prop id="tastes_sort_attribute">@status</prop>
+    <prop id="tastes_sort_number"/>
+    <prop id="tastes_sort_ignore_case"/>
+    <prop id="tastes_sort_desc"/>
+    <prop id="tastes_where"/>
+    <prop id="tastes_return_job">taste-see-all</prop>
+
+    <file id="notes">(file,tastes)</file>
+  
+    <prop id="notes_offset">./</prop>
+    <prop id="notes_offset_label"/>
+    <prop id="notes_offset_new_key">//</prop>
+    <prop id="notes_sort_attribute"/>
+    <prop id="notes_sort_number"/>
+    <prop id="notes_sort_ignore_case"/>
+    <prop id="notes_sort_desc"/>
+    <prop id="notes_where"/>
+    <prop id="notes_return_job">note-see-all</prop>
+    
+  </when> 
+</job>
+
+<!--
+
+<job id="see-check-app" role="hidden">
+
+   <choose>
+    <when test="(f,guicontroller,general,is-web,)">
+      <prop id="targetapp">Rezepte</prop>
+    </when>
+    <otherwise>
+      <prop id="targetapp">Formix-Rezeptblock</prop>
+    </otherwise>
+  </choose>
+    
+  <ti label="Rezepte" />
+  <dir id="tmp_pro">(dir,pro)myRezeptApp</dir>
+  
+      <call_app     app="(prop,targetapp)" 
+                    job="??" 
+                    pro_dir="(dir,tmp_pro)" 
+                    pro_id="Your Rezepte"
+                    flag="silent">                      
+      </call_app>    
+</job>
+
+<job id="see-rezept-app" role="hidden">
+
+  <dir id="tmp_pro">(dir,pro)myRezeptApp</dir>
+  
+      <call_app     app="Check" 
+                    job="??" 
+                    pro_dir="(dir,tmp_pro)" 
+                    pro_id="Your Check"
+                    flag="silent">                     
+      </call_app>    
+</job>
+
+-->
+
+</jobs>
+

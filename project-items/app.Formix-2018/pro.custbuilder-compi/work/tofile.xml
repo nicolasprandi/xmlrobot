@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="compi-write">
+<need>(prop,compi_key) (prop,isAdd)</need>
+<spirit act="open" id="compis_spirit_tc" xml="(file,compis)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,compis_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,compis_offset),0,(f,sub,(f,len,(prop,compis_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,compis_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="compis_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;compi row="(prop,compi_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="compis_spirit_tc" where="(prop,compis_offset)compi[@row='(prop,compi_key)']" attribute="compilation" value="(f,vob,prop,compi_compilation)"/>
+<spirit act="close" flag="save pretty" id="compis_spirit_tc"/>
+</job>

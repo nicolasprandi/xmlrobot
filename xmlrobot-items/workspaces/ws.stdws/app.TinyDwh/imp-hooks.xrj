@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+
+<job id="event_imp_view_begin" role="hidden">
+  
+   <prop id="book-name">(f,name_of_dir,(f,dir_of_file,(file,imps)))</prop>      
+  <ti_break class_table="tabNavigator"/>  
+
+  <ti type="rec" >
+
+    <ti x="(f,html,b,o)(prop,book-name)(f,html,b,c) (e:o)Index-Scenario-(prop,_sl_buch)(e:c)"
+     flag="block wrap_word" />
+    
+
+    <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button " align="right" class="fx fxAction justup" job="mm-tester-imp"/>  
+  </ti>   
+  
+  <call_job job="tk_bd_intro">
+      <dir id="book-master">(dir,goImp)</dir>
+      <prop id="book-type">imp</prop>    
+      <prop id="book-type-name">Index-Scenario</prop>
+      <!-- book name schon oben festgelegt -->
+      <prop id="book-home-job">_imps</prop>  
+  </call_job>  
+  <call_job job="tk_gpref_read"/>
+  <call_job job="tk_gpref_show_button" >
+    <prop id="what_gpref">isstyle</prop>
+    <prop id="ready_job">_imps</prop>
+    <prop id="with_hr">0</prop>
+    <prop id="do_align">right</prop>
+  </call_job>   
+
+  <ti_break/>
+  
+  
+  <create_file file="(dir,ghome)last-books/imp_last.txt">(prop,book-name)</create_file>
+    
+  <ti_space heigth="7px"/> 
+  
+
+  
+  <ti_hr_break/>  
+</job>
+
+
+<job id="event_imp_loop_end" role="hidden">
+ 
+  <when test="(prop,gpref_isstyle)">
+    <ti_break/>
+    <call_job job="ima-see-all">
+      <file id="imas">(file,imps)</file>
+      <prop id="imas_offset">imp[@row='(loop,imp_loop,@row)']/</prop>  
+      <prop id="imas_offset_label"></prop>
+      <file id="imps">(file,imps)</file>
+      <prop id="imps_offset">./</prop>  
+      <prop id="imps_offset_label"></prop>   
+      <prop id="imp_key">(loop,imp_loop,@row)</prop>        
+    </call_job>
+   
+     <ti_hr_break/>
+
+  </when>
+</job>
+
+<job id="event_imp_details_end" role="hidden">
+
+  
+<ti_hr_break/>
+<file id="imas">(file,imps)</file>
+<prop id="imas_offset">imp[@row='(prop,imp_key)']/</prop>
+
+<prop id="imas_offset_label"></prop>
+<ti type="rec">
+  <ti span="3">(prop,_pl_ima):</ti>
+
+  <ti  type="call_job" explain_nix="ima-add" flag="button " class="fx fxAdd fxAddIma" explain="+ Statement" job="ima-add" >
+    <prop id="imas_offset_label">Point #(prop,imp_point)</prop>
+    <file id="imas">(file,imps)</file>
+    <prop id="imas_offset">(prop,imas_offset)</prop>
+    <file id="imps">(file,imps)</file>
+    <prop id="imp_key">(prop,imp_key)</prop>
+  </ti>  
+  <ti>Conditions</ti>
+</ti>
+
+<ti_space heigth="8px"/>
+<!-- 
+<ti type="rec" >
+  
+  <ti  type="call_job" explain_nix="ima-add" flag="button " class="fb fbAdd fbAddIma" explain="+ Action" job="ima-add" >
+    <prop id="imas_offset_label">Point #(prop,imp_point)</prop>
+    <file id="imas">(file,imps)</file>
+    <prop id="imas_offset">(prop,imas_offset)</prop>
+    <file id="imps">(file,imps)</file>
+    <prop id="imp_key">(prop,imp_key)</prop>
+  </ti>
+</ti>    -->
+
+
+    <call_job job="ima-see-all"/>  
+</job>
+
+<job id="imp-orga-finished" role="hidden">
+
+      <prop id="mm-what">all</prop>
+      <file id="mm-liste">(file,orga)</file>
+    <call_job job="mm-op-imp"/>  
+</job>
+
+<job id="ima-orga-finished" role="hidden">
+
+  <prop id="imp_key">(f,substring_after,(prop,orga_offset),imp[@row=')</prop> 
+  <prop id="imp_key">(f,substring_before,(prop,imp_key),')</prop>
+  <file id="imps">(file,orga)</file>
+  <call_job job="imp-see"/>   
+</job>
+
+
+
+
+<job id="_imps" role="hidden">
+
+ <throw test="(f,not,(f,right,ipi))">Diese Funktion ist mit diesen Privilegien nicht moeglich. ipi</throw>
+  <choose>
+    <when test="(f,exists_file,(dir,ghome)last-books/imp_last.txt)">
+                                                             
+      <file id="imps">(dir,goImp)(f,file_content,(dir,ghome)last-books/imp_last.txt)/imp-list.xml</file>
+      
+      <when test="(f,not,(f,exists_file,(file,imps)))">
+        <create_file out="(file,imps)"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<is>
+  <imp row="1" point="1" on="1" />
+  <imp row="2" point="2" on="1" />
+  <imp row="3" point="3" on="1" />
+  <imp row="4" point="4" on="1" />
+  <imp row="5" point="5" on="1" />
+  <imp row="6" point="6" on="1" />
+</is>]]></create_file>
+        <i>Created: (file,imps)</i>
+      </when> 
+      
+      <call_job job="imp-see-all"/>  
+            
+    </when>
+    <otherwise>                                                  
+      <call_job job="mm-tester-imp" />
+    </otherwise>
+  </choose>  
+    
+
+</job>
+
+<job id="mm-tester-imp" role="hidden">      
+
+      <prop id="mm-singular">Index Scenario</prop>
+      <prop id="mm-plural">Index Scenarios</prop> 
+       
+  <call_job job="mm-master">
+    <dir id="mm-home">(dir,goImp)</dir>
+    <prop id="mm-postfix">imp</prop>
+    <prop id="mm-ojob">mm-op-imp</prop> 
+ </call_job> 
+
+</job>
+
+<job id="mm-op-imp" role="hidden">
+  <need>(prop,mm-what)</need>
+  <when test="(f,not,(f,exists_file,(file,mm-liste)))">
+    <create_file out="(file,mm-liste)"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<is>
+  <imp row="1" point="1" on="1" />
+  <imp row="2" point="2" on="1" />
+  <imp row="3" point="3" on="1" />
+  <imp row="4" point="4" on="1" />
+  <imp row="5" point="5" on="1" />
+  <imp row="6" point="6" on="1" />
+</is>]]></create_file>
+  </when>
+  <choose>
+    <when test="(f,eq_text,all,(prop,mm-what))">
+    
+      <!-- keine info -->
+      <!-- <ti label="(f,name_of_dir,(f,dir_of_file,(file,mm-liste)))"/>    -->
+      <call_job job="imp-see-all">
+         <file id="imps">(file,mm-liste)</file>
+      </call_job>
+      
+    </when>  
+    <!-- 
+    <when test="(f,eq_text,key,(prop,mm-what))">
+    
+      <call_job job="dsi-see">
+         <file id="dsis">(file,mm-liste)</file>
+         <prop id="dsi_key">(prop,mm-key)</prop>
+      </call_job>
+      
+    </when>  -->
+      
+  </choose>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

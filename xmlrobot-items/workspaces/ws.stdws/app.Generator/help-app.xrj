@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+<dir id="loxo" x=""/>
+<dir id="edir" x=""/>
+<dir id="angulardir" x=""/>
+
+<dir id="edir" x=""/>
+<dir id="edir" x=""/>
+<dir id="edir" x=""/>
+
+<file id="colsel" x=""/>
+<file id="edir" x=""/>
+<file id="edir" x=""/>
+<file id="edir" x=""/>
+<file id="edir" x=""/>
+<file id="edir" x=""/>
+
+
+<job id="?">
+  <ti label="When to use Application (f,html,i,open)Generator(f,html,i,close) :">
+    <ti xtype="ul">1(e:c) (f,html,bold,open)You want to create testdata for a software-project(f,html,bold,close)</ti>
+	  <ti xtype="ul">2(e:c) (f,html,bold,open)You want to publish an spreadsheet as AngularJS-application(f,html,bold,close)</ti>
+	  <ti xtype="ul">3(e:c) (f,html,bold,open)You want to generate an xsl-template(f,html,bold,close)</ti>         
+	  <ti xtype="ul">4(e:c) (f,html,bold,open)()You want to convert an spreadsheet to json, csv, json, xml or html()(f,html,bold,close)</ti>
+    <ti label="Spreadsheet:">A file in the format 
+'Microsoft Excel 2007-2013 XML (e:o).xlsx(e:c)' - or -
+'Microsoft Excel 97-2003 (e:o).xls(e:c)'</ti> 
+  </ti>
+  <ti_break/>
+  <ti_space height="5px" />
+  <ti label="Overview"/>
+  
+  <ti type="img" x="(dir,app)all-smaller.png"/>
+  <ti_space height="8px" />
+
+  <ti_break/> 
+  <ti_hr/>  
+  <ti_space height="5px" />
+  <ti label="()Generator, Main Process, Job 'Run'()"/>
+  <ti_space height="5px" />
+  <ti type="img" x="(dir,app)run-smaller.png"/>
+  
+  <call_job job="do model input" test="(f,has,dir,pro)">
+    <prop id="view" x=""/>
+    <prop id="modelinputflag" x="print_only print_all_fields print_tips_only"/>
+  </call_job>
+  
+          
+  <ti_hr/>
+  <ti label="()Exporter()"/>
+  <ti type="img" x="(dir,app)exporter-smaller.png"/>
+  <ti_space height="5px" />
+  <call_job job="do export input" test="(f,has,dir,pro)">
+    <prop id="view" x=""/>
+    <prop id="exportinputflag" x="print_only print_with_tips print_all_fields print_tips_only"/>
+    <prop id="askquestions" x="1"/>
+  </call_job>
+ 
+
+<ti_hr/>  
+  <ti label="License: GENERATOR"/>
+  <ti type="ul">Copyright &#xA9; 2015-2020 Nicolas Prandstaetter. All rights reserved.</ti> 
+  <ti type="ul">()GENERATOR is in version 0.7.()</ti>
+  <ti type="ul">GENERATOR is under test.</ti>
+
+  
+  <ti>(f,html,bold,open)Additional terms regarding generated Html-Files and AngularJS-Html-Files:(f,html,bold,close)</ti>
+  <ti type="ul">GENERATOR generates Html-Files and AngularJS-Html-Files in the EXPORT-process.</ti>
+  <ti type="ul">Both of these files will automatically include 2 links:&#xA;1. Link to the website of 'GENERATOR' and&#xA;2. link to the website of 'Xml-Robot'.</ti>
+  <ti type="ul">You are allowed to update and change the two generated files according to your needs and purposes(e:s) (f,html,bold,open)BUT(f,html,bold,close) you are (f,html,bold,open)NOT allowed to remove or modify the two links!(f,html,bold,close) They have to stay intact and remain visible to the end-user.</ti>
+
+
+
+
+<ti label="3rd party licenses of GENERATOR"/>
+<ti x="(f,html,bold,open)Json Entity Replacement(f,html,bold,close)"/>
+<ti type="ul">The Xsl-Sourcecode for replacing Json-Entities was created by Doeke Zanstra</ti>
+<ti type="ul">Copyright (e:o)c(e:c) 2006(e:s)2008 Doeke Zanstra</ti>
+<ti x="(f,html,bold,open)Bootstrap (e:o)Css used for AngularJS Export(e:c)(f,html,bold,close)"/>
+<ti type="ul">Bootstrap v3.3.0 (e:o)http://getbootstrap.com(e:c)</ti>
+<ti type="ul">Copyright 2011-2014 Twitter(e:s) Inc.</ti>
+<ti type="ul">Licensed under MIT(e:s) https://github.com/twbs/bootstrap/blob/master/LICENSE</ti>
+
+<ti x="(f,html,bold,open)AngularJS v1.5.3(f,html,bold,close)"/>
+<ti type="ul">(e:o)c(e:c) 2010-2016 Google(e:s) Inc. http://angularjs.org</ti>
+<ti type="ul">Licensed under MIT</ti>
+   
+
+</job>
+
+
+</jobs>

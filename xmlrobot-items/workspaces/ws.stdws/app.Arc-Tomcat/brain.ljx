@@ -1,0 +1,242 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog" />
+
+<job id="brain-seq-setup" role="hidden" >
+  <call_job job="brain-gather"/>
+  <call_job job="brain-read"/>
+</job>
+
+<job id="brain-seq-read-report" role="dev" > 
+  <call_job job="brain-read"/>
+  <call_job job="brain-report"/>
+</job>
+<job id="brain-forget" role="dev" pri="10">
+  <delete file="(file,brains)" />
+  
+  <delete file="(file,brain_webapps)" />
+  <i>Refreshing Server-Information-Cache ...</i>
+</job>
+
+<job id="webapp-list" role="dev">
+  <call_job job="brain-read"/>
+  <file id="y" x="(dir,work)sc1.xml"/>
+  <scan out="(file,y)" dir="(dir,webapps)" levels="1"/>
+  <ti type="file" x="(dir,work)sc1.xml"/>
+  <ti label="(f,html,i,o)(f,html,b,o)webapp(f,html,b,c)(f,html,i,c)">(f,html,b,o)filepath and web(f,html,b,c)</ti>
+  <loop id="wap" xml="(file,y)" xpath="dir">
+    <ti label="(loop,wap,@rpath)" type="rec">
+      <!-- <ti type="web">http://localhost:(prop,port-http)(prop,fs)(loop,wap,@ipath)</ti>   -->
+      <ti type="call_job"
+        explain="http://localhost:(prop,port-http)(prop,fs)(loop,wap,@ipath)" 
+        job="webapp-open-typical" flag="silent">
+        <prop id="webapp_name" x="(loop,wap,@ipath)"/>
+      </ti>
+      <ti type="call_job"
+        explain="Q" 
+        job="webapp-open" flag="silent">
+        <prop id="webapp_name" x="(loop,wap,@ipath)"/>
+      </ti>   
+      
+     <ti type="call_job"
+        explain="Details" 
+        job="webapp-details">
+        <prop id="webapp_name" x="(loop,wap,@rpath)"/>
+        <dir id="japp" x="(dir,webapps)(loop,wap,@ipath)"/>
+      </ti>          
+      
+    </ti>
+    <!--
+    <ti_space height="2px"/>
+    <ti type="dir" label="(f,html,b,o)(loop,wap,@rpath)(f,html,b,c)"></ti>
+    <ti label=" " type="web">http://localhost:(prop,port-http)(prop,fs)(loop,wap,@ipath)</ti>
+     -->
+  </loop>
+</job>
+
+<job id="webapp-details" role="hidden">
+  <need>(prop,webapp_name)</need>
+  <need>(dir,japp)</need>
+  <dump_ti label="webapp-details" test="0"/>
+  <ti label="Webapp: (prop,webapp_name)"/>
+  <call_job job="kong">
+    <prop id="kong_groups_flags">all</prop>                  
+    <file id="kong_data">(file,japp_index)</file>
+  </call_job>
+    
+</job>
+
+<job id="webapp-open" role="hidden">
+  <need>(prop,webapp_name)</need>
+  <call_job job="brain-read"/>
+  <call_service job="sel_open_file" flag="silent">
+    <file id="with">http://localhost:(prop,port-http)(prop,fs)(prop,webapp_name)</file>
+  </call_service>
+</job>
+<job id="webapp-open-typical" role="hidden">
+  <need>(prop,webapp_name)</need>
+  <call_job job="brain-read"/>
+  <call_service job="sel_open_file_typical" flag="silent">
+    <file id="with">http://localhost:(prop,port-http)(prop,fs)(prop,webapp_name)</file>
+  </call_service>
+</job>
+<job id="webapp-dav-add" role="dev">
+  <call_job job="brain-read"/>
+  <tk label="Properties of to created Web DAV App">
+    <tk id="name" flag="nono" regex=".+"/>
+  </tk>
+  
+  <dir id="now">(dir,webapps)(prop,name)</dir>
+  <mkdir dir="(dir,now)" />
+  <mkdir dir="(dir,now)WEB-INF" />
+  
+  <create_file out="(dir,now)WEB-INF(prop,fs)web.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+  <display-name>(prop,name) Webdav Content Management</display-name>
+  <description>
+     (prop,name) Webdav Content Management
+  </description>
+
+  <servlet>
+    <servlet-name>webdav</servlet-name>
+    <servlet-class>org.apache.catalina.servlets.WebdavServlet</servlet-class>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>0</param-value>
+    </init-param>
+    <init-param>
+      <param-name>listings</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>webdav</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+  <welcome-file-list>
+    <welcome-file/>
+  </welcome-file-list>  
+
+</web-app>]]></create_file>
+  
+  <create_file out="(dir,now)hello.txt" encoding="ISO-8859-1"><![CDATA[
+welcome to (prop,name) - webdav
+This page was generated on (moment) by Loxodrom-(prop,app)
+]]></create_file>
+
+  
+  <ti label="New Webapp Created">
+    <ti type="web" label="Open in browser:">http://localhost:(prop,port-http)(prop,fs)(prop,name)</ti>
+  </ti>
+  <ti_hr/>
+    
+  <call_job job="brain-forget"/>
+  <call_job job="webapp-list"/>  
+</job>
+
+<job id="webapp-add" role="dev">
+  <call_job job="brain-read"/>
+  <tk label="Properties of to created Web App">
+    <tk id="name" flag="nono" regex=".+"/>
+    <tk id="desc" tip="Description in WEB-INF(prop,fs)web.xml"/>
+    <tk id="welcome-message" type="textblock" tip="Message in the index.html"/>
+  </tk>
+  
+  <dir id="now">(dir,webapps)(prop,name)</dir>
+  <mkdir dir="(dir,now)" />
+  <mkdir dir="(dir,now)WEB-INF" />
+  
+  <create_file out="(dir,now)WEB-INF(prop,fs)web.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+    <description>(prop,desc)</description>
+    <display-name>(prop,name)</display-name>
+</web-app>]]></create_file>
+  
+  <create_file out="(dir,now)index.jsp" encoding="ISO-8859-1"><![CDATA[
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%@ page session="false" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>(prop,name) <%= application.getServerInfo() %></title>
+</head>
+
+<body>
+<p>Welcome to (prop,name)</p>
+<p>This page was generated on (moment) by Loxodrom-(prop,app)</p>
+<p><b>(prop,welcome-message)</b></p>
+</body>
+</html>
+]]></create_file>
+  <ti label="New Webapp Created">
+    <ti type="web" label="Open in browser:">http://localhost:(prop,port-http)(prop,fs)(prop,name)</ti>
+  </ti>
+  <ti_hr/>
+  <call_job job="brain-forget"/>
+  <call_job job="webapp-list"/>
+  
+</job>
+
+
+<job id="brain-gather" role="dev" >
+  <prop id="port-http">(f,xpath,(file,serverxml),()Service[@name='Catalina']/Connector[string-length(@protocol)=0 or starts-with(@protocol,'http')  or starts-with(@protocol,'HTTP')](),@port)</prop>
+  
+  <prop id="port-shutdown">(f,xpath,(file,serverxml),.,@port)</prop>  
+  
+  <create_file out="(file,brains)"><![CDATA[<brains>
+  <brain port_http="(x,(prop,port-http))" port_shutdown="(x,(prop,port-shutdown))" />
+  </brains>   
+    ]]></create_file>
+
+ 
+ <dump
+ level="info"
+ vars="0" />
+ <file id="y" x="(dir,work)sc1.xml"/>
+ 
+ <prop id="cnt_removes">0</prop>
+  <scan dir="(dir,webapps)" out="(file,y)" level_limit="1" />
+  <loop id="webapp" xml="(file,y)" xpath="dir">
+    <file id="cf">(dir,webapps)(loop,webapp,@ipath)WEB-INF(prop,fs)web.xml</file>
+    <when test="(f,not,(f,file_exists,(file,cf)))">
+      <ti>(f,html,b,o)removing (loop,webapp,@ipath)(f,html,b,c)</ti>
+      <xml_update
+                  what="(file,y)"
+                  how="remove"
+                  where="dir[@ipath='(loop,webapp,@ipath)']" />
+      <prop id="cnt_removes">(f,add,1,(prop,cnt_removes))</prop>
+    </when>
+  </loop>
+  
+</job>
+
+<job id="brain-read" role="hidden">
+  <when test="(f,not,(f,exists_file,(file,brains)))">
+    <call_job job="brain-gather" />
+  </when>
+  <spirit id="brains" act="open" xml="(file,brains)"/>
+    <prop id="port-http">(f,spirit,brains,brain,@port_http)</prop>  
+    <prop id="port-shutdown">(f,spirit,brains,brain,@port_shutdown)</prop>       
+  <spirit id="brains" act="close"/>
+</job>
+
+<job id="brain-report" role="hidden" >
+  <ti label="Gathered Brain">
+    <ti label="Http-Port (Catalina):" key="(entity:bo)prop,port-http(entity:bc)">(prop,port-http)</ti>
+    <ti label="Http-Port (Shutdown):" key="">(prop,port-shutdown)</ti>
+    <ti label="Brain:" test="(f,role,expert)" type="file">(file,brains)</ti>
+    <ti label=" " test="(f,role,expert)" type="file">(file,brain_webapps)</ti>
+  </ti>
+</job>
+
+</jobs>

@@ -1,0 +1,119 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="alle-komponenten-auflisten" role="hidden">
+  <spirit act="open" id="all" xml="(file,rezs)" missing_strategy="empty"/>
+  
+          <ti type="rec">
+          <ti>(prop,myclass)</ti>
+          <ti>Komponente</ti>
+          </ti>  
+  
+  <loop_xml 
+      act="open" 
+      id="rezept" 
+      spirit="all" 
+      xpath="rez"/> 
+   <loop 
+      id="while-rezept" 
+      while="()(f,loop_xml,rezept,has_next?)()">
+      <loop_xml act="next" id="rezept" />
+      <!-- 
+      <ti>im rezept</ti>
+      <ti label="(f,loop_xml,rezept,@bez)"/>
+                                 -->
+       <loop_xml 
+          act="open" 
+          id="komp" 
+          spirit="all" 
+          xpath="rez[@row=(f,xpath_string,(f,loop_xml,rezept,@row))]/komp"/> 
+       <loop 
+          id="while-komp" 
+          while="()(f,loop_xml,komp,has_next?)()">
+          <loop_xml act="next" id="komp" />
+          <ti type="rec">
+ 
+
+          <ti type="call_job" job="rez-see" explain="(f,loop_xml,rezept,@bez)">
+ 
+            <prop id="rez_key">(f,loop_xml,rezept,@row)</prop>
+            <prop id="rezeptname" x="(f,loop_xml,rezept,@bez)"/>
+            
+            <prop id="rezs_offset"></prop>
+      
+          </ti>
+                    
+          <ti type="call_job" job="komp-see" explain="(f,loop_xml,komp,@bez)">
+            <prop id="komp_key">(f,loop_xml,komp,@row)</prop>
+            <prop id="rez_key">(f,loop_xml,rezept,@row)</prop>
+            <prop id="rezeptname" x="(f,loop_xml,rezept,@bez)"/>
+            
+            <prop id="komps_offset">rez[@row=(f,xpath_string,(f,loop_xml,rezept,@row))]/</prop>
+            <prop id="komps_offset_label">(f,loop_xml,rezept,@bez) </prop>      
+          </ti>
+          </ti>
+          <!-- 
+          <ti label=" " x="(f,loop_xml,app,@name)" type="call_job" job="see-app-2-download"
+            explain="(f,loop_xml,app,@name)">
+            <prop id="app-path" x="(f,loop_xml,app,@path)"/>
+            <prop id="app-name" x="(f,loop_xml,app,@name)"/>
+          </ti>    --> 
+       </loop>
+       
+       <loop_xml 
+          act="close" 
+          id="komp" /> 
+                
+   </loop>
+   
+   <loop_xml 
+      act="close" 
+      id="rezept" />   
+  
+  <spirit act="close" id="all" xml="(file,rezs)" missing_strategy="empty"/>
+  
+  
+  
+  
+  
+  
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

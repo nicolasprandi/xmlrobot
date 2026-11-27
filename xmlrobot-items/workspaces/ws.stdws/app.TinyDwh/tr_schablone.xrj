@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<jobs>
+
+<job id="tr_schab" role="hidden">
+<!--
+<call_job job="tr_schab"/>
+(prop,)
+-->
+
+ <choose>
+    <when test="(f,eq_text,(prop,ling),de)">
+      <!-- d=deutsch -->
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop>      
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop> 
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop>      
+      <prop id="_schab_"></prop>
+      <prop id="_schab_"></prop> 
+                  
+      <prop id="_schab_l"></prop>
+      <prop id="_schab_t"></prop>  
+      
+      <prop id="_schab_l"></prop>
+      <prop id="_schab_t"></prop>
+      
+      <prop id="_schab_l"></prop>
+      <prop id="_schab_t"></prop>
+                        
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(prop,ling),es)">
+      <prop id="_pl_a">A</prop>
+      <prop id="_sl_a">A</prop>  
+      <prop id="_ex_b">B</prop>      
+    </when>  -->  
+    <otherwise>
+      <!-- e=englisch -->
+
+    </otherwise>
+  </choose>
+
+</job>
+
+
+
+
+</jobs>

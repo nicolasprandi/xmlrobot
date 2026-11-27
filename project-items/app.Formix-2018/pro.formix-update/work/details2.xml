@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="update-see-more">
+<need>(prop,update_key)</need>
+<call_job job="update-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="updates_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,update_titel),20)(f,html,bold,close)(f,when,(f,has,(prop,updates_offset_label)), - (prop,updates_offset_label),)"/>
+<call_job job="update-tk"/>
+<ti_hr/>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="Edit" job="update-edit">
+<prop id="update_key">(prop,update_key)</prop>
+<file id="updates">(file,updates)</file>
+<prop id="updates_offset">(prop,updates_offset)</prop>
+<prop id="updates_offset_label">(prop,updates_offset_label)</prop>
+<prop id="updates_offset_new_key">(prop,updates_offset_new_key)</prop>
+<prop id="updates_sort_attribute">(prop,updates_sort_attribute)</prop>
+<prop id="updates_sort_number">(prop,updates_sort_number)</prop>
+<prop id="updates_where">(prop,updates_where)</prop>
+<prop id="updates_return_job">(prop,updates_return_job)</prop>
+</ti>
+</ti>
+</job>

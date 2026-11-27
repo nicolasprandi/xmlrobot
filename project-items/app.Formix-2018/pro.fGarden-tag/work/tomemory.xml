@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="tag-read">
+<need>(prop,tag_key)</need>
+<spirit act="open" missing_strategy="empty" id="tage_spirit_tc" xml="(file,tage)"/>
+<prop id="tag_dt_upd">(f,spirit,tage_spirit_tc,(prop,tage_offset)tag[@row=(f,xpath_string,(prop,tag_key))],@dt_upd)</prop>
+<prop id="tag_dt_add">(f,spirit,tage_spirit_tc,(prop,tage_offset)tag[@row=(f,xpath_string,(prop,tag_key))],@dt_add)</prop>
+<prop id="tag_bez">(f,spirit,tage_spirit_tc,(prop,tage_offset)tag[@row=(f,xpath_string,(prop,tag_key))],@bez)</prop>
+<prop id="tag_besch">(f,spirit,tage_spirit_tc,(prop,tage_offset)tag[@row=(f,xpath_string,(prop,tag_key))],@besch)</prop>
+<prop id="tag_klasse">(f,spirit,tage_spirit_tc,(prop,tage_offset)tag[@row=(f,xpath_string,(prop,tag_key))],@klasse)</prop>
+<spirit act="close" id="tage_spirit_tc"/>
+</job>

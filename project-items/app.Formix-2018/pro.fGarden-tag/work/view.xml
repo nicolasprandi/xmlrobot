@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="tag-see-all" level="ws" role="hidden" tip="Lists all Tage">
+<prop id="nothing">1</prop>
+<loop id="i" missing_strategy="empty" xml="(file,tage)" xpath="(prop,tage_offset)tag(prop,tage_where)" sort="(prop,tage_sort_attribute)" number="(prop,tage_sort_number)" ignore_case="(prop,tage_sort_ignore_case)" desc="(prop,tage_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,tage_offset_label)),0)">
+<ti label="(prop,tage_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti align="right" type="call_job" explain="(f,html,bold,open)(f,text,cut_nice,(loop,i,@bez),30)(f,html,bold,close) : " job="tag-see">
+<prop id="tag_key">(loop,i,@row)</prop>
+<file id="tage">(file,tage)</file>
+<prop id="tage_offset">(prop,tage_offset)</prop>
+<prop id="tage_offset_label">(prop,tage_offset_label)</prop>
+<prop id="tage_offset_new_key">(prop,tage_offset_new_key)</prop>
+<prop id="tage_sort_attribute">(prop,tage_sort_attribute)</prop>
+<prop id="tage_sort_number">(prop,tage_sort_number)</prop>
+<prop id="tage_where">(prop,tage_where)</prop>
+<prop id="tage_return_job">(prop,tage_return_job)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+<file id="wochen">(file,wochen)</file>
+<prop id="wochen_offset">(prop,wochen_offset)</prop>
+<prop id="wochen_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="wochen_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="wochen_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="wochen_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="wochen_where">(prop,wochen_where)</prop>
+<prop id="wochen_return_job">(prop,wochen_return_job)</prop>
+<prop id="woche_key">(prop,woche_key)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,i,@besch),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@klasse),1),Sojaflocken(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),2),Kürbiskerne(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),3),Soja-Block(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),4),Tofu(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),5),Saiblinger(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),6),Honig(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),7),Sonnenblumenkerne(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),8),Erdnüsse(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),9),Polenta(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),10),Cottage Cheese(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),11),Jogurt(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),12),Dosentunfisch(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),13),Rindfleisch(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),14),Hafer(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),15),Nuesse(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),16),Fermentiertes Erdnusslaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),17),Gemischtes Kornlaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),18),Unersetzbar weil ESSENTiELL(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),19),Tomatenmark(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),20),Rosinen(e:s),),10)</ti>
+<ti test="(f,role,user)" type="call_job" explain="Del" job="tag-del">
+<prop id="tag_key">(loop,i,@row)</prop>
+<file id="tage">(file,tage)</file>
+<prop id="tage_offset">(prop,tage_offset)</prop>
+<prop id="tage_offset_label">(prop,tage_offset_label)</prop>
+<prop id="tage_offset_new_key">(prop,tage_offset_new_key)</prop>
+<prop id="tage_sort_attribute">(prop,tage_sort_attribute)</prop>
+<prop id="tage_sort_number">(prop,tage_sort_number)</prop>
+<prop id="tage_where">(prop,tage_where)</prop>
+<prop id="tage_return_job">(prop,tage_return_job)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+<file id="wochen">(file,wochen)</file>
+<prop id="wochen_offset">(prop,wochen_offset)</prop>
+<prop id="wochen_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="wochen_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="wochen_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="wochen_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="wochen_where">(prop,wochen_where)</prop>
+<prop id="wochen_return_job">(prop,wochen_return_job)</prop>
+<prop id="woche_key">(prop,woche_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keinen Tag gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,tage_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,user)" label=" " type="call_job" explain_nix="tag-add" explain="[ + Tag ]" job="tag-add">
+<file id="tage">(file,tage)</file>
+<prop id="tage_offset">(prop,tage_offset)</prop>
+<prop id="tage_offset_label">(prop,tage_offset_label)</prop>
+<prop id="tage_offset_new_key">(prop,tage_offset_new_key)</prop>
+<prop id="tage_sort_attribute">(prop,tage_sort_attribute)</prop>
+<prop id="tage_sort_number">(prop,tage_sort_number)</prop>
+<prop id="tage_where">(prop,tage_where)</prop>
+<prop id="tage_return_job">(prop,tage_return_job)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+<file id="wochen">(file,wochen)</file>
+<prop id="wochen_offset">(prop,wochen_offset)</prop>
+<prop id="wochen_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="wochen_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="wochen_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="wochen_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="wochen_where">(prop,wochen_where)</prop>
+<prop id="wochen_return_job">(prop,wochen_return_job)</prop>
+<prop id="woche_key">(prop,woche_key)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_service" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,tage)</file>
+<prop id="orga_offset">(prop,tage_offset)</prop>
+<prop id="orga_offset_label">(prop,tage_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,tage_offset_new_key)</prop>
+<prop id="orga_segment_plural">tage</prop>
+<prop id="orga_segment_singular">tag</prop>
+<prop id="orga_segment_plural_label">Tage</prop>
+<prop id="orga_segment_singular_label">Tag</prop>
+<prop id="orga_sort_attribute">(prop,tage_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,tage_sort_number)</prop>
+<prop id="orga_where">(prop,tage_where)</prop>
+<prop id="orga_name_expression_loop">()(f,html,bold,open)(f,text,cut_nice,(loop,i,@bez),30)(f,html,bold,close)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,i,@besch),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@klasse),1),Sojaflocken(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),2),Kürbiskerne(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),3),Soja-Block(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),4),Tofu(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),5),Saiblinger(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),6),Honig(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),7),Sonnenblumenkerne(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),8),Erdnüsse(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),9),Polenta(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),10),Cottage Cheese(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),11),Jogurt(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),12),Dosentunfisch(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),13),Rindfleisch(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),14),Hafer(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),15),Nuesse(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),16),Fermentiertes Erdnusslaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),17),Gemischtes Kornlaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),18),Unersetzbar weil ESSENTiELL(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),19),Tomatenmark(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),20),Rosinen(e:s),),10)()</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+<file id="wochen">(file,wochen)</file>
+<prop id="wochen_offset">(prop,wochen_offset)</prop>
+<prop id="wochen_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="wochen_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="wochen_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="wochen_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="wochen_where">(prop,wochen_where)</prop>
+<prop id="wochen_return_job">(prop,wochen_return_job)</prop>
+<prop id="woche_key">(prop,woche_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,tage)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,tage_offset)),0)">(prop,tage_offset)</ti>
+</ti>
+</when>
+</job>

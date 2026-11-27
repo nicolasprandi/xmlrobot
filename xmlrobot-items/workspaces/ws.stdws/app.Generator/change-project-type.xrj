@@ -1,0 +1,173 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="pt-set-conv" role="hidden">
+  <call_job job="pt-set">
+    <prop id="mustfastlane" x="1"/>
+  </call_job> 
+</job>
+
+<job id="pt-set-test" role="hidden">
+  <call_job job="pt-set">
+    <prop id="mustfastlane" x="0"/>
+  </call_job> 
+</job>
+
+<job id="pt-set" role="hidden">
+  <need>(prop,mustfastlane)</need>
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,pt)"/>
+    <prop id="joe-in-regex" x="mustfastlane"/>
+  </call_job> 
+</job>
+
+<job id="pt-get" role="hidden">
+  <need default="1">(prop,pt-ask)</need>
+  <need default="0">(prop,info-only)</need>
+  <call_job job="go-joe-read"> 
+    <file id="joe-in-store" x="(file,pt)"/>
+    <prop id="joe-in-regex" x="mustfastlane"/> 
+  </call_job>
+  
+  <when test="(f,not,(prop,info-only))">
+  <when test="(f,and,(f,not,(f,exists,prop,mustfastlane)),(prop,pt-ask))">
+  
+    <call_job job="go-joe-read"> 
+      <file id="joe-in-store" x="(dir,pro)userinputs/app-data-gen-setup-ic.xrs"/> 
+      <prop id="joe-in-regex" x="mustfastlane"/>
+    </call_job>
+    
+    <tk label="Type of Data-Generation Project: (prop,pro)">
+      <tk label="What do you want to do ?"
+          id="mustfastlane"
+          type="sel"
+          flag="nono"
+          x="1"
+          tip="'(prop,pn1b)' shuffles the data from the excel as long as you want
+&#xA;'(prop,pn2b)' keeps the data as it is and converts to formats like angular(e:s) csv(e:s) html(e:s) sql ... ">        
+          <sel label="(prop,pn1b)">0</sel>
+          <sel label="(prop,pn2b)">1</sel>
+          
+      </tk>
+    </tk>
+    
+    <call_job job="go-joe-write">
+      <file id="joe-in-store" x="(dir,pro)userinputs/app-data-gen-setup-ic.xrs"/>
+      <prop id="joe-in-regex" x="mustfastlane"/>
+    </call_job>
+    
+    <call_job job="go-joe-write">
+      <file id="joe-in-store" x="(file,pt)"/>
+      <prop id="joe-in-regex" x="mustfastlane"/>
+    </call_job>    
+      
+  </when>
+  </when>
+   
+  <need default="0">(prop,mustfastlane)</need>
+  <prop id="mustpt" x="(f,when,(prop,mustfastlane),(prop,pn2b),(prop,pn1b))"/>
+  <prop id="testdata" x="(f,not,(prop,mustfastlane))"/>
+  <need>(prop,mustfastlane) (prop,mustpt) (prop,testdata)</need>
+</job>
+
+<job id="change-project-type?" role="hidden">
+  <ti label="About: Change Project Type ...">
+    <ti type="ul">Lets you switch to another project type</ti>
+
+    <ti type="ul">(f,upper,(prop,pn1)): Creates testdata by shuffling the data from the spreadsheet</ti>
+    <ti type="ul">(f,upper,(prop,pn2)): Leaves the data as it is and just creates the exports</ti>
+  </ti>  
+  
+
+	
+</job>
+
+<job id="change-project-type-b" role="hidden">
+  <call_job job="pt-get">
+    <prop id="pt-ask" x="0"/>
+  </call_job>
+  
+  <ti label="1(e:c) Project-Type" />
+  
+  <choose>
+    <when test="(prop,mustfastlane)">
+      <ti type="rec" label="Currently">
+        <ti>running as '(prop,pn2)'</ti>
+      </ti>  
+      <ti type="rec" label="Change that and">
+        <ti type="call_job" job="Run GENERATOR" explain="run as '(prop,pn1)'" flag="arrow">
+        </ti>       
+      </ti>  
+    </when>
+    
+    <otherwise>
+      <ti type="rec" label="Currently">
+        <ti>running as '(prop,pn1)'</ti>
+        <!-- <ti type="call_job" job="Run" explain="Run that" flag="arrow" test="0"> </ti>-->
+        
+      </ti>  
+      <ti type="rec" label="Change that and ">
+        <ti type="call_job" job="Run CONVERTER" explain="run as '(prop,pn2)'" flag="arrow">
+        </ti>       
+      </ti>    
+  
+  
+    </otherwise>
+  </choose>
+
+</job>
+
+<job id="Run GENERATOR" role="hidden">
+   <call_job job="pt-set-test"/>
+   <call_job job="Run"/>
+</job>
+
+<job id="Run CONVERTER" role="hidden">
+   <call_job job="pt-set-conv"/>
+   <call_job job="Run"/>
+</job>
+
+<job id="change-project-type-c" role="hidden">
+	<call_job job="pt-get" />
+	<prop id="cpt-now" x="(f,when,(prop,mustfastlane),conversion,testdata)" /> 
+	
+	<tk label="Change Project Type" >
+		<tk id="cpt-now"
+			label="Run as"
+			flag="nono"
+			type="sel"
+			tip="'(prop,pn1b)' shuffels the data and produces the requested number of records
+&#xA;'(prop,pn2b)' keeps the data as it is and sets the focus on the conversion to a export format like angularJs(e:s) sql ...&#xA;Currently we are running as (f,upper,(f,when,(prop,mustfastlane),(prop,pn2),(prop,pn1)))">
+			<sel label="(prop,pn1b) (f,when,(f,not,(prop,mustfastlane)),(e:o)currently(e:c),)">testdata</sel>
+			<sel label="(prop,pn2b) (f,when,(prop,mustfastlane),(e:o)currently(e:c),)">conversion</sel>
+		</tk>
+	</tk>
+	
+	<choose>
+		<when test="(f,eq,testdata,(prop,cpt-now))">
+			<call_job job="Run GENERATOR" />
+		</when>
+		<otherwise>
+			<call_job job="Run CONVERTER" />
+		</otherwise>	
+	</choose>
+
+
+</job>
+
+<job id="change-project-type" role="hidden">
+  <interpreter jovial="1"/>
+  <choose>
+    <when test="(f,has,prop,pro)">
+      <call_job job="change-project-type-b"/>
+    </when>
+    <otherwise>
+      <ti>no project found</ti>
+    </otherwise>
+  </choose>
+</job>
+
+</jobs>

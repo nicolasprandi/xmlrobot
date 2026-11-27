@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="just-edit?" role="hidden">
+</job>
+<job id="just-edit" role="hidden">
+
+	<tk id="je-what"
+		label="What to edit"
+		type="sel"
+		flag="nono">
+		<sel label="Main Parameters">main</sel>
+		<sel label="Export Parameters">export</sel>
+	</tk>
+	<choose>
+		<when test="(f,eq,main,(prop,je-what))">
+			<call_job job="main_input_only" />
+		</when>
+		<when test="(f,eq,export,(prop,je-what))">
+		</when>		
+	</choose>
+
+</job>
+
+</jobs>

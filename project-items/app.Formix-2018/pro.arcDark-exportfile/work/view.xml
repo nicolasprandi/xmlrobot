@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="exportfile-see-all" level="ws" role="hidden" tip="Lists all Export Files">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="exportfile_loop" xml="(file,exportfiles)" xpath="(prop,exportfiles_offset)exportfile(prop,exportfiles_where)" sort="(prop,exportfiles_sort_attribute)" number="(prop,exportfiles_sort_number)" ignore_case="(prop,exportfiles_sort_ignore_case)" desc="(prop,exportfiles_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,exportfiles_offset_label)),0)">
+<ti label="(prop,exportfiles_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<file id="exportfile_file_temp_var_formix" x="file"/>
+<unescape id="exportfile_file_temp_var_formix" type="file"/>
+<translate id="exportfile_file_temp_var_formix" type="file"/>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,exportfile_loop,@desc)(f,html,bold,close)" job="exportfile-see">
+<prop id="exportfile_key">(loop,exportfile_loop,@row)</prop>
+<file id="exportfiles">(file,exportfiles)</file>
+<prop id="exportfiles_offset">(prop,exportfiles_offset)</prop>
+<prop id="exportfiles_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="exportfiles_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="exportfiles_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="exportfiles_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="exportfiles_where">(prop,exportfiles_where)</prop>
+<prop id="exportfiles_return_job">(prop,exportfiles_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,exportfile_loop,@file))" type="file" x="(f,try,()(f,name_of_file,(f,try,(loop,exportfile_loop,@file),))(),)" flag="translate"/>
+<ti test="(f,not,(f,has,(loop,exportfile_loop,@file)))"/>
+<ti type="call_job" explain="Edit" job="exportfile-edit">
+<prop id="exportfile_key">(loop,exportfile_loop,@row)</prop>
+<file id="exportfiles">(file,exportfiles)</file>
+<prop id="exportfiles_offset">(prop,exportfiles_offset)</prop>
+<prop id="exportfiles_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="exportfiles_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="exportfiles_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="exportfiles_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="exportfiles_where">(prop,exportfiles_where)</prop>
+<prop id="exportfiles_return_job">(prop,exportfiles_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Del" job="exportfile-del">
+<prop id="exportfile_key">(loop,exportfile_loop,@row)</prop>
+<file id="exportfiles">(file,exportfiles)</file>
+<prop id="exportfiles_offset">(prop,exportfiles_offset)</prop>
+<prop id="exportfiles_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="exportfiles_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="exportfiles_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="exportfiles_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="exportfiles_where">(prop,exportfiles_where)</prop>
+<prop id="exportfiles_return_job">(prop,exportfiles_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine ExportFiles gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,exportfiles_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="exportfile-add" explain="[ + File ]" job="exportfile-add">
+<file id="exportfiles">(file,exportfiles)</file>
+<prop id="exportfiles_offset">(prop,exportfiles_offset)</prop>
+<prop id="exportfiles_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="exportfiles_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="exportfiles_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="exportfiles_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="exportfiles_where">(prop,exportfiles_where)</prop>
+<prop id="exportfiles_return_job">(prop,exportfiles_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="" job="do-org-me">
+<file id="orga">(file,exportfiles)</file>
+<prop id="orga_where">(prop,exportfiles_where)</prop>
+<prop id="orga_view_loop_id">exportfile_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,exportfiles_offset)</prop>
+<prop id="orga_offset_label">(prop,exportfiles_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,exportfiles_offset_new_key)</prop>
+<prop id="orga_segment_plural">exportfiles</prop>
+<prop id="orga_segment_singular">exportfile</prop>
+<prop id="orga_segment_plural_label">Export Files</prop>
+<prop id="orga_segment_singular_label">Export File</prop>
+<prop id="orga_sort_attribute">(prop,exportfiles_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,exportfiles_sort_number)</prop>
+<prop id="orga_where">(prop,exportfiles_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,exportfile_loop,@desc)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,exportfiles)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,exportfiles_offset)),0)">(prop,exportfiles_offset)</ti>
+</ti>
+</when>
+</job>

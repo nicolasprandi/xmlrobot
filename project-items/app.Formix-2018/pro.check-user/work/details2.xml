@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="user-see-more">
+<need>(prop,user_key)</need>
+<call_job job="user-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="users_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,user_userid)(f,html,bold,close)(f,when,(f,has,(prop,users_offset_label)), - (prop,users_offset_label),)"/>
+<call_job job="user-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="Edit" job="user-edit">
+<prop id="user_key">(prop,user_key)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+</ti>
+</job>

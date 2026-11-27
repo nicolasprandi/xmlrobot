@@ -1,0 +1,108 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="build-event" role="hidden">
+  <need>(prop,build-event-type)</need>
+
+  <choose>
+    <when test="(f,eq_text,emergency,(prop,build-event-type))">
+      <!-- emergency button betaetigt -->
+      <ti label="Doing Emergency-Actions ..."/>
+      <!-- <call_job job="create-vok2attrsel"/>  -->    
+      <call_job job="pdi-build-selectors"/>
+      <call_job job="create-sel-hint-collections"/>
+            
+    </when>  
+    <when test="(f,eq_text,new_vok,(prop,build-event-type))">
+      <!-- ein neues vokabular wurde ausgewaehlt -->
+    
+      <!-- <call_job job="create-vok2attrsel"/>   -->  
+      <call_job job="build-repo"/> 
+      <call_job job="pdi-build-selectors"/>
+      
+         
+    </when>
+    
+    <when test="(f,eq_text,updated_navi,(prop,build-event-type))">
+      <!-- bei der sprache wurde von technical keys auf realwordlnames umgestellt 
+      <call_job job="create-vok2attrsel"/>      -->
+    </when>
+    
+    <when test="(f,eq_text,updated_hint_collections,(prop,build-event-type))">
+      <!-- ein neues hint-file wurde angelegt -->
+      <call_job job="create-sel-hint-collections"/>      
+    </when>    
+        
+    <otherwise>
+       <throw>build-event-type [(prop,build-event-type)]  not implemented yet</throw>
+    </otherwise>
+  </choose>
+
+</job>
+
+<job id="create-sel-hint-collections" role="hidden">
+
+  <file id="hintlist2" x="(dir,filetemp)hintlist2.xml"/>
+  <scan out="(file,hintlist2)" 
+        dir="(dir,hints)"
+        level_limit="1"
+        field="fn pre" />
+        
+
+  <ti type="file" test="0">(file,hintlist2)</ti>
+  <xslt 
+      xml="(file,hintlist2)" 
+      xsl="(dir,app)create-sel-hint-collection.xsl" 
+      out="(file,sel-hint-collections)">
+  </xslt>
+  <ti type="file" test="0">(file,sel-hint-collections)</ti>
+    
+</job>
+
+
+
+<job id="pdi-build-selectors" role="hidden">
+
+    <xslt 
+      xml="(dir,repo)vok.xml" 
+      xsl="(dir,app)vok2pdi-sel-obj.xsl" 
+      out="(file,pdi-sel-obj)">
+      <params>usage='tc'</params>
+    </xslt>
+    
+    <xslt 
+      xml="(dir,repo)vok.xml" 
+      xsl="(dir,app)vok2pdi-sel-obj.xsl" 
+      out="(dir,repo)osel-tc.xml">
+      <params>usage='tc'</params>
+    </xslt>    
+    
+    <xslt 
+      xml="(dir,repo)vok.xml" 
+      xsl="(dir,app)vok2pdi-sel-obj.xsl" 
+      out="(dir,repo)osel-nm.xml">
+      <params>usage='nm'</params>
+    </xslt>     
+    
+    <!-- <when test="(f,exists_file,(dir,app)vok2pdi-sel-attr.xsl)"> --> 
+    <try_catch>
+      <try>
+      <xslt 
+        xml="(dir,repo)vok.xml" 
+        xsl="(dir,app)vok2pdi-sel-attr.xsl" 
+        out="(file,pdi-sel-attr)" />  
+      <xslt 
+        xml="(dir,repo)vok.xml" 
+        xsl="(dir,app)vok2pdi-sel-bez.xsl" 
+        out="(file,pdi-sel-bez)" />   
+      </try>
+      <catch>
+        <ti>no attr and bez selector</ti>
+      </catch>
+     </try_catch>      
+    <!--  </when>    -->
+    
+</job>
+
+</jobs>

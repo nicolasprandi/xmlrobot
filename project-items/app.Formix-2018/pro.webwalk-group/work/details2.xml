@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="group-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="groups_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,groups_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="group-see">
+<prop id="group_key">(prop,group_key)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+<prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="group-see-all">
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+<prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,group_key)</need>
+<call_job job="group-read"/>
+<prop id="group_default_label_class" x="Group"/>
+<prop id="group_default_label_name" x="(prop,group_titel)(f,when,(f,has,(prop,groups_offset_label)), - (prop,groups_offset_label),)"/>
+<call_job job="group-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailGroup" explain="Edit" job="group-edit">
+<prop id="group_key">(prop,group_key)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+<prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,groups_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="group-see">
+<prop id="group_key">(prop,group_key)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+<prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="group-see-all">
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+<prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

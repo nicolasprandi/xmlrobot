@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="user-see-all" level="ws" role="hidden" tip="Lists all Users">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-user-view-begin</trace>
+<call_job job="hook-user-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: user-view: begin.0">
+<ti> hook_job=hook-user-view-begin hook=begin page=view station=0 object=user</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="user_loop" xml="(file,users)" xpath="(prop,users_offset)user(prop,users_where)" sort="(prop,users_sort_attribute)" number="(prop,users_sort_number)" ignore_case="(prop,users_sort_ignore_case)" desc="(prop,users_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,users_offset_label)),0)">
+<ti label="(prop,users_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Db"/>
+<ti x="Granted Apps"/>
+<ti/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,user_loop,@userid)(f,html,bold,close)" job="user-see">
+<prop id="user_key">(loop,user_loop,@row)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,user_loop,@db))" type="text" x="(loop,user_loop,@db)"/>
+<ti test="(f,not,(f,has,(loop,user_loop,@db)))"/>
+<ti test="(f,has,(loop,user_loop,@apps))" type="text" x="(f,tk_sel_translate,(loop,user_loop,@apps),(dir,pro)app-selector-gui.xml)" flag="wrap"/>
+<ti test="(f,not,(f,has,(loop,user_loop,@apps)))"/>
+<ti test="(f,role,user)" type="call_job" explain="Edit" job="user-edit">
+<prop id="user_key">(loop,user_loop,@row)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_job" page="view" explain="(f,html,b,o)(loop,user_loop,@userid)(f,html,b,c) &gt; Db" job="hook-action-user-dbcommand">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">dbcommanduser</prop>
+<prop page="view" id="user_key">(loop,user_loop,@row)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Users found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,users_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain_nix="user-add" explain="Hello" job="user-add">
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,boss)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,users)</file>
+<prop id="orga_where">(prop,users_where)</prop>
+<prop id="orga_view_loop_id">user_loop</prop>
+<prop id="orga_finished_job">user-see-all</prop>
+<prop id="orga_offset">(prop,users_offset)</prop>
+<prop id="orga_offset_label">(prop,users_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="orga_segment_plural">users</prop>
+<prop id="orga_segment_singular">user</prop>
+<prop id="orga_segment_plural_label">Users</prop>
+<prop id="orga_segment_singular_label">User</prop>
+<prop id="orga_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,users_sort_number)</prop>
+<prop id="orga_where">(prop,users_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,user_loop,@userid)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,users)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,users_offset)),0)">(prop,users_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-user-view-end</trace>
+<call_job job="hook-user-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: user-view: end.0">
+<ti> hook_job=hook-user-view-end hook=end page=view station=0 object=user</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

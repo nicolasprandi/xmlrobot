@@ -1,0 +1,54 @@
+<?xml version="1.0" ?><steps>
+<p id="idio_welcome">Bienvenu chec ma page du 'Recette de cuisine'
+      
+Nous avons collecte une selection superbe de la cuesin du monde.
+
+Il a de bon est il a de mal recettes.
+Il a aussi du poeme.
+
+Mais la base tequnica e tousjour en une estade ... naja ... decomos on poco mal ... le system es nouvo e 
+siguente il fout faire une login. username - passwort.
+
+nous continue avec la sequence del accuell ... le prochain sequences va etre ecriver en une lange sa pelle 'anglais-latino-blala'
+</p>
+<p id="idio_accept1">Bon jour avec Formix-Rezeptblock</p>
+<p id="idio_accept2">Je accept las reglas typicas pour utilize une site du web.&#xA;</p>
+<p id="idio_accept3">Accepter</p>
+<p id="idio_accept4">Stop e arrete</p>
+<p id="idio_accept5q1">En anglais le nom de jour 'monday' no est pas le equivalent comme 'miercredie'</p>
+<p id="idio_accept5q2">Je ne compronde pas que cette page/site du web ne fait pas ulitisation des 'cookies'</p>
+<p id="idio_accept5q3">Le site de web est en une manier de evaluation. no se recommenden de usar esta site de web avec datas de la realidad. le site es nouvo e poude hacer errores.</p>
+<p id="idio_accept5q4">Je accepte las reglas internationels pour las ideas de la possesion intellectual</p>
+<p id="idio_accept6p0">Notre positiones sont loin</p>
+<p id="idio_accept6p1">Tu est muy buana con las idiomas</p>
+<p id="idio_accept6p2">I 'l ya livres sur cookies qui ne fait pas gordo</p>
+<p id="idio_accept6p3">Je suis une vache</p>
+<p id="idio_accept6p4">Je sues un ladrone e no se pueden tener confianca conmigo</p>
+<p id="idio_login1">Inscription</p>
+<p id="idio_login2">Il faut faire du 'login'</p>
+<p id="idio_login3">Le nome (e:o)hay que saber(e:c)</p>
+<p id="idio_login4">Le mote secret (e:o)total geheim und so ;-(e:c)</p>
+<p id="idio_login5">La function que vous voulez utilizer pendant le 'session'</p>
+<p id="idio_login6">Nouvo Invite (e:o)lire(e:c)</p>
+<p id="idio_login7">Client (e:o)commander(e:c)</p>
+<p id="idio_login8">Editor (e:o)ecrire(e:c)</p>
+<p id="idio_msg1">Difficultes</p>
+<p id="idio_msg2">Le mot secree est mierde - desole! vous pouvez approber une nouvell fois. 
+
+Vouz pouvez demande les mots secrets pour entre le site plu en ecrivant une message electroniqu a cette direction ...
+
+  [ abraham@nicolas.at  ]
+  
+  </p>
+
+<!-- 
+
+<p id="idio_">regex</p>
+<p id="idio_">doku</p>
+<p id="idio_">regex</p>
+<p id="idio_">doku</p>
+<p id="idio_">regex</p>
+<p id="idio_">doku</p>
+<p id="idio_">regex</p>
+-->
+</steps>

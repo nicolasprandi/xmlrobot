@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+<job id="my-etl-jobs" role="hidden">
+
+ <call_job job="kjob-see-all"/>
+
+</job>
+
+<job id="event_post_update_kjob" role="hidden">
+
+  <call_job job="kjob-see"/>
+
+</job>
+
+<job id="event_kjob_begin" role="hidden">
+
+  <ti label="1(e:c) (prop,_pl_kjob)"/>
+
+</job>
+
+<job id="event_kjob_run" role="hidden">
+
+  <call_job job="kjob-read"/>
+  <call_job job="tr_kjob"/>
+  <throw test="(f,not,(f,has,file,kjob_jobfile))">(prop,_kjob_err_nojob)</throw>
+
+  <file id="pentaho-job-to-run" x="(file,kjob_jobfile)" /> 
+  <call_job job="run-etl-job"/>
+  
+
+</job>
+
+
+
+
+</jobs>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="atyp-add" level="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="atyp-editor"/>
+<prop id="atyp_key">1</prop>
+<when test="(f,not,(f,exists,prop,atyps_offset_new_key))">
+<prop id="atyps_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,atyps)" sort="@row" number="@row" xpath="(prop,atyps_offset_new_key)atyp">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="atyp_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Aktions-Typ: #(prop,atyp_key)</i>
+<call_job job="atyp-write"/>
+<ti label="Did add Aktions-Typ:" x="(f,html,bold,open)(f,text,cut_nice,(prop,atyp_bez),45)(f,html,bold,close)"/>
+<ti_hr/>
+<when test="(prop,do_return_job)"/>
+<call_job job="atyp-see-all"/>
+</job>

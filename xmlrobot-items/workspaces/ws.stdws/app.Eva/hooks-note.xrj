@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+<job id="hook-note-view-begin" role="hidden">
+
+  <ti label="Benotungen"/>
+
+</job>
+
+<job id="hook-note-details-end" role="hidden">
+
+   
+</job>
+
+
+
+<job id="hook-note-view-end" role="hidden">
+
+   
+
+         
+</job>
+
+
+</jobs>

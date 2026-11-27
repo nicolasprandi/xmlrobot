@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<sel>
+  <!-- 
+  <sel label="Einkauf">00</sel>
+  <sel label="Lieferung">10</sel>
+  
+  <sel label="Einkaufsprodukt Lagern">20</sel>
+  
+     <sel label="Vorbereitbarkeit">59</sel>
+     <sel label="Garnieren">70</sel>
+  <sel label="Verpacken">80</sel>
+  <sel label="Liefern">90</sel>
+       -->
+  <sel label="Zubereitung">40</sel>
+  <sel label="Vorbereiten">30</sel>       
+  <sel label="Einkauf">10</sel>
+  
+  <sel label="Phase 1">25</sel>
+  <sel label="Phase 2">26</sel>
+  <sel label="Phase 3">27</sel>
+  <sel label="Phase 4">28</sel>
+  <sel label="Phase 5">29</sel>
+  
+
+
+  <sel label="Lagerung">60</sel>
+  
+
+</sel>

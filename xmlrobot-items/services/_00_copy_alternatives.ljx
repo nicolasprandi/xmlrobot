@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.
+dobre den -->
+
+<jobs>
+
+    
+<job id="alternative-copy" role="hidden" >
+
+  <need>(dir,copy-from)</need>
+  <need>(dir,copy-to)</need>
+  <need>(prop,copy-type)</need> <!-- app services pro -->
+  
+  <file id="acs-scan" x="(dir,temp)acs-scan.xml" /> 
+  <scan dir="(dir,copy-from)" out="(file,acs-scan)" level_limit="1" field="fn" />
+  <mkdir dir="(dir,copy-to)"/>
+  
+  <choose>
+    <when test="(f,eq_text,app,(prop,copy-type))">
+    
+      <loop id="sx" xml="(file,acs-scan)" xpath="file">
+      	<copy file="(loop,sx,@fn)" tofile="(dir,copy-to)(loop,sx)" />
+      	<i>Copy   file (loop,sx)</i>
+      </loop>
+    
+      <loop id="sx" xml="(file,acs-scan)" xpath="dir">
+      	<choose>
+      		<when test="(f,contains,(loop,sx,@rpath),nobackup)">
+      			<i>Forget dir  (loop,sx,@ipath)</i>
+      		</when>
+      		<when test="(f,starts_with,(loop,sx,@rpath),pro)">
+      			<i>Forget dir  (loop,sx,@ipath)</i>
+      		</when>
+      		<otherwise>
+      			<i>Copy  dir  (loop,sx,@ipath) ...</i>
+            <copy uri="(dir,copy-from)(loop,sx,@ipath)" touri="(dir,copy-to)(loop,sx,@ipath)"/>
+      		</otherwise>
+      	</choose>	
+      </loop>    
+      
+      <ti label="Did copy application"> 
+        <ti type="dir" label="From:">(dir,copy-from)</ti>  
+        <ti type="dir" label="To:">(dir,copy-to)</ti>
+      </ti>      
+    
+    </when>
+    
+    <!-- 
+      <loop id="e" xml="(file,acs-scan)" xpath="//dir" missing_strategy="empty"> 
+        <when test="(f,has,(loop,e,@ipath))">
+          <mkdir dir="(dir,my-backup-space)(loop,e,@ipath)"/>
+        </when>
+      </loop>
+      
+      <loop id="e" xml="(file,acs-scan)" xpath="//file" missing_strategy="empty"> 
+      
+        <copy 
+          file="(dir,pro)(loop,e,..,@ipath)(loop,e)" 
+          tofile="(dir,my-backup-space)(loop,e,..,@ipath)(loop,e)"/>
+        
+      </loop>      -->
+  </choose>
+  
+  <remove type="file" id="acs-scan"/>
+
+
+</job>
+
+
+
+</jobs>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jobs>  
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<include file="(dir,services)programms-prolog.lsx" /><job id="View Programms" joblevel="pro" role="hidden" tip="Lists all Programms">
+<prop id="nothing">1</prop>
+<loop id="i" xml="(file,programms)" xpath="(prop,programms_offset)programm(prop,programms_where)" sort="(prop,programms_sort_attribute)" number="(prop,programms_sort_number)" ignore_case="(prop,programms_sort_ignore_case)" desc="(prop,programms_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,programms_offset_label)),0)">
+<ti>(f,html,bold,open)(prop,programms_offset_label): (f,html,bold,close)</ti>
+</when>
+<ti type="rec" label=" ">
+<ti x="Sort" />
+<ti x=" " />
+<ti x=" " />
+<ti x=" " />
+<ti x=" " />
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec" label="(f,html,bold,open)(loop,i,@title)(f,html,bold,close)">
+<ti type="text" x="(loop,i,@sort)" />
+<ti type="call_service" explain="See" job="See Programm">
+<prop id="programm_key">(loop,i,@row)</prop>
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti type="call_service" explain="Edit" job="Edit Programm">
+<prop id="programm_key">(loop,i,@row)</prop>
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti type="call_service" explain="Delete" job="Del Programm">
+<prop id="programm_key">(loop,i,@row)</prop>
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="view" explain="Test" job="hook_programm_act_test" flag="silent">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">test</prop>
+<prop page="view" id="programm_key">(loop,i,@row)</prop>
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti>No Programms found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,programms_offset),node(e:o)(e:c)))">
+<ti label=" " type="call_service" explain="Add another Programm" explain_alt="Add another Programm(prop,programms_offset_label)" job="Add another Programm">
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,info,level))">
+<ti_hr />
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,programms)</ti>
+<ti label="Xml-Offset:" test="(f,gt,(f,len,(prop,programms_offset)),0)">(prop,programms_offset)</ti>
+</ti>
+</when>
+</job>
+<job role="hidden" id="To Memory Programm">
+<need>(prop,programm_key)</need>
+<spirit act="open" id="programms_spirit_tc" xml="(file,programms)"  
+  flag="nuevo"
+  missing_strategy="empty"/>
+<prop id="programm_dt_upd">(f,spirit,programms_spirit_tc,(prop,programms_offset)programm[@row='(prop,programm_key)'],@dt_upd)</prop>
+<prop id="programm_dt_add">(f,spirit,programms_spirit_tc,(prop,programms_offset)programm[@row='(prop,programm_key)'],@dt_add)</prop>
+<prop id="programm_title">(f,spirit,programms_spirit_tc,(prop,programms_offset)programm[@row='(prop,programm_key)'],@title)</prop>
+<prop id="programm_sort">(f,spirit,programms_spirit_tc,(prop,programms_offset)programm[@row='(prop,programm_key)'],@sort)</prop>
+<file id="programm_pgm_file">(f,spirit,programms_spirit_tc,(prop,programms_offset)programm[@row='(prop,programm_key)'],@pgm_file)</file>
+<echo id="programm_pgm_file" type="file" label="Station A" level="warn"/>
+<unescape type="file" id="programm_pgm_file" />
+<echo id="programm_pgm_file" type="file" label="Station B" level="warn"/>
+<translate type="file" id="programm_pgm_file" />
+<echo id="programm_pgm_file" type="file" label="Station C" level="warn"/>
+<prop id="programm_pgm_app">(f,spirit,programms_spirit_tc,(prop,programms_offset)programm[@row='(prop,programm_key)'],@pgm_app)</prop>
+<prop id="programm_pgm_alt">(f,spirit,programms_spirit_tc,(prop,programms_offset)programm[@row='(prop,programm_key)'],@pgm_alt)</prop>
+<spirit act="close" id="programms_spirit_tc" />
+</job><job role="hidden" id="See Programm">
+<need>(prop,programm_key)</need>
+<call_service job="To Memory Programm" />
+<ti_hr />
+<ti label="[ (prop,programm_title) ]" key="#(prop,programm_key)" />
+<ti padding_top="0px" laxxbel="(prop,programm_title)(prop,programms_offset_label)">
+<ti label="Programm File:" type="file" test="(f,and,(f,gt,(f,len,(file,programm_pgm_file)),0),(f,exists,file,programm_pgm_file))">(file,programm_pgm_file)</ti>
+<ti label="Application:" type="text" test="(f,and,(f,gt,(f,len,(prop,programm_pgm_app)),0),(f,exists,prop,programm_pgm_app))">(prop,programm_pgm_app)</ti>
+<ti label="Programms Title:" type="text" test="(f,has,prop,programm_title)">(prop,programm_title)</ti>
+<ti label="Sort:" type="text" test="(f,has,prop,programm_sort)">(prop,programm_sort)</ti>
+<ti label="Alternative Pgm:" type="text" test="(f,and,(f,gt,(f,len,(prop,programm_pgm_alt)),0),(f,exists,prop,programm_pgm_alt))">(prop,programm_pgm_alt)</ti>
+</ti>
+<ti_hr />
+<ti padding_top="6px" label="Programm Actions">
+<ti type="call_service" explain="Edit" job="Edit Programm">
+<prop id="programm_key">(prop,programm_key)</prop>
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti type="call_service" explain="Delete" job="Del Programm">
+<prop id="programm_key">(prop,programm_key)</prop>
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="details" explain="Test" job="hook_programm_act_test" flag="silent">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">test</prop>
+<prop page="details" id="programm_key">(prop,programm_key)</prop>
+<file id="programms">(file,programms)</file>
+<prop id="programms_offset">(prop,programms_offset)</prop>
+<prop id="programms_offset_label">(prop,programms_offset_label)</prop>
+<prop id="programms_offset_new_key">(prop,programms_offset_new_key)</prop>
+<prop id="programms_sort_attribute">(prop,programms_sort_attribute)</prop>
+<prop id="programms_sort_number">(prop,programms_sort_number)</prop>
+<prop id="programms_where">(prop,programms_where)</prop>
+<prop id="programms_return_job">(prop,programms_return_job)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+<prop id="computer_key">(prop,computer_key)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<trace>()Hook Station, page=details station=0 hook=end hook_job=comp_act_home()</trace>
+<call_service job="comp_act_home" />
+</try>
+<catch>
+<ti label="Hook must be implemented: programm-details: end.0">
+<ti> hook_job=comp_act_home hook=end page=details station=0 object=programm</ti>
+</ti>
+</catch>
+</try_catch>
+</job><job role="hidden" id="Edit Programm">
+<need>(prop,programm_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Programm" />
+<prop id="isAdd">0</prop>
+<call_service job="Programm Editor" />
+<call_service job="To File Programm" />
+<i label="Updated:" x="Programm #(prop,programm_key)" />
+<ti label=" " x="(prop,programm_title)" />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,programms_return_job)" />
+</when>
+</job><job role="hidden" id="Del Programm">
+<need>(prop,programm_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Programm" />
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting [ (prop,programm_title) (prop,programms_offset_label)] ?" x="()Do you really want to delete that?&#xA;If you are not sure, make a backup of the services.()">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()" />
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,programms)" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" />
+<i>Deleted (prop,programm_title) #(prop,programm_key) (prop,programm_title)</i>
+<ti label="Did delete Programm:" x="(f,html,bold,open)(prop,programm_title)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,programms_return_job)" />
+</when>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+</job><job role="hidden" id="Programm Editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Programm(prop,programms_offset_label)" />
+<choose>
+<when test="(f,eq,(prop,os),win)">
+  <tk label="Programm File" id="programm_pgm_file" tip="The exe-file" type="file" flag="nono"/>
+  <tk label="Programms Title" id="programm_title" x="(f,name_of_file2,(file,programm_pgm_file))" tip="Programms Title(e:s) the user is going to see this" type="text" flag="nono"/>  
+</when>
+<otherwise>
+  <tk label="Application" id="programm_pgm_app" type="text" flag="nono" tip="The name of the programm/application. In mac hover over the icon in the bottom-bar and take that name"/>
+  <prop id="programm_title" x="(prop,programm_pgm_app)"/> 
+  <tk label="Programms Title" id="programm_title" tip="Programms Title(e:s) the user is going to see this" type="text" flag="nono "
+test="(f,not,(f,eq,(prop,os),mac))" />
+</otherwise>
+</choose>
+
+<tk label="Sort" id="programm_sort" x="1" tip="Position of this Programm in the Listing" regex="[0-9]*" regex_msg="Enter a numeric value" type="text" flag=" " />
+<tk label="(prop,label)" flag="sum_only">
+<tk label="Programm File" id="programm_pgm_file" tip="The exe-file" test="(f,eq,(prop,os),win)" type="file" flag="nono " />
+<tk label="Application" id="programm_pgm_app" tip="The name of the programm/application" test="(f,not,(f,eq,(prop,os),win))" type="text" flag="nono " />
+<tk label="Programms Title" id="programm_title" tip="Programms Title(e:s) the user is going to see this" type="text" flag="nono " />
+<tk label="Sort" id="programm_sort" x="1" tip="Position of this Programm in the Listing" regex="[0-9]*" regex_msg="Enter a numeric value" type="text" flag=" " />
+<tk label="Alternative Pgm" id="programm_pgm_alt" tip="Alternative Programm Definition" test="(f,role,admin)" type="text" flag=" " />
+</tk>
+</when>
+<otherwise>
+<need>(prop,programm_key)</need>
+<prop id="label" x="(prop,programm_title)(prop,programms_offset_label)" />
+<tk label="Update: (prop,label)" flag="sum_only">
+<tk label="Programm File" id="programm_pgm_file" tip="The exe-file" test="(f,eq,(prop,os),win)" type="file" flag="nono " />
+<tk label="Application" id="programm_pgm_app" tip="The name of the programm/application" test="(f,not,(f,eq,(prop,os),win))" type="text" flag="nono " />
+<tk label="Programms Title" id="programm_title" x="(f,when,(f,has,file,programm_pgm_file),(f,name_of_file2,(file,programm_pgm_file)),)(f,when,(f,has,prop,programm_pgm_app),(prop,programm_pgm_app),)" tip="Programms Title(e:s) the user is going to see this" type="text" flag="nono " />
+<tk label="Sort" id="programm_sort" x="1" tip="Position of this Programm in the Listing" regex="[0-9]*" regex_msg="Enter a numeric value" type="text" flag=" " />
+<tk label="Alternative Pgm" id="programm_pgm_alt" tip="Alternative Programm Definition" test="(f,role,admin)" type="text" flag=" " />
+</tk>
+</otherwise>
+</choose>
+</job><job id="Add another Programm" joblevel="pro" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="Programm Editor" />
+<prop id="programm_key">1</prop>
+<when test="(f,not,(f,exists,prop,programms_offset_new_key))">
+<prop id="programms_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,programms)" sort="@row" number="@row" xpath="(prop,programms_offset_new_key)programm">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="programm_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Programm: #(prop,programm_key)</i>
+<call_service job="To File Programm" />
+<ti label="Did add Programm:" x="(f,html,bold,open)(prop,programm_title)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,programms_return_job)" />
+</when>
+</job><job role="hidden" id="To File Programm">
+<need>(prop,programm_key) (prop,isAdd)</need>
+<spirit act="open" id="programms_spirit_tc" xml="(file,programms)" flag="nuevo" />
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,programms_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,programms_offset),0,(f,sub,(f,len,(prop,programms_offset)),1))" />
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,programms_offset)" />
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="programms_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;programm row="(prop,programm_key)" /&gt;</inline>
+</spirit>
+<spirit act="xml_update" how="set_attribute" attribute="dt_add" id="programms_spirit_tc" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" value="(f,time)" />
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" attribute="dt_upd" id="programms_spirit_tc" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" value="(f,time)" />
+<spirit act="xml_update" how="set_attribute" id="programms_spirit_tc" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" attribute="title" value="(prop,programm_title)" />
+<spirit act="xml_update" how="set_attribute" id="programms_spirit_tc" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" attribute="sort" value="(prop,programm_sort)" />
+<when test="(f,exists,file,programm_pgm_file)">
+<echo id="programm_pgm_file" type="file" label="Station X" level="warn"/>
+<file id="jack-in" x="(file,programm_pgm_file)" />
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file-srv" flag="silent" />
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<echo id="jack-result" type="prop" label="Station Y" level="warn"/>
+<spirit act="xml_update" how="set_attribute" id="programms_spirit_tc" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" attribute="pgm_file" value="(prop,jack-result)" />
+</when>
+<when test="(f,exists,prop,programm_pgm_app)">
+<spirit act="xml_update" how="set_attribute" id="programms_spirit_tc" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" attribute="pgm_app" value="(prop,programm_pgm_app)" />
+</when>
+<when test="(f,exists,prop,programm_pgm_alt)">
+<spirit act="xml_update" how="set_attribute" id="programms_spirit_tc" where="(prop,programms_offset)programm[@row='(prop,programm_key)']" attribute="pgm_alt" value="(prop,programm_pgm_alt)" />
+</when>
+<spirit act="close" flag="save" id="programms_spirit_tc" />
+</job></jobs>

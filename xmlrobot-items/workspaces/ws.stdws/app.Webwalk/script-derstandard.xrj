@@ -1,0 +1,161 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="get-next-postings" role="hidden">
+
+  <try_catch>
+    <try>
+      <wdriver act="find_element"
+               by_xpath="//div/form/div/button[string-length(e:o)@data-pagenumber(e:c) &gt; 0]"
+               return_prop_element_id="found-next"
+               flag="load_all"
+               sleep="(f,random,1000,2000)"/>  
+      <ti>found next posting page</ti>
+    </try>
+    <catch>
+      <ti>(prop,catched_msg)</ti>
+      <remove type="prop" id="found-next" test="(f,has,prop,found-next)"/>
+      <ti>end of postings</ti>
+    </catch>
+  </try_catch>
+  
+</job>
+
+<job id="copy-postings" role="hidden">
+  <need>(dir,ziel) (prop,postpage)</need>
+  <file id="current-xml" x="(dir,ziel)/page-(prop,postpage).xml"/>
+  <file id="current-post" x="(dir,ziel)/posts-(prop,postpage).xml"/>
+  <wdriver 
+    act="get_xml"
+    to_file="(file,current-xml)"/>   
+  <ti type="file" label="Downloaded Xml" x="(file,current-xml)"/> 
+  
+  <xslt
+    xml="(file,current-xml)"
+    xsl="(dir,xsl)std-postings-von-beitrag.xsl"
+    out="(file,current-post)"/>
+  <ti type="file" label="Converted" x="(file,current-post)"/>
+  <spirit 
+    id="allposts" 
+    act="xml_update"
+    how="append"
+    with="(file,current-post)"
+    with_what="childs"/>  
+
+</job>
+
+<job id="do-beitrag-posting" role="hidden">
+  <!-- <interpreter watch="1"/>    -->
+ <try_catch>
+ <try>
+   <need>(prop,arbeitstitel)</need>
+   <need>(prop,url-beitrag)</need>
+   
+   <dir id="ziel" x="(dir,results)postings/(prop,arbeitstitel)"/>
+   <mkdir dir="(dir,ziel)"/>
+   <prop id="postpage" x="1"/>
+   <file id="allposts" x="(dir,ziel)all-posts.xml"/>
+   <ti>a</ti>
+   <create_file out="(file,allposts)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<results></results>]]></create_file>
+   <ti>b</ti>
+   <spirit id="allposts" act="open" file="(file,allposts)"/> 
+   
+   <ti>c</ti>
+   <wdriver act="get"
+            url="(prop,url-beitrag)" />
+             
+   <ti>d</ti>
+   <tk type="msg" x="Wait ..."/>      
+  
+   <call_job job="copy-postings"/>
+   <call_job job="get-next-postings"/>
+    
+   <loop id="w" while="()(f,has,prop,found-next)()">
+      <prop id="postpage" x="(f,add,1,(prop,postpage))"/>
+      <welement 
+        act="scroll"
+        id="(prop,found-next)"/>
+        
+      <wdriver act="scroll" x="0" y="-250"/>   
+      
+      
+      <welement 
+        act="mouse_over"
+        id="(prop,found-next)"/>     
+      
+      <welement 
+        act="click"
+        id="(prop,found-next)"
+        sleep="(f,random,3000,7000)"/> 
+      <tk type="msg" x="Wait ..."/>   
+      <call_job job="copy-postings"/>       
+      <call_job job="get-next-postings"/>   
+      
+   </loop>
+   <spirit id="allposts" act="close" flag="save"/>
+   <ti type="file" label="all posts" x="(file,allposts)"/>
+   
+  <xslt
+    xml="(file,allposts)"
+    xsl="(dir,xsl)postings4excel.xsl"
+    out="(dir,temp)excel-vorstufe.xml"/>
+  <ti type="file" label="Excel Vorstufe" x="(dir,temp)excel-vorstufe.xml"/>
+  <file id="excel-result" x="(dir,ziel)all-postings.xls"/> 
+  <ti>r</ti>
+  <excel_update 
+    what="(dir,xsl)empty.xls"
+    out="(file,excel-result)"
+    how="add"
+    with="(dir,temp)excel-vorstufe.xml"
+    remove_sheet="empty"
+    sheet_name="(prop,arbeitstitel)"/>
+
+
+      
+    <ti>s</ti>  
+  <ti type="file" label="Excel" x="(file,excel-result)"/>  
+  </try>
+  <catch>
+    <ti label="Problem with">(prop,arbeitstitel)</ti>
+    <ti label=" ">(prop,url-beitrag)</ti>
+    <ti label=" ">(f,vob,prop,catched_msg)</ti>
+  </catch>
+  </try_catch>
+
+</job>
+                                  
+<job id="test" role="hidden">
+
+  <tk id="url-beitrag" type="sel">
+    <sel>https://derstandard.at/2000098700061/Wieder-sollen-es-nur-einzelne-Dummkoepfe-gewesen-sein</sel>
+    <sel>https://derstandard.at/2000098449415/Der-Brite-der-in-Wien-allein-einen-Indie-Hit-geschaffen</sel>
+    <sel>https://derstandard.at/2000098686262/Spike-Lees-Bauchweh-mit-dem-Oscar-fuer-Green-Book</sel>
+  </tk>
+
+        <call_job job="do-beitrag-posting">
+          <prop id="arbeitstitel" x="skiverband"/>
+
+        </call_job>
+
+</job>
+
+<job id="Der Standard: Postings" role="hidden">
+
+  <tk flag="sum" label="standard">
+    <tk id="url-beitrag" label="Url des Beitrags" flag="nono" tip="zb https://derstandard.at/2000098700061/Wieder-sollen-es-nur-einzelne-Dummkoepfe-gewesen-sein"/>
+    <tk id="arbeitstitel" flag="nono"/>
+  </tk>
+
+        <call_job job="do-beitrag-posting"/>
+
+</job>
+
+
+
+
+
+
+</jobs>

@@ -1,0 +1,1442 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="see-boxinfo" role="hidden">
+  <need>(prop,sbi-box-id)</need>
+
+  <ti label="iBox-Info" />
+  <dir id="cache">(dir,pro)cache</dir>    
+  <file id="detBox" xx="(dir,cache)detBox.xml" x="(dir,filetemp)detBox.xml"/>
+  <call_job job="-db-open-"/>
+
+  <dbc id="(prop,mydbc)"
+    out="(file,detBox)"
+    style="a"
+    root_name="root"
+    row_name="detail"    
+    act="select"
+    flag="trim">select * from i_box where box_id=(prop,sbi-box-id);</dbc>
+
+  <spirit id="detBox" act="open" xml="(file,detBox)" missing_strategy="empty"/>
+  <ti label="titel" x="(f,html,b,o)(f,spirit,detBox,detail,@titel)(f,html,b,c)"/>  
+  <ti label="box_id" x="(f,spirit,detBox,detail,@box_id)"/>
+  <ti label="zustand" x="(f,spirit,detBox,detail,@zustand)"/>
+  
+  <ti label="kurzname" x="(f,spirit,detBox,detail,@kurzname)"/>
+  <ti label="werte" x="(f,spirit,detBox,detail,@werte)"/>
+  <ti label="beschreibung" x="(f,spirit,detBox,detail,@beschreibung)"/>
+  <ti label="uri" x="(f,spirit,detBox,detail,@uri)"/>
+  <ti label="qualitaet" x="(f,spirit,detBox,detail,@qualitaet)"/>
+  <ti label="zeit_import" x="(f,spirit,detBox,detail,@zeit_import)"/>
+  <ti label="zeit_qk" x="(f,spirit,detBox,detail,@zeit_qk)"/>
+  <ti label="zeit_export" x="(f,spirit,detBox,detail,@zeit_export)"/>
+    
+
+  <spirit id="detBox" act="close" />
+</job>
+
+<job id="hook_dsi_details_top" role="hidden">
+
+  <ti_break class_table="tabNavigator"/>  
+  <ti type="rec">
+  <ti type="menu" span="10" align="right">
+
+    <ti flag="button obutton " label=" " type="call_job" 
+        explain_nix="dso-add" class="fb fbAdd" explain="+ (prop,_sl_dso)" 
+        job="dso-add"
+        align="right">
+        
+      <file id="dsis">(file,dsis)</file>
+      <prop id="dsi_key">(prop,dsi_key)</prop>   
+      <file id="dsos">(file,dsis)</file>
+      <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>   
+      
+    </ti>   
+    
+  <ti flag="button obutton " type="call_job" explain_nix="dsb-add" class="fb fbAdd" explain="+ (prop,_sl_dsb)" job="dsb-add">
+  
+      <file id="dsis">(file,dsis)</file>
+      <prop id="dsi_key">(prop,dsi_key)</prop>   
+      <file id="dsbs">(file,dsis)</file>
+      <prop id="dsbs_offset">dsi[@row='(prop,dsi_key)']/</prop>     
+ 
+      <prop id="back-to-blatt">1</prop>
+  </ti>    
+  </ti>
+  </ti>
+  <ti_break/>
+  
+    <ti type="rec" >
+      <ti>(prop,_sl_dsi)</ti>
+      <ti x="(f,html,b,o)(prop,dsi_name)(f,html,b,c)"/>
+    </ti>  
+    
+
+   <ti type="rec" label="in (prop,_sl_buch): ">
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,dsis)))</ti>
+   </ti>  
+   <ti_hr style="2"/>
+   
+
+    
+</job>
+
+<job id="testdata-see-record-details" role="hidden">   
+
+
+  
+  <call_job job="tr_dsi" />
+  <call_job job="tr_komp" />
+  <call_job job="tr_dsa" />
+  <call_job job="tr_dsb" />
+  <prop id="has-one-dso">0</prop>
+  <file id="dsos">(file,dsis)</file>
+  <ti_hr_break/>
+  <ti label="1(e:c) Objekte und Werte"/>
+  <ti_space height="3px" />
+  
+  <prop id="das-w">(f,when,(f,eq_text,(prop,ling),de),w,v)</prop>
+
+    
+  <loop missing_strategy="empty" 
+        id="objos" 
+        xml="(file,dsis)" 
+        xpath="dsi[@row=(f,xpath_string,(prop,dsi_key))]/dso">
+        <prop id="has-one-dso">1</prop>
+        
+        <ti_hr test="(f,not,(f,eq_num,1,(loop,objos,#i)))" />
+        
+        <!-- das objekt -->
+        <ti type="rec">
+        
+          <ti type="call_job" label=" " job="dso-see" explain="(f,html,b,o)(f,tk_sel_translate,(loop,objos,@objekttyp),(dir,repo)osel-(prop,tip-term-class).xml)(f,html,b,c) {(loop,objos,@row)}">
+            <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+            <file id="dsis">(file,dsis)</file>
+            <prop id="dsi_key">(prop,dsi_key)</prop>
+             <file id="dsos">(file,dsis)</file>
+             <prop id="dso_key">(loop,objos,@row)</prop>
+          </ti>        
+          
+          <ti type="call_job" job="dso-edit" explain="(loop,objos,@name)" flag="button obutton" class="fx fxAction justedit justeditobjekt" span="2">
+            <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+            <file id="dsos">(file,dsis)</file>
+            <prop id="dso_key">(loop,objos,@row)</prop>
+            <file id="dsis">(file,dsis)</file>
+            <prop id="dsi_key">(prop,dsi_key)</prop> 
+            <prop id="back-to-blatt">1</prop>         
+          </ti>                                                        
+            
+        </ti>
+        <!-- <ti label="(loop,objos,@name) {(loop,objos,@row)}" />   -->
+        <prop id="dso_key">(loop,objos,@row)</prop>
+        <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+        <file id="dsas">(file,dsis)</file>
+        <prop id="dsas_no_header">1</prop>
+        <prop id="dsas_offset">dsi[@row='(prop,dsi_key)']/dso[@row='(loop,objos,@row)']/</prop>
+
+        <!-- das ist die kopie von dsa-see-all-->
+        
+
+
+        <need default="">(prop,dsas_offset_label)</need>
+        <need default="./">(prop,dsas_offset)</need>
+        <need default="">(prop,dsas_return_job)</need>
+        <need default="//">(prop,dsas_offset_new_key)</need>
+        <need default="0">(prop,dsas_no_header)</need>
+        
+        <prop id="nothing">1</prop>
+        
+        <loop missing_strategy="empty" id="dsa_loop" xml="(file,dsas)" xpath="(prop,dsas_offset)dsa">
+        
+          <prop id="nothing" test="(prop,nothing)">0</prop>
+          
+          <prop id="parent-objekttyp">(loop,dsa_loop,..,@objekttyp)</prop>
+          <file id="pdi-sel-attr">(dir,repo)ot-(prop,parent-objekttyp)-asel-(prop,tip-term-class).xml</file>
+          
+          <remove id="parent-objekttyp" type="prop" />
+          
+<prop id="dsa-plus-translated">(f,tk_sel_translate,(loop,dsa_loop,@attributtyp),(file,pdi-sel-attr))</prop>
+<choose>
+  <when test="(f,ends_with,(prop,dsa-plus-translated), *)">
+    <prop id="dsa-plus-translated">(f,substring_before,(prop,dsa-plus-translated), *)</prop>
+    <prop id="dsa-plus-postfix">*</prop>
+  </when>
+  <otherwise>
+    <prop id="dsa-plus-postfix"></prop>
+  </otherwise>
+</choose>                
+
+          <ti type="rec" >
+            <ti flag="block" type="call_job" prefix="(prop,das-w) &gt; " postfix="(prop,dsa-plus-postfix)" explain="(prop,dsa-plus-translated)" job="dsa-see">
+              <prop id="dsa_key">(loop,dsa_loop,@row)</prop>
+              <file id="dsas">(file,dsas)</file>
+              <prop id="dsas_offset">(prop,dsas_offset)</prop>
+              <prop id="dsas_offset_label">(prop,dsas_offset_label)</prop>
+              <prop id="dsas_offset_new_key">(prop,dsas_offset_new_key)</prop>
+              <prop id="dsas_sort_attribute">(prop,dsas_sort_attribute)</prop>
+              <prop id="dsas_sort_number">(prop,dsas_sort_number)</prop>
+              <prop id="dsas_sort_ignore_case">(prop,dsas_sort_ignore_case)</prop>
+              <prop id="dsas_sort_desc">(prop,dsas_sort_desc)</prop>
+              <prop id="dsas_where">(prop,dsas_where)</prop>
+              <prop id="dsas_return_job">(prop,dsas_return_job)</prop>
+              <file id="dsis">(file,dsis)</file>
+              <prop id="dsis_offset">(prop,dsis_offset)</prop>
+              <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+              <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+              <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+              <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+              <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+              <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+              <prop id="dsis_where">(prop,dsis_where)</prop>
+              <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+              <prop id="dsi_key">(prop,dsi_key)</prop>
+              <file id="dsos">(file,dsos)</file>
+              <prop id="dsos_offset">(prop,dsos_offset)</prop>
+              <prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+              <prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+              <prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+              <prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+              <prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+              <prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+              <prop id="dsos_where">(prop,dsos_where)</prop>
+              <prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+              <prop id="dso_key">(prop,dso_key)</prop>
+              
+            </ti>
+            <ti type="call_job" flag="button obutton" span="2" explain="(loop,dsa_loop,@wert)" class="fx fxAction justedit justeditwert" job="dsa-edit">
+              <prop id="dsa_key">(loop,dsa_loop,@row)</prop>
+              <file id="dsas">(file,dsas)</file>
+              <prop id="dsas_offset">(prop,dsas_offset)</prop>
+              <prop id="dsas_offset_label">(prop,dsas_offset_label)</prop>
+              <prop id="dsas_offset_new_key">(prop,dsas_offset_new_key)</prop>
+              <prop id="dsas_sort_attribute">(prop,dsas_sort_attribute)</prop>
+              <prop id="dsas_sort_number">(prop,dsas_sort_number)</prop>
+              <prop id="dsas_sort_ignore_case">(prop,dsas_sort_ignore_case)</prop>
+              <prop id="dsas_sort_desc">(prop,dsas_sort_desc)</prop>
+              <prop id="dsas_where">(prop,dsas_where)</prop>
+              <prop id="dsas_return_job">(prop,dsas_return_job)</prop>
+              <file id="dsis">(file,dsis)</file>
+              <prop id="dsis_offset">(prop,dsis_offset)</prop>
+              <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+              <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+              <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+              <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+              <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+              <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+              <prop id="dsis_where">(prop,dsis_where)</prop>
+              <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+              <prop id="dsi_key">(prop,dsi_key)</prop>
+              <file id="dsos">(file,dsos)</file>
+              <prop id="dsos_offset">(prop,dsos_offset)</prop>
+              <prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+              <prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+              <prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+              <prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+              <prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+              <prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+              <prop id="dsos_where">(prop,dsos_where)</prop>
+              <prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+              <prop id="dso_key">(prop,dso_key)</prop>
+              <prop id="back-to-blatt">1</prop>
+            </ti>
+          </ti>
+      </loop>
+      
+      <when test="(prop,nothing)">
+        <ti type="rec">
+        <ti span="1"> </ti>
+        <ti flag="wrap_word">(prop,_dsa_nothing_l)</ti>
+        </ti>
+      </when>
+      
+      <when test="(f,not,(f,contains,(prop,dsas_offset),node(e:o)(e:c)))">
+        <ti type="menu" first_cell="2"  >
+          <ti flag="button obutton "  type="call_job"  class="fb fbAdd" explain="+ (prop,_sl_dsa)" job="dsa-add">
+            <file id="dsas">(file,dsas)</file>
+            <prop id="dsas_offset">(prop,dsas_offset)</prop>
+            <prop id="dsas_offset_label">(prop,dsas_offset_label)</prop>
+            <prop id="dsas_offset_new_key">(prop,dsas_offset_new_key)</prop>
+            <prop id="dsas_sort_attribute">(prop,dsas_sort_attribute)</prop>
+            <prop id="dsas_sort_number">(prop,dsas_sort_number)</prop>
+            <prop id="dsas_sort_ignore_case">(prop,dsas_sort_ignore_case)</prop>
+            <prop id="dsas_sort_desc">(prop,dsas_sort_desc)</prop>
+            <prop id="dsas_where">(prop,dsas_where)</prop>
+            <prop id="dsas_return_job">(prop,dsas_return_job)</prop>
+            <file id="dsis">(file,dsis)</file>
+            <prop id="dsis_offset">(prop,dsis_offset)</prop>
+            <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+            <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+            <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+            <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+            <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+            <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+            <prop id="dsis_where">(prop,dsis_where)</prop>
+            <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+            <prop id="dsi_key">(prop,dsi_key)</prop>
+            <file id="dsos">(file,dsos)</file>
+            <prop id="dsos_offset">(prop,dsos_offset)</prop>
+            <prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+            <prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+            <prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+            <prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+            <prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+            <prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+            <prop id="dsos_where">(prop,dsos_where)</prop>
+            <prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+            <prop id="dso_key">(prop,dso_key)</prop>
+            <prop id="back-to-blatt">1</prop>
+          </ti>
+          
+          <ti flag="button" test="(f,not,(prop,nothing))" type="call_job" class="fb fbOrg" explain="(prop,_dsa_org)" job="do-org-me">
+            <file id="orga">(file,dsas)</file>
+            <prop id="orga_where">(prop,dsas_where)</prop>
+            <prop id="orga_view_loop_id">dsa_loop</prop>
+            <prop id="orga_finished_job">ready-and-done-dsa</prop>
+            <prop id="orga_offset">(prop,dsas_offset)</prop>
+            <prop id="orga_offset_label">(prop,dsas_offset_label)</prop>
+            <prop id="orga_offset_new_key">(prop,dsas_offset_new_key)</prop>
+            <prop id="orga_segment_plural">dsas</prop>
+            <prop id="orga_segment_singular">dsa</prop>
+            <prop id="orga_segment_plural_label">(prop,_pl_dsa)</prop>
+            <prop id="orga_segment_singular_label">(prop,_sl_dsa)</prop>
+            <prop id="orga_sort_attribute">(prop,dsas_sort_attribute)</prop>
+            <prop id="orga_sort_number">(prop,dsas_sort_number)</prop>
+            <prop id="orga_where">(prop,dsas_where)</prop>
+            <prop id="orga_name_expression_loop">()(f,tk_sel_translate,(loop,dsa_loop,@attributtyp),(file,pdi-sel-attr))()</prop>
+            <prop id="orga_desc_expression_loop">()()</prop>
+            <file id="dsis">(file,dsis)</file>
+            <prop id="dsis_offset">(prop,dsis_offset)</prop>
+            <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+            <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+            <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+            <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+            <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+            <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+            <prop id="dsis_where">(prop,dsis_where)</prop>
+            <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+            <prop id="dsi_key">(prop,dsi_key)</prop>
+            <file id="dsos">(file,dsos)</file>
+            <prop id="dsos_offset">(prop,dsos_offset)</prop>
+            <prop id="dsos_offset_label">(prop,dsos_offset_label)</prop>
+            <prop id="dsos_offset_new_key">(prop,dsos_offset_new_key)</prop>
+            <prop id="dsos_sort_attribute">(prop,dsos_sort_attribute)</prop>
+            <prop id="dsos_sort_number">(prop,dsos_sort_number)</prop>
+            <prop id="dsos_sort_ignore_case">(prop,dsos_sort_ignore_case)</prop>
+            <prop id="dsos_sort_desc">(prop,dsos_sort_desc)</prop>
+            <prop id="dsos_where">(prop,dsos_where)</prop>
+            <prop id="dsos_return_job">(prop,dsos_return_job)</prop>
+            <prop id="dso_key">(prop,dso_key)</prop>
+            <prop id="back-to-blatt">1</prop>
+          </ti>
+        </ti>
+      </when>
+    
+        
+        
+  </loop>
+  
+  <when test="(f,not,(prop,has-one-dso))">
+    <ti type="rec">
+      <ti >(prop,_komp_dso_nothing)</ti>
+    </ti>
+  </when>
+    
+  <ti_hr />  
+
+  
+<ti type="menu">
+
+  <ti flag="button obutton " label=" " type="call_job" explain_nix="dso-add" class="fb fbAdd" explain="+ (prop,_sl_dso)" job="dso-add">
+    <file id="dsis">(file,dsis)</file>
+    <prop id="dsi_key">(prop,dsi_key)</prop>   
+    <file id="dsos">(file,dsis)</file>
+    <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>   
+    
+  </ti>
+  
+  <ti flag="button" test="(prop,has-one-dso)"  type="call_job" class="fb fbOrg" explain="(prop,_komp_dso_org)" job="do-org-me">
+    <file id="orga">(file,dsis)</file>
+    <prop id="orga_where"></prop>
+    <prop id="orga_view_loop_id">dso_loop</prop>
+    <prop id="orga_finished_job">ready-and-done-dso</prop>
+    <prop id="orga_offset">dsi[@row='(prop,dsi_key)']/</prop>
+    <prop id="orga_offset_label"></prop>
+    <prop id="orga_offset_new_key">//</prop>
+    <prop id="orga_segment_plural">dsos</prop>
+    <prop id="orga_segment_singular">dso</prop>
+    <prop id="orga_segment_plural_label">(prop,_pl_dso)</prop>
+    <prop id="orga_segment_singular_label">(prop,_sl_dso)</prop>
+    <prop id="orga_sort_attribute"></prop>
+    <prop id="orga_sort_number"></prop>                                             
+    <prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,dso_loop,@name),25) {(loop,dso_loop,@row)}()</prop>
+    <prop id="orga_desc_expression_loop">()()</prop>
+
+  </ti>  
+  
+
+</ti>
+
+  
+  <ti_hr_break/>
+  
+    <!--      <ti_space height="5px"/>
+    <ti type="rec">
+    <ti x="(f,html,b,o)(prop,_pl_dsb):(f,html,b,c)" span="7"/>
+
+    <ti x="{a}" align="center" />
+    <ti x="{b}" align="center" />
+    <ti />
+    </ti>       -->
+  
+  <ti label="2(e:c) (prop,_pl_dsb)"/>
+  <ti_space height="3px" />
+  <!-- 
+  <ti type="rec">
+    <ti x="2(e:c) (f,html,b,o)(prop,_pl_dsb):(f,html,b,c)" /> 
+    <ti x="{a} -&gt; {b}" span="2"/>
+    <ti x="explain"  />
+    <ti> </ti>
+              
+  </ti>          -->
+
+    
+  <file id="dsbs">(file,dsis)</file> 
+  <prop id="dsbs_offset">dsi[@row='(prop,dsi_key)']/</prop>
+  
+  <prop id="dsbs_return_job">dsb-see-all</prop>
+  
+  <!-- hier die geaenderte kopie von dsb-see-all -->
+
+  <need default="//">(prop,dsbs_offset_new_key)</need>
+  <prop id="nothing_dsb">1</prop>
+  <loop missing_strategy="empty" id="dsb_loop" xml="(file,dsbs)" xpath="(prop,dsbs_offset)dsb">
+
+  <prop id="nothing_dsb" test="(prop,nothing_dsb)">0</prop>
+
+  <ti type="rec">
+  
+    <ti type="call_job"  explain="(f,text,cut_nice,(loop,dsb_loop,@name),50)" job="dsb-see" xflag="block">
+      <prop id="dsb_key">(loop,dsb_loop,@row)</prop>
+      <file id="dsbs">(file,dsbs)</file>
+      <prop id="dsbs_offset">(prop,dsbs_offset)</prop>
+      <prop id="dsbs_offset_label">(prop,dsbs_offset_label)</prop>
+      <prop id="dsbs_offset_new_key">(prop,dsbs_offset_new_key)</prop>
+      <prop id="dsbs_sort_attribute">(prop,dsbs_sort_attribute)</prop>
+      <prop id="dsbs_sort_number">(prop,dsbs_sort_number)</prop>
+      <prop id="dsbs_sort_ignore_case">(prop,dsbs_sort_ignore_case)</prop>
+      <prop id="dsbs_sort_desc">(prop,dsbs_sort_desc)</prop>
+      <prop id="dsbs_where">(prop,dsbs_where)</prop>
+      <prop id="dsbs_return_job">(prop,dsbs_return_job)</prop>
+      <file id="dsis">(file,dsis)</file>
+      <prop id="dsis_offset">(prop,dsis_offset)</prop>
+      <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+      <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+      <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+      <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+      <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+      <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+      <prop id="dsis_where">(prop,dsis_where)</prop>
+      <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+      <prop id="dsi_key">(prop,dsi_key)</prop>
+    </ti>  
+                                                                                                     <!-- pfeil -->
+    <ti type="call_job" flag="button obutton" span="2" explain="(loop,dsb_loop,@dso_from_row) &#8594; (loop,dsb_loop,@dso_to_row)" 
+    class="fx fxAction justedit justeditbeziehung" job="dsb-edit">
+      <prop id="dsb_key">(loop,dsb_loop,@row)</prop>
+      <file id="dsbs">(file,dsbs)</file>
+      <prop id="dsbs_offset">(prop,dsbs_offset)</prop>
+      <prop id="dsbs_offset_label">(prop,dsbs_offset_label)</prop>
+      <prop id="dsbs_offset_new_key">(prop,dsbs_offset_new_key)</prop>
+      <prop id="dsbs_sort_attribute">(prop,dsbs_sort_attribute)</prop>
+      <prop id="dsbs_sort_number">(prop,dsbs_sort_number)</prop>
+      <prop id="dsbs_sort_ignore_case">(prop,dsbs_sort_ignore_case)</prop>
+      <prop id="dsbs_sort_desc">(prop,dsbs_sort_desc)</prop>
+      <prop id="dsbs_where">(prop,dsbs_where)</prop>
+      <prop id="dsbs_return_job">(prop,dsbs_return_job)</prop>
+      <file id="dsis">(file,dsis)</file>
+      <prop id="dsis_offset">(prop,dsis_offset)</prop>
+      <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+      <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+      <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+      <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+      <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+      <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+      <prop id="dsis_where">(prop,dsis_where)</prop>
+      <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+      <prop id="dsi_key">(prop,dsi_key)</prop>
+      <prop id="back-to-blatt">1</prop>
+    </ti>
+  </ti>
+</loop>
+
+<when test="(prop,nothing_dsb)">
+
+    <ti type="rec">
+      <ti flag="wrap_word">(prop,_dsb_nothing_l)</ti>
+    </ti>
+    
+</when>
+
+<when test="(f,not,(f,contains,(prop,dsbs_offset),node(e:o)(e:c)))">
+  <ti type="menu" >
+  <ti flag="button obutton " type="call_job" explain_nix="dsb-add" class="fb fbAdd" explain="+ (prop,_sl_dsb)" job="dsb-add">
+  <file id="dsbs">(file,dsbs)</file>
+  <prop id="dsbs_offset">(prop,dsbs_offset)</prop>
+  <prop id="dsbs_offset_label">(prop,dsbs_offset_label)</prop>
+  <prop id="dsbs_offset_new_key">(prop,dsbs_offset_new_key)</prop>
+  <prop id="dsbs_sort_attribute">(prop,dsbs_sort_attribute)</prop>
+  <prop id="dsbs_sort_number">(prop,dsbs_sort_number)</prop>
+  <prop id="dsbs_sort_ignore_case">(prop,dsbs_sort_ignore_case)</prop>
+  <prop id="dsbs_sort_desc">(prop,dsbs_sort_desc)</prop>
+  <prop id="dsbs_where">(prop,dsbs_where)</prop>
+  <prop id="dsbs_return_job">(prop,dsbs_return_job)</prop>
+  <file id="dsis">(file,dsis)</file>
+  <prop id="dsis_offset">(prop,dsis_offset)</prop>
+  <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+  <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+  <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+  <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+  <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+  <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+  <prop id="dsis_where">(prop,dsis_where)</prop>
+  <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+  <prop id="dsi_key">(prop,dsi_key)</prop>
+  <prop id="back-to-blatt">1</prop>
+  </ti>
+  <ti flag="button" test="(f,not,(prop,nothing_dsb))" type="call_job" class="fb fbOrg" explain="(prop,_x_organize)" job="do-org-me">
+  <file id="orga">(file,dsbs)</file>
+  <prop id="orga_where">(prop,dsbs_where)</prop>
+  <prop id="orga_view_loop_id">dsb_loop</prop>
+  <prop id="orga_finished_job">ready-and-done-dsb</prop>
+  <prop id="orga_offset">(prop,dsbs_offset)</prop>
+  <prop id="orga_offset_label">(prop,dsbs_offset_label)</prop>
+  <prop id="orga_offset_new_key">(prop,dsbs_offset_new_key)</prop>
+  <prop id="orga_segment_plural">dsbs</prop>
+  <prop id="orga_segment_singular">dsb</prop>
+  <prop id="orga_segment_plural_label">(prop,_pl_dsb)</prop>
+  <prop id="orga_segment_singular_label">(prop,_sl_dsb)</prop>
+  <prop id="orga_sort_attribute">(prop,dsbs_sort_attribute)</prop>
+  <prop id="orga_sort_number">(prop,dsbs_sort_number)</prop>
+  <prop id="orga_where">(prop,dsbs_where)</prop>
+  <prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,dsb_loop,@name),20)()</prop>
+  <prop id="orga_desc_expression_loop">()()</prop>
+  <file id="dsis">(file,dsis)</file>
+  <prop id="dsis_offset">(prop,dsis_offset)</prop>
+  <prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+  <prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+  <prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+  <prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+  <prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+  <prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+  <prop id="dsis_where">(prop,dsis_where)</prop>
+  <prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+  <prop id="dsi_key">(prop,dsi_key)</prop>
+  </ti>
+  </ti>
+</when>  
+  
+  <!-- dsb-see-all ende -->
+
+  
+    
+  <ti_hr/>  
+  
+  <ti type="rec" test="(f,right,import)">
+   
+   
+    <ti type="call_job" job="testdata-prod-record" explain="(prop,_komp_send_db)" flag="button" class="fx fxAction justgo">         
+    
+        <!-- <prop id="dsi_key">(prop,dsi_key)</prop>  -->
+        <file id="dsis">(file,dsis)</file>
+        
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+    </ti>
+  </ti>    
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)cache/chg-dsi-style.xrs" />
+    <prop id="joe-in-regex" x="dsi_key|dsis" />
+  </call_job>
+    
+  <prop id="what_gpref">teststyle</prop>
+  <prop id="ready_job">hook_dsi_changed_pref</prop>
+  <prop id="with_hr">0</prop>
+  <call_job job="tk_gpref_show_button"/>
+  
+  <prop id="what_gpref">testformat</prop>
+  <prop id="ready_job">hook_dsi_changed_pref</prop>
+  <prop id="with_hr">0</prop>
+  <call_job job="tk_gpref_show_button"/>  
+
+</job>
+
+<job id="hook_dsi_changed_pref" role="hidden">
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)cache/chg-dsi-style.xrs" />
+    <prop id="joe-in-regex" x="dsi_key|dsis" />
+  </call_job>
+ 
+ <call_job job="dsi-see-intro" />   
+
+</job>     
+
+
+
+<job id="dsi-see-intro" role="hidden">
+
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(prop,blatt)">
+
+      <prop id="testdata-see-record-with-links">0</prop>
+      <call_job job="testdata-see-record"/>
+
+      
+    </when>
+    <otherwise>
+
+  
+      <call_job job="dsi-see"/>
+    </otherwise>    
+  </choose>
+  
+  
+  
+
+    
+</job>
+
+
+<job id="blatt_on" role="hidden">
+  <create_file out="(file,blatt)">1</create_file>
+</job>
+
+<job id="blatt_off" role="hidden">
+  <create_file out="(file,blatt)">0</create_file>
+
+</job>
+
+<job id="blatt_get" role="hidden">
+  <call_job job="tk_gpref_read"/>
+  
+  <prop id="blatt">(prop,gpref_teststyle)</prop>
+  <!-- 
+  <when test="(f,exists_file,(file,blatt))">
+     <prop id="blatt">(f,file_content,(file,blatt))</prop>
+  </when>
+  -->
+
+</job>
+
+
+
+
+<job id="dsi_did_edit" role="hidden">
+
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(f,and,(prop,blatt),(f,has,prop,back-to-blatt))">
+    
+      <call_job job="testdata-see-record">
+        <file id="dsis">(file,dsis)</file>
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+        <prop id="testdata-see-record-with-links">0</prop>
+      </call_job>
+      
+    </when>
+    <otherwise>
+
+  
+      <call_job job="dsi-see"/>
+    </otherwise>    
+  </choose>
+    
+</job>
+
+<job id="dsi_did_insert" role="hidden">
+
+
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(f,and,(prop,blatt),(f,has,prop,back-to-blatt))">
+    
+      <call_job job="testdata-see-record">
+        <prop id="testdata-see-record-with-links">0</prop>
+        <file id="dsis">(file,dsis)</file>
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+      </call_job>
+      
+    </when>
+    <otherwise>
+
+  
+      <call_job job="dsi-see"/>
+    </otherwise>    
+  </choose>
+    
+</job>
+
+<job id="dso_did_edit" role="hidden">
+
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(f,and,(prop,blatt),(f,has,prop,back-to-blatt))">
+    
+      <call_job job="testdata-see-record">
+        <file id="dsis">(file,dsos)</file>
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+        <prop id="testdata-see-record-with-links">0</prop>
+      </call_job>
+      
+    </when>
+    <otherwise>
+
+  
+      <call_job job="dso-see"/>
+    </otherwise>    
+  </choose>
+    
+</job>
+
+<job id="dso_did_insert" role="hidden">
+
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(f,and,(prop,blatt),(f,has,prop,back-to-blatt))">
+    
+      <call_job job="testdata-see-record">
+        <prop id="testdata-see-record-with-links">0</prop>
+        <file id="dsis">(file,dsos)</file>
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+      </call_job>
+      
+    </when>
+    <otherwise>
+
+  
+      <call_job job="dsi-see"/>
+    </otherwise>    
+  </choose>
+    
+</job>
+
+<job id="dsb_did_edit" role="hidden">
+  
+
+  <call_job job="blatt_get"/>
+  <!-- <tk type="msg">dsb_did_edit blatt=(prop,blatt) back-to-blatt=(f,has,prop,back-to-blatt)</tk>    -->
+  <choose>
+    <when test="(f,and,(prop,blatt),(f,has,prop,back-to-blatt))">
+    
+      <call_job job="testdata-see-record">
+        <prop id="testdata-see-record-with-links">0</prop>
+        <file id="dsis">(file,dsbs)</file>
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+      </call_job>
+      
+    </when>
+    <otherwise>
+    <!-- 
+          <prop id="dso_key">(f,substring_after,(prop,orga_offset),dso[@row=')</prop> 
+      <prop id="dso_key">(f,substring_before,(prop,dso_key),')</prop>        
+    -->
+      <call_job job="dsi-see"/>
+    </otherwise>    
+  </choose>
+    
+</job>
+
+<job id="dsa_did_edit" role="hidden">
+
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(f,and,(prop,blatt),(f,has,prop,back-to-blatt))">
+    
+      <call_job job="testdata-see-record">
+        <file id="dsis">(file,dsas)</file>
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+        <prop id="testdata-see-record-with-links">0</prop>
+      </call_job>
+      
+    </when>
+    <otherwise>
+    <!-- 
+          <prop id="dso_key">(f,substring_after,(prop,orga_offset),dso[@row=')</prop> 
+      <prop id="dso_key">(f,substring_before,(prop,dso_key),')</prop>  
+    -->
+      <call_job job="dso-see"/>
+    </otherwise>    
+  </choose>
+    
+</job>
+
+
+
+
+
+
+                                                                              
+
+
+<job id="hook_dsb_follow_beztyp" role="hidden">
+  <when test="(f,not,(f,has,prop,dsb_name))">
+    <prop id="dsb_name">(f,xpath,(file,pdi-sel-bez),sel[(prop,dsb_beztyp)],@label)</prop>
+  </when>
+
+</job>
+
+<job id="_programming" role="hidden">
+  <call_job job="mm-tester-pgen"/>
+</job>
+
+<job id="hook_dsi_view_begin" role="hidden">                                        
+
+   <prop id="book-name">(f,name_of_dir,(f,dir_of_file,(file,dsis)))</prop>      
+  <ti_break class_table="tabNavigator"/>  
+
+  <ti type="rec" >
+
+    <ti x="(f,html,b,o)(prop,book-name)(f,html,b,c) (e:o)(prop,_pl_dsi)-(prop,_sl_buch)(e:c)"
+     flag="block wrap_word" />
+    
+
+    <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button " align="right" class="fx fxAction justup" job="mm-tester-testdata"/>  
+  </ti>   
+  
+
+  
+  <call_job job="tk_bd_intro">
+      <dir id="book-master">(dir,goTestdata)</dir>
+      <prop id="book-type">testdata</prop>
+      <prop id="book-type-name">(prop,_sl_dsi)</prop>
+      <!-- book name schon oben festgelegt -->
+      <prop id="book-home-job">_testdata</prop>  
+  </call_job>  
+
+  <ti_break/>
+  
+  
+  <create_file file="(dir,ghome)last-books/testdata_last.txt">(prop,book-name)</create_file>
+   
+    <call_job job="tr_tstm"/>
+    <call_job job="blatt_get"/>
+ 
+
+  
+ 
+  <ti_space heigth="7px"/> 
+
+  
+  <ti_hr_break/>
+  
+</job>
+
+<job id="hook_dsi_view_end" role="hidden">
+
+  <ti type="rec" >           
+    <ti type="call_job" job="testdata-prod-records" explain="(prop,_dsi_insert_all)"  
+        flag="button block" class="fx fxAction justgo" 
+        test="(f,right,import)">
+      <file id="dsis">(file,dsis)</file>
+  
+    </ti>
+  </ti>  
+  <ti> </ti>
+  
+  <!-- 
+<call_job job="tr_gpref"/>
+<call_job job="tk_gpref_read"/>
+<prop id="what_gpref">teststyle</prop>
+<prop id="ready_job">_testdata</prop>  
+<call_job job="tk_gpref_show_button"/>
+                        -->
+
+ 
+</job>
+                     
+<job id="hook_dso_details_top" role="hidden">
+
+ <ti type="rec" >
+  <ti>(prop,_sl_dso)</ti>
+  <ti >(f,html,b,o)(prop,dso_name)(f,html,b,o) </ti>
+ </ti>   
+
+<ti label="in (prop,_sl_dsi): " cflag="label_right">(f,xpath,(file,dsos),dsi[@row=(f,xpath_string,(prop,dsi_key))],@name)</ti>
+   <ti type="rec" label="in (prop,_sl_buch): ">
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,dsos)))</ti>
+   </ti>  
+<ti_hr style="2" />
+
+</job>
+                                                                                           
+<job id="hook_dsa_details_top" role="hidden">
+
+ <ti type="rec">
+  <ti>(prop,_sl_dsa)</ti>                                              
+  <ti >(f,html,b,o)(f,tk_sel_translate,(prop,dsa_attributtyp),(file,pdi-sel-attr))(f,html,b,o) </ti>
+ </ti>   
+<ti label="in (prop,_sl_dso): " >(f,xpath,(file,dsas),dsi[@row=(f,xpath_string,(prop,dsi_key))]/dso[@row=(f,xpath_string,(prop,dso_key))],@name)</ti>
+<ti label="in (prop,_sl_dsi): " >(f,xpath,(file,dsas),dsi[@row=(f,xpath_string,(prop,dsi_key))],@name)</ti>
+
+   <ti type="rec" label="in (prop,_sl_buch): ">
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,dsas)))</ti>
+   </ti>  
+
+<ti_hr style="2" />
+
+</job>
+
+<job id="hook_dsb_details_top" role="hidden">
+
+ <ti type="rec" >
+  <ti>(prop,_sl_dsb)</ti>
+  <ti >(f,html,b,o)(prop,dsb_name)(f,html,b,o) </ti>
+ </ti>   
+
+<ti label="in (prop,_sl_dsi): " >(f,xpath,(file,dsbs),dsi[@row=(f,xpath_string,(prop,dsi_key))],@name)</ti>
+   <ti type="rec" label="in (prop,_sl_buch): ">
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,dsbs)))</ti>
+   </ti>  
+
+<ti_hr style="2" />
+
+</job>
+
+<job id="hook_dso_details" role="hidden">
+  
+  <!-- attribute unter objekte dsa unter dso -->
+  <ti_hr_break/>
+
+    <ti type="rec">
+      <ti >(prop,_pl_dsa):</ti>
+      
+    </ti>
+    <!--       <ti>Inhalt</ti>
+    <ti type="rec">
+      <ti x="(f,html,i,o)(prop,_pl_dsa):(f,html,i,c)" xalign="right"/>
+      <ti/>
+    </ti>                 -->
+    <file id="dsas">(file,dsos)</file>
+    <prop id="dsas_offset">dsi[@row='(prop,dsi_key)']/dso[@row='(prop,dso_key)']/</prop>
+      
+    <prop id="dsas_offset_label"/>
+    <prop id="dsas_offset_new_key">//</prop>
+    <prop id="dsas_sort_attribute"/>
+    <prop id="dsas_sort_number"/>
+    <prop id="dsas_sort_ignore_case"/>
+    <prop id="dsas_sort_desc"/>
+    <prop id="dsas_where"/>
+    
+    <prop id="dsas_return_job">dso-see-all</prop>
+
+    <call_job job="dsa-see-all"/>
+    
+    
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)cache/chg-dso-style.xrs" />
+    <prop id="joe-in-regex" x="dsi_key|dsis|dso_key|dsos" />
+  </call_job>    
+
+  <prop id="what_gpref">testformat</prop>
+  <prop id="ready_job">hook_dso_changed_pref</prop>
+  <prop id="with_hr">1</prop>
+  <prop id="do_align">right</prop>
+  
+  <call_job job="tk_gpref_show_button"/>               
+    
+</job>
+
+<job id="hook_dso_changed_pref" role="hidden">
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)cache/chg-dso-style.xrs" />
+    <prop id="joe-in-regex" x="dsi_key|dsis|dso_key|dsos" />
+  </call_job>
+ 
+ <call_job job="dso-see" />   
+
+</job>  
+
+<job id="hook_dsa_details_end" role="hidden">
+
+ 
+       
+</job>
+
+<job id="hook_dsb_details_end" role="hidden">
+<!-- 
+   <ti_hr/>
+    
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(prop,blatt)">
+    
+      <ti type="rec" label=" ">
+      <ti type="call_job" job="testdata-see-record" explain="Rauf zum Datensatz" flag="button" class="fx fxAction justblack" >
+          <file id="dsis">(file,dsis)</file>
+          <prop id="dsi_key">(prop,dsi_key)</prop> 
+          <prop id="testdata-see-record-with-links">0</prop>
+      </ti>
+      </ti>
+            
+    </when>
+    <otherwise>
+    
+      <ti type="rec" label=" ">
+        <ti type="call_job" job="dsi-see" explain="Rauf zum Datensatz" flag="button" class="fx fxAction justblack" >
+            <file id="dsis">(file,dsbs)</file>
+            <prop id="dsi_key">(prop,dsi_key)</prop>
+            <prop id="dsis_offset">./</prop>
+            <prop id="dsis_offset_label"></prop>
+            <prop id="dsis_return_job">dsi-see-all</prop>  
+        </ti>
+      </ti>
+            
+    </otherwise>    
+  </choose>
+  
+  -->
+</job>
+
+<job id="hook_dsi_details" role="hidden">
+
+  <call_job job="blatt_get"/>
+  
+  <choose>
+  
+  <when test="(f,not,(prop,blatt))">
+  
+
+    <try_catch>
+    <try>
+      <ti_hr/>
+      <ti label="(prop,_pl_dso):"/>
+      <!-- 
+      <ti type="rec">
+        <ti x="(f,html,i,o)(prop,_pl_dso):(f,html,i,c)" xalign="right"/>
+        <ti/>
+      </ti>             -->
+      <file id="dsos">(file,dsis)</file>    
+      <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+        <prop id="dsos_where">[@dsi_key='(prop,dsi_key)']</prop>
+      <prop id="dsos_offset_label"/>
+      <prop id="dsos_offset_new_key">//</prop>
+      <prop id="dsos_sort_attribute"/>
+      <prop id="dsos_sort_number"/>
+      <prop id="dsos_sort_ignore_case"/>
+      <prop id="dsos_sort_desc"/>
+      <prop id="dsos_where"/>
+      <prop id="dsos_return_job">dso-see-all</prop>
+  
+      <call_job job="dso-see-all"/>
+    
+  
+      
+      <ti_hr/>
+      <ti type="rec">
+      <ti x="(f,html,b,o)(prop,_pl_dsb):(f,html,b,c)" span="2"/>
+   
+      <ti x="{a}" align="center" />
+      <ti x="{b}" align="center" />
+      <ti />               
+      </ti>    
+      
+      <file id="dsbs">(file,dsis)</file> 
+      <prop id="dsbs_offset">dsi[@row='(prop,dsi_key)']/</prop>
+      
+      <prop id="dsbs_offset_label"/>
+      <prop id="dsbs_offset_new_key">//</prop>
+      <prop id="dsbs_sort_attribute"/>
+      <prop id="dsbs_sort_number"/>
+      <prop id="dsbs_sort_ignore_case"/>
+      <prop id="dsbs_sort_desc"/>
+      <prop id="dsbs_where"/>
+      <prop id="dsbs_return_job">dsb-see-all</prop>
+  
+      <call_job job="dsb-see-all"/>
+    
+    </try>
+    <catch>
+      <dump_ti label="fehler"/>
+    </catch>
+    </try_catch>  
+    <ti_hr/>
+  
+    <ti type="rec">
+  
+     
+      <ti type="call_job" job="testdata-prod-record" explain="(prop,_dsi_insert_record)" 
+      xalign="right" flag="button" class="fx fxAction justgo" test="(f,right,import)" >               
+          <file id="dsis">(file,dsis)</file>          
+          <prop id="dsi_key">(prop,dsi_key)</prop>
+      </ti>
+    </ti>                                                                 
+
+
+    <!-- changer -->
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)cache/chg-dsi-style.xrs" />
+    <prop id="joe-in-regex" x="dsi_key|dsis" />
+  </call_job>
+    
+  <prop id="what_gpref">teststyle</prop>
+  <prop id="ready_job">hook_dsi_changed_pref</prop>
+  <prop id="with_hr">0</prop>
+  <call_job job="tk_gpref_show_button"/>
+
+  
+  </when>        
+  <otherwise>
+    <call_job job="testdata-see-record-details" />  
+  </otherwise>
+  </choose>
+    
+</job>
+
+<job id="testdata-did-edit-value" role="hidden">
+  <need>(file,dsas) (prop,dsa_key) (prop,dsi_key) (prop,dso_key)</need>
+  <call_job job="testdata-see-record">
+  <file id="dsis">(file,dsas)</file>
+  <prop id="dsi_key">(prop,dsi_key)</prop>
+</call_job>
+
+</job>
+
+<job id="testdata-did-edit-value-object" role="hidden">
+  <need>(file,dsos) (prop,dso_key) (prop,dsi_key) (prop,dso_key)</need>
+  <call_job job="testdata-see-record">
+    <file id="dsis">(file,dsos)</file>
+    <prop id="dsi_key">(prop,dsi_key)</prop>
+  </call_job>
+
+</job>
+
+<job id="testdata-did-edit-value-bez" role="hidden">
+  <need>(file,dsbs) (prop,dsi_key)</need>
+  <call_job job="testdata-see-record">
+    <file id="dsis">(file,dsbs)</file>
+    <prop id="dsi_key">(prop,dsi_key)</prop>
+  </call_job>
+
+</job>
+                              
+<job id="testdata-see-record" role="hidden">             
+  <need>(file,dsis) (prop,dsi_key)</need>
+  <need default="1">(prop,testdata-see-record-with-links)</need>
+  
+  <!-- <call_job test="(prop,testdata-see-record-with-links)" job="hook_dsi_see_nav_links" />    -->
+  
+  <file id="dsos">(file,dsis)</file>
+  <file id="dsas">(file,dsis)</file>
+  <!-- <prop id="_x_edit_a">- Edit</prop> -->
+  <prop id="dsa_do_align_right">right</prop>
+  <call_job job="dsi-see"/>
+</job>
+  
+
+
+<job id="dsi-hook-fullEdit" role="hidden">
+  <call_job job="testdata-see-record" />
+</job>
+
+
+
+<job id="Gen Pdi/Pentaho" role="hidden">
+  <interpreter watch="1" test="0"/>
+  <file id="s1" x="(dir,filetemp)scan1.xml"/>
+  <scan out="(file,s1)" 
+        dir="(dir,app)samples/import/"
+        level_limit="1"/>
+        
+  <loop id="s1" xml="(file,s1)" xpath="file">
+    <ti type="call_job" job="pdi-sample-choose" explain="(loop,s1)">
+      <prop id="psc-filename" x="(loop,s1)"/>
+    </ti>
+  </loop>
+</job>
+
+<job id="pdi-sample-choose" role="hidden">
+  <need>(prop,psc-filename)</need> 
+  
+  <file id="pdi-target-store" x="(dir,pro)pdi-target-store.xml"/>
+  
+  <call_job job="go-joe-read" >
+    <file id="joe-in-store" x="(file,pdi-target-store)" />
+  </call_job>
+  
+  <when test="(f,not,(f,has,dir,targetd))">
+      <dir id="targetd" x="(dir,pro)"/>
+  </when>
+  
+  <file id="target" x="(dir,targetd)(f,time)-(prop,psc-filename)"/>
+  
+  <tk flag="sum" label="Target of duplicate">
+    <tk type="file" id="target" flag="save nono" label="Target-file"/>
+  </tk>
+  <dir id="targetd" x="(f,dir_of_file,(file,target))"/>
+  
+  <call_job job="go-joe-write" >
+    <file id="joe-in-store" x="(file,pdi-target-store)" />
+    <prop id="joe-in-regex">targetd</prop>
+  </call_job>  
+  
+  <copy file="(dir,app)samples/import/(prop,psc-filename)"
+        tofile="(file,target)"/>
+        
+  <ti label="Created"/>
+  <ti label="File" type="file" x="(file,target)"/>
+  <ti label=" ">You have to replace the db-connection-pwd and the filename with pdi</ti>
+  
+  
+
+</job>
+
+<job id="ready-and-done-dsi" role="hidden">
+    
+    <file id="dsis">(file,orga)</file>
+    
+    <call_job job="dsi-see-all"/>  
+</job>
+
+<job id="ready-and-done-dso" role="hidden">
+
+  <call_job job="blatt_get"/>
+  
+  <prop id="dsi_key">(f,substring_after,(prop,orga_offset),dsi[@row=')</prop> 
+  <prop id="dsi_key">(f,substring_before,(prop,dsi_key),')</prop>   
+  
+  <file id="dsis">(file,orga)</file>  
+  
+  <choose>
+    <when test="(prop,blatt)">        
+      <prop id="testdata-see-record-with-links">0</prop>
+      <call_job job="testdata-see-record"/>        
+    </when>
+    
+    <otherwise>
+      <call_job job="dsi-see"/>
+    </otherwise>
+    
+  </choose>
+  
+</job>
+
+<job id="ready-and-done-dsb" role="hidden">
+
+  <call_job job="blatt_get"/>
+  
+  <prop id="dsi_key">(f,substring_after,(prop,orga_offset),dsi[@row=')</prop> 
+  <prop id="dsi_key">(f,substring_before,(prop,dsi_key),')</prop>   
+  
+  <file id="dsis">(file,orga)</file>  
+  
+  <choose>
+    <when test="(prop,blatt)">        
+      <prop id="testdata-see-record-with-links">0</prop>
+      <call_job job="testdata-see-record"/>        
+    </when>
+    
+    <otherwise>
+      <call_job job="dsi-see"/>
+    </otherwise>
+    
+  </choose>
+  
+</job>
+
+<job id="ready-and-done-dsa" role="hidden">
+  <!-- <ti>orga_offset = (prop,orga_offset)</ti> -->
+  <prop id="dsi_key">(f,substring_after,(prop,orga_offset),dsi[@row=')</prop> 
+  <prop id="dsi_key">(f,substring_before,(prop,dsi_key),')</prop>    
+  
+  <prop id="dso_key">(f,substring_after,(prop,orga_offset),dso[@row=')</prop> 
+  <prop id="dso_key">(f,substring_before,(prop,dso_key),')</prop>   
+
+  <file id="dsis">(file,orga)</file>
+    
+  <call_job job="blatt_get"/>  
+  
+  <choose>
+    <when test="(prop,blatt)">        
+      <prop id="testdata-see-record-with-links">0</prop>
+      <call_job job="testdata-see-record"/>        
+    </when>
+    
+    <otherwise>
+
+        <call_job job="dso-see" >
+          
+            <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+            <file id="dsis">(file,orga)</file>
+            <prop id="dsi_key">(prop,dsi_key)</prop>
+            <file id="dsos">(file,orga)</file>
+            <prop id="dso_key">(prop,dso_key)</prop>
+                       
+        </call_job>   
+    
+    </otherwise>
+    
+  </choose>  
+    
+     
+     
+     <!--   
+    <file id="dsos">(file,orga)</file>
+      <prop id="dsos_offset">(f,substring_before,(prop,orga_offset),/dso[@row=')/</prop>                               
+      <prop id="dsos_offset_label"></prop>
+      <prop id="dsos_offset_new_key"></prop>
+      <prop id="dsos_sort_attribute"></prop>
+      <prop id="dsos_sort_number"></prop>
+      <prop id="dsos_sort_ignore_case"></prop>
+      <prop id="dsos_sort_desc"></prop>
+      <prop id="dsos_where"></prop>
+    <prop id="dsos_return_job">dso-see-all</prop>  
+   
+    <call_job job="dso-see"/>          -->
+</job>          
+
+<job id="testdata-see-record-details-V1" role="hidden">   
+  <ti_hr style="2"/>
+
+  
+  <call_job job="tr_dsi" />
+  <call_job job="tr_komp" />
+  <prop id="has-one-dso">0</prop>
+  <loop missing_strategy="empty" 
+        id="objos" 
+        xml="(file,dsis)" 
+        xpath="dsi[@row=(f,xpath_string,(prop,dsi_key))]/dso">
+        <prop id="has-one-dso">1</prop>
+        <!-- 
+        <when test="(f,eq_num,1,(loop,objos,#i))">
+          <ti label="(loop,objos,..,@name)" />
+        </when>     <ti_space height="4px"/>     -->
+        
+        
+        <ti_hr style="2"  test="(f,gt_num,(loop,objos,#i),1)"/>
+        <ti type="rec">
+          <ti type="call_job" job="dso-edit" explain="(prop,_komp_dso_edit)" flag="button" class="fx fxAction">
+            <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+            <file id="dsos">(file,dsis)</file>
+            <prop id="dso_key">(loop,objos,@row)</prop>
+            <file id="dsis">(file,dsis)</file>
+            <prop id="dsi_key">(prop,dsi_key)</prop>          
+          </ti>                                                   
+          
+          
+          <ti type="call_job" label=" " job="dso-see" explain="(f,html,b,o)(f,tk_sel_translate,(loop,objos,@objekttyp),(dir,repo)osel-(prop,tip-term-class).xml)(f,html,b,c) &apos;(loop,objos,@name)&apos; (f,html,b,o){(loop,objos,@row)}(f,html,b,c)">
+            <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+            <file id="dsis">(file,dsis)</file>
+            <prop id="dsi_key">(prop,dsi_key)</prop>
+             <file id="dsos">(file,dsis)</file>
+             <prop id="dso_key">(loop,objos,@row)</prop>
+          </ti>          
+        </ti>
+        <!-- <ti label="(loop,objos,@name) {(loop,objos,@row)}" />   -->
+        <prop id="dso_key">(loop,objos,@row)</prop>
+        <file id="dsas">(file,dsis)</file>
+        <prop id="dsas_no_header">1</prop>
+        <prop id="dsas_offset">dsi[@row='(prop,dsi_key)']/dso[@row='(loop,objos,@row)']/</prop>
+        <call_job job="dsa-see-all"/>
+        
+        
+  </loop>
+  
+  <when test="(f,not,(prop,has-one-dso))">
+    <ti label=" ">(prop,_komp_dso_nothing)</ti>
+  </when>
+    
+  <ti_hr style="2"/>  
+
+  
+<ti type="rec" label=" ">
+  <ti flag="button obutton " label=" " type="call_job" explain_nix="dso-add" class="fx fxAdd fxAddDso" explain="+ (prop,_sl_dso)" job="dso-add">
+    <file id="dsis">(file,dsis)</file>
+    <prop id="dsi_key">(prop,dsi_key)</prop>   
+    <file id="dsos">(file,dsis)</file>
+    <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>   
+  </ti>
+  
+  <ti flag="button" test="(prop,has-one-dso)"  type="call_job" class="fx fxOrga fxOrgaDso" explain="(prop,_komp_dso_org)" job="do-org-me">
+    <file id="orga">(file,dsis)</file>
+    <prop id="orga_where"></prop>
+    <prop id="orga_view_loop_id">dso_loop</prop>
+    <prop id="orga_finished_job">ready-and-done-dso</prop>
+    <prop id="orga_offset">dsi[@row='(prop,dsi_key)']/</prop>
+    <prop id="orga_offset_label"></prop>
+    <prop id="orga_offset_new_key">//</prop>
+    <prop id="orga_segment_plural">dsos</prop>
+    <prop id="orga_segment_singular">dso</prop>
+    <prop id="orga_segment_plural_label">(prop,_pl_dso)</prop>
+    <prop id="orga_segment_singular_label">(prop,_sl_dso)</prop>
+    <prop id="orga_sort_attribute"></prop>
+    <prop id="orga_sort_number"></prop>                                             
+    <prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,dso_loop,@name),25) {(loop,dso_loop,@row)}()</prop>
+    <prop id="orga_desc_expression_loop">()()</prop>
+
+  </ti>  
+  
+
+</ti>
+
+  
+  <ti_hr/>
+  
+    <!--      <ti_space height="5px"/>
+    <ti type="rec">
+    <ti x="(f,html,b,o)(prop,_pl_dsb):(f,html,b,c)" span="7"/>
+
+    <ti x="{a}" align="center" />
+    <ti x="{b}" align="center" />
+    <ti />
+    </ti>       -->
+  
+  
+    <ti type="rec">
+    <ti x="(f,html,b,o)(prop,_pl_dsb):(f,html,b,c)" span="2"/> 
+    <ti x="{a}" align="center" />
+    <ti x="{b}" align="center" />
+    <ti />               
+    </ti>      
+
+    
+  <file id="dsbs">(file,dsis)</file> 
+  <prop id="dsbs_offset">dsi[@row='(prop,dsi_key)']/</prop>
+  
+  <prop id="dsbs_return_job">dsb-see-all</prop>
+
+  <call_job job="dsb-see-all"/>  
+    
+  <ti_hr/>  
+  
+  <ti type="rec" test="(f,right,import)">
+    <ti/>
+   
+    <ti type="call_job" job="testdata-prod-record" explain="(prop,_komp_send_db)" flag="button obutton" class="fx fxAction justgo"
+        >         
+    
+        <!-- <prop id="dsi_key">(prop,dsi_key)</prop>  -->
+        <file id="dsis">(file,dsis)</file>
+        
+        <prop id="dsi_key">(prop,dsi_key)</prop>
+    </ti>
+  </ti>    
+  <!-- 
+  <call_job job="gbt">
+    <file id="gbt-in">(file,dsis)</file>
+  </call_job>
+  
+  <ti type="rec" label=" ">                                                                                               
+    <ti type="call_job" job="mm-op-testdata" explain="(prop,gbt-out)" flag="button obutton"  class="fx fxAction justblack">
+      <prop id="mm-what">all</prop>
+      <file id="mm-liste">(file,dsis)</file>
+    </ti>          
+  </ti>             -->
+        
+
+</job>     
+        
+</jobs>

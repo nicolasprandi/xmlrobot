@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="tag-edit">
+<need>(prop,tag_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="tag-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="tag-editor"/>
+<call_job job="tag-write"/>
+<ti label="Did update Tag:" x="(f,html,bold,open)(f,text,cut_nice,(prop,tag_bez),30)(f,html,bold,close)"/>
+<ti_break/>
+<ti_hr/>
+<call_job job="tag-see"/>
+</job>

@@ -1,0 +1,163 @@
+<?xml version="1.0" ?> 
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+
+  <job id="go-jack-do-dir" role="hidden">
+    <need>(dir,jack-in)</need>
+    <prop id="jack-result-prop" x="(f,random_text,5)"/>
+    <prop id="jack-result-did-prop" x="(f,random_text,5)"/>    
+    <call_service job="go-jack-do-dir" flag="silent">
+      <dir id="jack-in" x="(dir,jack-in)" />
+      <prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+      <prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>      
+    </call_service>
+    <global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>  
+    <global act="get" as_id="jack-result-did" id="(prop,jack-result-did-prop)"/> 
+  </job>
+  
+  <job id="go-jack-do-file" role="hidden"> 
+    <need>(file,jack-in)</need>
+    <prop id="jack-result-prop" x="(f,random_text,5)"/>
+    <prop id="jack-result-did-prop" x="(f,random_text,5)"/>     
+    <call_service job="go-jack-do-file" flag="silent">
+      <file id="jack-in">(file,jack-in)</file>
+      <prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+      <prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>       
+    </call_service>
+    <global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+    <global act="get" as_id="jack-result-did" id="(prop,jack-result-did-prop)"/>
+      
+  </job>  
+
+  <job id="go-joe-read!" role="hidden">
+    <remove type="file" id="joe-in-store" flag="catch"/>
+    <remove type="prop" id="joe-in-regex" flag="catch"/>
+  </job>
+
+  <job id="go-joe-read" role="hidden">
+    <need>(file,joe-in-store)</need>
+    <need default=".*">(prop,joe-in-regex)</need>
+    <try_catch>
+      <try>
+        
+        <when test="(f,file_exists,(file,joe-in-store))">
+          <exclude file="(file,joe-in-store)" regex="(prop,joe-in-regex)"/>
+        </when>
+      </try>
+      <catch>
+        <throw_again test="(f,starts_with,(prop,catched_msg),wichtig)" />
+        <tp>Some problem in reading gui-store: (file,joe-in-store)</tp>
+      </catch>
+    </try_catch>
+  </job>
+
+  <job id="go-joe-write!" role="hidden">
+    <remove type="file" id="joe-in-store" flag="catch"/>
+    <remove type="prop" id="joe-in-regex" flag="catch"/>
+  </job>
+
+  <job id="get-isoffline" role="hidden">
+    
+    
+    <choose>
+      <when test="(f,eq_num,1,(f,sissi))">
+        <prop id="isoffline" x="1" />
+      </when>
+      <otherwise>
+        <prop id="isoffline" x="0" />
+      </otherwise>
+    </choose>
+    
+  </job>
+  
+  <job id="go-joe-write" role="hidden">
+
+    <!-- <interpreter watch="1" /> -->
+
+    <need>(prop,joe-in-regex) (file,joe-in-store)</need>
+    <file id="gj-ask">(dir,filetemp)joe-ask.xml</file>
+
+    <ask what="vars" out="(file,gj-ask)" style="escaped"/>
+    <ti label="ask-vars" type="file" x="(file,gj-ask)" test="0"/>
+    <print act="open" id="jp" out="(file,joe-in-store)"/>
+    <print act="println" id="jp">&lt;?xml version="1.0" ?&gt;&lt;steps&gt;</print>
+    <call_job job="get-isoffline"/>
+    
+    <loop id="j" xml="(file,gj-ask)" xpath="vars/var" flag="dont_escape_on_read">
+      <prop id="do-this">1</prop>
+      <when test="(f,and,(f,eq,dir,(loop,j,@type)),(f,eq,(prop,fs),(loop,j)))">
+        <prop id="do-this">0</prop>
+      </when>
+      <when test="(f,matches_regex,(loop,j,@id),(prop,joe-in-regex))">
+      <when test="(prop,do-this)">
+       <ti test="0">(loop,j,@type),(loop,j,@id) = (loop,j)</ti>
+       
+       <print act="print" id="jp" test="(f,eq,prop,(loop,j,@type))">&lt;p </print>
+       <print act="print" id="jp" test="(f,eq,file,(loop,j,@type))">&lt;f </print>
+       <print act="print" id="jp" test="(f,eq,dir,(loop,j,@type))">&lt;d </print>
+
+       <print act="print" id="jp">id=&quot;(x,(f,escape,(loop,j,@id)))&quot;</print>
+    
+				<choose>
+					<when test="(f,eq,,(loop,j))">
+						<!-- nothing -->
+						<print act="print" id="jp">&gt;</print>
+					</when>
+					<when test="(f,not,(prop,isoffline))">
+						<!-- online nix -->
+						<print act="print" id="jp">&gt;</print>
+						<print act="print" id="jp" flag="dont_unescape_on_write">(x,(loop,j))</print>
+					</when>          
+					<when test="(f,eq,prop,(loop,j,@type))">
+						<!-- property -->
+						<print act="print" id="jp">&gt;</print>
+						<print act="print" id="jp" flag="dont_unescape_on_write">(x,(loop,j))</print>
+					</when>
+					<when test="(f,eq,file,(loop,j,@type))">
+						<!-- file -->
+						<print act="print" id="jp">&gt;</print> 
+            <prop id="jack-result-prop" x="(f,random_text,5)"/>
+            <prop id="jack-result-did-prop" x="(f,random_text,5)"/>                          
+						<call_service job="go-jack-do-file" flag="silent">
+							<file id="jack-in" x="(loop,j)" />
+              <prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+              <prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/> 
+						</call_service>
+						<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+						<global act="get" as_id="jack-result-did" id="(prop,jack-result-did-prop)"/>
+						<print act="print" id="jp">(x,(prop,jack-result))</print>
+					</when>
+					<when test="(f,eq,dir,(loop,j,@type))">
+						<!-- directory -->					
+            <prop id="jack-result-prop" x="(f,random_text,5)"/>
+            <prop id="jack-result-did-prop" x="(f,random_text,5)"/>               	
+						<call_service job="go-jack-do-dir" flag="silent">
+							<dir id="jack-in" x="(loop,j)" />
+              <prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+              <prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/> 
+						</call_service>
+						<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+						<when test="(f,not,(f,eq,(loop,j),(prop,jack-result)))">
+							<print act="print" id="jp"> flag="cool"</print>
+						</when>
+						<print act="print" id="jp">&gt;</print>
+						
+						<print act="print" id="jp">(x,(prop,jack-result))</print>              
+					</when>
+				</choose>          
+      
+       <print act="print" id="jp">&lt;</print>
+       <print act="println" id="jp" test="(f,eq,prop,(loop,j,@type))">/p&gt;</print>
+       <print act="println" id="jp" test="(f,eq,file,(loop,j,@type))">/f&gt;</print>
+       <print act="println" id="jp" test="(f,eq,dir,(loop,j,@type))">/d&gt;</print>
+
+       </when>
+      </when>
+    </loop>
+    <print act="println" id="jp">&lt;/steps&gt;</print>
+    <print act="close" id="jp"/>
+
+  </job>
+
+</jobs>

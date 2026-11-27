@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<prolog>
+<file id="programms">(dir,services)programms.xml</file>
+<when test="(f,not,(f,exists_file,(file,programms)))">
+<create_file out="(file,programms)">&lt;programms/&gt;</create_file>
+<i>Created: (file,programms)</i>
+</when>
+<!--The offset defines a node in the xml-data-file under which all the data is found. use eg 'england' or 'country[id='england']-->
+<prop id="programms_offset">./</prop>
+<!--The offset label is communicated to the user, it verbalizes the offset-->
+<prop id="programms_offset_label"/>
+<!--the offset_new_key is used whenever a new id for an added record is needed. this is a prefix for an xpath-expression-->
+<prop id="programms_offset_new_key">//</prop>
+<!--sort_attribute defines the attributes to be used for the view-sort-->
+<prop id="programms_sort_attribute"/>
+<!--the numeric attributes in the sort-->
+<prop id="programms_sort_number"/>
+<!--the ignore-case attributes in the sort-->
+<prop id="programms_sort_ignore_case"/>
+<!--the desc attributes in the sort-->
+<prop id="programms_sort_desc"/>
+<!--a where claused, this is a post to the xpath-expression, use for several view-types-->
+<prop id="programms_where"/>
+<!--return job to be called after changes (new,delete,edit)-->
+<prop id="programms_return_job">View Programms</prop>
+</prolog>

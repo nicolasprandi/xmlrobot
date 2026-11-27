@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="Panorama File-Action" joblevel="ws" role="hidden">
+  <call_service job="Panorama-File-Activity" />
+</job>
+
+<job id="Panorama Dir-Action" joblevel="ws" role="hidden">
+  <call_service job="Panorama-Dir-Activity" />
+
+</job>   
+  
+<job id="Conf: Pano-Operations (Dir,File)" joblevel="ws" role="hidden">
+
+  <file id="activities">(dir,services)activities-panorama.xml</file>
+  <prop id="activities_offset">dir_activities/</prop>
+  <prop id="activities_offset_label">Directory-Operations</prop>
+  <prop id="activities_offset_new_key">//</prop>
+  <prop id="activities_sort_attribute">@sort</prop>
+  <prop id="activities_sort_number">@sort</prop>
+  <prop id="activities_sort_ignore_case" />
+  <prop id="activities_sort_desc" />
+  <prop id="activities_where" />
+  <prop id="activities_return_job">()Conf: Pano-Operations (Dir,File)()</prop>
+  <call_service job="View Operations" />
+  <ti_hr/>
+  
+  <file id="activities">(dir,services)activities-panorama.xml</file>
+  <prop id="activities_offset">file_activities/</prop>
+  <prop id="activities_offset_label">File-Operations</prop>
+  <prop id="activities_offset_new_key">//</prop>
+  <prop id="activities_sort_attribute">@sort</prop>
+  <prop id="activities_sort_number">@sort</prop>
+  <prop id="activities_sort_ignore_case" />
+  <prop id="activities_sort_desc" />
+  <prop id="activities_where" />
+  <prop id="activities_return_job">()Conf: Pano-Operations (Dir,File)()</prop>
+  <call_service job="View Operations" />
+  
+  <ti_hr/>
+
+</job>
+
+<job id="pnx_hook_view_activity_end" role="hidden">
+<ti label=" " type="call_service" job="pnx_activity_publish" explain="Publish (prop,activities_offset_label)">
+  <file id="activities">(file,activities)</file>
+  <prop id="activities_offset">(prop,activities_offset)</prop>
+  <prop id="activities_offset_label">(prop,activities_offset_label)</prop>
+  <prop id="activities_offset_new_key">(prop,activities_offset_new_key)</prop>
+  <prop id="activities_sort_attribute">(prop,activities_sort_attribute)</prop>
+  <prop id="activities_sort_number">(prop,activities_sort_number)</prop>
+  <prop id="activities_where">(prop,activities_where)</prop>
+  <prop id="activities_return_job">(prop,activities_return_job)</prop>
+</ti>
+
+</job>
+
+<job id="pnx_activity_locate" role="hidden">
+
+  <prop id="wanted_job">(f,xpath,(file,activities),(prop,activities_offset)activity[@id=(f,xpath_string,(prop,activity_key))],@service_job)</prop>
+  <prop id="wanted_title">(f,xpath,(file,activities),(prop,activities_offset)activity[@id=(f,xpath_string,(prop,activity_key))],@title)</prop>
+  <ti label="Locating Job-File:">
+    <ti label="of Operation:"> (prop,wanted_title)</ti>
+    <ti label="of Job:"> (prop,wanted_job)</ti>
+  </ti>
+  <file id="fx">(dir,filetemp)locatejob82347.xml</file>
+  <ask what="services" out="(file,fx)" style="natural"/>
+  <prop id="founds">0</prop>
+  <ti label="Findings:"/>
+  <loop id="s" xml="(file,fx)" xpath="services/job">
+    <when test="(f,eq,(loop,s,@id),(prop,wanted_job))">
+      <prop id="founds">(f,add,1,(prop,founds))</prop>
+      <ti label="(prop,founds)(e:c) located in:" type="file">(loop,s,@file)</ti>
+    </when>    
+  </loop>  
+  <when test="(f,eq,0,(prop,founds))">
+    <ti label="Sorry">
+      <ti label=" ">()Job could not be located in Services :-((()</ti>
+      <ti label=" ">You have to create it ...</ti>
+      <ti label=" ">()Tip: Take another activity, locate the jobfile and create the job there  ...()</ti>
+      <ti label=" ">()(For Security Reasons, [[pdname]] does not support the automatic creation of jobs)()</ti>
+    </ti>
+  </when>
+  
+</job>
+
+<job id="pnx_activity_publish" role="hidden">
+  <interpreter watch="0"/>
+  <choose>
+    <when test="(f,eq,(prop,activities_offset),file_activities/)">
+      <prop id="pub_type">file</prop>
+      <prop id="pub_type_human">File</prop>
+      <file id="dest">(dir,services)Panorama-Activities-File-Gen.ljx</file>
+    </when>
+    <when test="(f,eq,(prop,activities_offset),dir_activities/)">
+      <prop id="pub_type">dir</prop>
+      <prop id="pub_type_human">Dir</prop>
+      <file id="dest">(dir,services)Panorama-Activities-Dir-Gen.ljx</file>
+    </when>    
+    <otherwise>
+      <throw>Terrible 7234</throw>
+    </otherwise>
+  </choose>
+  
+  <ti label="pub_type:" x="(prop,pub_type)" />
+  <file id="gen_jobs">(dir,filetemp)pnx_generated_activity_jobs.xml</file>
+  
+  <xslt
+    xml="(dir,services)activities-panorama.xml"
+    xsl="(dir,services)pano-activities-jobs.xsl"
+    out="(file,dest)">
+    <params>job_id='(f,xslp,Panorama-(prop,pub_type_human)-Activity)' type_dir_file='(f,xslp,(prop,pub_type))'</params>
+  </xslt>
+
+  <create_file out="(dir,filetemp)do.lsx" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <steps>
+  <call_service job="()Conf: Pano-Operations (Dir,File)()"/> 
+  </steps>]]></create_file>
+    
+  <call_service job="restarter">
+   <file id="with-lsx" x="(dir,filetemp)do.lsx" />
+  </call_service>  
+  <restart/>       
+
+  <!-- <dump flag="ti" label="pnx_act_publish"/> -->
+</job>  
+</jobs>

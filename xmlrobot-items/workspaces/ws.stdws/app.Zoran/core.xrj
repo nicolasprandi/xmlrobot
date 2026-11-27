@@ -1,0 +1,244 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="core-operation" role="hidden">
+
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_conf_read"/>
+  
+
+  
+  <dump_ti_all label="Greetings from core-operation"/>
+ 
+  
+  <prop id="stat_begin" x="(f,time,yyyyMMdd_HHmmss)"/>
+  
+  <dir id="starter" x="(dir,services)" />
+  
+  <file id="scan" x="(dir,temp)scan.xml" />
+  
+  <scan dir="(dir,starter)" 
+        level_limit="3"
+        out="(file,scan)"
+        field="fn"/>
+  
+  <prop id="counter" x="0" />
+  <prop id="found" x="0"/> 
+        
+  <loop id="scan" xml="(file,scan)" xpath="//file">
+    <prop id="counter" x="(f,add,1,(prop,counter))"/>
+    
+    <ti type="file" label="Some (prop,counter)" x="(loop,scan,@fn)"/>
+
+    <prop id="found" x="1"/> 
+    
+    <!--
+      <choose>
+        <when test="1">
+        </when>
+        <when test="0">
+        </when>
+        <otherwise>
+        </otherwise>
+      </choose>
+    -->     
+  
+  </loop>
+  <tk type="msg" x="Operation now finished-hello"/>
+  <prop id="stat_end" x="(f,time,yyyyMMdd_HHmmss)"/>
+  <prop id="stat_counter" x="(prop,counter)"/>  
+  <call_job job="tk_stat_write" />
+  
+  <ti label="Summary"/>
+  <ti type="dir" x="(dir,services)" label="Eben"/>
+  <ti type="file" x="(file,takeoff)" label="Dort"/>
+  <throw>Good By</throw>
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+<job id="spiritell" role="hidden">
+
+  <need>(dir,target)</need>
+  <need>(prop,report)</need>
+  <need default="0">(prop,services)</need>
+  <throw>hallo</throw>
+  <mkdir dir="(dir,target)"/>
+  <tp>Searching for updated files ...</tp>
+  <interpreter watch="0"/>
+  <prop id="sum" x="0"/>
+  <choose>
+    <when test="(f,has,dir,from-dir)">
+      <file id="scan" x="(dir,systemp)scan.xml"/>
+      <scan dir="(dir,from-dir)" out="(file,scan)" field="md5"/>
+    </when>
+    <when test="(f,has,file,from-scan)">
+      <file id="scan" x="(file,from-scan)"/>
+    </when>    
+    <otherwise>
+      <throw>service 'copy-new' needs parameter ()(dir,from-dir) or (file,from-scan)() </throw>
+    </otherwise>  
+  </choose>
+  <ti type="file" label="copy-new" x="(file,scan)" test="0"/>
+  <!--
+   <spirit id="list" xml="(file,l)" act="open"/>
+   <loop_xml 
+      act="open" 
+      id="ws" 
+      spirit="list" 
+      xpath="dir"/> 
+   <loop 
+      id="while-ws" 
+      while="()(f,loop_xml,ws,has_next?)()">
+      <loop_xml act="next" id="ws" />
+      <ti label="(f,loop_xml,ws,@name)"/>
+      
+       <loop_xml 
+          act="open" 
+          id="app" 
+          spirit="list" 
+          xpath="dir[@name=(f,xpath_string,(f,loop_xml,ws,@name))]/dir"/> 
+       <loop 
+          id="while-ws" 
+          while="()(f,loop_xml,app,has_next?)()">
+          <loop_xml act="next" id="app" />
+          <ti label=" " x="(f,loop_xml,app,@name)" type="call_job" job="see-app-2-download"
+            explain="(f,loop_xml,app,@name)">
+            <prop id="app-path" x="(f,loop_xml,app,@path)"/>
+            <prop id="app-name" x="(f,loop_xml,app,@name)"/>
+          </ti>     
+       </loop>
+       
+       <loop_xml 
+          act="close" 
+          id="app" /> 
+                
+   </loop>
+   
+   <loop_xml 
+      act="close" 
+      id="ws" />           
+   
+   <spirit id="list" act="close"/>  
+  -->
+  
+  <spirit id="cn" act="open" xml="(file,scan)"/>
+  
+  <dir id="from-my-dir" x="(f,spirit,cn,@dir)"/>
+  <prop id="did-print-header" x="0"/>
+  <!-- 
+  <ti label="(f,html,b,open)Action(f,html,b,close)" key="(f,html,b,open)Reason(f,html,b,close)" type="rec">
+    <ti x="(f,html,b,open)from(f,html,b,close)" />
+    <ti x="(f,html,b,open)to(f,html,b,close)" />
+  </ti>    -->
+  <!-- copy if requested -->
+  
+  <loop_xml 
+    act="open" 
+    id="copy" 
+    spirit="cn" 
+    xpath="//file"/>
+ 
+  <loop 
+    id="while" 
+    while="()(f,loop_xml,copy,has_next?)()">
+    <loop_xml act="next" id="copy" />
+    <file id="dest" x="(dir,target)(f,loop_xml,copy,..,@ipath)(f,loop_xml,copy)"/>
+    <file id="source" x="(dir,from-my-dir)(f,loop_xml,copy,..,@ipath)(f,loop_xml,copy)"/>
+    <prop id="do-copy" x="0"/>
+    <choose>
+      <when test="(f,not,(f,exists_file,(file,dest)))">
+        <prop id="do-copy" x="1"/>
+        <prop id="reason" x="new"/>
+      </when>      
+      <when test="(f,not,(f,eq_text,(f,file_info,hash,md5,(file,dest)),(f,loop_xml,copy,@md5)))">
+        <prop id="do-copy" x="1"/>
+        <prop id="reason" x="updated"/>
+      </when>               
+    </choose> 
+    
+    <throw>hallo</throw>
+    
+    <!-- 
+    
+    <when test="(prop,services)">
+      <when test="(f,matches_regex,(f,loop_xml,copy),computer\-.+\.xrj)">
+        <prop id="do-copy" x="0"/>
+      </when>
+      <when test="(f,matches_regex,(f,loop_xml,copy),computer\-.+\.ljx)">
+        <prop id="do-copy" x="0"/>
+      </when>  
+      </when>                         
+    </when>
+    
+    <when test="(prop,do-copy)">
+      <call_service job="copy-new-print-header"/>   
+      <prop id="sum" x="(f,add,1,(prop,sum))"/>
+      <choose>
+        <when test="(prop,report)">
+          <ti label="Copy" key="(prop,reason)" type="rec">
+            <ti type="file" x="(file,source)" />
+            <ti type="file" x="(file,dest)" />
+            <ti type="call_service" job="Goto-Compare-Files" explain="Compare" xflag="silent"
+                test="(f,eq_text,updated,(prop,reason))">
+              <file id="old" x="(file,dest)"/>
+              <file id="new" x="(file,source)"/>
+            </ti>
+          </ti>
+        </when>      
+        <otherwise>
+          <copy file="(file,source)" tofile="(file,dest)" />
+          <ti label="Did copy" key="(prop,reason)" type="rec">
+            
+            <ti type="file" x="(file,source)" />
+            <ti type="file" x="(file,dest)" />
+          </ti>        
+        </otherwise>                
+      </choose>       
+    </when> 
+    -->
+  </loop>
+  
+  <loop_xml 
+    act="close" 
+    id="copy"/>    
+
+  <spirit id="cn" act="close" />
+  
+</job>
+
+
+</jobs>

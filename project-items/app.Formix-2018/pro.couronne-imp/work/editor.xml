@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="imp-editor">
+    <need>(prop,isAdd)</need>
+    <choose>
+        <when test="(prop,isAdd)">
+            <prop id="imp_default_label_class" x="+ Index Manipulation Point"/>
+            <prop id="imp_default_label_name" x="(f,when,(f,has,(prop,imps_offset_label)), | (prop,imps_offset_label),)"/>
+            <prop id="imps_tk_control" x="sum"/>
+        </when>
+        <otherwise>
+            <need>(prop,imp_key)</need>
+            <prop id="imp_default_label_class" x="Index Manipulation Point"/>
+            <prop id="imp_default_label_name" x="(f,tk_sel_translate,(prop,imp_point),(dir,app)index-points.xml)(f,when,(f,has,(prop,imps_offset_label)), - (prop,imps_offset_label),)"/>
+            <prop id="imps_tk_control" x="sum_only"/>
+        </otherwise>
+    </choose>
+    <call_job job="imp-tk"/>
+</job>

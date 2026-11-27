@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zut-tk">
+<need default="">(prop,zuts_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="bla bla bla bal" flag="(prop,zuts_tk_control) wrap ">
+<tk label="(f,vob,prop,mcZutatenbezeichnung)" id="zut_bez" x="" test_first="1" type="text" flag=" nono "/>
+<tk label="(f,vob,prop,mcMenge)" id="zut_menge" x="" test_first="1" tip="in gegebener Einheit" type="text" flag=" "/>
+<tk label="(f,vob,prop,mcEinheit)" id="zut_einheit" x="gr" x2="gr" test_first="1" tip="Die Einheit in der die Mengenangabe erfolt" test_dyn="()(f,has,prop,zut_menge)()" type="sel" flag=" " xml="(dir,app)mengen-selector.xml"/>
+<tk label="Details" x="Details" test_first="0" type="msg" flag=" "/>
+<tk label="Lager-Kategorie" id="zut_kat1" x="" test_first="0" tip="Anmerkungen zur Lagerhaltung" type="sel" flag=" ">
+<sel label="Frisch">obst</sel>
+<sel label="Trocken">trocken</sel>
+<sel label="Milch">milch</sel>
+<sel label="Fleisch">fleisch</sel>
+<sel label="Fisch">fisch</sel>
+</tk>
+<tk label="Kurzbeschreibung" id="zut_beschreibung" x="" test_first="0" tip="Dieser Text wird veroeffentlicht" type="textblock" flag=" "/>
+<tk label="Preis je Einheit" id="zut_preis" x="" test_first="0" tip="Preis je gewaehlter Einheit in Euro" type="text" flag=" "/>
+<tk label="Preiskalkulation" id="zut_kalkulation" x="" test_first="0" tip="Ein text zur beschreibung der kalkulationen" type="textblock" flag=" "/>
+<tk label="Spezial" x="Spezial" test_first="0" tip="Komponente wird zur Zutat" type="msg" flag=" "/>
+<tk label="Komponente" id="zut_komp_key" x="" test_first="0" tip="die Zutat vertritt gewaehlte Komponente ; dadurch kann diese Komponente wieder als [Verwendete Zutat ] bei einer anderen Komponente verwendet werden." type="sel" flag=" " xml="(file,akt-komponentenliste)"/>
+<tk label="Mehr" x="Mehr" test_first="0" tip="Noch mehr info" type="msg" flag=" "/>
+<tk label="Interner Text" id="zut_inttxt" x="" test_first="0" tip="wird nicht publiziert" type="textblock" flag=" "/>
+<tk label="Logo" x="Logo" test_first="0" test="(f,role,business)" type="msg" flag=" "/>
+<tk label="Bild" id="zut_logo" x="" test_first="0" tip="ein Bild" test="(f,role,business)" type="file" flag=" "/>
+<tk label="List-Max Breite/Px" id="zut_logo_max_x" x="" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+<tk label="List-Max Hoehe/px" id="zut_logo_max_y" x="90" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+<tk label="Detail-Max Breite/px" id="zut_logo_max_x_main" x="200" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+<tk label="Detail-Max Hoehe/px" id="zut_logo_max_y_main" x="" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+</tk>
+</job>

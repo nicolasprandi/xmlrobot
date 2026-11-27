@@ -1,0 +1,609 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.
+(f,request,dir,session_home_fs) -->
+<jobs>
+
+<call_job job="prolog"/>
+
+<file id="lpref" x="(dir,pro)cache/little-Panorama.txt"/>
+
+<dir id="lprefHome" x="(dir,pro)cache/"/>
+
+<prop id="olix-serious">0</prop>
+<prop id="olix-not-serious">(f,not,(prop,olix-serious))</prop>
+
+<job id="_olix_bfs_??" role="hidden">
+  <call_job job="_olix_bfs"/>
+  <call_job job="??"/>
+</job>
+
+<job id="_olix_bfs_tools" role="hidden">
+  <call_job job="_olix_bfs"/>
+  <call_job job="_olix_tools"/>
+</job>
+
+<job id="_olix_bfs" role="hidden">
+  <ti_clear flag="all" />
+  
+  <call_service job="include-header" />
+  <!-- <ti>pro=(prop,pro) (dir,pro) app=(prop,app) (dir,app)</ti> <include file="(dir,pro)mymenu.xml" test="(f,exists_file,(dir,pro)mymenu.xml)" />   -->
+
+</job>
+
+<job id="_olix_login" role="hidden">
+    <call_job job="tr_tls3"/>
+
+    <call_job job="tr_lrole"/>
+    <tk label="(prop,_tls3_tk_l)" flag="sum_only" tip="(prop,_tls3_tk_t)" tk_id="0">
+      <tk id="login_user" flag="nono" label="(prop,_tls3_nm_l)" tip="(prop,_tls3_nm_t)" xx="s" cols="30"/>
+      <tk id="login_pwd" flag="nono password" label="(prop,_tls3_pw_l)"  tip="(prop,_tls3_pw_t)" xx="s" cols="30"/>
+      <tk id="login_role" flag="nono" type="sel" label="(prop,_tls3_rl_l)" tip="(prop,_tls3_rl_t)&#xA;(prop,_lrole_tip)" x="(f,role)">
+
+        <tk label="(prop,_lrole_public)">public</tk>
+        <tk label="(prop,_lrole_user)">user</tk>
+        <tk label="(prop,_lrole_expert)">expert</tk>   
+        
+        <tk label="(prop,_lrole_expert2)">expert2</tk>
+        <!-- <tk label="Fachliche Tests">expert3</tk>
+        <tk label="Selection-Updates">boss3</tk>   
+        <tk label="Db-Credentials">boss4</tk>  
+         -->
+        <tk label="(prop,_lrole_boss)">boss</tk>    
+        <tk label="Index-Points">boss2</tk>
+        
+          
+        <tk label="(prop,_lrole_test)">test</tk>
+        <tk label="(prop,_lrole_test2)">test2</tk>
+           
+      </tk>
+      <!-- <tk id="login_pdb" label="PdB-Login" flag="nono" tip="Perform pdb-login with the same credentials in background" type="bool" default="0"/>    -->
+    </tk>
+              
+    <try_catch>
+      <try>
+        
+        <interpreter act="do-login"/>  
+        
+        <call_job job="sys_freshup">
+          <prop id="message">(prop,_tls3_did)</prop>
+        </call_job>        
+      </try>
+      <catch>                    
+
+        <ti label="(prop,_tls3_prob)"/>              
+        <throw_again/>
+      </catch>
+    </try_catch>
+ 
+  
+</job>
+    
+
+<job id="tr_lrole" role="hidden">
+
+ <choose>
+    <when test="(f,eq_text,(prop,ling),de)">
+      <!-- d=deutsch -->      
+
+    <prop id="_lrole_public">Gast</prop>
+    <prop id="_lrole_user">Objekt-Vereinigungen (e:o)Kompositionen(e:c)</prop>
+    <prop id="_lrole_expert">Abfragen und Stapel-Aktionen</prop>   
+    <prop id="_lrole_expert2">Testdaten</prop>  
+    <prop id="_lrole_boss">Tabellen</prop>
+    <prop id="_lrole_boss2"></prop> 
+    <prop id="_lrole_admin">Testdaten definieren</prop>
+    <prop id="_lrole_test">Test</prop> 
+    <prop id="_lrole_test2">Technischer Test</prop>
+    <prop id="_lrole_tip">()Mit der Anmeldung und der gew&#228;hlen Rolle spezifizieren Sie den Ihnen zur Verf&#252;gung stehenden Funktionsumfang der App. F&#252; die gew&#228;hlt Rolle ben&#246;tigen Sie die entsprechende Berechtigung, welche durch den Systemadministrator vergeben wird.()</prop>                       
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(prop,ling),es)">
+      <prop id="_pl_a">A</prop>
+      <prop id="_sl_a">A</prop>  
+      <prop id="_ex_b">B</prop>      
+    </when>  -->  
+    <otherwise>
+      <!-- e=englisch -->
+    <prop id="_lrole_public">Guest</prop>
+    <prop id="_lrole_user">Object-Units (e:o)Compositions(e:c)</prop>
+    <prop id="_lrole_expert">Queries and Bulk-Actions</prop>  
+    <prop id="_lrole_expert2">Testdata</prop>   
+    <prop id="_lrole_boss">Tables</prop>
+    <prop id="_lrole_boss2"></prop> 
+    <prop id="_lrole_admin">Testdata-Specification</prop>
+    <prop id="_lrole_test">Test</prop> 
+    <prop id="_lrole_test2">Technical Test</prop>
+    <prop id="_lrole_tip">()With the login you layout the functionality provided by the app to you. You will need a granted privileg to use the role of your choice.()</prop>           
+
+    </otherwise>
+  </choose>
+
+</job>
+
+<job id="_olix_tools" role="hidden" >
+
+  <call_job job="tr_tls1"/>
+  
+  <ti label="(prop,_tls1_atyourservice)"/>
+   
+  <choose>
+    <when test="(f,exists_file,(file,lpref))">
+      <ti type="call_job" job="olix-See-Little-Panorama" explain="(prop,_tls1_pn_or_see)" test="0"/>
+      <ti label="(f,html,b,o)Panorama(f,html,b,c)" flag="wrap_word">(prop,_tls1_pn_see_below)</ti>
+      <ti label=" " type="call_job" job="olix-Check-Panorama" explain="(prop,_tls1_pn_fresh)"/>
+    </when>
+    <otherwise>
+      <ti type="call_job" job="olix-Check-Panorama" explain="(prop,_tls1_pn_make)" flag="wrap_word"  label="(f,html,b,o)Panorama(f,html,b,c)"/>
+    </otherwise>
+  </choose>
+  <ti_hr style="2" />
+  <!-- 
+   <call_job job="olix-present-requestedApp">
+      <prop id="requestedApp">Hibiscus</prop>
+  </call_job> -->  
+  <call_job job="olix-present-requestedApp">
+      <prop id="requestedApp">Compare</prop>
+  </call_job>
+  
+  <call_job job="olix-present-requestedApp">
+      <prop id="requestedApp">Search</prop>
+  </call_job>  
+  
+  <!-- hier weitere service-apps einfuegen. So: 
+  <call_job job="olix-present-requestedApp">
+      <prop id="requestedApp">Appname</prop>
+  </call_job>   
+  -->
+  
+  <call_job job="olix-present-requestedApp">
+      <prop id="requestedApp">Generator</prop>
+  </call_job>     
+  
+  <call_job job="olix-present-requestedApp">
+      <prop id="requestedApp">Xml-2-Grid</prop>
+  </call_job>   
+  
+  <call_job job="olix-present-requestedApp">
+      <prop id="requestedApp">Xsl-Transformer</prop>
+  </call_job>    
+  <ti_hr style="2" />
+  <ti type="call_job" job="_olix_upload" explain="File-Upload" label=" "/> 
+  
+  <when test="(f,exists_file,(file,lpref))">
+    <ti_hr/>
+    <ti label="(prop,_tls1_pn_curr)"/>
+    <ti_space height="8px" />
+    <call_job job="olix-See-Little-Panorama"/>
+  </when>   
+
+</job>
+<job id="_olix_upload" role="hidden">
+   <tk id="upload" type="file" label="Upload" flag="upload"/>
+   <ti type="file" label="Uploaded">(file,upload)</ti>
+   <ti type="call_job" job="_olix_upload" explain="Upload Again" />
+</job>
+
+<job id="sys_freshup" role="hidden">
+
+<prop id="olix-serious">0</prop>
+<prop id="olix-not-serious">(f,not,(prop,olix-serious))</prop>
+
+  <need>(prop,message)</need>
+  <!-- ?? message_label ?? -->
+  
+  <choose>
+    <when test="(f,implement,online)">
+      
+      <ti flag="wrap_word" test="0">deleting (f,request,dir,session_home_fs)headers(prop,fs)(prop,app)/</ti> 
+      <delete dir="(f,request,dir,session_home_fs)headers(prop,fs)" flag="catch"/> 
+
+      <ti_clear flag="all" />
+
+      <call_service job="include-header" />
+
+      <ti label="(prop,message_label)" test="(f,has,prop,message_label)"/>
+      <ti x="(prop,message)"/>
+      <when  test="(f,not,(f,has,prop,olix-from-prolog))">  
+   
+        <call_job job="prolog"/>
+  
+        <ti_break_hr/>
+        <call_job job="??"/>
+      </when>
+    </when>
+    <otherwise>
+      <ti label="(f,vob,prop,message)"/>   
+    </otherwise>
+  </choose>
+
+</job>
+
+
+<job id="[ Werkzeuge ]" lang="de" role="hidden" tip="Verwenden Sie allgemeine Funktionen wie File-Browsing, Textsuchen oder Datei-Vergleiche">
+  <call_job job="_olix_tools"/>
+</job>
+
+<job id="[ Tools ]" lang="en" role="hidden" tip="Use services like files-browsing, search and compare">
+  <call_job job="_olix_tools"/>
+</job>
+
+<job id="[ Tools ]" lang="es" role="hidden" tip="Usa commun functionas como File-Browsing, Buscar textos y Comparar Fichas">
+  <call_job job="_olix_tools"/>
+</job>
+
+<job id="[ Anmelden ]" lang="de" role="hidden" tip="Einlogen mit Username und Passwort. Festlegen der Berechtigungen.">
+  <call_job job="_olix_login"/>
+</job>
+
+<job id="[ Login ]" lang="en" role="hidden" tip="Login with your user and password and see more.">
+  <call_job job="_olix_login"/>
+</job>
+
+<job id="[ Login ]" lang="es" role="hidden" tip="Hacer el login y specifica las privilegias.">
+  <call_job job="_olix_login"/>
+</job>
+
+<job id="[ Werkzeuge ]?" lang="de" >
+
+  <ti label="Job &apos;Werkzeug&apos;"/>  
+  <ti type="ul">()Verwenden Sie die Applikation 'Panorama' um durch Verzeichnisstrukturen zu navigieren. Kopieren und Loeschen Sie Dateien.()</ti>
+  <ti type="ul">()Verwenden Sie die Applikation 'Compare' um Verzeichnisse und Dateien zu vergleichen.()</ti>
+  <ti type="ul">()Verwenden Sie die Applikation 'Search' um nach Texten in den Dateien eines Verzeichnisses zu suchen.()</ti>
+  
+</job>
+
+<job id="[ Tools ]?" lang="en" >
+
+  <ti label="Job &apos;Tools&apos;"/>  
+  <ti type="ul">()Use the application 'Panorama' to navigate through folders. Copy and delete Files.()</ti>
+  <ti type="ul">()Use the application 'Compare' to compare files and folders.()</ti>
+  <ti type="ul">()Use the application 'Search' to search for texts in the files of a folder.()</ti>
+  
+</job>
+<!-- 
+<job id="[ Tools ]?" lang="es" >
+
+  <ti label="Job &apos;Tools&apos;"/>  
+  <ti type="ul">()Usa la application 'Panorama' para navigar en la systema.()</ti>
+  <ti type="ul">()Usa la application 'Compare' para comparar.()</ti>
+  <ti type="ul">()Usa la application 'Search' para buscar textos..()</ti>
+  
+</job>   -->
+
+<job id="[ Anmelden ]?" lang="de" >
+
+  <ti label="Job &apos;Anmelden&apos;"/>  
+  <ti type="ul">()Melden Sie sich hier mit Ihrer Benutzerkennung und dem Passwort an, um erweiterte Funktionen der Applikation zu verwenden.()</ti>
+  
+</job>
+
+<job id="[ Login ]?" lang="en" >
+
+  <ti label="Job &apos;Login&apos;"/>  
+  <ti type="ul">()Login with your user-name and password in order to use extended functionalities of the application.()</ti>
+  
+</job>
+
+<job id="[ Login ]?" lang="es" >
+
+  <ti label="Job &apos;Login&apos;"/>  
+  <ti type="ul">()Login with your user-name and password in order to use extended functionalities of the application.()</ti>
+  
+</job>
+
+
+
+
+
+<job id="olix-See-Little-Panorama" role="hidden">    
+  <throw test="(f,not,(f,exists_file,(file,lpref)))">Little-Panorama does not exist yet.</throw>          
+  <dir id="pro_temp" x="(f,file_content,(file,lpref))"/>
+  <call_app     app="Panorama" 
+                  job="??refresh" 
+                  pro_dir="(dir,pro_temp)" 
+                  pro_id="Your Pano"
+                  flag="silent">                                   
+  </call_app>       
+</job>
+
+
+<job id="olix-Check-Panorama" role="hidden">
+  <call_job job="tr_tls2"/>   
+  <call_service job="go-jil-run" flag="silent">
+    <prop id="jil-question" x="(prop,_tls2_pa_seldir)"/>
+    <dir id="senders_dir">(dir,pro)</dir>
+    <prop id="senders_label">(prop,_tls2_pa_sellab)</prop>
+  </call_service>
+  <global act="get" id="jil-result"/>
+    
+  <dir id="with" x="(prop,jil-result)"/>
+    
+  <need>(dir,with)</need>
+  
+  <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+    
+  <create_file out="(file,lpref)">(dir,pro_temp)</create_file>
+  
+  <mkdir dir="(dir,pro_temp)" flag="cascade"/>
+  <ti type="dir" label="(prop,_tls2_pa_little)" x="(dir,pro_temp)" test="0"/>
+  
+  <call_app     app="Panorama" 
+                job="Api-Panorama" 
+                pro_dir="(dir,pro_temp)" 
+                pro_id="(prop,_tls2_pa_little) (prop,_tls2_pa_at) (f,time)"
+                flag="silent">
+               <dir id="with">(dir,with)</dir>                            
+  </call_app>       
+     
+     
+</job>
+
+
+
+
+<job id="olix-present-requestedApp" role="hidden">
+                                                                                       
+  <choose>
+    <when test="(f,exists_file,(dir,lprefHome)little-(prop,requestedApp).txt)">
+      <ti_space height="2px"/>
+      <ti type="call_job" job="olix-go-requestedApp" 
+          flag="button" class="olixBlack"
+          explain="(prop,_tls1_xx_your_current) (prop,requestedApp)-(prop,_tls1_xx_project)" 
+      label="(f,html,b,o)(prop,requestedApp)(f,html,b,c)">
+        <prop id="requestedApp">(prop,requestedApp)</prop>
+      </ti>
+      <ti_space height="1px"/>  
+      
+      <ti type="rec" label=" ">
+        <ti type="call_job" job="olix-build-requestedApp" flag="wrap_word" explain="(prop,_tls1_xx_create_new) ..." >
+          <prop id="requestedApp">(prop,requestedApp)</prop>
+        </ti>
+        <ti type="call_job" job="olix-link" flag="wrap_word" explain="(prop,_tls1_xx_set_remote) (prop,_tls1_xx_project)" >
+          <prop id="requestedApp">(prop,requestedApp)</prop>
+        </ti>
+       </ti>     
+            
+    </when>
+    <otherwise>
+      <ti_space height="2px"/>
+      <ti type="rec" label="(f,html,b,o)(prop,requestedApp)(f,html,b,c)">
+        <ti type="call_job" job="olix-build-requestedApp" flag="wrap_word " explain="(prop,_tls1_xx_create_new) (prop,requestedApp)-(prop,_tls1_xx_project)" >
+          <prop id="requestedApp">(prop,requestedApp)</prop>
+        </ti>
+        <ti type="call_job" job="olix-link" flag="wrap_word" explain="(prop,_tls1_xx_set_remote) (prop,_tls1_xx_project)" >
+          <prop id="requestedApp">(prop,requestedApp)</prop>
+        </ti>
+       </ti>        
+    </otherwise>
+  </choose>    
+</job>
+<job id="olix-link" role="hidden">
+  <need>(prop,requestedApp)</need>
+  <file id="alink">(dir,lprefHome)little-(prop,requestedApp).txt</file>
+  <dir id="olix-rp-alt"></dir>
+  <when test="(f,exists_file,(file,alink))">
+    <dir id="olix-rp">(f,file_content,(file,alink))</dir>
+    <dir id="olix-rp-alt">(dir,olix-rp)</dir>
+  </when>
+  <tk id="olix-rp" label="Project-Folder" tip="Da liegen die Projektdaten. There is the project-data." flag="nono"
+    type="dir"/>
+  <when test="(f,not,(f,eq_text,(dir,olix-rp),(dir,olix-rp-alt)))">
+    <tk type="msg">setting link to
+(dir,olix-rp)
+
+in file
+(file,alink)</tk>
+    <delete file="(file,alink)"/>
+    <create_file file="(file,alink)">(dir,olix-rp)</create_file>
+    <ti>did it. select now the project once again</ti>
+  </when>
+  
+  <when test="(f,eq_text,(f,request,prop,master_project_app),(prop,requestedApp))">
+     <ti test="0">deleted (f,request,dir,session_home_fs)headers/(prop,requestedApp)0/</ti>
+     <delete dir="(f,request,dir,session_home_fs)headers/(prop,requestedApp)0/" flag="catch"/>
+  </when>  
+</job>
+<job id="olix-build-requestedApp" role="hidden">
+  <call_job job="tr_tls2"/>
+  
+  <when test="(f,exists_file,(dir,lprefHome)little-(prop,requestedApp).txt)">  
+        
+    
+    <dir id="pro_altes" x="(f,file_content,(dir,lprefHome)little-(prop,requestedApp).txt)"/>
+    <ti type="dir" label="AltesProjekt">(dir,pro_altes)</ti>
+    <!-- 
+    <tk type="msg">(prop,_tls2_remove_project1) (prop,requestedApp)(prop,_tls2_remove_project2)</tk>
+    <try_catch>
+      <try>
+        <tk type="msg" msg_type="w">Sollen die alten Projektdaten in
+  (dir,pro_altes)
+  gelöscht werden? </tk>
+        <delete dir="(dir,pro_altes)"/>
+      </try>
+      <catch>
+        <ti>die alten projektdaten bleiben erhalten</ti>
+      </catch>
+    </try_catch>
+    -->
+   
+    
+    <remove type="dir" id="pro_altes"/>
+  </when>
+  
+  
+  <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+  <create_file out="(dir,lprefHome)little-(prop,requestedApp).txt">(dir,pro_temp)</create_file>
+  
+  <mkdir dir="(dir,pro_temp)"/>
+  
+  <when test="(f,eq_text,(f,request,prop,master_project_app),(prop,requestedApp))">
+     <delete dir="(f,request,dir,session_home_fs)headers/(prop,requestedApp)0/" flag="catch"/>
+     <ti test="0">deleted (f,request,dir,session_home_fs)headers/(prop,requestedApp)0/</ti>
+  </when>
+  
+  
+
+
+  <call_app     app="(prop,requestedApp)" 
+                job="api-olix"               
+                pro_dir="(dir,pro_temp)" 
+                pro_id="(prop,_tls2_xx_your)-(prop,requestedApp)"
+                flag="silent">       
+     <call_service job="include-header" test="(prop,olix-not-serious)"/>              
+  </call_app>   
+      
+</job>
+
+<job id="olix-go-requestedApp" role="hidden">
+  <call_job job="tr_tls2"/>
+     
+  <dir id="pro_temp" x="(f,file_content,(dir,lprefHome)little-(prop,requestedApp).txt)"/>
+
+  <ti type="dir" label="(prop,_tls2_cp_little)" x="(dir,pro_temp)" test="0"/>
+  <call_app     app="(prop,requestedApp)" 
+                job="api-olix"  
+                pro_dir="(dir,pro_temp)" 
+                pro_id="(prop,_tls2_xx_your)-(prop,requestedApp)"
+                flag="silent">       
+     <call_service job="include-header" test="(prop,olix-not-serious)"/>              
+  </call_app>      
+      
+</job>
+
+
+<job id="tr_tls1" role="hidden">
+
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_tls1_atyourservice">Werkzeugkasten bereit ...</prop>
+      <prop id="_tls1_pn_or_see">oder &#246;ffnen dein Panorama</prop>
+      <prop id="_tls1_pn_see_below">Sehen Sie Ihr aktuelles Panorama-Projekt weiter unten (e:o)*(e:c) ...</prop>      
+      <prop id="_tls1_pn_fresh">Beginnen Sie ein neues Panorama-Projekt</prop>
+      <prop id="_tls1_pn_make">Beginnen Sie ein neues Panorama-Projekt</prop>
+     
+      <prop id="_tls1_pn_curr">Ihr aktuelles Panorama-Projekt (e:o)*(e:c)</prop>
+     
+      <prop id="_tls1_xx_your">Ihr</prop>
+      <prop id="_tls1_xx_your_current">Ihr aktuelles</prop>
+      <prop id="_tls1_xx_create_new">Beginnen Sie ein neues</prop>
+      <prop id="_tls1_xx_project">Projekt</prop>
+      <prop id="_tls1_xx_set_remote">Referenziere</prop>
+                  
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_tls1_atyourservice">Toolbox at your service ...</prop>
+      <prop id="_tls1_pn_or_see">or see your Panorama</prop>
+      <prop id="_tls1_pn_see_below">See your current Panorama-Project below (e:o)*(e:c) ...</prop>      
+      <prop id="_tls1_pn_fresh">Start a fresh Panorama-Project</prop>
+      <prop id="_tls1_pn_make">Start a new Panorama-Project</prop>     
+      <prop id="_tls1_pn_curr">Your current Panorama (e:o)*(e:c)</prop>     
+      <prop id="_tls1_xx_your">Your</prop>
+      <prop id="_tls1_xx_your_current">Your current</prop>
+      <prop id="_tls1_xx_project">Project</prop>
+      <prop id="_tls1_xx_create_another">Start a new</prop> 
+      <prop id="_tls1_xx_create_new">Start a new</prop> 
+      <prop id="_tls1_xx_set_remote">Reference</prop>
+
+    </when>
+  </choose>
+</job>
+
+<job id="tr_tls2" role="hidden">
+
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_tls2_sr_yourpro">Ihr Search</prop>
+      <prop id="_tls2_sr_seldir">W&#228;hlen Sie ein Verzeichnis zur Suche</prop>      
+      <prop id="_tls2_sr_sellab">Dein (prop,app)-Projekt</prop>
+
+      <prop id="_tls2_cp_yourpro">Dein Compare</prop>
+      <prop id="_tls2_cp_little">LittleCompare</prop>
+     
+      <prop id="_tls2_pa_seldir">W&#228;hlen Sie ein Verzeichnis zur Ansicht</prop>
+      <prop id="_tls2_pa_sellab">Ihr (prop,app)-Projekt</prop>
+      <prop id="_tls2_pa_little">LittlePano</prop>
+      <prop id="_tls2_pa_at">um</prop>    
+      
+      <prop id="_tls2_xx_your">Ihr</prop>
+      <prop id="_tls2_xx_project">Projekt</prop>   
+      
+      <prop id="_tls2_remove_project1">Das aktuelle</prop>     
+      <prop id="_tls2_remove_project2">-Projekt wird gel&#246;scht ...</prop>            
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_tls2_sr_yourpro">Your Search</prop>
+      <prop id="_tls2_sr_seldir">Select a Search Directory</prop>      
+      <prop id="_tls2_sr_sellab">Your (prop,app)-Project</prop>
+
+      <prop id="_tls2_cp_yourpro">Your Compare</prop>
+      <prop id="_tls2_cp_little">LittleCompare</prop>
+     
+      <prop id="_tls2_pa_seldir">Select a directory to view</prop>
+      <prop id="_tls2_pa_sellab">Your (prop,app)-Project</prop>
+      <prop id="_tls2_pa_little">LittlePano</prop>
+      <prop id="_tls2_pa_at">at</prop>  
+      
+      <prop id="_tls2_xx_your">Your</prop>
+      <prop id="_tls2_xx_project">Project</prop>   
+      <prop id="_tls2_remove_project1">The current</prop>     
+      <prop id="_tls2_remove_project2">-Project will be removed ...</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_tls3" role="hidden">
+
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_tls3_tk_l">Anmeldung</prop>
+      <prop id="_tls3_tk_t">Ihre Anmeldeinformationen f&#252;r (prop,app)</prop>      
+      <prop id="_tls3_nm_l">Benutzer-Name</prop>
+      <prop id="_tls3_nm_t">Ein eindeutig identifizierender Begriff unter dem Sie dem System bekannt sind.</prop>
+      <prop id="_tls3_pw_l">Geheimes Passwort</prop>
+      <prop id="_tls3_pw_t">Das zum Benutzer-Namen passende Passwort.</prop>      
+      <prop id="_tls3_rl_l">Rolle</prop>
+      <prop id="_tls3_rl_t">Ihre Funktions-Autorisierung unter der Sie sich anmelden.</prop>
+      <prop id="_tls3_did">Login durchgef&#252;hrt</prop>
+      <prop id="_tls3_prob">Problem mit Login</prop>
+    
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_tls3_tk_l">Login</prop>
+      <prop id="_tls3_tk_t">Your credentials</prop>      
+      <prop id="_tls3_nm_l">Name of user</prop>
+      <prop id="_tls3_nm_t">The unique identification under which your are known by the system.</prop>
+      <prop id="_tls3_pw_l">Secret password</prop>
+      <prop id="_tls3_pw_t">The secret term which makes sure that your are really the user you stated.</prop>      
+      <prop id="_tls3_rl_l">Role</prop>
+      <prop id="_tls3_rl_t">Your authorization and function under which you login.</prop>
+      <prop id="_tls3_did">Did Login</prop>
+      <prop id="_tls3_prob">Problem with Login</prop>
+    </when>
+  </choose>
+</job>
+
+
+
+              
+
+</jobs>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="sqli-write">
+    <need>(prop,sqli_key) (prop,isAdd)</need>
+    <need default="./">(prop,sqlis_offset)</need>
+    <spirit act="open" id="sqlis_spirit_tc" xml="(file,sqlis)"/>
+    <when test="(prop,isAdd)">
+        <choose>
+            <when test="(f,ends_with,(prop,sqlis_offset),/)">
+                <prop id="offset2" x="(f,substring,(prop,sqlis_offset),0,(f,sub,(f,len,(prop,sqlis_offset)),1))"/>
+            </when>
+            <otherwise>
+                <prop id="offset2" x="(prop,sqlis_offset)"/>
+            </otherwise>
+        </choose>
+        <spirit act="xml_update" how="insert_in" id="sqlis_spirit_tc" where="(prop,offset2)">
+            <inline attribute="with">&lt;sqli row="(prop,sqli_key)" /&gt;</inline>
+        </spirit>
+        <i>Added a new record</i>
+    </when>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="type" value="(f,vob,prop,sqli_type)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="name" value="(f,vob,prop,sqli_name)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="docu" value="(f,vob,prop,sqli_docu)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="cmt_session" value="(f,vob,prop,sqli_cmt_session)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="rq_import" value="(f,vob,prop,sqli_rq_import)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="rq_central" value="(f,vob,prop,sqli_rq_central)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="max_ids" value="(f,vob,prop,sqli_max_ids)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="cmt_style" value="(f,vob,prop,sqli_cmt_style)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="cmt_size" value="(f,vob,prop,sqli_cmt_size)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="sc_top" value="(f,vob,prop,sqli_sc_top)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="sc_intro" value="(f,vob,prop,sqli_sc_intro)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="sc_main" value="(f,vob,prop,sqli_sc_main)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="sc_extro" value="(f,vob,prop,sqli_sc_extro)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="sc_fin" value="(f,vob,prop,sqli_sc_fin)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="close_session" value="(f,vob,prop,sqli_close_session)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="gb_import" value="(f,vob,prop,sqli_gb_import)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="sqlis_spirit_tc" where="(prop,sqlis_offset)sqli[@row='(prop,sqli_key)']" attribute="gb_central" value="(f,vob,prop,sqli_gb_central)"/>
+    <spirit act="close" flag="save pretty" id="sqlis_spirit_tc"/>
+</job>

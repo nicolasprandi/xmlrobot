@@ -1,0 +1,8 @@
+<?xml version="1.0" ?><steps>
+<p id="myclass">Receipt</p>
+<p id="myclassPl">Receipts</p>
+<p id="myclassAkt">Current receipts</p>
+<p id="myclassZutat">Ingredient</p>
+<p id="myclassZutatPl">Ingredients</p>
+<p id="myclassZutatVerw">Used ingredients</p>
+</steps>

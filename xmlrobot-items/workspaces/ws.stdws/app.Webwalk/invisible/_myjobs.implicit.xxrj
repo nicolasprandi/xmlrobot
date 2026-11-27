@@ -1,0 +1,875 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="fresh-project">
+
+  <wdriver act="find_elements"
+           by_xpath="//a[text(e:o)(e:c)='Beenden']"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"/>
+           
+             
+  <ti label="nbr-found-elements:">(prop,nbr-found-elements)</ti>  
+  <prop id="goid">(f,spirit,found,//we[1],@id)</prop>   
+  <spirit id="found" act="close"/>
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,goid)"/>    
+    
+  <welement id="(prop,goid)"
+    act="click" />     
+             
+         
+  <wdriver act="find_elements"
+           by_xpath="//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"  />
+           
+             
+  <ti label="nbr-found-elements:">(prop,nbr-found-elements)</ti>  
+  <prop id="goid">(f,spirit,found,//we[1],@id)</prop>   
+  <spirit id="found" act="close"/>
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,goid)"/>    
+    
+  <welement id="(prop,goid)"
+    act="click" />        
+
+  <wdriver act="find_elements"
+           by_xpath="//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"    />
+                      
+  <ti label="nbr-found-elements:">(prop,nbr-found-elements)</ti>  
+  <prop id="goid">(f,spirit,found,//we[1],@id)</prop>   
+  <spirit id="found" act="close"/>
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,goid)"/>    
+    
+  <welement id="(prop,goid)"
+    act="click" />  
+</job>
+
+<job id="test-calculate">
+
+  <file id="testdata-excel">(dir,app)invisible/testdata.xls</file>
+  <tk type="file" id="testdata-excel" label="Excel to import" flag="nono" test="0"/>
+  <file id="testdata-xml">(dir,pro)testdata.xml</file>
+  
+  <ti label="testdata-excel" type="file">(file,testdata-excel)</ti>
+  
+  <excel_table 
+    excel="(file,testdata-excel)" 
+    sheet="calc" 
+    out="(file,testdata-xml)" 
+    style="short" 
+    root_name="rows" 
+    row_name="row"  />
+  
+  <prop id="auto">1</prop>  
+  <prop id="proto">Protocol&#xA;</prop>
+  <loop id="case" xml="(file,testdata-xml)" xpath="row">
+    <ti_hr/>
+    <ti label="testcase">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>
+    <try_catch>
+      <try>      
+      
+        <ti>fresh-project</ti>
+        
+        <call_job job="fresh-project" />
+        
+        <ti>topmenu-auto</ti>
+                
+        <call_job job="topmenu-auto">
+          <prop id="auto-menu">c</prop>
+        </call_job>
+           
+        <ti>enter-single-field-auto x</ti>
+        
+        <call_job job="enter-single-field-auto">
+          <prop id="auto-value">(loop,case,@x)</prop>
+        </call_job> 
+         
+        <ti>enter-single-field-auto y</ti>
+        
+        <call_job job="enter-single-field-auto">
+          <prop id="auto-value">(loop,case,@y)</prop>
+        </call_job> 
+      
+        <ti>enter-single-field-auto z</ti>
+        
+        <call_job job="enter-single-field-auto">
+          <prop id="auto-value">(loop,case,@z)</prop>
+        </call_job>     
+      
+        <ti>commit-review</ti>
+        
+        <call_job job="commit-review"/>
+        
+        <ti>get-calc-result</ti>
+        
+        <call_job job="get-calc-result"/>
+        
+        <ti>comparing expectation with result</ti>
+        
+        <choose>
+          <when test="(f,eq_num,(loop,case,@v),(prop,calc-result))">
+                 <ti label="Testresult OK"/>
+                 <ti label="testcase">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>
+                 <ti>as expected ok.</ti>
+                 <tp>testcase #(loop,case,#i) OK: (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</tp>
+                 
+                 <prop id="proto">(prop,proto) Testcase #(loop,case,#i) - OK - (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)&#xA;</prop>
+          </when>
+          
+          <otherwise>
+            <ti label="testcase failed">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v) not equals (prop,calc-result)</ti>
+            <tp>testcase #(loop,case,#i) FAILED: (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</tp>
+            <throw>Test Failed: This is not (loop,case,@v): (prop,calc-result)</throw>
+            
+            <prop id="proto">(prop,proto) Testcase #(loop,case,#i) - ERROR - Calculated=(prop,calc-result) by parameters (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)&#xA;</prop>
+          
+          </otherwise>
+        </choose>
+       </try>
+       <catch>
+        <ti label="Exception"/>
+        <ti label="testcase">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>
+        <ti label="message">(prop,catched_msg)</ti>
+        <tp>testcase #(loop,case,#i) EXCEPTION: (prop,catched_msg) :(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</tp>
+        <prop id="proto">(prop,proto) Testcase #(loop,case,#i) - SYSTEMEXCEPTION&#xA;(prop,catched_msg)&#xA;End of SYSTEMEXCEPTION of testcase#(loop,case,#i)&#xA;&#xA;</prop>           
+       </catch>
+      </try_catch>      
+  </loop>
+
+
+  <ti_hr/>
+  <ti label="Protocol"/>
+  <ti>(prop,proto)</ti>
+
+  
+   
+</job>
+<job id="test-calculate-v3">
+
+  <prop id="auto">1</prop>
+
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">c</prop>
+  </call_job>   
+  
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">1</prop>
+  </call_job> 
+   
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">2</prop>
+  </call_job> 
+
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">3</prop>
+  </call_job>     
+
+  <call_job job="commit-review"/>
+  <call_job job="get-calc-result"/>
+  
+  <choose>
+    <when test="(f,eq_num,6,(prop,calc-result))">
+           <ti label="Testresult OK"/>
+           <ti>as expected ok.</ti>
+    </when>
+    
+    <otherwise>
+      <throw>Test Failed: This is not 6: (prop,calc-result)</throw>
+    
+    </otherwise>
+  </choose>  
+
+</job>
+
+<job id="get-calc-result">
+
+  <wdriver act="find_elements"
+           by_xpath="//td[@class='tiDataLabeled' and @colspan='11' and @width='100%']"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"    />
+           
+  <!-- save spirit      
+  <file id="found" x="(dir,cache)found.xml"/>
+  <spirit id="found" act="save" out="(file,found)"/>
+  <ti type="file" label="Found:" x="(file,found)" />      --> 
+             
+  <ti label="should be 1:">(prop,nbr-found-elements)</ti>  
+  <!-- -->
+  <prop id="calc-result">(f,spirit,found,//we[1],@text)</prop>   
+
+                     
+  <spirit id="found" act="close"/>    
+
+</job>
+
+<job id="test-calculate-v2">
+
+  <prop id="auto">1</prop>
+
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+  
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">1</prop>
+  </call_job> 
+   
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">2</prop>
+  </call_job> 
+
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">3</prop>
+  </call_job>     
+
+  <call_job job="commit-review"/>
+
+</job>
+
+<job id="test-calculate-v1">
+
+  <prop id="auto">1</prop>
+   <ti>position #0</ti>
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+  <ti>position #1</ti>
+  <tk type="msg">position #1</tk>
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">1</prop>
+  </call_job> 
+   <ti>position #2</ti>
+   <tk type="msg">position #2</tk>
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">2</prop>
+  </call_job> 
+  <ti>position #3</ti>
+  <tk type="msg">position #3</tk>
+  <call_job job="enter-single-field-auto">
+    <prop id="auto-value">3</prop>
+  </call_job>     
+  <ti>position #4</ti>
+  <tk type="msg">position #4</tk>
+  
+  <call_job job="commit-review"/>
+  
+  <ti>position #5</ti>
+  <tk type="msg">position #5</tk>
+    
+</job>
+
+<job id="enter-single-field-auto">
+  
+  <when test="(f,has,prop,auto)">
+    <need>(prop,auto-value)</need>
+  </when>  
+  
+  <wdriver act="find_elements"
+           by_xpath="//input"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"        />
+  <ti label="enter-single-field-auto"/>
+  <ti label="nbr-found-elements:3:">(prop,nbr-found-elements)</ti>  
+  <ti label="count founds:3:">(f,spirit,found,count?,//we)</ti>
+  <ti label="xml:">(f,spirit,found,xml?)</ti>
+  
+  <choose>
+    <when test="(f,has,prop,auto)">                                               
+      <prop id="yourinput">(prop,auto-value)</prop>  
+    </when>
+    <otherwise>
+      <tk id="yourinput"/>
+    </otherwise>
+  </choose>
+    
+  <prop id="fieldid">(f,spirit,found,//we[2],@id)</prop> 
+  <prop id="okid">(f,spirit,found,//we[3],@id)</prop>   
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,fieldid)"/>   
+
+  <welement 
+    act="clear"
+    id="(prop,fieldid)"/>
+                                           
+  <welement 
+    act="send_keys"
+    id="(prop,fieldid)"
+    keys="(prop,yourinput)"/>   
+    
+  <welement id="(prop,okid)"
+    act="click" />     
+             
+  <spirit id="found" act="close"/>    
+</job>
+
+<job id="topmenu-auto-test-v2">
+  <prop id="auto">1</prop>
+  
+  <!-- 1 -->
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">l</prop>
+  </call_job>
+  
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+  
+  <call_job job="stop-button"/>
+  
+  <!-- 2 -->
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">l</prop>
+  </call_job>
+  
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+  
+  <call_job job="stop-button"/>  
+
+</job>
+
+<job id="demo-button">
+    
+  <wdriver act="find_elements"
+           by_xpath="//a[text(e:o)(e:c)='Demo']"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           />
+           
+  <throw test="(f,eq_num,0,(prop,nbr-found-elements))">demo-button didnt find a stop-button</throw>          
+ 
+  <prop id="goid">(f,spirit,found,//we[1],@id)</prop>   
+  
+  <spirit id="found" act="close"/>  
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,goid)"/>    
+    
+  <welement id="(prop,goid)"
+    act="click" />     
+                              
+</job>
+
+<job id="stop-button">
+    
+  <wdriver act="find_elements"
+           by_xpath="//a[text(e:o)(e:c)='Stop']"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           />
+           
+  <throw test="(f,eq_num,0,(prop,nbr-found-elements))">stop-button didnt find a stop-button</throw>          
+ 
+  <prop id="goid">(f,spirit,found,//we[1],@id)</prop>   
+  
+  <spirit id="found" act="close"/>  
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,goid)"/>    
+    
+  <welement id="(prop,goid)"
+    act="click" />     
+                              
+</job>
+
+
+<job id="topmenu-auto-test">
+  <prop id="auto">1</prop>
+  
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">l</prop>
+  </call_job>
+  
+  <call_job job="topmenu-auto">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+
+</job>
+
+<job id="topmenu-auto">
+  <when test="(f,has,prop,auto)">
+    <need>(prop,auto-menu)</need>
+  </when>
+    
+  <wdriver act="find_elements"
+           by_xpath="//table[@class='tiTable0']//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           return_prop_single_id="found-single-id"
+           />
+
+  <prop id="calcid">(f,spirit,found,//we[@text='Calculate'],@id)</prop>
+  <prop id="listid">(f,spirit,found,//we[@text='List'],@id)</prop>
+  <ti>(prop,calcid) (prop,listid) (f,spirit,found,count?,//we[@text='Calculate']) (f,spirit,found,count?,//we)</ti>
+          
+  <choose>
+    <when test="(f,has,prop,auto)">
+      <choose>
+        <when test="(f,eq_text,(prop,auto-menu),c)">
+          <prop id="menusel" x="calculate"/>
+        </when>
+        <when test="(f,eq_text,(prop,auto-menu),l)">
+          <prop id="menusel" x="list"/>
+        </when>        
+        <otherwise>
+          <throw>Property 'auto-menu' has an unexpected value of '(f,vob,prop,auto-menu)' or does not exist at all. if auto is on then the property auto-menu must have the value 'c' or 'l'</throw>
+        </otherwise>
+      </choose>      
+    </when>
+    <otherwise>
+      <tk type="sel" id="menusel">
+        <sel>calculate</sel> 
+        <sel>list</sel>
+      </tk>
+    </otherwise>
+  </choose>
+  
+  
+  <choose>
+    <when test="(f,eq_text,(prop,menusel),calculate)">
+      <prop id="click">(prop,calcid)</prop>
+    </when>
+    <when test="(f,eq_text,(prop,menusel),list)">
+      <prop id="click">(prop,listid)</prop>
+    </when>    
+  </choose>
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,click)" />                                            
+  
+  <welement id="(prop,click)"
+    act="click" /> 
+    
+  <spirit id="found" act="close"/>    
+</job>
+
+<job id="UP">
+    
+  <wdriver act="find_elements"
+           by_xpath="//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           return_prop_single_id="found-single-id"
+           />
+           
+  <!-- save spirit      
+  <file id="found" x="(dir,cache)found.xml"/>
+  <spirit id="found" act="save" out="(file,found)"/>
+  <ti type="file" label="Found:" x="(file,found)" />      --> 
+             
+  <ti label="should be 2:">(f,spirit,found,count?,//we[@text='UP'])</ti>  
+  <!-- -->
+  <prop id="goid">(f,spirit,found,//we[@text='UP'][1],@id)</prop>   
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,goid)"/>    
+    
+  <welement id="(prop,goid)"
+    act="click" />     
+             
+         
+  <spirit id="found" act="close"/>    
+</job>
+
+
+<job id="field-selektor">
+    
+  <wdriver act="find_elements"
+           by_xpath="//table[@class='tkReviewFieldsTable']//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           />
+  
+  <!-- save spirit -->      
+  <file id="found" x="(dir,cache)found.xml"/>
+  <spirit id="found" act="save" out="(file,found)"/>
+  <ti type="file" label="Found:" x="(file,found)" />
+   
+  <!-- open print for selection result sr -->
+  <file id="sr" x="(dir,cache)list-sr.xml"/>
+  <print id="sr" out="(file,sr)" act="open"/>
+  <print id="sr" act="print">&lt;sel&gt;</print>
+ 
+  <file id="gui" x="(dir,cache)list-gui.xml"/>
+  <print id="gui" out="(file,gui)" act="open"/>
+  <print id="gui" act="print">&lt;sel&gt;</print>
+          
+  <loop id="sx" xml="(file,found)" xpath="//we">
+    
+    <prop id="take">1</prop>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Alles Bearbeiten)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(loop,sx,@text),  ??  )">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(loop,sx,@text),Abbruch)">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Schrittweise Bearbeiten)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(loop,sx,@text),  ?  )">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Sort &amp; Delete)">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Sort &amp; Delete)">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Sort &amp; Delete)">
+      <prop id="take">0</prop>
+    </when>            
+        
+    <!-- -->
+    <when test="(prop,take)">
+      <print id="sr" act="print">(f,spirit,found,xml?,//we[(loop,sx,#i)])</print>
+      <print id="gui" act="print">&lt;sel label=&quot;(loop,sx,@text)&quot;&gt;(f,spirit,found,//we[(loop,sx,#i)],@id)&lt;/sel&gt;</print>
+    </when>              
+             
+  </loop>    
+  <print id="sr" act="print">&lt;/sel&gt;</print> 
+  <print id="sr" act="close"/>   
+  <ti type="file" label="Selection Result:" x="(file,sr)" />   
+
+  <print id="gui" act="print">&lt;/sel&gt;</print> 
+  <print id="gui" act="close"/>   
+  <ti type="file" label="Gui-Selektor:" x="(file,gui)" />  
+  <spirit id="found" act="close"/>
+  
+  <tk type="sel" id="row" xml="(file,gui)" flag="nono"/>
+  
+  <!-- <tk type="msg">row = (prop,row)</tk>  -->
+  <wdriver 
+    act="build_element"
+    element_id="(prop,row)"/>    
+    
+  <welement id="(prop,row)"
+    act="click" />    
+    
+  
+</job>
+
+<job id="list-selektor">
+    
+  <wdriver act="find_elements"
+           by_xpath="//table[@class='tiTable1']//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           />
+        
+  <file id="prot" x="(dir,cache)listsel.xml"/>
+  <spirit id="found" act="save" out="(file,prot)"/>
+  <ti type="file" label="Received:" x="(file,prot)" />
+   
+  
+  <file id="print" x="(dir,cache)listsel-print.xml"/>
+  <print id="p" out="(file,print)" act="open"/>
+  <print id="p" act="print">&lt;sel&gt;</print>
+ 
+  <file id="selektor" x="(dir,cache)listsel-selektor.xml"/>
+  <print id="s" out="(file,selektor)" act="open"/>
+  <print id="s" act="print">&lt;sel&gt;</print>
+          
+  <loop id="sx" xml="(file,prot)" xpath="//we">
+    
+    <prop id="take">1</prop>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Export)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(loop,sx,@text),Import)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(loop,sx,@text),  + Vi  )">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Sort &amp; Delete)">
+      <prop id="take">0</prop>
+    </when>
+    
+    <!-- -->
+    <when test="(prop,take)">
+      <print id="p" act="print">(f,spirit,found,xml?,//we[(loop,sx,#i)])</print>
+      <print id="s" act="print">&lt;sel label=&quot;(loop,sx,@text)&quot;&gt;(f,spirit,found,//we[(loop,sx,#i)],@id)&lt;/sel&gt;</print>
+    </when>              
+             
+  </loop>    
+  <print id="p" act="print">&lt;/sel&gt;</print> 
+  <print id="p" act="close"/>   
+  <ti type="file" label="Printed:" x="(file,print)" />   
+
+  <print id="s" act="print">&lt;/sel&gt;</print> 
+  <print id="s" act="close"/>   
+  <ti type="file" label="Selektor:" x="(file,selektor)" />  
+  
+  <tk type="sel" id="row" xml="(file,selektor)"/>
+  
+  <tk type="msg">row = (prop,row)</tk>
+  <wdriver 
+    act="build_element"
+    element_id="(prop,row)"/>    
+    
+  <welement id="(prop,row)"
+    act="click" />    
+    
+  <spirit id="found" act="close"/>
+</job>
+
+
+<job id="add-vi">
+    
+  <wdriver act="find_elements"
+           by_xpath="//table[@class='tiTable1']//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           />
+   
+  <ti label="should be 2:">(f,spirit,found,count?,//we) (prop,nbr-found-elements)</ti>  
+  
+  <choose>
+    <when test="(f,gt,(f,spirit,found,count?,//we[@text='  + Vi  ']),0)">
+      <prop id="searchtext">  + Vi  </prop>
+    </when>
+    <when test="(f,gt,(f,spirit,found,count?,//we[@text='Add another Vi']),0)">
+    <prop id="searchtext">Add another Vi</prop>
+    </when>    
+    <otherwise>
+      <throw>no + vi and no add another vi</throw>
+    </otherwise>
+  </choose>
+  <file id="prot" x="(dir,cache)addvi.xml"/>
+  <spirit id="found" act="save" out="(file,prot)"/>
+  <ti type="file" label="found:" x="(file,prot)" />
+   
+       
+  <!-- <ti label="count vi be 1">(f,spirit,found,count?,//we[@text='  + Vi  '])</ti>      -->
+  <tk type="msg">searchtext=[(prop,searchtext)]</tk>
+  <prop id="okid">(f,spirit,found,//we[@text=(f,xpath_string,(prop,searchtext))],@id)</prop>
+  <tk type="msg">okid=[(prop,okid)]</tk>
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,okid)"/>    
+    
+  <welement id="(prop,okid)"
+    act="click" />  
+      
+  <spirit id="found" act="close"/>      
+
+</job>
+
+<job id="commit-review">
+    
+  <wdriver act="find_elements"
+           by_xpath="//input"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           return_prop_single_id="found-single-id"
+           />
+  <ti label="should be 2:">(f,spirit,found,count?,//we) (prop,nbr-found-elements)</ti>  
+  
+  <prop id="okid">(f,spirit,found,//we[1],@id)</prop>   
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,okid)"/>    
+    
+  <welement id="(prop,okid)"
+    act="click" />     
+             
+ 
+  <spirit id="found" act="close"/>    
+</job>
+
+<job id="enter-single-field">
+    
+  <wdriver act="find_elements"
+           by_xpath="//input"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           return_prop_single_id="found-single-id"
+           />
+  <ti label="should be 3:">(f,spirit,found,count?,//we) (prop,nbr-found-elements)</ti>  
+  
+  <tk id="yourinput"/>
+  <prop id="fieldid">(f,spirit,found,//we[2],@id)</prop> 
+  <prop id="okid">(f,spirit,found,//we[3],@id)</prop>   
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,fieldid)" />   
+
+  <welement 
+    act="clear"
+    id="(prop,fieldid)"/>
+                                           
+  <welement 
+    act="send_keys"
+    id="(prop,fieldid)"
+    keys="(prop,yourinput)"/>   
+    
+  <welement id="(prop,okid)"
+    act="click"  />     
+             
+  <!--                    
+  <file id="prot" x="(dir,cache)topmenu.xml"/>
+  <spirit id="found" act="save" out="(file,prot)"/>
+  <ti type="file" label="Received:" x="(file,prot)" />
+
+  <prop id="calcid">(f,spirit,found,//we[@text='Calculate'],@id)</prop>
+  <prop id="listid">(f,spirit,found,//we[@text='List'],@id)</prop>
+  <ti>(prop,calcid) (prop,listid) (f,spirit,found,count?,//we[@text='Calculate']) (f,spirit,found,count?,//we)</ti>
+          
+  <tk type="sel" id="menusel">
+    <sel>calculate</sel> 
+    <sel>list</sel>
+  </tk>
+  
+  
+  <choose>
+    <when test="(f,eq_text,(prop,menusel),calculate)">
+      <prop id="click">(prop,calcid)</prop>
+    </when>
+    <when test="(f,eq_text,(prop,menusel),list)">
+      <prop id="click">(prop,listid)</prop>
+    </when>    
+  </choose>
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,click)"
+    sleep="1000"/>                                            
+  
+  <welement id="(prop,click)"
+    act="click"         
+    sleep="1000"/> 
+    -->  
+  <spirit id="found" act="close"/>    
+</job>
+
+<job id="topmenu">
+    
+  <wdriver act="find_elements"
+           by_xpath="//table[@class='tiTable0']//a"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           return_prop_single_id="found-single-id"
+           />
+  <ti label="xml">(f,spirit,found,xml?)</ti>         
+  <!--                    
+  <file id="prot" x="(dir,cache)topmenu.xml"/>
+  <spirit id="found" act="save" out="(file,prot)"/>
+  <ti type="file" label="Received:" x="(file,prot)" />
+  -->
+  <prop id="calcid">(f,spirit,found,//we[@text='Calculate'],@id)</prop>
+  <prop id="listid">(f,spirit,found,//we[@text='List'],@id)</prop>
+  <ti>(prop,calcid) (prop,listid) (f,spirit,found,count?,//we[@text='Calculate']) (f,spirit,found,count?,//we)</ti>
+          
+  <tk type="sel" id="menusel">
+    <sel>calculate</sel> 
+    <sel>list</sel>
+  </tk>
+  
+  
+  <choose>
+    <when test="(f,eq_text,(prop,menusel),calculate)">
+      <prop id="click">(prop,calcid)</prop>
+    </when>
+    <when test="(f,eq_text,(prop,menusel),list)">
+      <prop id="click">(prop,listid)</prop>
+    </when>    
+  </choose>
+  
+  <wdriver 
+    act="build_element"
+    element_id="(prop,click)"/>                                            
+  
+  <welement id="(prop,click)"
+    act="click"   /> 
+    
+  <spirit id="found" act="close"/>    
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

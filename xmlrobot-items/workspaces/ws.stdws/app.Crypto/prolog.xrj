@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<jobs>
+
+
+<job id="prolog" role="hidden">
+
+  <file id="tcrypt-data" x="(dir,pro)tcrypt-data.xrs"/>
+  <prop id="tcrypt-regex" x="tcrypt_.+"/>
+  <file id="fcrypt-data" x="(dir,pro)fcrypt-data.xrs"/>
+  <prop id="fcrypt-regex" x="fcrypt_.+"/>
+</job>
+
+
+
+
+</jobs>

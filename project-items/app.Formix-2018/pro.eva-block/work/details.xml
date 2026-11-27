@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="block-see">
+<need>(prop,block_key)</need>
+<call_job job="block-read"/>
+<prop x="print print_only" id="blocks_tk_control"/>
+<prop id="label" x="Block: (f,html,bold,open)(prop,block_name)(f,html,bold,close)(f,when,(f,has,(prop,blocks_offset_label)), - (prop,blocks_offset_label),)"/>
+<call_job job="block-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="[ ? ]" align="right" job="block-see-more">
+<prop id="block_key">(prop,block_key)</prop>
+<file id="blocks">(file,blocks)</file>
+<prop id="blocks_offset">(prop,blocks_offset)</prop>
+<prop id="blocks_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="blocks_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="blocks_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="blocks_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="blocks_where">(prop,blocks_where)</prop>
+<prop id="blocks_return_job">(prop,blocks_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit" job="block-edit">
+<prop id="block_key">(prop,block_key)</prop>
+<file id="blocks">(file,blocks)</file>
+<prop id="blocks_offset">(prop,blocks_offset)</prop>
+<prop id="blocks_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="blocks_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="blocks_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="blocks_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="blocks_where">(prop,blocks_where)</prop>
+<prop id="blocks_return_job">(prop,blocks_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,business)" type="call_job" explain="Delete" job="block-del">
+<prop id="block_key">(prop,block_key)</prop>
+<file id="blocks">(file,blocks)</file>
+<prop id="blocks_offset">(prop,blocks_offset)</prop>
+<prop id="blocks_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="blocks_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="blocks_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="blocks_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="blocks_where">(prop,blocks_where)</prop>
+<prop id="blocks_return_job">(prop,blocks_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-block-details-end</trace>
+<call_job job="hook-block-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: block-details: end.0">
+<ti> hook_job=hook-block-details-end hook=end page=details station=0 object=block</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

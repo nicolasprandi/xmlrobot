@@ -1,0 +1,14 @@
+body { padding-top:50px; }
+.plus:after {
+  content: " +";
+  white-space:nowrap; 
+}
+
+.minus:after {
+  content: " -";
+  white-space:nowrap;
+}
+
+.verti {
+  padding-left: 8px;
+}

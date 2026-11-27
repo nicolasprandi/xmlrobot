@@ -1,0 +1,322 @@
+<?xml version="1.0" ?>
+<!-- -->
+
+<jobs>
+<call_job job="check-login"/>
+<call_job job="prolog" />
+
+
+<!-- 
+<job id="See Values: conf_" role="dev">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>  
+</job>
+
+<job id="Edit: conf_">
+  
+</job>
+
+<job id="Edit: conf_?">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>
+</job>
+
+<job id="vfs">
+     <tk type="text" id="x" label="ftp-uri" tip="ftp://anonymous:password@speedtest.tele2.net ftp://demo:password@test.rebex.net"/>
+     <file id="out" x="(dir,pro)(f,time)-result.xml"/>
+     <vfs act="scan_ftp" dir="(prop,x)" out="(file,out)"/>
+     <ti type="file" x="(file,out)" label="from (prop,x)"/>
+</job>        <interpreter watch="1"/>
+-->
+
+  
+
+<job id="check-login" role="hidden">
+
+</job>
+  
+<job id="check-loginxx" role="hidden">
+
+<choose>
+  <when test="(f,not,(f,exists_file,(dir,pro)is-good.txt))">
+    <tk type="text" id="yours" label="Your ticket-number" flag="nono"/>
+    <create_file out="(dir,temp)x.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<keys>
+  <key date="2019-03-01" key="echnaton"/>
+  <key date="2019-03-02" key="falleria"/>
+  <key date="2019-03-03" key="gilludia"/>
+  <key date="2019-03-04" key="hirekia"/>
+  <key date="2019-03-05" key="isturika"/>
+  <key date="2019-03-06" key="jamlaka"/>
+  <key date="2019-03-07" key="kisundra"/>
+  <key date="2019-03-08" key="laramoria"/>
+  <key date="2019-03-09" key="minikusa"/>
+  <key date="2019-03-23" key="nerlendika"/>
+
+                
+</keys>
+]]></create_file>
+  <!--
+    <key date="2019-02-05" key="kurtileinVomWalde"/>
+  <key date="2019-02-06" key="zikadelleJourney"/>
+  <key date="2019-02-07" key="lamourSell"/>
+  <key date="2019-02-08" key="sundaysonlyHop"/>
+  <key date="2019-02-09" key=""brightdayYes"/>
+  <key date="2019-02-10" key=""/>
+  <key date="2019-02-11" key=""/>
+  <key date="2019-02-12" key=""/>
+  <key date="2019-02-13" key=""/>
+  <key date="2019-02-14" key=""/>
+  <key date="2019-02-15" key=""/>
+  <key date="2019-02-16" key=""/>
+  <key date="2019-02-17" key=""/>
+  <key date="2019-02-18" key=""/>
+  <key date="2019-02-19" key=""/>
+  <key date="2019-02-20" key=""/>         
+  -->      
+    <spirit id="s" act="open" file="(dir,temp)x.xml"/>
+    <ti test="0">date=(f,xpath_string,(f,time,yyyy-MM-dd))
+    @key[date=(f,xpath_string,(f,time,yyyy-MM-dd))]
+    </ti>
+    <prop id="has">(f,spirit,s,exists?,key[@date=(f,xpath_string,(f,time,yyyy-MM-dd))])</prop>
+    <when  test="(f,not,(prop,has))">
+      <spirit id="s" act="close"/>
+      <throw>Call the support with the ticket #12</throw>      
+   </when>
+    <prop id="key">(f,spirit,s,key[@date=(f,xpath_string,(f,time,yyyy-MM-dd))],@key)</prop>
+    <spirit id="s" act="close"/>
+    <delete file="(dir,temp)x.xml"/>
+    <choose>
+      <when test="(f,eq_text,(prop,key),(prop,yours))">
+        <create_file out="(dir,pro)is-good.txt">granted</create_file>
+        <ti>Access Granted</ti>
+      </when>
+      <otherwise>
+        <throw>Call the support with the ticket #13</throw>  
+      </otherwise>
+    </choose>
+   
+
+  </when>
+  <otherwise>
+    <ti test="0">granted</ti>
+  </otherwise>
+</choose>
+</job>
+
+<job id="Liste der Rezepte" role="hidden">
+
+    
+     <call_job job="rez-see-all"/>
+</job>
+<job id="List der Rezepte" role="hidden">
+  
+     <call_job job="rez-see-all"/>
+</job>
+
+<job id="Aktuelles Rezept" xrole="admin">
+
+
+
+  <choose>
+    <when test="(f,exists_file,(file,akt-rez))">
+      <prop id="rez_key">(f,file_content,(file,akt-rez))</prop>
+      <call_job job="rez-see"/>
+    </when>
+    <otherwise>
+
+     <call_job job="rez-see-all"/>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="Aktuelle Komponente" role="admin">
+
+
+
+  <choose>
+    <when test="(f,and,(f,exists_file,(file,akt-rez)),(f,exists_file,(file,akt-komp)))">
+     
+       <try_catch>
+       <try>
+      <prop id="komps_offset">rez[@row=(f,file_content,(file,akt-rez))]/</prop>
+      <prop id="rez_key">(f,file_content,(file,akt-rez))</prop>
+      <prop id="komp_key">(f,file_content,(file,akt-komp))</prop>
+      <call_job job="komp-see"/>
+      </try>
+      <catch>
+        <dump_ti label="ERROR"/>
+      </catch>
+      </try_catch>
+    </when>
+    <otherwise>
+
+     <call_job job="rez-see-all"/>
+    </otherwise>
+  </choose>
+</job>
+
+
+<job id="Rezept Liste" role="hidden">
+
+     <call_job job="rez-see-all"/>
+</job>
+
+<job id="Run" role="hidden">
+     <call_job job="tk_para_edit"/>
+
+     <call_job job="core-operation"/>
+     <ti>Did run</ti>
+     <create_file file="(file,project-exists)">yes</create_file>
+</job>
+
+<job id="sys_clear" role="hidden">
+  <!-- 
+  <delete file="(dir,pro)scan.xml" flag="catch"/>
+  <delete file="(file,akt-rez)" flag="catch"/>
+  <delete dir="(dir,pro)order-index/" flag="catch"/>
+  <call_service job="remove-empty-dirs" flag="catch silent">
+    <dir id="with">(dir,pro)orders/</dir>
+  </call_service>
+  -->
+</job>
+
+<job id="Run?">
+   <call_job job="tk_para_print_values_tips"/>
+   <call_job job="tk_stat_print_values_tips"/>
+</job>
+
+<job id="Edit Parameters" role="hidden">
+      <create_file file="(file,project-exists)">yes</create_file>
+      <call_job job="tk_para_edit"/>
+      
+</job>
+
+<job id="Edit Parameters?">
+     <call_job job="tk_para_print_values_tips"/>
+</job>
+
+<job id="Configuration" role="hidden" pri="10">
+
+  <ti type="call_job" job="Check-Panorama"/>
+  <ti type="call_job" job="See-Little-Panorama"/>
+     <call_job job="tk_conf_print_values_tips"/>
+     <ti type="call_job" job="tk_conf_edit" xlabel=" " explain="Bearbeiten"/>
+</job>
+
+<job id="Edit Configuration" role="hidden" pri="10">
+     <call_job job="tk_conf_edit"/>
+</job>
+
+<job id="Edit Configuration?">
+     <call_job job="tk_conf_print_values_tips"/>
+</job>
+
+<job id="TEST" role="hidden">
+
+  <ti type="call_job" job="TEST-APP"/>
+  <ti type="call_job" job="TEST-PRO"/>
+  <ti type="call_job" job="TEST-SERVICES"/>
+  <ti type="call_job" job="TEST-INFO"/>
+  <ti type="call_job" job="Check-Panorama"/>
+  <ti type="call_job" job="See-Little-Panorama"/>
+  <ti type="call_job" job="dump-me" test="(f,role,admin)"/>
+  <ti_hr/>
+    <ti type="file" label="Data" x="(file,rezs)" flag="download"/>
+  <ti type="dir" label="Project" x="(dir,pro)" flag="download"/>
+</job>
+
+<job id="dump-me" role="hidden">
+  <dump_ti_all label="Your requested dump"/>
+</job>
+
+<job id="See-Little-Panorama" role="hidden">
+
+    <file id="lpref" x="(dir,pro)little-panorama.txt"/>
+    
+    <throw test="(f,not,(f,exists_file,(file,lpref)))">Little-Panorama does not exist yet.</throw>
+            
+
+      <dir id="pro_temp" x="(f,file_content,(file,lpref))"/>
+
+      <ti type="dir" label="LittlePano" x="(dir,pro_temp)" test="0"/>
+      <call_app     app="Panorama" 
+                    job="See report" 
+                    pro_dir="(dir,pro_temp)" 
+                    pro_id="Little-Panorama from before"
+                    flag="silent">       
+                            
+      </call_app> 
+      
+</job>
+
+<job id="Check-Panorama" role="hidden">
+  
+      <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question" x="Select a directory"/>
+      </call_service>
+      <global act="get" id="jil-result"/>
+      
+ 
+        <dir id="with" x="(prop,jil-result)"/>
+      
+      
+      <need>(dir,with)</need>
+      <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+
+      
+      <file id="lpref" x="(dir,pro)little-panorama.txt"/>
+      <create_file out="(file,lpref)">(dir,pro_temp)</create_file>
+      
+      <mkdir dir="(dir,pro_temp)" flag="cascade"/>
+      <ti type="dir" label="LittlePano" x="(dir,pro_temp)" test="1"/>
+    
+      <call_app     app="Panorama" 
+                    job="Api-Panorama" 
+                    pro_dir="(dir,pro_temp)" 
+                    pro_id="Little-Panorama at (f,time)"
+                    flag="silent">       
+        <dir id="with">(dir,with)</dir>                       
+      </call_app>       
+     
+     <dir id="this" x="(prop,jil-result)" />  
+     
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

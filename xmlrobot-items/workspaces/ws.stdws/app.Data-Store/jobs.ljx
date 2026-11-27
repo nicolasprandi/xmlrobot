@@ -1,0 +1,389 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+  <include file="(dir,services)static-project-prolog.xrs"/>
+  <prop id="has_data" x="0"/>
+  <when test="(f,has,prop,pro)">
+    <dir id="conf" x="(dir,pro)config"/>
+    <dir id="data" x="(dir,pro)data"/>
+    <prop id="has_data" x="1" test="(f,exists_dir,(dir,data))"/>
+    <mkdir dir="(dir,conf)"/>
+    <mkdir dir="(dir,data)"/>
+    
+    <dir id="use_panorama" x="(dir,pro)used_apps(prop,fs)panorama"/>
+    <mkdir dir="(dir,use_panorama)"/>
+  </when>
+
+
+<job id="?">
+    
+  <ti label="When to use Application (f,html,i,open)Data-Store(f,html,i,close):">
+    <ti type="ul">(f,html,bold,open)You want to collect files(f,html,bold,close)</ti>
+    <ti type="ul">(f,html,bold,open)You want to make backups of these files(f,html,bold,close)</ti>
+    <ti type="ul">(f,html,bold,open)You want to provide these files to an XmlRobot-Application(f,html,bold,close)</ti>
+
+  </ti>
+
+  
+  
+  
+  <ti type="img" x="(dir,app)doku-data-store.jpg" />
+  
+
+
+
+    
+  <ti label="Next">
+    <ti type="call_service" job="item-add-pro-empty" explain="Go and create a new Data-Store-Project ..."
+    label="New Data-Store:">
+      <prop id="empty-app" x="(prop,app)"/>
+    </ti>  
+    <ti label="Online-Help:" type="web" x="https://www.xmlrobot.net/data-store-help"/>
+  </ti>
+    <ti label="Features">
+        <ti type="ul">This application is just something to store data</ti>
+        <ti type="ul">There is no specific functional process provided</ti>
+        <ti type="ul">But you can comfortabely import files and directories</ti>
+         <ti type="ul">The socalled &apos;data&apos; is stored in the project</ti>
+         <ti type="ul">You could use the backup-function of the project to make backups</ti>
+    </ti>    
+
+    <call_service job="app-info-final" flag="silent">
+      <prop id="aif-app" x="(prop,app)"/>
+    </call_service>  
+</job>
+
+
+<job id="??">
+  <ti x="(f,html,bold,open)Content of Data-Project is ...(f,html,bold,close)" align="right"/>
+
+    <call_service job="Goto-Panorama" flag="silent">
+        <dir id="with" x="(dir,data)" />
+    </call_service>
+    <!-- 
+    <call_service job="project-info-final" flag="silent">
+      <prop id="from-app" x="(prop,app)"/>
+      <prop id="from-pro" x="(prop,pro)"/>
+    </call_service>
+    -->
+</job>
+
+<job id="???">
+  <choose>
+    <when  test="(prop,has_data)">
+      <ti label="1(e:c) Project-Info" size="2"/>  
+      <call_job job="??" />
+      <ti>
+      
+      
+      </ti>
+      <ti_hr />
+      <ti label="2(e:c) Application-Info" size="2"/>
+      <call_job job="?" />
+    </when>
+    <otherwise>
+      <call_job job="?" />
+    </otherwise>
+  </choose>
+    
+</job>
+
+<job id="See Data" tip="Shows the Data-Folder" joblevel="pro">
+
+  <throw test="(f,not,(f,exists_dir,(f,vob,dir,data)))">Keine Daten Vorhanden</throw>
+    <call_service job="Goto-Panorama" flag="silent">
+        <dir id="with" x="(dir,data)" />
+    </call_service>
+</job>
+<job id="See Data?">
+  <ti label="About: See Data">
+    <ti type="ul">Lets you see the data in the project</ti>
+    <ti type="ul">Displays just the top-folder</ti>
+    <ti type="ul">Lets you navigate with Panorama-File-Browser</ti>
+  </ti>
+</job>
+<job id="See all files" role="user" txip="Imports a file or directory" joblevel="pro" pri="10">
+  <choose>
+  <when test="(f,not,(f,exists_file,(dir,use_panorama)setup.xml))">
+      <tk type="msg" x="Going to Scan full data for image ..."/>
+      <create_file 
+            out="(dir,use_panorama)api-2.xml" 
+            flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+              <api2 dir_to_see="(x,(dir,data))"/>]]></create_file> 
+      <ti type="file" label="saf" x="(dir,use_panorama)api-2.xml" test="0"/>       
+      <call_app
+        job="api-2"
+        app="Panorama" 
+        pro_dir="(dir,use_panorama)" pro_id="(prop,pro)" 
+        flag="silent"/>   
+  </when>
+  <otherwise>
+    <ti type="call_job" job="pano_layout" explain="Report Layout Parameters"/> 
+    <ti type="call_job" job="pano_refresh" explain="Refresh new Data"/>  
+      <call_app
+        job="See report"
+        app="Panorama" 
+        pro_dir="(dir,use_panorama)" pro_id="(prop,pro)" 
+        xflag="silent"/>   
+          
+  </otherwise>
+  </choose>
+</job>
+<job id="See All Filesxx" pri="10" tip="Shows all files of all hierarchies" joblevel="app" role="hidden">
+  <call_service job="Panorama-Dir-Activity-SEE-ALL-FILES" flag="silent">
+    <dir id="with" x="(dir,data)"/>
+  </call_service>
+</job>
+
+<job id="See All Files?">
+  <ti label="About: See All Data">
+    <ti type="ul">Displays ALL files in the project(e:s) no matter in which directory they are</ti>
+  </ti>
+</job>
+
+<job id="Import a Directory?">
+  <ti label="About: Import a Directory">
+    <ti type="ul">Imports a directory</ti>
+    <ti type="ul">Allows file-filter-patterns as file-selector</ti>
+    <ti type="ul">Has option 'Make it flat'</ti>
+  </ti>  
+
+  
+</job>
+<job id="read-dir-paras" role="hidden">
+    <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,conf)import-file-input.xml" />    
+    </call_job>
+</job>
+<job id="Import a Directory" tip="Imports a directory" joblevel="pro">
+
+    <call_job job="read-dir-paras"/>
+    
+    <tk lable="DIRECTORY IMPORTER" flxag="sum">
+      <tk id="import-dir"
+          label="Directory to import"
+          type="dir"
+          flag="nono"
+          tip="Data will be copied from this directory"/>
+    </tk>
+        
+    <prop id="name" x="(f,name_of_dir,(dir,import-dir))"/>
+
+    <call_job job="tk-directory">
+      <prop id="tk-dir-flag" x="sum"/>
+    </call_job>
+    
+    <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(dir,conf)import-file-input.xml" />
+        <prop id="joe-in-regex" x="import-includes|import-excludes|import-flatten|import-dir" />
+    </call_job> 
+        
+    <choose>
+      <when test="(f,has,prop,name)">
+        <dir id="target" x="(dir,data)(f,good_filename,(prop,name))"/>
+        <mkdir dir="(dir,target)"/>
+      </when>
+      <otherwise>
+        <dir id="target" x="(dir,data)"/>      
+      </otherwise>      
+    </choose>
+    <try_catch>
+    <try>
+      <tk type="msg" x="Sure about importing ?&#xA;If files exist already(e:s) they will be overwritten WITHOUT asking.&#xA;If you want to make sure that nothing wrong happens(e:s) make a [ Backup ]&#xA;of the Project in advance. Use the Service [ Project Management ] or &#xA;the button [ Pro: ] for that!" msg_type="w"/>     
+    </try>
+    <catch>
+      <ti>You quit(e:s) here is what you would have wanted:</ti>
+      <call_job job="tk-directory">
+        <prop id="tk-dir-flag" x="print_only print_with_tips"/>
+      </call_job>
+      <ti_hr/>
+      <ti_flush/>
+      <throw_again/>
+    </catch>
+    </try_catch>
+    <tp>doing copy ...</tp>
+    <tk test="(f,has,prop,import-flatten)" type="msg">Flatten will be ignored</tk>
+    <tk test="(f,has,prop,import-includes)" type="msg">import-includes will be ignored</tk>
+    <tk test="(f,has,prop,import-excludes)" type="msg">import-excludes will be ignored</tk>
+    <copy uri="(dir,import-dir)" touri="(dir,target)"/>
+
+    
+    <ti label="Did copy Directory">
+      <ti type="dir" x="(dir,import-dir)" label="From:"/>
+      <ti type="dir" x="(dir,target)" label="To Project:"/>
+    </ti>
+    
+    <ti label="Next">
+    <ti type="call_service" 
+        job="Panorama-Dir-Activity-SEE-ALL-FILES"
+        explain="See all files of folder '(f,name_of_dir,(dir,target))''"
+        label="See all:">
+        <dir id="with" x="(dir,target)"/>
+    </ti>
+    </ti>
+    
+</job>
+<job id="tk-directory" role="hidden">
+  <need>(prop,tk-dir-flag)</need>
+  
+    <tk label="Directory Import" flag="(prop,tk-dir-flag)">
+      <tk type="msg" x="Source of Data to Import" test_first="0"/>
+      <tk id="import-dir"
+          label="Directory to import"
+          type="dir"
+          flag="nono"
+          tip="Data will be copied from this directory"
+          test_first="0"/>    
+      <tk type="msg" x="Target folder" test_first="0"/>    
+      <tk id="name" label="New Directory Name" 
+          tip="The direcory-name in the Data-Store-Project. Leave it blank(e:s) if you want the data to be stored on top-level. Use '(prop,fs)' to separate directories."/>
+          
+      <tk type="msg" x="Filter Patterns" test_first="0" tip="Filter the files to import with patterns. A pattern is for example this: **/*.* or this **/*.pdf or this *.txt"/>    
+      <tk id="import-includes" label="Include-Pattern (e:o)Ant(e:c)"
+          x=""
+          test_first="0"
+          tip="Only files which match this pattern will be imported. Use **/*.pdf for all pdf-files. If empty(e:s) or **/*.* everything will be copied except for the defined Exclude-Pattern (e:o)Ant(e:c)"/>
+      <tk id="import-excludes" label="Exclude-Pattern (e:o)Ant(e:c)"
+          x=""
+          test_first="0"
+          tip="Files which match this pattern will NOT be imported. Use **/*.zip for excluding all zip-files"/> 
+          
+      <tk type="msg" x="Restructuring" test_first="0"/>                
+      <tk id="import-flatten" label="Make it Flat"
+          type="bool"
+          x="0"
+          test_first="0"
+          flag="no_is_0 nono"
+          tip="If set(e:s) all files will be copied directly in the specified directory(e:s) subdirectory-structure will not be followed while importing."
+          >         
+      </tk>             
+                 
+    </tk>  
+</job>
+<job id="Import a File" tip="Imports a file" joblevel="pro">
+    
+    <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,conf)import-file-input.xml" />    
+    </call_job>
+    <tk id="import-file"
+        label="File to import"
+        type="file"
+        flag="nono"/>
+    
+    <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(dir,conf)import-file-input.xml" />
+        <prop id="joe-in-regex" x="import-.+" />
+    </call_job>    
+    
+    <file id="write" x="(dir,data)(f,name_of_file,(file,import-file))"/>
+    
+    <when test="(f,exists_file,(file,write))">
+        
+        <tk label="Overwrite existing File ?" 
+            type="accept" 
+            id="delete-it-1" 
+             x="In your project '(prop,pro)' exists already this file.&#xA;Its the file &#xA;(file,write)&#xA;This file will be replaced" 
+            label_accept="Overwrite" 
+            label_decline="Forget it" 
+            width="300"
+            height="150">
+            <q id="delete-it-2" label="()Yes, I know that the existing file will be gone forever()"/>
+        </tk>
+        <when test="(f,not,(f,and,(prop,delete-it-1),(prop,delete-it-2)))">
+            <throw>Operation terminated on request.</throw>
+        </when>        
+    </when>
+    
+    <copy file="(file,import-file)" tofile="(file,write)" />
+    
+    <ti label="Did Copy">
+        <ti type="file" x="(file,import-file)" label="From"/>
+        <ti type="file" x="(file,write)" label="To Project" />
+    </ti>
+</job>
+
+<job id="Import a File?">
+    
+  <ti label="About: Import a File">
+    <ti type="ul">Copyies a file into the project</ti>
+
+  </ti>      
+</job>
+<job id="Import File or Dir?">
+  <ti>Imports a directory or a file(e:s) by selection</ti>
+</job>
+<job id="Import File or Dir" role="admin" tip="Imports a file or directory" joblevel="app">
+    
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,conf)ic-import-both-source.xml" />
+  </call_job>
+  
+  <tk type="sel" id="what" label="What to import ?" flag="nono"
+     tip="What type of item to import">
+    <sel label="File">file</sel>
+    <sel label="Directory">folder</sel>
+  </tk>
+  
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex" x="what" />
+    <file id="joe-in-store" x="(dir,conf)ic-import-both-source.xml" />
+  </call_job>
+  
+  <call_job job="Import a Directory" test="(f,eq,(prop,what),folder)"/>
+  <call_job job="Import a File" test="(f,eq,(prop,what),file)"/>
+  
+</job>
+
+
+
+<job id="See all files?" role="user" txip="Imports a file or directory" joblevel="app">
+
+
+
+  <ti label="About: See all files">
+    <ti type="ul">Displays ALL files in the project(e:s) no matter in which directory they are</ti>
+  </ti>
+
+
+
+
+</job>
+
+
+
+<job id="pano_refresh" role="hidden">
+
+      <tk type="msg" x="Going to Scan full data for image ..."/>
+      <create_file 
+            out="(dir,use_panorama)api-2.xml" 
+            flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+              <api2 dir_to_see="(x,(dir,data))"/>]]></create_file> 
+      <ti type="file" label="saf" x="(dir,use_panorama)api-2.xml" test="0"/>       
+      <call_app
+        job="api-2"
+        app="Panorama" 
+        pro_dir="(dir,use_panorama)" pro_id="(prop,pro)" 
+        flag="silent"/>   
+
+</job>
+<job id="pano_layout" role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(dir,use_panorama)setup.xml)">
+     	<call_app 
+        job="Setup: Layout" 
+        app="Panorama" 
+        pro_dir="(dir,use_panorama)" pro_id="(prop,pro)" 
+        flag="silent"/>    
+    </when>
+    <otherwise>
+    
+
+        
+    </otherwise>
+  </choose>
+
+</job>
+
+</jobs>

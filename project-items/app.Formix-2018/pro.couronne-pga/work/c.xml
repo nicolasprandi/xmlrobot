@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="attributtyp" add_edit="1" label="(prop,_pga_atyp_l)" name_flag="1" tip="(prop,_pga_atyp_t)" type="sel" nono="1" sel_file="(file,pdi-sel-attr)" /><field id="detail" label="(prop,_pga_docu_l)" tip="(prop,_pga_docu_t)" type="textblock" view_flag="1" view_len="26" /></fields>

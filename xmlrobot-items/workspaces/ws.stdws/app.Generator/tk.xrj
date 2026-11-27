@@ -1,0 +1,722 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="Explain Parameters" role="hidden">
+
+      <prop id="info-only" x="1"/>
+      <prop id="from-project-info" x="1"/>
+      <call_job job="check input" test="1"/>
+        
+  <call_job job="pt-get">
+    <prop id="info-only" x="1"/>
+  </call_job>
+  
+  <call_job job="Explain transformation parameters"/>
+  <call_job job="Explain export parameters"/>
+  <ti label=" " type="call_job" job="Explain all parameters" explain="Explain all parameters(e:s) even the &apos;not-used-ones&apos;"/>
+</job>
+
+<job id="Explain all parameters" role="hidden">
+  <call_job job="Explain all transformation parameters"/>
+  <call_job job="Explain all export parameters"/>
+</job>
+
+<job id="main_input_only" role="hidden">
+	<call_job job="pt-get"/>
+	<call_job job="flow input" >
+		<prop id="askquestions" x="1" />
+		<prop id="modelinputflag" x="sum_only print" />
+		<prop id="view" x="" />	
+	</call_job>
+</job>
+
+<job id="see_main_input_only" role="hidden">
+	
+	<call_job job="see_main_input_only_CORE" >
+		<prop id="askquestions" x="1" />
+		<prop id="modelinputflag" x="print print_only" />
+		<prop id="view" x="" />	
+	</call_job>
+</job>
+
+<job id="see_main_input_only_tips" role="hidden">
+	
+	<call_job job="see_main_input_only_CORE" >
+		<prop id="askquestions" x="1" />
+		<prop id="modelinputflag" x="print print_only print_with_tips print_all_fields" />
+		<prop id="view" x="" />	
+	</call_job>
+</job>
+
+<job id="Explain transformation parameters" role="hidden">
+	
+	<call_job job="see_main_input_only_CORE" >
+		<prop id="askquestions" x="1" />
+		<prop id="modelinputflag" x="print print_only print_with_tips" />
+		<prop id="view" x="" />	
+	</call_job>
+	<!-- 
+  <ti_hr style="2"/>
+  <ti type="call_job" job="Explain all transformation parameters" label=" "/>
+  <ti type="call_job" job="Run EXPORTER?" label=" "
+		explain="See parameters for export" test="0"/>
+	-->
+</job>
+
+<job id="Explain all transformation parameters" role="hidden">
+	
+	<call_job job="do model input" >
+		<prop id="askquestions" x="1" />
+		<prop id="modelinputflag" x="print print_only print_with_tips print_all_fields print_tips_only" />
+		<prop id="view" x="" />	
+	</call_job>
+</job>
+
+<job id="see_main_input_only_CORE" role="hidden">               
+  
+  <!-- read cached input -->  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+  </call_job>     
+  
+  <!-- see things -->
+  <call_job job="do model input"/>
+   
+</job>
+
+<job id="ccc" role="hidden">
+  <!--  
+  <need>(prop,ccc)</need>
+  <choose>
+  <when test="(f,and,(f,has,file,excel),(f,has,prop,excel-loc))">
+    <ti>(prop,ccc): excel and excel-loc here</ti>
+  </when>
+  <otherwise>
+    <dump_ti label="(prop,ccc): some excel not here"/>
+  </otherwise>
+  </choose>
+  -->
+</job>
+
+<job id="flow input" role="hidden">
+
+  <call_job job="ccc">
+    <prop id="ccc" x="flow-input"/>
+  </call_job>
+                 
+  <!-- read cached input -->  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+  </call_job>   
+  <dump_ti label="nach-ica" test="0"/>
+  <!--   
+  <when test="(f,not,(f,exists,prop,testdata))">
+    <throw>ein fall von get-testdata-prop</throw>
+    <call_job job="pt-get"/>
+  </when>               -->
+  <!-- do inputs -->
+  <when test="(f,or,(prop,askquestions),(f,not,(f,exists_file,(file,ic-a))))">
+    <call_job job="do model input"/>
+  </when>
+   
+  <!-- write input caches -->
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+  </call_job>
+  
+  <call_job job="go-joe-write">
+     <file id="joe-in-store" x="(file,fileref)"/>
+     <prop id="joe-in-regex" x="(prop,fileref_regex)" />
+  </call_job>  
+
+</job>
+
+<job id="select-sheet-only" role="hidden">
+
+  <call_job job="ccc">
+    <prop id="ccc" x="select-sheet-only"/>
+  </call_job>
+                 
+  <!-- read cached input -->  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)" />
+  </call_job>   
+
+  <!-- tk -->
+  <tk label="Select a sheet">
+    <tk id="sheet" 
+        type="sel" 
+        xml="(file,sheet-selector)" 
+        label="Sheet" 
+        flag="nono" 
+        tip="A sheetname. This sheet of the spreadsheet will be the base for the transformation."/>
+  </tk>
+               
+  <!-- write input caches -->
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+  </call_job>
+   
+
+
+</job>
+
+
+
+<job id="demand input of project" role="hidden">
+  <need>(dir,with_pro)</need>
+  <file id="input_pro" x="(dir,with_pro)input.xls"/>
+
+    
+  <choose>
+  
+    <when test="(f,file_exists,(file,input_pro))">
+      <file id="result_excel_pro" x="(file,input_pro)"/>
+    </when>
+    
+    <otherwise>
+      <file id="result_excel_pro" x="" />  
+    </otherwise>
+  
+  </choose>
+
+</job>
+
+<job id="check input" role="hidden">
+
+  <choose>    
+    <when test="(f,file_exists,(file,fileref))">
+      <exclude file="(file,fileref)" regex=".*"/>
+      <when test="(f,not,(f,exists_file,(file,excel)))">
+        <call_job job="check input advice">
+          <prop id="msg">The input-file disappeared from its expected location:&#xA;(f,can_file,(file,excel))</prop>
+         </call_job>         
+      </when> 
+    </when>
+    
+    <otherwise>
+        <call_job job="check input advice">
+          <prop id="msg">No input-spreadsheet specified</prop>
+         </call_job> 
+    </otherwise>
+    
+  </choose>
+
+  <need>(file,excel)</need>
+</job>
+
+<job id="check input relaxed" role="hidden">
+
+    <when test="(f,file_exists,(file,fileref))">
+      <exclude file="(file,fileref)" regex="(prop,fileref_regex)"/> 
+    </when>
+</job>
+
+<job id="check input advice" role="hidden">
+  <prop id="myjob" x="(prop,job)"/>
+  <prop id="myjob" test="(f,eq_text,??,(prop,job))" x="Project Info ??"/>
+  <ti label="Job cancelled">
+    <ti label="Problem:">The job '(prop,myjob)' could not be executed</ti>
+    <ti label="Reason:">(prop,msg)</ti>
+    <ti label="Next:" type="call_job" job="sys_project_setup" explain="Specify project (f,upper,(prop,pro)) from start ..."/>    
+  </ti>
+  <ti_break/>
+  <ti_hr/>
+  <throw>Sorry(e:s) no input found</throw>
+</job>
+
+<job id="demand input" role="hidden">
+
+  <choose>    
+    <when test="(f,file_exists,(file,fileref))">
+      <exclude file="(file,fileref)" regex=".*"/>
+      <when test="(f,not,(f,exists_file,(file,excel)))">
+        <tk label="Looking for input ...">
+        <tk type="msg" 
+            x="This input-file disappeared from its expected location:&#xA;(f,can_file,(file,excel))&#xA;Going to ask you for the file again ..." 
+            msg_type="e"/>
+        </tk>
+        <call_job job="Change Excel Input2"/>          
+      </when> 
+      <call_job job="demand input part 2"/>
+    </when>
+    
+    <otherwise>
+
+      <ti label="Welcome to GENERATOR"/>
+      <ti_space height="8px" />
+      <ti>The application 'GENERATOR'</ti>
+      <ti type="ul">produces testdata or</ti>
+      <ti type="ul" height="20px">just converts data to formats like csv(e:s) sql(e:s) angular(e:s) xml(e:s) excel(e:s) html or whatever you like. </ti>
+      <ti_space height="8px" />
+      <ti>It needs therefore some input with some values.</ti>
+      <ti>This will be a spreadsheet in one of these formats:</ti>
+      <ti type="ul">'Microsoft Excel 2007-2013 XML (e:o).xlsx(e:c)' -or- </ti>
+      <ti type="ul">'Microsoft Excel 97-2003 (e:o).xls(e:c)'</ti>
+      <ti_space height="8px" />
+      <ti>Currently no such file is specified(e:s) so we need one.</ti>
+      <ti>You can either</ti>
+      <ti type="ul">import one -or-</ti>
+      <ti type="ul">set a reference to a file</ti>
+      <ti_space height="8px" />  
+      <ti>That is what we want from you in the following step!</ti>
+      
+      <ti_space height="4px" />
+      
+      <ti type="call_job" job="demand input part3" explain="Continue with Generator ..." label="Next:"/>
+      <ti_space height="4px" />
+      <ti>Ps: GENERATOR delivers some spreadsheet-templates&#xA;which you may use for testing ...</ti> 
+    </otherwise>
+    
+  </choose>
+</job>
+
+<job id="demand input part3" role="hidden">
+  <call_job job="Change Excel Input2"/>
+  <call_job job="demand input part 2"/>
+
+       <call_job job="run-internal">
+      <prop id="askquestions" x="1" />
+     </call_job>
+</job>
+
+<job id="demand input part 2" role="hidden">
+  
+  <need default="1">(prop,goon)</need>
+  <when test="(prop,goon)">
+    <choose>
+      <when test="(f,not,(f,starts_with,(f,can_file,(file,excel)),(f,can_dir,(dir,pro))))">
+        <prop id="excel-loc" x="ref" />
+      </when>
+      <otherwise>
+        <prop id="excel-loc" x="pro" />
+      </otherwise>
+    </choose> 
+            
+    <need>(file,excel)</need>
+  
+    <ti_flush/>
+
+  </when>
+
+</job>
+<job id="Change Excel Input2" pri="10" role="hidden">
+  <call_job job="intenal: select excel input"/>
+
+</job>
+<job id="intenal: select excel input" pri="10" role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(dir,conf)excel-source-store.xml)">
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,conf)excel-source-store.xml"/>
+        <prop id="joe-in-regex" x="source"/> 
+      </call_job>    
+    </when>
+    <otherwise>
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)userinputs/app-data-gen-ic1.xml"/>
+        <prop id="joe-in-regex" x="source"/> 
+      </call_job>    
+    </otherwise>
+  </choose>
+
+  <tk label="Find Spreadsheet">
+  <tk id="source" 
+      label="Import-Reference Template-Any ? " 
+      type="sel" 
+      flag="nono" 
+      x="reference-template" 
+      tip="()'Import'' copies a file into the project.&#xA;'Reference' sets a link to a file without doing a copy.&#xA;'Templates' are examples.&#xA;'See Templates' lists the examples.&#xA;FORMAT: All spreadsheets must be in the format 'Microsoft Excel 2007-2013 XML (.xlsx)' -or- 'Microsoft Excel 97-2003 (.xls)'()">
+    <sel label="Import a template">template</sel>
+    <sel label="Import any spreadsheet">import</sel>
+    <sel label="Reference a template">reference-template</sel>    
+    <sel label="Reference any spreadsheet">reference</sel>
+    <sel label="See templates">see-templates</sel> 
+    <sel label="Stop &amp; Forget that">cancel</sel>   
+  </tk>
+  </tk>
+  <when test="(f,not,(f,has,prop,source))">
+    <prop id="goon" x="0"/>
+    <throw>Operation cancelled on request(e:s) everything is fine</throw>
+  </when>
+
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,conf)excel-source-store.xml"/>
+    <prop id="joe-in-regex" x="source"/>  
+  </call_job>
+  
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)userinputs/app-data-gen-ic1.xml"/>
+    <prop id="joe-in-regex" x="source"/>  
+  </call_job>  
+  
+  <prop id="goon" x="1"/>
+  <choose>
+    <when test="(f,eq,(prop,source),template)"> 
+      <scan out="(dir,filetemp)sel.xml" dir="(dir,templates)"/>
+      <tk label="Find Spreadsheet">
+      <tk id="template" 
+          label="Template to import" 
+          type="sel" 
+          flag="nono" 
+          xml="(dir,filetemp)sel.xml"
+          tip="Select a template to copy it into the project"/>
+      </tk>
+          
+      <file id="template" x="(dir,templates)(prop,template)"/>
+      
+      <call_job job="get-filename-import">
+        <prop id="gfi-in" x="(prop,template)"/>
+      </call_job>
+      <file id="excel" x="(file,gfi-out)"/>
+      <prop id="excel-loc" x="pro"/>
+      
+      <copy file="(file,template)" tofile="(file,excel)"/>
+      <ti label="Did import template">
+        <ti label="From:" type="file" x="(file,template)"/>
+        <ti label="To:" type="file" x="(file,excel)"/>
+      </ti>
+           
+      <call_job job="go-joe-write">
+         <file id="joe-in-store" x="(file,fileref)"/>
+         <prop id="joe-in-regex" x="(prop,fileref_regex)" />
+      </call_job>
+            
+    </when>  
+    
+    <when test="(f,eq,(prop,source),import)"> 
+      <tk label="Find Spreadsheet">
+      <tk type="file" 
+          id="template" 
+          label="Any spreadsheet to import"
+          tip="()Select a spreadsheet to import into the project.&#xA;Format: 'Microsoft Excel 2007-2013 XML (.xlsx)' -or- 'Microsoft Excel 97-2003 (.xls)'()"
+          extension=".xls .xlsx"
+          flag="nono" />
+      </tk>
+          
+      <call_job job="get-filename-import">
+        <prop id="gfi-in" x="(f,name_of_file,(file,template))"/>
+      </call_job>
+      <file id="excel" x="(file,gfi-out)"/>      
+      <prop id="excel-loc" x="pro"/>
+      
+      <copy file="(file,template)" tofile="(file,excel)"/>
+      
+      <ti label="Did import spreadsheet">
+        <ti label="From:" type="file" x="(file,template)"/>
+        <ti label="To:" type="file" x="(file,excel)"/>
+      </ti>
+           
+      <call_job job="go-joe-write">
+         <file id="joe-in-store" x="(file,fileref)"/>
+         <prop id="joe-in-regex" x="(prop,fileref_regex)" />
+      </call_job>          
+              
+    </when>  
+    
+    <when test="(f,eq,(prop,source),reference)">
+    
+      <file id="joe-in-store" x="(file,fileref)"/>
+      <tk label="Find Spreadsheet">
+      <tk type="file" 
+          id="excel" 
+          label="Any spreadsheet to reference"
+          flag="nono"
+          extension=".xlsx .xls"
+          tip="()Going to REFERENCE this spreadsheet.&#xA;Format: 'Microsoft Excel 2007-2013 XML (.xlsx)' -or- 'Microsoft Excel 97-2003 (.xls)'()"/>
+      </tk>   
+          
+      <prop id="excel-loc" x="ref"/>    
+          
+      <call_job job="go-joe-write">
+         <file id="joe-in-store" x="(file,fileref)"/>
+         <prop id="joe-in-regex" x="(prop,fileref_regex)" />
+      </call_job> 
+      
+      <ti label="Did set reference">
+        <ti label="To:" type="file" x="(file,excel)"/>
+      </ti>
+ 
+    </when>
+    
+    <when test="(f,eq,(prop,source),reference-template)"> 
+      <scan out="(dir,filetemp)sel.xml" dir="(dir,templates)"/>
+            
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,conf)rf-store.xml"/>
+        <prop id="joe-in-regex" x="template" />
+      </call_job>
+      <tk label="Find Spreadsheet">      
+      <tk id="template" 
+          label="Template to Reference" 
+          type="sel" 
+          flag="nono" 
+          xml="(dir,filetemp)sel.xml"
+          tip="This template will be referenced"/>
+      </tk>
+           
+      <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(dir,conf)rf-store.xml"/>
+        <prop id="joe-in-regex" x="template" />
+      </call_job>   
+            
+      <file id="excel" x="(dir,templates)(prop,template)"/>
+      <prop id="excel-loc" x="ref"/>    
+          
+      <call_job job="go-joe-write">
+         <file id="joe-in-store" x="(file,fileref)"/>
+         <prop id="joe-in-regex" x="(prop,fileref_regex)" />
+      </call_job> 
+      
+      <ti label="Did set template-reference">
+        <ti label="To:" type="file" x="(file,excel)"/>
+      </ti> 
+      
+    </when>  
+    
+    <when test="(f,eq,(prop,source),cancel)">
+      <ti label="Stopped operation"/> 
+    	<throw test="0">Operation cancelled on request(e:s) everything is fine</throw>
+    	<prop id="goon" x="0"/>
+    </when>  
+    
+    <when test="(f,eq,(prop,source),see-templates)">
+      <call_job job="tell sheetlist of templates" />
+    	<prop id="goon" x="0"/>
+    </when>           
+    
+  </choose>
+  
+  <when test="(prop,goon)">
+    <call_job job="create-sheet-selector">
+      <file id="css-by-spreadsheet" x="(file,excel)"/>
+    </call_job>
+    
+    <call_job job="select-sheet-only"/>
+  </when>
+  
+</job>
+
+<job id="get-filename-import" role="hidden">
+  <need>(prop,gfi-in)</need>
+  <choose>
+    <when test="(f,file_exists,(dir,pro)(prop,gfi-in))">
+      <choose>
+        <when test="(f,contains,(prop,gfi-in),.)">
+          <prop id="gfi-in-name" x="(f,substring_before,(prop,gfi-in),.)"/>
+          <prop id="gfi-in-ext" x=".(f,substring_after,(prop,gfi-in),.)"/>        
+        </when>
+        <otherwise>
+          <prop id="gfi-in-name" x="(prop,gfi-in)"/>
+          <prop id="gfi-in-ext" x=""/>
+        </otherwise>
+      </choose>
+      <ti test="0">(prop,gfi-in-name) - (prop,gfi-in-ext)</ti>
+      <prop id="gfi-i" x="1"/>
+      <loop id="gfi-loop" while="()(f,exists_file,(dir,pro)(prop,gfi-in-name)-(prop,gfi-i)(prop,gfi-in-ext))()">
+        <prop id="gfi-i" x="(f,add,1,(prop,gfi-i))"/>
+      </loop>
+      <prop id="gfi-out" x="(prop,gfi-in-name)-(prop,gfi-i)(prop,gfi-in-ext)"/>
+    </when>
+    <otherwise>
+      <prop id="gfi-out" x="(prop,gfi-in)"/>
+    </otherwise>
+  </choose>
+  <file id="gfi-out" x="(dir,pro)(prop,gfi-out)"/>
+  
+  <need>(prop,gfi-out) (file,gfi-out)</need>
+  
+</job>
+
+<job id="do config input" role="hidden">
+  <need>(prop,view_config)</need>
+
+  <tk label="2(e:c) Project Configuration" flag="sum_only (prop,view_config)"
+      tip="Defines some basic options for the project.">
+    <tk type="msg" 
+            x="Limitations"/>      
+    <tk id="conf-nbr-sample-recs" 
+        label="Nbr Sample Records"
+        cols="10"
+        tip="Number of sample records for the job 'See Results'"
+		regex="\d+"
+        regex_msg="Integers only!"
+        flag="nono"/>
+        
+    <tk id="conf-nbr-unique" 
+    cols="10"
+        label="Nbr Unique Values"
+		regex="\d+"
+        regex_msg="Integers only!"		
+        tip="Number of unique values for the job 'See Unique Values of Columns'"
+        flag="nono"/>    
+        
+    <tk id="conf-nbr-fastlane"           cols="10"
+        label="Nbr Preview"
+        tip="()Number of records to read from the spreadsheet for SHEET-CONVERSION. During sheet-conversion a faster algorithm is applied. Although it is faster, it limits the capabilities regarding the detection of unique values. By changing this parameter, more records are included in the analysis of unique values. This can go up to the total number of records of the spreadsheet.()"
+        flag="nono"
+		    regex="\d+"
+        regex_msg="Integers only!"/>   
+       
+    <tk type="msg" 
+            x="Description"/>     
+        
+    <tk id="conf-pro-desc" 
+        label="Project Description"  
+        type="textblock"
+        tip="Textual description for the project. Will be printed automatically with the project information."/>
+
+        <tk type="msg" 
+            x="Value-Formats"/>
+
+          <tk id="conf-bool-sql-strat" 
+              label="Bool Sql Export Strategy"
+              tip="()Specifies how sql-export should handle boolean values. Options are: (a) true/false or (b) 0/1; Default is true/false()"
+              flag="nono"
+              type="sel">
+              <sel label="true/false">true_false</sel>  
+              <sel label="0/1">0_1</sel>
+          </tk>
+            
+        <tk id="conf-dates" 
+            label="Convert dates" 
+            flag="no_is_0"  
+            x="1" 
+            type="bool"
+            tip="Enables the conversion of date-formatted cells from the input-spreadsheet. By default this is done."/>
+            
+        <tk id="conf-date-format" 
+            label="Individual date-format"  
+            tip="Regards again the import of date-formatted spreadsheet-cells. This individual-date-format overrules the default-date-format which is yyyy-MM-dd. See exact rules at https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html"/>
+                    
+        <tk type="msg" 
+            x="Exporter Options"/>
+        
+        <tk id="conf-do-export" 
+            label="Do Export" 
+            flag="nono"  
+            x="1" 
+            type="bool"
+            tip="Controls whether the EXPORTER will be invoked directly after data generation/sheet conversion."/>
+            
+        <tk id="conf-do-export-silent" 
+            label="Do Export Silent" 
+            flag="nono" 
+            x="0" 
+            type="bool"
+            tip="Tells EXPORTER not to ask questions."/>  
+                                       
+        
+  </tk>
+  
+</job>
+
+<job id="create conf default" role="hidden">
+  <prop id="conf-nbr-sample-recs" x="10"/>
+  <prop id="conf-nbr-unique" x="16"/>
+  <prop id="conf-nbr-fastlane" x="20"/>
+  <prop id="conf-bool-sql-strat" x="true_false"/> 
+  <prop id="conf-do-export" x="1"/>
+  <prop id="conf-do-export-silent" x="0"/>
+  <prop id="conf-dates" x="1"/>
+  <prop id="conf-date-format" x=""/>  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-conf)"/>
+    <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+  </call_job>
+    
+</job>
+
+<job id="internal: conf" role="hidden">
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-conf)"/>
+    <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+  </call_job>
+  
+  <call_job job="do config input">
+    <prop id="view_config" x="xprint"/>
+  </call_job>
+    
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-conf)"/>
+    <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+  </call_job>
+
+</job>
+
+<job id="tell conf" role="hidden">
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-conf)"/>
+    <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+  </call_job>
+   
+  <call_job job="do config input">
+    <prop id="view_config" x="print_only print_with_tips print_all_fields"/>
+  </call_job>
+  
+  <ti label=" " 
+      type="call_job"
+      job="tell conf tips"
+      explain="Explain all configuration parameters"/>
+
+</job>
+
+<job id="tell conf short" role="hidden">
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-conf)"/>
+    <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+  </call_job>
+   
+  <call_job job="do config input">
+    <prop id="view_config" x="print_only  "/>
+  </call_job>
+  
+  <ti label=" " 
+      type="call_job"
+      job="tell conf tips"
+      explain="Explain all configuration parameters"/>
+
+</job>
+
+<job id="tell conf tips" role="hidden">
+  
+ 
+  <call_job job="do config input">
+    <prop id="view_config" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+
+</job>
+
+<job id="read conf" role="hidden">
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-conf)"/>
+    <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+  </call_job>
+  <need default="true_false">(prop,conf-bool-sql-strat)</need>
+  
+  <prop test="(f,not,(f,has,prop,conf-nbr-sample-recs))" id="conf-nbr-sample-recs" x="10"/>
+  <prop test="(f,not,(f,has,prop,conf-nbr-unique))" id="conf-nbr-unique" x="16"/>
+  <prop test="(f,not,(f,has,prop,conf-nbr-fastlane))" id="conf-nbr-fastlane" x="20"/>
+  <prop test="(f,not,(f,has,prop,conf-bool-sql-strat))" id="conf-bool-sql-strat" x="true_false"/> 
+  <prop test="(f,not,(f,has,prop,conf-do-export))" id="conf-do-export" x="1"/>
+  <prop test="(f,not,(f,has,prop,conf-do-export-silent))" id="conf-do-export-silent" x="0"/> 
+  
+  <prop test="(f,not,(f,has,prop,conf-dates))" id="conf-dates" x="1"/>
+  <prop test="(f,not,(f,has,prop,conf-date-format))" id="conf-date-format" x=""/>    
+</job>
+
+</jobs>

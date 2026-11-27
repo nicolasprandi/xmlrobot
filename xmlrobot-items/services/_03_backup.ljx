@@ -1,0 +1,982 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<prop id="backup_moment">(f,time,yyyy-MM-dd,job)_(f,time,HH-mm,job)</prop>
+<job id="testst" role="test">
+  <ti label="request libro ">(f,request,dir,libro)</ti>  
+  <ti label="request libro2">(f,request,dir,libro2)</ti>  
+  
+  <ti label="request libro " type="dir">(f,request,dir,libro)</ti>  
+  <ti label="request libro2" type="dir">(f,request,dir,libro2)</ti>  
+</job>
+<job id="Backup?" joblevel="ws">
+  <ti label="About: Backup">
+    <ti>(f,html,b,open)Makes backups(f,html,b,close)</ti>
+    <ti type="ul">()Looks different for roles USER/EXPERT and ADMIN()</ti>
+  </ti>
+  
+  <ti label="()1) ()Roles USER &amp; EXPERT">
+    <ti type="ul">()Makes only project-backups()</ti>
+    <ti type="ul">()Lets you see project-backups()</ti>
+    <ti type="ul">()Requires a selected project in the database()</ti>
+  </ti>
+  
+  <ti label="()2) ()Role ADMIN">
+    <ti type="ul">()Makes backups of projects, applications and services()</ti>
+    <ti type="ul">()Lets you see project-backups()</ti>
+  </ti>  
+    
+</job>
+
+<job id="Backup 4 Admins?" joblevel="ws">
+  <ti label="About: Backup 4 Admins">
+    <ti>(f,html,b,open)Offers a wide range of activities for the backups(f,html,b,close)</ti>
+    <ti type="ul">()Handles project-, application- and service-backups()</ti>
+    <ti type="ul">()Handles configuration of the project-trailer()</ti>
+    <ti type="ul">()The project-trailer is a piece of script which is executed whenever a backup is done. It can be configured and is used to perform an additional task with the backup. For example to copy it on another drive. The project-trailer receives the following parameters:
+(prop,type): pro, app or srv  - depending on what type of backup was performed
+(dir,bt-dir): the current backup-directory
+(prop,bt-pro): the project-id
+(prop,bt-app): the application-id
+(f,vob,prop,computer): the current compter()</ti>
+  </ti>
+  
+
+    
+</job>
+
+<job id="Backup" joblevel="ws" role="admin">
+
+<call_service job="make-static-project"/>
+
+<choose>
+
+<when test="(f,or,(f,has,prop,pro),(f,role,admin))">
+
+  <call_service job="go-joe-read">
+    <file id="joe-in-store">(dir,status)ic-backup-wish.xml</file>  
+  </call_service>
+  
+  <choose>    
+    <when test="(f,role,admin)">
+      <tk label="Backup for Administrators">
+      <tk id="bu-user-do"
+          label="Make a backup of: "
+          type="sel"
+          flag="nono">
+         <sel label="Pro: (f,upper,(f,vob,prop,pro))"
+              test="(f,has,prop,pro)">bu-pro</sel> 
+              
+         <sel label="App: (f,upper,(f,vob,prop,app))"
+              test="(f,and,(f,has,prop,app),(f,role,admin))">bu-app</sel> 
+         <sel label="Srv: Services"
+              test="(f,role,admin)">bu-services</sel>  
+         <sel label="... or see project-backups"
+              test="(f,has,prop,pro)">bu-see</sel>                       
+
+      </tk>
+      </tk>    
+    </when>
+    <otherwise>
+      <tk label="Project Backup">
+      <tk id="bu-user-do"
+          label="Project: (f,upper,(f,vob,prop,pro))"
+          type="sel"
+          flag="nono">
+         <sel label="Make a backup of (f,upper,(f,vob,prop,pro))"
+              test="(f,has,prop,pro)">bu-pro</sel>          
+         <sel label="See backups"
+              test="(f,has,prop,pro)">bu-see</sel>
+      </tk>
+      </tk>    
+    </otherwise>
+  </choose>
+
+
+  <call_service job="go-joe-write-srv">
+    <file id="joe-in-store">(dir,status)ic-backup-wish.xml</file>   
+    <prop id="joe-in-regex">bu-user-do</prop>
+  </call_service>  
+    
+  <choose>
+    <when test="(f,eq_text,bu-pro,(prop,bu-user-do))">
+      <call_service 
+          job="Backup: Project"
+          flag="arrow"/>     
+    </when>
+    <when test="(f,eq_text,bu-app,(prop,bu-user-do))">
+      <call_service 
+          job="Backup: Application"
+          flag="arrow"/>     
+    </when> 
+    <when test="(f,eq_text,bu-services,(prop,bu-user-do))">
+      <call_service 
+          job="Backup: Services"
+          flag="arrow"/>     
+    </when>       
+    <when test="(f,eq_text,bu-see,(prop,bu-user-do))">
+      <call_service 
+          job="See Project Backups"
+          flag="arrow"/>     
+    </when>    
+  </choose>
+      
+</when>
+<otherwise>
+  <ti label="Sorry(e:s) no project">
+  <ti>Select a project (f,when,(f,role,admin),or application,) to make a backup ...</ti>
+  </ti>
+ 
+</otherwise>
+</choose>
+  
+</job>
+
+<job id="Backup 4 Admins" joblevel="ws" role="admin">
+<call_service job="make-static-project"/>
+<ti_space height="10px" />
+  <when test="(f,has,prop,pro)">
+    <ti label="Project (f,html,b,open)(prop,pro)(f,html,b,close)" type="rec">
+
+      <ti label="Pro:"
+          type="call_service"
+          job="Backup: Project"
+          flag="arrow"
+          xexplain="(f,upper,(prop,pro))"
+          explain="Do backup [ (prop,pro) ]">
+      </ti> 
+      <ti></ti>
+      <ti label="Pro:"
+          type="call_service" 
+          job="See Project Backups"
+          explain="See backups"
+          flag="arrow"
+          test="(f,has,prop,pro)"/>   
+      <ti></ti>
+      <ti type="call_service" 
+          job="Project"
+          explain="Manage project"
+          flag="arrow"
+          test="(f,has,prop,pro)"/>                     
+    </ti>
+    <ti_space height="3px"/>
+  </when>
+
+  <when test="(f,has,prop,app)">
+    <ti label="App (f,html,b,open)(prop,app)(f,html,b,close)" type="rec">
+
+      <ti type="call_service"
+          job="Backup: Application"
+          flag="arrow"
+          explain="Do backup [ (prop,app) ]"
+          xexplain="(f,upper,(prop,app))">
+      </ti> 
+      <ti></ti>
+      <ti type="call_service" 
+          job="See Application Backups"
+          explain="See backups"
+          flag="arrow"/>      
+          
+      <ti></ti>
+      <ti type="call_service" 
+          job="Application"
+          explain="Manage application"
+          flag="arrow"/>                            
+    </ti>  
+    <ti_space height="3px"/>
+  
+  </when>
+  <ti_hr/>
+  <ti label="Services" type="rec">
+
+    <ti type="call_service"
+        job="Backup: Services"   
+        explain="Do backup services"
+        flag="arrow"/> 
+    <ti></ti>    
+    <ti type="call_service" 
+        job="See Service Backups"
+        explain="See backups"
+        flag="arrow"/>     
+    <ti></ti>    
+    <ti type="call_service" 
+        job="Services"
+        explain="Manage services"
+        flag="arrow"/>              
+  </ti>
+     <when test="(f,role,admin)">
+    <ti_hr/>
+    <ti label="Backup Trailer"/>
+    <ti labxel=" "
+        type="call_service" 
+        job="Backup-Trailer Conf?"
+        explain="See Trailer"
+        test="(f,role,admin)"/> 
+              
+    <ti labxel=" "
+        type="call_service"
+        job="Backup-Trailer Conf"
+        explain="Declare Trailer"
+        test="(f,role,admin)">
+    </ti>    
+    </when>
+</job>
+
+<!--
+<job id="Backup ..." joblevel="ws">
+
+<choose>
+<when test="(f,role,expert)">
+    <ti label=" " type="rec">
+      <ti>Make a</ti> 
+      <ti> </ti>
+      <ti/>         
+    </ti>
+  <when test="(f,has,prop,pro)">
+    <ti label="Project (f,html,b,open)(prop,pro)(f,html,b,close)" type="rec">
+
+      <ti label="Pro:"
+          type="call_service"
+          job="Backup: Project"
+          flag="arrow"
+          xexplain="(f,upper,(prop,pro))"
+          explain="Project Backup">
+      </ti> 
+      <ti></ti>
+      <ti label="Pro:"
+          type="call_service" 
+          job="See Project Backups"
+          explain="See backups"
+          flag="arrow"
+          test="(f,has,prop,pro)"/>         
+    </ti>
+    <ti_space height="3px"/>
+  </when>
+
+  <when test="(f,has,prop,app)">
+    <ti label="App (f,html,b,open)(prop,app)(f,html,b,close)" type="rec">
+
+      <ti type="call_service"
+          job="Backup: Application"
+          flag="arrow"
+          explain="Application Backup"
+          xexplain="(f,upper,(prop,app))">
+      </ti> 
+      <ti></ti>
+      <ti type="call_service" 
+          job="See Application Backups"
+          explain="See backups"
+          flag="arrow"/>                  
+    </ti>  
+    <ti_space height="3px"/>
+  
+  </when>
+  <ti_hr/>
+  <ti label="Services" type="rec">
+
+    <ti type="call_service"
+        job="Backup: Services"
+        explain="Service Backup"
+        flag="arrow"/> 
+    <ti></ti>    
+    <ti type="call_service" 
+        job="See Service Backups"
+        explain="See backups"
+        flag="arrow"/>         
+  </ti>
+</when>
+<when test="(f,has,prop,pro)">
+  <ti label="Project Backup"/>
+      <ti type="call_service"
+          job="Backup: Project"
+          explain="Make a backup of project '(prop,pro)'">
+      </ti> 
+      <ti_space height="8px" />
+      
+      <call_service 
+          job="See Project Backups"
+          explain="See Backups"
+          flag="arrow"/> 
+</when>
+<otherwise>
+  <ti>Select a project to make a backup ...</ti>
+ 
+</otherwise>
+</choose>
+
+  <when test="(f,role,admin)">
+    <ti_hr/>
+    <ti label="Backup Trailer"/>
+    <ti labxel=" "
+        type="call_service" 
+        job="Backup-Trailer Conf?"
+        explain="See Trailer"
+        test="(f,role,admin)"/> 
+              
+    <ti labxel=" "
+        type="call_service"
+        job="Backup-Trailer Conf"
+        explain="Declare Trailer"
+        test="(f,role,admin)">
+    </ti>  
+  </when>
+  
+
+  
+</job>
+
+<job id="Backup!">
+
+
+  <tk label="Backup">
+  
+  	<tk id="bu-type" 
+  		type="sel" 
+  		flag="nono"
+  		label="Making a backup of what?">
+  	  <sel label="Project: [ (f,vob,prop,pro) ]" 
+  			   test="(f,exists,prop,pro)">pro</sel>
+  	  <sel label="Application: [ (f,vob,prop,app) ]" 
+  			   test="(f,and,(f,role,expert),(f,exists,prop,pro))">app</sel>
+  	  <sel label="Services:" 
+  			   test="(f,role,admin)">services</sel>
+  		
+  	</tk>
+  </tk>
+	  
+  <choose>
+    <when test="(f,eq_text,pro,(prop,bu-type))">
+      <call_service job="Backup: Project"/>
+    </when>
+    <when test="(f,eq_text,app,(prop,bu-type))">
+      <call_service job="Backup: Application"/>
+    </when>
+    <when test="(f,eq_text,service,(prop,bu-type))">
+      <call_service job="Backup: Services"/>
+    </when>  
+  </choose>      
+ 
+
+</job>
+
+<job id="Backup Quick" joblevel="app" role="expert">
+
+  <choose>
+    <when test="(f,has,prop,pro)">
+      <tk label="Quick Backup">
+        <tk id="what" type="sel" flag="nono" x="pro" label="Making a backup of what?">
+          <sel label="Project: [ (prop,pro) ]">pro</sel>
+          <sel label="Application: [ (prop,app) ]">app</sel>
+        </tk>
+      </tk>
+      <call_service job="Backup: Project" test="(f,eq,pro,(prop,what))"/>
+      <call_service job="Backup: Application" test="(f,eq,app,(prop,what))"/>
+    </when>
+    <when test="(f,has,prop,app)">
+      <call_service job="Backup: Application"/>
+    </when>    
+    <otherwise>
+      <ti>Select a project or an application to make a backup</ti>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="Backup Quick?" joblevel="ws">
+
+  <ti label="About: Backup Quick">
+    <ti type="ul">()Makes a backup of the current App or Project()</ti>
+    </ti>
+</job>
+
+<job id="Backup ...?" joblevel="ws">
+
+  <ti label="About: Backup"/>
+    
+  <ti type="ul">If you dont see the application or project you want to make a project of you have to ...</ti>
+  <ti type="ul">... select the application or project in the item-list on the left</ti>    
+</job>
+
+-->
+
+
+
+
+<job id="backup-trailer-read" role="hidden">
+  <choose>
+    <when test="(f,exists_file,(dir,services)sys_backup_trailer_joe.xml)">
+      <call_service job="go-joe-read">
+        <file id="joe-in-store">(dir,services)sys_backup_trailer_joe.xml</file>  
+      </call_service>
+    </when>
+    <otherwise>
+      <prop id="bu-trailer-check" x="?summers-!can-be-hot-and-0cold-nbr-of-gods"/>
+    </otherwise>
+  </choose>
+  
+  <when test="(f,not,(f,has,prop,bu-trailer-check))">
+    <throw>the file '(dir,services)sys_backup_trailer_joe.xml' seems to exists already and be used by something/body else ...</throw>
+  </when>
+  
+  <when test="(f,not,(f,eq,?summers-!can-be-hot-and-0cold-nbr-of-gods,(prop,bu-trailer-check)))">
+    <throw>the file '(dir,services)sys_backup_trailer_joe.xml' seems to exists already and be used by something/body else ...</throw>
+  </when>  
+
+</job>
+
+<job id="backup-trailer-write" role="hidden">
+  <tk label="Sure to save that? ">
+    <tk type="msg" x="(prop,bu-trailer-steps)" msg_type="w"/>
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <file id="joe-in-store">(dir,services)sys_backup_trailer_joe.xml</file> 
+    <prop id="joe-in-regex">bu-trailer-steps|bu-trailer-check</prop>
+  </call_service>  
+</job>
+
+<job id="Backup-Trailer Conf?" joblevel="ws" role="test">
+  <call_service job="backup-trailer-read" />
+  
+  <choose>
+    <when test="(f,has,prop,bu-trailer-steps)">
+      <ti label="Executed after app(e:s) prop or service-backups"/>
+      <!-- <ti>(prop,bu-trailer-steps)</ti> -->
+      <ti flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,(prop,bu-trailer-steps))&lt;font&gt;</ti>
+      <ti_hr/>
+      <ti type="file" label="File:" x="(dir,services)sys_backup_trailer_joe.xml"/>
+      <ti label="Tip:" x="Making a backup of the services makes also a backup of that!"/>    
+    </when>
+    <otherwise>
+      <ti>No Backup-Trailer defined</ti>
+    </otherwise>
+  </choose>
+  
+
+</job>
+
+<job id="Backup-Trailer Conf" joblevel="ws" role="hidden">
+  <call_service job="backup-trailer-read" />
+  <tk label="Backup-Trailer Configuration" flag="print print_with_tips">
+  <tk id="bu-trailer-steps"
+      type="textblock"
+      flag="big"
+      label="Job-Steps"
+      tip="Thats going to be executed after every backup system-backup&#xA;Parameters are:&#xA;&#xA;(e:o)prop(e:s)type(e:c) has 'srv' for servicess(e:s) 'app' for application or 'pro' for project-backup&#xA;&#xA;(e:o)dir(e:s)bt-dir(e:c) is the lately created backup-directory&#xA;&#xA;(e:o)prop(e:s)bt-app(e:c) has the application id&#xA;&#xA;(e:o)prop(e:s)bt-pro(e:c) has the project id&#xA;&#xA;(e:o)prop(e:s)computer(e:c) holds the id of the current computer&#xA;&#xA;!! Note !!&#xA;this thing is new(e:s) so when you create your own variables let them all begin with an $ so you dont overwrite something."/>
+  </tk>
+  <call_service job="backup-trailer-write" />  
+  
+</job>
+
+<job id="backup-trailer" role="hidden">
+  <need>(dir,bt-dir)</need>
+  <need>(prop,bt-type)</need>
+  <tp>Running Backup Trailer ...</tp>
+  
+  <call_service job="backup-trailer-read" />
+  
+  <when test="(f,has,prop,bu-trailer-steps)">
+    <file id="bt-temp" x="(dir,filetemp)bu-trailer.xrs"/>
+      <create_file out="(file,bt-temp)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>(prop,bu-trailer-steps)</steps>]]></create_file>
+    <ti label=" " key="(f,html,b,open)...executing backup-trailer(f,html,b,close)"/>
+    <include file="(file,bt-temp)"/>
+  </when>
+
+</job>
+
+<job id="Backup: Services" joblevel="ws" role="hidden">
+  <dir  id="backup_sc"
+        x="(dir,backup)srv-services" />
+  
+  <mkdir dir="(dir,backup_sc)"/>
+  
+  <sequence id="buseq" file="(dir,backup_sc)sequence.xml" len="4" act="open"/>
+    
+  <tk label="Make Service Backup">
+    <tk id="tit" 
+        label="Backup Title" 
+        x="" tip="()Give this backup a name, if you want!()"
+        rule="filename_with_blanks"/>
+  </tk>
+  
+  <prop id="tit_add"></prop>
+  <when test="(f,not,(f,eq,,(prop,tit)))">
+    <prop id="tit_add">.(prop,tit)</prop>
+  </when>
+  
+  <sequence id="buseq" act="next"/>
+    
+  <dir id="backup_sc_date" 
+        x="(dir,backup_sc)(f,sequence,buseq)_(prop,backup_moment)(prop,tit_add)" />
+  
+  <tp>Create directories...</tp>
+  <mkdir dir="(dir,backup_sc)" />
+  <mkdir dir="(dir,backup_sc_date)" /> 
+  <copy uri="(dir,services)" touri="(dir,backup_sc_date)" />
+ 
+
+  <ti label="Service Backup performed"> 
+    <ti type="dir" label="From:">(dir,services)</ti>  
+    <ti type="dir" label="To:">(dir,backup_sc_date)</ti>
+  </ti>
+  
+  <call_service job="backup-trailer">
+    <dir id="bt-dir" x="(dir,backup_sc_date)" />
+    <prop id="bt-type" x="srv" />
+  </call_service>
+
+  <ti label="Next">
+    <ti type="call_service" 
+        job="archify_backup" 
+        explain="Export this Service-Backup to a zip">
+      <dir  id="eb_dir"   x="(dir,backup_sc_date)"/>
+      <file id="eb_file"  x="(dir,workspace)SERVICES_(prop,backup_moment).zip"/>
+      <prop id="eb_title" x="Services"/>
+    </ti>
+    <ti type="call_service" 
+        job="copy_backup" 
+        explain="Copy this Service-Backup to a folder">
+      <dir  id="eb_dir"   x="(dir,backup_sc_date)"/>
+      <prop id="eb_key"  x="SERVICES_(prop,backup_moment)"/>
+      <prop id="eb_title" x="Services"/>
+    </ti>
+    <ti type="call_service"
+        job="See Service Backups"/>
+    <ti type="call_service" 
+        job="reflect-services-to-lgh" 
+        explain="Reflect services to local GH-Repo"
+        />    
+    <!-- 
+    <ti type="call_service" job="create_latest_backup" explain="Create Latest Directory" test="(f,role,test)">
+      <dir  id="eb_dir"   x="(dir,backup_sc_date)"/>
+      <prop id="eb_key"  x="SERVICES_(prop,backup_moment)"/>
+      <prop id="eb_title" x="Services"/>
+    </ti>
+    -->
+    
+  </ti>
+  
+</job>
+
+
+
+<job id="Backup: Application" joblevel="app" role="hidden">
+  <need>(prop,app)</need>
+  <prop id="app2" x="(prop,app)"/>
+  <dir  id="app2" x="(dir,app)"/>
+  <call_service job="Backup: Application2"/>
+</job>
+
+<job id="See Application Backups" joblevel="app" role="hidden">
+  <dir id="with">(dir,backup)app-(prop,app)</dir>
+  <prop id="backup_label">Application (prop,app)</prop>
+  <prop id="pro_temp">(prop,app)</prop>
+  <call_service job="See Some Backups"/>
+</job>
+
+<job id="See Project Backups" joblevel="pro" role="hidden">
+  <call_service job="make-static-project"/>  
+  <dir id="with">(dir,backup)pro-(prop,pro)-(prop,app)</dir>
+  <prop id="backup_label">Project (prop,pro) / (prop,app)</prop>
+  <prop id="pro_temp">(prop,pro)</prop>
+  <call_service job="See Some Backups"/>  
+</job>
+
+<job id="See Service Backups" joblevel="pro" role="hidden">  
+  <dir id="with">(dir,backup)srv-services</dir>
+  <prop id="backup_label">Services</prop>
+  <prop id="pro_temp">services</prop>
+  <call_service job="See Some Backups"/>   
+</job>
+
+<job id="See Some Backups" joblevel="pro" role="hidden">
+  <need>(dir,with) (prop,backup_label) (prop,pro_temp)</need>
+  
+
+  <dir id="temp-pro-backup">(f,request,dir,new_temp_pro)</dir>
+  
+  <mkdir dir="(dir,temp-pro-backup)"/>
+
+  <dir id="api">(dir,temp-pro-backup)Api</dir> 
+  <mkdir dir="(dir,api)"/> 
+
+
+  <choose>
+    <when test="(f,not,(f,dir_exists,(dir,with)))">
+      <ti>No Backups found</ti>
+    </when>
+    <otherwise>
+      <scan
+        dir="(dir,with)"
+        out="(dir,api)api-dirs.xml"
+        level_limit="1" 
+        field="fn pre post"/>  
+        
+      <print id="o1" out="(dir,api)api-paras.xml" act="open"/>
+      <print id="o1" act="print">&lt;paras limit="20" label="(x,(prop,backup_label))" /&gt;</print>
+      <print id="o1" act="close"/>  
+      
+
+
+      
+      <call_app
+        job="List Backups"
+        app="Backup"
+        pro_dir="(dir,temp-pro-backup)"
+        pro_id="(prop,pro_temp)"
+        flag="silent"/>     
+    </otherwise>
+  </choose>
+ 
+</job>
+
+<job id="Backup: Application2" joblevel="app" role="hidden">
+  <need>(prop,app2) (dir,app2)</need>
+  
+  <!-- file initials -->
+  <dir id="backup_app">(dir,backup)app-(prop,app2)</dir>
+  <mkdir dir="(dir,backup_app)"/>
+  <sequence id="buseq" file="(dir,backup_app)sequence.xml" len="4" act="open"/>   
+      
+  <tk label="Make Application Backup">
+    <tk id="tit" 
+        label="App (f,upper,(prop,app))(e:s) give the backup a name!" 
+        x="" 
+        tip="()Give this backup a name, if you want!()"
+        rule="filename_with_blanks"/>
+  </tk>
+  
+  <prop id="tit_add"></prop>  
+  <when test="(f,has,prop,tit)">
+    <prop id="tit_add">.(prop,tit)</prop>
+  </when>
+  <sequence id="buseq" act="next"/> 
+  <dir id="backup_app_date">(dir,backup_app)(f,sequence,buseq)_(prop,backup_moment)(prop,tit_add)</dir>
+
+  <tp>Create directories ...</tp>
+
+    <mkdir dir="(dir,backup_app)" />
+    <mkdir dir="(dir,backup_app_date)" />           
+
+  
+  <tp>Copy files ...</tp>
+  
+  <file id="sx">(dir,filetemp)app-backup-scan.xml</file>
+  <scan out="(file,sx)" dir="(dir,app2)" level_limit="1" field="fn"/>
+  <ti type="file" x="(file,sx)" test="0"/>
+  
+  <loop id="sx" xml="(file,sx)" xpath="file">
+  	<copy file="(loop,sx,@fn)" tofile="(dir,backup_app_date)(loop,sx)" />
+  	<i>Copy   file (loop,sx)</i>
+  </loop>
+
+  <loop id="sx" xml="(file,sx)" xpath="dir">
+  	<choose>
+  		<when test="(f,contains,(loop,sx,@rpath),nobackup)">
+  			<i>Forget dir  (loop,sx,@ipath)</i>
+  		</when>
+  		<when test="(f,starts_with,(loop,sx,@rpath),pro)">
+  			<i>Forget dir  (loop,sx,@ipath)</i>
+  		</when>
+  		<otherwise>
+  			<i>Copy  dir  (loop,sx,@ipath) ...</i>
+        <copy uri="(dir,app2)(loop,sx,@ipath)" 
+              touri="(dir,backup_app_date)(loop,sx,@ipath)"/>
+
+  		</otherwise>
+  	</choose>	
+  </loop>
+
+  <ti label="Application Backup performed"> 
+    <ti type="dir" label="From:">(dir,app2)</ti>  
+    <ti type="dir" label="To:">(dir,backup_app_date)</ti>
+  </ti>
+  
+  <call_service job="backup-trailer">
+    <dir id="bt-dir" x="(dir,backup_app_date)" />
+    <prop id="bt-type" x="app" />
+    <prop id="bt-app" x="(prop,app2)" />
+  </call_service>  
+  
+
+
+  <ti label="Next">
+    <ti type="call_service" job="archify_backup" explain="Export this Application-Backup to a zip">
+      <dir  id="eb_dir"   x="(dir,backup_app_date)"/>
+      <file id="eb_file"  x="(dir,workspace)APP_(prop,app2)_(prop,backup_moment).zip"/>
+      <prop id="eb_title" x="Application (prop,app2)"/>
+    </ti>
+    <ti type="call_service" job="copy_backup" explain="Copy this Application-Backup to a folder">
+      <dir  id="eb_dir"   x="(dir,backup_app_date)"/>
+      <prop id="eb_key"  x="APP_(prop,app2)_(prop,backup_moment)"/>
+      <prop id="eb_title" x="Application (prop,app2)"/>
+    </ti>
+    <ti type="call_service" job="See Application Backups"/>
+    
+    <ti type="call_service" job="reflect-app-to-lgh" explain="Reflect application to local GH-Repo"
+  xtest="(f,role,admin)">
+      <dir id="app-tu" x="(dir,app2)"/>                       
+      <prop id="app-tu" x="(prop,app2)"/>
+    </ti>    
+        
+    <!-- 
+    <ti type="call_service" job="create_latest_backup" explain="Create Latest Directory" test="(f,role,test)">
+      <dir  id="eb_dir"   x="(dir,backup_app_date)"/>
+      <prop id="eb_key"  x="APP_(prop,app2)_(prop,backup_moment)"/>
+      <prop id="eb_title" x="Application (prop,app2)"/>
+    </ti>   
+    --> 
+  </ti>
+  
+</job>
+
+<job id="Backup: Final" role="hidden">
+  <need>(dir,bf) (prop,bf)</need>
+
+</job>
+
+<job id="Backup: Project" joblevel="pro" role="hidden">
+  <throw test="(f,not,(f,has,prop,pro))">No Project selected(e:s) Backup-Project was quit.</throw>
+  
+  <need>(prop,pro) (prop,app)</need>
+  
+  <when test="(f,eq,(prop,app),Backup)">
+    <tk type="msg" msg="Sure to make a backup of a backup-project ???" msg_type="w"/>
+  </when>
+  
+  <!-- file initials -->
+  <dir id="backup_pro">(dir,backup)pro-(prop,pro)-(prop,app)</dir>
+  <mkdir dir="(dir,backup_pro)"/>
+  <sequence id="buseq" file="(dir,backup_pro)sequence.xml" len="4" act="open"/>
+  <sequence id="buseq" act="next"/>   
+
+  <prop id="tit_add"></prop>
+  <tk label="Make Project Backup">
+    <tk id="tit" 
+        label="project (f,upper,(prop,pro))(e:s) give the backup a name!" 
+        x="" 
+        tip="()Give this backup a name, if you want!()"
+        rule="filename_with_blanks"/>
+  </tk>
+  
+  <when test="(f,has,prop,tit)"> 
+    <prop id="tit_add">.(prop,tit)</prop> 
+  </when>  
+    
+  <dir id="backup_pro_date">(dir,backup_pro)(f,sequence,buseq)_(prop,backup_moment)(prop,tit_add)</dir>
+
+  <tp>Create directories...</tp>
+
+    <mkdir dir="(dir,backup_pro)" />
+    <mkdir dir="(dir,backup_pro_date)" />           
+ 
+  <tp>Copy files...</tp>
+  
+  <copy uri="(dir,pro)" touri="(dir,backup_pro_date)" />
+
+  
+  <ti label="Project Backup performed"> 
+    <ti type="dir" label="From:">(dir,pro)</ti>  
+    <ti type="dir" label="To:">(dir,backup_pro_date)</ti>
+  </ti>
+    
+  
+  <when test="(f,ask,exists_job,(prop,app),sys_project_backup)">
+    <loop while="()(f,not,(f,has,dir,bi-target))()" id="bi" >
+      <when test="(f,not,(f,exists_dir,(dir,backup_pro_date)backup-app-addition-(loop,bi,#i)))">
+        <dir id="bi-target" x="(dir,backup_pro_date)backup-app-addition-(loop,bi,#i)"/>
+      </when>
+    </loop>
+    <tp>Executing backup-addition of application ...</tp>
+    <ti label=" " key="(f,html,b,open)... executing backup-addition of application(f,html,b,close)"/>
+    <ti_break/>
+    <call_app
+      job="sys_project_backup"
+      app="(prop,app)"
+      pro_id="(prop,pro)"
+      pro_dir="(dir,pro)"
+      flag="silent">
+      <dir id="my-backup-space" x="(dir,bi-target)"/>
+      <dir id="the-backup" x="(dir,backup_pro_date)"/>
+    </call_app>
+
+  </when>
+  
+  <call_service job="backup-trailer">
+    <dir id="bt-dir" x="(dir,backup_pro_date)" />
+    <prop id="bt-type" x="pro" />
+    <prop id="bt-app" x="(prop,app)" />
+    <prop id="bt-pro" x="(prop,pro)" />
+  </call_service>    
+    
+
+
+  <ti label="Next">
+    <ti type="call_service" job="archify_backup" explain="Export this Project-Backup to a zip">
+      <dir  id="eb_dir"   x="(dir,backup_pro_date)"/>
+      <file id="eb_file"  x="(dir,workspace)PRO_(prop,pro)_(prop,app)_(prop,backup_moment).zip"/>
+      <prop id="eb_title" x="Project (prop,pro)/(prop,app)"/>
+    </ti>
+    <ti type="call_service" job="copy_backup" explain="Copy this Project-Backup to a folder">
+      <dir  id="eb_dir"   x="(dir,backup_pro_date)"/>
+      <prop id="eb_key"  x="PRO_(prop,pro)_(prop,app)_(prop,backup_moment)"/>
+      <prop id="eb_title" x="Project (prop,pro)/(prop,app)"/>
+    </ti>    
+    <ti type="call_service" job="See Project Backups"/>    
+  </ti>
+  
+</job>
+
+
+
+
+
+<job id="copy_backup" role="hidden">
+  <!-- Parameter Check -->
+  <need>(dir,eb_dir) (prop,eb_title) (prop,eb_key)</need>
+  <tk type="dir" id="target" label="Target Directory" regex=".+"/>
+  
+  <choose>
+    <when test="(f,dir_exists,(dir,target))">
+      <dir id="target2">(dir,target)(prop,eb_key)</dir>
+      <copy uri="(dir,eb_dir)" touri="(dir,target2)"/>
+
+      <ti label="Did Copy Backup">
+        <ti label="Of:" >(prop,eb_title)</ti>
+        <ti label="From:" type="dir">(dir,eb_dir)</ti>
+        <ti label="To:" type="dir">(dir,target2)</ti>
+      </ti>
+    </when>
+    <otherwise>
+      <throw>Target Directory must exist</throw>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="create_latest_backup" role="hidden">
+  <!-- Parameter Check -->
+  <need>(dir,eb_dir) (prop,eb_title) (prop,eb_key)</need>
+  <interpreter watch="0" />
+  <prop id="x1" x="(f,dir_of_dir,(dir,eb_dir))latest" />
+  
+  <dump flag="ti" test="0"/>
+  <tk label="Going to happen: COPY" flag="sum_only">
+    <tk type="dir" id="copy_latest_from" x="(dir,eb_dir)" label="From"/>
+    <tk type="dir" id="copy_latest_to" x="(prop,x1)" label="To"/>
+  </tk>
+  <!-- hallo -->
+  
+  <when test="(f,exists_dir,(dir,copy_latest_to))">
+    <tk type="msg" msg="Going to clear (dir,copy_latest_to)"></tk>
+ 
+      <delete dir="(dir,copy_latest_to)"/>
+
+  </when>
+  <copy uri="(dir,copy_latest_from)" touri="(dir,copy_latest_to)"/>
+
+  <ti label="Did Create Latest">
+    <ti label="From:" type="dir">(dir,copy_latest_from)</ti>
+    <ti label="To:" type="dir">(dir,copy_latest_to)</ti>
+  </ti>
+      
+</job>
+  
+<job id="archify_backup" role="hidden">
+  <!-- Parameter Check -->
+  <need>(dir,eb_dir) (file,eb_file) (prop,eb_title)</need>
+  <tk type="msg" msg="going to .." test="0"/>
+  <file id="joe-in-store">(dir,status)archifier.lsx</file>
+  <call_service job="go-joe-read"/>
+  <!-- confirm destination file -->
+  <when test="(f,exists,dir,lastdest)">
+    <file id="eb_file">(dir,lastdest)(f,name_of_file,(file,eb_file))</file>
+  </when>
+
+  <tk id="eb_file" type="file" flag="save" label="Archive to create"/>
+  
+  <dir id="lastdest">(f,dir_of_file,(file,eb_file))</dir>
+  <prop id="joe-in-regex">lastdest</prop>
+  <file id="joe-in-store">(dir,status)archifier.lsx</file>
+  
+  <call_service job="go-joe-write-srv"/>
+
+  <!-- create archive -->
+  <tp>Create zip for (prop,eb_title)...</tp>
+
+    <zip  destfile="(f,dir,classic,(file,eb_file))"
+          basedir="(f,dir,classic,(dir,eb_dir))" />
+
+  
+  <!-- browser message -->
+  <ti label="Archive '(prop,eb_title)' created">
+    <ti type="file" label="Written:" x="(file,eb_file)" />
+  </ti>
+</job>
+
+<job id="archify_backup_untl_2014_08_02" role="hidden">
+  <!-- Parameter Check -->
+  <need>(dir,eb_dir) (file,eb_file) (prop,eb_title)</need>
+  <when test="(f,not,(f,exists,dir,eb_dir))">
+    <throw>dir 'eb_dir' requested</throw>
+  </when>
+  <when test="(f,not,(f,exists,file,eb_file))">
+    <throw>file 'eb_file' requested</throw>
+  </when>
+  <when test="(f,not,(f,exists,prop,eb_title))">
+    <throw>prop 'eb_title' requested</throw>
+  </when>
+
+  <!-- confirm destination file -->
+  <tk id="eb_file" type="file" flag="save" label="Archive to create"/>
+
+  <!-- create archive -->
+  <tp>Create zip for (prop,eb_title)...</tp>
+
+    <zip  destfile="(f,dir,classic,(file,eb_file))"
+          basedir="(f,dir,classic,(dir,eb_dir))" />
+
+  
+  <!-- browser message -->
+  <ti label="Archive '(prop,eb_title)' created">
+    <ti type="file" label="Written:" x="(file,eb_file)" />
+  </ti>
+</job>
+
+<job id="import_backup" role="hidden">
+  <tp>Parameter Check</tp>
+  <when test="(f,not,(f,exists,dir,ib_dir))">
+    <throw>dir 'ib_dir' requested</throw>
+  </when>
+  <when test="(f,not,(f,exists,prop,ib_title))">
+    <throw>prop 'ib_title' requested</throw>
+  </when>
+  <when test="(f,not,(f,exists,prop,ib_prefix))">
+    <throw>prop 'ib_prefix' requested</throw>
+  </when>
+  
+  <tp>Get Import Information</tp>
+  <tk label="Enter Import Information" flag="sum">
+    <tk id="ib_file" type="file" label="(prop,ib_title)-Archive to import" base="(dir,workspace)" extension=".zip"/>
+    <ti id="ib_name" type="text" label="New Name for (prop,ib_title)"/>
+  </tk>
+
+  <dir id="new">(dir,ib_dir)(prop,ib_prefix)(prop,ib_name)</dir>
+  <when test="(f,file_exists,(dir,new))">
+    <throw>A Directory '(dir,new)' exists already. Try again!</throw>
+  </when>
+
+  <tp>Unzip Archive (dir,new)...</tp>
+    <mkdir dir="(dir,new)"/>  
+
+
+    <unzip  file="(file,ib_file)" 
+            todir="(dir,new)"/>
+
+  
+  <!-- resart -->
+  <restart app="(prop,app)" pro="(prop,ib_name)"/>
+
+</job>   
+</jobs>

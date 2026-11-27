@@ -1,0 +1,1105 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+<job id="Compile Java?">  
+  <call_job job="do-compile-java?"/>
+</job>
+
+<job id="Compile Java" role="test">  
+  <call_job job="do-compile-java"/>
+</job>
+
+<job id="do-compile-java?" role="hidden">  
+  <call_job job="tk_javacp_read"/>
+  <ti type="dir" x="(dir,pro)compile-(prop,javacp_app_id)"/>
+</job>
+
+<job id="do-compile-java-blind" role="hidden">  
+  <ti_hr/>
+  <ti>Doing java-compile [(prop,name)]</ti>
+
+  <ti_flush/>
+  
+  <call_job job="connect"/>
+  <call_job job="want-compiler"/>
+  <call_job job="load">
+    <prop id="load-type" x="parameters"/>
+    <prop id="paras-app-name" x="(prop,name)"/>
+    <prop id="paras-app-id" x="(prop,name)"/>
+    <prop id="paras-app-gh-path" x="(prop,xr-java-items)/(prop,name)"/>
+  </call_job>
+
+  <call_job job="compile-central"/>
+  <call_job job="go-build"/>
+    
+</job>
+
+<job id="do-compile-java" role="hidden">  
+  <call_job job="tk_javacp_edit"/>
+  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="parameters"/>
+    <prop id="paras-app-name" x="(prop,javacp_app_id)"/>
+    <prop id="paras-app-id" x="(prop,javacp_app_id)"/>
+    <prop id="paras-app-gh-path" x="(prop,javacp_app_path)"/>
+  </call_job>
+
+  <call_job job="compile-central"/>
+  <call_job job="go-build"/>
+    
+</job>
+
+<job id="Generate XmlRobot" tip="Compiles and Builds XmlRobot from scratch based on github" role="test">
+  <call_job job="do-create-project" />
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)user-data-generate-xmlrobot.xrs"/>
+    <prop id="joe-in-regex" x=".*"/>
+  </call_job>  
+  <tk label="Should I ask for details?">
+    <tk id="ask-questions" x="0" label="Ask Questions" type="sel" flag="nono"
+        tip="()During the generation a lot of questions may be asked. You can turn that off.()">
+        <sel label="Just do it and DON&apos;T ASK!">0</sel>        
+        <sel label="Ask all these questions">1</sel>
+    </tk>
+  </tk>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)user-data-generate-xmlrobot.xrs"/>
+    <prop id="joe-in-regex" x="ask-questions"/>
+  </call_job>    
+  <call_job job="want-compiler"/> 
+  
+  <call_job job="comp-build-ant"/> 
+  <call_job job="comp-build-poi"/> 
+  <call_job job="comp-build-core"/>   
+  <call_job job="Download Material"/>
+  <call_job job="Finish XmlRobot"/>
+</job>
+
+<job id="comp-build-core" role="hidden">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="core"/>
+  </call_job>
+  <call_job job="compile-central"/>
+  
+  <call_job job="go-build"/>
+</job>
+
+<job id="comp-build-ant" role="hidden">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="ant"/>
+  </call_job>
+
+  <call_job job="compile-central"/>
+  <call_job job="go-build"/>
+</job>
+
+<job id="comp-build-poi" role="hidden">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="poi"/>
+  </call_job>
+
+  <call_job job="compile-central"/>
+  <call_job job="go-build"/>
+</job>
+
+<job id="comp-build-panorama" role="hidden">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="panorama"/>
+  </call_job>
+
+  <call_job job="compile-central"/>
+  <call_job job="go-build"/>
+</job>
+
+<job id="comp-build-compare" role="hidden">  
+  <call_job job="connect"/>
+  <call_job job="load">
+    <prop id="load-type" x="compare"/>
+  </call_job>
+
+  <call_job job="compile-central"/>
+  <call_job job="go-build"/>
+</job>
+
+
+<job id="Compile Core" pri="10" role="test" 
+     tip="Sub-Step #1 of Generate XmlRobot">  
+  <call_job job="comp-build-core"/>
+</job>
+
+<job id="Compile Ant" pri="10" role="test"
+tip="Sub-Step #2 of Generate XmlRobot">  
+  <call_job job="comp-build-ant"/>
+</job>
+
+<job id="Compile Poi" pri="10" role="test"
+tip="Sub-Step #3 of Generate XmlRobot">  
+  <call_job job="comp-build-poi"/>
+</job>
+
+<job id="Compile More ..." pri="10" role="test"
+tip="Sub-Step #3 of Generate XmlRobot">  
+  <call_job job="Compile-Some-Libs"/>
+</job>
+
+
+
+<job id="run-the-prolog-steps" role="hidden">
+  <need>(prop,steps-to-run)</need>
+  <file id="run-the-prolog-steps">(dir,filetemp)prolog-steps-to-run-(f,time)-(f,random_text,5).xml</file>
+  <create_file out="(file,run-the-prolog-steps)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>(prop,steps-to-run)</steps>]]></create_file>
+  <include file="(file,run-the-prolog-steps)"/>
+  <remove id="run-the-prolog-steps" type="file"/>
+  <remove id="steps-to-run" type="prop"/>
+</job>
+
+
+<job id="compile-central" role="hidden">
+  <need default="1">(prop,ask-questions)</need>     
+  
+  <!-- messanger on -->
+  <throw test="(f,exists,prop,ist-mein-messager)">Programmierfehler: prop ist-mein-messager existert und sollte es nicht</throw>
+  <choose>
+    <when test="(f,exists,coop2,_pr,messages)">
+      <prop id="ist-mein-messager">0</prop>    
+    </when>
+    <otherwise>
+      <prop id="ist-mein-messager">1</prop>
+      <file id="messages">(dir,working)messages.txt</file>
+      <print id="messages" out="(file,messages)" act="open"/>
+      
+    </otherwise>  
+  </choose> 
+  
+  <!-- prolog-specdef -->
+  <ti label="Prolog-Specdef" type="file">(file,store-prolog-specdef)</ti>
+  <choose>
+    <when test="(f,exists_file,(file,store-prolog-specdef))">
+      <call_job job="tk_prol_read">
+         <file id="prol-data" x="(file,store-prolog-specdef)"/>
+      </call_job>
+      <choose>
+        <when test="(f,eq_text,steps,(prop,prol_typus))">
+          <call_job job="run-the-prolog-steps">
+            <prop id="steps-to-run">(prop,prol_steps)</prop>
+          </call_job>       
+        </when>
+        <when test="(f,eq_text,link,(prop,prol_typus))">
+          <remove id="prol_typus" type="prop" flag="catch"/>
+          <remove id="prol_steps" type="prop" flag="catch"/>
+          <file id="referenced-prolog-specdef">(file,prol_link)</file>
+          <remove id="prol_link" type="file" flag="catch"/>
+          
+          <call_job job="tk_prol_read">
+             <file id="prol-data" x="(file,referenced-prolog-specdef)"/>
+          </call_job>          
+          
+          <call_job job="run-the-prolog-steps">
+            <prop id="steps-to-run">(prop,prol_steps)</prop>
+          </call_job>       
+        </when>        
+      
+      </choose>
+    </when>
+    <otherwise>
+      <print id="messages" act="print">Kein File 'prolog-specdef.xml' gefunden. App Arcadia. Project (prop,pro). Gesucht: (file,store-prolog-specdef)</print>
+    </otherwise>
+  </choose>
+
+  <!-- eingaben -->
+  <mkdir dir="(dir,cc)"/>  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,store-compile)"/>
+    <prop id="joe-in-regex" x="d1|d2|d3|d3First|d4|d5|d2b|d8|d2b|d2c|d2t|d2tc|dReplace"/>
+  </call_job>
+  
+  <!-- java java files -->
+  <need default="1">(prop,d1)</need>
+  <need default="1">(prop,d2)</need>
+  <need default="1">(prop,d2t)</need>
+  <need default="">(prop,d2tc)</need>
+  <need default="1">(prop,d2b)</need>
+  <need default="1">(prop,d2c)</need>
+  <need default="1">(prop,d3)</need>
+  <need default="1">(prop,d3First)</need>
+  <need default="1">(prop,d4)</need>
+  <need default="1">(prop,d5)</need>
+  <need default="0">(prop,d8)</need>
+  <prop id="source-update-jobs-tip">()Liste von jobs mit space separiert zwecks update der java-sourcen. Die Reihenfolge wird bei der Ausfuehrung der updates eingehalten:
+   
+{reco-core}: xmlrobot-core  /*[requo-crypto]*/ 
+{reco-lib}: extension-libs fuer reco /*[requo-timer]*/ /*[requo-customer]*/ 32503676400000L... ablaufdatum
+{reco-hibiscus}: spezifisches fuer hibiscus-reco-lib 
+
+{echnaton}: echnaton-core, verwendet auch echnaton-commons ... 
+{echnaton-web}: echnaton-web, verwendet auch echnaton-commons ...
+{echnaton-hibiscus}: spezifisches fuer hibiscus-echnaton-lib, verwendet die selbe codebases wie reco-hibiscus
+{echnaton-lib}: allgemeines fuer echnaton-libraries, Ersetzt: /*[requo-timer]*/ &quot;20300101&quot; 32503676400000L und /*[requo-customer]*/. Es wird davon ausgegangen dass die lib eine kopie einer reco-lib ist.
+ 
+echnaton-commons (kann nicht solo inkludiert werden)
+  /*[echnaton-timer]*/ 
+  /*[echnaton-customer]*/
+  /*[echnaton-crypto]*/
+  20300101 ... als einfaches ende-datum()</prop>
+  <prop id="d2t">0</prop>
+  <ti_hr style="2"/>
+  <ti_hr/>
+  <ti label="Compiling" type="rec">
+    <ti> </ti>
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>    
+    <ti> </ti>
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+  </ti>
+  <ti label=" " type="rec">
+
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>    
+    <ti> </ti>
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+    <ti> </ti>    
+  </ti>  
+  <ti label=" " type="rec">
+    <ti> </ti>
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>    
+    <ti> </ti>
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+  </ti>
+  <ti label=" " type="rec">
+
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>
+    <ti> </ti>
+    <ti>(f,html,i,o)(prop,itemname)(f,html,i,o)</ti>    
+    <ti> </ti>
+    <ti>(f,html,b,o)(prop,itemname)(f,html,b,o)</ti>
+    <ti> </ti>    
+  </ti>    
+  <ti_hr style="2"/>
+  <ti_hr/>
+  <ti_break/>
+  <need default="1">(prop,ac-ask-p2-std)</need>
+  <tk label="Compile: (prop,itemname) " 
+      flag="(f,when,(prop,ask-questions),sum print,print_only)"
+      test="(prop,ac-ask-p2-std)">
+  <tk id="d1" label="download material ?" type="bool" flag=" no_is_0" 
+      test_first="0"/>
+  <tk id="d2" label="Download java-sources ?" type="bool"  flag=" no_is_0" 
+      test_first="0"/> 
+  <!--  
+  <tk id="d2t" label="Timestamp java-sources ?" type="bool"  flag=" no_is_0" 
+  tip="hier wird im source nach /*[timer]*/ gesucht und dann durch das in der konfig definierte enddatum ersetzt ... "
+      test_first="0"/>    
+      -->
+  <tk id="dReplace" label="Source-Update-Jobs" type="textblock"  tip="(prop,source-update-jobs-tip)" 
+      test_first="0"/>    
+            
+  <tk test="0" id="d2tc" label="App decoderXX"  tip="ein 16-stelliges schluesselding - eg  q=AKVrst4?Fn4*X-" test_first="0"/>                   
+  <tk id="d2b" label="Download 3rd-party-bins?" type="bool"  flag=" no_is_0" 
+      test_first="0"/>
+  <tk id="d2c" label="Extract downloaded 3rd-party-bins?" type="bool"  flag=" no_is_0" 
+      test_first="0"/>  
+      
+  <tk id="d3First" label="Include FirstParty-Lib ?" type="bool"  flag=" no_is_0" 
+      test_first="0"/>
+                
+  <tk id="d3" label="Compile ?" type="bool"  flag=" no_is_0" 
+      test_first="0"/>
+  <tk id="d4" label="Package jar-items ?" type="bool" flag=" no_is_0" 
+      test_first="0"/>      
+  <tk id="d5" label="Build ?" type="bool" flag=" no_is_0" 
+      test_first="0"/>         
+  <tk id="d8" label="Ask me before every step again!" type="bool" flag="nono no_is_0" 
+      test_first="0"/> 
+  </tk>
+
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,store-compile)"/>
+    <prop id="joe-in-regex" x="dReplace|d1|d2|d3|d3First|d4|d5|d2b|d8|d2b|d2c|d2t|d2tc"/>
+  </call_job>
+                                                                  
+  <tk id="d1" 
+      label="Download material ?" type="bool" flag=" no_is_0" 
+      x="1" test_first="0"
+      test="(prop,d8)"/>
+  
+  <mkdir dir="(dir,working)"/>    
+  <when test="(prop,d1)">
+    <mkdir dir="(dir,material-build)"/>
+    <ti type="dir" label="material-build" x="(dir,material-build)"/>
+    <ti>java item path!!! =[(prop,javaitem_path)] </ti>
+    
+     <tp>Download notice-intro.txt</tp>
+      <call_job job="do-retry"/>
+      <xrghub  
+              act="save" 
+              out="(file,noticeintro)"
+              path="(prop,javaitem_path)/NOTICE-INTRO.TXT"
+              flag="catch"/>  
+      <xrghub act="retry"/>
+      <xrghub act="clear_retry"/>
+
+      <tp>Download 3rd-party-overlay</tp>
+      <call_job job="caf">
+        <prop id="caf-path" x="(prop,javaitem_path)/3rd-party-libs/overlay"/>
+        <dir id="caf-target" x="(dir,bb)"/>
+        <dir id="caf-retry" x="0"/>
+      </call_job>  
+           
+      <tp>Download 3rd-party-meta-inf</tp> 
+      <mkdir dir="(dir,d1)META-INF"/>
+      <call_job job="caf">
+        <prop id="caf-path" x="(prop,javaitem_path)/3rd-party-libs/META-INF"/>
+        <dir id="caf-target" x="(dir,bb)META-INF"/>
+        <dir id="caf-retry" x="0"/>
+      </call_job>  
+    
+  
+      <call_job job="caf">
+        <prop id="caf-path" x="(prop,javaitem_path)/META-INF"/>
+        <dir id="caf-target" x="(dir,bb)META-INF"/>
+        <dir id="caf-retry" x="0"/>
+      </call_job>      
+       
+      <tp>dowload overall overlay</tp>
+      <call_job job="caf" flag="catch">
+        <prop id="caf-path" x="(prop,javaitem_path)/overlay"/>
+        <dir id="caf-target" x="(dir,bb)"/>
+        <dir id="caf-retry" x="0"/>
+      </call_job>  
+  
+  <call_job job="do-retry"/>                  
+        
+              
+   
+      <call_job job="docu-java-step">
+        <prop id="steps" x="d1" />
+      </call_job>    
+  </when> 
+      
+  <tk id="d2" label="Download java-sources ?" type="bool"  flag=" no_is_0" 
+      x="1" test_first="0"
+      test="(prop,d8)"/>      
+ 
+  <when test="(prop,d2)">
+    <choose>
+      <when test="(f,not,(prop,jvcp_never_overwrite_java))">
+  
+        <tp>Download java-source-files ...</tp>
+        <ti>Download java-source-files ...(prop,javaitem_path)/src (dir,src)</ti>
+        <ti label="Halllloooooo nikkkkii "/>
+        <ti label="path" type="dir">(prop,javaitem_path)/src</ti>
+        <ti label="path" >(prop,javaitem_path)/src</ti>
+        <ti label="target" type="dir">(dir,src)</ti>
+        <ti label="target">(dir,src)</ti>      nic123
+        <interpreter watch="0"/>
+        <call_job job="caf">
+          <prop id="caf-path" x="(prop,javaitem_path)/src"/>
+          <dir id="caf-target" x="(dir,src)"/>
+          <prop id="caf-retry" x="1"/>
+        </call_job>  
+    
+          <call_job job="docu-java-step">
+            <prop id="steps" x="d2" />
+          </call_job>  
+      </when>
+      <otherwise>
+        <ti>i am not overwrting java files</ti>
+      </otherwise>
+    </choose>
+  </when>
+  
+ <tk id="d2t" label="Timestamp java-sources ?" type="bool"  flag=" no_is_0" 
+      x="0" test_first="0"
+      test="(prop,d8)"/>      
+      
+ <tk id="d2tc" label="app-schluessel" test_first="0"
+      test="(prop,d8)"/>         
+ 
+  <when test="(f,and,0,(prop,d2t))">  <!-- gibts nicht mehr -->
+    <choose>
+      <when test="(f,not,(prop,jvcp_never_overwrite_java))">
+        <interpreter watch="0"/>
+        <file id="sk" x="(dir,filetemp)scan.xml"/>
+        <quick_scan dir="(dir,src)" out="(file,sk)" field="ext extension post fn"/>
+        <ti type="file" x="(file,sk)" label="derscan"/>
+        
+        <throw test="(f,not,(f,has,prop,jvcp_encoding))">We need an encoding</throw>
+        <throw test="(f,not,(f,has,prop,jvcp_end_date))">We need an end-date</throw>
+        <throw test="(f,not,(f,has,prop,jvcp_end_date_coded))">We need an end-date-coded</throw>
+                                                                       
+        <tp>Timestamp java-source-files ...</tp>
+        <ti>Timestamp java-source-files ...(prop,javaitem_path)/src (dir,src)</ti>
+        <prop id="timer-insert">()
+	private static long getTimeOfFileObject( org.apache.commons.vfs2.FileObject fileObject) throws org.apache.commons.vfs2.FileSystemException {
+    	org.apache.commons.vfs2.FileContent content = fileObject.getContent()(e:o)(e:c)();
+    	return content.getLastModifiedTime()(e:o)(e:c)();
+		
+	}	
+	
+	private static long getTimeOfNow()(e:o)(e:c)() throws org.apache.commons.vfs2.FileSystemException {
+		java.util.Date mydate = new java.util.Date()(e:o)(e:c)();
+		return mydate.getTime()(e:o)(e:c)();		
+	}	
+	
+	private static long getTimeOfDate(String yyyyMMdd ) throws Exception {
+		java.util.Date mydate;
+		mydate= new java.text.SimpleDateFormat("yyyyMMdd").parse(yyyyMMdd);
+		return mydate.getTime()(e:o)(e:c)();		
+	}	     
+  
+	private static long getTimeOfJustTest( ) throws Exception {
+		if ( new java.util.Date()(e:o)(e:c)().getTime()(e:o)(e:c)() &gt; getTimeOfDate("()(prop,jvcp_end_date_coded)()"))
+			throw new Exception("Garantiert");
+		return 9;		
+	}	     
+        ()</prop>                         
+        <ti label="timer-insert">(prop,timer-insert)</ti>
+        <prop id="did-do-app-decoder" x="0"/>
+        <loop id="m" xml="(file,sk)" xpath="//file" missing_strategy="empty">
+          <when test="(f,eq_text,java,(loop,m,@ext))">
+            
+            <prop id="rt">(f,file_content,(loop,m,@fn),(prop,jvcp_encoding))</prop>
+            <when test="(f,contains,(prop,rt),/*[timer]*/)">
+              <ti label="timed" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),/*[timer]*/,(prop,timer-insert))</prop>
+              <prop id="rt">(f,replace,(prop,rt),&quot;(prop,jvcp_end_date_coded)&quot;,&quot;(prop,jvcp_end_date)&quot;)</prop>
+              <prop id="rt">(f,replace,(prop,rt),CommonsVfs.getTimeOf,getTimeOf)</prop>
+              <!-- <file id="bu" x="(dir,filetemp)replaced/(loop,m,@ipath)(loop,m)"/>
+              <copy file="(loop,m,@fn)" tofile="(file,bu)"/> 
+              <ti label="before" type="file">(file,bu)</ti>  -->
+              <ti label=" " tyxpe="file" test="0">(prop,rt)</ti>
+              <create_file out="(loop,m,@fn)" encoding="(prop,jvcp_encoding)">(prop,rt)</create_file>
+            </when>
+            
+          </when>
+          <!-- 
+          <when tesyt="1" test="(f,has,prop,d2tc)">
+          <when test="(f,eq_text,DbJm.java,(loop,m))">
+          
+            <ti label="replacing passsord" type="file" x="(loop,m,@fn)"/>
+            <prop id="did-do-app-decoder" x="1"/>
+            <prop id="rt">(f,file_content,(loop,m,@fn),(prop,jvcp_encoding))</prop>
+
+              <prop id="rt">(f,replace,(prop,rt),&quot;hier-haben-wir-so-eine-sache&quot;,&quot;(prop,d2tc)&quot;)</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,jvcp_encoding)">(prop,rt)</create_file>
+   
+            
+          </when>
+          </when>      -->
+                    
+        </loop> 
+        
+        <ti label="did do pwd replacement" test="(prop,did-do-app-decoder)"/>
+        <ti label="did NOT do pwd replacement" test="(f,not,(prop,did-do-app-decoder))"/>
+      
+      
+    
+          <call_job job="docu-java-step">
+            <prop id="steps" x="d2t" />
+          </call_job>  
+      </when>
+      <otherwise>
+        <ti>i am not overwrting java files although you asked to timestamp !!!</ti>
+      </otherwise>
+    </choose>
+  </when>  
+  
+  <!-- neuer updater anfang nic123 -->
+  <tk id="dReplace" label="Source-Update-Jobs" type="textblock"  tip="(prop,source-update-jobs-tip)" 
+      test_first="0"      
+      test="(prop,d8)"/> 
+      
+  <when test="(f,has,prop,dReplace)">
+  
+        <interpreter watch="0"/>
+        <file id="vv" x="(dir,pro)my-scan.xml"/>
+        <quick_scan dir="(dir,src)" out="(file,vv)" field="ext extension post fn"/>
+        <ti type="file" x="(file,vv)" label="derscan fuer neuer replacer"/>
+        
+        <throw test="(f,not,(f,has,prop,jvcp_encoding))">We need an encoding</throw>
+
+          
+      <file id="ww" x="(dir,filetemp)hasi.xml"/>
+      <split
+        text="(prop,dReplace)"
+        out="(file,ww)"/>
+      <ti type="file" x="(file,ww)"/>
+
+      <loop id="wa" xml="(file,ww)" xpath="split">
+        
+        
+        <try_catch>
+          <try> 
+            
+            <tk type="msg" test="0">(loop,wa,#i) - (loop,wa,@x) - (prop,dReplace) goint to run job 'systema-(loop,wa,@x)'</tk>
+            <mkdir dir="(dir,store-root)"/>
+            <call_job job="systema-(loop,wa,@x)">
+              <dir id="systema-dir">(dir,src)</dir>
+              <file id="systema-scan">(file,vv)</file>
+              <prop id="systema-encoding">(prop,jvcp_encoding)</prop> 
+              <dir id="systema-residence">(dir,store-root)</dir>          
+            </call_job>
+ 
+          </try>
+          
+          <catch>
+            <tk type="msg" msg_type="e">Some problem - goint to continue
+                          (prop,catched_msg)
+                          systema-(loop,wa,@x)
+                          (dir,src) 
+                          (file,vv)
+                          (prop,jvcp_encoding)
+                          (dir,store-root)</tk>
+            <throw_again/>
+          </catch>
+        
+        </try_catch>      
+        
+      </loop>
+        
+      
+  </when>      
+  
+  
+  
+  <!-- neuer updater ende -->
+  
+  <mkdir dir="(dir,working)"/>  
+  <file id="k" x="(dir,working)bin_download.xml"/> 
+  <ti type="file" x="(file,k)"/> 
+  <tk id="d2b" 
+      label="Download 3rd-party-bins?" type="bool"  flag=" no_is_0" 
+      x="1" test_first="0"
+      test="(prop,d8)"/>
+  
+  <when test="(prop,d2b)">
+                
+    <mkdir dir="(dir,bindown)"/>
+    <mkdir dir="(dir,binextr)"/>    
+    <tp>Download bins: getting index ...</tp>
+  
+        <try_catch>
+          <try>
+        <xrghub  
+                act="list" 
+                out="(file,k)"
+                path="(prop,3rd_path)"
+                level="1"/>
+          </try>
+          <catch>
+            <create_file out="(file,k)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<empty/>
+]]></create_file>
+          </catch>
+         </try_catch>  
+                                                  
+            
+        <loop id="l1" xml="(file,k)" xpath="//file">
+          <when test="(f,or,(f,ends_with,(loop,l1,@name),.jar),(f,ends_with,(loop,l1,@name),.zip))">
+    
+            <tp>Download jar: (e:o)(loop,l1,#i)(e:c) (loop,l1,@name)        ... Copy from github</tp>
+    
+            <xrghub  
+                    act="save" 
+                    out="(dir,bindown)(loop,l1,@name)"
+                    path="(loop,l1,@path)"/>
+    
+          </when>
+        
+        </loop>  
+        
+        <call_job job="do-retry"/>
+        <loop id="l1" xml="(file,k)" xpath="//file" sort="text" ignore_case="text">
+          <when test="(f,or,(f,ends_with,(loop,l1,@name),.jar),(f,ends_with,(loop,l1,@name),.zip))">
+            <tp>unzipping (loop,l1,@name) ... by (f,when,(prop,jvcp_jar_unzip_by_ant),ant,vfs) ...</tp>                          
+                           
+              <!-- 
+              problem seit umstellung auf java 20
+              Could not find a file provider that can handle file "file:///F:/XmlRobot-Dev/Echnaton-Scripts/xmlrobot-internals/system/service_apps/app.Arcadia/pro.03-echo-desk-app-dev/compile-xmlrobot-core/bin_download/ant-launcher-1.9.11.jar".          
+              -->
+              
+              <choose>
+                <when test="(prop,jvcp_jar_unzip_by_ant)">
+                  <ant>
+                    <unzip 
+                    src="(f,file,classic,(dir,bindown)(loop,l1,@name))" 
+                    dest="(f,dir,classic,(dir,binextr))"/>
+                  </ant>
+                </when>
+                <otherwise>               
+                  <unzip 
+                  file="(dir,bindown)(loop,l1,@name)" 
+                  todir="(dir,binextr)"/>                                    
+                </otherwise>
+              </choose>    
+          </when>
+        </loop>       
+
+       
+
+    
+    <call_job job="docu-java-step">
+      <prop id="steps" x="d2b" />
+    </call_job>  
+  </when>
+  
+  <tk id="d2c" label="Extract downloaded 3rd-party-bins?" type="bool"  flag=" no_is_0" 
+      test_first="0" test="(prop,d8)"/>  
+  <when test="(prop,d2c)"> 
+  
+    <prop id="notice-1" x=""/>
+    <prop id="notice-2" x=""/>
+    <prop id="notice-2b" x=""/>
+    <prop id="notice-flags" x=""/>
+    <prop id="notice-nbr" x="0"/>
+    
+    <prop id="notice-0" x=""/>
+    <prop id="notice-0b" x=""/>
+    <prop id="notice-0-flags" x=""/>
+    <prop id="notice-0-nbr" x="0"/>       
+    <mkdir dir="(dir,sammler)"/>
+    <loop id="l1" xml="(file,k)" xpath="//file" sort="text" ignore_case="text">
+      <when test="(f,or,(f,ends_with,(loop,l1,@name),.jar),(f,ends_with,(loop,l1,@name),.zip))">
+
+        <tp>unzipping (loop,l1,@name) ... by (f,when,(prop,jvcp_jar_unzip_by_ant),ant,vfs) ...</tp>                          
+                                   
+        <choose>
+          <when test="(prop,jvcp_jar_unzip_by_ant)">
+            <ant>
+              <unzip 
+                src="(f,file,classic,(dir,bindown)(loop,l1,@name))" 
+                dest="(f,dir,classic,(dir,binextr))"/>
+            </ant>
+          </when>
+          <otherwise>               
+                  <unzip 
+                  file="(dir,bindown)(loop,l1,@name)" 
+                  todir="(dir,binextr)"/>                                  
+          </otherwise>
+        </choose>   
+        
+        <!-- get orig libname -->
+        <call_job job="get-orig-libname">
+          <prop id="gol-libname" x="(loop,l1,@name)"/>
+        </call_job>          
+        <prop id="old_name" x="(prop,orig-libname)"/>
+        <prop id="this_flag" x="(f,replace,(prop,old_name), ,_)"/>
+                  
+        <!-- notice 0 -->
+        
+        <when test="(f,not,(f,has_flag,(prop,notice-0-flags),(prop,this_flag)))">
+          <prop id="notice-0-flags" x="(prop,notice-0-flags)(prop,this_flag) "/>
+          <prop id="notice-0-nbr" x="(f,add,1,(prop,notice-0-nbr))"/>
+          <prop id="notice-0" x="(prop,notice-0)    (e:o)(prop,notice-0-nbr)(e:c) (prop,old_name)&#xA;"/>
+          <prop id="notice-0b" x="(prop,notice-0b)    (e:o)(prop,trash-1)(prop,notice-0-nbr)(prop,trash-2)(e:c) (prop,old_name)&#xA;"/>
+            
+        </when>
+                
+        <when test="(f,exists_dir,(dir,binextr)META-INF)">
+ 
+          <!-- renaming -->
+          <file id="l3" x="(dir,temp)l3.xml"/>
+          <scan out="(file,l3)" dir="(dir,binextr)META-INF" level_limit="1"/>
+          <!-- files -->
+          <loop id="f" xml="(file,l3)" xpath="file" sort="text" ignore_case="text">
+              <ti test="0"> move file=(dir,binextr)META-INF(prop,fs)(loop,f) 
+                    tofile=(dir,sammler)META-INF(prop,fs)(prop,old_name)-(loop,f)</ti>   
+          
+          <!--          
+          <prop id="t1" x="(f,file_info,last_mod,(file,with),yyyy-MM-dd-HH-mm-ss-SSS)"/>
+          <copy file="(file,with)" tofile="(file,new)"/>
+          <set_last_mod file="(file,new)" time="(prop,t1)"/>
+          
+          <delete file="(file,with)"/> 
+          -->                             
+            <copy file="(dir,binextr)META-INF(prop,fs)(loop,f)" 
+                  tofile="(dir,sammler)META-INF(prop,fs)(prop,old_name)-(loop,f)"/>
+            <delete file="(dir,binextr)META-INF(prop,fs)(loop,f)"/>
+            
+            <!-- 
+            <ant level="info">
+              <move file="(f,file,classic,(dir,binextr)META-INF(prop,fs)(loop,f))" 
+                    tofile="(f,file,classic,(dir,sammler)META-INF(prop,fs)(prop,old_name)-(loop,f))"/>
+            </ant>
+            -->
+            
+            <!-- notice -->
+            <prop id="this-is-a-notice-file" x="0"/>
+            <prop id="this_flag" x="(f,replace,(prop,old_name), ,_)"/>
+            <choose>
+              <when test="(f,not,(f,has_flag,(prop,notice-flags),(prop,this_flag)))">
+                <choose>
+                  <when test="(f,or,(f,eq_text,(loop,f),NOTICE),(f,eq_text,(f,upper,(loop,f)),NOTICE.TXT))">
+                    <prop id="notice-flags" x="(prop,notice-flags)(prop,this_flag) "/>
+                    <prop id="notice-nbr" x="(f,add,1,(prop,notice-nbr))"/>
+                    <prop id="notice-1" x="(prop,notice-1)    (e:o)(prop,notice-0-nbr)(e:c) (prop,old_name)&#xA;"/>
+                    <prop id="notice-2">(prop,notice-2)&#xA;===================================================================================&#xA;(e:o)(prop,notice-0-nbr)(e:c) NOTICE OF INCLUDED SOFTWARE CALLED &apos;(prop,old_name)&apos;&#xA;    (f,replace_regex,(f,file_content,(dir,sammler)META-INF(prop,fs)(prop,old_name)-(loop,f),ASCII),\n,
+          )&#xA;</prop>  
+          
+                    <prop id="notice-2b">(prop,notice-2b)&#xA;===================================================================================&#xA;(e:o)(prop,trash-1)(prop,notice-0-nbr)(prop,trash-2)(e:c) NOTICE OF INCLUDED SOFTWARE CALLED &apos;(prop,old_name)&apos;&#xA;    (f,replace_regex,(f,file_content,(dir,sammler)META-INF(prop,fs)(prop,old_name)-(loop,f),ASCII),\n,
+          )&#xA;</prop>                 
+                  </when>
+                  <otherwise>
+                    <!-- 
+                    <ti label="this is not a notice-file" x="(loop,f)"/>
+                    <ti_flush/>   -->
+                  </otherwise>
+                </choose>
+              </when>
+              <otherwise>
+                <!-- 
+                <ti label="there is already a flag" x="(prop,notice-flags) | (prop,this_flag)"/>
+                <ti_flush/>   -->
+              </otherwise>
+            </choose>
+            
+                       
+
+              <delete file="(dir,binextr)META-INF(prop,fs)(loop,f)" flag="catch" />
+           
+          
+          </loop>
+          
+         <!-- dirs nic123-->
+          <loop id="d" xml="(file,l3)" xpath="dir">
+            <prop id="xs">move dir  intodir=(dir,sammler)META-INF/(prop,old_name)-META-INF
+                          from= (dir,binextr)META-INF/(loop,d,@rpath)</prop>
+          
+            <tk type="msg" x="BEFORE &#xA;(prop,xs)" test="0"/>
+            
+              <copy 
+                  touri="(dir,sammler)META-INF/(prop,old_name)-META-INF"
+                  uri="(dir,binextr)META-INF/(loop,d,@rpath)"/>
+              <delete dir="(dir,binextr)META-INF/(loop,d,@rpath)"/>
+              <ti type="dir" label="copy problem" x="(dir,sammler)META-INF/(prop,old_name)-META-INF" test="0"/>    
+            
+            <!--               
+            <ant level="info">                    
+              <move todir="(f,dir,classic,(dir,sammler)META-INF(prop,fs)(prop,old_name)-META-INF)">
+                <fileset dir="(f,dir,classic,(dir,binextr)META-INF(prop,fs)(loop,d,@rpath))"/>
+              </move>      
+            </ant>
+            -->
+            <tk type="msg" x="AFTER &#xA;(prop,xs)" test="0"/>
+          </loop>          
+        </when>
+
+      </when>
+    
+    </loop>    
+    <ti label="Notice0">(prop,notice-0)</ti>
+    <ti label="Notice0b">(prop,notice-0b)</ti>
+    <ti label="Notice1">(prop,notice-1)</ti>
+    <ti label="Notice2">(prop,notice-2)</ti> 
+    <ti label="Notice2b">(prop,notice-2b)</ti>        
+
+        
+    <tp>notice-intro</tp> 
+           
+        
+    <choose>
+      <when test="(f,exists_file,(file,noticeintro))">
+         <tp>Creating notice-file</tp>
+         <mkdir dir="(dir,created-legals)"/>
+         <create_file out="(file,notice-gen)">(f,file_content,(file,noticeintro))&#xA;(prop,notice-0)&#xA;DETAILS REGARDING INCLUDED 3RD-PARTY-SOFTWARE(prop,notice-2)</create_file>
+         
+         <create_file out="(file,notice-gen-p1)">(f,file_content,(file,noticeintro))</create_file>
+         
+         <create_file out="(file,notice-gen-p2)">(prop,notice-0)</create_file>         
+         <create_file out="(file,notice-gen-p3)">(prop,notice-2)</create_file>                  
+         <create_file out="(file,notice-gen-p2b)">(prop,notice-0b)</create_file>         
+         <create_file out="(file,notice-gen-p3b)">(prop,notice-2b)</create_file>   
+         <copy file="(file,notice-gen)" intodir="(f,dir_of_file,(file,notice-gen))application-jar-pot(prop,fs)META-INF"/>      
+
+      </when>
+      <otherwise>
+         <ti label="*** NO NOTICE-INTRO ***" type="file" x="(file,noticeintro)"/>
+         <ant flag="catch">
+          <delete file="(f,file,classic,(file,notice-gen))"/>
+         </ant>        
+      </otherwise>
+    </choose>
+    <tp>zipping all binaries</tp>
+    <!-- 
+    <zip 
+      destfile="(file,bincomplete)">
+      <basedir>(dir,sammler)</basedir>
+      <basedir>(dir,binextr)</basedir>          
+    </zip>   
+    -->                                                    
+    
+    <ant>
+      <zip destfile="(f,file,classic,(file,bincomplete))">
+        <fileset dir="(f,dir,classic,(dir,sammler))" />
+        <fileset dir="(f,dir,classic,(dir,binextr))">
+          <!--  <exclude name="at/*/*.*"/>   -->
+        </fileset>
+      </zip>
+    </ant>    
+    
+
+
+  
+    <ti label="ERGEBNIISE"/>
+      <ti label="3rd-party-result" x="(file,bincomplete)" type="file"/>
+      <ti label="3rd-source-1 sammler" x="(dir,sammler)" type="dir"/>
+      <ti label="3rd-source-2 binextr" x="(dir,binextr)" type="dir"/>
+
+    <call_job job="docu-java-step">
+      <prop id="steps" x="d2c d2d" />
+    </call_job>  
+         
+  </when>  
+  
+  <tk id="d3First" label="Include First-Party-Lib ?" type="bool"  flag=" no_is_0" 
+      x="1" test_first="0"
+      test="(prop,d8)"/>
+  <!--     
+  <remove type="file" id="first-party" flag="catch"/>    
+  <when test="(prop,d3First)">
+      <tp>including first party lib</tp>
+  </when> --> 
+        
+    
+  <tk id="d3" label="Compile ?" type="bool"  flag=" no_is_0" 
+      x="1" test_first="0"
+      test="(prop,d8)"/>
+   
+  <when test="(prop,d3)">
+      <tp>Compiling</tp>
+      <ti>compiling ...</ti>    
+      <mkdir dir="(dir,bin)"/>
+      <call_job job="tk_jvcp_read"/>
+      <throw test="(f,not,(f,has,file,jvcp_javac))">No javac.exe definede(e:s) do EDIT the CONFIGURATION</throw>
+      <choose>
+        <when test="(f,and,(prop,d3First),(f,has,file,jvcp_first))">
+          <prop id="do-first-party" x="1"/>
+        </when>
+        <when test="(f,and,(prop,d3First),(f,not,(f,has,file,jvcp_first)))">
+          <ti label="Warning">Choosed to take First-Party but did not find a file defined</ti>
+          <prop id="do-first-party" x="0"/>
+        </when>      
+        <otherwise>
+          <prop id="do-first-party" x="0"/>        
+        </otherwise>
+      </choose>
+      <ti label="Compile Into:">(dir,bin)</ti>
+      <delete content_of_dir="(dir,bin)"/>
+      <choose>
+        <when test="(prop,do-first-party)">
+          <ti label="use 1st-party" type="file" x="(f,file,classic,(file,jvcp_first))"/>
+          <ti label="javac">srcdir=&quot;(f,dir,classic,(dir,src))&quot;
+                  destdir=&quot;(f,dir,classic,(dir,bin))&quot; 
+                  fork=&quot;yes&quot;
+                  executable = &quot;(f,file,classic,(file,jvcp_javac))&quot;      
+                  classpath=&quot;(f,file,classic,(file,bincomplete));(f,file,classic,(file,jvcp_first))&quot;  
+                  debug=&quot;off&quot;</ti>
+          <ant level="info">    
+            <javac  srcdir="(f,dir,classic,(dir,src))"
+                  destdir="(f,dir,classic,(dir,bin))" 
+                  fork="yes"
+                  executable = "(f,file,classic,(file,jvcp_javac))"       
+                  classpath="(f,file,classic,(file,bincomplete));(f,file,classic,(file,jvcp_first))"  
+                  debug="off"/>
+          </ant>         
+        </when>
+        <otherwise>
+          <ti label="javac">srcdir=&quot;(f,dir,classic,(dir,src))&quot;
+                  destdir=&quot;(f,dir,classic,(dir,bin))&quot; 
+                  fork=&quot;yes&quot;
+                  executable = &quot;(f,file,classic,(file,jvcp_javac))&quot;       
+                  classpath=&quot;(f,file,classic,(file,bincomplete))&quot;  
+                  debug=&quot;off&quot;</ti>
+          <ant level="info">    
+            <javac  srcdir="(f,dir,classic,(dir,src))"
+                  destdir="(f,dir,classic,(dir,bin))" 
+                  fork="yes"
+                  executable = "(f,file,classic,(file,jvcp_javac))"       
+                  classpath="(f,file,classic,(file,bincomplete))"  
+                  debug="off" />
+                  <!--    
+                  debug="true" debuglevel="lines,vars,source"
+                  -->
+          </ant>         
+        </otherwise>
+      </choose>
+
+                    
+      
+    <call_job job="docu-java-step">
+      <prop id="steps" x="d3" />
+    </call_job>        
+  </when>
+
+  <tk id="d4" 
+      label="Package compiled-bin ?" type="bool" flag=" no_is_0" 
+      x="1" test_first="0"
+      test="(prop,d8)"/>
+   
+  <when test="(prop,d4)">
+      <tp>Zipping</tp>
+      
+         
+        <zip destfile="(file,compiled-bin)"
+         basedir="(dir,bin)"/>
+        
+        <!-- 
+        <ant>
+          <zip destfile="(f,file,classic,(file,compiled-bin))">
+            <fileset dir="(f,dir,classic,(dir,bin))" />
+          </zip>
+        </ant>     -->
+       
+        <tp>copying</tp>
+        <copy file="(file,compiled-bin)"
+              tofile="(file,compiled-bin-original)"/>   
+       
+        
+    <call_job job="docu-java-step">
+      <prop id="steps" x="d4" />
+    </call_job>             
+  </when>
+
+  <tk id="d5" 
+      label="Buiild ?" type="bool" flag=" no_is_0" 
+      x="1" test_first="0"
+      test="(prop,d8)"/>
+      
+  <when test="(prop,d5)">
+    <ti label="Building: (prop,cc-name)" />
+    
+    <mkdir dir="(dir,bb)"/>  
+    <mkdir dir="(dir,d1)"/>
+      
+    <tp>copy overall metainf</tp>
+    <copy test="(f,exists_file,(file,notice-gen))"
+          file="(file,notice-gen)"
+          intodir="(dir,bb)META-INF"/>
+              
+          
+     <tp>zip (f,name_of_file,(file,final-build)) of (prop,name)</tp>   
+     <mkdir dir="(dir,src)"/>
+     <mkdir dir="(dir,bin)"/>
+     <mkdir dir="(dir,binextr)"/>
+     <mkdir dir="(dir,bb)"/>  
+     
+      <!-- 
+      <zip 
+        destfile="(file,final-build)">
+        <basedir>(dir,bin)</basedir>
+        <basedir>(dir,binextr)</basedir>
+        <basedir>(dir,bb)</basedir>        
+      </zip>
+      -->
+      <ti test="0">zip destfile=[(f,file,classic,(file,final-build))]   = final-build
+            fileset dir=[(f,dir,classic,(dir,bin))]            = bin
+            fileset dir=[(f,dir,classic,(dir,binextr))]        = binextr
+            fileset dir=[(f,dir,classic,(dir,bb))]             = bb </ti>
+        <ant>
+          <delete file="(f,file,classic,(file,final-build))"/>
+          <zip destfile="(f,file,classic,(file,final-build))">
+            <fileset dir="(f,dir,classic,(dir,bin))" />
+            <fileset dir="(f,dir,classic,(dir,binextr))" />
+            <fileset dir="(f,dir,classic,(dir,bb))" />
+          </zip>
+        </ant>        
+      <ti test="0">done..</ti>
+      <!-- 
+      <tp>unzipping the final result</tp>
+      <unzip file="(file,final-build)" todir="(dir,final-build)"/>
+      -->      
+      
+     <ti label="Did Build: (prop,cc-name)">      
+      <ti type="dir" x="(dir,bb)" label="Unzipped content:"/>
+      <ti type="file" x="(file,final-build)"  label="Result-jar:"/>
+      <!-- <ti type="dir" x="(dir,final-build)"  label="Content Result-jar:"/> -->
+      <ti type="call_job" job="copy-result-jar-somewhere" explain="(f,html,b,o)Copy this somewhere(f,html,b,c)" label=" ">
+        <file id="tocopy">(file,final-build)</file>
+        <file id="store-compile">(file,store-compile)</file>
+        
+      </ti>
+     </ti>
+     
+     
+      
+    <call_job job="docu-java-step">
+      <prop id="steps" x="d5" />
+    </call_job>             
+  </when>  
+  
+   <call_job job="go-joe-write"
+      test="(prop,d8)">
+    <file id="joe-in-store" x="(file,store-compile)"/>
+    <prop id="joe-in-regex" x="dReplace|d1|d2|d3|d4|d5|d2b|d8|d2b|d2c"/>
+  </call_job> 
+
+  <!-- messager off -->
+  
+  <when test="(prop,ist-mein-messager)">
+    <call_job job="close-messager"/>  
+  </when>
+
+  <remove id="ist-mein-messager" type="prop"/>
+
+</job>
+
+<job id="close-messager" role="hidden">
+    <print id="messages" act="close"/>
+    <prop id="messages">(f,file_content,(file,messages))</prop>
+    <when test="(f,has,prop,messages)">
+        <tk label="Messages from Arcadia: (prop,pro)">
+        <tk type="msg" label="Messages">(prop,messages)</tk>
+        </tk>
+        <ti_hr/>
+        <ti label="Messages from Arcadia: (prop,pro)"/>
+        <ti>(prop,messages)</ti>
+        <remove id="messages" type="prop"/>
+    </when>  
+</job>
+
+
+     
+<job id="copy-result-jar-somewhere" role="hidden">
+  <need>(file,tocopy)</need>
+  <need>(file,store-compile)</need>
+  
+  <file id="target-of-copy">(file,store-compile)copy</file>
+  <!-- <ti type="file" label="store-compile">(file,store-compile)</ti>
+  <ti type="file" label="storage">(file,target-of-copy)</ti>    -->
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,target-of-copy)"/>
+    <prop id="joe-in-regex" x="destiny"/>
+  </call_job> 
+  <tk label="Copy: (f,name_of_file,(file,tocopy))" flag="sum">
+    <tk type="file" id="destiny" flag="nono" />
+  </tk>
+
+  <call_job job="go-joe-write"/>
+  
+  <copy file="(file,tocopy)" tofile="(file,destiny)" />
+  <ti label="did copy compilation-result"/>
+  <ti type="file" label="From">(file,tocopy)</ti>
+  <ti type="file" label="To">(file,destiny)</ti>
+</job>
+
+</jobs>

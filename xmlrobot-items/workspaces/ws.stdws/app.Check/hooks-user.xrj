@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="hook-user-view-begin" role="hidden">
+
+  <ti label="List of User"/>
+
+</job>
+
+<job id="hook-user-details-end" role="hidden">
+   <ti_hr/>
+   <ti label=" " type="call_job" job="user-see-all" explain="See all Users"/>
+</job>
+
+<job id="hook-action-user-dbcommand" role="hidden">
+  <interpreter watch="0"/> 
+    
+  <need>(prop,user_key)</need>
+ 
+
+  <prop id="cur-user">(f,xpath,(file,users),//user[@row=(f,xpath_string,(prop,user_key))],@userid)</prop>
+  
+  <prop id="cur-user-size">(f,xpathx,-1,(file,users),//user[@row=(f,xpath_string,(prop,user_key))],@db_size)</prop>
+
+
+  <prop id="cur-user-apps">(f,try,()(f,xpath,(file,users),//user[@row=(f,xpath_string,(prop,user_key))],@apps)(),,)</prop>
+
+
+ 
+  <file id="ww" x="(dir,filetemp)hasi.xml"/>
+  <split text="(prop,cur-user-apps)" out="(file,ww)"/>
+  <file id="tmpusers" x="(dir,filetemp)dbusers-updated.xml" />
+  
+
+  <copy file="(file,users)" tofile="(file,tmpusers)"/>
+  
+  <xml_update what="(file,tmpusers)" how="insert_in" where="user[@row=(f,xpath_string,(prop,user_key))]"
+  with="(file,ww)"/>
+  <call_job job="tk_dbuser_edit"/>  
+  <call_job job="tk_conf_read"/> 
+  <!-- ,(f,has_flag,(prop,dbuser_request),update) -->
+  <choose>
+    <when test="(f,or,(f,has_flag,(prop,dbuser_request),insert),(f,has_flag,(prop,dbuser_request),insupd))">
+    
+      <tk id="cur-user-pwd"  label="Pwd of &apos;(prop,cur-user)&apos;" tip="Will be used for apps and database access" flag="password nono"/>
+      <call_job job="tk_secret_read"/>
+      <throw test="(f,not,(f,has,prop,secret_codico1))">must have secret encryptor</throw>
+      <throw test="(f,not,(f,has,prop,secret_codico2))">ust have encr</throw>
+      <throw test="(f,not,(f,eq_text,(prop,secret_codico1),(prop,secret_codico2)))">the secret keys are not equals</throw>
+      
+      <crypto id="scra" act="open" type="(prop,secret_codico2)"/>
+      <crypto id="scra" act="encrypt" in="(prop,cur-user-pwd)" out="ergebnis"/>
+      <remove type="prop" id="cur-user-pwd"/>
+    
+      <crypto id="scra" act="close" />          
+    </when>
+    <otherwise>
+      <prop id="ergebnis" x="egal"/>
+    </otherwise>
+  </choose>
+ 
+  <file id="out" x="(dir,temp)user-command.sql"/>
+  
+
+
+  
+  <xslt xml="(file,tmpusers)" xsl="(dir,app)dbuser.xsl" out="(file,out)">
+    <params>user_key='(f,xslp,(prop,user_key))' request='(f,xslp,(prop,dbuser_request))' tables='(f,xslp,(prop,dbuser_tables))' pwd='(f,xslp,(prop,ergebnis))' conf_db='(f,xslp,(prop,conf_db))' postgres_schema='(f,xslp,(prop,conf_postgres_schema))' (f,when,(f,not,(f,eq_num,(prop,cur-user-size),-1)),db_size='(f,xslp,(prop,cur-user-size))',)</params>
+  </xslt>    
+  
+  <prop id="xxx">(f,file_content,(file,out))</prop>
+  <delete file="(file,out)"/>
+  <tk type="textblock" id="xxx" flag="big" label="Result" tip="This is the result of your requests: [(prop,dbuser_request)] of User [(prop,cur-user)]"/>
+  <remove type="prop" id="xxx"/>
+   
+   <call_job job="user-see-all" />
+   
+</job>
+
+<job id="hook-user-view-end" role="hidden">
+    
+   <ti label="Action" type="call_job" job="generate-all-users" xexplain="Update App-Selector" test="0"/>    
+   <ti_hr/>
+   <ti_break/>                        
+   
+</job>
+
+
+
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

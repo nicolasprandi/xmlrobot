@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsa-tk">
+<call_job job="tr_dsa"/>
+<need default="">(prop,dsas_tk_control)</need>
+<when test="(f,has_flag,(prop,dsas_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,dsas_tk_control),print_all_fields)">
+<ti label="(prop,dsa_default_label_class) (prop,dsa_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,dsa_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<when test="(f,not,(f,has_flag,(prop,dsas_tk_control),print_only))">
+<when test="(f,not,(prop,isAdd))">
+<tk label="(prop,_dsa_wert_l)" id="dsa_wert" x="" test_first="1" tip="(prop,_dsa_wert_t)" type="(prop,format-for-dsa)" cols="35" flag=" "/>
+</when>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,dsas_tk_control),print_only),,(prop,dsa_default_label_class)(f,when,(f,has,prop,dsa_default_label_name), (prop,dsa_default_label_name),))" tip="(prop,_dsa_t)" tk_id="11" flag="(prop,dsas_tk_control) wrap ">
+<tk label="(prop,_dsa_atyp_l)" id="dsa_attributtyp" x="" test_first="1" tip="(prop,_dsa_atyp_t)" type="sel" follow_job="idef-dsa_attributtyp-off" flag=" nono " xml="(file,pdi-sel-attr)"/>
+<tk label="(prop,_dsa_wert_l)" id="dsa_wert" x="" test_first="1" tip="(prop,_dsa_wert_t)" type="(prop,format-for-dsa)" cols="35" flag=" "/>
+<tk label="(prop,_dsa_zeit_l)" x="(prop,_dsa_zeit_l)" test_first="0" tip="(prop,_dsa_zeit_t)" type="msg" flag=" "/>
+<tk label="(prop,_dsa_von_l)" id="dsa_von" x="" test_first="0" tip="(prop,_dsa_von_t)" type="text" cols="15" flag=" "/>
+<tk label="(prop,_dsa_bis_l)" id="dsa_bis" x="" test_first="0" tip="(prop,_dsa_bis_t)" type="text" cols="15" flag=" "/>
+</tk>
+</job>

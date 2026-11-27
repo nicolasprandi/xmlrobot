@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="taste-see-all" level="ws" role="hidden" tip="Lists all Verkostungen">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-taste-view-begin</trace>
+<call_job job="hook-taste-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: taste-view: begin.0">
+<ti> hook_job=hook-taste-view-begin hook=begin page=view station=0 object=taste</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="taste_loop" xml="(file,tastes)" xpath="(prop,tastes_offset)taste(prop,tastes_where)" sort="(prop,tastes_sort_attribute)" number="(prop,tastes_sort_number)" ignore_case="(prop,tastes_sort_ignore_case)" desc="(prop,tastes_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,tastes_offset_label)),0)">
+<ti label="(prop,tastes_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Lokal"/>
+<ti x="Note"/>
+<ti x="Status"/>
+<ti x="Datum"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,tk_sel_translate,(loop,taste_loop,@was),(dir,pro)plate-selector-gui.xml)(f,html,bold,close)" job="taste-see">
+<prop id="taste_key">(loop,taste_loop,@row)</prop>
+<file id="tastes">(file,tastes)</file>
+<prop id="tastes_offset">(prop,tastes_offset)</prop>
+<prop id="tastes_offset_label">(prop,tastes_offset_label)</prop>
+<prop id="tastes_offset_new_key">(prop,tastes_offset_new_key)</prop>
+<prop id="tastes_sort_attribute">(prop,tastes_sort_attribute)</prop>
+<prop id="tastes_sort_number">(prop,tastes_sort_number)</prop>
+<prop id="tastes_where">(prop,tastes_where)</prop>
+<prop id="tastes_return_job">(prop,tastes_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,taste_loop,@getestetes_lokal))" type="text" x="(f,tk_sel_translate,(loop,taste_loop,@getestetes_lokal),(dir,pro)person-selector-gui.xml)"/>
+<ti test="(f,not,(f,has,(loop,taste_loop,@getestetes_lokal)))"/>
+<ti test="(f,has,(loop,taste_loop,@note))" type="text" x="(loop,taste_loop,@note)"/>
+<ti test="(f,not,(f,has,(loop,taste_loop,@note)))"/>
+<ti test="(f,has,(loop,taste_loop,@status))" type="text" x="(f,when,(f,has_flag,(loop,taste_loop,@status),g),moeglich(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),e),geplant(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),d),aktuell gefordert(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),b),test-vorbeitung(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),a),test-ausfuehrung(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),c),test-abschluss(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),h),erledigt(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),i),abgebrochen(e:s),)(f,when,(f,has_flag,(loop,taste_loop,@status),f),verschoben(e:s),)"/>
+<ti test="(f,not,(f,has,(loop,taste_loop,@status)))"/>
+<ti test="(f,has,(loop,taste_loop,@date_active))" type="text" x="(loop,taste_loop,@date_active)"/>
+<ti test="(f,not,(f,has,(loop,taste_loop,@date_active)))"/>
+<ti test="(f,role,expert)" type="call_job" explain="Edit" job="taste-edit">
+<prop id="taste_key">(loop,taste_loop,@row)</prop>
+<file id="tastes">(file,tastes)</file>
+<prop id="tastes_offset">(prop,tastes_offset)</prop>
+<prop id="tastes_offset_label">(prop,tastes_offset_label)</prop>
+<prop id="tastes_offset_new_key">(prop,tastes_offset_new_key)</prop>
+<prop id="tastes_sort_attribute">(prop,tastes_sort_attribute)</prop>
+<prop id="tastes_sort_number">(prop,tastes_sort_number)</prop>
+<prop id="tastes_where">(prop,tastes_where)</prop>
+<prop id="tastes_return_job">(prop,tastes_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Verkostungen found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,tastes_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="taste-add" explain="Mahlzeit" job="taste-add">
+<file id="tastes">(file,tastes)</file>
+<prop id="tastes_offset">(prop,tastes_offset)</prop>
+<prop id="tastes_offset_label">(prop,tastes_offset_label)</prop>
+<prop id="tastes_offset_new_key">(prop,tastes_offset_new_key)</prop>
+<prop id="tastes_sort_attribute">(prop,tastes_sort_attribute)</prop>
+<prop id="tastes_sort_number">(prop,tastes_sort_number)</prop>
+<prop id="tastes_where">(prop,tastes_where)</prop>
+<prop id="tastes_return_job">(prop,tastes_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,tastes)</file>
+<prop id="orga_where">(prop,tastes_where)</prop>
+<prop id="orga_view_loop_id">taste_loop</prop>
+<prop id="orga_finished_job">taste-see-all</prop>
+<prop id="orga_offset">(prop,tastes_offset)</prop>
+<prop id="orga_offset_label">(prop,tastes_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,tastes_offset_new_key)</prop>
+<prop id="orga_segment_plural">tastes</prop>
+<prop id="orga_segment_singular">taste</prop>
+<prop id="orga_segment_plural_label">Verkostungen</prop>
+<prop id="orga_segment_singular_label">Verkostung</prop>
+<prop id="orga_sort_attribute">(prop,tastes_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,tastes_sort_number)</prop>
+<prop id="orga_where">(prop,tastes_where)</prop>
+<prop id="orga_name_expression_loop">()(f,tk_sel_translate,(loop,taste_loop,@was),(dir,pro)plate-selector-gui.xml)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,tastes)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,tastes_offset)),0)">(prop,tastes_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-taste-view-end</trace>
+<call_job job="hook-taste-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: taste-view: end.0">
+<ti> hook_job=hook-taste-view-end hook=end page=view station=0 object=taste</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

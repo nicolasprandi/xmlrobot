@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="target" add_edit="1" label="Target" name_flag="1" tip="A file as relative to the Delivery-System; The file to be replaced eg: service_apps/app.Generator/generator-first.jar" view_flag="0" type="text" nono="1" default_value="service_apps/app.Generator/generator-first.jar" position="1" /><field id="desc" add_edit="0" label="Beschreibung" tip="Beschreibungstext" view_flag="1" type="text" position="2" /></fields>

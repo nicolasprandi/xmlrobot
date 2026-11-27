@@ -1,0 +1,205 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<!-- 
+<job id="See Values: conf_" role="dev">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>  
+</job>
+
+<job id="Edit: conf_">
+  
+</job>
+
+<job id="Edit: conf_?">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>
+</job>
+<job id="list exti">
+     <call_job job="exti-see-all" />
+
+</job>
+-->
+
+<job id="Edit &amp; Run">
+    <call_job job="generate-selector" />
+     <call_job job="tk_run_edit"/>
+
+     <call_job job="core-operation"/>
+
+     <create_file file="(file,project-exists)">yes</create_file>
+</job>
+
+<job id="Edit &amp; Run?">
+    <call_job job="generate-selector" />
+    
+    
+   
+  <call_job job="tk_run_print_values"/>
+  <ti label=" " explain="Edit Run Parameters" type="call_job" job="tk_run_edit"/> 
+  <ti xlabel=" " explain="See all tips" type="call_job" job="tk_run_print_values_tips" test="0"/>  
+
+</job>
+
+<job id="Edit Only">
+    <call_job job="generate-selector" />
+     <call_job job="tk_run_edit"/>
+
+  <call_job job="tk_run_print_values_tips"/>
+  <ti label=" " explain="Edit Run Parameters" type="call_job" job="tk_run_edit"/> 
+  <ti xlabel=" " explain="See all tips" type="call_job" job="tk_run_print_values_tips" test="0"/>  
+</job>
+
+<job id="Run Only">
+
+
+     <call_job job="core-operation"/>
+
+     <create_file file="(file,project-exists)">yes</create_file>
+</job>
+
+<job id="List of webapps">
+     <call_job job="appconf-see-all" />
+
+</job>
+
+
+
+
+
+<!-- 
+<job id="Info">
+   <call_job job="tk_run_print_values_tips"/>
+   <call_job job="tk_para_print_values_tips"/>
+   <call_job job="tk_ext_print_values_tips"/>
+   <call_job job="tk_fut_print_values_tips"/>
+   <call_job job="tk_stat_print_values_tips"/>
+</job>
+-->
+<job id="Default-App-Conf" xrole="hidden">
+  <create_file file="(file,project-exists)">yes</create_file>
+  <call_job job="tk_para_print_values"/>
+  <ti label=" " explain="Edit Principal Defaults" type="call_job" job="tk_para_edit"/>
+
+  <call_job job="tk_ext_print_values"/>
+  <ti label=" " explain="Edit Extended Defaults" type="call_job" job="tk_ext_edit"/>  
+
+  <call_job job="tk_fut_print_values"/>
+  <ti label=" " explain="Edit Future Defaults" type="call_job" job="tk_fut_edit"/>
+    
+  <ti xlabel=" " explain="See all tips" type="call_job" job="Default-App-Conf-Tips" test="1"/>
+      
+</job>
+
+<job id="Default-App-Conf?" role="hidden">
+  <create_file file="(file,project-exists)">yes</create_file>
+  <call_job job="tk_para_print_values_tips"/>
+  <ti label=" " explain="Edit Principal Defaults" type="call_job" job="tk_para_edit"/>
+
+  <call_job job="tk_ext_print_values_tips"/>
+  <ti label=" " explain="Edit Extended Defaults" type="call_job" job="tk_ext_edit"/>  
+
+  <call_job job="tk_fut_print_values_tips"/>
+  <ti label=" " explain="Edit Future Defaults" type="call_job" job="tk_fut_edit"/>
+    
+  <ti xlabel=" " explain="See all help" type="call_job" job="Default-App-Conf-Help" test="1"/>
+      
+</job>
+
+<job id="Default-App-Conf-Help" role="hidden">
+  <create_file file="(file,project-exists)">yes</create_file>
+  <call_job job="tk_para_print_help"/>
+  <ti label=" " explain="Edit Principal Defaults" type="call_job" job="tk_para_edit"/>
+
+  <call_job job="tk_ext_print_help"/>
+  <ti label=" " explain="Edit Extended Defaults" type="call_job" job="tk_ext_edit"/>  
+
+  <call_job job="tk_fut_print_help"/>
+  <ti label=" " explain="Edit Future Defaults" type="call_job" job="tk_fut_edit"/>
+    
+      
+</job>
+<!--
+<job id="Default/Principal" xrole="hidden">
+  <create_file file="(file,project-exists)">yes</create_file>
+  <call_job job="tk_para_print_values"/>
+  <ti label=" " explain="Edit Principal Defaults" type="call_job" job="tk_para_edit"/>
+  <ti xlabel=" " explain="See all tips" type="call_job" job="tk_para_print_values_tips" test="0"/>
+      
+</job>
+
+<job id="Default/Principal?">
+     <call_job job="tk_para_print_values_tips"/>
+</job>
+
+<job id="Default/Extended" xrole="hidden">
+  <call_job job="tk_ext_print_values"/>
+  <ti label=" " explain="Edit Extended Defaults" type="call_job" job="tk_ext_edit"/>
+  <ti xlabel=" " explain="See all tips" type="call_job" job="tk_ext_print_values_tips" test="0"/>
+      
+</job>
+
+<job id="Default/Extended?">
+     <call_job job="tk_ext_print_values_tips"/>
+</job>
+
+<job id="Default/Future" xrole="hidden">
+  <call_job job="tk_fut_print_values"/>
+  <ti label=" " explain="Edit Future Defaults" type="call_job" job="tk_fut_edit"/>
+  <ti xlabel=" " explain="See all tips" type="call_job" job="tk_fut_print_values_tips" test="0"/>
+      
+</job>
+
+<job id="Default/Future?">
+     <call_job job="tk_fut_print_values_tips"/>
+</job>
+-->
+
+<job id="Configuration" pri="10" role="hidden">
+     <call_job job="tk_conf_edit"/>
+</job>
+
+
+
+<job id="Edit Configuration?">
+     <call_job job="tk_conf_print_values_tips"/>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,189 @@
+<?xml version="1.0" ?><!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<!-- <when test="(f,has,prop,pro)"> take 2 things to the prolog --> 
+  <!-- 
+  <file id="ipx-data" x="(dir,pro)ipx-data.xrs"/>
+  <prop id="ipx-regex" x="ipx_.+"/>
+  -->
+<!-- </when>       -->
+
+
+<job id="ipx_run" role="hidden">
+  <need default="0">(prop,ipx_run_print)</need>
+  <call_job job="tk_ipx_read"/>
+  <ti label="Looping over Xml by Xpath"/>
+  
+  <when test="(prop,ipx_run_print)">
+    <ti label="Xml-File:" type="file" x="(file,ipx_file_read)"/>
+    <ti label="Xpath:"  x="(prop,ipx_xpath)"/> 
+  </when>
+  <ti_break/>
+  <prop id="ipx-count">0</prop>
+  <loop xml="(file,ipx_file_read)" id="ipx" xpath="(prop,ipx_xpath)">
+    <prop id="ipx-count">(loop,ipx,#i)</prop>
+    <ti type="rec" label="(prop,ipx-count).">
+      <ti>(loop,ipx,xml?)</ti>
+    </ti>
+  </loop>  
+  <ti_hr/>
+  <ti label="Found (prop,ipx-count) times."/>
+  
+ <ti type="call_job" job="ixp_edit_run" explain="Edit &amp; Run Again ...." /> 
+</job>
+<!-- gui Adapters: to copy in the app  take the edit to your gui....
+<job id="Edit: ipx_">
+  <call_job job="tk_ipx_edit"/>
+</job>
+
+<job id="Edit: ipx_?">
+  <call_job job="tk_ipx_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_ipx_clear" explain="Clear this data"/>
+</job>
+                                   -->
+
+
+<!-- setting the default-values -->
+<job id="tk_ipx_default" role="hidden">
+
+  <need default="">(prop,ipx_xpath)</need>
+  <need default="">(file,ipx_file_read)</need>
+  <need default="">(prop,memo)</need>
+</job>
+
+
+<!-- ipx-core, make your changes here -->
+<job id="tk_ipx_core" role="hidden" tip="ipx_: Tk Internal">
+
+  <need default="">(prop,tk_ipx_add_flag)</need>
+
+  <tk label="Xpath" 
+      flag="(prop,tk_ipx_add_flag)"
+      tip="()Search an xml by xpath()"> 
+
+    <tk id="ipx_xpath"
+        type="textblock"
+        label="Xpath"               
+      	xtest_first="0"
+        flag="nono"
+        tip="()()" /> 
+        
+    <tk id="ipx_file_read"
+        type="file"  
+      	label="Xml-File" 
+        flag="nono"          
+        tip="()This file will be read()"
+        xtest_first="0"/>  
+        
+    <tk id="ipx_memo"
+        type="textblock"
+        label="Memo"               
+        tip="()Just to note something()" />           
+                          
+  </tk>   
+</job>
+<!-- 
+<job id="See Values: ipx_" role="dev">
+  <call_job job="tk_ipx_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_ipx_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+ <job id="Clear Data: ipx_">
+  <tk type="msg" x="Sure to clear data of ipx_ ?" msg_type="w"/>
+  <call_job job="tk_ipx_clear"/>
+</job>
+
+<job id="Print Values:  ipx_">
+  <call_job job="tk_ipx_print_values"/>
+</job>
+<job id="Print Help: ipx_" role="dev">
+  <call_job job="tk_ipx_print_help"/>
+</job>
+
+-->
+<!-- edit data: read, userinput, write -->
+<job id="tk_ipx_edit" tip="ipx_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,ipx-data))">
+      <!-- data exists already -->
+      <prop id="tk_ipx_add_flag" x="sum_only print"/>
+      <call_job job="tk_ipx_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_ipx_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_ipx_default"/>
+  <!-- doing input -->
+  <call_job job="tk_ipx_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_ipx_write"/>
+
+</job>
+
+
+
+<job id="tk_ipx_print_values" tip="ipx_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_ipx_read"/>
+  
+  <call_job job="tk_ipx_core">
+    <prop id="tk_ipx_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_ipx_print_values_tips" tip="ipx_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_ipx_read"/>
+  
+  <call_job job="tk_ipx_core">
+    <prop id="tk_ipx_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_ipx_print_help" tip="ipx_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_ipx_core">
+    <prop id="tk_ipx_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_ipx_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ipx-data)" />
+    <prop id="joe-in-regex" x="(prop,ipx-regex)" />    
+  </call_job>
+  <call_job job="tk_ipx_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_ipx_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ipx-data)" />
+    <prop id="joe-in-regex" x="(prop,ipx-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_ipx_clear"  tip="ipx_: Clears the data" role="hidden">
+  <delete file="(file,ipx-data)"/>
+</job>
+
+
+</jobs>

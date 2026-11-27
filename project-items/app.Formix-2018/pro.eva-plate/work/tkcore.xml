@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="plate-tk">
+<need default="">(prop,plates_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="Ein Rezept ist ein Beschreibung eines Kochvorganges dervin einem Endresultat muendet. &#10;Zum einen gibt es Grund-Zutaten fuer das gesamte Rezept. &#10;Weiters kann ein Rezept in Teilprodukte gegliedert werden - diese werden Komponenten genannt;&#10;Innerhalb jeder Komponente kann aus den Grund-Zutaten auswgewaet werden um diese zu verarbeiten. ie Verarbeitungsschritte &#10;Wwerden dokumentiert. " flag="(prop,plates_tk_control) wrap ">
+<tk label="Name" id="plate_name" x="" test_first="1" tip="Titel" type="text" flag=" nono "/>
+<tk label="Kategorie" id="plate_category" x="" test_first="1" tip="Klassifikationen und Kategorien" type="sel" flag="multi ">
+<sel label="Vorspeise">Vorspeise</sel>
+<sel label="Nachspeise">Nachspeise</sel>
+<sel label="Vegetarisch">Vegetarisch</sel>
+<sel label="Vegan">Vegan</sel>
+<sel label="Antihistamin">Antihistamin</sel>
+<sel label="Fleischlos">Fleischlos</sel>
+<sel label="Fischgericht">Fischgericht</sel>
+<sel label="billig">billig</sel>
+<sel label="teuer">teuer</sel>
+<sel label="SchnelleZubereitung">SchnelleZubereitung</sel>
+<sel label="geheimtipp">geheimtipp</sel>
+</tk>
+<tk label="Charakter" id="plate_character" x="" test_first="1" tip="Geschmaecker und Besonderheiten die das Rezept einzigartig machen" type="text" flag=" "/>
+<tk label="Doku" id="plate_beschreibung" x="" test_first="0" tip="Beschreibung die publiziert wird" type="textblock" flag=" "/>
+<tk label="Preisklasse im Wareneinkauf" id="plate_price_buy" x="" test_first="0" type="text" flag=" "/>
+<tk label="Preisklasse im Verkauf" id="plate_price_sell" x="" test_first="0" type="text" flag=" "/>
+<tk label="Zutaten" id="plate_parts" x="" test_first="0" tip="Zusatenliste fuer das Rezept" type="textblock" flag=" "/>
+<tk label="Text" id="plate_detail" x="" test_first="0" tip="Beschreibung fuer die interne verwendung; wird nicht publiziert" type="textblock" flag=" "/>
+<tk label="Logo" x="Logo" test_first="0" test="(f,role,admin)" type="msg" flag=" "/>
+<tk label="Bild" id="plate_logo" x="" test_first="0" tip="ein Bild" test="(f,role,admin)" type="file" flag=" "/>
+<tk label="List-Max Breite/Px" id="plate_logo_max_x" x="" test_first="0" tip="in pixel" test="(f,role,admin)" type="text" flag=" "/>
+<tk label="List-Max Hoehe/px" id="plate_logo_max_y" x="" test_first="0" tip="in pixel" test="(f,role,admin)" type="text" flag=" "/>
+</tk>
+</job>

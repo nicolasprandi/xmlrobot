@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="compi-editor">
+<try_catch>
+<try>
+<call_job job="hook_compi_editor_begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: compi-editor: begin.0">
+<ti> hook_job=hook_compi_editor_begin hook=begin page=editor station=0 object=compi</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Arcadia-Compilation(prop,compis_offset_label)"/>
+<prop x="sum" id="compis_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,compi_key)</need>
+<prop id="label" x="Arcadia-Compilation [(f,text,cut_nice,(f,tk_sel_translate,(prop,compi_compilation),(dir,pro)current-compi-compile-selection.xml),50)](prop,compis_offset_label)"/>
+<prop x="sum_only" id="compis_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="compi-tk"/>
+</job>

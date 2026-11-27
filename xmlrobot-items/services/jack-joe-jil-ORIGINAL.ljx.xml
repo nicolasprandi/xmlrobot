@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+  <prop id="debug-jack">1</prop>
+  
+  <job id="sys_jil_adapter_file" role="hidden">
+    <when test="(f,has,file,with-jil)">
+      <dir id="with-jil">(f,dir_of_file,(file,with-jil))</dir>
+      <prop id="init-filename" x="(f,name_of_file,(file,with-jil))"/>
+    </when>
+    
+    <call_service job="go-jil-run"/>
+    <global act="get" id="jil-result"/>
+    <tk type="msg" x="jil-result: (prop,jil-result)" test="0"/>
+    
+    <prop id="save-flag" x="(f,has_flag,(prop,with-flag-jil),save)"/>
+    
+    <choose>
+      <when test="(f,and,(f,not,(f,has,prop,with-extension-jil)),(f,not,(f,has,prop,init-filename)))">
+        <!-- no extension and no initial-filname-->
+        <tk type="file" 
+          id="f" 
+          base="(prop,jil-result)" 
+          label="File of Pre-Selection" 
+          flag="(prop,with-flag-jil) no_preselection"/>
+      </when>
+      <when test="(f,and,(f,not,(f,has,prop,with-extension-jil)),(f,has,prop,init-filename))">
+        <!-- no extension and initial-filname-->
+        <file id="maybe" x="(prop,jil-result)(prop,init-filename)"/>
+        <prop id="maybe-exists" x="(f,exists_file,(file,maybe))"/>
+        
+        <choose>
+          <when test="(f,or,(prop,maybe-exists),(prop,save-flag))">
+            <tk type="file" 
+              id="f" 
+              x="(file,maybe)" 
+              label="File of Pre-Selection" 
+              flag="(prop,with-flag-jil) no_preselection"/>            
+          </when> 
+          <otherwise>
+            <tk type="file" 
+              id="f" 
+              base="(prop,jil-result)" 
+              label="File of Pre-Selection" 
+              flag="(prop,with-flag-jil) no_preselection"/>          
+          </otherwise>                              
+        </choose>
+        
+      </when>      
+
+      <when test="(f,and,(f,has,prop,with-extension-jil),(f,not,(f,has,prop,init-filename)))">
+        <!-- extension and no initial-filname-->
+        <tk type="file" 
+          id="f" 
+          base="(prop,jil-result)" 
+          label="File of Pre-Selection" 
+          flag="(prop,with-flag-jil) no_preselection"
+          extension="(prop,with-extension-jil)"/>
+      </when>
+      
+      <when test="(f,and,(f,has,prop,with-extension-jil),(f,has,prop,init-filename))">
+        <!-- extension and initial-filname-->
+        
+        <file id="maybe" x="(prop,jil-result)(prop,init-filename)"/>
+        <prop id="maybe-exists" x="(f,exists_file,(file,maybe))"/>
+        
+        <choose>
+          <when test="(f,or,(prop,maybe-exists),(prop,save-flag))">
+            <tk type="file" 
+              id="f" 
+              x="(file,maybe)" 
+              label="File of Pre-Selection" 
+              flag="(prop,with-flag-jil) no_preselection"
+              extension="(prop,with-extension-jil)"/>            
+          </when> 
+          <otherwise>
+            <tk type="file" 
+              id="f" 
+              base="(prop,jil-result)" 
+              label="File of Pre-Selection" 
+              flag="(prop,with-flag-jil) no_preselection"
+              extension="(prop,with-extension-jil)"/>          
+          </otherwise>                              
+        </choose>
+
+      </when>      
+          
+    </choose>
+    <global act="set" id="jil-result" x="(file,f)"/>
+
+    <i>Preselected: (file,f)</i>
+  </job>  
+  
+  <job id="sys_jil_adapter_dir" role="hidden">
+    <call_service job="go-jil-run"/>
+    <global act="get" id="jil-result"/>
+    <i>Preselected: (prop,jil-result)</i>
+  </job>   
+  
+  <job id="Select Directory" role="hidden" joblevel="ws">
+
+    <call_service job="go-joe-read">
+      <file id="joe-in-store">(dir,status)last-pano-ic.lsx</file>  
+    </call_service>
+    <when test="(f,has,dir,dir_to_see)">
+      <ti type="dir" label="Last Dir:" x="(dir,dir_to_see)" />
+      <ti_flush/>
+    </when>
+    <call_service job="go-jil-run" flag="silent"/>
+    <tk id="dir_to_see" label="Confirm or Change" type="dir"/>
+    
+    <ti tyxpe="dir" label="Selected:">(dir,dir_to_see)</ti>
+    <ti_hr/>
+    <ti_break/>
+    <ti_flush/>
+    
+    <call_service job="go-joe-write">
+      <prop id="joe-in-regex">dir_to_see</prop>  
+      <file id="joe-in-store">(dir,status)last-pano-ic.lsx</file>  
+    </call_service>
+
+      <dir id="with">(dir,dir_to_see)</dir>
+      <call_service job="Goto-Panorama"/>
+    
+  </job>
+  
+  <!--
+    <job id="Select Directory" role="dev" joblevel="ws">
+    
+    <call_service job="go-jil-run" flag="silent"/>
+    <tk id="dir_to_see" label="Confirm or Change" type="dir"/>
+    <ti type="dir" label="Selected:">(dir,dir_to_see)</ti>
+    <ti tyxpe="dir" label=" ">(dir,dir_to_see)</ti>
+    <ti_flush/>
+    
+    <file id="joe-in-store">(dir,status)seldir77-ic.xml</file>  
+    <call_service job="go-joe-read"/>
+        
+    <tk type="bool" id="cont_panorama" label="Continue with Panorama?" flag="nono"/>
+
+    <prop id="joe-in-regex">cont_panorama</prop>  
+    <call_service job="go-joe-write"/>
+        
+    <when test="1" txest="(prop,cont_panorama)">
+      <ti_hr/>
+      <dir id="with">(dir,dir_to_see)</dir>
+      <call_service job="Goto-Panorama"/>
+    </when>
+    
+  </job>
+  -->
+  
+  <!-- selects just an application -->
+  <job id="go-jil-run-app" role="hidden" joblevel="ws">
+    <call_service job="jil-add-app-dir"/>
+    <need>(dir,dir_to_see) (prop,app_ref)</need>
+    <global act="set" id="jil-result" x="(dir,dir_to_see)"/>
+    <global act="set" id="jil-result-app" x="(prop,app_ref)"/> 
+  </job>
+  
+  <job id="go-jil-run" role="hidden" joblevel="ws">
+    
+    <file id="joe-in-store">(dir,status)jil-ic.xml</file>  
+    <call_service job="go-joe-read"/>
+    
+    <need default="Select a Directory-Type">(prop,jil-question)</need>
+    <try_catch>
+      <try>
+        <dir id="user_doc">(f,info,documents_dir)</dir>
+      </try>
+      <catch/>
+    </try_catch>    
+    <tk label="Preselection">    
+    <tk label="(prop,jil-question)" type="sel" id="input1" x="userdocs" flag="nono" tip="()This is a list of the EchnatonCcc-Folders. It helps you to find project- or application-folders. You will be navitaged through your datastructure. Use 'Manual Input per hand' to enter a folder-name with the keyboard.()">
+      <sel label="User - Documents" test="(f,exists,dir,user_doc)">userdocs</sel> 
+      <sel label="User - Home">userhome</sel>    
+
+          
+      <sel label="Project - (f,upper,(f,vob,prop,pro))"
+           test="(f,has,prop,pro)">this-pro</sel>         
+      <sel label="Project - ...">pro</sel>             
+
+      <sel label="Application - (f,upper,(f,vob,prop,app))"
+           test="(f,has,prop,app)">this-app</sel>
+      <sel label="Application - ...">app</sel> 
+      
+      <sel label="Workspace - (f,upper,(prop,workspace))">workspace</sel>
+      
+      <sel label="EchnatonCcc - Takeoff">takeoff</sel>
+      <sel label="EchnatonCcc - Services">services</sel>
+      <sel label="EchnatonCcc - Service Apps" 
+           test="(f,role,admin)">serviceApps</sel> 
+                                   
+      <sel label="EchnatonCcc - System">system</sel>   
+              
+      <sel label="Archive - Backups">backup</sel>
+      <sel label="Archive - Museum">museum</sel>
+      <sel label="Java - Home" test="(f,role,expert)">loxo_home</sel>
+      <sel label="Manual Input per hand ...">hand</sel>
+    </tk> 
+    </tk> 
+
+    <choose>
+      <when test="(f,eq,(prop,input1),)">
+        <throw>Selection cancelled.</throw>
+      </when>  
+      <when test="(f,eq,(prop,input1),app)">
+        <call_service job="jil-add-pro-dir"/>
+      </when>
+      <when test="(f,eq,(prop,input1),pro)">
+        <prop id="app_label">()Select first an APPLICATION, next the project ...()</prop>
+        <prop id="app_tip">()You decided to select a project. To find that project, we want you at first to select an application. Afterwards we will present you the list of projects of that application.()</prop>
+        <call_service job="jil-add-pro-dir"/>
+      </when>      
+      <when test="(f,eq,(prop,input1),services)">
+        <dir id="dir_to_see">(dir,services)</dir>
+      </when>  
+      <when test="(f,eq,(prop,input1),serviceApps)">
+        <dir id="dir_to_see">(dir,service_apps)</dir>
+      </when>      
+      <when test="(f,eq,(prop,input1),workspace)">
+        <dir id="dir_to_see">(dir,workspace)</dir>
+      </when>  
+      <when test="(f,eq,(prop,input1),this-app)">
+        <dir id="dir_to_see">(dir,app)</dir>
+      </when>  
+      <when test="(f,eq,(prop,input1),this-pro)">
+        <dir id="dir_to_see">(dir,pro)</dir>
+      </when>              
+      <when test="(f,eq,(prop,input1),takeoff)">
+        <dir id="dir_to_see">(f,dir_of_file,(file,takeoff))</dir>
+      </when>          
+      <when test="(f,eq,(prop,input1),system)">
+        <dir id="dir_to_see">(dir,system)</dir>
+      </when>   
+      <when test="(f,eq,(prop,input1),museum)">
+        <dir id="dir_to_see">(dir,museum)</dir>
+      </when>  
+      <when test="(f,eq,(prop,input1),backup)">
+        <dir id="dir_to_see">(dir,backup)</dir>
+      </when>                
+      <when test="(f,eq,(prop,input1),userhome)">
+        <dir id="dir_to_see">(f,sys_prop,user.home)(prop,fs)</dir>
+      </when>   
+      <when test="(f,eq,(prop,input1),userdocs)">
+        <dir id="dir_to_see">(dir,user_doc)</dir>
+      </when>   
+      <when test="(f,eq,(prop,input1),loxo_home)">
+        <dir id="dir_to_see">(dir,home)</dir>
+      </when>   
+      <when test="(f,eq,(prop,input1),hand)">
+        <when test="(f,has,dir,with-jil)">
+          <prop id="hand">(dir,with-jil)</prop>
+        </when>
+        <tk type="textblock" id="hand" label="Enter the Folder-Name"/>
+        <dir id="dir_to_see">(prop,hand)</dir>
+      </when>                            
+  
+    </choose>     
+      
+    <prop id="joe-in-regex">input1|app_ref|pro_ref</prop>  
+    <call_service job="go-joe-write"/>
+    
+    <need>(dir,dir_to_see)</need>
+    <global act="set" id="jil-result" x="(dir,dir_to_see)"/>
+          
+  </job>
+  
+<job id="jil-add-pro-dir" role="hidden">
+      <need default="Application Selection">(prop,app_label)</need>
+
+      <ask what="apps" out="(dir,filetemp)psi-ask.xml" style="natural"/>
+
+      <xslt 
+          xml="(dir,filetemp)psi-ask.xml" 
+          out="(dir,filetemp)psi-sel-apps.xml">
+          <inline attribute="xsl" flag="log"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//apps"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="app">
+   <sel><xsl:value-of select="@id"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>      
+      <tk type="sel" id="app_ref" label="(prop,app_label)" xml="(dir,filetemp)psi-sel-apps.xml" flag="nono" tip="(f,vob,prop,app_tip)"/>
+
+
+      <choose>
+        <when test="(f,eq,(prop,app_ref),)">
+          <dir id="dir_to_see">.</dir>
+          <throw>good bye</throw>
+        </when>                 
+        <when test="(f,eq,(prop,input1),app)">
+          <ti test="0">selected app=(prop,app_ref)</ti>
+          <dir id="dir_to_see">(f,xpath,(dir,filetemp)psi-ask.xml,apps/app[@id=(f,xpath_string,(prop,app_ref))],@dir)</dir>
+        </when> 
+        <when test="(f,eq,(prop,input1),pro)">
+          <!--  <xsl:apply-templates select="//apps/app[@id=(f,xpath_string,(prop,app_ref))]/pro"/>  -->
+          <xslt 
+              xml="(dir,filetemp)psi-ask.xml" 
+              out="(dir,filetemp)psi-sel-pros.xml" >
+              <params>id='(f,xslp,(prop,app_ref))'</params>
+              <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <xsl:stylesheet 
+      version="1.0" 
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:param name="id" />
+    <xsl:output method="xml"/>
+    
+    <xsl:template match="/">
+      <sels>
+       <xsl:apply-templates select="//apps/app[@id=$id]/pro"/>
+      </sels>
+    </xsl:template>
+    
+    <xsl:template match="pro">
+       <sel><xsl:value-of select="@id"/></sel>
+    </xsl:template>
+    
+    </xsl:stylesheet>
+      ]]></inline>         
+            </xslt>      
+            <tk type="sel" id="pro_ref" label="Select a '(prop,app_ref)' PROJECT" xml="(dir,filetemp)psi-sel-pros.xml" flag="nono"/>
+    
+            <choose>
+              <when test="(f,eq,(prop,pro_ref),)">
+                <dir id="dir_to_see">.</dir>
+                <throw>good bye</throw>
+              </when>                 
+              <when test="(f,eq,(prop,input1),pro)">
+                <dir id="dir_to_see">(f,xpath,(dir,filetemp)psi-ask.xml,apps/app[@id=(f,xpath_string,(prop,app_ref))]/pro[@id=(f,xpath_string,(prop,pro_ref))],@data_dir)</dir>
+                <ti test="0">project dir=(dir,dir_to_see)</ti>
+              </when> 
+            </choose>
+          </when>                
+      </choose>
+            
+     
+</job>
+
+<job id="jil-add-app-dir" role="hidden">
+      <need default="Application Selection">(prop,app_label)</need>
+      <ask what="apps" out="(dir,filetemp)psi-ask.xml" style="natural"/>
+      <xslt 
+          xml="(dir,filetemp)psi-ask.xml" 
+          out="(dir,filetemp)psi-sel-apps.xml">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//apps"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="app">
+   <sel><xsl:value-of select="@id"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+
+      <file id="joe-in-store">(dir,status)jil-app-ic.xml</file>  
+      <call_service job="go-joe-read"/>
+    
+      <tk type="sel" id="app_ref" label="(prop,app_label)" xml="(dir,filetemp)psi-sel-apps.xml" flag="nono"/>
+
+      <prop id="joe-in-regex">app_ref</prop>  
+      <call_service job="go-joe-write"/>
+    
+      <choose>
+        <when test="(f,eq,(prop,app_ref),)">
+          <dir id="dir_to_see">.</dir>
+          <throw>good bye</throw>
+        </when>                 
+        <otherwise>
+          <dir id="dir_to_see">(f,xpath,(dir,filetemp)psi-ask.xml,apps/app[@id=(f,xpath_string,(prop,app_ref))],@dir)</dir>
+        </otherwise>
+      </choose>
+</job>
+      
+
+<job id="go-jack-do-file" role="hidden">
+  <need>(file,jack-in)</need>  
+  <!-- <echo type="file" id="jack-in" label="In:"/> -->
+  <choose>
+    <when test="(f,has,file,jack-in)" >
+      <dir id="jwith">(f,can_dir,(f,dir_of_file,(file,jack-in)))</dir>
+      <call_service job="srv-jack-int-1" /> 
+      <prop id="go-jack-do-file-ret"     x="(prop,jack-out)(f,escape,(f,name_of_file,(file,jack-in)))"/>
+      <global act="set" id="jack-result" x="(prop,jack-out)(f,escape,(f,name_of_file,(file,jack-in)))"/>                            
+      <global act="set" id="jack-result-did" x="(prop,jack-out-did)"/>         
+    </when> 
+    <otherwise>
+      <prop id="go-jack-do-file-ret" x="(f,escape,(file,jack-in))"/>
+      <global act="set" id="jack-result" x="(f,escape,(file,jack-in))"/> 
+      <global act="set" id="jack-result-did" x="0"/>
+    </otherwise>
+  </choose>
+  
+  <!-- <echo type="prop" id="go-jack-do-file-ret" label="Jack: Return for file: (file,jack-in)"/>  -->
+
+</job>
+
+<job id="go-jack-do-dir" role="hidden" tip="x">
+  <need>(dir,jack-in)</need> 
+  
+  <choose>
+    <when test="(f,has,dir,jack-in)" >
+      <dir id="jwith">(f,can_dir,(dir,jack-in))</dir>
+      <call_service job="srv-jack-int-1" />
+      <global act="set" id="jack-result" x="(prop,jack-out)"/>  
+      <global act="set" id="jack-result-did" x="(prop,jack-out-did)"/> 
+    </when>
+    <otherwise>
+      <global act="set" id="jack-result" x="(f,escape,(dir,jack-in))"/>
+      <global act="set" id="jack-result-did" x="0"/>  
+    </otherwise>
+  </choose>  
+  
+  
+
+</job>
+
+
+<job id="srv-jack-int-1" role="hidden">
+  <need>(dir,jwith)</need>
+    <file id="jspirit" x="(dir,status)jack-jspirit.xml" />
+    <ti type="file" test="0">(file,jspirit)</ti>
+    
+    <create_file out="(file,jspirit)">&lt;list search_for=&quot;(x,(dir,jwith))&quot;/&gt;</create_file>
+    <spirit id="jspirit" act="open" xml="(file,jspirit)" flag="nuevo"/>
+
+    <!-- do project-dir if one exists -->
+    <when test="(f,exists,dir,pro)">
+      <when test="(f,dir_exists,(dir,pro))">
+        <when test="(f,starts_with,(dir,jwith),(dir,pro))">                
+          <prop id="name">pro</prop>
+          <dir id="name">(dir,pro)</dir>
+          <prop id="pri">1</prop>
+          <prop id="only_inside">1</prop>
+          <call_service job="srv-jack-int-2" />                    
+        </when>
+      </when> <!-- end dir_exists -->
+    </when> <!-- end pro -->
+    
+    <!-- do WORKSPACE AND APPLICATION 
+         if one exists and if it isn't a service-app -->
+    <when test="(f,exists,dir,app)">
+      <!-- application -->
+      <prop id="name">app</prop>
+      <dir id="name">(dir,app)</dir>
+      <prop id="pri">2</prop>
+      <prop id="only_inside">1</prop>
+      <call_service job="srv-jack-int-2" /> 
+      
+      <!-- workspace, but not for service-apps -->    
+      <when test="(f,not,(prop,is_service_app))">
+        <prop id="name">workspace</prop>
+        <dir id="name">(dir,workspace)</dir>
+        <prop id="pri">3</prop>
+        <prop id="only_inside">1</prop>
+        <call_service job="srv-jack-int-2" />
+      </when>
+    </when>
+    
+    <prop id="name">system</prop>
+    <dir id="name">(dir,system)</dir>
+    <prop id="pri">4</prop>
+    <prop id="only_inside">0</prop>
+    <call_service job="srv-jack-int-2" />       
+      
+    <spirit id="jspirit" act="close" flag="write save"/>
+    
+    
+    <prop id="result-count">(f,xsl,(file,jspirit),count(e:o)//member(e:c))</prop>
+    <ti label="Result Count" test="0">(prop,result-count)</ti>
+    
+    <choose>
+      <when test="(f,eq,(prop,result-count),0)">
+        <!-- nothing found, return as input -->
+        <prop id="jack-out">(f,escape,(dir,jwith))</prop>
+        <prop id="jack-out-did">0</prop>
+      </when>
+      <otherwise>
+        <!-- get first one -->
+        <loop id="pick" xml="(file,jspirit)" limit="1" 
+              xpath="member" sort="@is_outside @pri" number="@is_outside @pri">
+          <prop id="jack-out">(loop,pick)</prop>
+          <prop id="jack-out-did">1</prop>
+          <!-- <unescape id="jack-out" type="prop"/> -->
+          
+        </loop>
+      </otherwise>
+    </choose>
+    
+
+  <!-- <echo type="prop" id="jack-out" label="selected by [srv-jack-int-1]"/>  -->
+
+  <!-- <need>(prop,joe-out)</need> -->
+</job>
+
+<job id="srv-jack-int-2" role="hidden" tip="x">
+  <need>(prop,name) (dir,name) (dir,jwith) (prop,pri) (prop,only_inside)</need>
+  
+  <choose>
+    <!-- value equals request -->
+    <when test="(f,eq,(dir,jwith),(dir,name))">
+      <prop id="jack_out"></prop>
+      <spirit id="jspirit" act="xml_update" how="append">
+        <inline attribute="with"><![CDATA[
+    <member 
+      name="(prop,name)" 
+      pri="(prop,pri)" 
+      dir="(dir,name)" 
+      is_outside="0">(e:o)dir(e:s)(prop,name)(e:c)</member>
+      ]]>
+        </inline>
+      </spirit>
+    </when>      
+    <otherwise>
+      
+      <try_catch>
+        <try>
+          <prop id="jack_out">(f,relative_dir,(dir,jwith),(dir,name))</prop>
+          <escape type="prop" id="jack_out"/>
+          <!-- filter outsiders if only insiders wanted -->
+          <prop id="is_outside">(f,starts_with,(prop,jack_out),..)</prop>
+          <when test="(f,or,(f,not,(prop,is_outside)),(f,not,(prop,only_inside)))">
+            <spirit id="jspirit" act="xml_update" how="append">
+              <inline attribute="with"><![CDATA[
+                <member 
+                  name="(prop,name)" 
+                  dir="(dir,name)" 
+                  is_outside="(f,starts_with,(prop,jack_out),..)"
+                  pri="(prop,pri)"
+                  >(e:o)dir(e:s)(prop,name)(e:c)(x,(f,replace,(prop,jack_out),(prop,fs),(e:o)prop(e:s)fs(e:c)))</member>
+                  ]]>
+              </inline>
+            </spirit>      
+          </when>         
+        </try>
+        <catch/>
+
+      </try_catch>
+      
+    </otherwise>
+  </choose>
+
+</job>
+
+  <job id="go-joe-read!" role="hidden">
+    <remove type="file" id="joe-in-store" flag="catch"/>
+  </job>
+  
+  <job id="go-joe-read" role="hidden">
+    <try_catch>
+      <try>
+        <need>(file,joe-in-store)</need>
+        <when test="(f,file_exists,(file,joe-in-store))">
+          <include file="(file,joe-in-store)"/>
+        </when>
+      </try>
+      <catch>
+        <tp>Some problem in reading gui-store: (file,joe-in-store)</tp>
+      </catch>
+    </try_catch>
+  </job>
+
+  <job id="go-joe-write!" role="hidden">
+    <remove type="file" id="joe-in-store" flag="catch"/>
+    <remove type="prop" id="joe-in-regex" flag="catch"/>
+  </job>
+  
+  
+  <job id="go-joe-write" role="hidden">
+
+    <need>(prop,joe-in-regex) (file,joe-in-store)</need>
+    <file id="gj-ask">(dir,filetemp)joe-ask.xml</file>
+
+    <ask what="vars" out="(file,gj-ask)" style="escaped"/>
+    <ti label="ask-vars" type="file" x="(file,gj-ask)" test="0"/>
+    <print act="open" id="jp" out="(file,joe-in-store)"/>
+    <print act="println" id="jp">&lt;?xml version="1.0" ?&gt;&lt;steps&gt;</print>
+
+    <loop id="j" xml="(file,gj-ask)" xpath="vars/var" flag="dont_escape_on_read">
+      <prop id="do-this">1</prop>
+      <when test="(f,and,(f,eq,dir,(loop,j,@type)),(f,eq,(prop,fs),(loop,j)))">
+        <prop id="do-this">0</prop>
+      </when>
+      <when test="(f,matches_regex,(loop,j,@id),(prop,joe-in-regex))">
+      <when test="(prop,do-this)">
+       <ti test="0">(loop,j,@type),(loop,j,@id) = (loop,j)</ti>
+       
+       <print act="print" id="jp" test="(f,eq,prop,(loop,j,@type))">&lt;prop </print>
+       <print act="print" id="jp" test="(f,eq,file,(loop,j,@type))">&lt;file </print>
+       <print act="print" id="jp" test="(f,eq,dir,(loop,j,@type))">&lt;dir </print>
+
+       <print act="print" id="jp">id=&quot;(x,(f,escape,(loop,j,@id)))&quot;</print>
+    
+				<choose>
+					<when test="(f,eq,,(loop,j))">
+						<!-- nothing -->
+						<print act="print" id="jp">&gt;</print>
+					</when>
+					<when test="(f,eq,prop,(loop,j,@type))">
+						<!-- property -->
+						<print act="print" id="jp">&gt;</print>
+						<print act="print" id="jp" flag="dont_unescape_on_write">(x,(loop,j))</print>
+					</when>
+					<when test="(f,eq,file,(loop,j,@type))">
+						<!-- file -->
+						<print act="print" id="jp">&gt;</print>
+                                                
+						<call_service job="go-jack-do-file" flag="silent">
+              <file id="jack-in" x="(loop,j)" />				
+						</call_service>
+						<global act="get" id="jack-result"/>
+						<print act="print" id="jp">(x,(prop,jack-result))</print>
+					</when>
+					<when test="(f,eq,dir,(loop,j,@type))">
+						<!-- directory -->                                                
+						<call_service job="go-jack-do-dir" flag="silent">
+              <dir id="jack-in" x="(loop,j)" />	
+						</call_service>
+						<global act="get" id="jack-result"/>
+						<when test="(f,not,(f,eq,(loop,j),(prop,jack-result)))">
+							<print act="print" id="jp"> flag="cool"</print>
+						</when>
+						<print act="print" id="jp">&gt;</print>
+						
+						<print act="print" id="jp">(x,(prop,jack-result))</print>              
+					</when>
+				</choose>          
+      
+       <print act="print" id="jp">&lt;</print>
+       <print act="println" id="jp" test="(f,eq,prop,(loop,j,@type))">/prop&gt;</print>
+       <print act="println" id="jp" test="(f,eq,file,(loop,j,@type))">/file&gt;</print>
+       <print act="println" id="jp" test="(f,eq,dir,(loop,j,@type))">/dir&gt;</print>
+
+       </when>
+      </when>
+    </loop>
+    <print act="println" id="jp">&lt;/steps&gt;</print>
+    <print act="close" id="jp"/>
+
+  </job>  
+
+
+</jobs>

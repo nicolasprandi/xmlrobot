@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="spalten">(dir,pro)spalten.xml</file>
+<when test="(f,not,(f,exists_file,(file,spalten)))">
+<create_file out="(file,spalten)">&lt;spalten/&gt;</create_file>
+<i>Created: (file,spalten)</i>
+</when>
+<prop id="spalten_offset">./</prop>
+<prop id="spalten_offset_label"/>
+<prop id="spalten_offset_new_key">//</prop>
+<prop id="spalten_sort_attribute"/>
+<prop id="spalten_sort_number"/>
+<prop id="spalten_sort_ignore_case"/>
+<prop id="spalten_sort_desc"/>
+<prop id="spalten_where"/>
+<prop id="spalten_return_job">spalte-see-all</prop>
+</prolog>

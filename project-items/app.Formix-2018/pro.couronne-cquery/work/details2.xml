@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="squery-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="squerys_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,squerys_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="squery-see">
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="squery-see-all">
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,squery_key)</need>
+<call_job job="squery-read"/>
+<prop id="squery_default_label_class" x="(prop,_sl_squery)"/>
+<prop id="squery_default_label_name" x="(f,text,cut_nice,(prop,squery_id),50)(f,when,(f,has,(prop,squerys_offset_label)), - (prop,squerys_offset_label),)"/>
+<call_job job="squery-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailSquery" explain="(prop,_x_edit)" job="squery-edit" test="(prop,bpDev)" >
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,squerys_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="squery-see">
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="squery-see-all">
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

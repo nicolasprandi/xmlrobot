@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="file2-edit">
+<need>(prop,file2_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="file2-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="file2-editor"/>
+<call_job job="file2-write"/>
+<ti align="right" x="Did update File '(f,tk_sel_translate,(prop,file2_thefile),(file,file-selector-any))'"/>
+<call_job job="file2-see"/>
+</job>

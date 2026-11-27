@@ -1,0 +1,407 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+  <call_job job="prolog"/>
+  
+<job id="Test do-perform-replay" role="test">
+
+  <tk type="dir" xlabel="Customers-delviery" id="ac-delivery" label="The customers delivery-dir"
+      x="C:/delivery/kunde-2B"/>
+      
+  <call_job job="do-perform-replay"/>
+
+</job> 
+
+<job id="do-perform-replay" role="hidden">
+
+<need>(dir,ac-delivery)</need>
+<ti label="Playbacks"/>
+<ti type="dir" label="CustomerDelivery">(dir,ac-delivery)</ti>
+<loop id="pb" xml="(file,compileinfo)" xpath="dir/storeinfo/playbacks/playback">
+  <ti label="(loop,pb,../../..,@libname)"/>
+  <choose>
+    <when test="(f,not,(loop,pb,exists?,../../auto/steps/p[@id='auto_zelix']))">
+      <throw>For the lib &quot;(loop,pb,../../..,@libname)&quot; there is no specification whether it is included in zelix. Edit the compile specification</throw>
+    </when>
+    <when test="(f,eq_num,1,(loop,pb,../../auto/steps/p[@id='auto_zelix']))">
+      <ti>... is part of zelix and wants to update (loop,pb,@target)</ti>
+      <dir id="the-zip-dir">(dir,ac-delivery)zip</dir>
+      <ti type="dir" label="Unwanted Zip">(dir,the-zip-dir)</ti>
+      <choose>
+        <when test="(f,dir_exists,(dir,the-zip-dir))">
+          <delete dir="(dir,the-zip-dir)"/>
+          <ti label="Deleted Delivery-Zip" x="deleted the zip-dir of the delivery-dir"/>
+        </when>
+        <otherwise>
+          <ti xlabel="Deleted Delivery-Zip" x="the the zip-dir of the delivery-dir does not exist."/>
+        </otherwise>
+      </choose>
+      <file id="replay-target">(dir,ac-delivery)system/(loop,pb,@target)</file>
+      <file id="replay-origin">(loop,pb,../../../..,@dir)(loop,pb,../../..,@ipath)compiled-bin.jar</file>
+      <ti x="(f,html,b,o)copy(f,html,b,c)"/>
+        <ti type="file" label="Origin">(file,replay-origin)</ti>
+        <ti type="file" label="Target">(file,replay-target)</ti>
+      <delete file="(file,replay-target)" flag="catch"/>
+      <throw test="(f,exists_file,(file,replay-target))">The file [(file,replay-target)]  could not be deleted</throw>
+      <copy file="(file,replay-origin)"
+            tofile="(file,replay-target)"/>
+      <ti>Did copy well</ti>
+    </when>    
+    <otherwise>
+      <ti>... is NOT part of zelix</ti>
+      <tk type="msg">The compile &quot;(loop,pb,../../..,@libname)&quot; has playbacks specified but is not part of zelix. This is a contradiction and should be looked into.
+continue any and do no replay for &quot;(loop,pb,@target)&quot;</tk>
+    </otherwise>
+    
+  </choose>
+</loop>
+
+</job>   
+  
+<job id="do-edit-my-zelix-script" role="hidden">
+  <call_job job="zblock-see-all"/>
+  <ti_flush/>
+  <prop id="the-script"></prop>
+  <when test="(f,exists_file,(file,my-zelix-script))" >
+    <prop id="the-script">(f,file_content,(file,my-zelix-script))</prop>
+  </when>
+  <prop id="the-old-script">(prop,the-script)</prop>
+  <tk id="the-script" type="textblock" flag="big" tip="()This is your real and personal zelix script. It will be used for obfuriscation. The missing part regarding input- and output-files will be added at run-time. This script should now contain the exclude-statements and the at least the obfuriscate-statement.()"/>
+  <choose>
+    <when test="(f,eq_text,(prop,the-old-script),(prop,the-script))">
+      <ti>no changes found</ti>
+    </when>
+    <otherwise>
+      <tk type="msg">continue with doing the update</tk>
+      <create_file out="(file,my-zelix-script)">(prop,the-script)</create_file>
+      <ti type="file" label="updated" x="(file,my-zelix-script)"/>
+    </otherwise>
+  </choose>
+
+</job>
+
+<job id="do-run-zelix-script" role="hidden">
+  <tk type="msg" test="0">Going to copy in now - type=(prop,jvcp_zelix_type)</tk>
+  <include file="(file,zelix-copy-in)"/>
+  
+  <choose>
+    <when test="(f,eq_text,auto,(prop,jvcp_zelix_type))">
+      <need default="1">(prop,ac-ask-p3-review)</need>
+      <tk type="msg" test="(prop,ac-ask-p3-review)">Going to run now Zelix
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+(f,file_content,(file,my-zelix-script))
+      </tk>    
+      <file id="zkm-log">(dir,zelix-logs)std-(f,time).txt</file>
+      <file id="zkm-log-trim">(dir,zelix-logs)trm-(f,time).txt</file>
+      <tp>Starting Zelix-Obfuriscation ...</tp>
+      <ant level="info" log_level="info">
+        <taskdef name="ZKM" classname="ZKMTask" classpath="(f,file,classic,(file,jvcp_zkm))"/>
+         <!-- Attributes correspond to Zelix KlassMaster™ command line options. scriptFileName is only mandatory attribute -->
+         <ZKM scriptFileName="(f,file,classic,(file,zelix-script))"       
+              logFileName="(f,file,classic,(file,zkm-log))" 
+              trimLogFileName="(f,file,classic,(file,zkm-log-trim))" 
+              defaultExcludeFileName="(f,file,classic,(file,jvcp_zkm_default_exclude))" 
+              defaultTrimExcludeFileName="(f,file,classic,(file,jvcp_zkm_default_trim_exclude))">
+            <!--  the sysproperty tag provides an easy way of setting a System property -->
+            <sysproperty key="ZKM_NEW_CHANGE_LOG_ENCODING" value="UTF-16" /> 
+        </ZKM>	      
+      </ant>
+      <tp>Finished Zelix-Obfuriscation...</tp>
+      <ti label="Zelix-Obfuriscation done"/>
+      <ti type="file" label="Performed:">(file,zelix-script)</ti>      
+      <ti x="(f,html,b,o)Logging Output(f,html,b,c)"/>
+      <ti type="file" label="Log:">(file,zkm-log)</ti>
+
+      <ti type="file" label="Trim Log:">(file,zkm-log-trim)</ti>
+    </when>
+    <when test="(f,eq_text,manu,(prop,jvcp_zelix_type))">
+      <call_service job="Panorama-Dir-Activity-TERMINAL">
+          <dir id="with">(dir,zelix)</dir>
+      </call_service>  
+      <tk label="Your manual zelix-kickoff is requested.">
+      <tk type="msg">1. A terminal window just popped up
+2. Enter there: [ (f,name_of_file,(file,zelix-bat)) ] and press the ENTER-Key
+3. The zelix-obfuriscator will start ...
+4. Wait until zelix obfuriscator is finished and
+5. press here [ Ok ] to continue the build process.
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+(f,file_content,(file,my-zelix-script))
+      </tk>
+      </tk>    
+    </when>    
+    <otherwise>
+      <throw>Unbekannter Zelix-call-type: [(prop,jvcp_zelix_type)]</throw>
+    </otherwise>
+  </choose>  
+      
+  <include file="(file,zelix-copy-out)"/>
+  <!-- (file,jvcp_zkm) -->
+
+</job>
+
+<job id="do-create-zelix-script" role="hidden">                                            
+<call_job job="do-produce-printer12"/>
+<call_job job="tk_jvcp_read"/>
+<mkdir dir="(dir,zelix-output)"/>
+<create_file out="(file,zelix-script)">classpath   &quot;(f,file,classic,(file,jvcp_zkm))&quot;
+            &quot;C:\Program Files\Java\jre1.8.0_191\lib\resources.jar&quot;
+            &quot;C:\Program Files\Java\jre1.8.0_191\lib\rt.jar&quot;
+            &quot;C:\Program Files\Java\jre1.8.0_191\lib\jsse.jar&quot;
+            &quot;C:\Program Files\Java\jre1.8.0_191\lib\jce.jar&quot;
+            &quot;C:\Program Files\Java\jre1.8.0_191\lib\charsets.jar&quot;
+            &quot;C:\Program Files\Java\jre1.8.0_191\lib\jfr.jar&quot;
+            (f,file_content,(file,printer1));
+  
+open (f,file_content,(file,printer2));
+(f,file_content,(file,my-zelix-script))                      
+saveAll     archiveCompression=all &quot;(f,dir,classic,(dir,zelix-output))&quot;;</create_file>
+<ti type="file" label="Final Zelix-Script" x="(file,zelix-script)"/>
+
+<create_file out="(file,zelix-bat)">java -Xms512m -Xmx1024m -jar (f,file,classic,(file,jvcp_zkm)) zelix-script.txt
+pause</create_file>
+
+<ti label="All Zelix Things" type="dir" x="(dir,zelix)"/>
+
+</job>
+<job id="do-produce-printer12" role="hidden">
+  
+  <call_job job="do-build-compileinfo"/>
+  <need>(file,compileinfo)</need>
+  <xslt xml="(file,compileinfo)" 
+        xsl="(dir,app)ci-2-p1.xsl" 
+        out="(file,printer1)"/>
+        
+  <ti type="file" label="produced" x="(file,printer1)"/>
+  
+  <xslt xml="(file,compileinfo)" 
+        xsl="(dir,app)ci-2-p2.xsl" 
+        out="(file,printer2)"/>
+        
+  <ti type="file" label="produced" x="(file,printer2)"/>  
+  
+  <xslt xml="(file,compileinfo)" 
+        xsl="(dir,app)ci-2-copy-in.xsl" 
+        out="(file,zelix-copy-in)"/>
+        
+  <ti type="file" label="produced" x="(file,zelix-copy-in)"/>    
+  
+  <xslt xml="(file,compileinfo)" 
+        xsl="(dir,app)ci-2-copy-out.xsl" 
+        out="(file,zelix-copy-out)"/>
+        
+  <ti type="file" label="produced" x="(file,zelix-copy-out)"/>   
+
+</job>  
+  
+<job id="do-build-compileinfo"  role="hidden">
+  
+  <file id="x" x="(file,compileinfo)"/>
+  <scan dir="(dir,pro)" level_limit="2" out="(file,x)"/>
+  
+  <xml_update
+    what="(file,x)"
+    how="remove"
+    where="file"
+    flag="any"/>
+    
+  <spirit id="x" act="open" xml="(file,x)"/>
+  <loop_xml id="x" act="open" spirit="x" xpath="dir" xsort="@sort" xnumber="@sort"/>
+  <loop id="wx" while="()(f,loop_xml,x,has_next?)()">
+    <loop_xml act="next" id="x" />
+    
+    
+    <when test="(f,starts_with,(f,loop_xml,x,@rpath),compile-)">
+      
+                          
+      <prop id="aktueller-lib-name">(f,substring_after,(f,loop_xml,x,@rpath),compile-)</prop>
+      <prop id="mit-store">(f,loop_xml,x,exists?,//dir[@rpath=(f,xpath_string,-store-(prop,aktueller-lib-name))])</prop>
+      <ti label="Found: (prop,aktueller-lib-name)"/>
+
+        <spirit 
+          id="x"  
+          act="xml_update" 
+          where_is_loop_xml="x" 
+          how="set_attribute" 
+          attribute="mitstore" 
+          value="(prop,mit-store)" />
+          
+        <spirit 
+          id="x"  
+          act="xml_update" 
+          where_is_loop_xml="x" 
+          how="set_attribute" 
+          attribute="libname" 
+          value="(prop,aktueller-lib-name)" />          
+                
+      <when test="(prop,mit-store)">
+      
+        <file id="daten" x="(dir,pro)daten.xml" />
+        <prop id="the-regex">dir[@rpath=(f,xpath_string,-store-(prop,aktueller-lib-name))]</prop>
+        <prop id="value">(f,spirit,x,xml?,(prop,the-regex))</prop>
+        
+        <create_file out="(file,daten)">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;storeinfo&gt;(prop,value)&lt;/storeinfo&gt;</create_file>
+      
+        <spirit 
+          id="x"  
+          act="xml_update" 
+           
+          how="insert_in"
+          where="dir[@rpath=(f,xpath_string,(f,loop_xml,x,@rpath))]"  
+          with="(file,daten)" />
+          
+          <file id="maybe-auto">(dir,pro)-store-(prop,aktueller-lib-name)/auto.xml</file>
+          <choose>
+            <when test="(f,exists_file,(file,maybe-auto))">
+            
+              <spirit 
+                id="x"  
+                act="xml_update" 
+                 
+                how="insert_in"
+                where="dir[@rpath=(f,xpath_string,(f,loop_xml,x,@rpath))]/storeinfo"  
+                xwith="(file,maybe-auto)">
+                <inline attribute="with">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;auto&gt;&lt;/auto&gt;</inline>
+               </spirit>             
+              <spirit 
+                id="x"  
+                act="xml_update" 
+                 
+                how="insert_in"
+                where="dir[@rpath=(f,xpath_string,(f,loop_xml,x,@rpath))]/storeinfo/auto"  
+                with="(file,maybe-auto)" />          
+            </when>
+            <otherwise>
+              <ti>Ein auto.xml file existiert nich: (file,maybe-auto)</ti>
+            </otherwise>
+          </choose>
+          
+          <file id="maybe-playback">(dir,pro)-store-(prop,aktueller-lib-name)/playbacks.xml</file>
+          <choose>
+            <when test="(f,exists_file,(file,maybe-playback))">
+              <!-- 
+              <spirit 
+                id="x"  
+                act="xml_update" 
+                 
+                how="insert_in"
+                where="dir[@rpath=(f,xpath_string,(f,loop_xml,x,@rpath))]/storeinfo"  
+                xwith="(file,maybe-auto)">
+                <inline attribute="with">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;playbacks&gt;&lt;/auto&gt;</inline>
+               </spirit>   -->          
+              <spirit 
+                id="x"  
+                act="xml_update" 
+                 
+                how="insert_in"
+                where="dir[@rpath=(f,xpath_string,(f,loop_xml,x,@rpath))]/storeinfo"  
+                with="(file,maybe-playback)" />          
+            </when>
+            <otherwise>
+              <ti>das playback-file existiert nich: (file,maybe-playback)</ti>
+            </otherwise>
+          </choose>                
+        <ti_flush/>
+       
+      
+      </when>
+    </when>
+    <!--       <tk type="msg">wait</tk>
+    <spirit 
+      id="x"  
+      act="xml_update" 
+      where_is_loop_xml="x" 
+      how="set_attribute" 
+      attribute="id" 
+      value="(prop,next_id_to_give)" />   -->
+  </loop>
+  <loop_xml id="x" act="close"/>
+  
+  <loop_xml id="y" act="open" spirit="x" xpath="dir" xsort="@sort" xnumber="@sort"/>
+  <loop id="wy" while="()(f,loop_xml,y,has_next?)()">
+    <loop_xml act="next" id="y" />
+    <ti test="0">rpath = (f,loop_xml,y,@rpath)</ti>
+    <when test="(f,not,(f,starts_with,(f,loop_xml,y,@rpath),compile-))">
+    
+        <spirit 
+          id="x"  
+          act="xml_update"            
+          how="remove"
+          where="dir[@rpath=(f,xpath_string,(f,loop_xml,y,@rpath))]" />     
+    </when>
+  </loop>
+  <loop_xml id="y" act="close" />   
+  
+  <spirit id="x" act="close" flag="save write"/>
+  
+  <ti type="file" label="produced">(file,x)</ti>
+
+</job> 
+<job id="hook_zblock_view_end" role="hidden">
+  <ti type="call_job" job="generate-zblock-selector" explain="Generate Selektor for zblock"/>
+</job>
+
+
+<job id="generate-zblock-selector" role="hidden">
+      
+    
+      <xslt 
+          xml="(file,zblocks)" 
+          out="(file,zblock-selector)">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//zblock"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="zblock">
+   <sel><xsl:attribute name="label"><xsl:value-of select="@titel"/></xsl:attribute><xsl:value-of select="@row"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+      <ti label="Created" type="file">(file,zblock-selector)</ti>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

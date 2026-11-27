@@ -1,0 +1,223 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="write-stats-p1" role="hidden">
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex">stats-p1-.+</prop>  
+    <file id="joe-in-store">(dir,conf)stats-p1-joe.lsx</file>  
+  </call_job>
+</job>
+
+<job id="write-stats-p2" role="hidden">
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex">stats-p2-.+</prop>  
+    <file id="joe-in-store">(dir,conf)stats-p2-joe.lsx</file>  
+  </call_job>
+</job>
+
+<job id="has-stats" role="hidden">
+  <prop id="has-stats-return" x="0"/>
+  
+  <when test="(f,or,(f,exists_file,(dir,conf)stats-p1-joe.lsx),(f,exists_file,(dir,conf)stats-p2-joe.lsx))">
+    <prop id="has-stats-return" x="1"/>
+  </when>
+</job>
+<job id="read-stats-p1" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store">(dir,conf)stats-p1-joe.lsx</file>  
+    <prop id="joe-in-regex">stats-p1-.+</prop>
+  </call_job>
+</job>
+
+<job id="read-stats-p2" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store">(dir,conf)stats-p2-joe.lsx</file>
+    <prop id="joe-in-regex">stats-p2-.+</prop>  
+  </call_job>
+</job>
+
+<job id="read-stats-all" role="hidden">
+  <call_job job="read-stats-p1"/>
+  <call_job job="read-stats-p2"/>
+</job>
+
+<job id="print-stats-all" role="hidden">
+  <call_job job="read-stats-all"/>
+  <call_job job="print-stats"/>
+
+</job>
+
+<job id="print-stats-all-tips" role="hidden">
+  <call_job job="read-stats-all"/>
+  <prop id="with-tips" x="1"/>
+  <call_job job="print-stats"/>
+
+</job>
+
+<job id="print-stats" role="hidden">
+  <interpreter jovial="1" />
+  <need default="0">(prop,with-tips)</need>
+
+  <prop id="stats-p1-project-type" x="(f,upper,(prop,stats-p1-project-type))"/>
+
+  <prop id="ps-records-updated" x="(f,not,(f,eq,(prop,stats-p1-records),(prop,stats-p1-records-final)))"/>
+
+  <tk label="Last: Transformation" flag="print_only (f,when,(prop,with-tips), print_with_tips ,)">
+    <tk id="stats-p1-begin-date"
+        tip="Last time the programm was executed"
+        label="Date"/>
+    <tk id="stats-p1-duration-seconds"
+        tip="duration of programm execution in seconds"
+        label="Pgm exe in seconds"/>
+    <tk id="stats-p1-project-type"
+        label="Project type"
+        tip="The applied method for data-creation"/>
+    <tk id="stats-p1-records"
+        tip="Number of produced data records"
+        label="(f,when,(prop,ps-records-updated),(f,when,(prop,stats-p1-testdata),Generated records,Records from spreadsheet),Records)"/> 
+                      
+    <tk id="stats-p1-records-final"
+        tip="Number of records after xsl/xmlrobot-execution"
+        label="Records after scripts"
+        test="(prop,ps-records-updated)"/> 
+                
+    <tk id="stats-p1-input"
+        tip="The spreadsheet as source of input"
+        type="file"
+        label="Spreadsheet"
+        flag="xdownload"/> 
+    <tk id="stats-p1-input-sheet"
+        tip="the sheet read from the source of input"
+        label="Sheet"/>                 
+    <tk id="stats-p1-output"
+        tip="created result xml"
+        type="file"
+        label="Results"       
+        flag="xdownload"/>
+
+
+                                           
+  </tk>
+  <ti_space height="3px" />
+  <dir id="tmp-stats-angular-folder"></dir>
+  <when test="(f,has,file,stats-p2-angular)">
+    <dir id="tmp-stats-angular-folder">(f,dir_of_file,(file,stats-p2-angular))</dir>
+  </when>
+  <tk label="Last: Export" flag="print_only print_with_tips">
+    <tk id="stats-p2-begin-date"
+        tip=""
+        label="Date"/>
+    <tk id="stats-p2-duration-seconds"
+        tip=""
+        label="Pgm exe in seconds"/>
+        
+    <tk id="stats-p2-html"
+        label="Html"
+        tip=""
+        type="file"                
+        flag="xdownload"/> 
+        
+    <tk id="stats-p2-angular"
+        label="Angular Html"
+        tip=""
+        type="file"                
+        flag="xdownload"/>
+        
+    <tk id="tmp-stats-angular-folder"
+        label="Angular Folder"
+        tip=""
+        type="dir"                
+        flag="download button"/>        
+         
+    <tk id="stats-p2-excel"
+        label="Excel"
+        tip=""
+        type="file"        
+        flag="xdownload"/> 
+        
+    <tk id="stats-p2-csv"
+        label="Csv"
+        tip=""
+        type="file"        
+        flag="xdownload"/> 
+        
+    <tk id="stats-p2-json"
+        label="Json"
+        tip=""
+        type="file"        
+        flag="xdownload"/> 
+        
+    <tk id="stats-p2-xml"
+        label="Xml"
+        tip=""
+        type="file"        
+        flag="xdownload"/> 	
+        
+    <tk id="stats-p2-xml-elements"
+        label="Xml Elements"
+        tip=""
+        type="file"        
+        flag="xdownload"/>      
+           	
+    <tk id="stats-p2-sql"
+        label="Sql"
+        tip=""
+        type="file"        
+        flag="xdownload"/> 
+        
+    <tk id="stats-p2-indiv"
+        label="Individual Xsl"
+        tip=""
+        type="file"        
+        flag="xdownload"/> 
+                                                                               
+  </tk>
+  
+  <ti type="call_job"
+      job="print-stats-all-tips"
+      explain="See all tips ..."
+      label=" "
+	  test="0"/>
+    
+
+</job>
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

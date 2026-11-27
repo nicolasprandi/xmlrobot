@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="computer-see">
+<need>(prop,computer_key)</need>
+<call_job job="computer-read"/>
+<ti key="#(prop,computer_key)"/>
+<prop x="print print_only" id="computers_tk_control"/>
+<prop id="label" x="(prop,computer_computer)(prop,computers_offset_label)"/>
+<call_job job="computer-tk"/>
+<ti_space height="3px"/>
+<ti test="(f,role,admin)" type="call_job" explain="Edit" job="computer-edit">
+<prop id="computer_key">(prop,computer_key)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,admin)" type="call_job" explain="Del" job="computer-del">
+<prop id="computer_key">(prop,computer_key)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+<ti explain="See all" type="call_job" job="computer-see-all"/>
+</job>

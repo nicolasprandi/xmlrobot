@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="task-edit">
+<need>(prop,task_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="task-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="task-editor"/>
+<call_job job="task-write"/>
+<ti align="right" x="Did update Task '(f,text,cut_nice,(prop,task_name),26)'"/>
+<call_job job="task-see-all"/>
+</job>

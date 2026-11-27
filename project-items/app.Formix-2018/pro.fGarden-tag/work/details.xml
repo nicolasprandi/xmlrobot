@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="tag-see">
+<need>(prop,tag_key)</need>
+<call_job job="tag-read"/>
+<prop x="print print_only" id="tage_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,tag_bez),30)(f,html,bold,close)(prop,tage_offset_label)"/>
+<ti test="(f,role,user)" type="call_job" explain="Bearbeite Tag" job="tag-edit">
+<prop id="tag_key">(prop,tag_key)</prop>
+<file id="tage">(file,tage)</file>
+<prop id="tage_offset">(prop,tage_offset)</prop>
+<prop id="tage_offset_label">(prop,tage_offset_label)</prop>
+<prop id="tage_offset_new_key">(prop,tage_offset_new_key)</prop>
+<prop id="tage_sort_attribute">(prop,tage_sort_attribute)</prop>
+<prop id="tage_sort_number">(prop,tage_sort_number)</prop>
+<prop id="tage_where">(prop,tage_where)</prop>
+<prop id="tage_return_job">(prop,tage_return_job)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+<file id="wochen">(file,wochen)</file>
+<prop id="wochen_offset">(prop,wochen_offset)</prop>
+<prop id="wochen_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="wochen_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="wochen_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="wochen_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="wochen_where">(prop,wochen_where)</prop>
+<prop id="wochen_return_job">(prop,wochen_return_job)</prop>
+<prop id="woche_key">(prop,woche_key)</prop>
+</ti>
+<call_job job="tag-tk"/>
+<ti_space height="3px"/>
+<try_catch>
+<try>
+<call_job job="hoop-tag-detail-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: tag-details: end.0">
+<ti> hook_job=hoop-tag-detail-end hook=end page=details station=0 object=tag</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>

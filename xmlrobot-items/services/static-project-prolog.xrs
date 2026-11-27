@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<prolog>
+
+  <when test="(f,not,(f,has,prop,pro))"  >
+    <choose>
+      <when test="(f,ask,app_has_static_pro,(prop,app))"  >
+        <prop id="pro" x="Standard-Project" />
+        <dir id="pro" x="(dir,pro_home)pro_standard" />
+        <when test="(f,not,(f,dir_exists,(dir,pro)))">
+          <mkdir dir="(dir,pro)" />
+          <!-- <restart app="(prop,app)" pro="(prop,pro)"/> -->
+        </when>
+      </when>
+      <otherwise>
+        <i>kein standard-project</i>
+      </otherwise>
+    </choose>
+  </when>
+  
+</prolog>

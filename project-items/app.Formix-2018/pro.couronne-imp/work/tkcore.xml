@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="imp-tk">
+    <need default="">(prop,imps_tk_control)</need>
+    <call_job job="event_squery_editor"/>
+    <when test="(f,has_flag,(prop,imps_tk_control),print_only)">
+        <choose>
+            <when test="(f,has_flag,(prop,imps_tk_control),print_all_fields)">
+                <ti label="(prop,imp_default_label_class) (prop,imp_default_label_name)"/>
+            </when>
+            <otherwise>
+                <ti label=" " x="(f,html,b,o)(prop,imp_default_label_class)(f,html,b,c)"/>
+            </otherwise>
+        </choose>
+    </when>
+    <tk label="(f,when,(f,has_flag,(prop,imps_tk_control),print_only),,(prop,imp_default_label_class)(f,when,(f,has,prop,imp_default_label_name), (prop,imp_default_label_name),))" tip="Der Tip imp" tk_id="36" flag="(prop,imps_tk_control) wrap ">
+        <tk label="Point" id="imp_point" x="" test_first="1" tip="Um welchen Index-Punkt gehts?" type="sel" flag=" nono " xml="(dir,app)index-points.xml"/>
+        <tk label="On" id="imp_on" x="1" test_first="0" tip="Eingeschaltet ?" type="bool" flag=" nono "/>
+        <tk label="Description" id="imp_desc" x="" test_first="0" tip="Description visible in the Integration Report" type="textblock" flag="  wrap "/>
+        <tk label="Work-Docu" id="imp_work" x="" test_first="0" tip="Working-Documentation(e:s)stays private" type="textblock" flag="  wrap "/>
+    </tk>
+</job>

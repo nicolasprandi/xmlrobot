@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="product-write">
+    <need>(prop,product_key) (prop,isAdd)</need>
+    <need default="./">(prop,products_offset)</need>
+    <spirit act="open" id="products_spirit_tc" xml="(file,products)"/>
+    <when test="(prop,isAdd)">
+        <choose>
+            <when test="(f,ends_with,(prop,products_offset),/)">
+                <prop id="offset2" x="(f,substring,(prop,products_offset),0,(f,sub,(f,len,(prop,products_offset)),1))"/>
+            </when>
+            <otherwise>
+                <prop id="offset2" x="(prop,products_offset)"/>
+            </otherwise>
+        </choose>
+        <spirit act="xml_update" how="insert_in" id="products_spirit_tc" where="(prop,offset2)">
+            <inline attribute="with">&lt;product row="(prop,product_key)" /&gt;</inline>
+        </spirit>
+        <i>Added a new record</i>
+    </when>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="name" value="(f,vob,prop,product_name)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="productname" value="(f,vob,prop,product_productname)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="doku" value="(f,vob,prop,product_doku)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="proddoku" value="(f,vob,prop,product_proddoku)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="apps" value="(f,vob,prop,product_apps)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="apps_open" value="(f,vob,prop,product_apps_open)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="arcadia_pro" value="(f,vob,prop,product_arcadia_pro)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="prodconf" value="(f,vob,prop,product_prodconf)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="products_spirit_tc" where="(prop,products_offset)product[@row='(prop,product_key)']" attribute="dcl_services" value="(f,vob,prop,product_dcl_services)"/>
+    <spirit act="close" flag="save pretty" id="products_spirit_tc"/>
+</job>

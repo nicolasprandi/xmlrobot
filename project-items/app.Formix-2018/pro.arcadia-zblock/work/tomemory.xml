@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zblock-read">
+<need>(prop,zblock_key)</need>
+<spirit act="open" missing_strategy="empty" id="zblocks_spirit_tc" xml="(file,zblocks)"/>
+<prop id="zblock_dt_upd">(f,spirit,zblocks_spirit_tc,(prop,zblocks_offset)zblock[@row=(f,xpath_string,(prop,zblock_key))],@dt_upd)</prop>
+<prop id="zblock_dt_add">(f,spirit,zblocks_spirit_tc,(prop,zblocks_offset)zblock[@row=(f,xpath_string,(prop,zblock_key))],@dt_add)</prop>
+<prop id="zblock_content">(f,spirit,zblocks_spirit_tc,(prop,zblocks_offset)zblock[@row=(f,xpath_string,(prop,zblock_key))],@content)</prop>
+<prop id="zblock_titel">(f,spirit,zblocks_spirit_tc,(prop,zblocks_offset)zblock[@row=(f,xpath_string,(prop,zblock_key))],@titel)</prop>
+<spirit act="close" id="zblocks_spirit_tc"/>
+</job>

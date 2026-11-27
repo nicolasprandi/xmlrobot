@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="plate-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Teller(prop,plates_offset_label)"/>
+<prop x="sum" id="plates_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,plate_key)</need>
+<prop id="label" x="Teller [(f,text,cut_nice,(prop,plate_name),26)](prop,plates_offset_label)"/>
+<prop x="sum_only" id="plates_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="plate-tk"/>
+</job>

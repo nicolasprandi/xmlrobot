@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="file2-see-all" level="ws" role="hidden">
+<try_catch>
+<try>
+<call_job job="hook_file2_view_begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: file2-view: begin.0">
+<ti> hook_job=hook_file2_view_begin hook=begin page=view station=0 object=file2</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="file2_loop" xml="(file,files2)" xpath="(prop,files2_offset)file2(prop,files2_where)" sort="(prop,files2_sort_attribute)" number="(prop,files2_sort_number)" ignore_case="(prop,files2_sort_ignore_case)" desc="(prop,files2_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,files2_offset_label)),0)">
+<ti label="(prop,files2_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Probability"/>
+<ti/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,tk_sel_translate,(loop,file2_loop,@thefile),(file,file-selector-any))(f,html,bold,close)" job="file2-see">
+<prop id="file2_key">(loop,file2_loop,@row)</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,file2_loop,@prob))" type="text" x="(loop,file2_loop,@prob)"/>
+<ti test="(f,not,(f,has,(loop,file2_loop,@prob)))"/>
+<ti type="call_job" explain="Edit" job="file2-edit">
+<prop id="file2_key">(loop,file2_loop,@row)</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Del" job="file2-del">
+<prop id="file2_key">(loop,file2_loop,@row)</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Files found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,files2_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="file2-add" explain="Add another file" job="file2-add">
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,files2)</file>
+<prop id="orga_where">(prop,files2_where)</prop>
+<prop id="orga_view_loop_id">file2_loop</prop>
+<prop id="orga_finished_job">ready-and-done-file2</prop>
+<prop id="orga_offset">(prop,files2_offset)</prop>
+<prop id="orga_offset_label">(prop,files2_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="orga_segment_plural">files2</prop>
+<prop id="orga_segment_singular">file2</prop>
+<prop id="orga_segment_plural_label">Files</prop>
+<prop id="orga_segment_singular_label">File</prop>
+<prop id="orga_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,files2_sort_number)</prop>
+<prop id="orga_where">(prop,files2_where)</prop>
+<prop id="orga_name_expression_loop">()(f,tk_sel_translate,(loop,file2_loop,@thefile),(file,file-selector-any))()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,files2)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,files2_offset)),0)">(prop,files2_offset)</ti>
+</ti>
+</when>
+</job>

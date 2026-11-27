@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+
+<job id="build-central-OLD" role="hidden">   
+<interpreter watch="1" />
+  <ti type="dir" x="(dir,cc)" />
+  <ti type="dir" x="(dir,build-process)" />
+  <ti_flush/>
+  
+  <mkdir dir="(dir,bb)"/>  
+  <mkdir dir="(dir,d1)"/>
+  <prop id="e8" x="1"/>
+  
+  <tp>Download 3rd party bins</tp>
+    <call_job job="caf">
+      <prop id="caf-path" x="(prop,javaitem_path)/3rd-party-libs/bins"/>
+      <dir id="caf-target" x="(dir,d1)"/>
+    </call_job>
+    
+  <tp>Uzip 3rd party bins</tp>
+  <scan dir="(dir,d1)" out="(dir,pro)x1.xml"/>
+  <loop id="l1" xml="(dir,pro)x1.xml" xpath="//file" field="fn">
+    <tp>unzip (loop,l1)</tp>
+        <ant level="debug">
+          <unzip 
+          src="(dir,d1)(loop,l1)" 
+          dest="(dir,bb)"/>
+        </ant>   
+  </loop>
+  
+  <tp>Download 3rd-party-overlay</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="(prop,javaitem_path)/3rd-party-libs/overlay"/>
+    <dir id="caf-target" x="(dir,bb)"/>
+  </call_job>  
+  
+  <tp>Download 3rd-party-meta-inf</tp> 
+  <mkdir dir="(dir,d1)META-INF"/>
+  <call_job job="caf">
+    <prop id="caf-path" x="(prop,javaitem_path)/3rd-party-libs/META-INF"/>
+    <dir id="caf-target" x="(dir,bb)META-INF"/>
+  </call_job>  
+  
+  <tp>dowload overall metainf</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="(prop,javaitem_path)/META-INF"/>
+    <dir id="caf-target" x="(dir,bb)META-INF"/>
+  </call_job>      
+  
+  <tp>download java sources</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="(prop,javaitem_path)/src"/>
+    <dir id="caf-target" x="(dir,bb)"/>
+  </call_job> 
+       
+  <tp>download compiled-bin.jar</tp>
+  <xrghub  
+          act="save" 
+          out="(dir,d1)compiled-bin.jar"
+          path="(prop,javaitem_path)/compiled-bin.jar"/>    
+           
+   <tp>unzip compiled-bin.jar</tp>
+        <ant level="debug">
+          <unzip 
+          src="(dir,d1)compiled-bin.jar" 
+          dest="(dir,bb)"/>
+        </ant>
+        
+   <tp>zip the final result</tp>     
+    <ant level="debug">
+      <zip 
+      basedir="(dir,bb)" 
+      destfile="(file,final-build)"/>
+    </ant>          
+            
+</job>  
+
+
+
+</jobs>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="select-tk">
+<need default="">(prop,selects_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,selects_tk_control) wrap ">
+<tk label="Sql" id="select_sql" x="select * from vok.to; " test_first="1" tip="Das Sql Statement" type="textblock" flag="  big "/>
+<tk label="Technical Id" id="select_id" x="" test_first="1" tip="wird zum verzeichnisnamen" type="text" flag=" nono "/>
+<tk label="Beschreibung" id="select_desc" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="Refactoring" x="Refactoring" test_first="0" type="msg" flag=" "/>
+<tk label="Update on Run" id="select_update" x="0" test_first="0" tip="Update this when running" type="bool" flag=" nono  no_is_0 "/>
+<tk label="Archify" id="select_archify" x="0" test_first="0" tip="Update this when running" type="sel" flag=" nono  no_is_0 ">
+<sel label="No">0</sel>
+<sel label="Archify per Run">1</sel>
+<sel label="Archify per Day">2</sel>
+</tk>
+</tk>
+</job>

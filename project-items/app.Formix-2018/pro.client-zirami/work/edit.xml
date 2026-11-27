@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zirami-edit">
+<need>(prop,zirami_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="zirami-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="zirami-editor"/>
+<call_job job="zirami-write"/>
+<ti align="right" x="Did update Zirami '(prop,zirami_bez)'"/>
+<call_job job="hook-zirami-after-edit"/>
+</job>

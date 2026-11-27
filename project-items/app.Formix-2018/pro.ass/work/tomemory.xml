@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ass-read">
+<need>(prop,ass_key)</need>
+<spirit act="open" missing_strategy="empty" id="asss_spirit_tc" xml="(file,asss)"/>
+<prop id="ass_dt_upd">(f,spirit,asss_spirit_tc,(prop,asss_offset)ass[@row=(f,xpath_string,(prop,ass_key))],@dt_upd)</prop>
+<prop id="ass_dt_add">(f,spirit,asss_spirit_tc,(prop,asss_offset)ass[@row=(f,xpath_string,(prop,ass_key))],@dt_add)</prop>
+<prop id="ass_bez">(f,spirit,asss_spirit_tc,(prop,asss_offset)ass[@row=(f,xpath_string,(prop,ass_key))],@bez)</prop>
+<prop id="ass_beschreibung">(f,spirit,asss_spirit_tc,(prop,asss_offset)ass[@row=(f,xpath_string,(prop,ass_key))],@beschreibung)</prop>
+<prop id="ass_dauer">(f,spirit,asss_spirit_tc,(prop,asss_offset)ass[@row=(f,xpath_string,(prop,ass_key))],@dauer)</prop>
+<prop id="ass_einheit">(f,spirit,asss_spirit_tc,(prop,asss_offset)ass[@row=(f,xpath_string,(prop,ass_key))],@einheit)</prop>
+<spirit act="close" id="asss_spirit_tc"/>
+</job>

@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Konfiguration?" lang="de">
+
+
+  <ti label="Job &apos;Konfig&apos;"/>
+  <ti type="rec"><ti flag="wrap">Hier k&#246;nnen Sie sowohl konfigurieren als auch installieren.</ti></ti>   
+  <ti label="Steuerung"/>
+  <ti xtype="ul">Beim Konfigurieren geben Sie f&#252;r ein spezifisches Thema eine Liste an Parametern ein. Die Applikation wird dadurch gesteuert und ver&#228;ndert ihr Verhalten.</ti>
+  <ti xtype="ul">Konfigurationen gibt es f&#252;r:</ti> 
+<ti type="ul">die Datenbank</ti> 
+<ti type="ul">das Excel-Vokabular</ti>
+<ti type="ul">Penthao-Kitchen</ti>
+<ti type="ul">Spracheinstellungen </ti> 
+<ti type="ul">Mengenm&#228;ssige Begrenzung von Sql-Abfragen und</ti>      
+<ti type="ul">die Art und Weise der Pr&#228;sentation von Objekte im Objektnavigator</ti>  
+  <ti xtype="ul">Lesen Sie mehr &#252;ber die Konfigurationen im 'Teil 2: Parameterbeschreibungen' weiter unten ...</ti> 
+   
+  
+  <ti label="Installieren"/>
+  <ti type="ul">Beim Installieren sprechen wir von sogenannten &apos;Gef&#252;hrten Installationen&apos;. Diese f&#252;hren durch eine Liste von aufeinander abgestimmten Arbeitsschritten(e:s) die zum Aufsetzen des Systems notwendig sind.</ti>
+  <ti type="ul">Es gibt zwei Arten von gef&#252;hrten Installationen:
+1(e:c) Die &apos;Einfache Installation&apos;
+  wird dann verwendet(e:s) wenn Sie mit einer bereits existierenden Hibiscus-Daten arbeiten wollen.
+2(e:c) Die &apos;Vollst&#228;ndige Installation&apos;
+wird verwendet(e:s) wenn Sie ein komplett neues System von grundauf anlegen wollen. Dabei wird eine Postgres-Datenbank names &apos;hibiscus&apos; angelegt und mittes Kettle-Etl-Jobs mit Daten bef&#252;llt. Sowohl f&#252;r den Datenkatalog als auch f&#252;r Daten und Bef&#252;llungsjobs werden Templates und Kopiervorlagen zur Verf&#252;gung gestellt.  </ti> 
+
+  <ti type="ul">Alle durch eine gef&#252;hrte Installatione zur Verf&#252;gung gestellten Operationen sind auch &#252;ber die standardm&#228;ssige Benutzeroberfl&#228;che erreichbar. Eine gef&#252;hrte Installationen b&#252;ndelt diese Aktivit&#228;ten und pr&#228;sentiert die enthaltenen Arbeitsschritte in einer sequentiell abarbeitbaren Reihenfolge.</ti>  
+
+  <ti_hr/>
+<ti label="Teil 2: Parameterbeschreibungen" />
+
+<call_job job="?config-parameters?">
+  <prop id="_emergency_actions">Notfalls-Operationen</prop>
+</call_job> 
+
+</job>
+
+<job id="Configuration?" lang="en">
+
+  <ti label="Job &apos;Config&apos;"/>
+  <ti type="rec"><ti flag="wrap">You can do here configurations and guided installations.</ti></ti> 
+  
+  <ti_hr/>
+<ti label="Teil 2: Descriptions of Parameters" />
+
+<call_job job="?config-parameters?">
+  <prop id="_emergency_actions">Emergency Actions</prop>
+</call_job>
+  <!-- 
+  <ti label="1(e:c) Beinhaltet Konfigurationen"/>
+  <ti type="ul">Konfigurationen gibt es f&#252;r (e:o)a(e:c) die Datenbank-Connection(e:s) (e:o)b(e:c) die Sql-Limits(e:s) (e:o)c(e:c) Penthao-Kitchen(e:s) (e:o)d(e:c) das Excel-Vokabular und (e:o)e(e:c) die Objektnavigation.</ti>
+  <ti type="ul">F&#252;r jede Konfiguration gibt es eine Liste von Parametern.</ti> 
+  <ti type="ul">F&#252;r weiterf&#252;hrende Informationen bez&#252;glich der M&#246;glichkeiten jeder Konfiguration(e:s) klicken sie bitte auf die entsprechende Konfiguration. Im ersten Schritt werden die aktuellen Parameter-Inhalte angezeigt. </ti>
+  <ti type="ul">Unter dem Linke &apos;Explain this&apos; (e:o)rechts unten(e:c) gibt es n&#228;here Erl&#228;uterungen bez&#252;glich der Parameter und deren Bedeutung.</ti>   
+  <ti type="ul">Zum Bearbeiten der Parameter(e:s) klicken sie bitte auf [ Edit ].</ti>   
+  <ti label="2(e:c) Beinhaltet &apos;Guided Setups&apos;"/>
+  <ti type="ul">Ein sogenanntes &apos;Guided Setup&apos; f&#252;hrt durch eine Liste von Arbeitsschritten(e:s) die zum Aufsetzen eines Systems notwendig sind.</ti>
+  <ti type="ul">Es gibt zwei &apos;Guided Setups&apos;</ti> 
+  <ti type="ul">1(e:c) Das &apos;Simple Guided Setup&apos; wird dann verwendet(e:s) wenn Sie mit einer bereits existierenden Hibiscus-Daten arbeiten wollen.</ti>
+  <ti type="ul">2(e:c) Das &apos;Guided Setup&apos; wird verwendet(e:s) wenn Sie ein komplett neues System von grundauf anlegen wollen. Dabei wird eine Postgres-Datenbank names &apos;hibiscus&apos; angelegt und mittes Kettle-Etl-Jobs mit Daten bef&#252;llt. Sowohl f&#252;r den Datenkatalog als auch f&#252;r Daten und Bef&#252;llungsjobs werden Templates und Kopiervorlagen zur Verf&#252;gung gestellt.</ti>   
+  <ti type="ul">Alle durch ein Guided Setup zur Verf&#252;gung gestellten Operationen sind auch &#252;ber die standardm&#228;ssige Benutzeroberfl&#228;che erreichbar. Ein Guided Setup b&#252;ndelt diese Aktivit&#228;ten und pr&#228;sentiert die enthaltenen Arbeitsschritte in einer sequentiell abarbeitbaren Reihenfolge.</ti>     -->
+
+
+</job>
+
+
+
+<job id="Confi?" lang="es">
+
+  <ti label="Job &apos;Optiones&apos;"/>
+  <ti type="rec"><ti flag="wrap">Aqui se pueden hacer configurationes e installationes.</ti></ti>
+  
+  <ti_hr/>
+<ti label="Teil 2: Descriptiones de parameters" />
+
+<call_job job="?config-parameters?">
+  <prop id="_emergency_actions">Actiones de la emergencia</prop>
+</call_job>
+  <!-- 
+  <ti label="1(e:c) Beinhaltet Konfigurationen"/>
+  <ti type="ul">Konfigurationen gibt es f&#252;r (e:o)a(e:c) die Datenbank-Connection(e:s) (e:o)b(e:c) die Sql-Limits(e:s) (e:o)c(e:c) Penthao-Kitchen(e:s) (e:o)d(e:c) das Excel-Vokabular und (e:o)e(e:c) die Objektnavigation.</ti>
+  <ti type="ul">F&#252;r jede Konfiguration gibt es eine Liste von Parametern.</ti> 
+  <ti type="ul">F&#252;r weiterf&#252;hrende Informationen bez&#252;glich der M&#246;glichkeiten jeder Konfiguration(e:s) klicken sie bitte auf die entsprechende Konfiguration. Im ersten Schritt werden die aktuellen Parameter-Inhalte angezeigt. </ti>
+  <ti type="ul">Unter dem Linke &apos;Explain this&apos; (e:o)rechts unten(e:c) gibt es n&#228;here Erl&#228;uterungen bez&#252;glich der Parameter und deren Bedeutung.</ti>   
+  <ti type="ul">Zum Bearbeiten der Parameter(e:s) klicken sie bitte auf [ Edit ].</ti>   
+  <ti label="2(e:c) Beinhaltet &apos;Guided Setups&apos;"/>
+  <ti type="ul">Ein sogenanntes &apos;Guided Setup&apos; f&#252;hrt durch eine Liste von Arbeitsschritten(e:s) die zum Aufsetzen eines Systems notwendig sind.</ti>
+  <ti type="ul">Es gibt zwei &apos;Guided Setups&apos;</ti> 
+  <ti type="ul">1(e:c) Das &apos;Simple Guided Setup&apos; wird dann verwendet(e:s) wenn Sie mit einer bereits existierenden Hibiscus-Daten arbeiten wollen.</ti>
+  <ti type="ul">2(e:c) Das &apos;Guided Setup&apos; wird verwendet(e:s) wenn Sie ein komplett neues System von grundauf anlegen wollen. Dabei wird eine Postgres-Datenbank names &apos;hibiscus&apos; angelegt und mittes Kettle-Etl-Jobs mit Daten bef&#252;llt. Sowohl f&#252;r den Datenkatalog als auch f&#252;r Daten und Bef&#252;llungsjobs werden Templates und Kopiervorlagen zur Verf&#252;gung gestellt.</ti>   
+  <ti type="ul">Alle durch ein Guided Setup zur Verf&#252;gung gestellten Operationen sind auch &#252;ber die standardm&#228;ssige Benutzeroberfl&#228;che erreichbar. Ein Guided Setup b&#252;ndelt diese Aktivit&#228;ten und pr&#228;sentiert die enthaltenen Arbeitsschritte in einer sequentiell abarbeitbaren Reihenfolge.</ti>    -->
+           
+
+</job>
+
+<job id="?config-parameters?" role="hidden">
+
+
+
+<ti_hr/>
+<call_job job="tk_db_print_help"/>
+<ti_hr/>
+<call_job job="tk_para_print_help"/>
+<ti_hr/>
+<call_job job="tk_kitch_print_help"/>
+
+<ti_hr/>
+<call_job job="tk_lingua_print_help"/>
+ <ti_hr/>
+<call_job job="tk_limit_print_help"/>
+<ti_hr/>
+<call_job job="tk_nav_print_help"/>
+
+  <!-- 
+  <when test="(f,has,prop,pro)">
+  <ti_hr/>
+  <ti type="rec"><ti/>
+  <ti type="call_job" job="build-event" explain="(prop,_emergency_actions)" align="right">
+    <prop id="build-event-type">emergency</prop>
+  </ti>
+  </ti>
+  </when>  -->
+
+</job>
+
+</jobs>

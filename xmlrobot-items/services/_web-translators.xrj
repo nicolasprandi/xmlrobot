@@ -1,0 +1,963 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs>
+
+<job id="tr_sam" role="hidden">
+ <!--
+ (prop,) (prop,_sam_) (prop,_sam__) 
+ <call_service job="tr_sam"/>
+Ue &#220;
+ue &#252;
+Oe &#214;
+oe &#246;
+Ae &#196;
+ae &#228;
+-->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_sam_created_backup">Datensicherung wurde gemacht</prop>
+
+      <prop id="_sam_ups_veraenderungen">Es ist bei den Zieldaten zwischenzeitlich zu einer Ver&#228;nderung gekommen</prop>      
+      <prop id="_sam_ups_what">Was soll gemacht werden?</prop>
+      <prop id="_sam_ups_see">Genauer betrachten</prop>
+      <prop id="_sam_ups_stop">Abbrechen</prop>
+      <prop id="_sam_ups_update">Neue Datenen fraglos &#252;bertragen</prop>
+      
+      <prop id="_sam_compare">Nochmals vergleichen ...</prop>
+      <prop id="_sam_stopped">Abgebrochen ...</prop>
+      <prop id="_sam_upd_sure">Sind Sie sich mit dem &#220;berschreiben sicher??</prop>
+      <prop id="_sam_upd_doing">Die Ver&#228;nderungen werden begonnen ...</prop>
+      <prop id="_sam_r_chg">Ver&#228;nderung</prop>
+      <prop id="_sam_r_chg_pl">en</prop>
+      <prop id="_sam_r_repl">Ersetzung</prop>
+      <prop id="_sam_r_repl_pl">en</prop>
+      <prop id="_sam_r_del">L&#246;schung</prop>
+      <prop id="_sam_r_del_pl">en</prop>
+      <prop id="_sam_r_new">Neuanlage</prop>
+      <prop id="_sam_r_new_pl">n</prop>
+      <prop id="_sam_r_equ">Gleich</prop>
+      <prop id="_sam_r_equ_pl">e</prop>
+
+      <prop id="_sam_r_did_perform">Durchgef&#252;hrt wurden</prop>
+      <prop id="_sam_r_did_replace">Ersetzt:</prop>
+      <prop id="_sam_r_did_replacek">ersetzt</prop>
+      <prop id="_sam_r_did_delete">Gel&#246;scht:</prop>
+      <prop id="_sam_r_did_deletek">gel&#246;scht</prop>
+      <prop id="_sam_r_did_create">Neu:</prop>
+      <prop id="_sam_r_did_createk">erzeugt</prop>
+
+<prop id="_sam_r_did_replacek2">ersetzten</prop>
+<prop id="_sam_r_did_deletek2">l&#246;schen</prop>
+<prop id="_sam_r_did_createk2">neu</prop>
+
+      <prop id="_sam_a_confirm">Sie m&#252;ssen die Ver&#228;nderungen noch best&#228;tigen ...</prop>
+      <prop id="_sam_a_notmuch">Es gibt nichts zu tun(e:s) alles am neuersten Stand</prop>
+      <prop id="_sam_a_performall">F&#252;hre alle Ver&#228;nderungen durch</prop>
+(prop,)
+      <prop id="_sam_a_nochanges">Keine Ver&#228;nderungen gefunden</prop>
+      <prop id="_sam_a_copy">Kopiere</prop>
+      <prop id="_sam_a_delete">L&#246;sche</prop>
+      <prop id="_sam_a_new">Erzeuge</prop>
+      <prop id="_sam_a_really">wirklich?</prop> 
+      <prop id="_sam_compare">Vergleichen</prop>   
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_sam_created_backup">Created backup</prop>
+
+      <prop id="_sam_ups_veraenderungen">Targeted data changed meanwhile</prop>      
+      <prop id="_sam_ups_what">What to do?</prop>
+      <prop id="_sam_ups_see">See into this</prop>
+      <prop id="_sam_ups_stop">Stop</prop>
+      <prop id="_sam_ups_update">Update Changes anyway</prop>
+      
+      <prop id="_sam_compare">Do compare again ...</prop>
+      <prop id="_sam_stopped">Stopped ...</prop>
+      <prop id="_sam_upd_sure">Sure about overwriting??</prop>
+      <prop id="_sam_upd_doing">Starting now to implement Changes ...</prop>
+      <prop id="_sam_r_chg">Change</prop>
+      <prop id="_sam_r_chg_pl">s</prop>
+      <prop id="_sam_r_repl">Replacement</prop>
+      <prop id="_sam_r_repl_pl">s</prop>
+      <prop id="_sam_r_del">Delete</prop>
+      <prop id="_sam_r_del_pl">s</prop>
+      <prop id="_sam_r_new">New</prop>
+      <prop id="_sam_r_new_pl">s</prop>
+      <prop id="_sam_r_equ">Equal</prop>
+      <prop id="_sam_r_equ_pl">s</prop>
+
+      <prop id="_sam_r_did_perform">Did perform</prop>
+      <prop id="_sam_r_did_replace">Did replace:</prop>
+      <prop id="_sam_r_did_replacek">replaced</prop>
+      <prop id="_sam_r_did_delete">Did delete:</prop>
+      <prop id="_sam_r_did_deletek">deleted</prop>
+      <prop id="_sam_r_did_create">Did create:</prop>
+      <prop id="_sam_r_did_createk">inserted</prop>
+<prop id="_sam_r_did_replacek2">replace</prop>
+<prop id="_sam_r_did_deletek2">delete</prop>
+<prop id="_sam_r_did_createk2">new</prop>
+
+      <prop id="_sam_a_confirm">We ask you to confirm the updates ...</prop>
+      <prop id="_sam_a_notmuch">Not much to do</prop>
+      <prop id="_sam_a_performall">Perform all changes</prop>
+(prop,)
+      <prop id="_sam_a_nochanges">No changes found</prop>
+      <prop id="_sam_a_copy">Copy</prop>
+      <prop id="_sam_a_delete">Delete</prop>
+      <prop id="_sam_a_new">New</prop>
+      <prop id="_sam_a_really">Really?</prop> 
+      <prop id="_sam_compare">Compare</prop> 
+    </when>
+  </choose>
+</job>
+
+<job id="tr_wdb" role="hidden">
+ <!--
+ (prop,) (prop,_wdb_) (prop,_wdb__) 
+ <call_service job="tr_wdb"/> -->
+ <when test="(f,not,(f,has,prop,_wdb_prep_yourdblink))">
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_wdb_prep_yourdblink">Ihr PdB-Link</prop>
+      <prop id="_wdb_prep_created">Erstellt:</prop>      
+      <prop id="_wdb_red_dir_to_del">Verzeichnis von dem die leeren Verzeichnisse gel&#246;scht werden sollen</prop>
+      <prop id="_wdb_com_name">Projekt-Datenbank Commit</prop>
+      <prop id="_wdb_syn_name">Projekt-Datenbank Synchronisation</prop>
+      <prop id="_wdb_roll_name">Projekt-Datenbank Rollback</prop>
+      <prop id="_wdb_wrt_writefrommem">Schreibe vom Projekt-Speicher &#8594; Projekt-Datenbank</prop>      
+  
+      <prop id="_wdb_down_headline">Projekt Zip</prop>
+      <prop id="_wdb_read_readfrom">Lese von der Projekt-Datenbank &#8594; Projekt-Speicher</prop>      
+      <prop id="_wdb_act_what">Welche Aufgabe wollen Sie ausf&#252;hren?</prop>
+      <prop id="_wdb_act_readl">Datenbank &#8594; Projekt-Speicher</prop>
+      <prop id="_wdb_act_read">Lesen</prop>
+      <prop id="_wdb_act_writel">Projekt-Speicher &#8594; Datenbank</prop>
+      <prop id="_wdb_act_write">Schreiben</prop>
+      <prop id="_wdb_act_syncl">Lesen/Schreiben:</prop>
+      <prop id="_wdb_act_sync">Synchronisieren</prop>      
+      <prop id="_wdb_act_downl">Unterst&#252;tzung:</prop>
+      <prop id="_wdb_act_down">Projekt-Download</prop>
+       
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_wdb_prep_yourdblink">Your PdB-Link</prop>
+      <prop id="_wdb_prep_created">Created:</prop>      
+      <prop id="_wdb_red_dir_to_del">Directory to delete empty dirs from</prop>
+      <prop id="_wdb_com_name">Project-Database Commit</prop>
+      <prop id="_wdb_syn_name">Project-Database Sync</prop>
+      <prop id="_wdb_roll_name">Project-Database Rollback</prop>
+      <prop id="_wdb_wrt_writefrommem">Writing from Memory &#8594; Database:</prop>      
+  
+      <prop id="_wdb_down_headline">Project Zip</prop>
+      <prop id="_wdb_read_readfrom">Reading from database &#8594; memory:</prop>      
+      <prop id="_wdb_act_what">What to do?</prop>
+      <prop id="_wdb_act_readl">Database &#8594; Project</prop>
+      <prop id="_wdb_act_read">Read</prop>
+      <prop id="_wdb_act_writel">Project &#8594; Database</prop>
+      <prop id="_wdb_act_write">Write</prop>
+      <prop id="_wdb_act_syncl">Read/Write:</prop>
+      <prop id="_wdb_act_sync">Synchronize</prop>      
+      <prop id="_wdb_act_downl">Service:</prop>
+      <prop id="_wdb_act_down">Project-Download</prop>
+    </when>
+  </choose>
+  </when>
+</job>
+
+
+
+<job id="tr_fdag" role="hidden">
+ <!--
+ (prop,) (prop,_fdag_) (prop,_fdag__) 
+ <call_service job="tr_fdag"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fdag_file_another">Weitere Datei-Aktion ausf&#252;hren ...</prop>
+      <prop id="_fdag_dir_another">Weitere Verzeichnis-Aktion ausf&#252;hren ...</prop>      
+     
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fdag_file_another">Perform another File-Action ...</prop>
+      <prop id="_fdag_dir_another">Perform another Folder-Action ...</prop> 
+    </when>
+  </choose>
+</job>
+
+<job id="tr_fedit" role="hidden">
+ <!--
+ (prop,) (prop,_fedit_) (prop,_fedit__) 
+ <call_service job="tr_fedit"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fedit_edit">Bearbeiten</prop>
+      <prop id="_fedit_encoding">Encoding</prop>
+      <prop id="_fedit_edit_label">Bearbeiten Sie den Inhalt der Datei</prop>
+      <prop id="_fedit_before">Original:</prop>
+      <prop id="_fedit_new">Neu:</prop>
+      <prop id="_fedit_sure">Sind Sie sich betreffend der &#196;nderungen sicher?</prop>
+      <prop id="_fedit_sure2">Sie haben eine Ver&#228;nderung der folgenden Datei angestossen</prop>
+      <prop id="_fedit_sure3">Sind Sie sich sicher???</prop>
+      <prop id="_fedit_overwrite">&#220;berschreiben</prop>
+      <prop id="_fedit_forget">Vergiss es</prop>
+      <prop id="_fedit_iknow">()Ja, mir ist bewusst, dass die alten Inhalte der Datei f&#252;r immer verloren sein werden.()</prop>
+      <prop id="_fedit_terminated">Vorgang auf Wunsch abgebrochen.</prop>
+      <prop id="_fedit_created">Erzeugt</prop>
+      <prop id="_fedit_not_updated">Die Datei wurde nicht ver&#228;ndert und bleibt erhalten.</prop>
+   
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fedit_edit">Edit</prop>
+      <prop id="_fedit_encoding">Encoding</prop>
+      <prop id="_fedit_edit_label">Edit the files content</prop>
+      <prop id="_fedit_before">Original:</prop>
+      <prop id="_fedit_new">New:</prop>
+      <prop id="_fedit_sure">Sure about updating?</prop>
+      <prop id="_fedit_sure2">You commanded to update the file</prop>
+      <prop id="_fedit_sure3">Are you sure about that???</prop>
+      <prop id="_fedit_overwrite">Overwrite it</prop>
+      <prop id="_fedit_forget">Forget it</prop>
+      <prop id="_fedit_iknow">()Yes, I know that the old content of the updated files will be gone forever()</prop>
+      <prop id="_fedit_terminated">Operation terminated on request.</prop>
+      <prop id="_fedit_created">Created</prop>
+      <prop id="_fedit_not_updated">File was not updated and not saved</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_fextr" role="hidden">
+ <!--
+ (prop,) (prop,_fextr_) (prop,_fextr__) 
+ <call_service job="tr_fextr"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fextr_file_extract">Datei zum extrahieren</prop>
+      <prop id="_fextr_spec_target">Spezifizieren Sie das Ziel-Verzeichnis der Extraktion</prop>     
+      <prop id="_fextr_fin_targ_dir">Ultimatives Ziel-Verzeichnis</prop>
+      <prop id="_fextr_someelse">[ anderer Ziel-Ort ...]</prop>
+      <prop id="_fextr_extr_dest">Extraktionsziel von</prop>
+      <prop id="_fextr_confirm">Best&#228;tigen Sie das neue Ziel-Verzeichnis</prop>
+      <prop id="_fextr_dir_to_create">Verzeichnis zur Erstellung</prop>
+      <prop id="_fextr_going_extr">Es wird extrahiert nach:</prop>
+      <prop id="_fextr_warn_exists">WARNINUNG: Das Verzeichnis existiert bereits!</prop>
+      <prop id="_fextr_extracting">Extrahieren:</prop>      
+      <prop id="_fextr_to">nach:</prop>
+      <prop id="_fextr_did_extract">Extraktion abgeschlossen</prop>
+      <prop id="_fextr_from">Von Zip-Datei:</prop>     
+      <prop id="_fextr_to">In das Verzeichnis:</prop>
+      <prop id="_fextr_see_pano">Ansicht mit Panorama</prop>
+     
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fextr_file_extract">File to extract</prop>
+      <prop id="_fextr_spec_target">Specify Target Directory to extract to</prop>     
+      <prop id="_fextr_fin_targ_dir">Final Target Directory</prop>
+      <prop id="_fextr_someelse">[ something else ...]</prop>
+      <prop id="_fextr_extr_dest">Extaction-Destination of</prop>
+      <prop id="_fextr_confirm">Confirm the new output-directory</prop>
+      <prop id="_fextr_dir_to_create">Directory to be created</prop>
+      <prop id="_fextr_going_extr">Going to extract to:</prop>
+      <prop id="_fextr_warn_exists">WARNING: Directory Exists already</prop>
+      <prop id="_fextr_extracting">Extracting:</prop>      
+      <prop id="_fextr_to">to:</prop>
+      <prop id="_fextr_did_extract">Did Extraction</prop>
+      <prop id="_fextr_from">From Zip File:</prop>     
+      <prop id="_fextr_to">To Directory:</prop>
+      <prop id="_fextr_see_pano">See with Panorama</prop>
+    </when>
+  </choose>
+</job>
+
+
+
+
+<job id="tr_fcop" role="hidden">
+ <!--
+ (prop,) (prop,_fcop_) (prop,_fcop__) 
+ <call_service job="tr_fcop"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+     <prop id="_fcop_file_copy">Datei zum Kopierten</prop>
+      <prop id="_fcop_targetoc">Ziel des Kopiervorganges</prop>      
+      <prop id="_fcop_samedir">Selbes Verzeichnis</prop>
+      <prop id="_fcop_likelast">Wie letztes mal:</prop>
+      <prop id="_fcop_someelse">Anderes Ziel</prop>
+      <prop id="_fcop_target_dir">Ziel-Verzeichnis der Kopie</prop>      
+      <prop id="_fcop_filename">Dateiname</prop>
+      <prop id="_fcop_new_filename">Neuer Datei-Name</prop>
+      <prop id="_fcop_target_copy">Ziel des Kopiervorganges</prop>
+      <prop id="_fcop_file_write">Datei zu Schreiben</prop>      
+      <prop id="_fcop_overwrite">Folgende Datei wird &#252;berschrieben:</prop>
+      <prop id="_fcop_performed">Kopieren abgeschlossen ...</prop>
+      <prop id="_fcop_from">Von:</prop>
+      <prop id="_fcop_to">Nach:</prop>        
+    
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+     <prop id="_fcop_file_copy">File to copy</prop>
+      <prop id="_fcop_targetoc">Target of copy</prop>      
+      <prop id="_fcop_samedir">Same Directory</prop>
+      <prop id="_fcop_likelast">Like last time:</prop>
+      <prop id="_fcop_someelse">Somewhere else</prop>
+      <prop id="_fcop_target_dir">Target folder of copy</prop>      
+      <prop id="_fcop_filename">Filename</prop>
+      <prop id="_fcop_new_filename">The new file-name</prop>
+      <prop id="_fcop_target_copy">Target of Copy</prop>
+      <prop id="_fcop_file_write">File to write</prop>      
+      <prop id="_fcop_overwrite">This file is going to be replaced:</prop>
+      <prop id="_fcop_performed">Copy performed...</prop>
+      <prop id="_fcop_from">From:</prop>
+      <prop id="_fcop_to">To:</prop>      
+
+    </when>
+  </choose>
+</job>
+
+<job id="tr_fsimp" role="hidden">
+ <!--
+ (prop,) (prop,_fsimp_) (prop,_fsimp__) 
+ <call_service job="tr_fsimp"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fsimp_file_view">Datei zur Betrachtung</prop>
+      <prop id="_fsimp_file_see">Datei als Bild</prop>      
+      <prop id="_fsimp_encoding">Encoding</prop>
+      <prop id="_fsimp_file_checksum">Datei Pr&#252;fziffern</prop>
+      <prop id="_fsimp_file_checksum2">Datei Pr&#252;fziffern ...</prop>
+      <prop id="_fsimp_file_down">Datei zum Download</prop>          
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fsimp_file_view">File to view</prop>
+      <prop id="_fsimp_file_see">File to see</prop>      
+      <prop id="_fsimp_encoding">Encoding</prop>
+      <prop id="_fsimp_file_checksum">File Checksums</prop>
+      <prop id="_fsimp_file_checksum2">File Checksums ...</prop>
+      <prop id="_fsimp_file_down">File to download</prop> 
+    </when>
+  </choose>
+</job>
+
+<job id="tr_fren" role="hidden">
+ <!--
+ (prop,) (prop,_fren_) (prop,_fren__) 
+ <call_service job="tr_fren"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fren_fileto_ren">Datei zur Umbenennung</prop>
+      <prop id="_fren_new_name">Neuer Name</prop>      
+
+      <prop id="_fren_goingto">Umbenennung wirklich durchf&#252;hren ?</prop>
+      <prop id="_fren_from">Von:</prop>
+      <prop id="_fren_to">Nach:</prop>      
+      <prop id="_fren_performed">Umbenennung durchgef&#252;hrt.</prop>
+    
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fren_fileto_ren">File to rename</prop>
+      <prop id="_fren_new_name">New Name</prop>      
+
+      <prop id="_fren_goingto">Do you really want to do the renaming?</prop>
+      <prop id="_fren_from">From:</prop>
+      <prop id="_fren_to">To:</prop>      
+      <prop id="_fren_performed">Rename performed.</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_fdel" role="hidden">
+ <!--
+ (prop,) (prop,_fdel_) (prop,_fdel__) 
+ <call_service job="tr_fdel"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fdel_acc_l">Datei l&#246;schen</prop>
+      <prop id="_fdel_acc_x">Diese Datei wird gel&#246;scht(e:s) ihre Daten werden nicht wieder herstellbar sein:</prop>
+      <prop id="_fdel_acc_ac">L&#246;sche</prop>
+      <prop id="_fdel_acc_de">Vergiss es</prop>
+      <prop id="_fdel_acc_q">()Ja, mir ist bewusst, dass die Daten f&#252;r immer verschwunden sein werden.()</prop>
+      <prop id="_fdel_del_stop">L&#246;schung abgebrochen:</prop>
+      <prop id="_fdel_del_done">Gel&#246;schte Datei:</prop>
+
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fdel_acc_l">Delete file</prop>
+      <prop id="_fdel_acc_x">The file is going to be deleted(e:s) all data will disappear.:</prop>
+      <prop id="_fdel_acc_ac">Delete</prop>
+      <prop id="_fdel_acc_de">Forget it</prop>
+      <prop id="_fdel_acc_q">()Yes, I know that the file will be gone forever()</prop>
+      <prop id="_fdel_del_stop">Delete stopped:</prop>
+      <prop id="_fdel_del_done">Deleted File:</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_wfa" role="hidden">
+ <!--
+ (prop,) (prop,_wfa_) (prop,_wfa__) 
+ <call_service job="tr_wfa"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_wfa_file">Datei</prop>
+      <prop id="_wfa_do_fullpic">Bild in voller Gr&#246;sse betrachten</prop>
+      <prop id="_wfa_fileactions">Datei-Aktionen</prop>
+      
+      <prop id="_wfa_do_seecont">Text-(f,html,b,o)Inhalt(f,html,b,c) betrachten</prop>
+      <prop id="_wfa_do_seepic">(f,html,b,o)Bild(f,html,b,c) betrachten</prop>
+      <prop id="_wfa_do_edit">Text-Datei (f,html,b,o)bearbeiten(f,html,b,c)</prop>
+      <prop id="_wfa_do_delete">(f,html,b,o)L&#246;schen(f,html,b,c)</prop>
+      <prop id="_wfa_do_copy">(f,html,b,o)Kopieren(f,html,b,c)</prop>
+      <prop id="_wfa_do_rename">(f,html,b,o)Umbenennen(f,html,b,c)</prop>
+      <prop id="_wfa_do_checksum">(f,html,b,o)Pr&#252;fziffern(f,html,b,c) ermitteln</prop>
+      <prop id="_wfa_do_extract">Zip-Datei (f,html,b,o)extrahieren(f,html,b,c)</prop>
+      <prop id="_wfa_do_encrypt">Text-Datei (f,html,b,o)verschluesseln-entschluesseln(f,html,b,c)</prop>
+      <prop id="_wfa_do_seeinfos">Datei-Infos sehen ...</prop>
+      <prop id="_wfa_do_pano">Weiter mit Panorama ...</prop>      
+      <prop id="_wfa_size">Gr&#246;sse</prop>  
+      <prop id="_wfa_lastmod">Letzte Ver&#228;nderung</prop>  
+      <prop id="_wfa_lastmod2">Datum der letzten Ver&#228;nderung</prop>    
+      <prop id="_wfa_completefn">Kompletter Dateiname</prop>
+                 
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_wfa_file">File</prop>
+      <prop id="_wfa_do_fullpic">See picture in full size</prop>
+      <prop id="_wfa_fileactions">File Actions</prop>
+      
+      <prop id="_wfa_do_seecont">See (f,html,b,o)content(f,html,b,c) of text-file</prop>
+      <prop id="_wfa_do_seepic">See the (f,html,b,o)picture(f,html,b,c)</prop>
+      <prop id="_wfa_do_edit">(f,html,b,o)Edit(f,html,b,c) a text-file</prop>
+      <prop id="_wfa_do_delete">(f,html,b,o)Delete(f,html,b,c)</prop>
+      <prop id="_wfa_do_copy">(f,html,b,o)Copy(f,html,b,c)</prop>
+      <prop id="_wfa_do_rename">(f,html,b,o)Rename(f,html,b,c)</prop>
+      <prop id="_wfa_do_checksum">See (f,html,b,o)Checksums(f,html,b,c)</prop>
+      <prop id="_wfa_do_extract">(f,html,b,o)Extract(f,html,b,c) a Zip</prop>
+      <prop id="_wfa_do_encrypt">(f,html,b,o)Encrypt-Decrypt(f,html,b,c) a text-file</prop>      
+      <prop id="_wfa_do_seeinfos">See File-Infos ...</prop>
+      <prop id="_wfa_do_pano">Continue with Panorama ...</prop>
+      
+      <prop id="_wfa_size">Size</prop> 
+      <prop id="_wfa_lastmod">Last Modification</prop> 
+      <prop id="_wfa_lastmod2">Date of last modification</prop>
+      <prop id="_wfa_completefn">Complete filename</prop>
+            
+    </when>
+  </choose>
+</job>
+
+<job id="tr_vfsi" role="hidden">
+ <!--
+ (prop,) (prop,_vfsi_) (prop,_vfsi__) 
+ <call_service job="tr_vfsi"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_vfsi_props">Eigenschaften</prop>
+      <prop id="_vfsi_nameinfos">Namens-Infos</prop>
+      <prop id="_vfsi_size">Gr&#246;sse</prop>  
+      <prop id="_vfsi_lastmod">Letzte Ver&#228;nderung</prop>
+
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_vfsi_props">Properties</prop>
+      <prop id="_vfsi_nameinfos">Name-Infos</prop>
+      <prop id="_vfsi_size">Size</prop> 
+      <prop id="_vfsi_lastmod">Last Modification</prop> 
+
+    </when>
+  </choose>
+</job>
+
+
+<job id="tr_dirst" role="hidden">
+ <!--
+ (prop,) (prop,_dirst_) (prop,_dirst__) 
+ <call_service job="tr_dirst"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+       <prop id="_dirst_repprops">Berichtseigenschaften Scan</prop>
+      <prop id="_dirst_scanning">Scanning</prop>
+      <prop id="_dirst_stil">Stil</prop>
+      <prop id="_dirst_dirs">Verzeichnisse</prop>      
+      <prop id="_dirst_files">Dateien</prop>
+      <prop id="_dirst_dirs2">Verzeichnisse-2</prop>
+      <prop id="_dirst_sort">Sortierung</prop>
+      <prop id="_dirst_sortopt">Sortierungsoptionen</prop>
+      <prop id="_dirst_size">Gr&#246;sse</prop>
+      <prop id="_dirst_filematch">Dateiname enth&#228;lt</prop>
+      <prop id="_dirst_maxlevels">Verzeichnis-Ebenen</prop>
+      <prop id="_dirst_maxlevels_t">Maximale Anzahl der zu inkludierenden Verzeichnisebenen</prop>
+      <prop id="_dirst_2dbbackup">2 (e:o)database backup(e:c)</prop>
+      <prop id="_dirst_2dblink">3 (e:o)database link(e:c)</prop>          <prop id="_dirst_all">Alle</prop>
+      <prop id="_dirst_statsin">Statistiken in</prop>
+      <prop id="_dirst_total">ges</prop>
+      <prop id="_dirst_inthisfol">in diesem Verzeichnis</prop>
+      <prop id="_dirst_lvl">ebene</prop>
+      <prop id="_dirst_nbroffiles">anz dateien</prop>
+      <prop id="_dirst_storage">speicher</prop>
+      <prop id="_dirst_avg">durrchschn.</prop>
+      <prop id="_dirst_nbroffilesftotal">anz dateien d ges</prop>
+      <prop id="_dirst_f">d</prop>
+      <prop id="_dirst_ftot">d ges</prop>
+      <prop id="_dirst_tot">ges</prop>
+
+      <prop id="_dirst_resume">Zusammenfassung</prop>
+      <prop id="_dirst_nbr_tot_dirs">Gesamtanzahl der Verzeichnisse</prop>
+      <prop id="_dirst_nbr_empty_dirs">Anzahl der leeren Verzeichnisse</prop>
+      <prop id="_dirst_nbr_filled_dirs">Anzahl der bef&#252;llten Verzeichnisse</prop>
+      <prop id="_dirst_nbr_tot_files">Gesamtanzahl der Dateien</prop>
+
+      <prop id="_dirst_pos_kb">pos _ kb</prop>
+      <prop id="_dirst_folderstats">Verzeichnis-Statistik</prop>  
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <!-- d=deutsch -->
+      <prop id="_dirst_repprops">Report props Scanning</prop>
+      <prop id="_dirst_scanning">Scanning</prop>
+      <prop id="_dirst_stil">Stil</prop>
+      <prop id="_dirst_dirs">Directories</prop>      
+      <prop id="_dirst_files">Files</prop>
+      <prop id="_dirst_dirs2">Directories-2</prop>
+      <prop id="_dirst_sort">Sort</prop>
+      <prop id="_dirst_sortopt">Sorting option</prop>
+      <prop id="_dirst_size">Size</prop>
+      <prop id="_dirst_filematch">File Match</prop>
+      <prop id="_dirst_maxlevels">Max Levels</prop>
+      <prop id="_dirst_maxlevels_t">maximum nbr of dir levels</prop>
+      <prop id="_dirst_2dbbackup">2 (e:o)database backup(e:c)</prop>
+      <prop id="_dirst_2dblink">3 (e:o)database link(e:c)</prop>
+      <prop id="_dirst_all">All</prop>      
+      <prop id="_dirst_statsin">Stats in</prop>
+      <prop id="_dirst_total">total</prop>
+      <prop id="_dirst_inthisfol">in this folder</prop>
+      <prop id="_dirst_lvl">lvl</prop>
+      <prop id="_dirst_nbroffiles">nbr of files</prop>
+      <prop id="_dirst_storage">storage</prop>
+      <prop id="_dirst_avg">avg</prop>
+      <prop id="_dirst_nbroffilesftotal">nbr of files f total</prop>
+      <prop id="_dirst_f">f</prop>
+      <prop id="_dirst_ftot">f tot</prop>
+      <prop id="_dirst_tot">tot</prop>
+
+      <prop id="_dirst_resume">Resume</prop>
+      <prop id="_dirst_nbr_tot_dirs">Nbr of total dirs</prop>
+      <prop id="_dirst_nbr_empty_dirs">Nbr of empty dirs</prop>
+      <prop id="_dirst_nbr_filled_dirs">Nbr of filled dirs</prop>
+      <prop id="_dirst_nbr_tot_files">Total Nbr of files </prop>
+
+      <prop id="_dirst_pos_kb">pos _ kb</prop>
+      <prop id="_dirst_folderstats">Folder Statistics</prop>    
+    </when>
+  </choose>
+</job>
+
+<job id="tr_wda" role="hidden">
+ <!--
+ (prop,) (prop,_wda_) (prop,_wda__) 
+ <call_service job="tr_wda"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_wda_cr_dirname">Verzeichnisname</prop>
+      <prop id="_wda_cr_created">Erzeugt</prop>      
+      <prop id="_wda_cr_newdir">Neues Verzeichnis:</prop>
+
+      <prop id="_wda_cmp_select">W&#228;hlen Sie ein Verzeichnis zum vergleichen:</prop>
+      <prop id="_wda_cmp_confirm">Best&#228;tigen Sie Ihre Anfrage zum Vergleich der Verzeichnisse</prop>
+      <prop id="_wda_cmp_olddir">Urspr&#252;ngliches Verzeichnis</prop>
+      <prop id="_wda_cmp_newdir">Verzeichnis zum Vergleichen</prop>
+      <prop id="_wda_cmp_olddir_t">Das Verzeichnis das Sie urspr&#252;nglich mit Panorama betrachtet haben. Es wird im Rahmen des Vergleichs als '&#228;lters' Verzeichnis betrachtet.</prop>
+      <prop id="_wda_cmp_newdir_t">Jenes Verzeichnis mit dem das 'urspr&#252;ngliche' Verzeichnis verglichen werden soll. Es wird im Rahmen des Vergleichs als 'j&#252;nges' Verzeichnis betrachtet.</prop>      
+      
+
+
+      <prop id="_wda_pics_l">Gr&#246;sseneinstellung</prop>
+      <prop id="_wda_pics_maxx_l">Maximale Breite x</prop>
+      <prop id="_wda_pics_maxy_l">Maximale H&#246;he y</prop>
+      <prop id="_wda_pics_picsof_l">Bilder von:</prop>
+
+      <prop id="_wda_empty_going">Es wird das komplette Verzeichniss gescannt</prop>
+      <prop id="_wda_empty_found">gefunden</prop>
+      <prop id="_wda_empty_empty">Leer</prop>
+
+      <prop id="_wda_del_delfolder">Verzeichnis l&#246;schen</prop>
+      <prop id="_wda_del_goingdel">Das folgende Verzeichnis wird gel&#246;scht(e:s) alle Daten werden unwiderruflich gel&#246;scht:</prop>
+      <prop id="_wda_del_delete">L&#246;sche</prop>
+      <prop id="_wda_del_forget">Vergiss es</prop>
+      <prop id="_wda_del_iknow">()Ja, mir ist bewusst dass alle Daten im Verzeichnis gel&#246;scht werden.()</prop>
+      <prop id="_wda_del_stopped">Vorgang angehalten</prop>
+      <prop id="_wda_del_how">Art der L&#246;schung</prop>
+      <prop id="_wda_del_compl">Gesamtes Verzeichnis</prop>
+      <prop id="_wda_del_cont">Inhalt des Verzeichnisses</prop>
+      <prop id="_wda_del_performed">L&#246;schung durchgef&#252;hrt</prop>
+      <prop id="_wda_del_deleted">Gel&#246;scht</prop>
+      <prop id="_wda_del_seepano">Geleertes Verzeichnis ansehen</prop>
+      <prop id="_wda_del_seepano_parent">Dar&#252;berliegendes Verzeichnis ansehen</prop>    
+      <prop id="_wda_del_seepano_parent2">Darüber-Dar&#252;berliegendes Verzeichnis ansehen</prop>       
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_wda_cr_dirname">Name of Dir</prop>
+      <prop id="_wda_cr_created">Created</prop>      
+      <prop id="_wda_cr_newdir">New Dir:</prop>
+
+      <prop id="_wda_cmp_select">Select a directory to compare with:</prop>
+      <prop id="_wda_cmp_confirm">Confirm you directory-compare-request</prop>
+      <prop id="_wda_cmp_olddir">Base Directory</prop>
+      <prop id="_wda_cmp_newdir">Directory to compare with</prop>
+      <prop id="_wda_cmp_olddir_t">The folder which was viewed initially with Panorama. When performing the compare it will be regarded as the 'older' folder.</prop>
+      <prop id="_wda_cmp_newdir_t">The folder angainst the inital folder will be compared against. This folder will be regarded as the 'younger' folder when it comes to the compare.</prop>  
+
+      <prop id="_wda_pics_l">Sizer</prop>
+      <prop id="_wda_pics_maxx_l">Max Width x</prop>
+      <prop id="_wda_pics_maxy_l">Max Height y</prop>
+      <prop id="_wda_pics_picsof_l">Pics of:</prop>
+
+      <prop id="_wda_empty_going">Going to scan the full directory</prop>
+      <prop id="_wda_empty_found">found</prop>
+      <prop id="_wda_empty_empty">Empty</prop>
+
+      <prop id="_wda_del_delfolder">Delete folder</prop>
+      <prop id="_wda_del_goingdel">The following directory is going to be deleted&#xA;All data will disappear:</prop>
+      <prop id="_wda_del_delete">Delete</prop>
+      <prop id="_wda_del_forget">Forget it</prop>
+      <prop id="_wda_del_iknow">()Yes, I know that folder-data will be gone forever()</prop>
+      <prop id="_wda_del_stopped">Operation stopped</prop>
+      <prop id="_wda_del_how">Delete how</prop>
+      <prop id="_wda_del_compl">Complete Directory</prop>
+      <prop id="_wda_del_cont">Content of Directory</prop>
+      <prop id="_wda_del_performed">Activity Performed</prop>
+      <prop id="_wda_del_deleted">Deleted</prop>
+      <prop id="_wda_del_seepano">See empty folder</prop>
+      <prop id="_wda_del_seepano_parent">See the upper folder</prop>  
+      <prop id="_wda_del_seepano_parent2">See the upper upper folder</prop> 
+    </when>
+  </choose>
+</job>
+
+<job id="tr_wdi" role="hidden">
+ <!--
+ (prop,) (prop,_wdi_) (prop,_wdi__) 
+ <call_service job="tr_wdi"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+
+     
+      <prop id="_wdi_folder">Verzeichnis</prop>
+      <prop id="_wdi_folder_actions">Verzeichnis-Aktionen</prop>
+      
+      <prop id="_wdi_do_pano">Weiter mit (f,html,b,o)Panorama(f,html,b,c) ...</prop>
+      <prop id="_wdi_do_seepics">Alle (f,html,b,o)Bilder(f,html,b,c) ansehen</prop>
+      <prop id="_wdi_do_deldir">Verzeichnis (f,html,b,o)l&#246;schen(f,html,b,c)</prop>
+      <prop id="_wdi_do_mkdir">(f,html,b,o)Neues(f,html,b,c) Verzeichnis anlegen</prop>
+      <prop id="_wdi_do_seeallfiles">(f,html,b,o)Alle(f,html,b,c) Dateien in und unterhalb dieses Verzeichnisses auflisten</prop>
+      <prop id="_wdi_do_stats">(f,html,b,o)Statistik(f,html,b,c)</prop>
+      <prop id="_wdi_do_seeemptys">(f,html,b,o)Leere(f,html,b,c) Verzeichnisse auflisten</prop>
+      <prop id="_wdi_do_compare">Dieses Verzeichnis mit einem anderen Verzeichnis (f,html,b,o)vergleichen(f,html,b,c)</prop>
+      <prop id="_wdi_do_encrypt">(f,html,b,o)Verschl&#252;sseln-Entschl&#252;sseln(f,html,b,c)</prop>
+      <prop id="_wdi_do_zip">Dieses Verzeichnis (f,html,b,o)zippen(f,html,b,c)</prop>
+      <prop id="_wdi_do_seeinf">Verzeichnis-Infos ...</prop>   
+      <prop id="_wdi_complete">Kompletter Verzeichnisname</prop>
+               
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_wdi_folder">Folder</prop>
+      <prop id="_wdi_folder_actions">Folder-Actions</prop>
+      
+      <prop id="_wdi_do_pano">Continue with (f,html,b,o)panorama(f,html,b,c) ...</prop>
+      <prop id="_wdi_do_seepics">See all (f,html,b,o)pictures(f,html,b,c)</prop>
+      <prop id="_wdi_do_deldir">(f,html,b,o)Delete(f,html,b,c) directory</prop>
+      <prop id="_wdi_do_mkdir">(f,html,b,o)Create(f,html,b,c) a directory</prop>
+      <prop id="_wdi_do_seeallfiles">See (f,html,b,o)all(f,html,b,c) files under this directory</prop>
+      <prop id="_wdi_do_stats">See (f,html,b,o)statistics(f,html,b,c)</prop>
+      <prop id="_wdi_do_seeemptys">See (f,html,b,o)empty(f,html,b,c) dirs</prop>
+      <prop id="_wdi_do_compare">(f,html,b,o)Compare(f,html,b,c) this dir with another dir</prop>
+      <prop id="_wdi_do_encrypt">(f,html,b,o)Encrypt-Decrypt(f,html,b,c)</prop>
+      <prop id="_wdi_do_zip">(f,html,b,o)Zip(f,html,b,c) the dir</prop>
+      <prop id="_wdi_do_seeinf">Folder-Infos ...</prop>
+      <prop id="_wdi_complete">Complete name of folder</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_seldir" role="hidden">
+ <!--
+ (prop,_seldir_) (prop,_seldir__) 
+  -->
+ <when test="(f,not,(f,has,prop,_seldir_confchange))">
+   <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_seldir_confchange">Best&#228;tigen oder &#196;ndern</prop>
+      <choose>
+        <when test="(f,implement,online)">
+          <prop id="_seldir_vorauswahl">Verzeichnis-Wahl</prop>
+        </when>
+        <otherwise>
+          <prop id="_seldir_vorauswahl">Vorauswahl</prop>
+        </otherwise>
+      </choose>
+      
+      <prop id="_seldir_dirtype">W&#228;hlen Sie eine Verzeichnis-Kategorie aus</prop>
+      <prop id="_seldir_typentip">()Das ist eine Liste von System-Verzeichnissen. Die Liste unterst&#252;tzt Sie beim Auffinden eines Verzeichnisses. Verwenden Sie 'Manuelle Eingabe' um einen Verzeichnisnamen direkt mit der Tastatur zu erfassen.()</prop>
+      <prop id="_seldir_your">Ihr</prop>
+      <prop id="_seldir_project">Projekt</prop>
+      <prop id="_seldir_serving">Unterst&#252;tzendes</prop>
+      <prop id="_seldir_userdocs">OsBenutzer - Dokumente</prop>
+      <prop id="_seldir_userhome">OsBenutzer - Home</prop>
+      <prop id="_seldir_sessdisk">Sitzung - Festplatte</prop>
+      <prop id="_seldir_sessmem">Sitzung - Hauptspeicher</prop>
+      <prop id="_seldir_dblink">PdB - Projektdatenbank</prop>
+      <prop id="_seldir_libro">Libro - Bilder</prop>
+      <prop id="_seldir_libro2">Libro - Daten</prop>
+      <prop id="_seldir_app">Applikation</prop>
+      <prop id="_seldir_allapps">Verzeichnis aller Applikationen</prop>
+      <prop id="_seldir_takeoff">Takeoff</prop>
+      <prop id="_seldir_services">Services</prop>
+      <prop id="_seldir_javahome">Java - Home</prop>
+      <prop id="_seldir_manual">Manuelle Eingabe ...</prop>
+      <prop id="_seldir_cancelled">Auswahl Abgebrochen</prop>
+      <prop id="_seldir_doselapppro">()W&#228;hlen Sie zuerste eine APPLIKATION, darnach ein Projekt ...()</prop>
+      <prop id="_seldir_doselapppro_tip">()Sie haben sich dazu entschlossen, ein projekt zu w&#228;hlen. Um dieses aufzufinden, w&#228;hlen Sie bitte zuerst eine APPLIKATION aus. Darnach wird Ihnen eine Liste der dazu passenden Projekte angeboten.()</prop>
+      <prop id="_seldir_enterfn">Geben Sie einen Verzeichnisnamen ein</prop>
+      <prop id="_seldir_appsel">Auswahl einer Applikation</prop>
+      <prop id="_seldir_goodbye">tsch&#252;ss</prop>
+      <prop id="_seldir_selecta">W&#228;hlen Sie ein</prop>
+      <prop id="_seldir_PROJECT">PROJEKT</prop>
+      <!-- <prop id="_seldir_"></prop> -->  
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+    <!-- d=deutsch -->
+      <prop id="_seldir_confchange">Confirm or Change</prop>
+
+      
+      <choose>
+        <when test="(f,implement,online)">
+          <prop id="_seldir_vorauswahl">Selection</prop>
+        </when>
+        <otherwise>
+          <prop id="_seldir_vorauswahl">Preselection</prop>
+        </otherwise>
+      </choose>      
+      
+      <prop id="_seldir_dirtype">Select a Directory-Type</prop>
+      <prop id="_seldir_typentip">()This is a list of the System-Folders. It helps you to find project- or application-folders. You will be navitaged through your datastructure. Use 'Manual Input per hand' to enter a folder-name with the keyboard.()</prop>
+      <prop id="_seldir_your">Your</prop>
+      <prop id="_seldir_project">Project</prop>
+      <prop id="_seldir_serving">Serving</prop>
+      <prop id="_seldir_userdocs">OsUser - Documents</prop>
+      <prop id="_seldir_userhome">OsUser - Home</prop>
+      <prop id="_seldir_sessdisk">Session - Disk</prop>
+      <prop id="_seldir_sessmem">Session - Memory</prop>
+      <prop id="_seldir_dblink">PdB - Projectdatabase</prop>
+      <prop id="_seldir_libro">Libro - Pics</prop>
+      <prop id="_seldir_libro2">Libro - Data</prop>
+      <prop id="_seldir_app">Application</prop>
+      <prop id="_seldir_allapps">Folder with all applications</prop>
+      <prop id="_seldir_takeoff">Takeoff</prop>
+      <prop id="_seldir_services">Services</prop>
+      <prop id="_seldir_javahome">Java - Home</prop>
+      <prop id="_seldir_manual">Manual input per hand ...</prop>
+      <prop id="_seldir_cancelled">Selection cancelled.</prop>
+      <prop id="_seldir_doselapppro">()Select first an APPLICATION, next the project ...()</prop>
+      <prop id="_seldir_doselapppro_tip">()You decided to select a project. To find that project, we want you at first to select an application. Afterwards we will present you the list of projects of that application.()</prop>
+      <prop id="_seldir_enterfn">Enter the Folder-Name</prop>
+      <prop id="_seldir_appsel">Application Selection</prop>
+      <prop id="_seldir_goodbye">good bye</prop>
+      <prop id="_seldir_selecta">Select a</prop>
+      <prop id="_seldir_PROJECT">PROJECT</prop>
+      <!-- <prop id="_seldir_"></prop> -->
+    </when>
+  </choose>
+</when>
+</job>
+
+<job id="tr_choose_web" role="hidden">
+<!-- (prop,_webch_) -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_webch_proposes">Das System schl&#228;gt vor</prop>
+      <prop id="_webch_accept_prepo">Vorschlag annehmen</prop>
+      <prop id="_webch_selbasic">W&#228;hlen Sie ein Verzeichnis f&#252;r</prop>
+      <prop id="_webch_towrite">zum Schreiben</prop>
+      
+      <prop id="_webch_your">Ihr</prop>
+      <prop id="_webch_project">Projekt</prop>
+      <prop id="_webch_db">Datenbank</prop>
+      <prop id="_webch_session">Sitzung</prop>
+      <prop id="_webch_libro">Libro-Bilder</prop>
+      <prop id="_webch_libro2">Libro-Daten</prop>
+      <prop id="_webch_app">Applikation</prop>
+      <prop id="_webch_lastchoose">Wie die letzte Auswahl</prop>
+      <prop id="_webch_see_more_folders">Sehen Sie weitere Verzeichnisse ...</prop>
+           
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_webch_proposes">The system proposes</prop>
+      <prop id="_webch_accept_prepo">Accept preposition</prop>
+      <prop id="_webch_selbasic">Select a folder for </prop>
+      <prop id="_webch_towrite">to write</prop>
+      <prop id="_webch_your">Your</prop>
+      <prop id="_webch_project">Project</prop>
+      <prop id="_webch_db">Database</prop>
+      <prop id="_webch_session">Session</prop>
+      <prop id="_webch_libro">Libro-Pics</prop>
+      <prop id="_webch_libro2">Libro-Data</prop>
+      <prop id="_webch_app">Application</prop>
+      <prop id="_webch_see_more_folders">See more folders ...</prop>
+      <prop id="_webch_lastchoose">Like the latest choice</prop>
+    </when>
+  </choose>
+</job>
+
+
+
+
+<job id="tr_kjob" role="hidden">
+ <!--
+ (prop,) (prop,_kjob_) (prop,_kjob__) 
+ <call_service job="tr_kjob"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>                  
+            
+      <prop id="_kjob_xx_l"></prop>
+      <prop id="_kjob_xx_t"></prop>      
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+
+    </when>
+  </choose>
+</job>
+
+
+
+
+</jobs>

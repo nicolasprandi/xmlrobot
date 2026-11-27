@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="stew-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="stews_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,stews_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="stew-see">
+<prop id="stew_key">(prop,stew_key)</prop>
+<file id="stews">(file,stews)</file>
+<prop id="stews_offset">(prop,stews_offset)</prop>
+<prop id="stews_offset_label">(prop,stews_offset_label)</prop>
+<prop id="stews_offset_new_key">(prop,stews_offset_new_key)</prop>
+<prop id="stews_sort_attribute">(prop,stews_sort_attribute)</prop>
+<prop id="stews_sort_number">(prop,stews_sort_number)</prop>
+<prop id="stews_sort_ignore_case">(prop,stews_sort_ignore_case)</prop>
+<prop id="stews_sort_desc">(prop,stews_sort_desc)</prop>
+<prop id="stews_where">(prop,stews_where)</prop>
+<prop id="stews_return_job">(prop,stews_return_job)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="sqlis">(file,sqlis)</file>
+<prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+<prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+<prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+<prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+<prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+<prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+<prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+<prop id="sqlis_where">(prop,sqlis_where)</prop>
+<prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+<prop id="sqli_key">(prop,sqli_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="sqli-see">
+<file id="stews">(file,stews)</file>
+<prop id="stews_offset">(prop,stews_offset)</prop>
+<prop id="stews_offset_label">(prop,stews_offset_label)</prop>
+<prop id="stews_offset_new_key">(prop,stews_offset_new_key)</prop>
+<prop id="stews_sort_attribute">(prop,stews_sort_attribute)</prop>
+<prop id="stews_sort_number">(prop,stews_sort_number)</prop>
+<prop id="stews_sort_ignore_case">(prop,stews_sort_ignore_case)</prop>
+<prop id="stews_sort_desc">(prop,stews_sort_desc)</prop>
+<prop id="stews_where">(prop,stews_where)</prop>
+<prop id="stews_return_job">(prop,stews_return_job)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="sqlis">(file,sqlis)</file>
+<prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+<prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+<prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+<prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+<prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+<prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+<prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+<prop id="sqlis_where">(prop,sqlis_where)</prop>
+<prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+<prop id="sqli_key">(prop,sqli_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,stew_key)</need>
+<call_job job="stew-read"/>
+<prop id="stew_default_label_class" x="(prop,_sl_stew)"/>
+<prop id="stew_default_label_name" x="(prop,stew_type)(f,when,(f,has,(prop,stews_offset_label)), - (prop,stews_offset_label),)"/>
+<call_job job="stew-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailStew" explain="(prop,_x_edit)" job="stew-edit" test="(prop,bpDev)">
+<prop id="stew_key">(prop,stew_key)</prop>
+<file id="stews">(file,stews)</file>
+<prop id="stews_offset">(prop,stews_offset)</prop>
+<prop id="stews_offset_label">(prop,stews_offset_label)</prop>
+<prop id="stews_offset_new_key">(prop,stews_offset_new_key)</prop>
+<prop id="stews_sort_attribute">(prop,stews_sort_attribute)</prop>
+<prop id="stews_sort_number">(prop,stews_sort_number)</prop>
+<prop id="stews_sort_ignore_case">(prop,stews_sort_ignore_case)</prop>
+<prop id="stews_sort_desc">(prop,stews_sort_desc)</prop>
+<prop id="stews_where">(prop,stews_where)</prop>
+<prop id="stews_return_job">(prop,stews_return_job)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="sqlis">(file,sqlis)</file>
+<prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+<prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+<prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+<prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+<prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+<prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+<prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+<prop id="sqlis_where">(prop,sqlis_where)</prop>
+<prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+<prop id="sqli_key">(prop,sqli_key)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,stews_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="stew-see">
+<prop id="stew_key">(prop,stew_key)</prop>
+<file id="stews">(file,stews)</file>
+<prop id="stews_offset">(prop,stews_offset)</prop>
+<prop id="stews_offset_label">(prop,stews_offset_label)</prop>
+<prop id="stews_offset_new_key">(prop,stews_offset_new_key)</prop>
+<prop id="stews_sort_attribute">(prop,stews_sort_attribute)</prop>
+<prop id="stews_sort_number">(prop,stews_sort_number)</prop>
+<prop id="stews_sort_ignore_case">(prop,stews_sort_ignore_case)</prop>
+<prop id="stews_sort_desc">(prop,stews_sort_desc)</prop>
+<prop id="stews_where">(prop,stews_where)</prop>
+<prop id="stews_return_job">(prop,stews_return_job)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="sqlis">(file,sqlis)</file>
+<prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+<prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+<prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+<prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+<prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+<prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+<prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+<prop id="sqlis_where">(prop,sqlis_where)</prop>
+<prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+<prop id="sqli_key">(prop,sqli_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="sqli-see">
+<file id="stews">(file,stews)</file>
+<prop id="stews_offset">(prop,stews_offset)</prop>
+<prop id="stews_offset_label">(prop,stews_offset_label)</prop>
+<prop id="stews_offset_new_key">(prop,stews_offset_new_key)</prop>
+<prop id="stews_sort_attribute">(prop,stews_sort_attribute)</prop>
+<prop id="stews_sort_number">(prop,stews_sort_number)</prop>
+<prop id="stews_sort_ignore_case">(prop,stews_sort_ignore_case)</prop>
+<prop id="stews_sort_desc">(prop,stews_sort_desc)</prop>
+<prop id="stews_where">(prop,stews_where)</prop>
+<prop id="stews_return_job">(prop,stews_return_job)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+<prop id="squery_key">(prop,squery_key)</prop>
+<file id="sqlis">(file,sqlis)</file>
+<prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+<prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+<prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+<prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+<prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+<prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+<prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+<prop id="sqlis_where">(prop,sqlis_where)</prop>
+<prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+<prop id="sqli_key">(prop,sqli_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

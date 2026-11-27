@@ -1,0 +1,155 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>                                                            
+<call_job job="prolog"/>
+
+
+<job id="Trace a File" tip="Let's you trace the changes of a specific file" pri="10">
+ <try_catch>
+	<try>
+		<call_job job="Trace a File-internal" />
+	</try>
+	<catch>
+		<ti>not possible</ti>
+	</catch>
+ </try_catch>
+</job>
+
+<job id="Trace a File-internal" tip="Let's you trace the changes of a specific file" role="hidden">
+  <interpreter watch="0"/>
+  <ti>Doing difference between first and last backup ...</ti>
+  <ti_flush/>
+  <file id="s2" x="(dir,filetemp)s2.xml"/>
+    <scan
+    dir="(dir,backups)"
+    out="(file,s2)"
+    level_limit="1" 
+    field="fn pre post"/>
+  <prop id="has">0</prop>  
+  <loop id="k" xml="(file,s2)" xpath="dir">
+    <prop id="has">1</prop>
+    <choose>
+      <when test="(f,eq,1,(loop,k,#i))">
+        <dir id="compare1">(dir,backups)(loop,k,@ipath)</dir>
+        <prop id="compare1_home">(loop,k,@ipath)</prop>
+	
+      </when>
+      <when test="(f,eq,(loop,k,#max),(loop,k,#i))">
+      
+        <dir id="compare2">(dir,backups)(loop,k,@ipath)</dir>
+        <prop id="compare2_home">(loop,k,@ipath)</prop>
+              
+      </when>    
+    </choose>
+      
+    <ti type="dir" label="((loop,k,#i)) " x="(dir,backups)(loop,k,@ipath)" flag="flow" test="0"/>
+  
+  </loop>    
+  
+  <choose>
+  <when test="(prop,has)">
+    <dir id="comparehome" x="(dir,backups)"/>
+    <ti label="Complete History" size="2"/>
+    <call_job job="Compare Backups"/>
+  </when>
+  <otherwise>
+    <ti>no backups found</ti>
+  </otherwise>
+  </choose>
+  
+
+</job>
+
+
+<job id="Project Options" pri="10" tip="Lets you define the number of Backups to list">
+  <call_job job="Configurate Project"/>
+
+</job>
+
+<job id="Project Options?" pri="10">
+  <ti label="About: Project Options">
+    <ti type="ul" x="Set here some general parameter for the project"/>
+    <ti type="ul" x="Define length of list: Specify the number of backups you want to list in the project information"/>
+    <ti type="ul" x="Define XmlRobot-Trailer-Steps: They are going to be executed after every backup. Use them if you want to do something with new backups."/>
+  </ti>
+  <when test="(f,has,prop,pro)">
+    <prop id="the-trailer" x="(f,xpathx,,(file,conf),.,@conf_trailer)"/>
+    <ti label="Current definitions">
+      <ti label="Limit of backups in list:">(f,xpathx,20,(file,conf),.,@conf_limit)</ti>
+      <ti label="XmlRobot-Trailer-Steps:" x="(f,when,(f,not,(f,has,prop,the-trailer)),No trailer specified, ) "/>
+      <ti test="(f,has,prop,the-trailer)" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,(prop,the-trailer))&lt;font&gt;</ti>
+    </ti>
+   
+  </when>
+</job>
+
+
+<job id="Configurate Project" role="hidden" tip="Definie the number of backups listed" pri="10">
+  <tk label="Project Configuration" flag="sum_only">
+    <tk id="debug" test="(f,role,dev)" type="bool" label="Debug Mode" flag="no_is_0" tip="For Programmers"/>
+    <tk id="conf_limit" type="text" label="List Limit" flag="nono" tip="Maximal number of rows when listing backups"/>
+    <tk id="conf_trailer" 
+        type="textblock"
+        label="XmlRobot-Trailer-Steps"
+        flag="big"
+        tip="()Define XmlRobot-Steps here. They are going to be executed after every backup. Use the variable (dir,bt-dir) to retrive the last backup-directory. Use (prop,pro) to get the project-name.()"/>
+  </tk>
+  <xml_update
+    what="(file,conf)"
+    how="set_attribute"
+    where="."
+    attribute="debug"
+    value="(prop,debug)" />
+    
+  <xml_update
+    what="(file,conf)"
+    how="set_attribute"
+    where="."
+    attribute="conf_trailer"
+    value="(prop,conf_trailer)" />
+      
+  <xml_update
+    what="(file,conf)"
+    how="set_attribute"
+    where="."
+    attribute="conf_limit"
+    value="(prop,conf_limit)" /> 
+    
+  <ti label="Project Configuration done">
+    <ti label="Debug-Mode:">(prop,debug)</ti>
+    <ti label="List-Limit:">(prop,conf_limit)</ti>
+    <ti label="XmlRobot-Trailer-Steps:">(prop,conf_trailer)</ti>
+  </ti>   
+</job>
+
+<job id="Create empty Backup-Folder" role="admin" tip="Creates an empty backu-folder" pri="10">
+
+  <call_job job="need_source"/>
+    
+  <when test="(prop,need_source_ok)">
+    <tk id="add" label="Backup Title"/>
+    <prop id="add">(f,good_filename,(prop,add))</prop>
+    <prop id="add_len">(f,len,(prop,add))</prop>
+    <choose>
+      <when test="(f,gt,(prop,add_len),0)">
+        <prop id="add2">.(prop,add)</prop>
+      </when>
+      <otherwise>
+        <prop id="add2"></prop>
+      </otherwise>
+    </choose>
+    <sequence id="backups" act="next" /> 
+    <prop id="backup_moment">(f,time,yyyy-MM-dd,job)_(f,time,HH-mm,job)</prop>     
+    <dir id="dest">(dir,backups)(f,sequence,backups)_(prop,backup_moment)(prop,add2)</dir>
+                             
+    <mkdir dir="(dir,dest)"/>
+    
+    <ti label="Creation of empty Bakckup-Folder done!">
+      <ti label="New Dir:" type="dir">(dir,dest)</ti>
+    </ti>  
+  </when>
+      
+</job>
+
+</jobs>

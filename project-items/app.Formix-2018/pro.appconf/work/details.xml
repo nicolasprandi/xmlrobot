@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="appconf-see">
+<need>(prop,appconf_key)</need>
+<call_job job="appconf-read"/>
+<prop x="print print_only" id="appconfs_tk_control"/>
+<prop id="label" x="AppConf: (f,html,bold,open)(prop,appconf_displayname)(f,html,bold,close)(f,when,(f,has,(prop,appconfs_offset_label)), - (prop,appconfs_offset_label),)"/>
+<call_job job="appconf-tk"/>
+<ti_space height="3px"/>
+<ti type="rec">
+<ti type="call_job" explain="Edit Principal Configuration" job="appconf-edit">
+<prop id="appconf_key">(prop,appconf_key)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+</ti>
+<ti type="call_job" explain="[ ? ]" job="appconf-see-more">
+<prop id="appconf_key">(prop,appconf_key)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+</ti>
+</ti>
+<ti flag="no_arrow" type="call_job" explain="Delete" job="appconf-del">
+<prop id="appconf_key">(prop,appconf_key)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook_appconf_details_end</trace>
+<call_job job="hook_appconf_details_end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: appconf-details: end.0">
+<ti> hook_job=hook_appconf_details_end hook=end page=details station=0 object=appconf</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

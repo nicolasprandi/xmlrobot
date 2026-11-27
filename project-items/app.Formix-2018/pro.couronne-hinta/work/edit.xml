@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="namaste-edit">
+<need>(prop,namaste_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="namaste-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="namaste-editor"/>
+<call_job job="namaste-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_namaste) '(f,tk_sel_translate,(prop,namaste_attributtyp),(file,pdi-sel-attr))'"/>
+</ti>
+<call_job job="hint-see"/>
+</job>

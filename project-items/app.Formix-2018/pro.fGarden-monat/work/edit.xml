@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="monat-edit">
+<need>(prop,monat_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="monat-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="monat-editor"/>
+<call_job job="monat-write"/>
+<ti label="Did update Monat:" x="(f,html,bold,open)(f,text,cut_nice,(prop,monat_monat),30)(f,html,bold,close)"/>
+<ti_break/>
+<ti_hr/>
+<call_job job="monat-see"/>
+</job>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ima-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="imas_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,imas_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="ima-see">
+<prop id="ima_key">(prop,ima_key)</prop>
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="imp-see">
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,ima_key)</need>
+<call_job job="ima-read"/>
+<prop id="ima_default_label_class" x="Statement"/>
+<prop id="ima_default_label_name" x="(f,text,cut_nice,(prop,ima_cmd),100)(f,when,(f,has,(prop,imas_offset_label)), - (prop,imas_offset_label),)"/>
+<call_job job="ima-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailIma" explain="(prop,_x_edit)" job="ima-edit">
+<prop id="ima_key">(prop,ima_key)</prop>
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,imas_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="ima-see">
+<prop id="ima_key">(prop,ima_key)</prop>
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="imp-see">
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

@@ -1,0 +1,301 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<include file="(dir,app)prolog.xrs"/>
+
+<job id="Create Mac-Application" tip="Creates the mac-application based on a jar-file">
+
+  
+  <!-- perform user input -->
+  <call_job job="tk_para_edit"/>
+   
+  <ti_hr/>
+  <tp>Started conversion ...</tp>
+	
+	<prop id="prot-date" x="(f,time,yyyy-MM-dd E HH:mm)" />
+	<prop id="prot-computer" x="(prop,computer)" test="(f,exists,prop,computer)"/>
+  <file id="prot-jar" x="(file,in-jar)" />
+  <prop id="prot-appname" x="(prop,in-name)" />    
+	<call_job job="write-prot"/>
+
+  
+  <!-- detecting main class if not defined, read manifest -->
+  <dir id="tix" x="(f,request,dir,file_temp_dir)"/>
+  <file id="in-jar2" x="(dir,tix)(f,name_of_file,(file,in-jar))"/>
+  <copy uri="(file,in-jar)" touri="(file,in-jar2)"/>
+  <file id="in-jar" x="(file,in-jar2)"/>
+  <ti type="file" x="(file,in-jar)"/>
+  <dir id="extracted-jar" x="(dir,tix)extracted-jar"/>
+  
+  <when test="(f,not,(f,has,prop,in-main-class))">
+    <ant>
+        <unzip  src="(f,file,classic,(file,in-jar))"
+                dest="(f,dir,classic,(dir,extracted-jar))">
+            <patternset>
+                <include name="META-INF/MANIFEST.MF" />
+            </patternset>
+        </unzip>
+    </ant>
+    
+    <when test="(f,not,(f,file_exists,(dir,extracted-jar)META-INF/MANIFEST.MF))">
+      <ti label="Error: The jar-file does not have a manifest-file">
+        <ti label="Detail:">We need a main class and that is usually specified in the manifest-file</ti>
+        <ti label="Solution:">Fill in the input-field 'main-class' or repair the jar-file</ti>
+        <ti label="Jar:" type="file">(file,in-jar)</ti>        
+      </ti>    
+      <throw>()The jar-file does not have a manifest-file()</throw>     
+    </when>
+    
+		<file id="manifest" x="(dir,extracted-jar)META-INF/MANIFEST.MF"/>
+    
+		<ti label="Manifest:"
+        type="file"
+        x="(file,manifest)" 
+        test="(f,role,test)"/>
+    
+    <choose>
+        <when test="(f,file_contains_regex,(file,manifest),Main-Class: (e:o).+(e:c))">
+            <loop   id="l"
+                    file="(file,manifest)"
+                    regex="Main-Class: (e:o).+(e:c)"
+                    limit="1">
+                    
+                <ti x="(loop,l,1)" label="Detected Main Class:"/>  
+                <prop id="in-main-class" x="(loop,l,1)" />
+            </loop>            
+        </when>
+        <otherwise>
+            <ti label="Error: Main-class was not found">
+              <ti label="Manifest:" type="file">(file,manifest)</ti>
+              <ti label="Jar:" type="file">(file,in-jar)</ti>
+              <ti label="Solution:">Fill in the input-field 'main-class' or repair the jar-file</ti>
+            </ti>
+            <throw>No main-class-specification in MANIFEST found. Specify parameter main-class!</throw>
+        </otherwise>
+    </choose>
+  </when>
+  
+  <prop id="prot-main-class" x="(prop,in-main-class)" />
+  <call_job job="write-prot"/>
+  
+  <!-- dont do jre if it doesnt exist -->
+  <prop id="do-jdk">0</prop>
+  <when test="(prop,in-jdk-use)">
+    <choose>
+      <when test="(f,has,dir,in-jdk-runtime)">  <!-- in-jdk-runtime has value -->
+        <choose>
+            <when test="(f,not,(f,dir_exists,(dir,in-jdk-runtime)))"> <!-- the directory doesnt exist -->
+              <tk label="Going to skip JRE ...">
+                <tk type="msg"
+                    msg_type="w" 
+                    x="()The defined JavaRuntime (JRE) does not exist. It is NOT going to be used.()&#xA;(dir,in-jdk-runtime)"/>
+              </tk>
+            </when>
+            <otherwise>
+                <prop id="do-jdk">1</prop>    
+            </otherwise>
+        </choose>
+    
+      </when>
+      <otherwise>
+        <tk label="No JRE found">
+        <tk type="msg" msg_type="w">()You requested to use a JRE, but you didn't specify where it is.()(f,when,(f,eq,mac,(prop,os)),,&#xA;Anyway(e:s) we are not on a mac-computer and JRE-option would need a mac ...)()&#xA;We are going to create the mac-application without the java-runtime-environment ...()</tk>
+        </tk>
+        <ti label="Problem:">Creating application without JRE</ti>
+      </otherwise>
+    </choose>
+  </when>
+      
+  <!-- Clear Result folder if requested -->
+  <when test="(prop,in-clear)">
+    <tp>Clearing Result-folder ...</tp> 
+    <mkdir dir="(dir,result)"/>
+    <delete content_of_dir="(dir,result)"/>      
+  </when>
+
+  <!-- Process 
+       a) do application creation on base of app-bundler-tasks
+       b) write this code first to a file (ant-temp)
+          we need to do it like that to define the optional arguments
+       c) execute the ant-temp
+  -->
+
+  <mkdir dir="(dir,result)"/>  
+  <file id="ant-temp" x="(dir,temp)(prop,app)-anttemp.xml" />
+  
+  <dir id="result-fs" x="(dir,tix)result"/>
+  <mkdir dir="(dir,result-fs)"/>
+  <delete content_of_dir="(dir,result-fs)"/>
+  <!--
+  outputdirectory="(x,(dir,result))"  
+  -->
+  
+  <create_file out="(file,ant-temp)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+<ant>
+ <taskdef
+  name="bundleapp"
+  classname="com.oracle.appbundler.AppBundlerTask"
+  classpath="(x,(f,dir,classic,(dir,app))appbundler-1.0.jar)"/>
+ <bundleapp 
+  outputdirectory="(x,(f,dir,classic,(dir,result-fs)))"
+  name="(x,(prop,in-name))"
+  displayname="(x,(prop,in-name))"
+  identifier="(x,(f,when,(f,has,prop,in-identifier),(prop,in-identifier),(prop,in-name)))"
+  mainclassname="(x,(prop,in-main-class))"
+  (f,when,(f,has,prop,in-shortversion),shortversion="(f,escape,_xml,(prop,in-shortversion))",)
+  (f,when,(f,has,prop,in-applicationcategory),applicationCategory="(f,escape,_xml,(prop,in-applicationcategory))",)
+  (f,when,(f,has,file,in-icon),icon="(f,escape,_xml,(file,in-icon))",)
+  (f,when,(f,has,prop,in-copyright),copyright="(f,escape,_xml,(prop,in-copyright))",)
+  (f,when,(f,has_flag,(f,vob,prop,in-feat),NoSignature),,signature="????") >
+  (f,when,(prop,do-jdk),<runtime dir="(f,escape,_xml,(dir,in-jdk-runtime))" />,)
+   <classpath file="(x,(f,file,classic,(file,in-jar)))" />
+   (f,when,(f,has_flag,(f,vob,prop,in-feat),NoWorkdir),,(f,when,(prop,in-work-inside),<option value="-Duser.dir=$APP_ROOT"/>,<option value="-Duser.dir=$APP_ROOT/.."/>))		      	      	      
+   (f,when,(f,has_flag,(f,vob,prop,in-feat),NoScreenMenubar),,<option value="-Dapple.laf.useScreenMenuBar=true"/>)	      
+   (f,when,(f,has_flag,(f,vob,prop,in-feat),NoXdock),,<option value="-Xdock:name=(f,escape,_xml,(prop,in-name))"/>)
+   (f,when,(f,has,prop,in-xms),<option value="-Xms(prop,in-xms)"/>,)
+   (f,when,(f,has,prop,in-xmx),<option value="-Xmx(prop,in-xmx)"/>,)
+   (f,when,(f,has,prop,in-arg),(prop,in-arg),)
+   (f,when,(f,has,prop,in-more),(prop,in-more),)
+ </bundleapp>	
+</ant>
+  ]]></create_file>  
+  
+  
+ 
+  <tp>Bundling '(prop,in-name)'(f,when,(prop,do-jdk), - patience - JRE needs time,) ...</tp>
+  <!-- execute the ant-commands created above  -->
+  <ti type="file" 
+        x="(file,ant-temp)"
+        test="(f,role,expert)"
+        label="Ant-AppBundler-Script to execute:"/>
+      
+  <ti test="(f,role,test)">(f,file_content,(file,ant-temp))</ti>
+
+  <ant ant="(file,ant-temp)"/>
+  
+  
+  <tp>Bundling successfull</tp>
+  <copy uri="(dir,result-fs)" touri="(dir,result)"/>
+  <!-- <zip destfile="(dir,result)(prop,in-name).zip" basedir="(dir,result)"/>    
+  <ti type="file" label="created zip of mac-app" x="(dir,result)(prop,in-name).zip"/> -->
+  
+  <!-- create Runners, if requested -->
+  <when test="(prop,in-runner)">
+    <tp>Creating runners ...</tp>
+    <!-- composing vm-options -->
+    <prop id="memory" x="" />
+    <when test="(f,has,prop,in-xms)">
+        <prop id="memory" x="(prop,memory) -Xms(prop,in-xms)"/>       
+    </when>
+    <when test="(f,has,prop,in-xmx)">
+        <prop id="memory" x="(prop,memory) -Xmx(prop,in-xmx)"/>       
+    </when>
+    
+    <!-- composing argument -->
+    <prop id="arg" x="" />
+	<prop id="arg_problem" x="" />
+	<prop id="arg_problem_count" x="0" />
+    <when test="(f,has,prop,in-arg)">
+      <create_file out="(dir,temp)args.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?> 
+        <args>(prop,in-arg)</args>]]></create_file>  
+        <loop id="args" xml="(dir,temp)args.xml" xpath="argument">
+          <prop id="arg" x="(prop,arg) (loop,args,@value)"/>
+		  <prop id="count_problems" x="(f,count_regex,(loop,args,@value),()[\&amp;\%\^\&lt;\&gt;\|\'\´\`\,\;\=\(\)\!\&quot;\\\[\]\.\*\?\s]())" />
+		  <when test="(f,not,(f,eq_num,0,(prop,count_problems)))">
+			<prop id="arg_problem" x="(prop,arg_problem)(prop,count_problems) Problem(f,plural,(prop,count_problems)) in argument #(loop,args,#i): (loop,args,@value)&#xA;" />
+			<prop id="arg_problem_count" x="(f,add,(prop,arg_problem_count),(prop,count_problems))" />
+		  </when>
+        </loop>              
+    </when>
+	<when test="(f,has,prop,arg_problem)">
+		<tk label="Problem with special characters in bat-sh-runner">
+		<tk type="msg" msg_type="w">a. Some characters might cause problems in the sh/bat-file&#xA;b. We found (prop,arg_problem_count) of these in the arguments&#xA;c. Problematic characers are: &amp;%^&lt;&gt;|'´`(e:s);=(e:o)(e:c)!&quot;\[].*? and whitespaces&#xA;d. You have to test the created sh/bat-file&#xA;e. Maybe you have to escape the characters in question&#xA;f. This is the list of problems:&#xA;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -&#xA;(prop,arg_problem)</tk>
+		</tk>
+	</when>
+    
+    <!-- writing shell files -->
+    <prop id="jarname" x="(f,name_of_file,(file,in-jar))" />
+    <create_file out="(dir,result)(prop,in-name)-Win.bat">java(prop,memory) -jar (prop,jarname)(prop,arg)</create_file>
+    <create_file out="(dir,result)(prop,in-name)-Linux.sh">java(prop,memory) -jar (prop,jarname)(prop,arg)</create_file>
+    
+    <!-- setting executable bit for linux-shell-file 
+    <ant>
+        <chmod file="(dir,result)(prop,in-name)-Linux.sh" perm="ugo+rx" />
+    </ant>              -->
+    
+    <!-- copy jarfile so that shell-files have something to do -->
+    <copy file="(file,in-jar)" intodir="(dir,result)" />
+    
+	
+  </when>
+  
+  <!-- Seeing project-info -->
+  <ti label="(f,html,bold,open)Bundling successfull: (prop,in-name)(f,html,bold,close)" x=" "/>
+  <ti_hr/>
+  <ti_break/>
+	<call_job job="see-results" />
+
+  <ti_bottom/>
+
+  
+</job>
+
+<job id="See Results" pri="10" tip="Displays created applications &amp; sh/bat-files">
+<call_job job="see-results"/>
+
+</job>
+
+<job id="Remove Results" pri="10" tip="Removes the created mac-app">
+<ant flag="catch">
+  <delete dir="(dir,result)"/>
+</ant>
+<ti>Remove performed successfully</ti>
+</job>
+
+
+<job id="sys_project_setup" role="hidden">
+
+  <call_job job="Create Mac-Application"/>
+  
+</job>
+
+
+<job id="JRE Helper" joblevel="app" pri="10" tip="Searches for the JavaVirtualMachines-folder">
+	<ti label="Searching for JRE-Locations"/>
+	<choose>
+		<when test="(f,exists_dir,/Library/Java/)">
+			<ti type="dir" label="Found:" x="/Library/Java/" />
+		</when>
+		<otherwise>
+			<ti xtype="dir" label="NOT Found:" x="/Library/Java" />
+		</otherwise>
+	</choose>
+	
+	<choose>
+		<when test="(f,exists_dir,/Library/Java/JavaVirtualMachines/)">
+			<ti type="dir" label="Found:" x="/Library/Java/JavaVirtualMachines/" />
+			<ti label=" ">Remember: If you use a JRE as parameter(e:s) you have to
+select the 'Contents/Home' folder as parameter.</ti>
+		 	<ti type="call_service" label=" " job="open_dir" flag="silent"
+					explain="Open JavaVirtualMachines-folder" >
+				<ti_break/>
+	
+				<dir id="with" x="/Library/Java/JavaVirtualMachines/"/>
+			</ti>			
+			<ti type="call_service" label=" " job="Goto-Panorama" flag="silent"
+					explain="See JavaVirtualMachines with Panorama" >
+				<ti_break/>
+	
+				<dir id="with" x="/Library/Java/JavaVirtualMachines/"/>
+			</ti>
+		</when>
+		<otherwise>
+			<ti xtype="dir" label="NOT Found:" x="/Library/Java/JavaVirtualMachines" />
+		</otherwise>
+	</choose>
+
+</job>
+
+</jobs>

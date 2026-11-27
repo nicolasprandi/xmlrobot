@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="file-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new File(prop,files_offset_label)"/>
+<prop x="sum" id="files_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,file_key)</need>
+<prop id="label" x="File [(f,tk_sel_translate,(prop,file_thefile),(file,file-selector-any))](prop,files_offset_label)"/>
+<prop x="sum_only" id="files_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="file-tk"/>
+</job>

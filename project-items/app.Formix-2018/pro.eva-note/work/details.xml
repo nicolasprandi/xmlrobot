@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="note-see">
+<need>(prop,note_key)</need>
+<call_job job="note-read"/>
+<prop x="print print_only" id="notes_tk_control"/>
+<prop id="label" x="Note: (f,html,bold,open)(f,tk_sel_translate,(prop,note_aspect),(dir,pro)aspect-selector-gui.xml)(f,html,bold,close)(f,when,(f,has,(prop,notes_offset_label)), - (prop,notes_offset_label),)"/>
+<call_job job="note-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="[ ? ]" align="right" job="note-see-more">
+<prop id="note_key">(prop,note_key)</prop>
+<file id="notes">(file,notes)</file>
+<prop id="notes_offset">(prop,notes_offset)</prop>
+<prop id="notes_offset_label">(prop,notes_offset_label)</prop>
+<prop id="notes_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="notes_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="notes_sort_number">(prop,notes_sort_number)</prop>
+<prop id="notes_where">(prop,notes_where)</prop>
+<prop id="notes_return_job">(prop,notes_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit" job="note-edit">
+<prop id="note_key">(prop,note_key)</prop>
+<file id="notes">(file,notes)</file>
+<prop id="notes_offset">(prop,notes_offset)</prop>
+<prop id="notes_offset_label">(prop,notes_offset_label)</prop>
+<prop id="notes_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="notes_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="notes_sort_number">(prop,notes_sort_number)</prop>
+<prop id="notes_where">(prop,notes_where)</prop>
+<prop id="notes_return_job">(prop,notes_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,business)" type="call_job" explain="Delete" job="note-del">
+<prop id="note_key">(prop,note_key)</prop>
+<file id="notes">(file,notes)</file>
+<prop id="notes_offset">(prop,notes_offset)</prop>
+<prop id="notes_offset_label">(prop,notes_offset_label)</prop>
+<prop id="notes_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="notes_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="notes_sort_number">(prop,notes_sort_number)</prop>
+<prop id="notes_where">(prop,notes_where)</prop>
+<prop id="notes_return_job">(prop,notes_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-note-details-end</trace>
+<call_job job="hook-note-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: note-details: end.0">
+<ti> hook_job=hook-note-details-end hook=end page=details station=0 object=note</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

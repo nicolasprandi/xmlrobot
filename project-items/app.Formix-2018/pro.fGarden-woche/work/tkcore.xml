@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="woche-tk">
+<need default="">(prop,wochen_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" flag="(prop,wochen_tk_control)">
+<tk label="Bezeichnung" id="woche_bez" x="" test_first="1" type="text" flag=" nono "/>
+<tk label="Kurzbeschreibung" id="woche_beschreibung" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="Menge" id="woche_menge" x="" test_first="0" tip="in gegebener Einheit" type="text" flag=" "/>
+<tk label="Einheit" id="woche_einheit" x="" test_first="0" type="sel" flag=" ">
+<sel label="gramm">1</sel>
+<sel label="kilogramm">2</sel>
+</tk>
+<tk label="Kategorien" id="woche_klasse" x="" test_first="0" type="sel" flag="multi ">
+<sel label="Schwer zu Organisieren">1</sel>
+<sel label="Leicht verfügbar">2</sel>
+<sel label="Saisonales">3</sel>
+<sel label="Bio-Aufpreis">4</sel>
+<sel label="Gute Connection">5</sel>
+</tk>
+<tk label="Ersetzbar durch" id="woche_ersatz" x="" test_first="0" tip="Diese Zutat kann ersetzt werden" type="sel" flag="multi ">
+<sel label="Sojaflocken">1</sel>
+<sel label="Kürbiskerne">2</sel>
+<sel label="Soja-Block">3</sel>
+<sel label="Tofu">4</sel>
+<sel label="Saiblinger">5</sel>
+<sel label="Honig">6</sel>
+<sel label="Sonnenblumenkerne">7</sel>
+<sel label="Erdnüsse">8</sel>
+<sel label="Polenta">9</sel>
+<sel label="Cottage Cheese">10</sel>
+<sel label="Jogurt">11</sel>
+<sel label="Dosentunfisch">12</sel>
+<sel label="Rindfleisch">13</sel>
+<sel label="Hafer">14</sel>
+<sel label="Nuesse">15</sel>
+<sel label="Fermentiertes Erdnusslaibchen">16</sel>
+<sel label="Gemischtes Kornlaibchen">17</sel>
+<sel label="Unersetzbar weil ESSENTiELL">18</sel>
+<sel label="Tomatenmark">19</sel>
+<sel label="Rosinen">20</sel>
+</tk>
+</tk>
+</job>

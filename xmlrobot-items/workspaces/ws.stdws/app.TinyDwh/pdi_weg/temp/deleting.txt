@@ -1,0 +1,2 @@
+attr_id_s;obj_id_s;info_id_s;mig_id_s
+ 25952; 18122; 18122; 685

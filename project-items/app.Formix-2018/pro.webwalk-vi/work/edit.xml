@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="vi-edit">
+    <need>(prop,vi_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="vi-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="vi-editor"/>
+    <call_job job="vi-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- Virtual Identity '(f,text,cut_nice,(prop,vi_firstname),50).(f,text,cut_nice,(prop,vi_lastname),50)'"/>
+    </ti>
+    <call_job job="vi-see"/>
+</job>

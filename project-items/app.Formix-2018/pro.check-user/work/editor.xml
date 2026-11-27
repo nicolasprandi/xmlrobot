@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="user-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new User(prop,users_offset_label)"/>
+<prop x="sum" id="users_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,user_key)</need>
+<prop id="label" x="User [(prop,user_userid)](prop,users_offset_label)"/>
+<prop x="sum_only" id="users_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="user-tk"/>
+</job>

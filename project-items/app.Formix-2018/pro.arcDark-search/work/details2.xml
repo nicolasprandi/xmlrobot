@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="search-see-more">
+<need>(prop,search_key)</need>
+<call_job job="search-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="searches_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,search_techname)(f,html,bold,close)(f,when,(f,has,(prop,searches_offset_label)), - (prop,searches_offset_label),)"/>
+<call_job job="search-tk"/>
+<ti_hr/>
+<ti type="rec">
+<ti type="call_job" explain="Edit" job="search-edit">
+<prop id="search_key">(prop,search_key)</prop>
+<file id="searches">(file,searches)</file>
+<prop id="searches_offset">(prop,searches_offset)</prop>
+<prop id="searches_offset_label">(prop,searches_offset_label)</prop>
+<prop id="searches_offset_new_key">(prop,searches_offset_new_key)</prop>
+<prop id="searches_sort_attribute">(prop,searches_sort_attribute)</prop>
+<prop id="searches_sort_number">(prop,searches_sort_number)</prop>
+<prop id="searches_where">(prop,searches_where)</prop>
+<prop id="searches_return_job">(prop,searches_return_job)</prop>
+</ti>
+</ti>
+</job>

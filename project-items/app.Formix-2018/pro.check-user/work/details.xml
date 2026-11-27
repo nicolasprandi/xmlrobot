@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="user-see">
+<need>(prop,user_key)</need>
+<call_job job="user-read"/>
+<prop x="print print_only" id="users_tk_control"/>
+<prop id="label" x="User: (f,html,bold,open)(prop,user_userid)(f,html,bold,close)(f,when,(f,has,(prop,users_offset_label)), - (prop,users_offset_label),)"/>
+<call_job job="user-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="[ ? ]" align="right" job="user-see-more">
+<prop id="user_key">(prop,user_key)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit" job="user-edit">
+<prop id="user_key">(prop,user_key)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,admin)" type="call_job" explain="Delete" job="user-del">
+<prop id="user_key">(prop,user_key)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec">
+<ti/>
+<ti isFromAction="1" type="call_job" page="details" explain="Cmd:User" job="hook-action-user-dbcommand">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">dbcommanduser</prop>
+<prop page="details" id="user_key">(prop,user_key)</prop>
+<file id="users">(file,users)</file>
+<prop id="users_offset">(prop,users_offset)</prop>
+<prop id="users_offset_label">(prop,users_offset_label)</prop>
+<prop id="users_offset_new_key">(prop,users_offset_new_key)</prop>
+<prop id="users_sort_attribute">(prop,users_sort_attribute)</prop>
+<prop id="users_sort_number">(prop,users_sort_number)</prop>
+<prop id="users_where">(prop,users_where)</prop>
+<prop id="users_return_job">(prop,users_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-user-details-end</trace>
+<call_job job="hook-user-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: user-details: end.0">
+<ti> hook_job=hook-user-details-end hook=end page=details station=0 object=user</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

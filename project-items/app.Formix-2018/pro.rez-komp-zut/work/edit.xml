@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kompzut-edit">
+<need>(prop,kompzut_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="kompzut-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="kompzut-editor"/>
+<call_job job="kompzut-write"/>
+<ti align="right" x="Did update Zutaten-Verwendung '(f,text,cut_nice,(f,tk_sel_translate,(prop,kompzut_zut_key),(file,akt-zutatenliste)),20)'"/>
+<call_job job="make-after-zuord-add"/>
+</job>

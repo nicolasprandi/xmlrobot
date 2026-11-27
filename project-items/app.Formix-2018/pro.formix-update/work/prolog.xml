@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="updates">(dir,pro)updates.xml</file>
+<when test="(f,not,(f,exists_file,(file,updates)))">
+<create_file out="(file,updates)">&lt;updates/&gt;</create_file>
+<i>Created: (file,updates)</i>
+</when>
+<prop id="updates_offset">./</prop>
+<prop id="updates_offset_label"/>
+<prop id="updates_offset_new_key">//</prop>
+<prop id="updates_sort_attribute"/>
+<prop id="updates_sort_number"/>
+<prop id="updates_sort_ignore_case"/>
+<prop id="updates_sort_desc"/>
+<prop id="updates_where"/>
+<prop id="updates_return_job">update-see-all</prop>
+</prolog>

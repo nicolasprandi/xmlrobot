@@ -1,0 +1,1075 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+<!-- 
+<job id="Identify Project" role="hidden">
+  <try_catch>
+    <try>
+    <dump_ti flag="Vorher"/>
+      <call_job job="Edit Project Type" />
+      <dump_ti flag="Nacher"/>
+    </try>
+    <catch>
+      <dump_ti flag="im exception"/>
+    </catch>
+  </try_catch> 
+    <tk type="msg" msg="Identify Project"/>
+
+    
+</job>
+-->
+<job id="_visual_layouting_new" role="hidden">
+
+  <call_job job="do-tk-report">
+      <prop id="with-flags">print_only</prop>
+      <prop id="with-read">1</prop>
+  </call_job>
+  
+    
+  <ti type="rec" > 
+    <ti> </ti>
+     
+    <ti type="call_job" job="do-report-conf" explain="[ (prop,_x_edit) ]" flag="button" class="fx fxEdit fxEditDetail fxEditDetailConf"/>
+    <ti type="call_job" job="_visual_layouting_new_with_tips" flag="button" class="fx fxAskAsk fxAskAskConf" explain="(prop,_label_askask)"  align="right"/>
+ 
+  </ti>
+  <ti_hr/>
+  <call_job job="?Visuals?" />
+  <!-- <ti_hr/> -->  
+      
+</job>
+
+<job id="_visual_layouting_new_with_tips" role="hidden">
+
+  <call_job job="do-tk-report">
+      <prop id="with-flags">print_only print_with_tips print_all_fields </prop>
+      <prop id="with-read">1</prop>
+  </call_job>
+  
+  <ti_hr/>  
+  <ti type="rec" > 
+    <ti> </ti>
+     
+    <ti type="call_job" job="do-report-conf" explain="[ (prop,_x_edit) ]" flag="button" class="fx fxEdit fxEditDetail fxEditDetailConf"/>
+
+ 
+  </ti>
+      
+</job>
+
+<job id="Panorama Directory" joblevel="app" role="hidden">
+  <!-- <dump flag="ti" label="STATION - 5"/>  
+  <ti label="redo_dir">(dir,redo_dir)</ti>
+  <ti label="redo_ipath">(prop,redo_ipath)  </ti>
+   -->
+  <need>(dir,redo_dir) (prop,redo_ipath)</need>
+  
+  
+  <prop id="et_scan_policy">(f,xpathx,life,(file,et),scan,@policy)</prop>
+  
+  <choose>
+    <when test="(f,eq,life,(prop,et_scan_policy))">
+
+      <dir id="jack-in">(dir,redo_dir)</dir>
+      <call_job job="go-jack-do-dir"/>
+      
+      <!--   <ti_hr/>
+      <ti>Aus eigenem parnorama-directory call</ti>
+      <ti type="file" label="et RESI" x="(file,et)"/>
+      -->
+
+      <xml_update 
+        what="(file,et)"
+        how="set_attribute"
+        where="scan"
+        attribute="dir" 
+        value="(prop,jack-result)"/>      
+    </when>
+    <when test="(f,eq,image,(prop,et_scan_policy))">    
+      <xml_update 
+        what="(file,et)"
+        how="set_attribute"
+        where="offset"
+        attribute="ipath" 
+        value="(f,escape,(prop,redo_ipath))" />    
+    </when>
+    <otherwise>
+      <throw>What means '(prop,et_scan_policy)' in (file,et)??? </throw>
+    </otherwise>
+  </choose>
+    
+  <call_job job="execute" />
+          
+</job>
+
+<job id="do-report-print" joblevel="app" role="hidden">
+
+  <call_job job="Read Definitions" />
+  <call_job job="execute_final_report"/> 
+</job>
+
+<job id="open" role="hidden">
+
+      <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question" x="Preselect for Directory"/>
+      </call_service>
+      <global act="get" id="jil-result"/>
+     
+     <dir id="with" x="(prop,jil-result)" />
+     
+     <prop id="ahora">(dir,with)</prop>
+     <tk type="textblock" id="ahora" label="Confirm directory" flag="nono"/>
+     <dir id="with">(prop,ahora)</dir>
+
+    <dir id="jack-in" x="(dir,with)"/>
+    <call_job job="go-jack-do-dir"/>
+    <ti_hr/>
+    <ti type="file" label="et BUTI FROM SERVICES" x="(file,et)" test="0"/>    
+    <call_job job="go-joe-read!" />
+    <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,pano-initials)" />
+        <prop id="joe-in-regex" x="how|levels" />
+    </call_job>
+    <!-- 
+     <tk label="Select panorama-project-type: LIFE or IMAGE">
+     <tk  type="sel" 
+          id="how" 
+          label="Strategy Type" 
+          x="browse"
+          flag="nono"
+          tip="()The strategy defines how folders are analyzed.&#xA;LIFE: Browse folder by folder as it is the common way&#xA;IMAGE: analyzes all folders once at the beginning. Can therefore make statistics over several folders. Is good to get an overview over files.()">
+        <sel label="Browse through folders - LIFE">browse</sel>
+        <sel label="Preload once as image for statistics - IMAGE">image</sel>
+     </tk>
+     </tk>          -->
+     <prop id="how" x="browse"/>
+     
+     <choose>
+        <when test="(f,eq,browse,(prop,how))">
+            <create_file out="(file,et)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+            <execution_type nic="from projectsetup: browse through folders">
+              <scan dir="(prop,jack-result)" level_limit="1" policy="life"/>
+              <org type="system" />
+              <offset></offset> 
+              <report_ti  dir_level="1" dirs_types="child" 
+                          file_hightlight="1" 
+                          limit_dirs="40" 
+                          limit_next_dirs="80" 
+                          files_sort="name"/>
+            </execution_type>
+              ]]>
+            </create_file>              
+        </when>
+        <when test="(f,eq,image,(prop,how))">
+            
+            <tk type="sel" id="levels" label="Nbr of Levels" tip="Number of Direcory Levels to include in the report" flag="nono" x="99">
+                <sel label="Unlimited Levels" >99</sel>
+                <sel>1</sel>
+                <sel>2</sel>
+                <sel>3</sel>
+                <sel>4</sel>
+                <sel>5</sel>
+                <sel>6</sel>
+                <sel>7</sel>
+                <sel>9</sel>
+                <sel>10</sel>
+                <sel>50</sel>
+            </tk>
+            
+
+            <create_file out="(file,et)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+            <execution_type nic="from project setup: see all">
+              <scan dir="(prop,jack-result)" level_limit="(prop,levels)" policy="image"/>
+              <org type="system" />
+              <offset></offset> 
+            <report_ti
+                dir_level="(prop,levels)"
+                dirs_types="child"
+                file_hightlight="1"
+                limit_dirs="40"
+                limit_next_dirs="80"
+                files_sort="name"
+                limit_files_per_group="50"
+                files_flag="1"
+                files_opt=" specials"
+                cats_use="1"
+                sum_total="begin"
+                sum_cat="1"
+                sum_ext="1"
+                sum_sort="big"/>
+            </execution_type>
+              ]]>
+            </create_file>                     
+            
+        </when>        
+     </choose>
+       <need>(dir,with)</need>
+       
+ 
+    <call_job job="go-joe-write!" />
+    <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(file,pano-initials)" />
+        <prop id="joe-in-regex" x="how|levels" />
+    </call_job>
+    
+     <call_job job="execute" />
+         
+  
+  
+
+  
+ 
+</job>
+
+<job id="execute" role="hidden">
+
+  <when test="(f,not,(f,exists_file,(file,et)))">
+
+    <file id="dh-input-store">(dir,filetemp)pano-input-store.xml</file>
+    
+      <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question" x="Select a directory for Panorama"/>
+      </call_service>
+      <global act="get" id="jil-result"/>
+     
+     <dir id="with" x="(prop,jil-result)" />
+     <tk type="dir" id="with" label="Confirm directory" flag="nono"/>
+     <call_job job="write-initials"/>
+      
+  </when>
+
+  <call_job job="Read Definitions" /> 
+
+      
+  <prop id="do_now">0</prop>
+
+  <choose>
+    <when test="(f,not,(f,exists_file,(file,scan)))">
+      <prop id="do_now">1</prop>
+    </when>
+    <when test="(f,eq,life,(prop,et_scan_policy))">
+      <prop id="do_now">1</prop>
+    </when>  
+    <when test="(f,eq,image,(prop,et_scan_policy))">
+      <prop id="do_now">0</prop>
+    </when>    
+  </choose>
+
+  <choose>          
+    <when test="(prop,do_now)"> 
+      <when test="(f,eq,image,(prop,et_scan_policy))">
+        <!-- <clear_memory/> -->
+      </when>       
+      <tp>Scanning Filesystem(e:s) (f,when,(f,eq,(prop,unlimited),(prop,correct_scan_level_limit)),Unlimited,(prop,correct_scan_level_limit)) Levels in (dir,et_scan_dir) ...</tp> 
+      <tp test="0">correct_et_scan_level_limit=(prop,correct_scan_level_limit)</tp> 
+      <when test="(f,not,(f,exists_dir,(dir,et_scan_dir)))">
+        <ti type="text" x="Seems to be very secret"/>
+      </when>
+      <call_job job="Write Computer"/>
+      <tp>scanning (dir,et_scan_dir)</tp>
+      <choose>
+        <when test="(f,not,(f,exists,prop,et_scan_fext_type))">
+          <ti>Greeting from the scan #1</ti><scan dir="(dir,et_scan_dir)" 
+                out="(file,scan)" 
+                level_limit="(prop,correct_scan_level_limit)" 
+                field="kb id pre files moxre level ext post2"
+                ext2_ext="xml"
+                min_kb="(prop,et_scan_min_kb)"
+                agg="kb files"
+                avg="kb"/>
+        </when>
+        <when test="(f,eq,1,(prop,et_scan_fext_type))">
+          <!-- positive filter -->
+          <ti>doing positive filter for: (prop,et_scan_fext_yes)</ti>
+          <ti>Greeting from the scan #2</ti><scan dir="(dir,et_scan_dir)" 
+                out="(file,scan)" 
+                level_limit="(prop,correct_scan_level_limit)" 
+                field="kb id pre files moxre level ext post2"
+                ext2_ext="xml"
+                file_extension="(prop,et_scan_fext_yes)"
+                min_kb="(prop,et_scan_min_kb)"
+                agg="kb files"
+                avg="kb"
+                flag="no_empty_dirs"/>
+        </when>   
+        <when test="(f,eq,2,(prop,et_scan_fext_type))">
+          <!-- negative filter -->
+          <ti>doing negative filter for: (prop,et_scan_fext_no)</ti>
+          <ti>Greeting from the scan #3</ti><scan dir="(dir,et_scan_dir)" 
+                out="(file,scan)" 
+                level_limit="(prop,correct_scan_level_limit)" 
+                field="kb id pre files moxre level ext post2"
+                ext2_ext="xml"
+                file_extension_not="(prop,et_scan_fext_no)"
+                min_kb="(prop,et_scan_min_kb)"
+                agg="kb files"
+                avg="kb"
+                flag="no_empty_dirs"/>
+        </when>               
+        <otherwise>
+          <!-- <ti>Greeting from the scan #4 (dir,et_scan_dir)</ti>    -->
+          
+          <scan dir="(dir,et_scan_dir)" 
+                out="(file,scan)" 
+                level_limit="(prop,correct_scan_level_limit)" 
+                field="kb id pre files moxre level ext post2"
+                ext2_ext="xml"
+                min_kb="(prop,et_scan_min_kb)"
+                agg="kb files"
+                avg="kb"/>        
+        </otherwise>
+      </choose>
+             
+      <!-- <dump flag="ti"/> -->
+      <!-- <ti type="file">(file,scan)</ti> -->
+      <!-- Scan in now done -->
+      <choose>
+            <when test="(f,not,(f,exists,prop,et_scan_path_exclude))">
+                
+            </when>
+            <when test="(f,not,(f,eq,,(prop,et_scan_path_exclude)))">
+                <ti>path to exclude: (prop,et_scan_path_exclude)</ti>
+                <call_job job="do_exclude_path" />
+                
+            </when>
+      </choose>
+      
+      <interpreter turbo="1"/>
+      <tp>Sorting Categories and Extensions (e:o)(prop,scanned_agg_files) Files(e:c) ...</tp>      
+      <call_job job="convert"/> 
+            
+      <tp>Performing Aggregations (e:o)(prop,scanned_agg_dirs) Directories(e:c) ... </tp>
+      <try_catch>
+        <try>
+    
+          <aggregate_scan
+            scan="(file,scan3)"
+            org="(file,org3)"
+            out="(file,scan4)" 
+            flag="sys_debug"/>    
+              
+        </try>
+        <catch>
+          <prop id="scan-3-no-os-data">(f,try,()(f,xpath,(file,scan3),.,@no_os_data)(),1)</prop>
+          <choose>
+            <when test="(f,eq,1,(prop,scan-3-no-os-data))">
+                <ti label="Known IssueYYY:">(f,html,bold,open)Operating-System hides data from directory: (dir,et_scan_dir)(f,html,bold,close)</ti>
+                <ti>(prop,catched_msg)</ti>
+                <ti type="file" label="Scan:" x="(file,scan3)"/>
+            </when>
+            <otherwise>
+              <throw_again/>
+            </otherwise>
+          </choose>
+        </catch>
+      </try_catch>
+
+ 
+                           
+    </when> 
+    <!-- 
+    <otherwise>
+      <tp>No Scan requested!</tp>
+    </otherwise>
+    -->
+  </choose>        
+   
+  <!-- <call_job job="hardcoded_report_ti_(prop,et_report_ti_job)" /> -->
+  <when test="(f,not,(f,exists,prop,scan-3-no-os-data))">
+    <call_job job="execute_final_report"/>
+  </when>
+</job>
+
+<job id="execute_final_report" role="hidden"> 
+  <choose>
+    <when test="(f,matches_regex,(prop,et_report_ti_limit_next_dirs),\d+)">
+      <prop id="top_next_dirs_limit">(prop,et_report_ti_limit_next_dirs)</prop>
+      <prop id="next_dirs_limit">(prop,et_report_ti_limit_next_dirs)</prop>    
+    </when>
+    <otherwise>
+      <prop id="top_next_dirs_limit">(prop,unlimited2)</prop>
+      <prop id="next_dirs_limit">(prop,unlimited2)</prop>    
+    </otherwise>
+  </choose>
+          
+  <choose>
+    <when test="(f,matches_regex,(prop,et_report_ti_limit_dirs),\d+)">
+      <prop id="top_big_limit">(prop,et_report_ti_limit_dirs)</prop>
+      <prop id="top_fancy_limit">(prop,et_report_ti_limit_dirs)</prop>
+      <prop id="big_limit">(prop,et_report_ti_limit_dirs)</prop>
+      <prop id="fancy_limit">(prop,et_report_ti_limit_dirs)</prop>    
+    </when>
+    <otherwise>
+      <prop id="top_big_limit">(prop,unlimited2)</prop>
+      <prop id="top_fancy_limit">(prop,unlimited2)</prop>
+      <prop id="big_limit">(prop,unlimited2)</prop>
+      <prop id="fancy_limit">(prop,unlimited2)</prop>    
+    </otherwise>
+  </choose>
+  
+  <choose>
+    <when test="(f,matches_regex,(prop,et_report_ti_limit_files_per_group),\d+)">
+      <prop id="attr_file_limit">(prop,et_report_ti_limit_files_per_group)</prop>    
+    </when>
+    <otherwise>
+      <prop id="attr_file_limit">(prop,unlimited2)</prop>    
+    </otherwise>
+  </choose>    
+  
+
+  <prop id="do_file">(prop,et_report_ti_files_flag)</prop>
+
+  <prop id="do_file_size">(f,has_flag,(prop,et_report_ti_files_opt),size)</prop>
+  <prop id="do_file_specials">(f,has_flag,(prop,et_report_ti_files_opt),specials)</prop>
+    
+  <prop id="attr_file_number">@kb</prop>
+  <prop id="attr_file_ignore_case">@pre @ext2 @ext @post2</prop>
+  
+  <choose>
+    <when test="(f,eq,name,(prop,et_report_ti_files_sort))">
+      <prop id="attr_file_sort">@pre</prop>
+      <prop id="attr_file_desc"></prop>          
+    </when>
+    <when test="(f,eq,ext,(prop,et_report_ti_files_sort))">
+      <prop id="attr_file_sort">@post2 @pre</prop>
+      <prop id="attr_file_desc"></prop>          
+    </when>    
+    <when test="(f,eq,size,(prop,et_report_ti_files_sort))">
+      <prop id="attr_file_sort">@kb</prop>
+      <prop id="attr_file_desc">@kb</prop>          
+    </when>    
+    <when test="(f,eq,size_sf,(prop,et_report_ti_files_sort))">
+      <prop id="attr_file_sort">@kb</prop>
+      <prop id="attr_file_desc"></prop>          
+    </when>        
+    <otherwise>
+      <prop id="attr_file_sort"></prop>
+      <prop id="attr_file_desc"></prop>                    
+    </otherwise>
+  </choose>   
+  
+  <prop id="do_groups">(prop,et_report_ti_cats_use)</prop>
+  
+  <prop id="do_sum_extensions">0</prop>
+  <prop id="do_sum_group">0</prop>
+  <prop id="do_sum_group_top">0</prop>
+  
+  <prop id="do_top_total_only">0</prop>
+  <prop id="do_top_totals">0</prop>
+  <prop id="do_top_totals_sum">0</prop>
+  <prop id="do_top_totals_sort"></prop>
+  <prop id="do_top_totals_desc"></prop>
+
+  <prop id="do_total_only">0</prop>
+  <prop id="do_totals">0</prop>
+  <prop id="do_totals_sum">0</prop>
+  <prop id="do_totals_sort"></prop>
+  <prop id="do_totals_desc"></prop>
+  
+  <prop id="attr_extension_sort"></prop>
+  <prop id="attr_extension_number"></prop>
+  <prop id="attr_extension_desc"></prop> 
+  
+  <prop id="et_report_ti_sum_cat" test="(f,not,(f,has,prop,et_report_ti_sum_cat))">0</prop>
+  <prop id="et_report_ti_sum_ext" test="(f,not,(f,has,prop,et_report_ti_sum_ext))">0</prop>
+
+        
+  <choose>
+    <when test="(f,eq,begin,(prop,et_report_ti_sum_total))">
+      <choose>
+        <when test="(f,and,(prop,et_report_ti_sum_cat),(prop,et_report_ti_cats_use))">
+          <prop id="do_top_totals">1</prop>
+          <prop id="do_top_totals_sum">1</prop>       
+        </when>
+        <otherwise>
+          <prop id="do_top_total_only">1</prop>
+        </otherwise>
+      </choose>
+    </when>
+    <when test="(f,eq,end,(prop,et_report_ti_sum_total))">
+      <choose>
+        <when test="(f,and,(prop,et_report_ti_sum_cat),(prop,et_report_ti_cats_use))">
+          <prop id="do_totals">1</prop>
+          <prop id="do_totals_sum">1</prop>      
+        </when>
+        <otherwise>
+          <prop id="do_total_only">1</prop>
+        </otherwise>
+      </choose>
+    </when>    
+  </choose>
+
+  <prop id="do_sum_group">(prop,et_report_ti_sum_cat)</prop>
+  <prop id="do_sum_extensions">(prop,et_report_ti_sum_ext)</prop>
+  <!-- <ti label="et_report_ti_sum_sort">(prop,et_report_ti_sum_sort)</ti> -->
+  <choose>
+    <when test="(f,eq,big,(prop,et_report_ti_sum_sort))">
+      <prop id="do_top_totals_sort">@kb</prop>
+      <prop id="do_top_totals_desc">@kb</prop> 
+      <prop id="do_totals_sort">@kb</prop>
+      <prop id="do_totals_desc">@kb</prop>
+      <prop id="attr_extension_sort">@kb_sum</prop>
+      <prop id="attr_extension_number">@kb_sum</prop>
+      <prop id="attr_extension_desc">@kb_sum</prop>       
+    </when>
+    <when test="(f,eq,most,(prop,et_report_ti_sum_sort))">
+      <prop id="do_top_totals_sort">@c</prop>
+      <prop id="do_top_totals_desc">@c</prop> 
+      <prop id="do_totals_sort">@c</prop>
+      <prop id="do_totals_desc">@c</prop>
+      <prop id="attr_extension_sort">@kb_sum</prop>
+      <prop id="attr_extension_number">@kb_sum</prop>
+      <prop id="attr_extension_desc">@kb_sum</prop>       
+    </when> 
+    <when test="(f,eq,less,(prop,et_report_ti_sum_sort))">
+      <prop id="do_top_totals_sort">@c</prop>
+      <prop id="do_totals_sort">@c</prop>
+      <prop id="attr_extension_sort">@kb_sum</prop>
+      <prop id="attr_extension_number">@kb_sum</prop>      
+    </when>        
+    <when test="(f,eq,small,(prop,et_report_ti_sum_sort))">
+      <prop id="do_top_totals_sort">@kb</prop> 
+      <prop id="do_totals_sort">@kb</prop>
+      <prop id="attr_extension_sort">@kb_sum</prop>
+      <prop id="attr_extension_number">@kb_sum</prop>    
+    </when>    
+    <otherwise>
+      <!-- <ti>no total sort</ti> -->
+    </otherwise>
+  </choose>
+  
+  <prop id="see_dir_size">(f,has_flag,(prop,et_report_ti_dirs_info),size)</prop>
+  <prop id="do_dirs_size">(prop,see_dir_size)</prop>
+  
+  <prop id="do_top_sub_dirs">0</prop>
+  <prop id="do_top_big_dirs">0</prop>
+  <prop id="do_top_fancy_dirs">0</prop>
+  
+  <prop id="do_sub_dirs">(f,has_flag,(prop,et_report_ti_dirs_types),child)</prop>
+  <prop id="do_big_dirs">(f,has_flag,(prop,et_report_ti_dirs_types),big)</prop>
+  <prop id="do_all_dirs">(f,has_flag,(prop,et_report_ti_dirs_types),all)</prop>
+  <prop id="do_fancy_dirs">(f,has_flag,(prop,et_report_ti_dirs_types),avg)</prop>
+     
+  <prop id="do_top_next_dirs">0</prop>
+  <prop id="top_next_dirs_sort"></prop>
+  <prop id="top_next_dirs_desc"></prop>  
+  <prop id="top_next_dirs_unit"></prop>
+  
+  <choose>
+    <when test="(f,has_flag,(prop,et_report_ti_dirs_types),next)">
+      <prop id="do_next_dirs">1</prop>
+      <prop id="next_dirs_sort"></prop>
+      <prop id="next_dirs_desc"></prop>
+      <prop id="next_dirs_unit"></prop>    
+    </when>
+    <otherwise>
+      <prop id="do_next_dirs">0</prop>
+      <prop id="next_dirs_sort">@agg_kb</prop>
+      <prop id="next_dirs_desc">@agg_kb</prop>
+      <prop id="next_dirs_unit">agg_kb</prop>     
+    </otherwise>
+  </choose>
+  
+  <prop id="file_highlight">(prop,et_report_ti_file_highlight)</prop>
+  
+  <tp>Building Report ...</tp>      
+  <call_job job="report_ti_v2"/>
+  <tp>Rendering Report ...</tp>
+
+</job>
+
+
+<job id="convert" joblevel="app" role="hidden">
+  
+  <need>(file,scan)</need>
+  <need>(file,et_org)</need>
+  <call_job job="prepare_offset"/> 
+  
+  <spirit id="scan" act="open" xml="(file,scan)" flag="nuevo"/>
+  <spirit id="org" act="open" xml="(file,et_org)" flag="nuevo"/>
+                      
+  <loop_xml id="scan" 
+              act="open" 
+              spirit="scan" 
+              xpath="//file"
+              sort="@ext" />
+
+  <prop id="scan_exists">1</prop>
+  <call_job job="read_scan" />
+
+  <loop_xml id="org"                             
+              act="open"
+              spirit="org"              
+              xpath="group/extension"
+              sort="@extension" />
+              
+  <prop id="org_exists">1</prop>          
+  <call_job job="read_org" />
+    
+  <loop id="master" while="()(f,and,(prop,scan_exists),(prop,org_exists))()">
+  
+    <try_catch>
+      <try>
+        <prop id="scan_key">(f,loop_xml,scan,@ext)</prop>
+      </try>
+      <catch>
+        <prop id="scan_key">?#?#?</prop>
+      </catch>
+    </try_catch>
+    
+    <choose>
+      <when test="(f,eq,(prop,org_key),(prop,scan_key))">
+      
+        <!-- Verarbeite scan -->
+        
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="(f,loop_xml,org,..,@id)"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="(f,loop_xml,org,@id)"
+                          flag="noupdate" />                                  
+
+        <call_job job="read_scan" />
+        
+      </when>
+
+      <when test="(f,eq,(prop,scan_key),?#?#?)">
+        <!-- File with no extension -->
+          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="0"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="0"
+                          flag="noupdate" /> 
+                                                       
+        <call_job job="read_scan" />
+      </when>
+                
+      <when test="(f,lt,(prop,org_key),(prop,scan_key))">
+        <call_job job="read_org" />
+      </when>
+      
+      <otherwise>
+        <!-- File with no extension -->
+          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="0"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="0"
+                          flag="noupdate" /> 
+                                                       
+        <call_job job="read_scan" />
+      </otherwise>
+     </choose>      
+                
+  </loop> 
+  
+  <when test="(f,and,(prop,scan_exists),(f,not,(prop,org_exists)))">
+  <warn>clean up1 (f,loop_xml,scan)</warn>
+  <call_job job="group_to_0"/>
+  <loop id="clean" while="()(f,loop_xml,scan,has_next?)()">
+  	<loop_xml id="scan" act="next"/>
+  	<warn>clean up (f,loop_xml,scan)</warn>
+  	<call_job job="group_to_0"/>
+  </loop>
+  </when>
+                        
+  <loop_xml id="scan" act="close"/>
+  <loop_xml id="org"  act="close"/> 
+
+    
+  <spirit id="org" act="close" flag="save" out="(file,org2)"/>
+  
+  <call_job job="perform_reduction2"/>
+  
+  <spirit id="scan" act="close" flag="save" out="(file,scan3)"/> 
+  
+  <xslt xml="(file,org2)" out="(file,org3)" xsl="(dir,app)group-sums.xsl"/>
+  
+</job>
+
+<job id="group_to_0" role="hidden">
+
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="0"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="0"
+                          flag="noupdate" />    
+</job>
+
+<job id="read_scan" role="hidden">
+  <choose>
+    <when test="(f,loop_xml,scan,has_next?)">
+      <loop_xml act="next" id="scan" />   
+    </when>
+    <otherwise>
+      <prop id="scan_exists">0</prop>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="read_org" role="hidden">
+  <choose>
+    <when test="(f,loop_xml,org,has_next?)">
+      <loop_xml act="next" id="org" />
+      <prop id="org_key">(f,loop_xml,org,@extension)</prop>      
+    </when>
+    <otherwise>
+      <prop id="org_exists">0</prop>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="perform_reduction2" role="hidden">
+
+  <when test="(f,exists,prop,redu_cat_type)">
+    <when test="(f,not,(f,eq,,(prop,redu_cat_type)))">
+      <tp>Performing Category-Reductions ...</tp>
+      <!-- <ti>Performing Reductions ...</ti>  -->
+      <file id="flist">(dir,filetemp)pano-clist.txt</file>
+      <create_file out="(file,flist)">(prop,redu_cat_cats)</create_file>
+      <prop id="sammeln">-</prop>
+      <loop id="redus" file="(file,flist)" regex="\d+">
+        <trace>(loop,redus,#i)(e:o) (loop,redus)</trace>
+        <prop id="sammeln">(prop,sammeln)(loop,redus)-</prop>
+      </loop>      
+      <ti type="text" x="Performing Category-Reductions"/>
+
+      <loop_xml id="redu" 
+                  act="open" 
+                  spirit="scan" 
+                  xpath="//file" />
+
+      <!-- test: sammeln contains -@g- -->
+      <choose>
+        <when test="(f,eq,1,(prop,redu_cat_type))">
+          <!-- positive reduction -->      
+          <loop id="redu2" while="()(f,loop_xml,redu,has_next?)()">
+            <loop_xml id="redu" act="next"/>
+            
+            <when test="(f,not,(f,contains,(prop,sammeln),-(f,loop_xml,redu,@g)-))">
+              <spirit id="scan"
+                      act="xml_update"
+                      where_is_loop_xml="redu"
+                      how="remove"/>                      
+            </when>
+          </loop>
+        </when>
+        
+        <when test="(f,eq,2,(prop,redu_cat_type))">
+          <!-- negative reduction -->      
+          <loop id="redu2" while="()(f,loop_xml,redu,has_next?)()">
+            <loop_xml id="redu" act="next"/>
+            <when test="(f,contains,(prop,sammeln),-(f,loop_xml,redu,@g)-)">
+              <spirit id="scan"
+                      act="xml_update"
+                      where_is_loop_xml="redu"
+                      how="remove"/>          
+            </when>
+          </loop>
+        </when>        
+        
+      </choose>       
+      <loop_xml id="redu" 
+                  act="close" />
+
+      <loop_xml id="toomuch" 
+                  act="open" 
+                  spirit="scan" 
+                  xpath="//dir[count(e:o).//file(e:c)=0]" />
+                  
+      <loop id="toomuch2" while="()(f,loop_xml,toomuch,has_next?)()">
+        <loop_xml id="toomuch" act="next"/>
+          <ti test="0">Dir too much: ipath=(f,loop_xml,toomuch,@ipath) id=(f,loop_xml,toomuch,@id)</ti>
+          <spirit test="(f,not,(f,eq_num,1,(f,loop_xml,toomuch,@id)))"
+                  id="scan"
+                  act="xml_update"
+                  where_is_loop_xml="toomuch"
+                  how="remove"
+                  flag="catch"/>                      
+      </loop>                  
+                                                     
+      <loop_xml id="toomuch" 
+                  act="close"  />     
+                                            
+    </when>
+  </when>
+
+</job>
+
+<job id="do_exclude_path" role="hidden">
+    <!-- <dump flag="ti" /> -->
+    <tp>doing path exclude for '(prop,et_scan_path_exclude)'</tp>
+    <spirit id="off" act="open" xml="(file,scan)"/>
+    <prop id="cr">0</prop>
+    <loop_xml id="off" 
+                  act="open" 
+                  spirit="off" 
+                  xpath="//dir[contains(e:o)@ipath(e:s)(f,xpath_string,(prop,et_scan_path_exclude))(e:c)]" />    
+
+          <loop id="w-off" while="()(f,loop_xml,off,has_next?)()">
+            <loop_xml id="off" act="next"/>
+            <trace>removed (f,loop_xml,off,@ipath) with dir-id=(f,loop_xml,off,@id)</trace>
+            <!-- <when test="(f,not,(f,contains,(prop,sammeln),-(f,loop_xml,redu,@g)-))"> -->
+
+                <spirit id="off"
+                      act="xml_update"
+                      where_is_loop_xml="off"
+                      how="remove"/>
+                <prop id="cr">(f,add,1,(prop,cr))</prop>
+            <!-- </when> -->
+          </loop>
+
+    <loop_xml id="off" 
+                  act="close" />    
+          
+    <spirit id="off" act="close" flag="save" ouxxt="(dir,pro)xxx.xml"/>
+    <tp>path exclude removed (prop,cr) directories</tp>
+    
+</job>
+
+<job id="do-report-conf" joblevel="pro" role="hidden">
+        
+  <call_job job="Edit Definitions-Report"/>
+     
+  <call_job job="execute"/>
+  
+</job>
+
+<job id="do-scan-conf" joblevel="pro" role="hidden">
+        
+
+  <call_job job="prolog" />
+
+  <call_job job="Edit Definitions-Source"/>
+
+  <prop id="et_offset_ipath"></prop>
+
+  <call_job job="Write Definitions-Offset"/>
+
+
+    <delete dir="(dir,work)"/>
+
+  <call_job job="prolog" />
+
+  <call_job job="execute"/>
+  
+</job>
+
+<job id="Edit Project Type" joblevel="pro" role="hidden">
+    <call_job job="Read Definitions"/>
+    <file id="joe-in-store">(dir,status)app-panorama-named-project-type.xml</file>
+    <call_job job="go-joe-read" />
+    <tk label="Convert to a panorama-project">
+      <tk type="sel" 
+          label="Select a project style and specify the inital layout" 
+          id="what"
+          tip="()(1) Keep: Will keep the current report as it is&#xA;(2) Just see sizes: Will also keep the report, but additionally display sizes of files&#xA;(3) Statistics: Will include all files of all subfolder()" 
+          flag="nono"
+          x="keep">
+          <sel label="()(1)() Keep everything like it is">keep</sel>
+          <sel label="()(2)() Just see sizes of files">size</sel>
+          <sel label="()(3)() Statistics of all files-Image">all</sel>
+          
+          
+      </tk>
+    </tk>
+    
+    <prop id="joe-in-regex">what</prop>
+    
+    <call_job job="go-joe-write" />
+    
+    <choose>
+        <when test="(f,eq,(prop,what),all)">
+            <prop id="see_file_size">1</prop>
+            <prop id="et_report_ti_files_opt">size</prop>
+            <prop id="et_scan_policy">image</prop>
+            <prop id="et_report_ti_dir_level">(prop,unlimited)</prop>
+            <prop id="et_scan_level_limit">(prop,unlimited)</prop>
+            <prop id="et_report_ti_sum_cat">1</prop>
+            <prop id="et_report_ti_limit_files_per_group">200</prop>
+            <prop id="et_report_ti_sum_total">begin</prop>
+            <call_job job="Write Definitions-Source"/>
+            <call_job job="Write Definitions-Report"/>
+            <delete file="(file,scan)"/>
+            <delete file="(file,scan3)"/>
+            <call_job job="execute"/>
+            
+        </when>
+        <when test="(f,eq,(prop,what),size)">
+            <prop id="see_file_size">1</prop>
+            <prop id="et_report_ti_files_opt">size</prop>
+            <call_job job="Write Definitions-Report"/>
+            <call_job job="execute"/>
+        </when>
+        <when test="(f,eq,(prop,what),keep)">
+        </when>        
+        <otherwise>
+            <throw>Panic!</throw>
+        </otherwise>
+    </choose>
+    
+    
+</job>
+
+<job id="Edit Definitions-Report" joblevel="pro" role="hidden">
+  <call_job job="Read Definitions"/>
+  
+  <!-- control - in -->
+  <prop id="operate_next">(f,and,(f,role,expert),(f,eq,image,(prop,et_scan_policy)))</prop>
+  <prop id="operate_next">1</prop>
+  
+  <prop id="see_dir_size">(f,has_flag,(prop,et_report_ti_dirs_info),size)</prop>
+  
+  <prop id="see_file_size">(f,has_flag,(prop,et_report_ti_files_opt),size)</prop>
+  <prop id="see_file_specials">(f,has_flag,(prop,et_report_ti_files_opt),specials)</prop>
+  
+  <choose>
+    <when test="(f,not,(prop,et_report_ti_files_flag))">
+      <prop id="dlg_see_files">-1</prop>
+    </when>
+    <otherwise>
+      <prop id="dlg_see_files">(prop,et_report_ti_file_highlight)</prop>
+    </otherwise>
+  </choose>
+  
+  <!-- dialog -->  
+  <call_job job="do-tk-report"/>
+
+  
+  <!-- control out -->
+  <prop id="et_report_ti_dirs_info">(f,when,(prop,see_dir_size),size,)</prop>
+  
+  <prop id="et_report_ti_files_opt">(f,when,(prop,see_file_size),size,) (f,when,(prop,see_file_specials),specials,)</prop>
+
+  <choose>
+    <when test="(f,eq,-1,(prop,dlg_see_files))">
+      <prop id="et_report_ti_files_flag">0</prop>
+      <prop id="et_report_ti_file_highlight">0</prop>
+    </when>
+    <otherwise>
+      <prop id="et_report_ti_files_flag">1</prop>
+      <prop id="et_report_ti_file_highlight">(prop,dlg_see_files)</prop>
+    </otherwise>
+  </choose>  
+  
+  <call_job job="Write Definitions-Report"/>  
+</job>
+
+<job id="Edit Definitions-Source" joblevel="pro" role="hidden">
+
+  <call_job job="Read Definitions"/>
+
+  <!-- control in -->
+
+  <choose>
+    <when test="(f,eq,0,(prop,et_scan_fext_type))">
+      <prop id="dlg_fext_type"></prop>
+    </when>
+    <when test="(f,eq,1,(prop,et_scan_fext_type))">
+      <!-- positive, yes -->
+      <prop id="dlg_fext_type">(prop,et_scan_fext_type)</prop>
+      <prop id="dlg_fext_ext">(prop,et_scan_fext_yes)</prop>
+    </when>    
+    <when test="(f,eq,2,(prop,et_scan_fext_type))">
+      <!-- negative, no -->
+      <prop id="dlg_fext_type">(prop,et_scan_fext_type)</prop>
+      <prop id="dlg_fext_ext">(prop,et_scan_fext_no)</prop>
+    </when> 
+  </choose>
+
+   
+  <!-- dialog -->
+  <call_job job="tr_dscan"/>
+   
+  <tk test="(f,eq,,(dir,et_scan_dir))" type="dir" id="et_scan_dir" 
+      label="(prop,_dscan_dir_l)"
+      tip="(prop,_dscan_dir_t)"/>
+
+  <call_job job="do-tk-select"/>
+
+  <!-- control out -->
+  <choose>
+    <when test="(f,eq,,(prop,dlg_fext_type))">
+      <prop id="et_scan_fext_type">0</prop>
+    </when>
+    <when test="(f,eq,1,(prop,dlg_fext_type))">
+      <!-- positive, yes -->
+      <prop id="et_scan_fext_type">1</prop>
+      <prop id="et_scan_fext_yes">(prop,dlg_fext_ext)</prop>
+      <prop id="et_scan_fext_no"></prop>
+    </when>    
+    <when test="(f,eq,2,(prop,dlg_fext_type))">
+      <!-- negative, no -->
+      <prop id="et_scan_fext_type">2</prop>
+      <prop id="et_scan_fext_yes"></prop>
+      <prop id="et_scan_fext_no">(prop,dlg_fext_ext)</prop>
+    </when>   
+  </choose>  
+
+ 
+  <!-- write -->
+  <call_job job="Write Definitions-Source"/>
+
+    
+</job>
+
+<job id="Print Definitions-Source" joblevel="pro" role="hidden">
+
+  <call_job job="Read Definitions"/>
+  <call_job job="Write Definitions-Source-Internal"/>  
+    
+</job>
+
+<job id="Write Definitions-Source-Internal" role="hidden">
+
+  <ti label="Current Source Definitions">
+    <ti type="dir" x="(dir,et_scan_dir)" label="Directory to scan:"/>
+    <ti x="(prop,et_scan_level_limit)" label="Telescope-Levels:" test="(f,role,expert)"/>
+    <ti x="(prop,et_scan_policy)" label="Strategy:"/>
+    <ti x="(prop,et_scan_min_kb)" label="Limit Files by Kb-Size:" test="(f,role,expert)"/>
+
+  </ti>
+
+</job>
+
+<job id="Edit Definitions, Reload" joblevel="app" role="hidden">
+  <call_job job="Edit Definitions"/>
+  <call_job job="Run"/>
+</job>  
+
+</jobs>

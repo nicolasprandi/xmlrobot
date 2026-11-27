@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+    <!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+    <file id="imps">(dir,pro)imps.xml</file>
+    <when test="(f,not,(f,exists_file,(file,imps)))">
+        <create_file out="(file,imps)">&lt;imps/&gt;</create_file>
+        <i>Created: (file,imps)</i>
+    </when>
+    <prop id="imps_offset">./</prop>
+    <prop id="imps_offset_label"/>
+    <prop id="imps_offset_new_key">//</prop>
+    <prop id="imps_sort_attribute"/>
+    <prop id="imps_sort_number"/>
+    <prop id="imps_sort_ignore_case"/>
+    <prop id="imps_sort_desc"/>
+    <prop id="imps_where"/>
+    <prop id="imps_return_job">imp-see-all</prop>
+</prolog>

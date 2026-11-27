@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="note-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Note(prop,notes_offset_label)"/>
+<prop x="sum" id="notes_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,note_key)</need>
+<prop id="label" x="Note [(f,tk_sel_translate,(prop,note_aspect),(dir,pro)aspect-selector-gui.xml)](prop,notes_offset_label)"/>
+<prop x="sum_only" id="notes_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="note-tk"/>
+</job>

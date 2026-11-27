@@ -1,0 +1,4 @@
+
+Rezept
+
+Ein Rezept ist ein Beschreibung eines Kochvorganges der in einem Endresultat muendet. Zum einen gibt es Grund-Zutaten fuer das gesamte Rezept. Weiters kann ein Rezept in Teilprodukte gegliedert werden - diese werden Komponenten genannt; Innerhalb jeder Komponente kann aus den Grund-Zutaten ausgewaelt werden um diese zu verarbeiten. Die Verarbeitungsschritte werden dokumentiert. 

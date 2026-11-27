@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="appconf-read">
+<need>(prop,appconf_key)</need>
+<spirit act="open" missing_strategy="empty" id="appconfs_spirit_tc" xml="(file,appconfs)"/>
+<prop id="appconf_dt_upd">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@dt_upd)</prop>
+<prop id="appconf_dt_add">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@dt_add)</prop>
+<prop id="appconf_app">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@app)</prop>
+<prop id="appconf_displayname">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@displayname)</prop>
+<prop id="appconf_eclipseproject">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@eclipseproject)</prop>
+<prop id="appconf_login">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@login)</prop>
+<prop id="appconf_public">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@public)</prop>
+<prop id="appconf_apps">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@apps)</prop>
+<prop id="appconf_desc">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@desc)</prop>
+<prop id="appconf_rule_base">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@rule_base)</prop>
+<prop id="appconf_project_dir">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@project_dir)</prop>
+<prop id="appconf_clone_project_dir_on">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@clone_project_dir_on)</prop>
+<prop id="appconf_css">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@css)</prop>
+<prop id="appconf_firstjob">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@firstjob)</prop>
+<prop id="appconf_header">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@header)</prop>
+<prop id="appconf_header_job">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@header_job)</prop>
+<prop id="appconf_footer">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@footer)</prop>
+<prop id="appconf_footer_job">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@footer_job)</prop>
+<prop id="appconf_trace_on">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@trace_on)</prop>
+<prop id="appconf_role">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@role)</prop>
+<prop id="appconf_bits">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@bits)</prop>
+<prop id="appconf_uri_wf_bits">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_wf_bits)</prop>
+<prop id="appconf_uri_wf_prov_pro">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_wf_prov_pro)</prop>
+<prop id="appconf_uri_rf_bits">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_rf_bits)</prop>
+<prop id="appconf_uri_rf_prov_app">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_rf_prov_app)</prop>
+<prop id="appconf_uri_rf_prov_pro">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_rf_prov_pro)</prop>
+<prop id="appconf_uri_wd_bits">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_wd_bits)</prop>
+<prop id="appconf_uri_wd_prov_pro">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_wd_prov_pro)</prop>
+<prop id="appconf_uri_rd_bits">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_rd_bits)</prop>
+<prop id="appconf_uri_rd_prov_app">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_rd_prov_app)</prop>
+<prop id="appconf_uri_rd_prov_pro">(f,spirit,appconfs_spirit_tc,(prop,appconfs_offset)appconf[@row=(f,xpath_string,(prop,appconf_key))],@uri_rd_prov_pro)</prop>
+<spirit act="close" id="appconfs_spirit_tc"/>
+</job>

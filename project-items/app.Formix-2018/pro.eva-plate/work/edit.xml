@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="plate-edit">
+<need>(prop,plate_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="plate-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="plate-editor"/>
+<call_job job="plate-write"/>
+<ti align="right" x="Did update Teller '(f,text,cut_nice,(prop,plate_name),26)'"/>
+<call_job job="plate-see-all"/>
+</job>

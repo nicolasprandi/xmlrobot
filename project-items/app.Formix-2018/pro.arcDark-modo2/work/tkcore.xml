@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo2-tk">
+<need default="">(prop,modos2_tk_control)</need>
+<need default="">(prop,modo2_default_label)</need>
+<tk label="(prop,modo2_default_label)" flag="(prop,modos2_tk_control) wrap ">
+<tk label="Probability" id="modo2_prob" x="" test_first="1" tip="Probability [0-100]. Ist ein Expression und wird ausgewertet." type="text" flag=" "/>
+<tk label="How" id="modo2_how" x="" test_first="1" tip="How to update. set_text: Attribute-Value" type="sel" flag=" nono ">
+<sel label="append">append</sel>
+<sel label="insert_in">insert_in</sel>
+<sel label="insert_in_begin">insert_in_begin</sel>
+<sel label="insert_before">insert_before</sel>
+<sel label="insert_after">insert_after</sel>
+<sel label="replace">replace</sel>
+<sel label="remove">remove</sel>
+<sel label="set_attribute">set_attribute</sel>
+<sel label="remove_attribute">remove_attribute</sel>
+<sel label="set_text">set_text</sel>
+</tk>
+<tk label="Where" x="Where" test_first="0" type="msg" flag=" "/>
+<tk label="Xpath" id="modo2_where" x="()job[@id=(f,xpath_string,follow-spreadsheet)]()" test_first="1" tip="xpath" type="text" flag=" "/>
+<tk label="Attribute-Name" id="modo2_attribute" x="" test_first="0" tip="for set_attribute and remove_attribute" type="text" flag=" "/>
+<tk label="With" x="With" test_first="0" type="msg" flag=" "/>
+<tk label="a. Xml" id="modo2_with" x="()(f,spirit,all,xml?,//job[@id=(f,xpath_string,see_main_input_only)])()" test_first="0" tip="Xml to use for update" type="textblock" flag=" "/>
+<tk label="a. What of Xml" id="modo2_with_what" x="root" test_first="0" type="sel" flag=" ">
+<sel label="root">root</sel>
+<sel label="child">child</sel>
+</tk>
+<tk label="b. Value" id="modo2_value" x="" test_first="0" tip="for set_attribute and set_text" type="text" flag=" "/>
+<tk label="Administratives" x="Administratives" test_first="0" type="msg" flag=" "/>
+<tk label="Flag" id="modo2_flag" x="any" test_first="0" tip="many any noupdate remove" type="sel" flag="multi ">
+<sel label="many">many</sel>
+<sel label="any">any</sel>
+<sel label="noupdate">noupdate</sel>
+<sel label="remove">remove</sel>
+<sel label="sys_debug">sys_debug</sel>
+<sel label="sys_debug_content">sys_debug_content</sel>
+</tk>
+<tk label="Expected Counts" id="modo2_count" x="" test_first="0" tip="Counts" regex="\d+" type="text" flag=" "/>
+</tk>
+</job>

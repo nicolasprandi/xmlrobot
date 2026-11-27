@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="plate-see-all" level="ws" role="hidden" tip="Lists all Teller">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-plate-view-begin</trace>
+<call_job job="hook-plate-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: plate-view: begin.0">
+<ti> hook_job=hook-plate-view-begin hook=begin page=view station=0 object=plate</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="plate_loop" xml="(file,plates)" xpath="(prop,plates_offset)plate(prop,plates_where)" sort="(prop,plates_sort_attribute)" number="(prop,plates_sort_number)" ignore_case="(prop,plates_sort_ignore_case)" desc="(prop,plates_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,plates_offset_label)),0)">
+<ti label="(prop,plates_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,plate_loop,@name),26)(f,html,bold,close)" job="plate-see">
+<prop id="plate_key">(loop,plate_loop,@row)</prop>
+<file id="plates">(file,plates)</file>
+<prop id="plates_offset">(prop,plates_offset)</prop>
+<prop id="plates_offset_label">(prop,plates_offset_label)</prop>
+<prop id="plates_offset_new_key">(prop,plates_offset_new_key)</prop>
+<prop id="plates_sort_attribute">(prop,plates_sort_attribute)</prop>
+<prop id="plates_sort_number">(prop,plates_sort_number)</prop>
+<prop id="plates_where">(prop,plates_where)</prop>
+<prop id="plates_return_job">(prop,plates_return_job)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(f,when,(f,has_flag,(loop,plate_loop,@category),Vorspeise),Vorspeise(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Nachspeise),Nachspeise(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Vegetarisch),Vegetarisch(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Vegan),Vegan(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Antihistamin),Antihistamin(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Fleischlos),Fleischlos(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Fischgericht),Fischgericht(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),billig),billig(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),teuer),teuer(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),SchnelleZubereitung),SchnelleZubereitung(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),geheimtipp),geheimtipp(e:s),),50).(f,text,cut_nice,(loop,plate_loop,@character),30).(f,text,cut_nice,(loop,plate_loop,@beschreibung),30).(f,text,cut_nice,(loop,plate_loop,@price_buy),30).(f,text,cut_nice,(loop,plate_loop,@parts),30)</ti>
+<ti test="(f,role,expert)" type="call_job" explain="Edit" job="plate-edit">
+<prop id="plate_key">(loop,plate_loop,@row)</prop>
+<file id="plates">(file,plates)</file>
+<prop id="plates_offset">(prop,plates_offset)</prop>
+<prop id="plates_offset_label">(prop,plates_offset_label)</prop>
+<prop id="plates_offset_new_key">(prop,plates_offset_new_key)</prop>
+<prop id="plates_sort_attribute">(prop,plates_sort_attribute)</prop>
+<prop id="plates_sort_number">(prop,plates_sort_number)</prop>
+<prop id="plates_where">(prop,plates_where)</prop>
+<prop id="plates_return_job">(prop,plates_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Nichts gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,plates_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="plate-add" explain="[ + Neue Teller ]" job="plate-add">
+<file id="plates">(file,plates)</file>
+<prop id="plates_offset">(prop,plates_offset)</prop>
+<prop id="plates_offset_label">(prop,plates_offset_label)</prop>
+<prop id="plates_offset_new_key">(prop,plates_offset_new_key)</prop>
+<prop id="plates_sort_attribute">(prop,plates_sort_attribute)</prop>
+<prop id="plates_sort_number">(prop,plates_sort_number)</prop>
+<prop id="plates_where">(prop,plates_where)</prop>
+<prop id="plates_return_job">(prop,plates_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,plates)</file>
+<prop id="orga_where">(prop,plates_where)</prop>
+<prop id="orga_view_loop_id">plate_loop</prop>
+<prop id="orga_finished_job">plate-see-all</prop>
+<prop id="orga_offset">(prop,plates_offset)</prop>
+<prop id="orga_offset_label">(prop,plates_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,plates_offset_new_key)</prop>
+<prop id="orga_segment_plural">plates</prop>
+<prop id="orga_segment_singular">plate</prop>
+<prop id="orga_segment_plural_label">Teller</prop>
+<prop id="orga_segment_singular_label">Teller</prop>
+<prop id="orga_sort_attribute">(prop,plates_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,plates_sort_number)</prop>
+<prop id="orga_where">(prop,plates_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,plate_loop,@name),26)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(f,when,(f,has_flag,(loop,plate_loop,@category),Vorspeise),Vorspeise(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Nachspeise),Nachspeise(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Vegetarisch),Vegetarisch(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Vegan),Vegan(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Antihistamin),Antihistamin(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Fleischlos),Fleischlos(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),Fischgericht),Fischgericht(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),billig),billig(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),teuer),teuer(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),SchnelleZubereitung),SchnelleZubereitung(e:s),)(f,when,(f,has_flag,(loop,plate_loop,@category),geheimtipp),geheimtipp(e:s),),50).(f,text,cut_nice,(loop,plate_loop,@character),30).(f,text,cut_nice,(loop,plate_loop,@beschreibung),30).(f,text,cut_nice,(loop,plate_loop,@price_buy),30).(f,text,cut_nice,(loop,plate_loop,@parts),30)()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,plates)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,plates_offset)),0)">(prop,plates_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-plate-view-end</trace>
+<call_job job="hook-plate-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: plate-view: end.0">
+<ti> hook_job=hook-plate-view-end hook=end page=view station=0 object=plate</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

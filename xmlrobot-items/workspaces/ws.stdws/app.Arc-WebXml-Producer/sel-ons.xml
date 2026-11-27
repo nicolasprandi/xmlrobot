@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<sel>
+        <sel label="Check-In Project">mayCheckinProject</sel>
+        <sel label="Check-Out Project">mayCheckoutProject</sel>
+        <sel label="Service Project">mayServiceProject</sel>
+        <sel label="Dump">mayDump</sel>
+        <!-- <sel label="Upload Project-Zip">mayUploadProject</sel>  -->
+        <sel label="Download Project-Zip">mayDownloadProject</sel>
+        <sel label="Can Download Files">downloadfiles</sel>         
+        <!-- <sel label="Password Protect">pwd</sel>
+        <sel label="Mediathek">mediathek</sel> 
+        <sel label="Can Upload to Mediathek">uploadtomediathek</sel> 
+        <sel label="Embed Java-Script">embedjs</sel>
+        <sel label="Smartphone Optimized">smart</sel> -->      
+        <sel label="Control JobRuntime">runtime</sel>
+        <sel label="Offer Big-Picture">bigpic</sel>       
+        <sel label="MyData">mydata</sel>
+        <!-- <sel label="Can Upload Files">uploadfiles</sel> -->
+        
+        <sel label="Gui-Privilegs">guiprivs</sel> 
+
+        <sel label="Tk.Cnf">tk</sel> 
+        <sel label="Interperter.Cnf">interpreter</sel> 
+        <sel label="Workspace.Cnf">ws</sel> 
+</sel>

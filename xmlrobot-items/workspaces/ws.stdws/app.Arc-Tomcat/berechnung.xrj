@@ -1,0 +1,203 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="prolog" role="hidden">
+
+
+
+<dir id="app-inst">(dir,app)big-install-files-nobackup</dir>
+<dir id="app-hb">(dir,app)handbooks-nobackup</dir>
+
+<file id="install-zip-5">(dir,app)apache-tomcat-5.5.36.zip</file>
+<file id="install-zip-6">(dir,app)apache-tomcat-6.0.39.zip</file>
+<file id="install-zip">(file,install-zip-5)</file>
+
+<file id="joe-store-install">(dir,app)store-input-install.xml</file> 
+<when test="(f,not,(f,exists,prop,pro))">
+  <call_job job="?"/>
+  <ti_hr/>
+  <ti>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </ti>
+  <ti label="Forget the following failure !!!"/>
+  <throw>Select a UFO-Tomcat55 project ...</throw>
+</when>        
+
+<dir id="memo">(dir,pro)memory</dir>
+<mkdir dir="(dir,memo)" test="(f,not,(f,exists_dir,(dir,memo)))"/>
+<file id="setup">(dir,pro)setup.xml</file>
+<file id="brains">(dir,memo)brains.xml</file>
+
+<when test="(f,not,(f,file_exists,(file,setup)))">
+  
+  <!-- setup does not exist, we'r going to get it -->
+  <file id="joe-in-store">(file,joe-store-install)</file> 
+  <call_job job="go-joe-read"/>
+    
+  <tk id="what-to-do" type="sel" label="No Setup for Project '(prop,pro)' found.&#10; How are we going to handle this?" tip="Regards (prop,app)" flag="nono" x="new">
+    <sel label="Reference an existing Installation">ref</sel>
+    <sel label="Make a new Installation">new</sel>
+    <sel label="Forget it(e:s) do nothing!">forget</sel>
+  </tk>
+  <choose>
+    <when test="(f,eq,forget,(prop,what-to-do))">
+      <prop id="joe-in-regex">what-to-do|loc|macchanges</prop> 
+      <call_job job="go-joe-write"/> 
+      <throw>Did quit operations upon your request</throw>       
+    </when>    
+    <when test="(f,eq,ref,(prop,what-to-do))">
+      <tk id="loc" type="dir" label="Selection Location of Tomcat-5" x="(dir,app)"/>
+      <create_file out="(file,setup)">&lt;setup loc_dir="(dir,loc)" /&gt;</create_file>        
+    </when>    
+    <when test="(f,eq,new,(prop,what-to-do))">
+      <tk label="Select and Confirm" flag="sum">
+        <tk id="parent" type="dir" label="Select Target Location of Tomcat" x="(f,dir_of_dir,(dir,loc))" tip="This is the PARENT-Folder of future Tomcat!"/>
+        <tk id="source-zip" type="file" x="(file,install-zip-5)" label="Tomcat Software" tip="If you want to use another tomcat-install-zip you can do that here"/>
+      </tk>
+      <tp>Extracting (file,source-zip)  -to-  (dir,parent)</tp>
+      <ant>
+        <unzip src="(file,source-zip)" dest="(dir,parent)"/>
+      </ant>
+      <ti type="dir">(dir,loc)</ti>
+      <file id="re">(dir,systemp)(prop,app)-re.xml</file>
+      <scan dir="(dir,parent)" out="(file,re)" level_limit="2"/>
+      <ti type="file" x="(file,re)"/>
+      <dir id="loc">(dir,parent)(f,xpath,(file,re),dir,@rpath)</dir>
+      <prop id="orig">(f,xpath,(file,re),dir,@rpath)</prop>
+      <tk id="name" type="text" label="Name of Installation" x="(prop,pro)" tip="This will be the folder-name of the tomcat-home-directory" flag="nono"/>
+      
+      <choose>
+        <when test="(f,eq,(prop,orig),(prop,name))">
+          <!-- name stays the same -->
+                    
+        </when>
+        <otherwise>
+          <!-- rename-->
+          <tp>Renaming ...</tp>
+          <ant>
+            <move todir="(dir,parent)(prop,name)">
+              <fileset dir="(dir,parent)(prop,orig)"/>
+            </move>
+          </ant>
+          <dir id="loc">(dir,parent)(prop,name)</dir>
+        </otherwise>
+      </choose>
+
+      
+      <choose>
+        <when test="(f,exists,prop,computer)">
+          <prop id="computer-fragment"> computer="(prop,computer)"</prop>
+        </when>
+        <otherwise>
+          <prop id="computer-fragment"> computer="unknown"</prop>
+        </otherwise>
+      </choose>
+      
+      <ti type="dir">(dir,loc)</ti>
+      <create_file out="(file,setup)">&lt;setup loc_dir="(dir,loc)" (prop,computer-fragment)/&gt;</create_file>        
+    </when>      
+  </choose>
+  
+
+  <dir id="bin">(dir,loc)bin</dir>
+  <choose>
+    <when test="(f,or,(f,eq,mac,(prop,os)),(f,eq,linux,(prop,os)))">
+      <tk type="sel" flag="multi" id="macchanges" label="Mac Integration" tip="Automatic correction for better Mac-Integration">
+        <sel label="Change Ownership">owner</sel>
+        <sel label="Change Executatble-Bit">exe</sel>
+      </tk>
+      <when test="(f,or,(f,has_flag,(prop,macchanges),owner),(f,has_flag,(prop,macchanges),exe))">
+        <file id="updater">(dir,bin)update.sh</file>
+        <print id="sh" act="open" out="(file,updater)" />
+        <print id="sh" act="println" test="(f,has_flag,(prop,macchanges),owner)">sudo chown -R (f,sys_prop,user.name) (dir,loc)bin</print>
+        <print id="sh" act="print" test="(f,has_flag,(prop,macchanges),exe)">sudo chmod +x (dir,loc)bin/*.sh</print>
+        <print id="sh" act="close" />
+        <ti label="sh-updater:" type="file">(file,updater)</ti>
+        <!-- 
+        <prop id="update-content">(f,file_content,(file,updater))</prop>
+        <ti label=" ">(prop,update-content)</ti>
+        <tp>performing updates defined in (file,updater)</tp>
+        -->
+        <ti label="What to do in the Terminal window?">
+          <ti label="(1) Enter:">sh ./update.sh</ti>
+          <ti label="(2) Hit the Enter-Key"> </ti>
+          <ti label="(3) Enter:">... your password ...</ti>
+          <ti label="(4) Hit the Enter-Key"> </ti>
+          <ti label=" ">Youre done in the terminal, press ok in loxodrom to continue the process ...</ti>
+        </ti>
+        <ti_flush/>
+        
+        <try_catch>
+          <try>
+          <choose>
+                  <when test="(f,eq,mac,(prop,os))">
+                          <exe>
+                            <arg>open</arg>
+                            <arg>-a</arg>
+                            <arg>Terminal</arg>
+                            <arg>(dir,bin)</arg>
+                          </exe>
+                  </when>
+                  <otherwise>
+                          <exe dir="(dir,bin)">
+                                  <arg>gnome-terminal</arg>
+                          </exe>
+                  </otherwise>
+          </choose>
+          <tk type="msg" msg="A shell-script was created to perform your requested updates, follow the instrucitons to run it:&#xA;1) A Gnome-Terminal window should have been opened.&#xA;2) Enter in that gnome-window: sh ./update.sh +Enter&#xA;3) Enter afterwards your password +Enter&#xA;4) Then press the ok-button in this window to continue." />
+
+          </try>
+          <catch>
+            <tk type="msg" msg="Something went wrong in openting the terminal&#xA;Do Something" />
+          </catch>
+
+        </try_catch>
+
+        
+      </when>
+      
+    </when>
+  </choose>
+
+  
+  <prop id="joe-in-regex">what-to-do|loc|macchanges</prop>
+  <file id="joe-in-store">(file,joe-store-install)</file>  
+  <call_job job="go-joe-write"/>  
+</when>
+
+<!-- loc has the location of the tomcat-installation -->
+<dir id="loc">(f,xpath,(file,setup),.,@loc_dir)</dir>
+<prop id="computer_setup">(f,try,()(f,xpath,(file,setup),.,@computer)(),)</prop>
+<try_catch><try>
+<include file="(dir,app)kingkong-prolog.lsx" />
+</try>
+<catch/>
+</try_catch>
+
+<file id="kingkong_index">(dir,app)kingkong-index.xml</file>
+<file id="kingkong_lsx">(dir,app)kingkong-prolog.lsx</file>
+<file id="brain_webapps">(dir,work)brain_webapps.xml</file>
+<file id="japp_index">(dir,app)japp-index.xml</file>
+
+<when test="(f,has,prop,pro)">  
+  <file id="way-data" x="(dir,pro)way-data.xrs"/>
+  <prop id="way-regex" x="way_.+"/>
+</when>
+
+</job>
+
+</jobs>

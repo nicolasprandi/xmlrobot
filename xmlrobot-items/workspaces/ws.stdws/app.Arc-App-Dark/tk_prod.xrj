@@ -1,0 +1,395 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+
+-->
+<call_job job="prolog" />
+
+
+<!-- gui Adapters: to copy in the app .... -->
+
+
+
+<job id="Edit: prod_?">
+  <call_job job="tk_prod_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_prod_clear" explain="Clear this data"/>
+</job>
+
+<!-- 
+ <job id="Clear Data: prod_">
+  <tk type="msg" x="Sure to clear data of prod_ ?" msg_type="w"/>
+  <call_job job="tk_prod_clear"/>
+</job>
+
+<job id="Print Values:  prod_">
+  <call_job job="tk_prod_print_values"/>
+</job>
+<job id="Print Help: prod_" role="dev">
+  <call_job job="tk_prod_print_help"/>
+</job>
+
+-->
+
+<!-- setting the default-values -->
+<job id="tk_prod_default" role="hidden">
+  <need default="s e x f">(prop,prod_type)</need>
+  <need default="0">(prop,prod_doku)</need>
+  <need default="1">(prop,prop_target_clear)</need> 
+  <need default="0">(prop,prod_xslencrytion)</need> 
+  <need default="0">(prop,prod_del_jars)</need> 
+  <need default="0">(prop,prod_listed_zips)</need> 
+  <need default="1">(prop,prod_encrypted_rename)</need>  
+  <need default="1">(prop,prod_allow_serial)</need> 
+  <need default="1">(prop,prod_allow_blurry)</need>
+  <need default="1">(prop,prod_perform_counts)</need>  
+  <need default="(dir,standard-production)">(dir,prod_target)</need>    
+  
+  <need default="0">(prop,prod_total_count_ablaufdatum)</need>
+  <need default="0">(prop,prod_total_count_files)</need>
+  <need default="0">(prop,prod_total_count_files_open)</need>
+  <need default="0">(prop,prod_total_count_dirs)</need>
+  <need default="0">(prop,prod_is_services)</need>
+            
+  
+<!-- 
+  <need default="regex">(prop,prod_type)</need>
+  <need default="(dir,temp)">(dir,prod_dir)</need>       -->
+</job>
+
+
+<!-- prod-core, make your changes here -->
+<job id="tk_prod_core" role="hidden" tip="prod_: Tk Internal">
+
+  <need default="">(prop,tk_prod_add_flag)</need>
+
+  <tk label="Production" 
+      flag="(prop,tk_prod_add_flag)"
+      tip="()Parameters for the app-production()"> 
+
+    <tk id="prod_target" 
+        type="dir" 
+        label="Production Directory"  
+        flag="nono"   
+        x2="(dir,standard-production)"              
+        tip="()Result()"/>
+    <!--    
+    <tk id="prod_target_zip"
+        type="file"  
+      	label="Production Zip-File" 
+        flag="save"
+        extension=".zip"
+        test_first="0"        
+        tip="()This file will be written()"/>         
+         
+    <tk id="prod_target2" 
+        type="dir" 
+        label="Target Dir2"  
+        flag="x"                 
+        tip="()Result()"/>     -->
+    <!--             
+    <tk id="prod_target_clear"
+        type="bool"
+        label="Always clear Target"
+        flag="nono"       
+      	test_first="0"/>   
+        
+        
+        
+        
+
+        
+    <tk id="prod_listed_zips"
+        type="bool"  
+      	label="Produce ExportFiles" 
+        test_first="0"        
+        flag="no_is_0"
+        tip="()This commands to create really the defined zip-files of the [ExportFiles]()"/>     -->
+                
+    <tk type="msg" x="Enablers" test_first="0"/>     
+    <tk id="prod_allow_serial"
+        type="bool"
+        label="Enable SerialNbr"
+        flag="nono"       
+      	test_first="0"
+        tip="()Allows SerialNumber and Wasserzeichen.()"/>       
+        
+    <tk id="prod_allow_blurry"
+        type="bool"
+        label="Enable Blurry"
+        flag="nono"       
+      	test_first="0"
+        tip="()Enables the Blurry-Modification-Algorithm()"/> 
+        
+    <tk id="prod_allow_prodconf"
+        type="bool"
+        label="Enable ProdConf"
+        flag="nono"       
+      	test_first="0"
+        tip="()Enables the ProdConf-Modification-Algorithm()"/>           
+        
+    <tk id="prod_perform_counts"
+        type="bool"
+        label="Force Counter-Verfication"
+        flag="nono"       
+      	test_first="0"
+        tip="()Always use counter-Verification Signation-Results and Blurry-Results()"/>                  
+    
+    <!--     
+    <tk id="prod_target_zip2"
+        type="file"  
+      	label="Zipped App-file2" 
+        flag="save"
+        extension=".zip"
+        test_first="0"        
+        tip="()This file will be written()"/>        -->
+        
+      
+        
+                   
+                        
+    <tk type="msg" x="Main Parameters" test_first="0"/>   
+    <tk id="prod_type"
+        type="sel"  
+        label="Usage" 
+        test_first="0"        
+        tip="()()"
+        flag="multi">
+        <sel label="Serial-Nbr">s</sel>
+        <sel label="Job-Crypt">e</sel> 
+        <sel label="Xsl-Crypt">x</sel>    
+        <sel label="Final-Date">f</sel> 
+        <sel label="Scramble">sc</sel>
+        <sel label="Productname">p</sel>
+    </tk>       
+    <tk id="prod_serial_nbr" 
+        label="Serial-Nbr" />
+    <tk id="prod_pwd" 
+        label="Job-Encryption-Key" />  
+        
+    <tk id="prod_pwd_xsl" 
+        label="Xsl-Encryption-Key" />          
+        
+    <tk id="prod_ablaufdatum" 
+        label="Final-Date"
+        regex="\d\d\d\d\d\d\d\d"
+        tip="hier wird das 30000101 in '()(f,gt_num,(f,time,yyyyMMdd),30000101)()' ersetzt. Zu implementieren ist: &lt;throw test=&quot;()(f,gt_num,(f,time,yyyyMMdd),30000101)()&quot;&gt;This app is out of service&lt;/throw&gt;" />     
+    
+    <tk id="prod_productname" 
+        label="Productname" tip="All occurences of [[pdname]] will be replaced by this name" /> 
+    
+    <tk type="msg" x="Checksums" test_first="0"/>     
+    
+    <tk id="prod_total_count_ablaufdatum" 
+        label="Total Nbr of FinalDates" 
+        tip="Gesamte Anzahl der Final-Dates die in der Applikation ersetzt werden soll bzw erwartet wird. Das dient der kontrolle ob auch alles ersetzt worden ist."/>    
+        
+    <tk id="prod_total_count_files" 
+        label="Total Nbr of Result-Files" 
+        tip="Gesamt-Anzahl der Files im Endergebnis (e:o)Verschluesselt und Unverschluesselt(e:c)."
+        flag="nono"
+        regex="\d+"/>    
+        
+    <tk id="prod_total_count_files_open" 
+        label="... davon unverschluesselt" 
+        tip="Gesamt-Anzahl der unverschluesselten Files."
+        flag="nono"
+        regex="\d+"/>          
+        
+    <tk id="prod_total_count_dirs" 
+        label="Total Nbr of Result-Dirs" 
+        tip="Gesamt-Anzahl der Directories im Endergebnis."
+        flag="nono"
+        regex="\d+"/>       
+        
+    <tk id="prod_total_count_productname" 
+        label="Total Nbr of Prodname-Replacements" 
+        tip="Anzahl der Ersetzungen des produktnamens"
+        xflag="nono"
+        regex="\d+"/>                                 
+    
+    <!--     
+    <tk id="prod_encrypted_rename"
+        type="sel"  
+        label="Rename Encrypted Files" 
+        test_first="0"  
+        flag="nono"      
+        tip="()This renames encrypted job-files to *-encrypted.*()">
+        <sel label="Yes-Rename Encrypted Files">1</sel>
+        <sel label="No-Keep Filenames">0</sel>
+    </tk>    -->     
+
+    <tk type="msg" x="Specifications" test_first="0"/>
+    
+    <tk id="prod_is_services" 
+        label="What is it" 
+        tip="Is it a service or an application. decides how to notify a possible job-encryption."
+        type="sel"        
+        flag="nono">
+        <sel label="Application">0</sel>
+        <sel label="Services">1</sel>  
+        
+    </tk>            
+    <!-- 
+    <tk type="msg" x="Xsl" test_first="0"/>  
+    
+      -->      
+    
+    <tk id="prod_file_filter"
+        type="sel"  
+        label="File Filters" 
+
+        test_first="0" 
+        flag="multi"       
+        tip="()()">
+        <sel label="S:Not-WebServices-Typicals">web-services</sel>
+        <sel label="S:_web-.*">web-prefixed</sel>
+        <sel label="S:Computers">computers</sel>  
+        <sel label="Online-Login-Tools">online-login</sel>
+        <sel label="LICENSE.XML">license</sel>
+        <sel label="jar-files/top-level">jar-top</sel>
+        <sel label="java-files/top-level">java-top</sel>
+        <sel label="class-files/top-level">class-top</sel>
+        <sel label="jar-files/all-levels">jar-all</sel>
+        <sel label="java-files/all-levesl">java-all</sel>
+        <sel label="class-files/all-levels">class-all</sel>        
+    </tk>  
+           
+    
+    <tk type="msg" x="Alternative Rules" test_first="0"/>   
+    
+    <tk id="prod_alt_prolog_def"
+        type="file"  
+      	label="Prolog-Steps"    
+        test_first="0"
+        base="(dir,app)"       
+        tip="()An alternative prolog-file with xr-steps. ()(prop,app)()-Project. The prolog-steps locate in the ()(prop,app)()-project in the file ()&apos;(f,substring_after,(file,prolog-steps),(dir,pro))&apos;"
+        />    
+            
+    <tk id="prod_alt_sig_def"
+        type="file"  
+      	label="Signature-Rules" 
+        xflag="force_extension"     
+        test_first="0"
+        base="(dir,app)"       
+        tip="()An alternative Signature-Rule-File. Select here the rule-file of another ()(prop,app)()-Project. The signation-rules locate in the ()(prop,app)()-project in the file ()&apos;(f,substring_after,(file,updater),(dir,pro))&apos;"
+        xextension=".xml"/>   
+        
+    <tk id="prod_alt_blurry_def"
+        type="file"  
+      	label="Blurry-Rules" 
+        xflag="force_extension"     
+        test_first="0"
+        base="(dir,app)"       
+        tip="()An alternative Blurry-Rule-File. Select here the rule-file of another ()(prop,app)()-Project. The blurry-rules locate in the ()(prop,app)()-project in the file ()&apos;(f,substring_after,(file,blurries),(dir,pro))&apos;"
+        xextension=".xml"/>   
+        
+    <tk id="prod_alt_prodconf_def"
+        type="file"  
+      	label="ProdConf-Rules" 
+        xflag="force_extension"     
+        test_first="0"
+        base="(dir,app)"       
+        tip="()An alternative ProdConf-Rule-File. Select here the rule-file of another ()(prop,app)()-Project. The prodconf-rules locate in the ()(prop,app)()-project in the file ()&apos;(f,substring_after,(file,prodconf),(dir,pro))&apos;"
+        xextension=".xml"/>                  
+        
+    <!--        
+    <tk type="msg" x="Doku" test_first="0"/>    
+    <tk id="prod_proddoku" 
+        label="Product-Doku" 
+        type="textblock"
+        test_first="0"
+        flag="big bigbig" />         
+        
+    <tk id="prod_prolog" 
+        type="textblock" 
+        label="Prolog-OutOfService"  
+        flag="big"                 
+        tip="()OUT OF SERVICE !!! XmlRobot-Steps for initialisation of special things.()"/>                  
+     --> 
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_prod_edit" tip="prod_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,prod-data))">
+      <!-- data exists already -->
+      <prop id="tk_prod_add_flag" x="sum_only print"/>
+      <call_job job="tk_prod_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_prod_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_prod_default"/>
+  <!-- doing input -->
+  <call_job job="tk_prod_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_prod_write"/>
+
+</job>
+
+
+
+<job id="tk_prod_print_values" tip="prod_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_prod_read"/>
+  
+  <call_job job="tk_prod_core">
+    <prop id="tk_prod_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_prod_print_values_tips" tip="prod_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_prod_read"/>
+  
+  <call_job job="tk_prod_core">
+    <prop id="tk_prod_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_prod_print_help" tip="prod_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_prod_core">
+    <prop id="tk_prod_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_prod_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,prod-data)" />
+    <prop id="joe-in-regex" x="(prop,prod-regex)" />
+  </call_job>
+  <call_job job="tk_prod_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_prod_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,prod-data)" />
+    <prop id="joe-in-regex" x="(prop,prod-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_prod_clear"  tip="prod_: Clears the data" role="hidden">
+  <delete file="(file,prod-data)"/>
+</job>
+
+
+</jobs>

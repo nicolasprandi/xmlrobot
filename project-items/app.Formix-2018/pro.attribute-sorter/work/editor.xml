@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="attribute-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Attribute(prop,attributes_offset_label)"/>
+<tk label="Position" id="attribute_pos" tip="Position" regex="\d+" type="text" flag=" nono "/>
+<tk label="(prop,label)" flag="sum_only">
+<tk label="Position" id="attribute_pos" tip="Position" regex="\d+" type="text" flag=" nono "/>
+<tk label="Attribute name" id="attribute_name" tip="Attribute Name" test_first="0" type="text" flag=" nono "/>
+</tk>
+</when>
+<otherwise>
+<need>(prop,attribute_key)</need>
+<prop id="label" x="(prop,attribute_name)(prop,attributes_offset_label)"/>
+<tk label="Update: (prop,label)" flag="sum">
+<tk label="Position" id="attribute_pos" tip="Position" regex="\d+" type="text" flag=" nono "/>
+<tk label="Attribute name" id="attribute_name" tip="Attribute Name" test_first="0" type="text" flag=" nono "/>
+</tk>
+</otherwise>
+</choose>
+</job>

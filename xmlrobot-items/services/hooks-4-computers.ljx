@@ -1,0 +1,740 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobliste>
+<!--
+Gemacht:
+1) in programms-gen.jobs.xml, job "Add Programm"
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+
+-->
+<job id="comp_recog_view" role="hidden">
+  <interpreter jovial="1"/>
+	<ti>hello recog_view</ti>
+	<dump flag="ti" />
+</job>
+
+<job id="compi_hook_del_computer" role="hidden">
+  <interpreter jovial="1"/>  
+	<try_catch>
+	<try>
+  	<!-- remving from takeoff -->
+    <copy file="(file,takeoff)" tofile="(dir,filetemp)takeoff-(f,time)-xml-robot-takeoff.xml"/>
+    <i>copied (file,takeoff) to (dir,filetemp)takeoff-(f,time)-xml-robot-takeoff.xml</i>
+    <xml_update what="(file,takeoff)" how="remove" where="computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))]" flag="catch"/>
+    <i>Deleted computer '(prop,computer_computer)' from takeoff-file</i>
+    
+    <!-- removing service for computer -->
+    <file id="srv-del" x="(dir,services)computer-(prop,computer_computer).ljx" />
+    <when test="(f,exists_file,(file,srv-del))">
+      <delete file="(file,srv-del)"/>
+      <i>Deleted file-service for computer '(prop,computer_computer)'</i>
+    </when>
+                    
+    <!-- <tk type="msg" msg="Continue with updating System?" /> -->
+    <call_service job="compi_hook_upd_recognizers" />
+   </try>
+   <catch>
+    <dump flag="ti" label="We have a problem!"/>
+   </catch>
+   </try_catch>	
+</job>
+
+<job id="compi_hook_new_computer_added" role="hidden">
+  <interpreter jovial="1"/>
+  <dump flag="ti" label="compi_hook_new_computer_added"/>
+  
+
+  <tk type="bool" id="do_recog" x="1" label="Define a Recoginition-File for this Computer now?"/>
+
+  <when test="(prop,do_recog)">
+    <file id="recognitions">(dir,services)computers.xml</file>
+    <prop id="recognitions_offset">computer[@row=(prop,computer_key)]/</prop>
+    <prop id="recognitions_offset_label"> [(prop,computer_computer)]</prop>
+    <prop id="recognitions_offset_new_key">//</prop>
+    <prop id="recognitions_sort_attribute" />
+    <prop id="recognitions_sort_number" />
+    <prop id="recognitions_sort_ignore_case" />
+    <prop id="recognitions_sort_desc" />
+    <prop id="recognitions_where" />
+    <prop id="recognitions_return_job">XXX</prop>
+  
+    <prop id="do_return_job_asldfkjjwiojfasffdh">(prop,do_return_job)</prop>
+    <prop id="do_return_job">0</prop>
+    
+    <call_service job="Add another Recognition File" />  
+    <prop id="do_return_job">(prop,do_return_job_asldfkjjwiojfasffdh)</prop>
+    <remove id="do_return_job_asldfkjjwiojfasffdh" type="prop"/>
+    
+  </when>  
+  
+  <tk type="bool" id="do_takeoff" x="1" label="Add the new Computer to the current take-off-file ?"/>
+
+  <when test="(prop,do_takeoff)">
+    <call_service job="comp_add_computer_takeoff" />
+  </when>    
+</job>
+
+<job id="something_hook" role="hidden">
+  <interpreter jovial="1"/>
+  <dump flag="txi" label="Something Hook"/>
+</job>
+
+<job id="Conf: Computers" joblevel="ws" role="hidden">
+  <interpreter jovial="1"/>
+  <include file="(dir,services)computers-prolog.lsx" />
+  <call_service job="View Computers"/>
+</job>
+
+<job id="compi_recognition_act_test" joblevel="ws" role="hidden">
+  <interpreter jovial="1"/>
+  <call_service job="To Memory Recognition File" />
+  <!-- <dump flag="ti" label="compi_recognition_act_check_exist"/> -->
+  <ti label="Test: Checking if Recognition-File exists ...">
+    <ti label="File to test:" type="file">(file,recognition_file)</ti>
+  </ti>
+  <ti label="Test Result:"/>
+  <choose>
+    <when test="(f,file_exists,(file,recognition_file))">
+      <ti label="Good News:">File was found on current computer</ti>
+    </when>
+    <otherwise>
+      <ti label="Bad News:">(f,html,bold,open)File found NOT on current computer(f,html,bold,close)</ti>
+    </otherwise>
+  </choose>
+  
+      
+</job>
+
+
+<job id="Adapter" role="hidden" joblevel="ws">
+  <interpreter jovial="1"/>
+  <file id="computers">(dir,services)computers.xml</file>
+  <try_catch>
+    <try>  
+      <prop id="computer_key">(f,xpath,(file,computers),computer[@computer=(f,xpath_string,(prop,computer))],@row)</prop>
+      
+      <file id="computers">(dir,services)computers.xml</file>
+      <prop id="computers_offset">./</prop>
+      <prop id="computers_offset_label"></prop>
+      <prop id="computers_offset_new_key">//</prop>
+      <prop id="computers_sort_attribute"/>
+      <prop id="computers_sort_number"/>
+      <prop id="computers_sort_ignore_case"/>
+      <prop id="computers_sort_desc"/>
+      <prop id="computers_where"/>
+      <prop id="computers_return_job">Adapter</prop>        
+      <call_service job="See Computer"/>
+    </try>
+    <catch>
+      <ti label="Info">
+        <ti>This computer is not known!</ti>
+      </ti>
+    </catch>
+  </try_catch>
+  <ti_break/>
+  <ti label="Action">
+  <ti laxbel="_" type="call_service" job="All Adapters" explain="See all Computer Adapters" />
+  </ti>
+
+  
+</job>
+
+<job id="hook_programm_act_see2" joblevel="ws" role="hidden">
+  <interpreter jovial="1"/>
+  <try_catch><try>
+<need>(prop,computer_key)</need>
+<call_service job="To Memory Computer" />
+<prop id="isAdd">0</prop>
+<call_service job="Computer Editor" />
+  </try>
+  <catch/>
+  </try_catch>
+</job>
+<job id="hook_programm_act_test" joblevel="ws" role="hidden">
+  <interpreter jovial="1"/>
+  <file id="mx">(dir,filetemp)hook-memo.xml</file>
+  <when test="(f,not,(f,file_exists,(file,mx)))">
+    <create_file out="(file,mx)">&lt;memo/&gt;</create_file>
+  </when>
+  
+    <call_service job="To Memory Programm"/>
+    <call_service job="To Memory Computer"/>
+    <dump msg="Begin HOOK_PROGRAMM_ACT_RUN after LOOAD" />
+      
+  <when test="(f,eq,(prop,greetings_from),view)">
+
+  </when>
+
+  <when test="(f,not,(f,eq,(prop,os),(prop,computer_os)))">
+    <tk type="msg" msg="Computers do not fit: (prop,os)(e:s) (prop,computer_os)"/>
+  </when>
+  
+  <prop id="how">(f,xpathx,1,(file,mx),.,@how)</prop>
+  <tk type="sel" id="how" label="How do you want to test this programm?" flag="nono"
+      tip="By 'testing' the programm will be called.">
+    <sel label="With a DIRECTORY as parameter">fd</sel>   
+    <sel label="With a FILE as parameter">fp</sel>
+    <sel label="Without parameter">alone</sel>
+  </tk>
+  <xml_update what="(file,mx)" where="." how="set_attribute" 
+    attribute="how" value="(prop,how)" />  
+  
+  <when test="(f,eq,(prop,how),alone)">
+      <i>Testing on it's own</i>
+      <choose>
+        <when test="(f,eq,(prop,os),mac)">
+          <dump label="For Mac" />
+          <exe>
+        	  <arg>open</arg>
+        	  <arg>-a</arg>
+        	  <arg>(prop,programm_pgm_app)</arg>
+        </exe></when>
+        <when test="(f,eq,(prop,os),win)">
+	       <exe>
+      	    <arg>(file,programm_pgm_file)</arg>
+          </exe>
+        </when>  
+        <when test="(f,eq,(prop,os),linux)">
+	  <exe>
+      	    <arg>(prop,programm_pgm_app)</arg>
+          </exe>
+        </when>  
+      </choose>
+      
+
+  </when>
+  
+  <when test="(f,eq,(prop,how),fp)">
+      <i>Running with a file as parameter</i>
+      
+      <file id="parameter_file">(f,xpathx,(dir,workspace),(file,mx),.,@parameter_file)</file>
+      <tk type="file" id="parameter_file" label="Select a file as parameter"/>
+      <xml_update what="(file,mx)" where="." how="set_attribute" 
+        attribute="parameter_file" value="(file,parameter_file)" />  
+      
+      <choose>
+        <when test="(f,eq,(prop,os),mac)"><exe>
+        	  <arg>open</arg>
+        	  <arg>-a</arg>
+        	  <arg>(prop,programm_pgm_app)</arg>
+      	   <arg>(file,parameter_file)</arg>        	  
+        </exe></when>
+        <when test="(f,eq,(prop,os),win)"><exe>
+      	  <arg>(file,programm_pgm_file)</arg>
+      	  <arg>(file,parameter_file)</arg>
+        </exe></when>  
+        <when test="(f,eq,(prop,os),linux)">
+	  <exe>
+      	    <arg>(prop,programm_pgm_app)</arg>
+	    <arg>(file,parameter_file)</arg>
+          </exe>
+        </when>  
+      </choose>
+
+  </when>  
+  
+  <when test="(f,eq,(prop,how),fd)">
+      <i>testing with a dir as parameter</i>
+      
+      <dir id="parameter_dir">(f,xpathx,?,(file,mx),.,@parameter_dir)</dir>
+       <tk type="dir" id="parameter_dir"/>
+      <xml_update what="(file,mx)" where="." how="set_attribute" 
+        attribute="parameter_dir" value="(dir,parameter_dir)" />  
+
+      
+
+      <choose>
+        <when test="(f,eq,(prop,os),mac)"><exe>
+        	  <arg>open</arg>
+        	  <arg>-a</arg>
+        	  <arg>(file,programm_pgm_app)</arg>
+      	   <arg>(dir,parameter_dir)</arg>        	  
+        </exe></when>
+        <when test="(f,eq,(prop,os),win)"><exe>
+      	  <arg>(file,programm_pgm_file)</arg>
+      	  <arg>(dir,parameter_dir)</arg>
+        </exe></when>  
+        <when test="(f,eq,(prop,os),linux)"><exe>
+      	  <arg>(prop,programm_pgm_app)</arg>
+      	  <arg>(dir,parameter_dir)</arg>
+        </exe></when> 
+      </choose>
+
+  </when>   
+      
+</job>
+<job id="compi_hook_editor_programm_begin" role="hidden">
+  <interpreter jovial="1"/>
+<dump label="from hook: programm - editor - begin"/>
+</job>
+
+
+<job id="programm_act_verify" role="hidden">
+  <interpreter jovial="1"/>
+  <dump label="from: compi_hook_see_programm_end"/>
+  <!-- 
+  <call_service job="comp_test_programm" flag="silent">
+    <prop id="computer_key">(prop,computer_key)</prop>
+    <prop id="programm_key">(prop,programm_key)</prop>
+    <prop id="programm_pgm_app">(prop,programm_pgm_app)</prop>
+    <file id="programm_pgm_file">(file,programm_pgm_file)</file>
+    <prop id="programm_pgm_alt">(prop,programm_pgm_alt)</prop>
+  </call_service>                 -->
+  
+  
+</job>
+
+<job id="comp_test_programm" role="hidden">
+  <interpreter jovial="1"/>
+
+<dump label="from: comp_test_programm - A"/>
+<!-- 
+<call_service job="To Memory Programm" />
+<dump label="from: comp_test_programm - B"/>       -->
+
+<!-- <dump label="from: comp_test_programm - B"/>
+
+<try_catch>
+<try>
+<tk type="file" id="with" />
+<choose>
+  <when test="(f,eq,(prop,os),mac)">
+    <exe>
+	  <arg>open</arg>
+	  <arg>-a</arg>
+	  <arg>(prop,programm_pgm_id)</arg>
+	  <arg>(file,with)</arg>
+          </exe>
+    
+  </when>
+  <when test="(f,eq,(prop,os),win)">
+    <dump label="VOR WIN"/>
+    <exe>
+	  <arg>(prop,programm_pgm_file)</arg>
+	  <arg>(file,with)</arg>
+          </exe>
+    
+  </when>  
+</choose>
+</try>
+<catch/>
+</try_catch>                  -->
+</job>
+
+<job id="comp_check_computer_takeoff" role="hidden">
+  <interpreter jovial="1"/>
+  
+  <!-- 
+  <ti label="Checking:" type="text">(prop,computer_computer)</ti>  
+  <ti label="in:" type="file">(file,takeoff)</ti>
+-->
+
+  <try_catch>
+    <try>
+      <prop id="ist">(f,xpath,(file,takeoff),computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))])</prop>
+      
+      <ti label="(e:o)a(e:c) Publish">
+        <ti label="Programms:" type="call_service" job="comp_sync_computer" explain="Publish programms of '(prop,computer_computer)'">
+          <prop id="computer_computer">(prop,computer_computer)</prop>
+        </ti>     
+	      <ti label="Recognizers:" type="call_service" job="compi_hook_upd_recognizers" 
+		explain="Publish recognizers of all computers" />
+      </ti>
+      
+      <ti_space height="4px" />
+      
+      <prop id="computer-flag-tablet">(f,contains,(f,xpathx,,(file,takeoff),computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))],@flag),tablet)</prop>
+      
+      <ti label="(e:o)b(e:c) Check Takeoff-File for Computer">
+	
+        <ti label="OK">'(prop,computer_computer)' is in Takeoff-File</ti>
+        
+        <ti label=" " type="call_service" job="comp_remove_computer_takeoff" explain="Remove '(prop,computer_computer)' from Takeoff-File">
+          <prop id="computer_computer">(prop,computer_computer)</prop>
+        </ti>
+        
+        <ti label=" " type="call_service" 
+            job="comp_maketablet_computer_takeoff" explain="Define '(prop,computer_computer)' as Tablet"
+            test="(f,not,(prop,computer-flag-tablet))">
+          <prop id="computer_computer">(prop,computer_computer)</prop>
+        </ti>      
+        
+        <ti label=" " type="call_service" 
+            job="comp_unmaketablet_computer_takeoff" explain="Define '(prop,computer_computer)' as s normal Desktop-Computer and NOT as a Tablet"
+            test="(prop,computer-flag-tablet)">
+          <prop id="computer_computer">(prop,computer_computer)</prop>
+        </ti>               
+         
+      </ti>
+      
+      
+      <ti type="file" label="Takeoff-File:" test="(f,role,admin)">(file,takeoff)</ti>
+    
+      
+      
+    </try>
+    <catch>
+	     
+      <ti label="()(a) Check Takeoff-File for Computer:()">
+      	<ti label="(f,html,bold,open)- - - F a i l u r e - - -(f,html,bold,close)">'(prop,computer_computer)' is NOT in Takeoff-File</ti>
+      	<ti label=" " type="call_service" job="comp_add_computer_takeoff" explain="Add '(prop,computer_computer)' to Takeoff-File">
+      	  <prop id="computer_computer">(prop,computer_computer)</prop>
+      	</ti>
+      </ti>
+      <!-- 
+      <ti_break/>
+      <ti_hr/>
+      <dump flag="ti" /> -->
+      
+    </catch>
+  </try_catch>
+
+  
+  <call_service job="comp_act_home"/>
+   
+</job>
+
+<job id="comp_act_home" role="hidden">
+  <interpreter jovial="1"/>
+  <ti_space heigth="5px"/>
+  <ti_hr/>
+  <ti_space heigth="3px"/>
+  <ti type="call_service" job="Conf: Computers" explain="See all Computers"/>
+
+</job>
+
+
+
+
+<job id="computer_act_export" role="hidden">
+  <interpreter jovial="1"/>
+  <call_service job="To Memory Computer"/>
+  <dump label="with love from computer act export"/>
+</job>
+
+<job id="comp_add_computer_takeoff" role="hidden">
+  <interpreter jovial="1"/>
+
+    <copy file="(file,takeoff)" 
+          tofile="(dir,filetemp)takeoff-(f,time).ltx" />
+
+  <i>copied (file,takeoff) to (dir,filetemp)takeoff-(f,time).ltx</i>
+  
+  <when test="(f,eq,0,(f,xsl,(file,takeoff),count(e:o)takeoff/computers(e:c)))">
+  	<warn>computers will be defined in takeoff</warn>
+  	<xml_update what="(file,takeoff)" how="append" >
+        <inline attribute="with">&lt;computers/&gt;</inline>
+    </xml_update>		
+  </when>
+
+  <xml_update what="(file,takeoff)" how="insert_in" where="computers">
+      <inline attribute="with">&lt;computer&gt;(x,(prop,computer_computer))&lt;/computer&gt;</inline>
+  </xml_update>
+  <prop id="comp_sync_no_restart">1</prop>
+  <call_service job="comp_sync_computer" />
+  <call_service job="compi_hook_upd_recognizers" />
+</job>
+
+<job id="comp_maketablet_computer_takeoff" role="hidden">
+  <interpreter jovial="1"/>
+  <need>(prop,computer_computer)</need>
+
+  <prop id="computer-flag">(f,xpathx,,(file,takeoff),computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))],@flag) tablet</prop>
+        
+  <xml_update 
+    what="(file,takeoff)" 
+    how="set_attribute" 
+    where="computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))]"
+    attribute="flag"
+    value="(prop,computer-flag)"
+    >
+  </xml_update>
+                  
+  <call_service job="Restart" />
+  
+</job>
+
+<job id="comp_unmaketablet_computer_takeoff" role="hidden">
+  <interpreter jovial="1"/>
+  <need>(prop,computer_computer)</need>
+
+  <prop id="computer-flag">(f,xpathx,,(file,takeoff),computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))],@flag)</prop>
+  
+  <prop id="startpos">(f,index_of,(prop,computer-flag),tablet)</prop>
+
+  <prop id="computer-flag2">(f,substring,(prop,computer-flag),0,(prop,startpos))(f,substring,(prop,computer-flag),(f,add,(prop,startpos),6))</prop>
+          
+  <xml_update 
+    what="(file,takeoff)" 
+    how="set_attribute" 
+    where="computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))]"
+    attribute="flag"
+    value="(prop,computer-flag2)"
+    >
+  </xml_update>
+                  
+  <call_service job="Restart" />
+  
+</job>
+
+<job id="comp_remove_computer_takeoff" role="hidden">
+  <interpreter jovial="1"/>
+     
+  <tk label="Remove computer ?"
+      type="accept"
+      id="delete-this-1"
+      x="Sure about removing computer '(prop,computer_computer)' from takeoff-file ?"
+      label_accept="Remove"
+      label_decline="Forget it"
+      width="300" height="100">
+      <q id="delete-this-2" label="()Yes, do remove the computer()"/>
+  </tk>
+  <when test="(f,not,(f,and,(prop,delete-this-1),(prop,delete-this-2)))">
+      <throw>Remove of computer terminated on request.</throw>
+  </when>
+
+    <copy file="(file,takeoff)" 
+          tofile="(dir,filetemp)takeoff-(f,time).xrt.xml"/>
+
+  
+  <i>copied (file,takeoff) to (dir,filetemp)takeoff-(f,time).xrt.xml</i>
+  
+  <xml_update 
+    what="(file,takeoff)" 
+    how="remove" 
+    where="computers/computer[text(e:o)(e:c)=(f,xpath_string,(prop,computer_computer))]"/>
+  
+  <file id="maybe-programms"
+        x="(dir,services)computer-(prop,computer_computer).ljx" />
+  <when test="(f,exists_file,(file,maybe-programms))">
+    <tk type="msg" x="removing (file,maybe-programms)" test="0"/>
+    <delete file="(file,maybe-programms)"/>
+  </when>
+  
+  <when test="(f,has,prop,computer)">
+  <when test="(f,eq_text,(prop,computer),(prop,computer_computer))">
+    <prop id="deselect-computer" x="1"/>
+  </when>  
+  </when>               
+  <call_service job="compi_hook_upd_recognizers" />
+
+</job>
+
+<job id="compi_hook_see_computer_end" role="hidden">
+  <interpreter jovial="1"/>
+  <file id="programms">(dir,services)computers.xml</file>
+  <prop id="programms_offset">computer[@row=(prop,computer_key)]/</prop>
+  <prop id="programms_offset_label"></prop>
+  <prop id="programms_offset_new_key">//</prop>
+  <prop id="programms_sort_attribute">@sort</prop>
+  <prop id="programms_sort_number">@sort</prop>
+  <prop id="programms_sort_ignore_case"></prop>
+  <prop id="programms_desc" />
+  <prop id="programms_where" />
+  <prop id="programms_return_job">See Computer</prop>
+  
+  <ti_hr/>
+  
+  <ti label="(e:o)1(e:c) Programms"/>
+  <call_service job="View Programms" />
+
+  <file id="recognitions">(dir,services)computers.xml</file>
+  <prop id="recognitions_offset">computer[@row=(prop,computer_key)]/</prop>
+  <prop id="recognitions_offset_label"></prop>
+  <prop id="recognitions_offset_new_key">//</prop>
+  <prop id="recognitions_sort_attribute" />
+  <prop id="recognitions_sort_number" />
+  <prop id="recognitions_sort_ignore_case" />  
+  <prop id="recognitions_desc" />
+  <prop id="recognitions_where" />
+  <prop id="recognitions_return_job">See Computer</prop>
+  <!--  -->
+  <ti_hr styxle="2"/>
+  <!-- <ti_hr/><ti_break/> -->
+  <ti label="(e:o)2(e:c) Recognition Files"/>
+  <call_service job="View Recognition Files" />
+  <!-- dort das so machen, das war mal 
+<file id="hasi">(f,exxxxxxport,(loop,i,@file))</file>
+<translate id="hasi" type="file"/>
+<ti type="rec" label="(f,html,bold,open)(f,substring,(f,name_of_file,(file,hasi)),0,16)(f,when,(f,gt,(f,len,(f,name_of_file,(file,hasi))),16),...,)(f,html,bold,close)">
+  -->
+  
+  <ti_hr/>
+  <!-- <ti_break/> -->
+  
+  
+  
+  <call_service job="comp_check_computer_takeoff" />  
+  <!-- 
+  <ti label="Actions" size="3"/>
+  <dump label="Duaksdöfjölasjkdfö"/>
+  <ti type="call_service" explain="Check this Computer in Takeoff-File!" job="comp_check_computer_takeoff" flag="silexnt">
+    <prop id="computer_computer">(prop,computer_computer)</prop>
+  </ti>
+  -->
+  
+</job>
+
+<job id="compi_hook_view_computer_end" role="hidden">
+  <interpreter jovial="1"/>
+  <ti_hr/>
+  <ti label="Actions:">
+  <ti type="call_service" job="compi_hook_upd_recognizers" 
+      explain="Update all computer-recognizers on system" >
+  </ti>
+  </ti>
+  
+</job>
+<job id="comp_sync_computer" role="hidden">
+  <interpreter jovial="1"/>
+  <!-- <call_service job="To Memory Computer"/> -->
+  <!-- <dump label="with love from comp_sync_computer" flag="ti"/> -->
+  
+  <ti>doing button for Computer-Programm-update</ti>
+  <file id="compi_programms">(dir,filetemp)compi-programms.jobs.xml</file>
+  <file id="computers">(dir,services)computers.xml</file>
+  <xslt 
+    xml="(file,computers)" 
+    xsl="(dir,services)compi-programms-jobs.xsl" 
+    out="(file,compi_programms)" >
+    <params>computer='(f,xslp,(prop,computer_computer))' os='(f,xslp,(f,xpath,(file,computers),computer[@computer=(f,xpath_string,(prop,computer_computer))],@os))'</params>
+  </xslt>
+  <ti type="file">(file,compi_programms)</ti>
+
+
+    <copy file="(file,compi_programms)" tofile="(dir,services)computer-(prop,computer_computer).ljx"/>
+
+  
+<create_file out="(dir,filetemp)written.lsx" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+
+<ti type="ul" x="Computerspecific programms for &apos;(x,(prop,computer_computer))&apos; are now available"/>
+<ti label="Did Create:" type="file" test="(f,role,admin)">(x,(dir,services)computer-(prop,computer_computer).ljx)</ti>
+<ti_break/>
+<ti_hr/>
+<call_service job="Conf: Computers"/> 
+</steps>]]></create_file>
+
+<call_service job="restarter">
+ <file id="with-lsx" x="(dir,filetemp)written.lsx" />
+</call_service>
+
+  <choose>
+    <when test="(f,not,(f,exists,prop,comp_sync_no_restart))">
+      <!-- <tk type="msg" msg="Going to Restart 1 ..."/>  -->
+      <restart/>    
+    </when>
+    <when test="(f,eq,(prop,comp_sync_no_restart),0)">
+      <!-- <tk type="msg" msg="Going to Restart 2..."/> -->
+      <restart/>    
+    </when>  
+  </choose>
+    
+</job>
+
+
+<job id="ccar" role="hidden">
+  <interpreter jovial="1"/>
+<create_file out="(dir,filetemp)do.lsx"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+<call_service job="Conf: Computers"/> 
+</steps>]]></create_file>
+
+<call_service job="restarter">
+ <file id="with-lsx" x="(dir,filetemp)do.lsx" />
+</call_service>
+</job>
+
+<job id="compi_hook_upd_recognizers" role="hidden">
+  <interpreter jovial="1"/>
+  <need default="0">(prop,deselect-computer)</need>
+  <ti>doing button for Recognition files</ti>
+  <file id="compi_reco">(dir,filetemp)compi-recog.jobs.xml</file>
+  <file id="computers">(dir,services)computers.xml</file>
+
+    <copy file="(file,takeoff)" tofile="(dir,filetemp)compi-takeoff.xml" />
+
+  <xslt 
+    xml="(file,computers)" 
+    xsl="(dir,services)compi-verification-jobs.xsl" 
+    out="(file,compi_reco)"
+    home="(dir,filetemp)" >
+  </xslt>
+  <ti type="file">(file,compi_reco)</ti>
+  
+
+    <copy file="(file,compi_reco)" tofile="(dir,services)check-computers-onstart.ljx"/>
+
+  
+  <call_service job="ccar"/>
+  
+  <choose>
+    <when test="(prop,deselect-computer)">
+      <restart computer=""/>
+    </when>
+    <otherwise>
+      <restart/>
+    </otherwise>
+  </choose>
+  
+  
+</job>
+<job id="compi_hook_editor_programm_end" role="hidden">
+  <interpreter jovial="1"/>
+  <dump label="compi_hook_editor_programm_end"/>
+  <when test="(f,not,(f,file_exists,(file,programm_pgm_file)))">
+    <file id="programm_pgm_file"></file>
+  </when>
+</job>
+
+<job id="compi_hook_view_computer_begin" role="hidden">
+  <interpreter jovial="1"/>
+  <dump label="compi_hook_view_computer_begin"/>
+  <!-- 
+  <ti type="file">(dir,services)computers.xml</ti>
+  <ti tyxpe="file">(prop,computer)</ti>-->
+  <try_catch>
+    <try>  
+      <!-- 
+      <prop id="computer_key">(f,xpath,(dir,services)computers.xml,computer[@computer=(f,xpath_string,(prop,computer))],@row)</prop>
+      
+      <file id="computers">(dir,services)computers.xml</file>
+      <prop id="computers_offset">./</prop>
+      <prop id="computers_offset_label"></prop>
+      <prop id="computers_offset_new_key">//</prop>
+      <prop id="computers_sort_attribute"/>
+      <prop id="computers_sort_number"/>
+      <prop id="computers_where"/>
+      <prop id="computers_return_job">View Computers</prop>        
+      <call_service job="See Computer"/>
+      <ti><ti/></ti>
+      
+      <ti label="- List of all Computers -" />-->
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+  <!-- 
+    <file id="computers">(dir,services)computers.xml</file>
+  <prop id="computers_offset">./</prop>
+  <prop id="computers_offset_label"/>
+  <prop id="computers_offset_new_key">//</prop>
+  <prop id="computers_sort_attribute"/>
+  <prop id="computers_sort_number"/>
+  <prop id="computers_where"/>
+  <prop id="computers_return_job">View Computers</prop>  
+  -->
+
+  
+</job>
+
+
+</jobliste>

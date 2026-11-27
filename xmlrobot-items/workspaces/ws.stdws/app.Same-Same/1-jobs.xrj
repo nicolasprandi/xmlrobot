@@ -1,0 +1,451 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+
+<call_job job="prolog" />
+
+      
+<job id="Add Folder" tip="Do add a directory to your observations">
+    <prop id="this-is-new" x="1"/>
+    <call_job job="tk_newfo_edit"/>
+
+    <create_file 
+      test="(f,not,(f,exists_file,(file,list)))"
+      out="(file,list)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <list/>]]></create_file>
+      
+    <tp>Checking TBD...</tp>                     
+    
+    <try_catch>
+      <try>
+        <dir id="a" x="(f,xpath,(file,list),item[@name=(f,xpath_string,(prop,newfo_name))],@dir)"/>
+        <ti label="a" type="dir">(dir,a)</ti>
+        <throw>There exists already an item '(prop,newfo_name)' with dir '(dir,a)'</throw>
+      </try>
+      <catch>
+        <throw_again test="(f,has,dir,a)"/>
+      </catch>    
+    </try_catch>
+      
+          
+    <create_file 
+      out="(dir,filetemp)item-coll.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <item name="(x,(prop,newfo_name))" dir="(x,(dir,newfo_dir))" />]]></create_file>
+    <xml_update 
+          how="append" 
+          with_what="root" 
+          what="(file,list)" 
+          with="(dir,filetemp)item-coll.xml"/> 
+
+          
+                  
+   <ti>folder added</ti>         
+   
+   <ti label="Next Step">
+    <ti type="call_job" job="Add Folder"/>
+    <ti type="call_job" job="See Folders"/>
+   </ti>          
+</job>
+<job id="See Folders" tip="Do see the registered directories">
+
+    <ti label="{ name } " type="rec">
+      <ti>{ directory }</ti>
+      <ti> </ti>
+    </ti>
+    <ti_hr/>
+    
+  <spirit id="items" act="open" file="(file,list)"/>
+  <prop id="haveitem" x="0"/>
+  <loop id="items" spirit="items" xpath="item">
+  <prop id="haveitem" x="1"/>
+    <ti label="(loop,items,@name)" type="rec">
+      <ti type="dir" x="(loop,items,@dir)"/>
+      <ti type="call_job" job="remove-item" flag="arrow" explain="Remove">
+        <prop id="item-to-remove" x="(loop,items,@name)"/>
+      </ti>
+    </ti>
+    
+  </loop>
+  <spirit id="items" act="close"/>
+  <ti test="(f,not,(prop,haveitem))">Not much to see</ti>
+
+   <ti label="Next Step">
+    <ti type="call_job" job="Analyze"/>
+  <ti  type="call_job" job="Add Folder"/>    
+   </ti>
+</job>
+<job id="Analyze" tip="Do take a look at these directories">
+  <create_file 
+    out="(file,coll)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <coll/>]]></create_file>
+
+  <loop id="items" xml="(file,list)" xpath="item">
+    <tp>Scanning folder (loop,items,@name) ...</tp>  
+    <scan out="(dir,filetemp)scan.xml" 
+          dir="(loop,items,@dir)" 
+          field="kb id level lm md5 ipath"/>
+          
+    <create_file 
+      out="(dir,filetemp)item-coll.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <item name="(x,(loop,items,@name))" dir="(x,(loop,items,@dir))" />]]></create_file>
+
+    <xml_update 
+          how="append" 
+          with_what="root" 
+          what="(dir,filetemp)item-coll.xml" 
+          with="(dir,filetemp)scan.xml"/>
+          
+    <xml_update 
+          how="append" 
+          with_what="root" 
+          what="(file,coll)" 
+          with="(dir,filetemp)item-coll.xml"/>
+   
+    
+  </loop>
+
+  
+  <create_file 
+    out="(file,dup)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <dup/>]]></create_file>
+  <spirit id="dup" act="open" file="(file,dup)"/>
+ 
+  <prop id="group-key" x=""/>
+  <prop id="group-pos" x=""/>
+   <prop id="group-final"><![CDATA[</group>]]></prop>
+  <loop id="f" xml="(file,coll)" xpath="//file" sort="@md5">
+     <prop id="this-key" x="(loop,f,@md5)"/>
+     <choose>
+      <when test="(f,eq_text,(prop,this-key),(prop,group-key))">
+        <!-- weiteres auftreten -->
+        <prop id="group-pos" x="(f,add,1,(prop,group-pos))"/>
+        <prop id="group-push"><![CDATA[
+            <file pos="(prop,group-pos)" fn="(x,(loop,f,ancestor::item[1],@dir)(loop,f,@ipath)(loop,f))" id="(x,(loop,f,@id))" item="(x,(loop,f,ancestor::item[1],@name))"/>
+          ]]></prop>        
+        <prop id="group-xml" x="(prop,group-xml)(prop,group-push)"/>
+      </when>
+      <otherwise>
+        <!-- erstes auftreten -->          
+        
+        <!-- bisheriges gegebenenfalls rausschreiben -->
+        <when test="(f,gt,(prop,group-pos),1)">
+         
+          <spirit 
+            id="dup" 
+            act="xml_update" 
+            how="append" 
+            with_what="root" >            
+            <inline attribute="with">(prop,group-xml)(prop,group-final)</inline>
+          </spirit>
+        </when>          
+        
+        <prop id="group-key" x="(prop,this-key)"/>
+        <prop id="group-pos" x="1"/>
+        
+        <prop id="group-xml"><![CDATA[<group key="(x,(prop,this-key))">
+            <file pos="(prop,group-pos)" fn="(x,(loop,f,ancestor::item[1],@dir)(loop,f,@ipath)(loop,f))" id="(x,(loop,f,@id))" item="(x,(loop,f,ancestor::item[1],@name))"/>
+          ]]></prop>
+      </otherwise>
+    </choose>
+     
+  </loop>  
+  
+  <!-- letzte gruppe dazu -->
+  <spirit 
+  id="dup" 
+  act="xml_update" 
+  how="append" 
+  with_what="root" >            
+  <inline attribute="with">(prop,group-xml)(prop,group-final)</inline>
+  </spirit>
+          
+  <spirit id="dup" act="close" flag="save"/>
+  <ti label="Done">
+    <ti type="file" label="Analyzed Duplicates" x="(file,dup)"/>
+    <ti type="call_job" job="See Duplicate Files" label=" "/>
+  </ti>
+  
+   <ti label="Next Step">
+    <ti type="call_job" job="See Duplicate Files"/>
+   </ti>  
+</job>
+
+<job id="remove-item" role="hidden" tip="Do remove one of these folders">
+  <need>(prop,item-to-remove)</need>
+  <tk type="msg" x="Going to remove (prop,item-to-remove)"/>
+  
+  <xml_update 
+    how="remove" 
+    what="(file,list)" 
+    where="item[@name=(f,xpath_string,(prop,item-to-remove))]"/>
+  <try_catch>
+    <try>  
+      <xml_update 
+        how="remove" 
+        what="(file,coll)" 
+        where="item[@name=(f,xpath_string,(prop,item-to-remove))]"/> 
+    </try>
+    <catch>
+      <ti>Das wurde in collection noch nicht gefunden - egal.</ti>
+    </catch>
+  </try_catch>
+    
+  <ti label="Performed remove"/>
+  <ti_hr/>
+  <call_job job="See Folders"/>   
+
+</job>
+
+
+
+<job id="See Duplicate Files" tip="Do see the results of the analysis">
+  <call_job job="tk_conf_read"/>
+  <prop id="c" x="0"/>
+  <prop id="t" x="0"/>
+  <prop id="g" x="0"/>
+  <spirit id="dup" act="open" file="(file,dup)"/>
+  <loop id="groups" spirit="dup" xpath="group">
+    <ti label="(e:o)(loop,groups,#i)(e:c) (loop,groups,@key)" xkey="(loop,groups,#i)"
+    test="(f,lt_num,(prop,t),(prop,conf_limit))"/>/>
+    <prop id="g" x="(f,add,1,(prop,g))"/>
+    <loop id="files" spirit="dup" xpath="group[@key=(f,xpath_string,(loop,groups,@key))]/file">
+     <prop id="t" x="(f,add,1,(prop,t))"/>    
+      <prop id="c" x="(f,add,1,(prop,c))"/> 
+      <tp test="(f,eq_num,0,(f,mod,(prop,t),200))">prepare (prop,t)</tp>  
+      <ti type="file" 
+          x="(loop,files,@fn)" 
+          label="(prop,g).(prop,t).(loop,files,#i)." 
+          key="(loop,files,@item):(loop,files,@id)"
+          flag="flow"
+          test="(f,and,(f,lt_num,(prop,t),(prop,conf_limit)),(f,eq_num,0,(f,mod,(prop,t),(prop,conf_mod))))"/>
+ 
+    </loop> 
+
+    <prop id="c" x="(f,sub,(prop,c),1)"/> 
+  </loop>
+  
+    <when test="(f,gt_num,(prop,t),(prop,conf_limit))">
+      <ti>Limit of  (prop,conf_limit) reached. mod was set to (prop,conf_mod)</ti>
+    </when>  
+  <spirit id="dup" act="close"/>
+  <ti_break/>
+  <ti_hr/>
+  <ti label="Statistics">
+    <ti label="Number of files to delete" x="(prop,c)"/>
+    <ti label="Total Number of files in question" x="(prop,t)"/>
+    <ti label="Number of Groups" x="(prop,g)"/>
+  </ti>
+
+   <ti label="Next Step">
+    <ti type="call_job" job="Remove Duplicate Files &gt; 1"/>
+   </ti>
+</job>
+
+<job id="Remove Duplicate Files &gt; 1" tip="Do delete things to much">
+  <call_job job="tk_conf_read"/>
+  <tk label="Remove all duplicates ?"
+      type="accept"
+      id="delete-this-1"
+      x="Going to remove all duplicates"
+      label_accept="Delete them"
+      label_decline="Forget it"
+      width="300" height="150">
+      <q id="delete-this-2" label="()Yes, I know that files will be gone forever and DELETED()"/>
+      <q id="delete-this-3" label="()Just see the POTENTIAL results()"/>
+  </tk>
+  <when test="(f,not,(prop,delete-this-1))">
+      <throw>Operation terminated on request. Accept it</throw>
+  </when>
+
+  <when test="(f,not,(f,or,(prop,delete-this-3),(prop,delete-this-2)))">
+      <throw>Operation terminated on request. Check one.</throw>
+  </when>
+  
+  <when test="(f,and,(prop,delete-this-3),(prop,delete-this-2))">
+      <throw>Operation terminated on request. Check only one.</throw>
+  </when>  
+  
+  
+  <choose>
+    <when test="(prop,delete-modern)">
+ 
+        <sequence id="seq" file="(dir,pro)sequence-delete-history.xml" act="open"/>
+        <sequence id="seq"  act="next"/>
+        <file id="ac" x="(dir,antthings)(f,sequence,seq)_deletes.xml" />
+        <!-- <sequence id="seq"  act="close"/>   -->
+        <print id="p" out="(file,ac)" act="open"/>
+        <print act="println" id="p"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>]]></print>
+        
+        <spirit id="dup" act="open" file="(file,dup)"/>
+        <prop id="c" x="0"/>
+        <loop id="groups" spirit="dup" xpath="group">
+          <ti label="(loop,groups,@key)" key="(loop,groups,#i)"
+          test="(f,and,(f,lt_num,(prop,c),(prop,conf_limit)),(f,eq_num,0,(f,mod,(prop,c),(prop,conf_mod))))"/>   
+          
+          <loop id="files" spirit="dup" xpath="group[@key=(f,xpath_string,(loop,groups,@key))]/file">
+            <when test="(f,gt_num,(loop,files,@pos),1)">
+              <prop id="c" x="(f,add,1,(prop,c))"/>
+              <prop id="see-ti" x="1"/>
+              
+              <prop id="see-ti" x="1" xx="(f,eq_num,0,(f,mod,(prop,c),20))" xtest="(f,gt_num,(prop,c),10000)"
+                test="(f,and,(f,lt_num,(prop,c),(prop,conf_limit)),(f,eq_num,0,(f,mod,(prop,c),(prop,conf_mod))))"/>
+              <ti type="file"
+                  test="(prop,see-ti)" 
+                  x="(loop,files,@fn)" label="(loop,files,@pos)." 
+                  key="(loop,files,@item):(loop,files,@id)"
+                  flag="flow"/>      
+                  
+              <when test="(prop,delete-this-2)">
+                <print act="println" id="p" flag="dont_unescape_on_write"><![CDATA[<delete file="(x,(loop,files,@fn))"/>]]></print>
+              </when> 
+              <when test="(f,not,(prop,delete-this-2))">
+                <print act="println" id="p" flag="dont_unescape_on_write"><![CDATA[<deleteo file="(x,(loop,files,@fn))"/>]]></print>
+              </when>               
+            </when>         
+            <tp test="(f,eq_num,(f,mod,(prop,c),500),0)">(prop,c) | Preparing file  (prop,c) to delete</tp>
+          </loop>    
+        </loop>
+        <ti>Number of Records (prop,c) to delete as double files</ti>
+                
+        <print act="println" id="p"><![CDATA[</steps>]]></print>
+        <print id="p" act="close"/>
+                
+        <spirit id="dup" act="close"/>
+        <ti_hr/>
+        <ti label="Preperation ok">
+          <ti type="file" x="(file,ac)"/>
+        </ti>
+
+        <choose>
+          <when test="(prop,delete-this-2)">
+            <tk type="msg" msg_type="w">Number of records to delete [ (prop,c) file(f,plural,(prop,c)) ]
+  Prepare finished. Starting now to DELETE really
+  Logging goes to logging-level [ info ] .
+  Continue with question to see that?</tk>
+            <tk type="bool" id="see-them" label="See that (prop,c) of records" flag="nono" x="1"/>    
+            <tk  test="(prop,see-them)" label="Protokoll">
+            <tk type="msg" msg="(f,file_content,(file,ac))" msg_type="w"/> 
+            </tk>
+            <include file="(file,ac)"/>
+          </when>   
+          
+          <otherwise>
+            <tk type="msg" msg_type="i">We are NOT going to delete!
+  Its all conditional!
+  Number of records to delete [ (prop,c) file(f,plural,(prop,c)) ]
+  Prepare finished. Starting now to delete really
+  Logging goes to logging-level [ info ] .
+  Message Received ?
+  Continue with question to see those records ?  </tk>
+            <tk id="see-them" label="See them" type="bool" x="1"/>
+            <tk  test="(prop,see-them)" label="Protokoll">
+            <tk type="msg" msg="(f,file_content,(file,ac))"/> 
+            </tk>
+
+          </otherwise>
+        </choose>   
+                   
+        
+    </when>  
+    <otherwise>
+      <!-- not modern -->
+      
+      <spirit id="dup" act="open" file="(file,dup)"/>
+      <loop id="groups" spirit="dup" xpath="group">
+        <ti label="(loop,groups,@key)" key="(loop,groups,#i)"/>
+        
+        <loop id="files" spirit="dup" xpath="group[@key=(f,xpath_string,(loop,groups,@key))]/file">
+          <when test="(f,gt_num,(loop,files,@pos),1)">
+            <ti type="file" 
+                x="(loop,files,@fn)" label="(loop,files,@pos)." key="(loop,files,@item):(loop,files,@id)"
+                flag="flow"/>      
+                
+            <when test="(prop,delete-this-2)">
+              
+                  <delete file="(loop,files,@fn)"/>
+              
+            </when> 
+          </when>         
+      
+        </loop>    
+      </loop>
+      <spirit id="dup" act="close"/>
+      
+    </otherwise>
+  </choose>
+  
+   <ti label="Next Step">
+    <ti type="call_job" job="Analyze"/>
+   </ti>  
+
+</job>
+
+<job id="Clear Project"  tip="Do throw the whole crap away ">
+  <call_service job="Clear Project">
+    <prop id="inst_id_to_delete" x="(prop,pro)"/>
+    <dir id="inst_dir_to_delete" x="(dir,pro)"/>
+  </call_service>
+</job>
+
+<job id="throw" role="hidden">
+  <throw>throw on demand</throw>
+</job>
+
+<job id="???" >
+ 
+  <choose>
+    <when test="(f,exists_file,(file,list))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <ti label="Welcome to SAME-SAME">
+        <ti type="call_job" job="Add Folder" explain="Go &amp; add a folder to check for..."/>
+      </ti>
+      <ti_hr/>
+      <call_job job="?" />
+    </otherwise>
+  </choose>
+</job>
+
+<job id="??">
+  <choose>
+    <when test="(f,exists_file,(file,list))">
+      <call_job job="See Folders"/>
+    </when>
+    <otherwise>
+      <ti label="Welcome to CHECK SAME SAME">
+        <ti type="call_job" job="Add Folder" explain="Go &amp; add a folder to check for..."/>
+      </ti>
+      <ti_hr/>
+      <call_job job="?" />    
+    </otherwise>
+  
+  </choose>
+  
+  
+  <call_service job="project-info-final" flag="silent">
+    <prop id="from-app">(prop,app)</prop>
+    <prop id="from-pro">(prop,pro)</prop>
+    <dir id="from-pro" x="(dir,pro)"/>      
+  </call_service>
+</job>
+
+<job id="?">
+    
+  <ti label="When to use Application (f,html,i,open)Check-Same-Files(f,html,i,close):">
+    <ti type="ul">(f,html,bold,open)You want to detect same files(f,html,bold,close)</ti>
+    <ti type="ul">(f,html,bold,open)You want to remove duplicate files(f,html,bold,close)</ti>
+
+
+  </ti>
+
+
+    
+    <call_service job="app-info-final" flag="silent">
+      <prop id="aif-app" x="(prop,app)"/>
+    </call_service>  
+</job>
+
+</jobs>

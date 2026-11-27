@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<jobs>
+
+
+
+<job id="prolog" role="hidden">
+  <file id="input-data" x="(dir,pro)input-data.xrs"/>
+  <prop id="input-regex" x="input_.+"/>
+  <file id="print-data" x="(dir,pro)print-data.xrs"/>
+  <prop id="print-regex" x="print_.+"/>  
+</job>
+
+</jobs>

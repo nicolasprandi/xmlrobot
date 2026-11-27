@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<sel>
+  <sel label="May Login">mayLogin</sel>
+  <sel label="Must Login">mustLogin</sel> 
+  <sel label="Dont Cross Filename of Project">dontCrossFnPro</sel>
+  <sel label="Link Filenames of Project">seeFnPro</sel>
+    
+ 
+  <sel label="Link Filenames of App">seeFnApp</sel>
+  <sel label="Dont Cross Filename of App">dontCrossFnApp</sel>  
+  <sel label="Link Filenames of Else">seeFnElse</sel>  
+  <sel label="Dont Cross Filename of Else">dontCrossFnElse</sel>
+  
+  <sel label="Operate Files/Dirs">clickFnPro</sel>   
+  <sel label="Project on Filesystem">hardProject</sel>
+  <sel label="EB11">eb11</sel>
+  <sel label="EB12">eb12</sel> 
+  <sel label="EB13">eb13</sel>
+  <sel label="EB14">eb14</sel>
+  <sel label="EB15">eb15</sel> 
+  <sel label="EB16">eb16</sel>
+  <sel label="EB17">eb17</sel>
+  <sel label="EB18">eb18</sel> 
+  <sel label="EB19">eb19</sel>  
+     
+</sel>

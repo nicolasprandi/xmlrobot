@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="custset-see">
+<need>(prop,custset_key)</need>
+<need default="">(prop,custsets_sort_attribute)</need>
+<need default="">(prop,custsets_sort_number)</need>
+<need default="">(prop,custsets_sort_ignore_case)</need>
+<need default="">(prop,custsets_sort_desc)</need>
+<need default="">(prop,custsets_where)</need>
+<need default="">(prop,custsets_offset_label)</need>
+<need default="">(prop,custsets_offset)</need>
+<need default="">(prop,custsets_return_job)</need>
+<need default="//">(prop,custsets_offset_new_key)</need>
+<prop x="print print_only" id="custsets_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,custsets_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="custset-see">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="custset-see-all">
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<call_job job="custset-read"/>
+<prop id="custset_default_label_class" x="Customer"/>
+<prop id="custset_default_label_name" x="(f,text,cut_nice,(prop,custset_name),30)(f,when,(f,has,(prop,custsets_offset_label)), - (prop,custsets_offset_label),)"/>
+<ti type="menu" info="an-edit-button-details" first_cell="2" test="(f,role,user)">
+<ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailCustset" explain="[ Edit ]" job="custset-edit">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskCustset" explain="" job="custset-see-more">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetresults" explain="Results" job="action_see_folders">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">results</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetdo all" explain="Do ALL" job="action_complete">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">do all</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetdo all java" explain="Do ALL - Java" job="action_complete_java">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">do all java</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetexport_programms" explain="Build Scripts" job="action_custset_build">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">export_programms</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetjava_compiles" explain="Compile" job="do-compiles-for-custset">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">java_compiles</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetjava_obfu_replay" explain="Obfuriscate" job="do-obfu-replay">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">java_obfu_replay</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetjava_finalize" explain="Finalize" job="do-finalize-compiles">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">java_finalize</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<call_job job="custset-tk"/>
+<ti_space height="3px"/>
+<ti type="menu" info="an-edit-button-details" first_cell="2" test="(f,role,user)">
+<ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailCustset" explain="[ Edit ]" job="custset-edit">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskCustset" explain="" job="custset-see-more">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetresults" explain="Results" job="action_see_folders">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">results</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetdo all" explain="Do ALL" job="action_complete">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">do all</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetdo all java" explain="Do ALL - Java" job="action_complete_java">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">do all java</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetexport_programms" explain="Build Scripts" job="action_custset_build">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">export_programms</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetjava_compiles" explain="Compile" job="do-compiles-for-custset">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">java_compiles</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetjava_obfu_replay" explain="Obfuriscate" job="do-obfu-replay">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">java_obfu_replay</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<ti type="rec" label=" ">
+<ti type="call_job" page="details" flag="button" class="fx fxAction fxActionCustsetjava_finalize" explain="Finalize" job="do-finalize-compiles">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">java_finalize</prop>
+<prop page="details" id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook_details_end_custset</trace>
+<call_job job="hook_details_end_custset"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: custset-details: end.0">
+<ti> hook_job=hook_details_end_custset hook=end page=details station=0 object=custset</ti>
+</ti>
+</catch>
+</try_catch>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,custsets_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="custset-see">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="custset-see-all">
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

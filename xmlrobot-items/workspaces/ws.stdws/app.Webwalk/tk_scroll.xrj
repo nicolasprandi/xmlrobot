@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+
+-->
+<call_job job="prolog" />
+
+
+<!-- setting the default-values -->
+<job id="tk_scroll_default" role="hidden">
+  <need default="0">(prop,scroll_x)</need>
+  <need default="0">(prop,scroll_y)</need>  
+</job>
+
+
+<!-- scroll-core, make your changes here -->
+<job id="tk_scroll_core" role="hidden" tip="scroll_: Tk Internal">
+
+  <need default="">(prop,tk_scroll_add_flag)</need>
+
+  <tk label="Scroll" 
+      flag="(prop,tk_scroll_add_flag)"
+      xtip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+     <tk id="scroll_x" flag="nono" x="0"/>
+    <tk id="scroll_y" flag="nono" x="0"/>
+ 
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_scroll_edit" tip="scroll_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,scroll-data))">
+      <!-- data exists already -->
+      <prop id="tk_scroll_add_flag" x="sum sxum_only print"/>
+      <call_job job="tk_scroll_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_scroll_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_scroll_default"/>
+  <!-- doing input -->
+  <call_job job="tk_scroll_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_scroll_write"/>
+
+</job>
+
+
+
+<job id="tk_scroll_print_values" tip="scroll_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_scroll_read"/>
+  
+  <call_job job="tk_scroll_core">
+    <prop id="tk_scroll_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_scroll_print_values_tips" tip="scroll_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_scroll_read"/>
+  
+  <call_job job="tk_scroll_core">
+    <prop id="tk_scroll_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_scroll_print_help" tip="scroll_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_scroll_core">
+    <prop id="tk_scroll_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_scroll_read" role="hidden">
+  <call_job job="go-joe-read">
+    <prop id="joe-in-regex" x="(prop,scroll-regex)" />  
+    <file id="joe-in-store" x="(file,scroll-data)" />
+  </call_job>
+  <call_job job="tk_scroll_default"/>
+ 
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_scroll_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,scroll-data)" />
+    <prop id="joe-in-regex" x="(prop,scroll-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_scroll_clear"  tip="scroll_: Clears the data" role="hidden">
+  <delete file="(file,scroll-data)"/>
+</job>
+
+
+</jobs>

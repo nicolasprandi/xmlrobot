@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="computer-tk">
+<need default="">(prop,computers_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" flag="(prop,computers_tk_control)">
+<tk label="Computer" id="computer_computer" test_first="1" tip="Computers Name" type="text" flag=" "/>
+<tk label="Operating System" id="computer_os" test_first="0" tip="Operating System running on this Computer" type="sel" flag=" ">
+<sel label="win">win</sel>
+<sel label="mac">mac</sel>
+<sel label="linux">linux</sel>
+</tk>
+<tk x="hallo" test_first="0" type="msg" flag=" "/>
+<tk label="Name" id="computer_name" test_first="0" tip="Der name" type="text" flag=" "/>
+<tk label="Adresse" id="computer_adresse" test_first="0" tip="Die Adresse" type="textblock" flag=" "/>
+<tk x="Files" test_first="0" type="msg" flag=" "/>
+<tk id="computer_f1" test_first="0" type="file" flag="  download "/>
+<tk id="computer_f2" test_first="0" type="file" flag="  download "/>
+<tk x="Dirs" test_first="0" type="msg" flag=" "/>
+<tk id="computer_d1" test_first="0" type="dir" flag="  download "/>
+<tk id="computer_d2" test_first="0" type="dir" flag="  download "/>
+</tk>
+</job>

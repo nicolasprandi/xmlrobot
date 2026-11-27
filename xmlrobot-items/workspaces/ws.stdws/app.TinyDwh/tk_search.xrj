@@ -1,0 +1,254 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2018-2020 Nicolas Prandstaetter. All rights reserved.  -->
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="tk_search_default" role="hidden">
+  <need default="-contains-">(prop,search_type)</need>  
+
+ 
+</job>
+
+<!-- search-core, make your changes here -->
+<job id="tk_search_core" role="hidden" tip="search_: Tk Internal">
+
+  <need default="">(prop,tk_search_add_flag)</need>
+  <call_job job="tk_search_default"/>
+  <call_job job="tr_search"/>
+  
+  <when test="(f,not,(f,has_flag,(prop,tk_search_add_flag),print_tips_only))">
+    <throw test="(f,not,(f,exists_file,(file,tip-attr-sel)))">(prop,_sl_no_repo)</throw>
+  </when>
+  <prop id="search_mylabel">(f,when,(f,has_flag,(prop,tk_search_add_flag),print_tips_only),(prop,_sl_object_search_desc),(prop,_sl_object_search))</prop>
+  <choose>
+    <when test="(f,right,searchplus)">
+    
+      <tk label="(prop,search_mylabel)" 
+          flag="(prop,tk_search_add_flag)"
+          tip="(prop,_sl_object_search_tip)"
+          tk_id="33"> 
+          
+        <tk type="msg" test_first="0" >(prop,_sl_search_args)</tk>                                               
+        <tk id="search_for" 
+            label="(prop,_sl_search_for)"
+            x="Aus"
+            flag="nono" 
+            tip="(prop,_sl_search_for_tip)"
+            cols="31"/>
+                            
+        <tk id="search_type"
+            type="sel"  
+            label="(prop,_sl_search_type)"                                         
+            x="text"
+            test_first="0" 
+            flag="nono"       
+            tip="(prop,_sl_search_type_tip)">
+            <sel label="(prop,_sl_search_contains)">-contains-</sel>
+            <sel label="(prop,_sl_search_equals)">-equals-</sel> 
+            <sel label="(prop,_sl_numeric_search)">-numeric-</sel>
+            <sel label="(prop,_sl_search_objid)">-objid-</sel>               
+            <sel label="% ILIKE %">%ILIKE%</sel>
+            <sel label="ILIKE">ILIKE</sel>         
+           <sel label="% LIKE %">%LIKE%</sel>
+            <sel label="LIKE">LIKE</sel> 
+            
+            <sel label="% ILIKE % - CaseSensitive">%ILIKE%2</sel>
+            <sel label="ILIKE - CaseSensitive">ILIKE2</sel> 
+           <sel label="% LIKE % - CaseSensitive">%LIKE%2</sel>
+            <sel label="LIKE - CaseSensitive">LIKE2</sel>  
+                    
+              
+        </tk>
+        
+        <tk type="msg" test_first="0" >(prop,_sl_search_in)</tk>
+        
+        <tk id="search_obj_tech_name" 
+            label="(prop,_sl_only_in_obj)"
+            type="sel"                     
+            xml="(dir,repo)osel-(prop,tip-term-class).xml" 
+            test_first="0" 
+            flag="multi"
+            tip="(prop,_sl_only_in_tip_obj)"/> 
+                    
+        <tk id="search_attr_tech_name" 
+            label="(prop,_sl_only_in_attr)"
+            type="sel"
+            xml="(file,tip-attr-sel)" 
+            test_first="0" 
+            flag="multi"
+            tip="(prop,_sl_only_in_tip_attr)"/>  
+                                 
+      </tk>      
+    </when>
+    <otherwise>
+    
+      <tk label="(prop,search_mylabel)" 
+          flag="(prop,tk_search_add_flag)"
+          tip="(prop,_sl_object_search_tip)"
+          tk_id="32"> 
+          
+       <tk type="msg" test_first="0" >(prop,_sl_search_args)</tk>      
+        <tk id="search_for" 
+            label="(prop,_sl_search_for)"
+            x="Aus"
+            flag="nono" 
+            tip="(prop,_sl_search_for_tip)"
+            cols="31"/>
+                            
+        <tk id="search_type"
+            type="sel"  
+            label="(prop,_sl_search_type)" 
+            x="text"
+            test_first="0" 
+            flag="nono"       
+            tip="(prop,_sl_search_type_tip)">
+            <sel label="(prop,_sl_search_contains)">-contains-</sel>
+            <sel label="(prop,_sl_search_equals)">-equals-</sel> 
+            
+                    
+            <sel label="(prop,_sl_numeric_search)">-numeric-</sel>
+            <sel label="(prop,_sl_search_objid)">-objid-</sel>                 
+        </tk>
+        
+        <tk type="msg" test_first="0" >(prop,_sl_search_in)</tk>
+        
+        <tk id="search_obj_tech_name" 
+            label="(prop,_sl_only_in_obj)"
+            type="sel"                     
+            xml="(dir,repo)osel-(prop,tip-term-class).xml" 
+            test_first="0" 
+            flag="multi"
+            tip="(prop,_sl_only_in_tip_obj)"/> 
+                    
+        <tk id="search_attr_tech_name" 
+            label="(prop,_sl_only_in_attr)"
+            type="sel"
+            xml="(file,tip-attr-sel)" 
+            test_first="0" 
+            flag="multi"
+            tip="(prop,_sl_only_in_tip_attr)"/>  
+            
+            
+                                 
+      </tk>      
+    
+    </otherwise>
+  
+  
+  </choose>
+                      
+     
+  
+  
+    <!--     
+    <tk id="search_is_number" 
+        label="(prop,_sl_numeric_search)"
+        type="bool"
+        test_first="0" 
+        flag="no_is_0"
+        tip="(prop,_sl_numeric_search_tip)"/>     -->    
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_search_edit" tip="search_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,search-data))">
+      <!-- data exists already -->
+      <prop id="tk_search_add_flag" x="sum print"/>
+      <call_job job="tk_search_read"/>
+    </when>      
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_search_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  
+  <when test="(f,exists,prop,hack-tox4-search-alt)">
+      <prop id="tk_search_add_flag" x="sum_only print"/>
+  </when>
+  
+  <!-- doing input -->
+  <call_job job="tk_search_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_search_write"/>
+
+</job>
+
+
+
+<job id="tk_search_print_values" tip="search_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_search_read"/>
+  
+  <call_job job="tk_search_core">
+    <prop id="tk_search_add_flag" x="print_only"/>
+  </call_job>
+  
+
+    <ti type="rec" xlabel=" " > 
+      <ti> </ti>
+
+      <ti type="call_job" job="tk_search_print_values_tips_all" flag="button" class="fx fxAskAsk fxAskAskConf" explain="(prop,_label_askask)" label=" " align="right"/>    
+      <ti> </ti>
+
+    </ti>  
+  
+</job>
+
+<job id="tk_search_print_values_tips" tip="search_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_search_read"/>
+  
+  <call_job job="tk_search_core">
+    <prop id="tk_search_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_search_print_values_tips_all" tip="search_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_search_read"/>
+  
+  <call_job job="tk_search_core">
+    <prop id="tk_search_add_flag" x="print_only print_with_tips print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_search_print_help" tip="search_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_search_core">
+    <prop id="tk_search_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_search_read" role="hidden">
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,search-data)" />
+    <prop id="joe-in-regex" x="(prop,search-regex)" />
+  </call_job>
+ 
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_search_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,search-data)" />
+    <prop id="joe-in-regex" x="(prop,search-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_search_clear"  tip="search_: Clears the data" role="hidden">
+  <delete file="(file,search-data)"/>
+</job>
+
+
+</jobs>

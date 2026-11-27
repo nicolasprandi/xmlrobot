@@ -1,0 +1,301 @@
+<?xml version="1.0" ?><!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<!-- <when test="(f,has,prop,pro)"> take 2 things to the prolog --> 
+  <!-- 
+
+  -->
+<!-- </when>       -->
+
+<!-- gui Adapters: to copy in the app  take the edit to your gui.... 
+
+<job id="Edit: iro_">
+  <call_job job="tk_iro_edit"/>
+</job>
+
+<job id="Edit: iro_?">
+  <call_job job="tk_iro_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_iro_clear" explain="Clear this data"/>
+</job>
+
+   -->
+
+<!-- setting the default-values -->
+<job id="tk_iro_default" role="hidden">
+
+  <need default="0">(prop,iro_interrupt)</need>
+  <need default="1">(prop,iro_run)</need>
+  <need default="0">(prop,iro_coll)</need>
+  <need default="keep">(prop,iro_limit_style)</need>
+
+</job>
+
+
+<!-- iro-core, make your changes here -->
+<job id="tk_iro_core" role="hidden" tip="iro_: Tk Internal">
+  <need default="1">(prop,do-the-iro-edit-intro)</need>
+  <call_job job="tr_iro"/>
+
+  <need default="">(prop,tk_iro_add_flag)</need>
+  
+  <when test="(f,and,(f,exists_file,(file,iro-data)),(prop,do-the-iro-edit-intro))" >
+  
+    <tk id="iro2_bulk_rows" 
+        type="sel" 
+        label="(prop,_iro_l_bulk_rows)"
+        test="(prop,piro-bulk-row-sel)"
+        test_first="1"                  
+        tip="(prop,_iro_t_bulk_rows)"
+        flag="multi" 
+        xml="(f,vob,file,piro-bulk-row-sel)"/>  
+  </when>
+
+  <tk label="(prop,_iro_l_all)" 
+      flag="(prop,tk_iro_add_flag)"
+      tip="(prop,_iro_t_all)"> 
+
+    <tk type="msg"
+        x="(prop,_iro_l_bulks)"
+        test="(prop,piro-bulk-row-sel)"
+        test_first="0"/> 
+        
+    <tk id="iro2_bulk_rows" 
+        type="sel" 
+        label="(prop,_iro_l_bulk_rows)"
+        test="(prop,piro-bulk-row-sel)"
+        test_first="1"                  
+        tip="(prop,_iro_t_bulk_rows)"
+        flag="multi" 
+        xml="(f,vob,file,piro-bulk-row-sel)"/>        
+        
+
+    <tk type="msg"
+        x="(prop,_iro_l_limit_msg)"
+        test_first="0"/>   
+        
+    <tk id="iro_limit_style"
+        type="sel"
+        label="(prop,_iro_l_limit_style)" 
+        test_first="0"        
+        cols="10"
+        tip="(prop,_iro_t_limit_style)"
+        flag="nono">
+        
+        <!-- <sel label="(prop,_qura_s_limit_style_config1): (prop,sql_limit_queries) (prop,_qura_s_limit_style_config2)">config</sel>      -->
+        <sel label="(prop,_iro_s_limit_style_keep)">keep</sel>
+        <sel label="(prop,_iro_s_limit_style_no)">no</sel>
+        <sel label="(prop,_iro_s_limit_style_indiv) ...">indiv</sel>                
+    </tk>              
+    <tk id="iro_limit_indiv"
+        type="text"      	
+      	label="(prop,_iro_l_limit)"      	
+      	regex="\d+"
+        cols="5"
+      	regex_msg="()A Number()"
+      	test_first="0"
+        tip="(prop,_iro_t_limit)"/>        
+
+    <tk type="msg"
+        x="(prop,_iro_l_options)"
+        test_first="0"/>                 
+    <tk id="iro_interrupt"
+        type="bool"
+        label="(prop,_iro_l_interrupt)"       
+      	test="(prop,piro-interrupt)"
+        flag="no_is_0"
+        test_first="0"     
+        tip="(prop,_iro_t_interrupt)"
+        />     
+        
+    <tk id="iro_run"
+        type="bool"
+        label="(prop,_iro_l_run)"       
+        flag="no_is_0"
+        test_first="0"     
+        tip="(prop,_iro_t_run)"
+        />       
+        
+    <tk type="msg"
+        x="(prop,_iro_l_coll)"
+        test_first="0"/>             
+        
+    <tk id="iro_coll"
+        type="bool"
+        label="(prop,_iro_l_coll_on)"       
+        flag="no_is_0"
+        test_first="0"     
+        tip="(prop,_iro_t_coll_on)"
+        />        
+        
+    <tk id="iro_coll" 
+        type="dir" 
+        label="(prop,_iro_l_coll_store)"  
+        base="(dir,pro)"
+        flagx="nono"                 
+        tip="(prop,_iro_t_coll_store)"
+        test_first="0"/>                
+
+    <tk id="iro_coll_style"
+        type="sel"  
+        label="(prop,_iro_l_coll_style)"
+        test_first="0"      
+        tip="(prop,_iro_t_coll_style)">
+        <sel label="(prop,_iro_t_coll_style_append)">a</sel>
+        <sel label="(prop,_iro_t_coll_style_overwrite)">o</sel>   
+    </tk>
+    
+ 
+                          
+  </tk>   
+</job>                                     
+<!-- 
+<job id="See Values: iro_" role="dev">
+  <call_job job="tk_iro_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_iro_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+ <job id="Clear Data: iro_">
+  <tk type="msg" x="Sure to clear data of iro_ ?" msg_type="w"/>
+  <call_job job="tk_iro_clear"/>
+</job>
+
+<job id="Print Values:  iro_">
+  <call_job job="tk_iro_print_values"/>
+</job>
+<job id="Print Help: iro_" role="dev">
+  <call_job job="tk_iro_print_help"/>
+</job>
+
+-->
+<!-- edit data: read, userinput, write -->
+<job id="tk_iro_edit" tip="iro_: Edit the Data" role="hidden">
+  <call_job job="tk_iro_read"/>
+  <prop id="tk_iro_add_flag" x="sum_only "/>
+  <when test="(prop,piro-bulk-row-sel)">
+  
+    <when test="(f,not,(f,exists_file,(file,iro2-data)))">
+      <prop id="tk_iro_add_flag" x="sum "/>
+    </when>
+      
+  </when>
+  
+
+  <call_job job="tk_iro_default"/>
+  <!-- doing input -->
+  <prop id="do-iro-core">1</prop>
+  <loop id="while-iro" while="()(prop,do-iro-core)()" >
+    <prop id="do-iro-core">0</prop>
+    <call_job job="tk_iro_core"/>
+    <when test="(prop,iro_coll)">                 
+      <when test="(f,or,(f,not,(f,has,dir,iro_coll)),(f,not,(f,has,prop,iro_coll_style)))">  
+        <tk type="msg" msg_type="w">(prop,_iro_msg_coll_missing):(f,when,(f,not,(f,has,dir,iro_coll)),&#xA;(prop,_iro_l_coll_store): (prop,_iro_t_coll_store),)(f,when,(f,not,(f,has,prop,iro_coll_style)),&#xA;(prop,_iro_l_coll_style): (prop,_iro_t_coll_style),)
+        </tk>      
+        <prop id="do-iro-core">1</prop>
+        <prop id="do-the-iro-edit-intro">0</prop>
+      </when>                     
+    </when>
+  </loop>
+  <!-- 
+    <tk id="iro_coll"
+        type="bool"
+        label="(prop,_iro_l_coll_on)"       
+        flag="no_is_0"
+        test_first="0"     
+        tip="(prop,_iro_t_coll_on)"
+        />        
+        
+    <tk id="iro_coll" 
+        type="dir" 
+        label="(prop,_iro_l_coll_store)"  
+        base="(dir,pro)"
+        flagx="nono"                 
+        tip="(prop,_iro_t_coll_store)"
+        test_first="0"/>                
+
+    <tk id="iro_coll_style"
+        type="sel"  
+        label="(prop,_iro_l_coll_style)"
+        test_first="0"      
+        tip="(prop,_iro_t_coll_style)">
+        <sel label="(prop,_iro_t_coll_style_append)">a</sel>
+        <sel label="(prop,_iro_t_coll_style_overwrite)">o</sel>   
+    </tk>  
+  -->
+  <!-- writing data -->
+  <call_job job="tk_iro_write"/>
+
+</job>
+
+
+
+<job id="tk_iro_print_values" tip="iro_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_iro_read"/>
+  
+  <call_job job="tk_iro_core">
+    <prop id="tk_iro_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_iro_print_values_tips" tip="iro_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_iro_read"/>
+  
+  <call_job job="tk_iro_core">
+    <prop id="tk_iro_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_iro_print_help" tip="iro_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_iro_core">
+    <prop id="tk_iro_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_iro_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,iro-data)" />
+    <prop id="joe-in-regex" x="(prop,iro-regex)" />    
+  </call_job>
+  
+  <call_job job="go-joe-read" test="(prop,piro-bulk-row-sel)">
+    <file id="joe-in-store" x="(file,iro2-data)" />
+    <prop id="joe-in-regex" x="(prop,iro2-regex)" />    
+  </call_job>
+    
+  <call_job job="tk_iro_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_iro_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,iro-data)" />
+    <prop id="joe-in-regex" x="(prop,iro-regex)" />
+  </call_job>
+  
+  <call_job job="go-joe-write" test="(prop,piro-bulk-row-sel)">
+    <file id="joe-in-store" x="(file,iro2-data)" />
+    <prop id="joe-in-regex" x="(prop,iro2-regex)" />    
+  </call_job>  
+</job>
+
+<!-- cleares data 
+<job id="tk_iro_clear"  tip="iro_: Clears the data" role="hidden">
+  <delete file="(file,iro-data)"/>
+</job>        -->
+
+
+</jobs>

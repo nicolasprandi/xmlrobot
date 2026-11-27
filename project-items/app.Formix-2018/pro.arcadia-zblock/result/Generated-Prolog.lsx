@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="zblocks">(dir,pro)zblocks.xml</file>
+<when test="(f,not,(f,exists_file,(file,zblocks)))">
+<create_file out="(file,zblocks)">&lt;zblocks/&gt;</create_file>
+<i>Created: (file,zblocks)</i>
+</when>
+<prop id="zblocks_offset">./</prop>
+<prop id="zblocks_offset_label"/>
+<prop id="zblocks_offset_new_key">//</prop>
+<prop id="zblocks_sort_attribute"/>
+<prop id="zblocks_sort_number"/>
+<prop id="zblocks_sort_ignore_case"/>
+<prop id="zblocks_sort_desc"/>
+<prop id="zblocks_where"/>
+<prop id="zblocks_return_job">zblock-see-all</prop>
+</prolog>

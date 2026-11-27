@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="do-categories-setup" role="hidden">
+  <call_job job="tr_pcat"/>
+  <call_job job="Read Definitions" />
+  
+  <choose>
+    <when test="(f,eq,system,(prop,et_org_type))">
+      <!-- currently the categories of system -->
+      <tk type="bool" id="to_project" flag="nono" label="(prop,_pcat_do_you_want)"/>
+      <when test="(f,not,(prop,to_project))">
+        <throw>(prop,_pcat_you_could)</throw>
+      </when>
+
+      <choose>
+        <when test="(f,exists_file,(file,extension-groups-edit))">
+          <tk type="sel" id="sdf" flag="nono" label="(prop,_pcat_there_exists)">
+            <sel label="(prop,_pcat_use_this)">use</sel>
+            <sel label="(prop,_pcat_forget_the)">new</sel>
+          </tk>
+          
+          <when test="(f,eq,new,(prop,sdf))">
+            <copy file="(file,app-extension-groups-life)" tofile="(file,extension-groups-edit)"/>
+          </when>
+          
+        </when>
+        <otherwise>
+          <copy file="(file,app-extension-groups-life)" tofile="(file,extension-groups-edit)"/>
+        </otherwise>
+      </choose>      
+
+      
+      <file id="groups">(file,extension-groups-edit)</file>
+      <call_job job="Publish Panorama File-Categories"/>
+      
+      <prop id="et_org_type">project</prop>
+      <call_job job="Write Definitions-OrgType"/>
+      
+    </when>
+    
+    
+  </choose>
+  <ti label="(prop,_pcat_proj_cats)"/>
+  <ti_hr/>
+  <file id="eg-with">(file,extension-groups-edit)</file>
+  <call_job job="eg-editor-base"/> 
+   
+  <when test="(f,eq,project,(prop,et_org_type))">
+    <ti type="call_job" job="Use Standard Categories"  
+        explain="(prop,_pcat_use_std)"/>
+  </when>
+
+</job>
+
+</jobs>

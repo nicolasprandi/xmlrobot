@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="note-write">
+<need>(prop,note_key) (prop,isAdd)</need>
+<spirit act="open" id="notes_spirit_tc" xml="(file,notes)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,notes_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,notes_offset),0,(f,sub,(f,len,(prop,notes_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,notes_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="notes_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;note row="(prop,note_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="notes_spirit_tc" where="(prop,notes_offset)note[@row='(prop,note_key)']" attribute="aspect" value="(f,vob,prop,note_aspect)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="notes_spirit_tc" where="(prop,notes_offset)note[@row='(prop,note_key)']" attribute="note" value="(f,vob,prop,note_note)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="notes_spirit_tc" where="(prop,notes_offset)note[@row='(prop,note_key)']" attribute="note_verbal" value="(f,vob,prop,note_note_verbal)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="notes_spirit_tc" where="(prop,notes_offset)note[@row='(prop,note_key)']" attribute="urteil" value="(f,vob,prop,note_urteil)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="notes_spirit_tc" where="(prop,notes_offset)note[@row='(prop,note_key)']" attribute="grund" value="(f,vob,prop,note_grund)"/>
+<spirit act="close" flag="save pretty" id="notes_spirit_tc"/>
+</job>

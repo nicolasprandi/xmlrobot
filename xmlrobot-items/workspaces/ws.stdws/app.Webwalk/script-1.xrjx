@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<include file="(dir,app)prolog.xrs"/>
+<job id="Script 1">
+
+         
+  <wdriver act="get"
+           url="http://www.xmlrobot.net"           
+           sleep="(f,random,1000,2000)"/>
+      
+  <wdriver act="find_elements"
+           by_xpath="//div[@id='navigation']//ul[@class='menu']/li/a"
+           new_file="(dir,pro)tmp-nav.xml"           
+           sleep="(f,random,1000,2000)"
+           flag="keep"/>
+           
+  <loop id="nav" xpath="we" xml="(dir,pro)tmp-nav.xml">
+  
+    <call_job job="prep-coop">
+      <prop id="dc-we" x="(loop,nav,@id)"/>
+    </call_job>
+    
+    <welement 
+          act="click" 
+          id="(prop,dc-we)"               
+          sleep="(f,random,2000,3000)"/>
+    <tk type="msg" x="continue"/>
+  </loop>
+  <throw>ssss</throw>         
+   <tp>finished find-elelemnts</tp>             
+           
+  <ti type="file" x="(dir,pro)nicolas-tag-a.xml" />  
+  
+
+  <wdriver act="find_elements"
+           by_tag_name="a"
+           new_spirit_id="hase"           
+           sleep="(f,random,1000,3000)"
+           flag="keep"/>
+        
+  <call_job job="ps-print-spirit">
+    <prop id="ps-id" x="hase" />
+  </call_job>
+
+</job>
+
+
+
+
+</jobs>

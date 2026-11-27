@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="appconf-edit">
+<need>(prop,appconf_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="appconf-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="appconf-editor"/>
+<call_job job="appconf-write"/>
+<ti align="right" x="Did update AppConf '(prop,appconf_displayname)'"/>
+<call_job job="appconf-see-all"/>
+</job>

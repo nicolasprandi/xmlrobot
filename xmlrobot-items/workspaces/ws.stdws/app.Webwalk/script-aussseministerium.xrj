@@ -1,0 +1,252 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+                                  
+
+
+<job id="do-some-countries" role="hidden">
+  <need>(file,countries)</need>
+
+  <!-- (prop,country-group) -->
+  <prop id="problems" x=""/>
+  <tk id="limit" x="999"/>
+  <loop id="a" xml="(file,countries)" xpath="we" limit="(prop,limit)">
+    <ti>(loop,a,@text)</ti>
+    <ti_flush/>
+    <try_catch>
+      <try>
+        <call_job job="do-country">
+          <prop id="country-name" x="(loop,a,@text)"/>
+          <prop id="country-group" x="(f,vob,prop,country-group)"/>
+        </call_job>
+      </try>
+      <catch>
+        <ti>PROBLEM with (loop,a,@text)</ti>
+        <ti>(prop,catched_msg)</ti>
+        <prop id="problems" x="(prop,problems) (loop,a,@text)"/>
+      </catch>
+    </try_catch>
+  </loop>
+  <ti label="Problems" x="(prop,problems)"/>
+  
+
+</job>
+
+<job id="do-country-Albanien" role="hidden">
+  <!-- <interpreter watch="1"/> -->
+  <call_job job="do-country"><prop id="country-name" x="Albanien"/></call_job>
+
+</job>
+
+<job id="do-country-China" role="hidden">
+  <!-- <interpreter watch="1"/> -->
+  <call_job job="do-country"><prop id="country-name" x="China"/></call_job>
+
+</job>
+
+<job id="do-country-FRAGEN" role="hidden">
+  <!-- <interpreter watch="1"/> -->
+  <tk id="country-name"/>
+  <call_job job="do-country"><prop id="country-name" x="(prop,country-name)"/></call_job>
+
+</job>
+
+<job id="List Countries" role="hidden">
+  <call_job job="list-countries-of">  
+    <file id="lco-file" x="(dir,smart)005_ausminist-landestliste/liste1.xml"/>
+    <prop id="lco-group" x="A-I"/>
+  </call_job>
+  
+  <call_job job="list-countries-of">  
+    <file id="lco-file" x="(dir,smart)005_ausminist-landestliste/liste2.xml"/>
+    <prop id="lco-group" x="J-O"/>
+  </call_job> 
+  
+  <call_job job="list-countries-of">  
+    <file id="lco-file" x="(dir,smart)005_ausminist-landestliste/liste3.xml"/>
+    <prop id="lco-group" x="P-Z"/>
+  </call_job>     
+</job>
+
+<job id="list-countries-of" role="hidden">
+ <need>(prop,lco-group) (file,lco-file)</need>
+ <ti label="(prop,lco-group)"/>
+ <ti type="call_job" job="do-some-countries" explain="Download some of them" label=" ">
+    <file id="countries">(file,lco-file)</file>
+    <prop id="country-group">(prop,lco-group)</prop>
+  </ti> 
+ 
+ <loop id="lco" xml="(file,lco-file)" xpath="we">
+  <ti type="rec" label="(loop,lco,@text)">
+    <ti type="call_job" job="do-country" explain="Download Country-Info">
+      <prop id="country-name" x="(loop,lco,@text)"/>
+      <prop id="country-group" x="(prop,lco-group)"/>
+    </ti>
+    <ti test="(f,exists_dir,(dir,results)(loop,lco,@text)/)" type="dir" x="(dir,results)(loop,lco,@text)">
+    </ti>
+  </ti>
+ </loop>
+</job> 
+
+<job id="do-country" role="hidden">
+ <try_catch>
+ <try>
+ <prop id="paras_url" x="https://www.bmeia.gv.at/reise-aufenthalt/reiseinformation/laender/"/>
+ <need>(prop,paras_url)</need>
+ <need>(prop,country-name)</need>
+ <!-- (prop,country-group) -->
+ 
+  <wdriver act="get"
+           url="(prop,paras_url)" />
+           
+  <when test="(f,has,prop,country-group)">
+  
+    <!-- find: group --> 
+    <wdriver 
+      act="find_element"
+      by_xpath="//div[@class='tx-bmeia-countries']/div/ul/li/a[text(e:o)(e:c)=(f,xpath_string,(prop,country-group))]"
+      return_prop_element_id="found-group"
+      flag="load_all"
+      sleep="(f,random,1000,2000)"/>  
+      
+  <!-- group.click -->  
+  <welement 
+    id="(prop,found-group)"
+    act="click" />          
+  
+  </when>
+
+  
+  <!-- find: country --> 
+  <wdriver 
+    act="find_element"
+    by_xpath="//a[contains(e:o).(e:s)(f,xpath_string,(prop,country-name))(e:c)]"
+    return_prop_element_id="country"
+    flag="load_all"/>             
+
+  <!-- country.scroll -->
+  <welement 
+    act="scroll"
+    id="(prop,country)"/>    
+  
+  <!-- country.click -->  
+  <welement 
+    id="(prop,country)"
+    act="click" /> 
+    
+  <!-- ausgaben vorbereiten -->  
+
+  <dir id="resultgroup" x="(dir,results)(prop,country-name)/"/>
+  <mkdir dir="(dir,resultgroup)"/>
+         
+    
+  <!-- find: Besondere Bestimmungen --> 
+  <try_catch>
+    <try>
+      <wdriver 
+        act="find_element"
+        by_xpath="//a[contains(e:o).(e:s)'Besondere Bestimmungen'(e:c)]"
+        return_prop_element_id="besondere"
+        flag="load_all"/>     
+                
+      <welement 
+        act="scroll"
+        id="(prop,besondere)"/>    
+        
+      <welement 
+        id="(prop,besondere)"
+        act="click"    />
+        
+      <file id="result" x="(dir,resultgroup)BMEIA-besondere-bestimmungen.png"/>
+      <wdriver 
+        act="screenshot" 
+        file="(file,result)"/>
+      <ti label="(f,html,b,o)(prop,country-name)(f,html,b,c)" type="file" x="(file,result)"/>      
+    </try>
+    <catch>
+      <ti label=" ">(prop,country-name) nichts besonderes gefunden</ti>
+    </catch>
+  </try_catch>
+      
+      
+  <file id="result-html" x="(dir,resultgroup)BMEIA-landesinfo.html"/> 
+  <wdriver 
+    act="get_pagesource"
+    to_file="(file,result-html)"/>           
+  <ti label=" " type="file" x="(file,result-html)"/>  
+  
+  <file id="result-xml" x="(dir,resultgroup)BMEIA-landesinfo.xml"/> 
+  <wdriver 
+    act="get_xml"
+    to_file="(file,result-xml)"/>           
+  <ti label=" " type="file" x="(file,result-xml)"/>           
+  </try>
+  <catch>
+    <ti label=" ">(prop,country-name) es ist ein problem aufgetreten</ti>
+    <ti lable=" ">(prop,catched_msg)</ti>
+  </catch>
+ </try_catch>        
+
+  <!-- 
+                 
+  <throw>ok end of dev</throw>
+           
+  <loop id="i" max="1" limit="1" xpath="we" spirit="alia">
+        <prop id="widdi" x="(loop,i,@id)"/>
+        <ti>was gefunden (loop,i,@id)</ti>
+        
+        <wdriver 
+          act="build_element"
+          element_id="(prop,widdi)"
+          flag="catch" />  
+     
+        <welement 
+          act="scroll"
+          id="(prop,widdi)" 
+          webdriver_id="(prop,wdid)"/>    
+          
+        <welement id="(prop,widdi)"
+          act="click"         
+          sleep="(f,random,1000,2000)"/>  
+          
+        <wdriver act="find_elements"
+                 by_xpath="//a[contains(e:o).(e:s)'Besondere Bestimmungen'(e:c)]"
+                 new_spirit_id="besondere"
+                 xflag="keep"/>
+                 
+        <loop id="j" max="1" limit="1" xpath="we" spirit="besondere">
+              
+              <ti>was gefunden (loop,j,@id)</ti> 
+                
+              <wdriver 
+                act="build_element"
+                element_id="(loop,j,@id)"
+                flag="catch" />    
+                
+              <welement 
+                act="scroll"
+                id="(loop,j,@id)" 
+                webdriver_id="(prop,wdid)"/>    
+                
+              <welement id="(loop,j,@id)"
+                act="click"         
+                sleep="(f,random,1000,2000)"/>       
+              <dir id="results" x="(dir,pro)results"/>
+              <mkdir dir="(dir,results)"/>
+              <dir id="resultgroup" x="(dir,results)aussenminist-besonderes"/>
+              <mkdir dir="(dir,resultgroup)"/>
+              <file id="result" x="(dir,resultgroup)(prop,country-name).png"/>  
+              <wdriver act="screenshot" file="(file,result)"/>
+              <ti label="(prop,country)" type="file" x="(file,result)"/>                       
+        </loop>
+        <spirit id="besondere" act="close"/>              
+                                           
+  </loop>
+  <spirit id="alia" act="close"/>
+  -->
+
+</job>
+
+
+</jobs>

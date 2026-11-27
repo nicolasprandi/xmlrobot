@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+<job id="?">
+
+  <ti label="App 'Demo'"/>
+  <ti type="ul">Calculating the volumen of a box by entering x(e:s) y(e:s) and z</ti>
+  <ti type="ul">Entering a list of virtual identities</ti>
+</job>
+
+<job id="??">
+
+  <ti label="App 'Demo'"/>
+  <ti type="ul">Calculating the volumen of a box by entering x(e:s) y(e:s) and z</ti>
+  <ti type="ul">Entering a list of virtual identities</ti>
+</job>
+
+<job id="vi-see-after-insert" role="hidden">
+
+  <call_job job="vi-see"/>
+  <ti label="Action"/>                                      
+  <ti type="call_job" job="vi-add" explain="Add another Vi" xlabel=" "/>
+  <ti type="call_job" job="vi-see-all" explain="See the complete list" xlabel=" "/>
+  <!--
+  <ti_hr/>
+  <call_job job="vi-see-all"/> -->
+</job>
+
+<job id="Calculate">
+  <call_job job="tk_calc_edit"/>
+  
+  <prop id="v">(f,mul,(prop,calc_x),(prop,calc_y),(prop,calc_z))</prop>
+  <ti_hr style="2" />
+  <ti label="Volume:">(prop,v)</ti>
+</job>
+
+<job id="Calculate?">
+  <call_job job="tk_calc_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_calc_clear" explain="Clear this data"/>
+</job>
+
+<job id="List">
+
+  <call_job job="vi-see-all"/>
+</job>
+
+<job id="List?">
+
+  <ti>Help for list tbd ...</ti>
+</job>
+
+<!--
+
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="view-block" file_class="view" search="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti type=&quot;call_job&quot;" search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti type=&quot;call_job&quot; flag=&quot;block&quot; " />
+  <update row="2" titel="Zutat intnational" file_class="details" search="&lt;prop id=&quot;label&quot; x=&quot;Zutat: " search_type="text" expectation="1" replace="&lt;prop id=&quot;label&quot; x=&quot;(f,vob,prop,myclassZutat): " />
+  <update row="3" titel="Zutatenbezeichnung" file_class="tkcore" search="&lt;tk label=&quot;Bezeichnung&quot;" search_type="text" expectation="1" replace="&lt;tk label=&quot;(f,vob,prop,mcZutatenbezeichnung)&quot;" />
+  <update row="4" titel="Menge" file_class="tkcore" search="&lt;tk label=&quot;Menge&quot; " search_type="text" expectation="1" replace="&lt;tk label=&quot;(f,vob,prop,mcMenge)&quot; " />
+  <update row="5" titel="Einheit" file_class="tkcore" search="&lt;tk label=&quot;Einheit&quot;" search_type="text" expectation="1" replace="&lt;tk label=&quot;(f,vob,prop,mcEinheit)&quot;" />
+</updates>

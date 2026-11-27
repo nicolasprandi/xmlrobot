@@ -1,0 +1,125 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="check-login"/>
+<call_job job="prolog" />
+
+<job id="TEST-APP" role="hidden">
+  <ti_hr/><ti label="from it" /><ti_hr/>
+  
+  
+  <call_job job="see-folder">
+     <dir id="test" x="(dir,app)"/>
+  </call_job>
+
+  <ti_hr/><ti label="PANORAMA" /><ti_hr/>
+  <call_service job="Goto-Panorama">
+    <dir id="with" x="(dir,app)"/>
+  </call_service>
+</job>
+
+<job id="TEST-PRO" role="hidden">
+  <ti_hr/><ti label="from it" /><ti_hr/>
+  
+  
+  <call_job job="see-folder">
+     <dir id="test" x="(dir,pro)"/>
+  </call_job>
+
+  <ti_hr/><ti label="PANORAMA" /><ti_hr/>
+  <call_service job="Goto-Panorama">
+    <dir id="with" x="(dir,pro)"/>
+  </call_service>
+</job>
+
+<job id="TEST-SERVICES" role="hidden">
+  <ti_hr/><ti label="from it" /><ti_hr/>
+  
+  
+  <call_job job="see-folder">
+     <dir id="test" x="(dir,services)"/>
+  </call_job>
+
+  <ti_hr/><ti label="PANORAMA" /><ti_hr/>
+  <call_service job="Goto-Panorama">
+    <dir id="with" x="(dir,services)"/>
+  </call_service>
+</job>
+
+<job id="TEST-INFO" role="hidden">
+  <call_service job="System Info" />
+</job>
+
+
+<job id="see-folder" role="hidden">
+  <need>(dir,test)</need>
+  <file id="s" x="(dir,filetemp)xxx.xml"/>
+  <dir id="s" x="(dir,test)"/>
+  <scan out="(file,s)" dir="(dir,s)" field="fn"/>
+  <ti type="file" x="(file,s)" />
+  <ti_break/>
+  <ti label="Files"/>
+  <loop id="b" xml="(file,s)" xpath="//file">
+    <ti type="file">(loop,b,@fn)</ti>
+  </loop>
+  <ti_break/>
+  <ti label="Dirs"/>
+  <loop id="b" xml="(file,s)" xpath="//dir">
+    <ti type="dir">(dir,s)(loop,b,@ipath)(loop,b)</ti>
+  </loop>  
+  <ti_break/>
+</job>
+<job id="test-A" role="hidden">
+  <ti_hr/><ti label="APP" /><ti_hr/>
+  <call_service job="Goto-Panorama">
+    <dir id="with" x="(dir,app)"/>
+  </call_service>
+  <ti_hr/><ti label="PROJECT" /><ti_hr/>
+  
+  <call_service job="Goto-Panorama">
+    <dir id="with" x="(dir,pro)"/>
+  </call_service>  
+  
+  <ti_hr/><ti label="SERVICES" /><ti_hr/>
+  
+  
+  <call_service job="Goto-Panorama">
+    <dir id="with" x="(dir,services)"/>
+  </call_service>    
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

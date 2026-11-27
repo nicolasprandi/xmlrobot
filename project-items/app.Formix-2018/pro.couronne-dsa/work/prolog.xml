@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="dsas">(dir,pro)dsas.xml</file>
+<when test="(f,not,(f,exists_file,(file,dsas)))">
+<create_file out="(file,dsas)">&lt;dsas/&gt;</create_file>
+<i>Created: (file,dsas)</i>
+</when>
+<prop id="dsas_offset">./</prop>
+<prop id="dsas_offset_label"/>
+<prop id="dsas_offset_new_key">//</prop>
+<prop id="dsas_sort_attribute"/>
+<prop id="dsas_sort_number"/>
+<prop id="dsas_sort_ignore_case"/>
+<prop id="dsas_sort_desc"/>
+<prop id="dsas_where"/>
+<prop id="dsas_return_job">dsa-see-all</prop>
+</prolog>

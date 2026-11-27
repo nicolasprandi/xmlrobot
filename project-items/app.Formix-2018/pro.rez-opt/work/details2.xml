@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="opt-see-more">
+<need>(prop,opt_key)</need>
+<call_job job="opt-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="opts_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,opt_bez),30)(f,html,bold,close)(f,when,(f,has,(prop,opts_offset_label)), - (prop,opts_offset_label),)"/>
+<call_job job="opt-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="Bearbeite Option" job="opt-edit">
+<prop id="opt_key">(prop,opt_key)</prop>
+<file id="opts">(file,opts)</file>
+<prop id="opts_offset">(prop,opts_offset)</prop>
+<prop id="opts_offset_label">(prop,opts_offset_label)</prop>
+<prop id="opts_offset_new_key">(prop,opts_offset_new_key)</prop>
+<prop id="opts_sort_attribute">(prop,opts_sort_attribute)</prop>
+<prop id="opts_sort_number">(prop,opts_sort_number)</prop>
+<prop id="opts_where">(prop,opts_where)</prop>
+<prop id="opts_return_job">(prop,opts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<prop id="zut_key">(prop,zut_key)</prop>
+</ti>
+</ti>
+</job>

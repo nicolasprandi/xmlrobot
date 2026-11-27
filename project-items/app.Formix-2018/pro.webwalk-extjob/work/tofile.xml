@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extjob-write">
+<need>(prop,extjob_key) (prop,isAdd)</need>
+<need default="./">(prop,extjobs_offset)</need>
+<spirit act="open" id="extjobs_spirit_tc" xml="(file,extjobs)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,extjobs_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,extjobs_offset),0,(f,sub,(f,len,(prop,extjobs_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,extjobs_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in_begin" id="extjobs_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;extjob row="(prop,extjob_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extjobs_spirit_tc" where="(prop,extjobs_offset)extjob[@row='(prop,extjob_key)']" attribute="jobid" value="(f,vob,prop,extjob_jobid)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extjobs_spirit_tc" where="(prop,extjobs_offset)extjob[@row='(prop,extjob_key)']" attribute="desc" value="(f,vob,prop,extjob_desc)"/>
+<spirit act="close" flag="save pretty" id="extjobs_spirit_tc"/>
+</job>

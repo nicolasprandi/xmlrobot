@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="test-1">
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+<job id="?">
+  <ti>Application Help from coding sample</ti>
+</job>
+
+<job id="??">
+  <ti>Project Info from coding sample</ti>
+</job>
+
+<job id="sample_ant" tip="Sample for using ANT">
+  <!-- copy the current takeoff-file to the temp-directory
+  use 'overwrite' to make sure that ant copies cause 
+  by default ant copies only if the file is 'newer'-->
+  <copy file="(file,takeoff)" intodir="(dir,filetemp)"/>
+
+  
+  <ti label="Did Copy">
+    <ti label="From:" 
+        type="file" 
+        x="(file,takeoff)"/>
+    <ti label="To:" 
+        type="file" 
+        x="(dir,filetemp)(f,name_of_file,(file,takeoff))"/>
+    <ti label="Ant-Manual:" 
+        type="web" 
+        x="https://ant.apache.org/manual/"/>
+  </ti>
+</job>
+<job id="sample_ask" tip="Sample for using ASK">
+
+  <!-- define file -->
+  <file id="ask" 
+        x="(dir,filetemp)ask.xml" /> 
+  
+  <!-- ask for system information -->
+  <ask what="apps services vars" 
+       out="(file,ask)" 
+       style="natural"/>
+  
+  <!-- filelink -->
+  <ti type="file" 
+      label="Ask:" 
+      x="(file,ask)"/>
+</job>
+<job id="sample_create_file" tip="Sample for using: CREATE_FILE">
+
+  <!-- file to be written -->
+  <file id="memo" x="(dir,filetemp)summer.xml" />
+  
+  <!-- some variable to be written in the xml -->
+  <prop id="name" x="&lt;Hello Moon&gt;" />
+  
+  <!-- creating the file. 
+  Exported variables have to be surrounded with (x,....) 
+  so xml-entities are replaced.
+  cause the file-creation itself knows nothing about xml -->
+  <create_file out="(file,memo)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <memo what="is it">(x,(prop,name))</memo>
+  ]]></create_file>
+  
+  <!-- a link to the file on the terminal -->
+  <ti label="Memo" type="file" x="(file,memo)"/>
+</job>
+
+<job id="sample_xml_loops" tip="Sample for using: XML LOOPS">
+
+  <!-- get a directory from user -->
+  <tk 
+    type="dir" 
+    id="what" 
+    label="Directory to scan" 
+    flag="nono" 
+    tip="Directory which files are going to be listed"/>
+  
+  <!-- define file, 
+  scan that directory (only first level), 
+  print filelink -->
+  
+  <file 
+    id="scan" 
+    x="(dir,filetemp)scan.xml"/>
+  
+  <scan 
+    out="(file,scan)" 
+    dir="(dir,what)" 
+    level_limit="1" 
+    field="fn lm"/> 
+  
+  <ti 
+    type="file" 
+    x="(file,scan)" 
+    label="Scan:"/>  
+  
+  <!-- do the loop and print every file, 
+  sort by filename and ignore the cases -->
+  
+  <ti label="Loop with PLAIN xml-xpath-loop" />
+  <loop 
+    id="sx" 
+    xml="(file,scan)" 
+    xpath="file" 
+    sort="text" 
+    ignore_case="text"> 
+    <ti 
+      label="(loop,sx,#i)" 
+      type="file" 
+      x="(loop,sx,@fn)"/> 
+  </loop>
+  
+  <ti label="Loop with COOP xml-xpath-loop" />
+  <loop_xml 
+    act="open" 
+    id="sy" xml="(file,scan)" 
+    xpath="file" 
+    sort="text" 
+    ignore_case="text" />
+  
+  <loop 
+    id="while-1" 
+    while="()(f,loop_xml,sy,has_next?)()">
+    <loop_xml act="next" id="sy" />  
+    <ti 
+      label="(f,loop_xml,sy,#i)" 
+      x="(f,loop_xml,sy,@fn)" 
+      type="file"/>
+  </loop>
+  
+  <loop_xml act="close" id="sy" />
+</job>
+
+<job id="sample_panorama" tip="Sample for using: PANORAMA">
+
+  <call_service job="Goto-Panorama" flag="silent">
+    <dir id="with" x="(dir,services)"/>
+  </call_service>
+</job>
+
+<job id="sample_xsl" tip="Sample for using: XSL">
+
+  <!-- define files -->
+  <file id="ask" x="(dir,filetemp)ask.xml" />
+  <file id="xsl" x="(dir,filetemp)xsl.xsl" />
+  <file id="result" x="(dir,pro)result.xml" /> 
+  
+  <!-- ask for system information -->
+  <ask what="apps services vars" out="(file,ask)" style="natural" />
+  <ti type="file" x="(file,ask)" label="Ask:"/>
+  
+  <!-- creating the xsl-file, 
+  normally you dont need this cause its already an xsl file somewhere --> 
+  <create_file out="(file,xsl)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:param name="day"/>
+  <xsl:output method="xml"/>
+  
+  <xsl:template match="/">
+    <xsl:apply-templates select="ws"/>
+  </xsl:template>
+  
+  <xsl:template match="ws">
+    <ws>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="apps"/>
+      <xsl:apply-templates select="services"/>
+    </ws>
+  </xsl:template>
+  
+  <xsl:template match="apps">
+    <apps>
+      <xsl:copy-of select="@*"/>
+      <xsl:attribute name="day">
+        <xsl:value-of select="$day" />
+      </xsl:attribute>
+      <xsl:copy-of select="@*|node(e:o)(e:c)|text(e:o)(e:c)"/>
+    </apps>
+  </xsl:template>
+  
+  <xsl:template match="services">
+    <services>
+      <xsl:copy-of select="@*|node(e:o)(e:c)|text(e:o)(e:c)"/>
+    </services>
+  </xsl:template>
+  
+  </xsl:stylesheet>
+  ]]></create_file>
+  <ti type="file" x="(file,xsl)" label="Xsl:"/>
+  
+  <!-- perform xsl -->
+  <xslt 
+    xml="(file,ask)" 
+    xsl="(file,xsl)" 
+    out="(file,result)"> 
+    <params>day='(f,xslp,sunday)'</params> 
+  </xslt>
+  
+  <!-- filelink to results -->
+  <ti type="file" x="(file,result)" label="Result:"/>
+</job>
+
+</jobs>

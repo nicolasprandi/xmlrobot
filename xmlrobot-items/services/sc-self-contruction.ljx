@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.
+           <interpreter watch="1"/> 
+                           -->
+<jobs>
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">ServicES out of service</throw>
+<job id="self-contruction" role="hidden"  joblevel="ws">
+  
+
+  <choose>
+    <when test="(f,not,(f,starts_with,(dir,temp),ram:///))">
+      <dir id="mytemp">(dir,temp)</dir>
+    </when>
+    <otherwise>
+      <dir id="mytemp">(dir,filetemp)</dir>
+    </otherwise>
+  </choose>
+ 
+  
+  <file id="scx-apps-1">(dir,mytemp)scx-apps-1.xml</file>
+  <file id="scx-apps-2">(dir,mytemp)scx-apps-2.xml</file>
+  
+  <ask what="apps" out="(file,scx-apps-1)" style="natural"/>
+
+  <xslt 
+      xml="(file,scx-apps-1)" 
+      out="(file,scx-apps-2)">
+      <inline attribute="xsl" ><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//apps"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="app">
+   <sel><xsl:value-of select="@id"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>      
+
+  <call_service job="go-joe-read">
+    <file id="joe-in-store">(dir,status)self-contruction.xml</file>
+    <prop id="joe-in-regex">sc-.*</prop>  
+  </call_service>
+  
+  <tk label="Self-Construction" flag="sum_only">
+      <tk id="sc-java-main" label="Java Main" type="file" extension=".jar" tip="Java-main" x="(f,info,sys_jar)"/>
+      <tk id="sc-services" label="Services" type="dir" tip="Services Directory" x="(dir,services)"/>
+      <tk type="msg">Ant</tk>
+      <tk id="sc-java-ant" label="Ant-Lib-Jar" type="file" extension=".jar" tip="Ant-Jar-Lib" />
+      <tk id="sc-ant-target" label="Ant-File-Name" tip="This is the name of the lib in the zip. &#xA;Reconquista: &#xA;[ant-lib.jar] &#xA;Echnaton: &#xA;[ant-4-xmlrobot.jar]" x="ant-lib.jar"/>
+      <tk type="msg">Poi</tk>
+      <tk id="sc-java-poi" label="Poi-Lib-Jar" type="file" extension=".jar" tip="Poi-Jar-Lib" />
+      <tk id="sc-poi-target" label="Pit-File-Name" tip="This is the name of the lib in the zip. &#xA;Reconquista: &#xA;[poi-lib.jar] &#xA;Echnaton: &#xA;[poi-4-xmlrobot.jar]" x="poi-lib.jar"/>      
+      <tk type="msg">Apps</tk>
+      <tk type="sel" id="sc-apps" flag="multi" xml="(file,scx-apps-2)"/>
+      
+      <tk type="msg">Takeoffs</tk>
+
+      
+      <tk id="sc-aux-takeoffs" label="List of TakeOff" type="dir" tip="Just a takeoff-file" />
+      
+      <tk type="msg">Plain Files</tk>      
+      <tk id="sc-aux-takeoff" label="The Takeoff" type="file" tip="Just a takeoff-file" />
+      <tk id="sc-aux-batch" label="Batch-File" type="file" tip="Just a batch-file" />        
+      <tk type="msg">Production</tk>
+      <tk id="sc-result" label="Result-Jar" type="file" extension=".jar" tip="To produce" flag="save write"/>
+    
+      <tk id="sc-produce" label="Produce-Now" type="bool" x="1"/>
+  </tk>
+  
+  <call_service job="go-joe-write">
+    <file id="joe-in-store">(dir,status)self-contruction.xml</file>
+    <prop id="joe-in-regex">sc-.*</prop>  
+  </call_service>  
+  
+
+  <when test="(f,not,(prop,sc-produce))">
+    <tp>not producing</tp>
+  </when>
+  
+  <when test="(prop,sc-produce)">
+    
+    <dir id="sc-prep">(dir,mytemp)sc-production(prop,fs)</dir>
+    
+    <tp>Unzipping (file,sc-java-main)</tp>
+    <ant  level="info">
+      <mkdir dir="(f,dir,classic,(dir,sc-prep))"/>
+      <unzip 
+        src="(f,file,classic,(file,sc-java-main))" 
+        dest="(f,dir,classic,(dir,sc-prep))"/>  
+    </ant>
+    
+    <dir id="sc-target-libs">(dir,sc-prep)resources(prop,fs)libs(prop,fs)</dir>
+    <dir id="sc-target-apps">(dir,sc-prep)resources(prop,fs)service_apps(prop,fs)</dir>
+    <dir id="sc-target-services">(dir,sc-prep)resources(prop,fs)services(prop,fs)</dir>
+    <tp>Doing Libs</tp>
+    <when test="(f,exists_dir,(dir,sc-target-libs))">
+      <tp>Clearing Libs-Folder</tp>
+      <ant level="info">
+        <delete dir="(f,dir,classic,(dir,sc-target-libs))"/>
+      </ant>
+    </when>
+    <when test="(f,has,file,sc-java-ant)">
+      <tp>Copy ant-lib</tp>
+      <copy file="(file,sc-java-ant)" tofile="(dir,sc-target-libs)(prop,sc-ant-target)"/>    
+    </when>
+    <when test="(f,has,file,sc-java-poi)">
+      <tp>Copy poi-lib</tp>
+      <copy file="(file,sc-java-poi)" tofile="(dir,sc-target-libs)(prop,sc-poi-target)"/>    
+    </when>    
+    
+    <tp>Doing Services</tp>
+    <when test="(f,exists_dir,(dir,sc-target-services))">
+      <tp>Clearing services-Folder</tp>
+      <ant level="info">
+        <delete dir="(f,dir,classic,(dir,sc-target-services))"/>
+      </ant>
+    </when>    
+    
+    <when test="(f,has,dir,sc-services)">
+      <tp>Copy services</tp>
+      <copy uri="(dir,sc-services)" touri="(dir,sc-target-services)"/>    
+    </when>    
+    
+    <tp>Doing apps</tp>
+    <when test="(f,exists_dir,(dir,sc-target-apps))">
+      <tp>Clearing apps-Folder</tp>
+      <ant level="info">
+        <delete dir="(f,dir,classic,(dir,sc-target-apps))"/>
+      </ant>
+    </when>      
+    <when test="(f,has,prop,sc-apps)">
+      <file id="sc-applist" x="(dir,mytemp)applist.xml"/>
+      <split
+        text="(prop,sc-apps)"
+        out="(file,sc-applist)" />  
+      <loop id="app" xml="(file,sc-applist)" xpath="split">
+
+        <tp>copy app (loop,app,@x)</tp>
+
+       
+        <call_service job="alternative-copy">
+          <dir id="copy-from">(f,ask,app_dir,(loop,app,@x))</dir>
+          <dir id="copy-to">(dir,sc-target-apps)app.(loop,app,@x)</dir>
+          <prop id="copy-type">app</prop>
+        </call_service>
+      
+      </loop>
+    </when>  
+    <when test="(f,has,dir,sc-aux-takeoffs)">
+      <tp>Doing takeoffs</tp>
+      <copy 
+        uri="(dir,sc-aux-takeoffs)"
+        touri="(dir,sc-prep)resources(prop,fs)"/>
+    </when>
+    
+    <mkdir dir="(dir,sc-prep)resources(prop,fs)third-party-licenses"/>
+    
+    <tp>Doing zip</tp>
+    
+    <choose>
+      <when test="(f,not,(f,starts_with,(dir,temp),ram:///))">
+        <ant level="info"> 
+          <zip destfile="(f,file,classic,(file,sc-result))" basedir="(f,dir,classic,(dir,sc-prep))" /> 
+        </ant>
+      </when>
+      <otherwise>
+        <zip destfile="(file,sc-result)" basedir="(dir,sc-prep)" /> 
+      </otherwise>
+    </choose>
+      
+
+    
+
+     
+    <when test="(f,has,file,sc-aux-batch)">
+      <copy 
+        file="(file,sc-aux-batch)"
+        tofile="(f,dir_of_file,(file,sc-result))(f,name_of_file,(file,sc-aux-batch))"/>
+    </when>    
+    
+    <when test="(f,has,file,sc-aux-takeoff)">
+      <copy 
+        file="(file,sc-aux-takeoff)"
+        tofile="(f,dir_of_file,(file,sc-result))(f,name_of_file,(file,sc-aux-takeoff))"/>
+    </when>        
+    <ti label="Result"/>
+    <ti label="Result" type="file" x="(file,sc-result)"/>
+  
+  </when>
+  
+  
+  
+      
+
+  
+</job>
+
+
+</jobs>

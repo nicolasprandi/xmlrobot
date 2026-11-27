@@ -1,0 +1,1 @@
+select * from import.tip order by wann desc;

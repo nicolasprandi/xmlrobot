@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="insert_in_begin" file_class="tofile" search="how=&quot;insert_in&quot;" search_type="text" expectation="1" replace="how=&quot;insert_in_begin&quot;" />
+  <update row="2" titel="datafile weg" file_class="view" search="&lt;ti test=&quot;(f,not,(f,has,(loop,kjob_loop,@datafile)))&quot;/&gt;" search_type="text" expectation="1" replace=" " off="1" />
+  <update row="3" titel="folder fuer nicht beides" file_class="view" search="&lt;ti test=&quot;(f,not,(f,has,(loop,kjob_loop,@datafolder)))&quot;/&gt;" search_type="text" expectation="1" replace="&lt;ti test=&quot;(f,and,(f,not,(f,has,(loop,kjob_loop,@datafolder))),(f,not,(f,has,(loop,kjob_loop,@datafile))))&quot;/&gt;" off="1" />
+  <update row="4" titel="translator-tk" file_class="tkcore" search="id=&quot;kjob-tk&quot;&gt;" search_type="text" expectation="1" replace="id=&quot;kjob-tk&quot;&gt;&#xA;&lt;call_job job=&quot;tr_kjob&quot; /&gt;" off="1" />
+  <update row="5" titel="translator-view" file_class="view" search="role=&quot;hidden&quot;&gt;" search_type="text" expectation="1" replace="role=&quot;hidden&quot;&gt;&#xA;&lt;call_job job=&quot;tr_kjob&quot; /&gt;" off="1" />
+  <update row="6" titel="rule filename" file_class="tkcore" search="id=&quot;kjob_id&quot;" search_type="text" expectation="1" replace="id=&quot;kjob_id&quot; rule=&quot;filename&quot;" off="1" />
+</updates>

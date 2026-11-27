@@ -1,0 +1,1749 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2021 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+
+<call_job job="prolog" />                                                                
+<job id="report_ti_v2" joblevel="app" role="hidden">
+
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Panorama is out of service due to end of license</throw>
+  
+  <call_job job="tr_rep"/>
+  <exclude file="(dir,app)specials.xml" regex="sumsign"/>
+  <!-- <prop id="sumsign">(f,when,(f,implement,online),SUM,&#8721;)</prop>  -->
+  <tx_style ti_border="0"/>
+                           
+  <!-- 
+  
+  <interpreter turbo="1"/>   -->
+
+  <prop id="break_after_group">0</prop>        <!-- breaker: -->
+  <need>(prop,et_report_ti_dir_level)</need> 
+  <need>(prop,et_scan_policy)</need>
+  <need default="1">(prop,do_sums_at_beginning)</need>
+  <need default="1">(prop,see_dir_size)</need>
+  
+  <need default="2">(prop,file_highlight)</need>
+  
+  <choose>
+    <when test="(f,eq,0,(prop,file_highlight))">
+      <prop id="flag_file_bold"> </prop>
+    </when>
+    <otherwise>
+      <prop id="flag_file_bold"> focus </prop>
+      
+    </otherwise>
+  </choose>
+  
+  <need default="1">(prop,do_groups)</need>
+  
+  <need default="1">(prop,do_sum_extensions)</need>
+  <need default="1">(prop,do_sum_group)</need>                   
+  <need default="1">(prop,do_sum_group_top)</need>
+  <need default="1">(prop,do_file)</need>
+  <need default="1">(prop,do_file_size)</need>
+  <need default="0">(prop,do_file_specials)</need>
+  <prop id="do_file_specials">(f,and,(prop,do_file_specials),(f,not,(f,guicontroller,general,is-web,)))</prop>
+  <!-- <ti>do_file_specials=(prop,do_file_specials)</ti> -->
+  <choose>
+    <when test="(prop,do_file_specials)">
+      <prop id="flow"></prop>
+    </when>
+    <otherwise>
+      <prop id="flow"> flow </prop>
+    </otherwise>
+  </choose>
+  <prop id="len">40</prop>
+  <prop id="len2">40</prop>
+
+  <!-- top: totals, dirs -->
+  <need default="0">(prop,do_top_total_only)</need>
+  <need default="0">(prop,do_top_totals)</need>
+  <need default="0">(prop,do_top_totals_sum)</need>
+  <need default="@kb">(prop,do_top_totals_sort)</need>
+  <need default="@kb">(prop,do_top_totals_desc)</need>
+  <need default="0">(prop,do_top_sub_dirs)</need>
+  <need default="0">(prop,do_top_big_dirs)</need>
+  <need default="20">(prop,top_big_limit)</need>
+  <need default="0">(prop,do_top_fancy_dirs)</need>
+  <need default="200">(prop,top_fancy_limit)</need>
+  
+  <!-- total_only -->
+  <need default="1">(prop,do_total_only)</need>
+  
+  <!-- totals -->
+  <need default="1">(prop,do_totals)</need>
+  <need default="1">(prop,do_totals_sum)</need>  
+  <need default=" ">(prop,do_totals_sort)</need>
+  <need default=" ">(prop,do_totals_desc)</need>  
+  
+  <need default="1">(prop,do_sub_dirs)</need>
+  <need default="1">(prop,do_big_dirs)</need>
+  <need default="20">(prop,big_limit)</need>
+  <need default="1">(prop,do_fancy_dirs)</need>
+  <need default="200">(prop,fancy_limit)</need>  
+  
+  
+  <need default="@kb @pre">(prop,attr_file_sort)</need>
+  <need default="@kb">(prop,attr_file_number)</need>
+  <need default="@pre">(prop,attr_file_ignore_case)</need>
+  <need default="9999">(prop,attr_file_limit)</need> 
+  
+  <need default="@sum_kb">(prop,attr_extension_sort)</need>
+  <need default="@sum_kb">(prop,attr_extension_number)</need>
+  <need default="@sum_kb">(prop,attr_extension_desc)</need> 
+  
+  <call_job job="prepare_offset"/>  
+  <call_job job="get-scan8"/>
+  
+  <prop id="next_dir_level">(f,add,1,(prop,max_dir_level))</prop> 
+  <ti label="Greetings from report_ti" test="0">
+    <ti type="file" label="Scan">(file,scan8)</ti>
+    <ti type="file" label="Org">(file,org3)</ti>
+    <ti label="max_dir_level">(prop,max_dir_level)</ti>
+    <ti label="next_dir_level">(prop,next_dir_level)</ti>
+  </ti>  
+
+  <prop id="is-web" x="(f,guicontroller,general,is-web,)"/>
+  <prop id="is-not-web" x="(f,not,(prop,is-web))"/>
+  <prop id="is-choose" x="(f,and,(f,or,(f,guicontroller,choose,dir,is-on),(f,guicontroller,choose,file,is-on)),(prop,is-web))" />
+
+
+ 
+  <!-- 
+  
+
+
+      <prop id="is-web" x="1"/>
+  <prop id="is-not-web" x="0"/>
+  <prop id="is-choose" x="1" />    
+  
+  
+    <prop id="is-web" x="1"/>
+  <prop id="is-not-web" x="0"/>
+  <prop id="is-choose" x="1" />  
+  <ti>is-choose = (prop,is-choose)</ti>
+  <ti>file-flag-choose = (prop,file-flag-choose)</ti>
+  -->
+  <prop id="file-flag-choose" x="(f,when,(f,guicontroller,choose,file,is-on), choose ,)" flag="lock"/>
+  
+  <prop id="dir-flag-choose" x="(f,when,(f,guicontroller,choose,dir,is-on), choose ,)" flag="lock"/>
+  
+  <prop id="is-naked" x="(f,or,(f,guicontroller,choose,file,is-on),(f,guicontroller,choose,dir,is-on))" />
+  <!-- <ti>max_dir_level = (prop,max_dir_level)</ti>  -->
+  <prop id="is-naked" x="(f,and,(f,implement,online),(f,eq_num,1,(prop,max_dir_level)))" />
+  
+  <prop id="dirs-go-right">(f,or,(prop,is-naked),(f,not,(f,implement,online)))</prop>
+
+  <prop id="naked-flag"></prop>
+
+  <prop id="gen-file-label"></prop>
+
+  <when test="(prop,is-naked)">
+
+    <prop id="naked-flag">naked</prop>
+    <prop id="gen-file-label">  </prop>
+  </when>
+  
+  <choose>
+    <when test="(prop,is-web)">
+      <prop id="gen-dir-prefix"></prop>
+    </when>
+    <otherwise>
+      <prop id="gen-dir-prefix">&gt;&gt; </prop>
+    </otherwise>
+  
+  </choose>
+
+
+  
+  <spirit id="scan" act="open" xml="(file,scan8)" flag="nuevo"/>
+  <spirit id="org" act="open" xml="(file,org3)" flag="nuevo"/>
+  <!-- 
+  <dir id="home">(f,xpath,(file,scan8),.,@dir)(prop,et_offset_ipath)</dir>
+  <dir id="home_original">(f,xpath,(file,scan8),.,@dir)</dir>
+  -->
+  <dir id="home2">(f,spirit,scan,@dir)(prop,et_offset_ipath)</dir>
+  <dir id="home_original">(f,spirit,scan,@dir)</dir>
+  
+  
+  <call_job job="tk_visual_read"/>
+      
+  <!-- link for the upper directory -->
+  <prop id="len_name">(f,len,(f,name_of_dir,(dir,home2)))</prop>
+  <prop id="do-see-the-dir-chooser">0</prop>
+  <call_job job="choose-1" test="(prop,is-choose)"/>
+  
+  <prop id="top_key"></prop>
+  <choose>
+  <when test="(f,eq,(prop,et_scan_policy),image)">
+    <prop id="top_key"> [img (f,sub,(prop,offset_is_at_level),1)+(prop,et_report_ti_dir_level)]</prop>
+    <ti label=" " 
+    key="[image]" test="0"
+    >(dir,et_scan_dir)</ti>
+  </when>
+  <when test="(f,gt,(prop,et_report_ti_dir_level),1)">
+    <prop id="top_key"> [(prop,et_report_ti_dir_level) levels]</prop>
+  </when>
+  </choose>               
+  
+  
+
+                                                         
+  <prop id="upper_ok">1</prop>
+  <dump flag="ti" test="0"/>
+
+  <choose>
+
+    <when test="(f,eq,(prop,et_scan_policy),life)">
+      <prop id="upper_redo_ipath"></prop>  
+    </when>    
+    <when test="(f,eq,(prop,et_offset_ipath),)">
+      
+      <prop id="upper_redo_ipath"></prop>  
+      <prop id="upper_ok">0</prop>
+    </when>
+    <otherwise>
+      <try_catch>
+        <try>
+          <prop id="upper_redo_ipath">(f,spirit,scan,(prop,offset_ipath2),@upper_ipath)</prop> 
+          <!--
+          <prop id="upper_redo_ipath">(f,xpath,(file,scan8),(prop,offset_ipath2),@upper_ipath)</prop> 
+          -->
+        </try>
+        <catch>
+          <prop id="upper_redo_ipath"></prop> 
+          <prop id="upper_ok">1</prop>
+        </catch>
+      </try_catch>
+    </otherwise>
+  </choose>  
+  
+  <!-- <echo type="prop" id="upper_redo_ipath"/> -->
+  <!-- <echo type="prop" id="upper_ok"/> https://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references -->
+  
+  <choose>
+  
+    <when test="(prop,is-web)">
+    
+
+      <prop id="logo-dir-info">(prop,_rep_)</prop>
+      <!-- <prop id="logo-dir-info">Detailsi &#8489;&#8593;&#8595;&#8834;&#8847;&#9021;&#9651;&#9652;&#10773;</prop> -->
+      <prop id="logo-add-folder">(prop,_rep_)</prop>
+    
+    </when>
+    
+    <otherwise>
+    
+
+      
+
+      <prop id="logo-dir-info"></prop>  
+      <!-- <prop id="logo-dir-info">[  Details ][   &#402;i   ]</prop> -->
+      
+      <prop id="logo-add-folder"></prop>    
+    
+    </otherwise>
+  
+  </choose>
+  <!-- 
+  <choose>
+    <when test="0" xtest="(prop,is-not-web)">
+    
+    <try_catch>
+      <try>
+        <choose>
+          <when test="(f,and,(prop,upper_ok),(f,exists_dir,(f,dir_of_dir,(dir,home2))))">
+            <ti type="call_job"  
+                  label=" "
+                  job ="Panorama Directory" 
+                  explain="^^____UP____^^"
+                  explainx="&lt;&lt;&#160;UP&#160;&#160;"
+                  xexplain="(f,html,big,open)&#160;&#160;&#160;&#8657;&#160;&#160;&#160;(f,html,big,close)"
+                  flag="no_arrow">                     
+                  <dir  id="redo_dir" >(f,dir_of_dir,(dir,home2))</dir> 
+                  <prop id="redo_ipath" >(prop,upper_redo_ipath)</prop>          
+            </ti>    
+          </when>
+          <otherwise>
+            <ti  x=" " key="Root"/>
+          </otherwise>
+        </choose>
+       
+        <ti 
+        type="(f,when,(f,guicontroller,choose,file,is-on),text,dir)" 
+        key="(prop,top_key)" flag="wrap">(dir,home2)</ti>
+        <call_job job="see_locs"/>
+      
+               
+      </try>
+      <catch>
+        <ti label="Not Granted">upper of </ti>
+      </catch>
+    </try_catch>
+    
+    </when>
+    <otherwise>
+    -->
+      <!-- 
+      <choose>
+        <when test="(f,and,(prop,upper_ok),(f,exists_dir,(f,dir_of_dir,(dir,home2))))">
+          <ti type="call_job"  
+                label=" "
+                job ="Panorama Directory" 
+                explain="^^____UP____^^"
+                explainx="&lt;&lt;&#160;UP&#160;&#160;"
+                xexplain="(f,html,big,open)&#160;&#160;&#160;&#8657;&#160;&#160;&#160;(f,html,big,close)"
+                flag="no_arrow">                     
+                <dir  id="redo_dir" >(f,dir_of_dir,(dir,home2))</dir> 
+                <prop id="redo_ipath" >(prop,upper_redo_ipath)</prop>          
+          </ti>    
+        </when>
+        <otherwise>
+          <ti  x=" " key="Root"/>
+        </otherwise>
+      </choose>
+      
+      <ti label="(f,html,big,open)(f,name_of_dir,(dir,home2))(f,html,big,close)" 
+      
+      key="(prop,top_key)" >(dir,home2)</ti> 
+      -->
+      <ti_break class_table="panoMain"/>
+      <prop id="hats">(f,and,(prop,upper_ok),(f,exists_dir,(f,dir_of_dir,(dir,home2))))</prop>  
+
+      <call_job job="see_locs2"/> 
+      <!-- flag="(f,when,(prop,is-choose),block,)" -->    
+      <prop id="file-min-with">60px</prop>
+      
+      <ti_break class_table="tabNavigator"/>
+    
+      <ti type="rec" 
+          key="(prop,top_key)">
+          <ti type="menu" span="10" align="right">
+            
+          <!--<ti min_width="60px"> </ti>   <ti test="(f,not,(prop,is-naked))">  </ti>   --> 
+          <ti type="call_service" job="open_dir" explain=" O " flag="silent">
+            <dir  id="with" >(dir,home2)</dir>
+          </ti>
+           <ti type="call_job"  
+                job ="web-dir-action-add" 
+                explain="(prop,_rep_adddir)"
+                flag="button obutton "
+                class="panoDirAddButton"
+                test="(f,interpreter,has_priv,opDelete)">                     
+                <dir  id="with" >(dir,home2)</dir>          
+          </ti>   
+   
+          <ti type="call_job"  
+                job ="web-dir-action-info" 
+                explain="(prop,_rep_dirinfo)"
+                flag="button "
+                class="panoDirInfoButton">                     
+                <dir  id="with" >(dir,home2)</dir>          
+          </ti>    
+                                   
+
+          
+          <ti type="call_job"  
+                test="(prop,hats)"
+                job ="Panorama Directory" 
+                explain="(prop,_rep_upperdir)"
+                flag="button obutton"
+                class="panoUpButton"
+                min_width="50px">                     
+                <dir  id="redo_dir" >(f,dir_of_dir,(dir,home2))</dir> 
+                <prop id="redo_ipath" >(prop,upper_redo_ipath)</prop>          
+          </ti>          
+          
+          </ti> 
+                     
+     
+      </ti>
+      <ti_break/> 
+      <ti type="rec" >
+          <ti flag="button obutton" class="panoThisDir" >(f,html,big,open)(f,html,b,o)(f,name_of_dir,(dir,home2))(f,html,b,c)(f,html,big,close)</ti>
+          
+      <!--       
+      </ti>   
+      
+      <ti type="rec" test="(f,has,prop,the-dir-location)">     -->
+       
+          
+          <ti flag="wrap button obutton" test="(f,implement,online)"  class="panoDirLocator">(prop,the-dir-location)</ti> 
+          
+          <ti flag="wrap silent" test="(f,not,(f,implement,online))"   
+              type="call_service" job="open_dir" explain="(prop,the-dir-location)">
+                <dir id="with">(dir,home2)</dir>
+          </ti>              
+      </ti>          
+      <ti_break/>     
+      <choose>
+        <when test="(prop,do-see-the-dir-chooser)">
+            <ti_space height="5px" /> 
+          
+            <ti type="dir" x="(dir,home2)" flag="blind choose label_right button_choose  button_plain " class_plain="dirChooseAcceptPlain" explain="xxChoose: " class_choose="panoChooseDirAccept"    call_choose="(prop,_rep_select_dir) (f,html,b,o)(f,name_of_dir,(dir,home2))(f,html,b,c)"/> 
+        
+            <ti_space height="7px" />  
+            <ti_break/>    
+        </when>
+        <otherwise>
+          <ti_space height="7px" /> 
+        </otherwise>
+      </choose>
+      
+
+
+      <!-- <ti flag="wrap">(dir,home2)</ti> 
+      
+      <ti_break/>       -->
+<!-- 
+    </otherwise>
+  
+  </choose>        -->
+  
+ 
+  <!-- 
+  <ti type="call_service" job="see_dir_actions" xtest="(f,and,1,(f,exists_dir,(f,dir_of_dir,(dir,home2))))">
+    <dir id="with" x="(dir,home2)"/>
+  </ti>
+  -->
+
+  
+  <!-- <call_job job="choose-1"/> -->
+      
+  <ti_break test="(prop,is-not-web)"/>         <!-- breaker: -->
+  
+  <!-- preparing total -->
+  <prop id="tot_c">-1</prop>
+  <prop id="tot_c" test="(f,spirit,scan,exists?,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1],@c)">(f,spirit,scan,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1],@c)</prop>
+
+  <prop id="tot_kb">-1</prop>    
+  <prop id="tot_kb" test="(f,spirit,scan,exists?,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1],@kb)">(f,spirit,scan,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1],@kb)</prop>
+    
+  <prop id="tot_exists">(f,gt,(prop,tot_c),-1)</prop>  
+  
+  <!-- dir preperation -->
+  <prop id="dir_starter">(f,len,(prop,et_offset_ipath))</prop>  
+  <prop id="len_ipath">(f,len,(prop,et_offset_ipath))</prop>  
+  
+  <prop id="needs-begin-hr">0</prop>   <!-- breaker: -->
+  
+  <!-- top totals, total, dirs -->
+  <when test="(f,or,(prop,do_top_total_only),(prop,do_top_totals))">
+    <ti_hr_break/> 
+             <!-- <ti_hr  xstyle="2"/>  breaker: -->
+           <!-- <ti_break />test="(f,not,(prop,is-naked))"breaker: -->
+           
+    <when test="(prop,do_top_total_only)">
+      <call_job job="do_total_only"/>
+      <prop id="needs-begin-hr">1</prop>         <!-- breaker: -->
+    </when>
+    
+    <when test="(prop,do_top_totals)">
+      <prop id="dt_sum">(prop,do_top_totals_sum)</prop>
+      <prop id="dt_sort">(prop,do_totals_sort)</prop>
+      <prop id="dt_desc">(prop,do_totals_desc)</prop>
+      <call_job job="do_totals"/>  
+      
+      <prop id="needs-begin-hr">1</prop>            <!-- breaker: -->
+    </when>  
+    <ti_break/>                    <!-- breaker: -->
+                 
+  </when>
+
+  
+  <when test="(prop,do_top_sub_dirs)">
+    <call_job job="do_sub_dirs"/> 
+    <prop id="needs-begin-hr">1</prop>             <!-- breaker: -->
+  </when> 
+  
+  <when test="(prop,do_top_next_dirs)">
+    <prop id="nd_sort">(prop,top_next_dirs_sort)</prop>
+    <prop id="nd_desc">(prop,top_next_dirs_desc)</prop>
+    <prop id="nd_limit">(prop,top_next_dirs_limit)</prop>
+    <prop id="dir_size_unit">(prop,top_next_dirs_unit)</prop>
+    <call_job job="do_next_dirs"/>  
+    <prop id="needs-begin-hr">1</prop>             <!-- breaker: -->
+  </when> 
+ 
+  
+  <when test="(prop,do_top_big_dirs)">
+    <prop id="bd_limit">(prop,top_big_limit)</prop>
+    <call_job job="do_big_dirs"/>  
+    <prop id="needs-begin-hr">1</prop>              <!-- breaker: -->
+  </when>    
+  
+  <when test="(prop,do_top_fancy_dirs)">
+    <prop id="fd_limit">(prop,top_fancy_limit)</prop>
+    <call_job job="do_fancy_dirs"/>  
+    <prop id="needs-begin-hr">1</prop>              <!-- breaker: -->
+  </when>     
+  <prop id="had-one-file">0</prop>
+  <!-- files in groups or without groups -->      
+  <choose>
+    <when test="(f,and,(prop,do_file),(prop,do_groups))">
+      <choose>
+        <when test="(f,or,(prop,do_top_totals),(prop,do_top_totals))">
+          <prop id="group_sort">(prop,do_totals_sort)</prop>
+          <prop id="group_desc">(prop,do_totals_desc)</prop>
+        </when>
+        <otherwise>
+          <prop id="group_sort"></prop>
+          <prop id="group_desc"></prop>        
+        </otherwise>
+      </choose>
+   
+      <ti_hr test="(prop,needs-begin-hr)"/>       <!-- breaker: -->
+      <ti_break  test="(f,not,(prop,is-naked))"/>   <!-- breaker: -->  
+      
+      <loop  id="group" 
+             xpath="(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/g" 
+             spirit="scan" 
+             sort="(prop,group_sort)"
+             desc="(prop,group_desc)"
+             number="@kb @c">             
+        <prop id="group_title">(f,spirit,org,group[@id=(loop,group,@id)],@title)</prop>    
+        <prop id="did_group_header">0</prop>
+        
+        <!-- loop file in group,
+             xpath:   (prop,offset_ipath2)//    .................. alles unterhalb des aktuellen gewuenschten dirs ist
+                      file[@g=(loop,group,@id)  .................. files die der aktuellen gruppe zugeordnet sind
+                      and ../@level&lt;=(prop,max_dir_level)] ....       die nicht ausserhalb der reichweite des dir-levels sind
+                      -->
+        <prop id="break_after_group">0</prop>   <!-- breaker: -->
+        
+        <!-- group selections -->
+        <prop id="group_request">1</prop>
+        <choose>
+          <when test="(f,eq,1,(prop,et_report_ti_grp_filter_type))">
+            <!-- Positive Filter, Requested groups are defined -->
+            <prop id="group_request">(f,has_flag,(file,et_report_ti_grp_filter_x),(loop,group,@id))</prop>
+          </when>
+          <when test="(f,eq,2,(prop,et_report_ti_grp_filter_type))">
+            <!-- Negavite Filter, Groups to be omitted are defined -->
+            <prop id="group_request">(f,not,(f,has_flag,(file,et_report_ti_grp_filter_x),(loop,group,@id)))</prop>
+          </when>                    
+        </choose>
+        <ti test="(prop,do_super_debug)" label="Debugging Groups">
+        <ti label="SHOW:" test="(prop,group_request)">(prop,group_title)</ti>
+        <ti label="HIDE:" test="(f,not,(prop,group_request))">(prop,group_title)</ti>
+        </ti>
+        
+        <when test="(f,and,(prop,do_file),(prop,group_request))">
+          <prop id="last_file_i">0</prop>
+
+          <loop id="file"
+                spirit="scan" 
+                xpath="(prop,offset_ipath2)//file[@g=(loop,group,@id) and ../@level&lt;=(prop,max_dir_level)]"                  
+                sort="(prop,attr_file_sort)"
+                number="(prop,attr_file_number)" 
+                ignore_case="(prop,attr_file_ignore_case)"
+                desc="(prop,attr_file_desc)" 
+                limit="(prop,attr_file_limit)">
+            <!-- <ti>loop-fileA-(loop,file,#i)</ti> -->
+            <prop id="last_file_i">(loop,file,#i)</prop>
+              
+              <!-- ausgabe des gruppenheaders falls noch nicht erledigt  -->
+              <when test="(f,not,(prop,did_group_header))"> 
+                <!-- <ti>jetzt kommt gruppenheader (f,not_eq,(loop,group,#i),1)</ti> -->
+                <when test="(f,not,(f,eq,(loop,group,#i),1))">
+                  <choose>
+                    <when test="(f,eq,2,(prop,file_highlight))">
+                      <ti_hr/>           <!-- breaker: -->
+                    </when>
+                    <when test="(f,eq,0,(prop,file_highlight))">
+                      <ti_space height="5px" /> 
+                    </when>
+                    <otherwise>
+                      <ti_hr/>       <!-- breaker: -->
+                    </otherwise>                                  
+                  </choose>
+                </when>
+                
+
+                <choose>
+                  <when test="(prop,do_sum_group_top)">
+                    <!-- 
+                    <ti label="(f,html,bold,open) - (prop,group_title) - (f,html,bold,close)"
+                        key="(f,html,bold,open)(f,format,(loop,group,@kb),#(e:s)###) kb(f,html,bold,close)">                
+                    </ti>                      
+                    -->
+                    <ti label=" - (prop,group_title) -"
+                        key="(f,html,bold,open)(f,format,(loop,group,@kb),#(e:s)###) kb(f,html,bold,close)">                
+                    </ti>  
+                                     
+                  </when>     
+                  <otherwise>
+                    <!--
+                    <ti label="(f,html,bold,open) - (prop,group_title) - (f,html,bold,close)"/>
+                    -->
+                    <ti label=" - (prop,group_title) -"/>
+                  </otherwise>
+                </choose>                    
+                <prop id="did_group_header">1</prop>
+              </when>
+              
+              <file id="af">(dir,home_original)(f,when,(loop,file,exists?,..,@ipath),(loop,file,..,@ipath),)(loop,file)</file>
+              
+              <!-- <ti>choose-2</ti> -->
+              <prop id="had-one-file">1</prop>
+              <ti label="(prop,gen-file-label)"
+                  type="file"           
+                  len="(prop,len)"
+                  len2="(prop,len2)"
+                  key="(f,when,(prop,do_file_size),(f,format,(loop,file,@kb),#(e:s)###) kb,)" 
+                  class_choose="panoChooseFileAccept"
+                  call_choose="(prop,_rep_select_file)"
+                  flag="(prop,flag_file_bold) (prop,flow) (prop,file-flag-choose) button_choose (prop,naked-flag)">(file,af)</ti>
+                  
+              <file id="fn2">(dir,home_original)(f,when,(loop,file,exists?,..,@ipath),(loop,file,..,@ipath),)(loop,file)</file>    
+              <call_job job="report_visuals" />    
+              <when test="(prop,do_file_specials)">
+                
+                <try_catch><try>
+                <call_job job="report_file_specials" />
+                </try><catch/></try_catch>
+              </when>                    
+              <!--                       
+              <choose>
+                <when test="1" xtest="(prop,is-web)">
+                  <ti type="rec">
+                    <ti type="call_job" job="perform-file-operation" explain="(f,name_of_file,(file,af))">
+                      <file id="gofile">(file,af)</file>
+                    </ti>
+                    <ti>(dir,home2)</ti>                  
+                  </ti>                                 
+                </when>
+                <otherwise>
+                  <ti>choose-2</ti>
+                  <ti type="file" 
+                      len="(prop,len)"
+                      len2="(prop,len2)"
+                      key="(f,when,(prop,do_file_size),(f,format,(loop,file,@kb),#(e:s)###) kb,)" 
+                      flag="(prop,flag_file_bold) (prop,flow) choose">(file,af)</ti>      
+                  <when test="(prop,do_file_specials)">
+                    <file id="fn2">(dir,home_original)(f,when,(loop,file,exists?,..,@ipath),(loop,file,..,@ipath),)(loop,file)</file>
+                    <try_catch><try>
+                    <call_job job="report_file_specials" />
+                    </try><catch/></try_catch>
+                  </when>                                     
+                </otherwise>
+              </choose>
+              -->
+
+                        
+              
+
+          </loop> <!-- end: loop file -->
+          
+        </when>
+        
+        <!-- sum je extension -->
+        <when test="(f,and,(prop,do_sum_extensions),(prop,group_request))">
+
+          <loop id="extension" 
+                xpath="//group[@id=(loop,group,@id)]/extension" 
+                spirit="org"
+                sort="(prop,attr_extension_sort)"
+                number="(prop,attr_extension_number)"
+                desc="(prop,attr_extension_desc)"  >
+                        
+            <prop id="ext_c">-1</prop>
+            
+            <prop id="ext_c" test="(f,spirit,scan,exists?,(prop,offset_ipath2)//aggs[@id=(loop,group,..,@id)]/e[@id=(loop,extension,@id)],@c)">(f,spirit,scan,(prop,offset_ipath2)//aggs[@id=(loop,group,..,@id)]/e[@id=(loop,extension,@id)],@c)</prop>            
+            
+            <when test="(f,gt,(prop,ext_c),-1)">
+
+              <prop id="ext_kb">-1</prop> 
+                          
+              <prop id="ext_kb" test="(f,spirit,scan,exists?,(prop,offset_ipath2)//aggs[@id=(loop,group,..,@id)]/e[@id=(loop,extension,@id)],@kb)">(f,spirit,scan,(prop,offset_ipath2)//aggs[@id=(loop,group,..,@id)]/e[@id=(loop,extension,@id)],@kb)</prop> 
+                 
+        			<ti label=" " key="(f,format,(prop,ext_kb),#(e:s)###) kb"
+                  align="right" >(f,html,bold,open)(loop,extension,@extension)(f,html,bold,close)  (e:o)(prop,ext_c) (prop,_rep_files)(e:c) </ti>               
+            </when>
+     
+          </loop> <!-- end loop: extension -->
+        </when>
+        
+        <!-- sum group -->
+        <choose>
+          <when test="(f,not,(prop,group_request))">
+          </when>
+          <when test="(prop,do_sum_group)">
+           
+            <ti label=" " key="(f,html,bold,open)(f,format,(loop,group,@kb),#(e:s)###) kb(f,html,bold,close)"
+                  align="right" >(prop,sumsign) (f,html,bold,open)(prop,group_title)(f,html,bold,close) (e:o)(loop,group,@c) (prop,_rep_files)(e:c)</ti>               
+               
+          </when>     
+          <otherwise>
+            <!-- <ti> </ti> -->
+          </otherwise>
+        </choose>
+        
+        <!-- <ti_hr test="(prop,group_request)"/> -->
+    
+      </loop> <!-- end: loop group -->
+      
+      <!-- others -->
+      <prop id="not_found_others">1</prop>
+
+      <prop id="oth_c">-1</prop>
+            
+      <prop id="oth_c" test="(f,spirit,scan,exists?,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@c)">(f,spirit,scan,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@c)</prop>
+
+      <prop id="group_request">1</prop>
+      <choose>
+        <when test="(f,eq,1,(prop,et_report_ti_grp_filter_type))">
+          <!-- Positive Filter, Requested groups are defined -->
+          <prop id="group_request">(f,has_flag,(file,et_report_ti_grp_filter_x),o)</prop>
+        </when>
+        <when test="(f,eq,2,(prop,et_report_ti_grp_filter_type))">
+          <!-- Negavite Filter, Groups to be omitted are defined -->
+          <prop id="group_request">(f,not,(f,has_flag,(file,et_report_ti_grp_filter_x),o))</prop>
+        </when>                    
+      </choose>
+        
+      <when test="(f,and,(f,gt,(prop,oth_c),-1),(prop,group_request))">
+      
+        <prop id="oth_kb">-1</prop>
+              
+        <prop id="oth_kb" test="(f,spirit,scan,exists?,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@kb)">(f,spirit,scan,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@kb)</prop>
+        
+        <prop id="last_file_i">0</prop>
+        
+        <loop id="file" spirit="scan"
+                        xpath="(prop,offset_ipath2)//file[@g=0 and ../@level&lt;=(prop,max_dir_level)]"
+                        sort="(prop,attr_file_sort)"
+                        number="(prop,attr_file_number)" 
+                        ignore_case="(prop,attr_file_ignore_case)" 
+                        desc="(prop,attr_file_desc)" 
+                        limit="(prop,attr_file_limit)"> 
+          <!-- <ti>loop-fileB-(loop,file,#i)</ti> -->             
+          <prop id="last_file_i">(loop,file,#i)</prop>
+
+              <when test="(prop,not_found_others)">
+                <!-- do others headline, occasionally do the group top or just the text -->
+                <prop id="not_found_others">0</prop>
+
+                <choose>
+                  <when test="(f,eq,2,(prop,file_highlight))">
+                    <ti_hr/>          <!-- breaker: -->
+                  </when>
+                  <when test="(f,eq,0,(prop,file_highlight))">
+                    <ti_space height="5px" />     <!-- breaker: -->
+                  </when>
+                  <otherwise>
+                    <ti_hr/>          <!-- breaker: -->
+                  </otherwise>                                  
+                </choose>                
+        
+                <choose>
+                  <when test="(prop,do_sum_group_top)">
+                  
+                    <ti x="(f,html,bold,open) - (prop,_rep_Others) - (f,html,bold,close)"
+                        x2="(prop,sumsign) (e:o)(prop,oth_c) (prop,_rep_files)(e:c)" 
+                        key="(f,html,bold,open)(f,format,(prop,oth_kb),#(e:s)###) kb(f,html,bold,close)">                
+                    </ti>  
+                                     
+                  </when>     
+                  <otherwise>
+                    <ti x="(f,html,bold,open) - (prop,_rep_Others) - (f,html,bold,close)"/>
+                  </otherwise>
+                </choose>    
+                <!--                 
+                <ti x="(f,html,bold,open) []  - Others - (f,html,bold,close)" size="1"
+                    key="(f,when,(prop,do_sum_group_top),(f,format,(prop,oth_kb),#(e:s)###) kb,)"/>
+                -->
+                    
+              </when>
+              
+              <when test="(prop,do_file)">
+                <!-- <ti>choose-3</ti> nic123 (prop,naked-flag) <ti>(prop,naked-flag)=smf</ti>-->
+                <prop id="had-one-file">1</prop>
+                <ti
+                  label="(prop,gen-file-label)" 
+                  type="file"  
+                  len="(prop,len)"
+                  len2="(prop,len2)"
+                  call_choose="(prop,_rep_select_file)"
+                  key="(f,when,(prop,do_file_size),(f,format,(loop,file,@kb),#(e:s)###) kb,)" 
+                  flag="(prop,flag_file_bold) (prop,flow) (prop,file-flag-choose) (prop,naked-flag)">(dir,home_original)(f,when,(loop,file,exists?,..,@ipath),(loop,file,..,@ipath),)(loop,file)</ti>
+                  
+                <file id="fn2">(dir,home_original)(f,when,(loop,file,exists?,..,@ipath),(loop,file,..,@ipath),)(loop,file)</file>                           
+                <call_job job="report_visuals" />                
+                <!-- specials fuer diesen filetyp -->
+                <when test="(prop,do_file_specials)">
+                  
+                  <try_catch><try>
+                  <call_job job="report_file_specials" />
+                  </try><catch/></try_catch>
+                </when>
+                
+              </when>
+
+        </loop> <!-- end: loop file, others -->       
+
+        <!-- Others sum -->
+        <when test="(f,and,(prop,do_sum_group),(f,not,(prop,not_found_others)))">
+      		<ti type="rec" label=" " key="(f,html,bold,open)(f,format,(prop,oth_kb),#(e:s)###) kb(f,html,bold,close)">
+      			<ti align="right">(prop,sumsign) (f,html,bold,open)(prop,_rep_Others)(f,html,bold,close) (e:o)(prop,oth_c) (prop,_rep_files)(e:c)</ti>
+      		</ti>     
+        </when>
+        <!-- <ti_hr/> -->        <!-- breaker: -->
+      
+      </when> <!-- end: others exist -->
+      
+      <call_job job="end-of-a-file-loop"/>
+                         
+    </when>
+
+    
+    <!-- no grouping, just files, loop for files nic123 -->
+    <when test="(prop,do_file)">
+      <prop id="last_file_i">0</prop>
+ 
+      <ti_hr test="(prop,needs-begin-hr)"/>      <!-- breaker: -->
+      <ti_break  test="(f,not,(prop,is-naked))"/>     <!-- breaker: -->
+              
+      <loop id="file" 
+            spirit="scan"
+            xpath="(prop,offset_ipath2)//file[../@level&lt;=(prop,max_dir_level)]"  
+            sort="(prop,attr_file_sort)"
+            number="(prop,attr_file_number)" 
+            ignore_case="(prop,attr_file_ignore_case)" 
+            limit="(prop,attr_file_limit)"
+            desc="(prop,attr_file_desc)">
+        <!-- <ti>loop-fileC-(loop,file,#i)</ti> -->    
+        <prop id="last_file_i">(loop,file,#i)</prop>
+        <!-- <ti>choose-1</ti> -->
+        <prop id="had-one-file">1</prop>
+        <ti type="file" 
+            len="(prop,len)"
+            len2="(prop,len2)" 
+            call_choose="(prop,_rep_select_file)"
+            key="(f,when,(prop,do_file_size),(f,format,(loop,file,@kb),#(e:s)###) kb,)" 
+            flag="(prop,flag_file_bold) (prop,flow) (prop,file-flag-choose) (prop,naked-flag)">(dir,home_original)(f,when,(loop,file,exists?,..,@ipath),(loop,file,..,@ipath),)(loop,file)</ti>
+        <file id="fn2">(dir,home_original)(f,when,(loop,file,exists?,..,@ipath),(loop,file,..,@ipath),)(loop,file)</file>                                           
+        <call_job job="report_visuals" flag="catch"/>
+        <!-- specials fuer diesen filetyp -->
+        <when test="(prop,do_file_specials)">
+          
+          <call_job job="report_file_specials" flag="catch"/>
+        </when>
+        
+      </loop> <!-- end: loop file -->
+
+      <call_job job="end-of-a-file-loop"/>
+  
+      <!-- <ti_hr/> -->         <!-- breaker: -->
+    </when>    
+
+  </choose>
+  
+  <!-- files end -->
+  <when test="(f,or,(prop,do_total_only),(prop,do_totals))">
+    <!-- <ti_hr/> -->            <!-- breaker: -->
+  </when>
+  
+  <when test="(f,or,(prop,do_sub_dirs),(prop,do_next_dirs),(prop,do_big_dirs),(prop,do_fancy_dirs),(prop,do_all_dirs))">
+    <ti_break test="(f,or,(prop,is-not-web),(f,not,(prop,is-naked)))"/>       <!-- breaker: -->
+  </when>
+    
+  <when test="(prop,do_sub_dirs)">
+    <call_job job="do_sub_dirs"/>  
+  </when>   
+
+  <when test="(prop,do_next_dirs)">
+    <prop id="nd_sort">(prop,next_dirs_sort)</prop>
+    <prop id="nd_desc">(prop,next_dirs_desc)</prop>
+    <prop id="nd_limit">(prop,next_dirs_limit)</prop>
+    <prop id="dir_size_unit">(prop,next_dirs_unit)</prop>
+    <call_job job="do_next_dirs"/>  
+  </when>   
+
+  <when test="(prop,do_all_dirs)">
+    <call_job job="do_all_dirs"/>  
+  </when>  
+    
+  <when test="(prop,do_big_dirs)">
+    <prop id="bd_limit">(prop,big_limit)</prop>
+    <call_job job="do_big_dirs"/>  
+  </when>    
+  
+  <when test="(prop,do_fancy_dirs)">
+    <prop id="fd_limit">(prop,fancy_limit)</prop>
+    <call_job job="do_fancy_dirs"/>  
+  </when>    
+  <ti type="rec">
+    <ti min_width="60px"></ti>
+    <ti></ti>
+  </ti>
+  <when test="(f,or,(prop,do_total_only),(prop,do_totals))">
+    <ti_hr_break/>          <!-- breaker: -->
+    <when test="(prop,do_total_only)">
+      <call_job job="do_total_only"/>
+    </when>
+    
+    <when test="(prop,do_totals)">
+      <prop id="dt_sum">(prop,do_totals_sum)</prop>
+      <prop id="dt_sort">(prop,do_totals_sort)</prop>
+      <prop id="dt_desc">(prop,do_totals_desc)</prop>
+      <call_job job="do_totals"/>    
+    </when>    
+  </when>
+  
+  <!-- 
+  <call_job job="do_reporting_sums"/>
+  -->
+
+  <spirit id="scan" act="close" />
+  <spirit id="org" act="close" /> 
+     
+   <!-- 
+   <dump flag="ti"/>
+  <warn>PARENT: (f,parent_of_dir,(dir,pro))</warn>
+  
+  <call_job job="do_reporting_context"/>
+  -->
+
+  
+  <!-- <call_job job="info_convert_anonym"/> 
+     <ti_break/>
+     <ti_hr/>         <call_service job="see_dir_actions" xtest="(f,and,1,(f,exists_dir,(f,dir_of_dir,(dir,home2))))" flag="silent">
+    <dir id="with" x="(dir,home2)"/>
+  </call_service>                    -->
+
+  
+  <when test="(f,and,(f,not,(f,guicontroller,choose,file,is-on)),(prop,is-not-web))">
+    <ti_hr styxle="5"/>         <!-- breaker: -->
+    
+    <ti type="call_job" 
+        job="Report Features" 
+        explain="(prop,_rep_features)" 
+        test="(f,and,(f,eq,(prop,pro),(prop,temp-pro-id)),(f,role,expert))" 
+        label=" "/>
+  </when>
+  <!-- 
+  <ti_hr_break/>
+  <ti label="pro-dir">(dir,pro)</ti>    -->
+</job>
+
+<job id="end-of-a-file-loop" role="hidden">
+          <when test="(f,not,(prop,had-one-file))">
+            <choose>
+              <when test="(prop,is-naked)">
+                  <ti label=" ">(prop,_rep_nofiles)</ti>
+              </when>
+              <otherwise>
+                 <!-- <ti>No Files found</ti>   -->
+                 <ti label=" ">(prop,_rep_nofiles)</ti>
+              </otherwise>
+            </choose>
+          </when>  
+
+
+
+</job>  
+
+<job id="Report Features" role="hidden" tip="Does something with a simple panorama-view">
+  <ti label="Actions"/>
+  <ti type="call_job" 
+      job="do-report-conf" 
+      explain="Change the layout of this report"
+      label="()1. Layout:()"/>
+  <ti type="ul" label=" ">()Make sums per categories and extensions()</ti>
+  <ti type="ul" label=" ">()See sizes of files, sort &amp; filter files, disable content-analysis()</ti>
+  <ti_space height="2px" />
+  <ti type="call_job"  
+      explain="Convert this report to a panorama-project with a name" 
+      job="Make Project"
+      label="()2. Project:()"
+      /> 
+  <ti type="ul" label=" ">Have this view available as a separated panorama-project</ti>
+  <ti type="ul" label=" ">Include several directory-levels</ti>            
+  <when test="(f,role,test)">
+    <ti label="For testers"/>    
+    <ti type="dir" label="Temporary Project Dir:" x="(dir,pro)"/>
+    <ti_space height="10px" />      
+  </when>
+  
+
+
+</job>
+
+<job id="Make Project" role="hidden" tip="Convert this report to a panorama-project with a name">
+  <call_job job="Edit Project Type" />
+  <call_service job="Make Project">
+    <dir id="from-pro-home" x="(dir,pro_home)"/>
+    <dir id="from-pro" x="(dir,pro)"/>
+    <prop id="from-app" x="(prop,app)"/>
+  
+  </call_service>
+     
+</job>
+
+
+
+
+
+<job id="do_total_only" role="hidden">
+
+  <choose>
+
+    <when test="(prop,tot_exists)">  
+      
+      <ti key="(f,html,bold,open)(f,format,(prop,tot_kb),#(e:s)###) kb(f,html,bold,close)" 
+          align="right"
+          
+          x="(f,html,bold,open)(prop,_rep_complete) (e:o)(prop,tot_c) (prop,_rep_files)(e:c)(f,html,bold,close)" />
+            
+    </when>  
+      
+    <otherwise>
+      <ti x="(f,html,bold,open) [ (prop,sumsign) ]  - (prop,_rep_total) - (f,html,bold,close)" />
+      <ti x="(prop,_rep_nototals)"/>
+    </otherwise>
+  
+  </choose>
+
+</job>
+
+<job id="do_totals" role="hidden">
+  <need>(prop,dt_sum) (prop,dt_sort) (prop,dt_desc)</need> <!-- with sums at the end? -->
+
+  <when test="(prop,tot_exists)">
+  
+    <!-- <ti x="(f,html,bold,open) [ (prop,sumsign) ]  - Totals - (f,html,bold,close)" /> -->
+    
+    <choose>
+      <when test="(prop,tot_exists)">
+        <choose>
+          <when test="(f,eq,,(prop,et_report_ti_grp_filter_type))">
+
+      			<ti key="(f,html,bold,open)(f,format,(prop,tot_kb),#(e:s)###) kb(f,html,bold,close)"
+      				  align="right">(f,html,bold,open)(prop,_rep_total) (e:o)(prop,tot_c) (prop,_rep_files)(e:c)(f,html,bold,close)</ti>
+                   
+          </when>
+          <otherwise>
+      			<ti type="rec" label="(f,html,bold,open) [ (prop,sumsign) ]  (f,html,bold,close)" key="(f,html,bold,open)(f,format,(prop,tot_kb),#(e:s)###) kb(f,html,bold,close)">
+      				<ti align="right">(f,html,bold,open)(prop,_rep_totalbefcat) (e:o)(prop,tot_c) files(e:c)(f,html,bold,close)</ti>
+      			</ti>             
+          </otherwise>
+        </choose>                
+      </when>        
+      <otherwise>
+        <ti x="(f,html,bold,open) [ (prop,sumsign) ]  - (prop,_rep_total) - (f,html,bold,close)" />
+        <ti x="(prop,_rep_nototals)"/>
+      </otherwise>  
+    </choose>
+
+		<ti type="text" label="(prop,_rep_sums)"  x="(prop,_rep_percat)" key="(prop,_rep_seprator)"/>
+    
+    <prop id="show_stripe">0</prop>
+    <prop id="sx_count">0</prop>
+    <prop id="sx_kb">0</prop>
+    <loop   id="group" 
+            spirit="scan" 
+            xpath="(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/g"
+            sort="(prop,dt_sort)" 
+            desc="(prop,dt_desc)" 
+            number="@kb @c">      
+
+      <prop id="group_request">1</prop>
+      <choose>
+        <when test="(f,eq,1,(prop,et_report_ti_grp_filter_type))">
+          <!-- Positive Filter, Requested groups are defined -->
+          <prop id="group_request">(f,has_flag,(file,et_report_ti_grp_filter_x),(loop,group,@id))</prop>
+        </when>
+        <when test="(f,eq,2,(prop,et_report_ti_grp_filter_type))">
+          <!-- Negavite Filter, Groups to be omitted are defined -->
+          <prop id="group_request">(f,not,(f,has_flag,(file,et_report_ti_grp_filter_x),(loop,group,@id)))</prop>
+        </when>                    
+      </choose>            
+      <when test="(prop,group_request)">
+        <prop id="show_stripe">1</prop>             
+        <prop id="group_title">(f,spirit,org,group[@id=(loop,group,@id)],@title)</prop>     
+        <!-- 
+  			<ti type="rec" label=" " key="(f,html,bold,open)(f,format,(loop,group,@kb),#(e:s)###) kb(f,html,bold,close)">
+  				<ti align="right" 
+          "560px">(prop,sumsign) (f,html,bold,open)(prop,group_title)(f,html,bold,close) ((loop,group,@c) files)</ti>
+  			</ti>
+        --> 
+  			<ti label=" " key="(f,html,bold,open)(f,format,(loop,group,@kb),#(e:s)###) kb(f,html,bold,close)"
+            align="right" >(prop,sumsign) (f,html,bold,open)(prop,group_title)(f,html,bold,close) (e:o)(loop,group,@c) (prop,_rep_files)(e:c)</ti>     
+        
+        <prop id="sx_count">(f,add,(prop,sx_count),(loop,group,@c))</prop>
+        <prop id="sx_kb">(f,add,(prop,sx_kb),(loop,group,@kb))</prop>  
+			</when>
+                
+    </loop>   <!-- End Group-loop -->
+    
+    <prop id="group_request">1</prop>
+    <choose>
+      <when test="(f,eq,1,(prop,et_report_ti_grp_filter_type))">
+        <!-- Positive Filter, Requested groups are defined -->
+        <prop id="group_request">(f,has_flag,(file,et_report_ti_grp_filter_x),o)</prop>
+      </when>
+      <when test="(f,eq,2,(prop,et_report_ti_grp_filter_type))">
+        <!-- Negavite Filter, Groups to be omitted are defined -->
+        <prop id="group_request">(f,not,(f,has_flag,(file,et_report_ti_grp_filter_x),o))</prop>
+      </when>                    
+    </choose>
+    
+    <prop id="oth_c">-1</prop>
+
+    <prop id="oth_c" test="(f,spirit,scan,exists?,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@c)">(f,spirit,scan,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@c)</prop>    
+    
+    <when test="(f,and,(f,gt,(prop,oth_c),-1),(prop,group_request))">
+      <prop id="show_stripe">1</prop> 
+
+      <prop id="oth_kb">-1</prop>
+            
+      <prop id="oth_kb" test="(f,spirit,scan,exists?,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@kb)">(f,spirit,scan,(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/n,@kb)</prop>
+      
+  		<ti type="rec" label=" " key="(f,format,(prop,oth_kb),#(e:s)###) kb">
+  			<ti align="right">(prop,sumsign) (f,html,bold,open)Others(f,html,bold,close) (e:o)(prop,oth_c) (prop,_rep_files)(e:c)</ti>
+  		</ti>
+      <prop id="sx_count">(f,add,(prop,sx_count),(prop,oth_c))</prop>
+      <prop id="sx_kb">(f,add,(prop,sx_kb),(prop,oth_kb))</prop>    		
+  	</when>  
+  	
+  	<!-- Extension sums -->
+  	<when test="(prop,do_sum_extensions)">
+  	  <ti type="text" label="(prop,_rep_sums)" y=" " x="(prop,_rep_perext)" key="(prop,_rep_seprator)"/> 
+  	  <!-- 
+
+			<ti type="rec" label=" " key="(f,html,bold,open)Extension Sums:(f,html,bold,close)"/>
+			-->
+			
+      <loop   id="extension" 
+              spirit="scan" 
+              xpath="(prop,offset_ipath2_dirs)aggs[@level&lt;=(prop,max_dir_level)][1]/e"
+              sort="(prop,dt_sort)" 
+              desc="(prop,dt_desc)" 
+              number="@kb @c">
+              
+                  
+        
+        
+        <prop id="group_request">1</prop>
+        <choose>
+          <when test="(f,eq,1,(prop,et_report_ti_grp_filter_type))">
+            <prop id="e_gid">(f,spirit,org,//extension[@id=(loop,extension,@id)]/..,@id)</prop>
+            <!-- Positive Filter, Requested groups are defined -->            
+            <prop id="group_request">(f,has_flag,(file,et_report_ti_grp_filter_x),(prop,e_gid))</prop>
+          </when>
+          <when test="(f,eq,2,(prop,et_report_ti_grp_filter_type))">
+            <!-- Negavite Filter, Groups to be omitted are defined -->
+            <prop id="e_gid">(f,spirit,org,//extension[@id=(loop,extension,@id)]/..,@id)</prop>            
+            <prop id="group_request">(f,not,(f,has_flag,(file,et_report_ti_grp_filter_x),(prop,e_gid)))</prop>
+          </when>                    
+        </choose>
+        
+        <when test="(prop,group_request)">
+        
+          <prop id="e_tit">(f,spirit,org,//extension[@id=(loop,extension,@id)],@extension)</prop>
+        
+    			<ti label=" " key="(f,format,(loop,extension,@kb),#(e:s)###) kb"
+              align="right">(prop,sumsign) (f,html,bold,open)(prop,e_tit)(f,html,bold,close) (e:o)(loop,extension,@c) (prop,_rep_files)(e:c)</ti>    			
+                
+        </when>
+              
+      </loop>  	
+  	
+  	</when>
+
+    <when test="(f,and,(prop,dt_sum),(f,not,(f,eq,,(prop,et_report_ti_grp_filter_type))))">
+    
+      <ti test="(prop,show_stripe)" x=" " key="(prop,_rep_seprator)"/>
+  		<ti type="rec" label=" " key="(f,format,(prop,sx_kb),#(e:s)###) kb"
+        test="(f,not,(f,eq,,(prop,et_report_ti_grp_filter_type)))">
+  			<ti align="right">(f,html,bold,open)(prop,_rep_total)(f,html,bold,close) (e:o)(prop,sx_count) (prop,_rep_files)(e:c)</ti>
+  		</ti>  
+          
+    </when>
+ 
+  
+  </when>
+
+</job>
+
+<job id="do_sub_dirs" role="hidden">
+
+  <prop id="bold_dir_size">1</prop>
+
+  <prop id="do_dir_filecount">0</prop>
+  <ti_hr/>             <!-- breaker: -->                   
+  <!-- <ti_break test="(f,and,(prop,is-web),(f,not,(prop,is-naked)))"/>    -->
+  <!-- <ti_break test="(prop,is-web)"/> -->
+  <!-- <ti label="(f,html,bold,open)[ Directories ](f,html,bold,close)" x=" " xxx="Direct Childs"/>  -->
+  <ti label="(prop,_rep_dirheader)"/>
+    
+  <prop id="no_dir">1</prop>
+  <prop id="each_dir_key"></prop>
+  <prop id="ed_size">(prop,see_dir_size)</prop>
+  
+  <loop id="dirs" 
+        spirit="scan" 
+        xpath="(prop,offset_ipath2_dirs)dir" 
+        sort="@rpath" 
+        ignore_case="@rpath"
+        missing_strategy="empty">
+    <prop id="no_dir">0</prop>
+    <prop id="dir_title">(loop,dirs,@rpath)</prop>      
+    <call_job job="each_dir" />           
+  </loop>  
+  <when test="(prop,no_dir)">
+    <ti_space height="3px" />
+    <ti label=" ">(prop,_rep_nodirs)</ti>
+  </when>
+  
+  
+  <!-- <ti_hr/> -->
+</job>
+
+<job id="do_next_dirs" role="hidden">
+  <need>(prop,nd_limit) (prop,nd_sort) (prop,nd_desc)</need>
+
+  <prop id="bold_dir_size">1</prop>
+  <prop id="dir_size_unit">kb</prop>
+
+  <prop id="do_dir_filecount">0</prop>
+  <ti_hr/>            <!-- breaker: -->
+  <dump flxag="ti" test="0"/>                                      
+  
+  <choose>
+  <when test="(f,eq,(prop,et_scan_policy),image)">
+    <!-- <ti label="desc at scope (f,sub,(prop,offset_is_at_level),1)+(prop,et_report_ti_dir_level)">(dir,et_scan_dir)</ti> -->
+    <!-- <ti label=" " test="(f,gt,(f,len,(prop,et_offset_ipath)),0)">(prop,et_offset_ipath) + (prop,et_report_ti_dir_level)</ti> -->
+    <prop id="nx_add"></prop>
+    <prop id="nx_add" test="(f,gt,(f,len,(prop,et_offset_ipath)),0)">(prop,et_offset_ipath) + (prop,et_report_ti_dir_level)</prop>
+  </when>
+  <otherwise>
+    <!-- <ti label=" " >For Scope +(prop,et_report_ti_dir_level)</ti> -->
+    <prop id="nx_add">(prop,_rep_forscope) +(prop,et_report_ti_dir_level)</prop>
+  </otherwise>
+  </choose>
+  <echo type="prop" id="nx_add" label="Next Directories"/>
+  <ti label="(f,html,bold,open)(prop,_rep_nextdirshead)(f,html,bold,close)" x="(prop,nx_add)"/> 
+     
+  <prop id="no_dir">1</prop>
+  <prop id="each_dir_key"></prop>
+  <prop id="ed_size">(prop,see_dir_size)</prop>
+  <trace>next dirs: (prop,offset_ipath2_dirs_b)dir[@level=(prop,next_dir_level)]  </trace>
+  <prop id="last_dir_i">0</prop>          
+    
+  <loop id="dirs" 
+        spirit="scan" 
+        xpath="(prop,offset_ipath2_dirs_b)dir[@level=(prop,next_dir_level)]"
+        sort="(prop,nd_sort)" 
+        number="@kb" 
+        desc="(prop,nd_desc)" 
+        limit="(prop,nd_limit)">
+    <prop id="last_dir_i">(loop,dirs,#i)</prop>    
+    <prop id="no_dir">0</prop>
+    <prop id="dir_title">(loop,dirs,@rpath)</prop>
+    <prop id="dir_title">(f,substring,(loop,dirs,@ipath),(prop,len_ipath))</prop>      
+    <call_job job="each_dir" />           
+  </loop>
+  <when test="(f,eq,(prop,last_dir_i),(prop,nd_limit))">
+    <ti label=" ">(prop,_rep_limitof) (prop,last_dir_i) (prop,_rep_reached)</ti>
+  </when>    
+
+  <ti test="(prop,no_dir)" label=" ">(prop,_rep_nodirs)</ti>
+  <!-- <ti_hr/> -->
+</job>
+
+<job id="do_all_dirs" role="hidden">
+  <prop id="ad_limit">99</prop>
+  <need>(prop,ad_limit)</need>
+  <prop id="ad_level_header">_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ </prop>
+  <ti_hr/>            <!-- breaker: -->
+  <!-- Biggest Dirs -->
+  <prop id="bold_dir_size">1</prop>
+  <prop id="dir_size_unit">kb</prop>
+
+  <prop id="requested_dir_style">biggest</prop>
+  <prop id="do_dir_filecount">0</prop>
+  <ti label="(f,html,bold,open)(prop,_rep_alldirshead)(f,html,bold,close)" x=" "/>
+  <prop id="ad_start_level">(prop,offset_is_at_level)</prop>
+  <dump flagx="ti"/>    
+  <prop id="no_dir">1</prop>
+  <prop id="each_dir_key"></prop>
+  <prop id="ed_size">1</prop>
+  
+  <!-- [not(@level&gt;(prop,max_dir_level))]  [@level&lt;(prop,max_dir_level)] -->
+  <prop id="last_dir_i">0</prop>          
+   
+  <loop id="dirs" 
+        spirit="scan" 
+        xpath="(prop,offset_ipath2_dirs_b)dir" 
+        xsort="@kb" 
+        number="@kb" 
+        desc="@kb" 
+        limit="(prop,ad_limit)">
+    <prop id="last_dir_i">(loop,dirs,#i)</prop>             
+    <prop id="no_dir">0</prop>
+    <prop id="ad_current_level">(loop,dirs,@level)</prop>
+    <prop id="ad_distance_level">(f,sub,(prop,ad_current_level),(prop,ad_start_level))</prop>
+    <choose>
+    <when test="1" testx="(f,gt,(loop,dirs,@agg_kb),0)">
+      <prop id="dir_title">(f,substring,(loop,dirs,@ipath),(prop,len_ipath))</prop>      
+      
+      <choose>
+        <when test="(f,gt,(loop,dirs,@agg_kb),0)">
+          <prop id="dir_title">(f,substring,(prop,ad_level_header),0,(f,mul,2,(prop,ad_distance_level)))  (f,substring,(loop,dirs,@ipath),(prop,len_ipath))</prop>
+          <prop id="each_dir_key">(loop,dirs,@agg_files) x (f,format,(loop,dirs,@avg_kb),#(e:s)###) kb = </prop>
+          <call_job job="each_dir" />
+        </when>   
+        <otherwise>
+          <call_job job="each_dir" />
+        </otherwise> 
+      
+      </choose>
+    </when>
+    <otherwise>
+      <ti>wollen wir nicht</ti>
+    </otherwise>
+    </choose>
+          
+  </loop>
+  <when test="(f,eq,(prop,last_dir_i),(prop,ad_limit))">
+    <ti label=" ">(prop,_rep_limitof) (prop,last_dir_i) (prop,_rep_reached)</ti>
+  </when>   
+  
+  <when test="(prop,no_dir)">
+    <ti label=" ">(prop,_rep_nodirs)</ti>
+  </when>  
+  <!-- <ti_hr/> -->
+</job>
+
+<job id="do_big_dirs" role="hidden">
+  <need>(prop,bd_limit)</need>
+  <ti_hr/>            <!-- breaker: -->
+  <!-- Biggest Dirs -->
+  <prop id="bold_dir_size">1</prop>
+  <prop id="dir_size_unit">kb</prop>
+
+  <prop id="requested_dir_style">biggest</prop>
+  <prop id="do_dir_filecount">0</prop>
+  <ti label="(f,html,bold,open)(prop,_rep_biggestdirshead)(f,html,bold,close)" x="sorted by kb "/>
+    
+  <prop id="no_dir">1</prop>
+  <prop id="each_dir_key"></prop>
+  <prop id="ed_size">1</prop>
+  
+  <!-- [not(@level&gt;(prop,max_dir_level))]  [@level&lt;(prop,max_dir_level)] -->
+  <prop id="last_dir_i">0</prop>          
+   
+  <loop id="dirs" 
+        spirit="scan" 
+        xpath="(prop,offset_ipath2_dirs_b)dir" 
+        sort="@kb" 
+        number="@kb" 
+        desc="@kb" 
+        limit="(prop,bd_limit)">
+    <prop id="last_dir_i">(loop,dirs,#i)</prop>             
+    <prop id="no_dir">0</prop>
+    
+    <when test="(f,gt,(loop,dirs,@agg_kb),0)">
+      <prop id="dir_title">(f,substring,(loop,dirs,@ipath),(prop,len_ipath))</prop>      
+      
+      <choose>
+        <when test="(f,gt,(loop,dirs,@agg_kb),0)">
+          <prop id="dir_title">(f,substring,(loop,dirs,@ipath),(prop,len_ipath))</prop>
+          <prop id="each_dir_key">(loop,dirs,@agg_files) x (f,format,(loop,dirs,@avg_kb),#(e:s)###) kb = </prop>
+          <call_job job="each_dir" />
+        </when>   
+        <otherwise>
+          <call_job job="each_dir" />
+        </otherwise> 
+      
+      </choose>
+    </when>
+          
+  </loop>
+  <when test="(f,eq,(prop,last_dir_i),(prop,bd_limit))">
+    <ti label=" ">(prop,limit of) (prop,last_dir_i) (prop,_rep_reached)</ti>
+  </when>   
+  
+  <when test="(prop,no_dir)">
+    <ti label=" ">(prop,_rep_nodirs)</ti>
+  </when>  
+  <!-- <ti_hr/> -->
+</job>
+
+
+<job id="do_fancy_dirs" role="hidden">
+  <need>(prop,fd_limit)</need>
+
+  <ti_hr/>           <!-- breaker: -->
+  <!-- Fancy Dirs -->
+  <prop id="bold_dir_size">1</prop>
+
+    <prop id="do_dir_filecount">1</prop>
+
+    <ti label="(f,html,bold,open)(prop,_rep_biggestdirshead)(f,html,bold,close)" x="(prop,_rep_sortedavg)"/>      
+    <prop id="no_dir">1</prop>
+
+    <prop id="last_dir_i">0</prop>          
+    <prop id="ed_size">1</prop>    
+    <loop id="dirs" 
+          spirit="scan" 
+          xpath="(prop,offset_ipath2_dirs_b)dir[@agg_files&gt;0]" 
+          sort="@avg_kb" 
+          number="@avg_kb" 
+          desc="@avg_kb" 
+          limit="(prop,fd_limit)">
+      <prop id="last_dir_i">(loop,dirs,#i)</prop>
+      <prop id="no_dir">0</prop>
+      <when test="(f,gt,(loop,dirs,@agg_kb),0)">
+        <prop id="dir_title">(f,substring,(loop,dirs,@ipath),(prop,len_ipath))</prop>
+        <prop id="each_dir_key">(loop,dirs,@agg_files) x (f,format,(loop,dirs,@avg_kb),#(e:s)###) kb = </prop>
+        <call_job job="each_dir" />
+      </when>           
+    </loop>
+    <when test="(f,eq,(prop,last_dir_i),(prop,fd_limit))">
+      <ti label=" ">(prop,_rep_limitof) (prop,last_dir_i) (prop,_rep_reached)</ti>
+    </when>   
+    <when test="(prop,no_dir)">
+      <ti label=" ">(prop,_rep_nodirs)</ti>
+    </when>  
+    
+    <!-- <ti_hr/> -->
+    
+</job>
+
+
+<job id="each_dir" role="hidden">
+  <need>(prop,ed_size) (prop,dir_title) (prop,each_dir_key)</need>
+  <need default="agg_kb">(prop,dir_size_unit)</need>
+  <dir id="target">(dir,home_original)(loop,dirs,@ipath)</dir>
+  
+  <prop id="key_saver"></prop>
+
+  <when test="(f,and,(prop,ed_size),(f,has,(loop,dirs,@kb)))">
+
+    <choose>
+      <when test="(f,eq,agg_kb,(prop,dir_size_unit))">      
+        <choose>
+          <when test="(prop,bold_dir_size)">
+            <prop id="inner">(f,html,bold,open)(f,format,(loop,dirs,@agg_kb),#(e:s)###)(f,html,bold,close)</prop>
+          </when>
+          <otherwise>
+            <prop id="inner">(f,format,(loop,dirs,@agg_kb),#(e:s)###)</prop>
+          </otherwise>
+        </choose>
+        <!-- <prop id="key_saver">(f,when,(loop,dirs,@more),?+,) (prop,inner) kb</prop> -->
+        <prop id="key_saver">? (prop,inner) kb</prop>        
+      </when>
+      
+      <when test="(f,eq,kb,(prop,dir_size_unit))">      
+        <choose>
+          <when test="(prop,bold_dir_size)">
+            <prop id="inner">(f,html,bold,open)(f,format,(loop,dirs,@kb),#(e:s)###)(f,html,bold,close)</prop>
+          </when>
+          <otherwise>
+            <prop id="inner">(f,format,(loop,dirs,@kb),#(e:s)###)</prop>
+          </otherwise>
+        </choose>
+        <prop id="key_saver">(prop,inner) kb</prop>
+      </when>  
+      <otherwise>
+        <prop id="inner">?(prop,dir_size_unit)</prop>
+        <prop id="key_saver">?(prop,dir_size_unit)</prop>
+      </otherwise>    
+    </choose>
+
+    
+    
+  </when>
+
+  <!--  
+              flag="no_arrow  button"
+            align="left"
+            class="PanoDirSelector"><ti>   </ti> -->
+  <ti type="rec" key="(prop,key_saver)" xlabel=" ">
+    <ti xtest="(prop,dirs-go-right)" > </ti>      
+    <ti type="call_job"  
+            job ="Panorama Directory"      
+            prefix="(prop,gen-dir-prefix)"
+            explain="(f,html,bold,open)(prop,dir_title)(f,html,bold,close)" weg="&#160;&#160;"                            
+            xexplain="&#8658;&#160;&#160;(f,html,bold,open)(prop,dir_title)(f,html,bold,close)"
+            flag="button"
+            class="panoGoDir"
+            align="left"
+            >                       
+            <dir  id="redo_dir" >(dir,target)</dir>
+            <prop id="redo_ipath">(loop,dirs,@ipath)</prop>  
+            <prop id="more">1</prop>
+                   
+    </ti>
+    <!-- nic123 -->
+    <ti type="call_service" job="Panorama-Dir-Activity" explain="&#160;&#402;" 
+        test="(prop,is-not-web)"
+        align="right"
+        flxag="silent">
+      <dir id="with" x="(dir,target)"/>  
+    </ti>
+    <ti align="right" span="8" test="(f,not,(prop,is-naked))">(prop,each_dir_key)</ti> 
+   </ti>    
+</job>
+
+<job id="report_visuals" role="hidden">
+
+<need>(file,fn2)</need>
+
+               
+               <when test="(f,has,prop,visual_onoff)"> 
+                <when test="(prop,visual_onoff)">
+                  <file id="dasfile" >(file,fn2)</file>  
+                  <prop id="s">(f,lower,(loop,file))</prop>
+                                    
+                  <when test="(f,or,(f,ends_with,(prop,s),.jpg),(f,ends_with,(prop,s),.png))">
+                    
+                    <choose>
+                      <when test="(f,and,(f,has,prop,visual_max_x),(f,has,prop,visual_max_y))">
+                        <ti type="img" max_x="(prop,visual_max_x)" max_y="(prop,visual_max_y)">(file,dasfile)</ti>
+                      </when>        
+                      <when test="(f,has,prop,visual_max_x)">
+                        <ti type="img" max_x="(prop,visual_max_x)">(file,dasfile)</ti>
+                      </when>
+                      <when test="(f,has,prop,visual_max_y)">
+                        <ti type="img" max_y="(prop,visual_max_y)">(file,dasfile)</ti>
+                      </when>          
+                      <otherwise>
+                        <ti type="img">(file,dasfile)</ti>
+                      </otherwise>
+                    </choose>
+                    <ti_space height="5px" /> 
+                    <!--   
+                    <ti>(f,html,b,o)(loop,f)(f,html,b,c)</ti>
+                    <ti>(dir,with)(loop,f)</ti>
+                    <ti type="file">(dir,with)(loop,f)</ti>
+                    <ti_hr/>  -->
+                  </when>                   
+                </when>
+
+                </when>
+</job>
+
+<job id="see_locs2" role="hidden">
+
+<prop id="the-dir-location"></prop>
+<prop id="locp1"></prop>
+<prop id="locp2"></prop>
+<try_catch>
+<try>
+
+<need>(dir,home2)</need>
+<!-- 
+<ti label="home2">(dir,home2) </ti>
+<ti label="master_project_app" flag="catch">(f,request,dir,master_project_app) </ti>
+<ti label="app" flag="catch">(dir,app) </ti>   -->
+
+<prop id="locp-done">0</prop>
+  
+  <when test="(f,not,(prop,locp-done))">
+  <when test="(f,has,(f,request,dir,master_project))">
+  <!-- <ti label="mp">(f,request,dir,master_project)</ti>  -->
+  <when test="(f,starts_with,(dir,home2),(f,request,dir,master_project))">
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(f,request,prop,master_project_app)-(prop,_rep_project)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(f,request,dir,master_project))</prop>
+  </when>  
+  </when>
+  </when>
+  
+  <when test="(f,not,(prop,locp-done))">
+  <!-- <when test="(f,has,(f,request,dir,libro))"> -->
+  <when test="(f,starts_with,(dir,home2),(f,request,dir,libro))">
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(prop,_rep_libro)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(f,request,dir,libro))</prop>          
+  </when>  
+  <!-- </when> -->     
+  </when>
+  
+  <when test="(f,not,(prop,locp-done))">
+  <!-- <when test="(f,has,(f,request,dir,libro2))"> -->
+  <when test="(f,starts_with,(dir,home2),(f,request,dir,libro2))">
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(prop,_rep_libro2)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(f,request,dir,libro2))</prop>          
+  </when>  
+  <!-- </when> -->     
+  </when>  
+  
+  <when test="(f,not,(prop,locp-done))">
+  <when test="(f,has,(f,request,dir,databaselink))">   
+  <!-- <ti label="db">(f,request,dir,databaselink)</ti>  -->    
+  <when test="(f,starts_with,(dir,home2),(f,request,dir,databaselink))">      
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(prop,_rep_db)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(f,request,dir,databaselink))</prop>          
+  </when>  
+  </when>  
+  </when>          
+
+  <when test="(f,not,(prop,locp-done))">
+  <when test="(f,starts_with,(dir,home2),(f,request,dir,session_home_fs))">  
+  <!-- <ti label="session">(f,request,dir,session_home_fs)</ti> -->      
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(prop,_rep_session)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(f,request,dir,session_home_fs))</prop>          
+  </when> 
+  </when>  
+    
+  <when test="(f,not,(prop,locp-done))">
+  <when test="(f,starts_with,(dir,home2),(f,request,dir,session_home_mem))">             
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(prop,_rep_sessionMemo)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(f,request,dir,session_home_mem))</prop>          
+  </when> 
+  </when>
+  
+  <when test="(f,not,(prop,locp-done))">      
+  <when test="(f,has,(f,request,dir,master_project_app))">
+  <when test="(f,starts_with,(dir,home2),(f,request,dir,master_project_app))">
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(f,request,prop,master_project_app)-(prop,_rep_app)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(f,request,dir,master_project_app))</prop>          
+    
+  </when>     
+  </when>    
+  </when>
+   
+  <when test="(f,not,(prop,locp-done))">
+  <when test="(f,starts_with,(dir,home2),(dir,system))">           
+    <prop id="locp-done">1</prop>
+    <prop id="locp1">(prop,_rep_system)</prop>
+    <prop id="locp2">(f,substring_after,(dir,home2),(dir,system))</prop>          
+  </when> 
+  </when>
+  
+  <choose>
+    <when test="(prop,locp-done)">
+    
+      <choose>
+        <when test="(f,has,prop,locp2)">
+          
+          
+            <prop id="kurzz">(f,substring,(prop,locp2),0,(f,sub,(f,len,(prop,locp2)),1))</prop>
+
+            <prop id="lllast">(f,last_index_of,(prop,kurzz),/)</prop>  
+            <prop id="rrrest">(f,substring,(prop,kurzz),0,(f,add,1,(prop,lllast)))</prop>
+            <choose>
+              <when test="(f,gt_num,(f,len,(prop,rrrest)),0)">
+                <prop id="the-dir-location">(prop,_rep_in) (prop,locp1): (prop,rrrest)</prop>              
+              </when>
+              <otherwise>
+                <prop id="the-dir-location">(prop,_rep_in) (prop,locp1)</prop>
+              </otherwise>
+            
+            </choose>
+       <remove id="rrrest" type="prop"/>
+            <remove id="lllast" type="prop"/>
+            <remove id="kurzz" type="prop"/>
+             
+        </when>
+        
+        <when test="(f,has,prop,locp1)">
+             <prop id="the-dir-location">(prop,_rep_the) (prop,locp1)</prop>
+        </when>
+                
+        <otherwise>
+             <prop id="the-dir-location"> </prop>
+        
+        </otherwise>
+      
+      
+      </choose>
+    
+      
+    
+    </when>
+    <otherwise>
+      <prop id="the-dir-location"></prop>
+    </otherwise>  
+  </choose>
+     
+        
+   </try>
+   <catch>
+    <ti>faild to deduct file-name (prop,catched_msg)</ti>
+    <prop id="the-dir-location"></prop>
+   </catch>
+  </try_catch>  
+</job>
+
+<job id="see_locs" role="hidden">
+
+<try_catch>
+<try>
+<ti test="0">------ im see_locs ------------
+(dir,home2)
+------------
+(f,request,dir,master_project)
+(f,request,dir,libro)
+(f,request,dir,databaselink)
+(f,request,dir,session_home_mem)
+(f,request,dir,session_home_fs)
+(dir,system)
+</ti>
+<need>(dir,home2)</need>
+       <when test="(f,has,(f,request,dir,master_project))">
+        <when test="(f,starts_with,(dir,home2),(f,request,dir,master_project))">
+          <ti label="(f,html,b,o)Your &apos;(f,request,prop,master_project_app)&apos; Project(f,html,b,c)">(f,substring_after,(dir,home2),(f,request,dir,master_project))</ti>
+        </when>  
+        </when>
+        
+        <when test="(f,has,(f,request,dir,libro))">
+        <when test="(f,starts_with,(dir,home2),(f,request,dir,libro))">
+        
+          <ti label="(f,html,b,o)In Libro(f,html,b,c)">(f,substring_after,(dir,home2),(f,request,dir,libro))</ti>
+          
+        </when>  
+        </when>     
+        
+        <when test="(f,has,(f,request,dir,libro2))">
+        <when test="(f,starts_with,(dir,home2),(f,request,dir,libro2))">
+        
+          <ti label="(f,html,b,o)In Libro-2(f,html,b,c)">(f,substring_after,(dir,home2),(f,request,dir,libro2))</ti>
+          
+        </when>  
+        </when>         
+        
+        <when test="(f,has,(f,request,dir,databaselink))">
+        
+        <when test="(f,starts_with,(dir,home2),(f,request,dir,databaselink))">
+      
+          <ti label="(f,html,b,o)In dB(f,html,b,c)">(f,substring_after,(dir,home2),(f,request,dir,databaselink))</ti>
+          
+        </when>  
+        </when>            
+        
+        <when test="(f,starts_with,(dir,home2),(f,request,dir,session_home_mem))">
+      
+          <ti label="(f,html,b,o)In SessionMem(f,html,b,c)">(f,substring_after,(dir,home2),(f,request,dir,session_home_mem))</ti>          
+        </when> 
+        
+        <when test="(f,starts_with,(dir,home2),(f,request,dir,session_home_fs))">
+  
+          <ti label="(f,html,b,o)In SessionFs(f,html,b,c)">(f,substring_after,(dir,home2),(f,request,dir,session_home_fs))</ti>           
+        </when>         
+        
+        <when test="(f,starts_with,(dir,home2),(dir,system))">
+       
+          <ti label="(f,html,b,o)In System(f,html,b,c)">(f,substring_after,(dir,home2),(dir,system))</ti>           
+        </when> 
+        
+        
+        
+   </try>
+   <catch>
+    <ti>faild to deduct file-name (prop,catched_msg)</ti>
+   </catch>
+  </try_catch>  
+</job>
+</jobs>

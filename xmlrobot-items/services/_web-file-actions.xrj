@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<job id="File-Again" role="hidden">
+  <need>(file,with)</need>
+  <ti_hr/>
+  <call_service job="tr_fdag"/>
+  <ti type="call_service" job="see_file_actions" explain="(prop,_fdag_file_another)">
+    <file id="with">(file,with)</file>
+  </ti>
+</job>
+
+<job id="go-on" role="hidden">
+  <need>(dir,with)</need>
+  <call_service job="Goto-Panorama"/>  
+  <call_service job="see_file_actions"/>
+</job>
+    
+<job id="see_file_actions" joblevel="ws" role="hidden">
+<!-- <interpreter act="check-login"/>  -->
+  <need>(file,with)</need>
+  <ti_break/>
+  <call_service job="tr_wfa"/>
+  <!-- 
+  <when test="(f,guicontroller,choose,file,is-on)">
+    <ti label="(f,html,b,o)Coosing file (f,html,b,c)(f,when,(f,guicontroller,choose,file,has-save),to write,):" x="(f,guicontroller,choose,file,label)"/>   
+    <ti label=" " x="(f,guicontroller,choose,file,tip)" 
+        test="(f,has,(f,guicontroller,choose,file,tip))"/>    
+    <ti type="file" label=" " x="(file,with)" flag="choose label_right"
+     explain="Keep (f,name_of_file,(file,with))" prefix="[ choose ]"/>
+    <ti_hr/>
+  </when>         -->
+  
+  <prop id="fnk" x="(f,lower,(f,name_of_file,(file,with)))"/>            
+  <prop id="ispic">(f,or,(f,ends_with,(prop,fnk),.jpg),(f,ends_with,(prop,fnk),.png))</prop>
+
+  <when test="(f,and,(prop,ispic),(f,interpreter,has_priv,opContent))">
+
+    <ti explain="(prop,_wfa_do_fullpic)" type="call_service" job="File-Pic" 
+        test="(f,interpreter,has_priv,opContent)">
+      <file id="with" x="(file,with)"/>
+    </ti>  
+    <ti type="img" max_x="600" max_y="200">(file,with)</ti>      
+  </when>
+
+  <prop id="src" x="(file,with)"/>
+
+  
+
+  <!-- <ti x="(f,html,b,o)(prop,_wfa_file)(f,html,b,c)"/>  -->
+  <ti label="(prop,_wfa_file): (f,name_of_file,(file,with))"/>
+  <ti_break class_table="tabNavigator"/>
+  <ti type="file" x="(file,with)"/>  
+
+  <ti_break/>
+
+  <ti type="file" x="(file,with)" flag="download blind" test="(f,implement,online)"/>
+ 
+ <!-- <ti x="(f,html,b,o)(prop,_wfa_size)(f,html,b,c)" /> -->
+ <ti type="rec" flag="catch">
+  <ti flag="block" x="(f,file_info,size,(file,with),kb) kb = (f,file_info,size,(file,with),bytes) bytes"/> 
+ </ti>
+
+ <ti type="rec" flag="catch">
+  <ti flag="block" x="(f,file_info,last_mod,(file,with),yyyy-MM-dd)" /> 
+ </ti>
+ 
+ <ti type="rec" flag="catch">
+  <ti flag="block" x="(f,file_info,last_mod,(file,with),HH:mm:ss)"/> 
+ </ti>
+ 
+
+  
+ <ti_space height="4px"/> 
+
+    
+  <when test="(f,interpreter,has_priv,opFiles)">
+    <ti label="(prop,_wfa_fileactions)"/> 
+    
+    <ti type="rec">
+      <ti explain="(prop,_wfa_do_delete)" type="call_service" job="File-Delete" flag="button" class="fx fxSrv fxSrvDel redButton"
+          test="(f,interpreter,has_priv,opDelete)">
+        <file id="with" x="(file,with)"/>
+      </ti> 
+      <ti test="(f,not,(f,interpreter,has_priv,opDelete))"></ti>
+       <ti test="(f,not,(f,interpreter,has_priv,opCopy))"></ti>
+      <ti explain="(f,html,b,o)UTF-8:(f,html,b,c) (prop,_wfa_do_seecont)" type="call_service" job="File-Content-UTF8"   flag="button" class="fx greenButton"
+          test="(f,interpreter,has_priv,opContent)">
+        <file id="with" x="(file,with)"/>
+      </ti>      
+      
+      <ti explain="(prop,_wfa_do_seecont)" type="call_service" job="File-Content"        flag="button" class="fx   greenButton"
+          test="(f,interpreter,has_priv,opContent)">
+        <file id="with" x="(file,with)"/>
+      </ti>           
+
+    </ti>
+
+
+  
+    <ti type="rec">
+      <ti explain="(prop,_wfa_do_copy)" type="call_service" job="File-Copy"          flag="button" class="fx fxSrv fxSrvCopy"
+          test="(f,interpreter,has_priv,opCopy)">
+        <file id="with" x="(file,with)"/>
+      </ti> 
+      <ti explain="(f,html,b,o)UTF-8:(f,html,b,c) (prop,_wfa_do_edit)" type="call_service" job="File-Edit"  flag="button" class="fx fxSrv fxSrvEdit yellowButton"
+          test="(f,interpreter,has_priv,opUpdate)">
+        <file id="with" x="(file,with)"/>
+        <prop id="file-edit-encoding">UTF-8</prop>
+      </ti>  
+      <ti explain="(prop,_wfa_do_edit)" type="call_service" job="File-Edit"  flag="button" class="fx fxSrv fxSrvEdit yellowButton"
+          test="(f,interpreter,has_priv,opUpdate)">
+        <file id="with" x="(file,with)"/>
+      </ti>        
+    </ti>
+    
+    
+    <ti type="rec">
+      <ti explain="(prop,_wfa_do_rename)" type="call_service" job="File-Rename"     flag="button" class="fx fxSrv fxSrvRename"
+          test="(f,interpreter,has_priv,opRename)">
+        <file id="with" x="(file,with)"/>
+      </ti>     
+       <ti test="(f,not,(f,interpreter,has_priv,opRename))"></ti>
+      <ti explain="(prop,_wfa_do_seepic)" type="call_service" job="File-Pic"   flag="button" class="fx fxSrv fxSrvPic"
+          test="(f,interpreter,has_priv,opContent)">
+        <file id="with" x="(file,with)"/>
+      </ti>
+    </ti>        
+
+    
+ 
+    
+
+        
+    <!-- 
+    <ti explain="Text Replace" type="call_service" job="File-ReplaceText">
+      <file id="with" x="(file,with)"/>
+    </ti>  -->
+    
+
+    <!-- 
+    <ti explain="(f,html,b,o)Csv-2-Xml(f,html,b,c)" type="call_service" job="File-Csv2Xml" 
+        test="(f,interpreter,has_priv,opCsv2Xml)">
+      <file id="with" x="(file,with)"/>
+    </ti>    -->     
+    <ti type="rec">
+      <ti explain="(prop,_wfa_do_checksum)" type="call_service" job="File-Checksum"     span="2"     flag="button" class="fx fxSrv fxSrvChecksum"
+          test="(f,interpreter,has_priv,opContent)">
+        <file id="with" x="(file,with)"/>
+      </ti>     
+    </ti>
+
+    <ti type="rec">
+      <ti explain="(prop,_wfa_do_extract)" type="call_service" job="File-Extract"     span="2"     flag="button" class="fx fxSrv fxSrvExtract"
+          test="(f,interpreter,has_priv,opUnzip)">
+        <file id="with" x="(file,with)"/>
+      </ti>        
+    
+    </ti>
+    
+    <ti type="rec">
+      <ti type="call_service" job="File-Encrypt-Decrypt" explain="(prop,_wfa_do_encrypt)" span="2"   flag="button" class="fx fxSrv fxSrvDecEncrypt"
+        test="(f,interpreter,has_priv,opCrypto)">
+        <file id="with" x="(file,with)"/>  
+      </ti>    
+    </ti>    
+
+        
+
+    
+
+      
+    <ti type="rec">
+      <ti> </ti>
+      <ti explain="(prop,_wfa_do_pano)" type="call_service" job="Dir-Panorama"          flag="button" class="fx fxSrv fxSrvPano"
+          test="(f,interpreter,has_priv,opInfo)">   
+        <dir id="with" x="(f,dir_of_file,(file,with))"/>
+      </ti>           
+    </ti>
+    
+    <ti type="rec">
+      <ti> </ti>
+      <ti explain="(prop,_wfa_do_seeinfos)" type="call_service" job="File-Dir-VFS"                flag="button" class="fx fxSrv fxSrvInfo"
+          test="(f,interpreter,has_priv,opInfo)">   
+        <prop id="with" x="(file,with)"/>
+      </ti>              
+    </ti>
+        
+ 
+    
+
+  <ti_hr_break/>
+  <ti label="(prop,_wfa_completefn):"/>
+  <ti type="rec">
+  <ti  flag="block wrap" x="(file,with)" />
+  </ti>
+    
+   
+    <!-- 
+    
+      <ti_hr_break/>
+  <ti label="(prop,_wdi_complete):"/>
+  <ti  flag="block wrap" x="(dir,with)" />
+    <when test="(f,interpreter,has_priv,opInfo)">
+      <ti label="File-Infos"/>
+      <ti label="base" x="(f,vfs,(prop,src),base)" flag="catch"/>  
+      <ti label="scheme" x="(f,vfs,(prop,src),scheme)" flag="catch"/>  
+      <ti label="type" x="(f,vfs,(prop,src),type)" flag="catch"/>
+     
+    
+      <ti label="extension" x="(f,vfs,(prop,src),extension)" flag="catch"/>
+      <ti label="depth" x="(f,vfs,(prop,src),depth)" flag="catch"/>   
+      <ti label="uri" x="(f,vfs,(prop,src),uri)" flag="catch"/>   
+    
+      <ti label="URL &amp; URI"/>
+                       
+      <ti label="friendly_uri" x="(f,vfs,(prop,src),friendly_uri)" flag="catch"/>   
+      <ti label="url" x="(f,vfs,(prop,src),url)" flag="catch"/>  
+      <ti label="url_prot" x="(f,vfs,(prop,src),url_prot)" flag="catch"/> 
+       
+      
+    
+    
+      <ti label="Path"/>
+      <ti label="path" x="(f,vfs,(prop,src),path)" flag="catch"/>
+      <ti label="path_decoded" x="(f,vfs,(prop,src),path_decoded)" flag="catch"/> 
+    
+      <ti label="Root"/>
+      <ti label="root_path" x="(f,vfs,(prop,src),root_path)" flag="catch"/>  
+      <ti label="root_path_decoded" x="(f,vfs,(prop,src),root_path_decoded)" flag="catch"/>
+      <ti label="root_base" x="(f,vfs,(prop,src),root_base)" flag="catch"/>
+      <ti label="root_uri" x="(f,vfs,(prop,src),root_uri)" flag="catch"/>
+           
+      <ti label="Bits"/>  
+      <ti label="name_is_file" x="(f,vfs,(prop,src),name_is_file)" flag="catch"/>   
+      <ti label="exists" x="(f,vfs,(prop,src),exists)" flag="catch"/>  
+      <ti label="is_attached" x="(f,vfs,(prop,src),is_attached)" flag="catch"/>
+      <ti label="is_content_open" x="(f,vfs,(prop,src),is_content_open)" flag="catch"/>
+    
+      <ti label="is_executable" x="(f,vfs,(prop,src),is_executable)" flag="catch"/>
+      <ti label="is_file" x="(f,vfs,(prop,src),is_file)" flag="catch"/>
+      <ti label="is_folder" x="(f,vfs,(prop,src),is_folder)" flag="catch"/>  
+      
+      <ti label="is_hidden" x="(f,vfs,(prop,src),is_hidden)" flag="catch"/>
+      <ti label="is_readable" x="(f,vfs,(prop,src),is_readable)" flag="catch"/>
+      <ti label="is_writable" x="(f,vfs,(prop,src),is_writable)" flag="catch"/>   
+    </when>
+    -->
+  
+  </when>  
+    
+
+  <!-- 
+  <ti label="Real-file infos"/>     
+  <ti label="file_uri" x="(f,vfs,(prop,src),file_uri)" flag="catch"/>
+  <ti label="file_url" x="(f,vfs,(prop,src),file_url)" flag="catch"/>
+  
+  <when test="(f,guicontroller,may,operate-file,)">
+    <ti label="Actions"/> 
+    <ti label="See file-content" type="call_service" job="see_file_content">
+      <file id="with" x="(file,with)"/>
+    </ti>  
+    
+    <ti label="Copy File" type="call_service" job="Panorama-File-Activity-COPY">
+      <file id="with" x="(file,with)"/>
+    </ti>    
+    
+     <ti label="Treat File as Directory" type="call_service" job="Panorama-File-Activity-TREAT"><file id="with" x="(file,with)"/></ti> 
+     <ti label="Rename File" type="call_service" job="Panorama-File-Activity-RENAME"><file id="with" x="(file,with)"/></ti>
+     <ti label="Extract a ZIP file" type="call_service" job="Panorama-File-Activity-EXTRACTZIP"><file id="with" x="(file,with)"/></ti>
+     <ti label="Calculate Checksums (e:o)md5(e:s) sha1(e:c)" type="call_service" job="Panorama-File-Activity-CHECKSUM"><file id="with" x="(file,with)"/></ti>
+
+  </when>
+  -->
+                   
+  
+
+
+</job>
+ 
+<job id="File-Csv2Xml" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  
+</job>   
+
+<job id="File-Delete" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_service job="tr_fdel"/>
+  <!-- <ti type="file" x="(file,with)" label="File to Delete:"/>  -->
+
+  <tk label="(prop,_fdel_acc_l) (f,name_of_file,(file,with)) ?" 
+      type="accept" 
+      id="quest-delete-1" 
+      x="(prop,_fdel_acc_x) &#xA;(f,name_of_file,(file,with))&#xA;&#xA;(file,with)"
+      label_accept="(prop,_fdel_acc_ac)"
+      label_decline="(prop,_fdel_acc_de)"
+      width="300"
+      height="150">
+    <q id="quest-delete-2" label="(prop,_fdel_acc_q)"/>       
+  </tk>
+
+  <choose>  
+    <when test="(f,not,(f,and,(prop,quest-delete-1),(prop,quest-delete-2)))">
+       <ti type="file" label="(prop,_fdel_del_stop)">(file,with)</ti>
+    </when>
+    <otherwise>
+          <delete file="(file,with)"/>
+          <ti type="file" label="(prop,_fdel_del_done)">(file,with)</ti>
+          <call_service job="tr_wda"/>
+          <ti type="call_service" job="Goto-Panorama" explain="(prop,_wda_del_seepano_parent)" label=" ">
+            <dir id="with">(f,dir_of_file,(file,with))</dir>
+          </ti>              
+    </otherwise>
+  </choose>
+  <!-- <call_service job="File-Again"/>  -->
+</job>
+
+<job id="File-Rename" role="hidden" joblevel="ws">
+  <call_service job="tr_fren"/>
+  
+  <ti type="file" x="(file,with)" label="(prop,_fren_fileto_ren)"/>
+  <need>(file,with)</need>
+  <prop id="nof">(f,name_of_file,(file,with))</prop>
+
+  <tk id="nof" label="(prop,_fren_new_name)" regex=".+" flag="nono" rule="filename" cols="30"/>
+
+  <file id="new">(f,dir_of_file,(file,with))(prop,nof)</file>
+  <tk type="msg">(prop,_fren_goingto)</tk>
+  <prop id="t1" x="(f,file_info,last_mod,(file,with),yyyy-MM-dd-HH-mm-ss-SSS)"/>
+  <copy file="(file,with)" tofile="(file,new)"/>
+  <set_last_mod file="(file,new)" time="(prop,t1)"/>
+  <delete file="(file,with)"/>  
+
+  <ti label="(prop,_fren_performed)">
+    <ti type="file" id="(prop,_fren_from)" x="(file,with)" />
+    <ti type="file" id="(prop,_fren_to)" x="(file,new)" />
+  </ti>
+  <file id="with">(file,new)</file>
+  <call_service job="File-Again"/>
+</job>
+<!-- 
+<job id="File-Split" joblevel="ws" role="hidden">
+  <need>(file,with)</need>
+  
+  <tk flag="nono"
+      type="sel" id="target1" label="Target Specification" tip="Where should the files be placed? This directory is: ">
+    <sel label="Under this directory">this</sel>
+    <sel label="Somwhere else">else</sel>
+  </tk>
+  
+  <choose>
+    <when test="(f,eq_text,(prop,target1),this)">
+      <tk id="dirname" label="New Directory" 
+      tip="a new directory will be created under (f,dir_of_file,(file,with)). Thats its name"
+      flag="nono"/>
+      <dir id="target2">(f,dir_of_file,(file,with))(prop,dirname)</dir>
+      
+    </when>
+    
+    <when test="(f,eq_text,(prop,target1),else)">
+      <tk id="target2" label="New Directory" type="dir" 
+      tip="Select your target directory"
+      flag="nono"/>
+      <dir id="target2">(f,dir_of_file,(file,with))(prop,dirname)</dir>
+      
+    </when>    
+  
+  </choose>
+  <prop id="encoding" x="UTF-8"/>
+  <tk label="Finish the parameters" flag="sum">  
+  <tk id="linenums" label="Number of lines" tip="number of lines per result-file" test_first="1"/>
+
+  <tk type="text" id="encoding" test_first="0" />
+      <tk id="target2" label="New Directory" type="dir" 
+      tip="Select your target directory"
+      flag="nono" test_first="0"/>
+  </tk>  
+  
+  <dump_ti/>
+</job>
+-->
+
+<job id="File-Pic" joblevel="ws" role="hidden">
+  <need>(file,with)</need>
+  <call_service job="tr_fsimp"/>
+  <ti type="file" x="(file,with)" label="(prop,_fsimp_file_view)"/>
+  <ti type="text">(file,with)</ti>
+  <ti type="img">(file,with)</ti>
+  <call_service job="File-Again"/>
+</job>
+
+<job id="File-Content" joblevel="ws" role="hidden">
+  <need>(file,with)</need>
+  <call_service job="tr_fsimp"/>
+  <ti type="file" x="(file,with)" label="(prop,_fsimp_file_view)"/>
+  <prop id="encoding" x="UTF-8"/>
+  <tk type="text" id="encoding" x="UTF-8" label="(prop,_fsimp_encoding)" flag="nono" cols="10"/>
+
+  <ti_hr/>
+                <call_service job="fps">
+                  <file id="fps-file">(file,with)</file>   
+                  <prop id="fps-regex">\n</prop>
+                  <prop id="fps-limit">300000</prop>
+                  <prop id="fps-header">1</prop>        
+                  <prop id="fps-encode">(prop,encoding)</prop>
+                    
+                </call_service>
+                  
+  <call_service job="File-Again"/>
+</job>
+
+<job id="File-Content-UTF8" joblevel="ws" role="hidden">
+  <need>(file,with)</need>
+  <need default="0">(prop,last_size)</need>
+  <call_service job="tr_fsimp"/>
+  <ti label="(prop,_fsimp_file_view)"/>
+  <ti type="file" x="(file,with)" label="File"/>
+  <ti label="Time" >(f,time,yyyy-MM-dd HH:mm:ss)</ti>
+  <prop id="size">(f,file_info,size,(file,with),bytes)</prop>
+  <choose>
+    <when test="(f,eq_num,0,(prop,last_size))">
+      <ti label="Size" >(prop,size) bytes</ti>
+    </when>  
+    <when test="(f,eq_num,(prop,size),(prop,last_size))">
+      <ti label="Size" >(prop,size) bytes</ti>
+    </when>
+    <otherwise>
+      <ti label="Size" >(prop,size) bytes = +(f,html,b,o)(f,sub,(prop,size),(prop,last_size))(f,html,b,c)</ti>
+    </otherwise>
+  
+  </choose>
+
+  <ti type="call_service" job="File-Content-UTF8" explain="View again" label=" " flag="button">
+    <file id="with">(file,with)</file>
+    <prop id="last_size">(prop,size)</prop>
+  </ti>  
+  <ti_hr/>
+  <!-- 
+  <ti>(f,file_content,(file,with),UTF-8)</ti>      -->
+  
+                <call_service job="fps">
+                  <file id="fps-file">(file,with)</file>   
+                  <prop id="fps-regex">\n</prop>
+                  <prop id="fps-limit">300000</prop>
+                  <prop id="fps-header">1</prop>        
+                  <prop id="fps-encode">UTF-8</prop>
+                    
+                </call_service>
+                  
+  <ti_hr/>
+  <ti type="call_service" job="File-Content-UTF8" explain="View again" flag="button">
+    <file id="with">(file,with)</file>
+    <prop id="last_size">(prop,size)</prop>
+  </ti>
+  <call_service job="File-Again"/>
+</job>
+
+<job id="File-Checksum" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_service job="tr_fsimp"/>
+  <ti type="file" x="(file,with)" label="(prop,_fsimp_file_checksum)"/>
+  <ti_break/>
+  <ti label="(prop,_fsimp_file_checksum2)">
+    <ti label="md5:">(f,file_info,hash,md5,(file,with))</ti>
+    <ti label="md2:">(f,file_info,hash,md2,(file,with))</ti>
+    <ti label="sha1:">(f,file_info,hash,sha1,(file,with))</ti>
+    <ti label="sha256:">(f,file_info,hash,sha256,(file,with))</ti>
+    <ti label="sha384:">(f,file_info,hash,sha384,(file,with))</ti>
+    <ti label="sha512:">(f,file_info,hash,sha512,(file,with))</ti>
+    
+  </ti>
+  <call_service job="File-Again"/>
+  
+</job>
+
+<job id="File-Download" role="hidden" joblevel="ws">
+
+  <need>(file,with)</need>
+   <call_service job="tr_fsimp"/>
+     
+  <ti type="file" x="(file,with)" label="(prop,_fsimp_file_down)" flag="download"/>
+  <call_service job="File-Again"/>
+</job>
+
+                                                            
+<job id="File-Copy" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_service job="tr_fcop"/> 
+  <ti type="file" x="(file,with)" label="(prop,_fcop_file_copy)"/>
+
+  
+
+  <call_service job="go-joe-read"> 
+    <prop id="joe-in-regex">target</prop>
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-copy-x-ic.lsx</file>  
+  </call_service>
+  
+  <tk id="where" type="sel" flag="nono" label="(prop,_fcop_targetoc)">
+      <sel label="(prop,_fcop_samedir)">same</sel>
+      <sel label="(prop,_fcop_likelast) (f,vob,dir,target)" test="(f,has,dir,target)">last</sel>
+      <sel label="(prop,_fcop_someelse)">else</sel>
+  </tk>
+  
+  <choose>
+    <when test="(f,eq_text,same,(prop,where))">
+      <dir id="target" x="(f,dir_of_file,(file,with))" />
+    </when>
+    <when test="(f,eq_text,last,(prop,where))">
+    </when>
+    <when test="(f,eq_text,else,(prop,where))">
+      <dir id="target" x="(f,dir_of_file,(file,with))" />
+      <tk id="target" label="(prop,_fcop_target_dir)" type="dir" flag="nono"/> 
+    </when>        
+  </choose>
+ 
+
+  
+  <prop id="nof">(f,name_of_file,(file,with))</prop>
+  <tk id="nof" label="(prop,_fcop_filename)" type="text" flag="nono" tip="(prop,_fcop_new_filename)"/>
+  <file id="new">(dir,target)(prop,nof)</file>
+  <tk label="(prop,_fcop_target_copy)" flag="sum_only">    
+    <tk id="new" type="file" label="(prop,_fcop_file_write)" flag="nono save"/>
+  </tk>
+  
+  <dir id="target" x="(f,dir_of_file,(file,new))" />
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">target</prop>  
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-copy-x-ic.lsx</file>  
+  </call_service>
+
+  <when test="(f,file_exists,(file,new))">
+    <tk type="msg" msg_type="w">(prop,_fcop_overwrite)
+(file,new)</tk>
+  </when>
+
+  <prop id="t1" x="(f,file_info,last_mod,(file,with),yyyy-MM-dd-HH-mm-ss-SSS)"/>
+  <copy file="(file,with)" tofile="(file,new)"/>
+  <set_last_mod file="(file,new)" time="(prop,t1)"/>  
+
+
+  <ti label="(prop,_fcop_performed)">
+    <ti type="file" label="(prop,_fcop_from)" x="(file,with)" />
+    <ti type="file" label="(prop,_fcop_to)" x="(file,new)" />
+  </ti>
+  <call_service job="File-Again"/>
+</job>  
+
+<job id="File-Encrypt-Decrypt" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <tk type="msg" msg_type="w">Make sure that the text in the file is stored in utf-8</tk>
+  
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-enc-dec-file.lsx</file>
+    <prop id="joe-in-regex">style</prop>  
+  </call_service>
+  <tk label="Encrypt-Decrypt File: (f,name_of_file,(file,with))">
+    
+    <tk type="sel" flag="nono"
+        id="style"
+        label="Encrypt-or-Decrypt"
+        x="encrypt">
+        <sel label="Encrypt">encrypt</sel>
+        <sel label="Decrypt">decrypt</sel>
+    </tk>
+          
+    <tk id="pw1" label="Pw" flag="nono password" tip="This is the secret key with which the given text is encrypted/decrypted"/>
+    <tk id="pw2" label="Pw-Again" flag="nono password" tip="This is the secret key with which the given text is encrypted/decrypted once again"/>
+    <tk id="result" type="file" flag="save write nono" label="Result-File" />
+    
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">style</prop>  
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-enc-dec-file.lsx</file> 
+  </call_service>  
+  
+  <throw test="(f,not,(f,eq_text,(prop,pw1),(prop,pw2)))">Passwords differs</throw>
+  
+  <crypto id="scra" act="open" type="(prop,pw1)"/>
+  <crypto id="scra" act="(prop,style)" from="(file,with)" to="(file,result)"/>
+
+  <crypto id="scra" act="close" />
+  
+  <ti type="file" label="Result">(file,result)</ti>
+  <ti label=" ">(f,file_content,(file,result))</ti>
+  
+  
+  <call_service job="File-Again"/>  
+    
+</job>
+  
+<job id="File-Extract" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_service job="tr_fextr"/>
+  
+  <ti type="file" x="(file,with)" label="(prop,_fextr_file_extract)"/>
+  <tk id="extract-to-dir" type="dir" x="(f,dir_of_file,(file,with))" label="(prop,_fextr_spec_target)" />
+  
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-unzip-ic.lsx</file>
+    <prop id="joe-in-regex">what-target</prop>  
+  </call_service>
+  
+  <tk type="sel" id="what-target" label="(prop,_fextr_fin_targ_dir)" flag="nono" x="here">
+    <sel label="(f,name_of_dir,(dir,extract-to-dir))">here</sel>
+    <sel label="(f,name_of_dir,(dir,extract-to-dir))(prop,fs)(f,name_of_file2,(file,with))">there</sel>
+    <sel label="(f,name_of_dir,(dir,extract-to-dir))(prop,fs)(f,replace,(f,name_of_file,(file,with)),.,-)">over</sel>
+ <sel label="(prop,_fextr_someelse)">else</sel>
+  </tk>
+  
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">what-target</prop>  
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/op-unzip-ic.lsx</file>  
+  </call_service>  
+
+  <when test="(f,eq,else,(prop,what-target))">
+    
+      <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question" x="(prop,_fextr_extr_dest) (f,name_of_file,(file,with))"/>
+      </call_service>
+      <global act="get" id="jil-result"/>        
+      <dir id="extract-to-dir" x="(prop,jil-result)" />
+
+    
+  </when>
+  <when test="(f,eq,there,(prop,what-target))">
+    <dir id="extract-to-dir">(dir,extract-to-dir)(f,name_of_file2,(file,with))</dir>   
+  </when>
+  
+  <when test="(f,eq,over,(prop,what-target))">
+    <dir id="extract-to-dir">(dir,extract-to-dir)(f,replace,(f,name_of_file,(file,with)),.,-)</dir>    
+  </when>  
+  <tk label="(prop,_fextr_confirm)" flag="sum_only">
+  <tk id="extract-to-dir" type="dir" flag="nono" label="(prop,_fextr_dir_to_create)"/>
+  </tk>
+  
+  <tk type="msg" 
+      x="(prop,_fextr_going_extr) &#xA;(dir,extract-to-dir) (f,when,(f,exists_dir,(dir,extract-to-dir)),&#xA;(prop,_fextr_warn_exists),)"
+      msg_type="(f,when,(f,exists_dir,(dir,extract-to-dir)),w,i)"/>
+  <mkdir dir="(dir,extract-to-dir)" flag="cascade"/>
+  <tp>(prop,_fextr_extracting) (f,name_of_file,(file,with)) (prop,_fextr_to) (dir,extract-to-dir)</tp>
+
+    <mkdir dir="(dir,extract-to-dir)"/>
+    <unzip file="(file,with)" todir="(dir,extract-to-dir)"/>
+
+
+  <ti label="(prop,_fextr_did_extract)">
+    <ti type="file" label="(prop,_fextr_from)">(file,with)</ti>
+  </ti>
+  <ti_break/>
+    <ti type="dir" label="(prop,_fextr_to)">(dir,extract-to-dir)</ti>
+
+    <ti type="call_service" job="Goto-Panorama" label=" " explain="(prop,_fextr_see_pano)">
+      <dir id="with" x="(dir,extract-to-dir)"/>
+    </ti>  
+
+    <call_service job="File-Again"/>
+  </job>
+
+
+<!-- 
+<job id="File-ReplaceText" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <ti type="file" x="(file,with)" label="Text replace"/>
+  
+  <tk id="encoding" x="UTF-8" flag="nono" tip="Le encoding de file"/>
+  
+  <tk type="msg">Content of file is:
+(f,file_content,(file,with),(prop,encoding))  
+</tk>
+  
+  <tk label="Parameters for text-replacement" tip="Regarding file: (f,name_of_file,(file,with))">
+    <tk id="search" label="Search for Text" flag="nono" type="textblock" tip="This text will be searched for"/>
+    <tk id="replace" label="Replace with Text" flag="nono" type="textblock" tip="Cette text va etre el nouvell text qui replace le text de la cherche"/>  
+    <tk id="expected" label="Expected Ocurrencs" flag="nono" type="text" x="1" tip="Le chiffre de fois-chiffre pour controller la situation"/> 
+    <tk id="encoding" x="UTF-8" flag="nono" tip="Le encoding de file"/>
+  </tk>
+  
+
+  
+  <prop id="count1" x="(f,file_count_text,(file,with),(prop,search))"/>
+  <ti>encounted (prop,count1)</ti>
+  <throw test="(f,not,(f,eq_num,(prop,count1),(prop,expected)))">We expeced to meet [(prop,search] [(prop,expected) ] Times(e:s) but  found it [(prop,count1)] times !!</throw>
+    
+  <prop id="content" x="(f,file_content,(file,with),(prop,encoding))"/>
+  <prop id="content_replaced" x="(f,replace,(prop,content),(prop,search),(prop,replace))"/>
+  <tk type="msg" msg_type="w">- - - - - - - New content will be - - - - - - - - - - 
+(prop,content_replaced)
+- - - - - - - And it was before - - - - - - - - - - 
+(prop,content)
+
+ok?</tk>
+
+  <tk type="textblock" flag="big" id="content" label="Edit the files content (f,name_of_file,(file,with))"/>
+  <choose>
+  <when test="(f,not,(f,eq_text,(prop,content),(prop,content_before)))">
+    <tk label="Sure about updating?" 
+    	type="accept" 
+    	id="delete-pro-1" 
+    	x="You commanded to update  the file &#xA;(file,with)&#xA;Are you sure about that???" 
+    	label_accept="Overwrite it" 
+    	label_decline="Forget it" 
+    	width="300" height="150">
+    	<q id="delete-pro-2" label="()Yes, I know that the old content of the updated files will be gone forever()"/>
+    </tk>
+    
+    
+    <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+      <ti>Operation terminated.</ti>
+    	<throw>Operation terminated on request.</throw>
+    </when>   
+    <create_file out="(file,with)">(prop,content)</create_file>
+    <ti type="file" label="created" x="(file,with)"/>
+  </when>
+  <otherwise>
+    <ti>file was not updated and not saved</ti>
+  </otherwise>
+  </choose>
+</job>
+-->
+
+
+<job id="File-Edit" role="hidden" joblevel="ws">
+  <need>(file,with)</need>
+  <call_service job="tr_fedit"/>
+  <ti type="file" x="(file,with)" label="(prop,_fedit_edit)"/>
+  <choose>
+    <when test="(f,has,prop,file-edit-encoding)">
+      <prop id="encoding">(prop,file-edit-encoding)</prop>
+    </when>
+    <otherwise>
+      <tk id="encoding" x="UTF-8" label="(prop,_fedit_encoding)" flag="nono" cols="10"/>
+    </otherwise>
+  </choose>
+  
+  <prop id="content" x="(f,file_content,(file,with),(prop,encoding))"/>
+  <prop id="content_before" x="(prop,content)"/>
+  <tk>
+  <tk type="textblock" flag="bigbig" id="content" label="(prop,_fedit_edit_label) (f,name_of_file,(file,with))"/>
+  </tk>
+  <choose>
+  <when test="(f,not,(f,eq_text,(prop,content),(prop,content_before)))">
+    <ti_hr/>  
+    <ti label="(prop,_fedit_new)(e:s) Len=(f,len,(prop,content))"/>
+    <ti>(prop,content)</ti>   
+    <ti_hr/>   
+    <ti label="(prop,_fedit_before)(e:s) Len=(f,len,(prop,content_before))"/>
+
+    <ti>(prop,content_before)</ti>
+    <prop id="delete-pro-2" x="1"/>
+    <tk label="(prop,_fedit_sure)" 
+    	type="accept" 
+    	id="delete-pro-1" 
+    	x="(prop,_fedit_sure2)&#xA;(file,with)&#xA;(prop,_fedit_sure3)" 
+    	label_accept="(prop,_fedit_overwrite)" 
+    	label_decline="(prop,_fedit_forget)" 
+    	width="300" height="150">
+    	<q id="delete-pro-2" label="(prop,_fedit_iknow)" flag="load"/>
+    </tk>
+    
+    <!-- fail if question not answered properly -->
+    <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+      <ti>(prop,_fedit_terminated)</ti>
+    	<throw>(prop,_fedit_terminated)</throw>
+    </when> 
+    <create_file out="(file,with)">(prop,content)</create_file>
+    <ti type="file" label="(prop,_fedit_created)" x="(file,with)"/>
+  </when>
+  <otherwise>
+    <ti>(prop,_fedit_not_updated)</ti>
+  </otherwise>
+  </choose>
+  <call_service job="File-Again"/>
+</job>
+
+<job id="File-Dir-VFS" role="hidden" joblevel="ws">
+  <need>(prop,with)</need>
+  <call_service job="tr_vfsi"/>
+  <ti label="(prop,with)"/>
+  <ti_space height="5px" />
+  <ti label="(prop,_vfsi_props)"/>
+ <ti label="(prop,_vfsi_lastmod)" x="(f,file_info,last_mod,(prop,with),yyyy-MM-dd HH:mm:ss)" flag="catch"/>
+ <ti label="(prop,_vfsi_size)" x="(f,file_info,size,(prop,with),kb) kb" flag="catch"/>
+ <ti label=" " x="(f,file_info,size,(prop,with),bytes) bytes" flag="catch"/>
+ <ti label=" " x="(f,file_info,size,(prop,with),mb) mb" flag="catch"/> 
+ <ti label="URL &amp; URI"/>  
+
+  <ti label="uri" x="(f,vfs,(prop,with),uri)" flag="catch"/>                  
+  <ti label="friendly_uri" x="(f,vfs,(prop,with),friendly_uri)" flag="catch"/>   
+  <ti label="url" x="(f,vfs,(prop,with),url)" flag="catch"/>  
+  <ti label="url_prot" x="(f,vfs,(prop,with),url_prot)" flag="catch"/>   
+
+
+ <ti label="(prop,_vfsi_nameinfos)"/>  
+
+  <ti label="scheme" x="(f,vfs,(prop,with),scheme)" flag="catch"/>  
+  <ti label="type" x="(f,vfs,(prop,with),type)" flag="catch"/>
+ 
+  <ti label="base" x="(f,vfs,(prop,with),base)" flag="catch"/>
+  <ti label="extension" x="(f,vfs,(prop,with),extension)" flag="catch"/>
+  <ti label="depth" x="(f,vfs,(prop,with),depth)" flag="catch"/>   
+
+  <ti label="Path"/>
+  <ti label="path" x="(f,vfs,(prop,with),path)" flag="catch"/>
+  <ti label="path_decoded" x="(f,vfs,(prop,with),path_decoded)" flag="catch"/> 
+
+  <ti label="Root"/>
+  <ti label="root_path" x="(f,vfs,(prop,with),root_path)" flag="catch"/>  
+  <ti label="root_path_decoded" x="(f,vfs,(prop,with),root_path_decoded)" flag="catch"/>
+  <ti label="root_base" x="(f,vfs,(prop,with),root_base)" flag="catch"/>
+  <ti label="root_uri" x="(f,vfs,(prop,with),root_uri)" flag="catch"/>
+  
+  <ti label="Bits"/>     
+ 
+  <ti label="name_is_file" x="(f,vfs,(prop,with),name_is_file)" flag="catch"/>   
+  <ti label="exists" x="(f,vfs,(prop,with),exists)" flag="catch"/>  
+  <ti label="is_attached" x="(f,vfs,(prop,with),is_attached)" flag="catch"/>
+  <ti label="is_content_open" x="(f,vfs,(prop,with),is_content_open)" flag="catch"/>
+
+  <ti label="is_executable" x="(f,vfs,(prop,with),is_executable)" flag="catch"/>
+  <ti label="is_file" x="(f,vfs,(prop,with),is_file)" flag="catch"/>
+  <ti label="is_folder" x="(f,vfs,(prop,with),is_folder)" flag="catch"/>  
+  
+  <ti label="is_hidden" x="(f,vfs,(prop,with),is_hidden)" flag="catch"/>
+  <ti label="is_readable" x="(f,vfs,(prop,with),is_readable)" flag="catch"/>
+  <ti label="is_writable" x="(f,vfs,(prop,with),is_writable)" flag="catch"/>   
+    
+  <choose>
+    <when test="(f,vfs,(prop,with),name_is_file)">  
+      <call_service job="File-Again">
+        <file id="with">(prop,with)</file>
+      </call_service>
+    </when>
+    <otherwise>
+      <call_service job="Dir-Again">
+        <dir id="with">(prop,with)</dir>
+      </call_service>
+    </otherwise>
+  </choose>
+  
+</job>
+ 
+<job id="fps" role="hidden">
+  <need>(file,fps-file)</need>
+  <need default="\n">(prop,fps-regex)</need>
+  
+  <need default="30">(prop,fps-limit)</need> <!-- maximale zeilenanzahl -->
+  <prop id="fps-limit2">(f,add,1,(prop,fps-limit))</prop>
+  
+  <need default="UTF-8">(prop,fps-encode)</need>
+  <need default="1">(prop,fps-header)</need>
+  
+  <prop id="fps-filemax">(f,file_info,len,(file,fps-file))</prop>
+  <!-- 
+  <choose>
+    <when test="(f,has,prop,font)">
+    </when>
+  <need default="Courier">(prop,fps-face)</need>      -->
+  <prop id="fps-intro">&lt;font face=&quot;Courier&quot;&gt;</prop>
+  <prop id="fps-extro">&lt;font&gt;</prop>
+  
+
+  <!--
+  <ti label="fps: ECHT"/>  
+  
+  <prop id="fps-founds">0</prop>
+  <prop id="fps-limit-reached">0</prop>
+  
+  
+  
+  <loop id="findings" file="(file,fps-file)" regex="(prop,fps-regex)" 
+        encoding="(prop,fps-encode)" limit="(prop,fps-limit2)">
+  
+    <prop id="fps-founds">(f,add,1,(prop,fps-founds))</prop>
+    <ti>founds=(prop,fps-founds) limit2=(prop,fps-limit2)</ti>
+    <choose>                               
+      <when test="(f,eq_num,(prop,fps-founds),(prop,fps-limit2))">
+        <prop id="fps-limit-reached">1</prop>
+      </when>
+      <otherwise>
+         <prop id="fps-start">(f,max,(loop,findings,#start),0)</prop>
+         <prop id="fps-end">(f,min,(loop,findings,#end),(prop,fps-filemax))</prop>
+         <ti label="(prop,fps-founds):">(loop,findings,$before)</ti>
+         
+      </otherwise>
+    </choose>
+    
+  </loop>
+    
+  <ti>fps-limit-reached=(prop,fps-limit-reached) limit2=(prop,fps-limit2) fps-founds=(prop,fps-founds)</ti>  
+  -->
+ 
+  <prop id="fps-founds">0</prop>
+  <prop id="fps-limit-reached">0</prop>    
+
+  <!-- <ti>rt: (prop,fps-regex)</ti> -->
+  <loop_regex act="open" id="findings" file="(file,fps-file)"  
+              regex="(prop,fps-regex)" encoding="(prop,fps-encode)" 
+              limit="(prop,fps-limit2)" 
+              remain_prop_id="fps-remain"/>
+
+  <loop id="while" while="()(f,loop_regex,findings,has_next?)()"> 
+  
+    <prop id="fps-founds">(f,add,1,(prop,fps-founds))</prop>
+    <!-- <ti>founds=(prop,fps-founds) limit2=(prop,fps-limit2)</ti>  -->
+    <choose>                               
+      <when test="(f,eq_num,(prop,fps-founds),(prop,fps-limit2))">
+      
+        <prop id="fps-limit-reached">1</prop>
+      </when>
+      <otherwise>
+        <choose>
+          <when test="(f,and,(prop,fps-header),(f,eq_num,1,(prop,fps-founds)))">
+            <!-- header zeile -->
+            <ti flag="html" x="&lt;strong/&gt;(prop,fps-intro)(f,escape,_htmlb,(f,loop_regex,findings,$before)(f,loop_regex,findings))(prop,fps-extro)&lt;/strong&gt;" />       
+          </when>
+          <otherwise>
+            <!-- normale datenzeile -->
+            <ti flag="html" x="(prop,fps-intro)(f,escape,_htmlb,(f,loop_regex,findings,$before)(f,loop_regex,findings))(prop,fps-extro)" />
+          </otherwise>
+        </choose>
+        <ti_space height="3px"/>
+         
+      </otherwise>
+    </choose>  
+    
+  </loop>
+
+  <loop_regex act="close" id="findings"/>  
+
+  <!-- <ti flag="html" x="REMAIN would be: (prop,fps-intro)(f,escape,_htmlb,(prop,fps-remain))(prop,fps-extro)" />   -->
+  <when test="(f,not,(prop,fps-limit-reached))">
+     <ti flag="html" x="(prop,fps-intro)(f,escape,_htmlb,(prop,fps-remain))(prop,fps-extro)" />
+  </when>
+
+  <!--    
+  <ti>fps-limit-reached=(prop,fps-limit-reached) limit2=(prop,fps-limit2) fps-founds=(prop,fps-founds)</ti>      
+  
+    <ti label="fps-TEST-anfang"/>
+  
+  <ti flag="html" x="(prop,fps-intro)(f,escape,_htmlb,(f,file_content,(file,fps-file),(prop,fps-encode)))(prop,fps-extro)" /> 
+
+  <ti label="fps-TEST-ende"/> 
+  -->
+  <remove type="prop" id="fps-intro"/>
+  <remove type="prop" id="fps-extro"/>
+  <remove type="prop" id="fps-filemax"/>
+  <remove type="prop" id="fps-limit2"/>
+  
+  <remove type="prop" id="fps-founds"/>
+  <remove type="prop" id="fps-start" flag="catch"/>
+  <remove type="prop" id="fps-end" flag="catch"/>  
+  
+</job>
+</jobs>

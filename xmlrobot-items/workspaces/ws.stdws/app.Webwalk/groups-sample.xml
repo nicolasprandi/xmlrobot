@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<groups>
+<group row="1" titel="Meine Xpaths">
+<find row="5" titel="Sample Selector" style="by_xpath" xpath="//this-xpath"/>
+</group>
+
+<group row="2" titel="Standards: zum Anklicken">
+<find row="13" xpath="//a|//button" titel="alle links und buttons"  style="by_xpath"/>
+<find row="6" xpath="//a" titel="alle links" style="by_xpath"/>
+<find row="7" xpath="//button" titel="alle buttons"  style="by_xpath"/>
+</group>
+
+<group row="3" titel="Standard: Eingabefelder" >
+<find row="8" xpath="//input|//textarea" titel="inputs"  style="by_xpath"/>
+</group>
+
+<group row="4" titel="Standard: Diverse">
+<find row="9" xpath="//img" titel="alle bilder" style="by_xpath" />
+<find row="10" xpath="//frame|//iframe" titel="frame" style="by_xpath" />
+<find row="11" titel="body" xpath="//body"  style="by_xpath"/>
+<find row="12" titel="areas" xpath="//area"  style="by_xpath"/>
+</group>
+
+</groups>

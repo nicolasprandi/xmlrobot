@@ -1,0 +1,476 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="_statistics" role="hidden">
+<call_job job="conf-stat-intro-hori" />
+
+<ti_break class_table="tabLinklist" />
+<call_job job="tr_stats" />
+<!-- 
+
+  <call_job
+      job="sql-list-them" >
+      <dir id="sr-dir" x="(dir,my-statistics)"/>
+      <prop id="sr-label" x="My Stats"/>                         sd
+  </call_job>              -->
+  
+  <call_job job="tr_stats"/>
+  <ti_break class_table="tabLinklistSmall" />
+  <!-- 
+  <ti_space height="2px"/>
+  <ti label="(prop,_stats_main_statistiken)"/>
+  <ti_space height="3px"/>
+  <ti_hr/>
+  <ti_space height="2px"/>      -->
+  
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-boxes"/>
+    <prop id="sr-label" x="(prop,_stats_main_boxes_i)"/>
+    <prop id="sr-translator" x="sql-box"/>
+    <prop id="sr-class" x="c"/>
+  </call_job>
+  
+  <ti_space height="6px"/>
+    
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-usages"/>
+    <prop id="sr-label" x="(prop,_stats_main_usages)"/>
+    <prop id="sr-translator" x="sql-list-all"/>
+    <prop id="sr-class" x="c"/>
+  </call_job>
+  
+  <ti_space height="6px"/>
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-unused"/>
+    <prop id="sr-label" x="(prop,_stats_main_unused)"/>
+    <prop id="sr-translator" x="sql-list-all"/>
+    <prop id="sr-class" x="c"/>
+  </call_job>  
+  
+  <ti_space height="6px"/>
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-unknown"/>
+    <prop id="sr-label" x="(prop,_stats_main_unknown)"/>
+    <prop id="sr-translator" x="sql-list-all"/>
+    <prop id="sr-class" x="c"/>
+  </call_job>    
+  <ti_space height="2px"/>
+  <ti_hr/>
+  <ti_space height="2px"/>
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-usages-import"/>
+    <prop id="sr-label" x="(prop,_stats_main_usages_i)"/>
+    <prop id="sr-translator" x="sql-list-all"/>
+    <prop id="sr-class" x="i"/>
+  </call_job>
+  
+  <ti_space height="6px"/>
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-unused-import"/>
+    <prop id="sr-label" x="(prop,_stats_main_unused_i)"/>
+    <prop id="sr-translator" x="sql-list-all"/>
+    <prop id="sr-class" x="i"/>
+  </call_job>  
+  
+  <ti_space height="6px"/>
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-unknown-import"/>
+    <prop id="sr-label" x="(prop,_stats_main_unknown_i)"/>
+    <prop id="sr-translator" x="sql-list-all"/>
+    <prop id="sr-class" x="i"/>
+  </call_job>   
+  <ti_space height="2px"/>   
+  <ti_hr/>
+  <ti_space height="2px"/>
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-diverse"/>
+    <prop id="sr-label" x="(prop,_stats_main_divers)"/>
+    <prop id="sr-translator" x="sql-list-all"/>
+  </call_job>
+ <!--   
+ <call_job job="sql-list-them">
+  <prop id="sr-label" x="(prop,_stats_main_vokabular)"/>
+  <dir id="sr-dir" x="(dir,app)sql-vok"/>
+  <prop id="sr-translator" x="vok"/>
+ </call_job>
+ -->
+   
+ <!-- nicolas -->
+    <when test="(f,exists_dir,(dir,app)sql-schlecht)">
+    <ti_space height="6px"/>
+    <ti_break/>
+      <ti label="(prop,_stats_main_add)"/>
+   
+      <ti type="call_job"
+          job="sql-list-them" 
+          explain="Schlecht"
+          label="Super-Admin"
+          xkey="">
+        <dir id="sr-dir" x="(dir,app)sql-schlecht"/>
+        <prop id="sr-label" x="Schlecht"/>
+      </ti>
+      
+         
+      <ti type="call_job"
+          job="sql-list-them" 
+          explain="Diverse"
+          label="Super-Admin"
+          key="diverse sqls">
+        <dir id="sr-dir" x="(dir,app)sql-1"/>
+        <prop id="sr-label" x="Diverse"/>
+      </ti>        
+      
+  <!--  
+  
+ <call_job job="sql-list-them">
+  <prop id="sr-label" x="Migration"/>
+  <dir id="sr-dir" x="(dir,app)sql-migration"/>
+ </call_job>  
+   
+  <call_job
+      job="sql-list-them" >
+    <dir id="sr-dir" x="(dir,app)sql-import"/>
+    <prop id="sr-label" x="Pending to Import"/>
+    <prop id="sr-translator" x="import"/>
+  </call_job>  
+    
+  <call_job
+      job="sql-list-them" >
+      <dir id="sr-dir" x="(dir,app)sql-inhalte"/>
+      <prop id="sr-label" x="Inhalte"/>
+      <prop id="sr-translator" x="inhalte"/>
+  </call_job>   -->                     
+   </when>
+
+</job>
+
+<job id="sql-list-them" role="hidden">
+  <need>(prop,sr-label) (dir,sr-dir)</need>
+  <need default="">(prop,sr-translator)</need>
+  <need default="1">(prop,sr-list-again)</need>
+  <need default="0">(prop,sr-ask)</need>
+  <need default="0">(prop,sr-edit)</need>
+  <need default="0">(prop,sr-class)</need>
+  <need default="0">(prop,sr-from-run)</need>
+  
+  
+
+  <when test="(f,exists_dir,(dir,sr-dir))">
+    <when  test="(prop,sr-from-run)">
+      <call_job job="tr_stats"/>  
+      <ti_break class_table="tabLinklist" />
+    </when>
+    <choose>
+      <when test="(f,eq_text,0,(prop,sr-class))">
+        <prop id="sr-class-text"></prop>
+      </when>
+      <when test="(f,eq_text,i,(prop,sr-class))">
+        <prop id="sr-class-text">(prop,_stats_main_import): </prop>
+      </when>   
+      <when test="(f,eq_text,c,(prop,sr-class))">
+        <prop id="sr-class-text">(prop,_stats_main_central): </prop>
+      </when>       
+    </choose>  
+     
+    <ti label="(prop,sr-label)"/>
+    <scan dir="(dir,sr-dir)" out="(dir,filetemp)sql1.xml" level_limit="1" field="fn"/>
+    <loop id="sql1" xml="(dir,filetemp)sql1.xml" xpath="file" >
+      <choose>
+        <when test="(f,has,prop,sr-translator)">
+          <call_job job="tr_statistics_(prop,sr-translator)">
+            <prop id="trsn-in">(f,name_of_file2,(loop,sql1,@fn))</prop>          
+          </call_job>
+          <prop id="sr-file-name">(prop,sr-class-text)(prop,trsn-out)</prop>
+          <prop id="sr-file-name-h">(prop,trsn-out)</prop>
+        </when>
+        <otherwise>
+          <prop id="sr-file-name">(prop,sr-class-text)(f,name_of_file2,(loop,sql1,@fn))</prop> 
+          <prop id="sr-file-name-h">(f,name_of_file2,(loop,sql1,@fn))</prop>        
+        </otherwise>
+      
+      </choose>
+      <ti type="rec">
+        <ti type="call_job" job="sql-run" explain="(prop,sr-file-name-h)" flag="block">
+          <file id="sr-file" x="(loop,sql1,@fn)"/>
+          <prop id="sr-label" x="(prop,sr-label)"/>
+          <dir id="sr-dir" x="(dir,sr-dir)"/>
+          <prop id="sr-ask" x="(prop,sr-ask)"/>
+          <prop id="sr-translator">(prop,sr-translator)</prop>
+          <prop id="sr-list-again">(prop,sr-list-again)</prop>
+          <prop id="sr-file-name">(prop,sr-file-name)</prop>
+          <prop id="sr-class" x="(prop,sr-class)"/>
+        </ti>
+        <ti type="call_job" job="sql-run" explain="(prop,_stats_list_editrun)" test="(prop,sr-edit)">
+          <file id="sr-file" x="(loop,sql1,@fn)"/>
+          <prop id="sr-label" x="(prop,sr-label)"/>
+          <dir id="sr-dir" x="(dir,sr-dir)"/>
+          <prop id="sr-ask" x="(prop,sr-ask)"/>
+          <prop id="sr-edit" x="1"/>
+          <prop id="sr-translator">(prop,sr-translator)</prop>
+          <prop id="sr-list-again">(prop,sr-list-again)</prop>
+          <prop id="sr-file-name">(prop,sr-file-name)</prop>
+          <prop id="sr-class" x="(prop,sr-class)"/>          
+        </ti>     
+        <ti test="(f,not,(prop,sr-edit))"> </ti>   
+        
+        <ti type="call_job" job="sql-see-it" explain="(prop,_stats_list_see)">
+          <file id="sr-file" x="(loop,sql1,@fn)"/>
+          <prop id="sr-file-name">(prop,sr-file-name)</prop>        
+        </ti>
+      </ti>
+    </loop>
+    
+
+    <!-- 
+    <ti test="0" type="call_service" job="Goto-Panorama" explain="See Folder" label=" ">
+      <dir id="with" x="(dir,sr-dir)"/>
+    </ti>
+    -->
+
+    <ti type="dir" x="(dir,sr-dir)" label=" " flag="label_right" test="(f,role,test)"/>    
+    <remove id="sr-class-text" type="prop"/>
+    <remove id="sr-file-name" type="prop"/>
+    <remove id="sr-file-name-h" type="prop"/>
+  </when>
+
+</job>
+
+<job id="sql-run" role="hidden">
+
+  <call_job test="(f,not,(f,has,prop,sr-no-stat-menu))" job="conf-stat-intro-hori" />
+  <!-- 
+  <ti>(file,sr-file)</ti>
+  <ti>(dir,sr-dir)</ti>
+  <ti>(prop,sr-label)</ti>               -->
+  <need>(file,sr-file)</need>                         <!--  das file das ausgefuhert werden soll  -->
+  <need default="(f,name_of_file,(file,sr-file))">(prop,sr-file-name)</need>                   
+                                                      <!--  der name (uebersetzt) des files fuer den user  -->
+  <need default="0">(prop,sr-ask)</need>              <!--  soll vor der ausfuehrung nochmal nachgefragt werden ?  -->
+  <need default="0">(prop,sr-edit)</need>             <!--  soll ein update vor der ausfuehrung ermoeglicht werden ?  -->
+
+  <need default="0">(prop,sr-list-again)</need>       <!--  soll nach ausfuehrung nochmal das sr-dir gelistet werden  -->
+  <need>(dir,sr-dir) </need>                          <!--  das verzeichnis in dem das file liegt, zum weiterreichen -->
+  <need>(prop,sr-label)</need>                        <!--  die bezeichnung des verzeichnisses in dem das file liegt,zum weiterreichen  -->  
+  <need default="select">(prop,sr-act)</need>
+  <need default="">(prop,sr-translator)</need>        <!--  der translator zum weiterreichen  -->  
+  <call_job job="tr_stats"/>
+  <prop id="s" x="(f,file_content,(file,sr-file))"/>
+  
+  <when test="(prop,sr-edit)">
+    <tk label="(prop,_stats_run_update_h) (prop,sr-file-name)">
+      <tk id="s" type="textblock" flag="bigbig big" label="(prop,_stats_run_update_l)" tip="(prop,_stats_run_update_t)"/>
+    </tk>
+  </when>
+  
+  <when test="(prop,sr-ask)">
+    <tk label="(prop,_stats_run_run_h) (prop,sr-file-name) ?">
+    <tk type="msg"       
+        msg="(prop,s)"
+        msg_type="i"
+        tip="(prop,_stats_run_run_t)"/>
+    </tk>
+  </when>  
+    
+  
+  <call_job job="tk_limit_read"/>
+  
+  <file id="sr-out" x="(dir,pro)cache/stat-result.csv"/>
+  
+  <call_job job="-db-open-"/>
+    
+  <call_job job="tk_db_read_dbms"/>
+  <when test="(f,eq_text,mysql,(prop,db_dbms))">
+    <prop id="s">(f,replace,(prop,s),()cast(count(*) as varchar(10))(),()cast(count(*) as char(10))())</prop>
+  </when>
+  
+  <delete file="(file,sr-out)" />  
+  <try_catch>
+    <try>    
+      <dbc id="(prop,mydbc)"
+        out="(file,sr-out)"
+        style="c"
+        act="(prop,sr-act)"
+        limit="(prop,sql_limit_staticstics)"
+        flag="trim " xflag="catch">(prop,s)</dbc>  
+
+      <prop id="sql-was-ok">1</prop>
+    </try>
+    <catch>
+      <prop id="sql-was-ok">0</prop>
+      <prop id="sql_catched_msg" x="(prop,catched_msg)"/>
+    </catch>
+  </try_catch>
+
+  <call_job job="-db-close-"/>    
+
+  <!-- <ti label="Sql:" type="file" x="(file,sr-file)" xkey="(f,time,HH:mm:ss yyyy-MM-dd)"/> -->
+
+  <ti x="(f,html,i,o)(prop,sr-file-name)(f,html,i,c)"/>
+   
+  <!--         <ti_break/>  
+  <ti type="call_job" job="sql-run" explain="(prop,_stats_run_runagain)"
+      flag="button" class="fx fxEdit">
+    <file id="sr-file" x="(file,sr-file)"/>  
+    <prop id="sr-file-name" x="(prop,sr-file-name)"/>
+    <prop id="sr-ask">(prop,sr-ask)</prop>
+    <prop id="sr-edit">(prop,sr-edit)</prop>
+    <prop id="sr-list-again">(prop,sr-list-again)</prop>
+    <prop id="sr-translator">(prop,sr-translator)</prop>    
+    <prop id="sr-label" x="(prop,sr-label)"/>
+    <dir id="sr-dir" x="(dir,sr-dir)"/>    
+  </ti>
+  -->
+
+  <choose>
+    <when test="(prop,sql-was-ok)">
+     
+      <call_service job="fps">
+        <file id="fps-file">(file,sr-out)</file>      
+        <prop id="fps-limit">100000</prop>
+      </call_service>
+  
+    </when>
+    <otherwise>
+      <ti_hr/>    
+      <ti>(prop,_stats_run_resultwas) (prop,sql_catched_msg)</ti>
+      <ti_hr/> 
+      <ti  x="(f,replace,(prop,s),&#xA;, )" /> 
+    </otherwise>
+  </choose>
+
+  <ti_break/> 
+  <ti_space height="6px" />
+  <prop id="sql-zeigt-convert">(f,and,(prop,sql-was-ok),(f,right,convert))</prop>
+  
+  <ti type="menu">
+    <ti type="call_job" job="sql-run" explain="(prop,_stats_run_runagain)" 
+      flag="block button" class="fb fbEdit">
+      <file id="sr-file" x="(file,sr-file)"/>  
+      <prop id="sr-file-name" x="(prop,sr-file-name)"/>
+      <prop id="sr-ask">(prop,sr-ask)</prop>
+      <prop id="sr-edit">(prop,sr-edit)</prop>
+      <prop id="sr-list-again">(prop,sr-list-again)</prop>
+      <prop id="sr-translator">(prop,sr-translator)</prop>    
+      <prop id="sr-label" x="(prop,sr-label)"/>
+      <dir id="sr-dir" x="(dir,sr-dir)"/>    
+    </ti>  
+
+    <ti test="(prop,sql-zeigt-convert)" type="call_job" 
+        job="csv2xml" explain="(prop,_stats_run_convert)" xalign="right"
+        flag="button" class="fb fbEdit">
+      <file id="c2x-file" x="(file,sr-out)"/>    
+    </ti>    
+        
+      
+    <ti type="call_job" job="Limit Conf" explain="(prop,_stats_change_limit) (e:o)(prop,sql_limit_staticstics)(e:c)" xalign="right" 
+        flag="button" class="fb fbEdit xjustlimit"/>
+ </ti>
+  
+    
+  <when test="(prop,sql-was-ok)"> 
+  <ti lasbel="(prop,_stats_run_result)" x="(file,sr-out)" type="file" flag="naked"/>
+  </when>
+
+  
+  <when test="(prop,sr-list-again)">
+    <ti_break_hr/>
+    <call_job job="sql-list-them">
+      <prop id="sr-label" x="(prop,sr-label)"/>
+      <dir id="sr-dir" x="(dir,sr-dir)"/>  
+      <prop id="sr-list-again">(prop,sr-list-again)</prop>
+      <prop id="sr-translator">(prop,sr-translator)</prop>  
+      <prop id="sr-ask">(prop,sr-ask)</prop>  
+      <prop id="sr-from-run">1</prop>      
+    </call_job>  
+
+
+        
+  </when>
+</job>
+
+
+
+<job id="csv2xml" role="hidden">
+  <need>(file,c2x-file)</need>
+
+  <call_job job="tr_stats"/>
+  
+  <prop id="priv-enable-csv2xml">1</prop>  
+  <throw test="(f,not,(prop,priv-enable-csv2xml))">(prop,_stats_conv_nopriv)</throw>  
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,csv2xml-data)" />
+    <prop id="joe-in-regex" x="(prop,csv2xml-regex)" />
+  </call_job>
+  
+  <need default="row">(prop,c2x-row-name)</need>
+  <need default="root">(prop,c2x-root-name)</need>
+  <need default="a">(prop,c2x-format)</need>
+
+  <file id="c2x-xml" x="(f,dir_of_file,(file,c2x-file))(f,name_of_file2,(file,c2x-file)).xml" />
+
+  <tk label="(prop,_stats_conv_head)" flag="sum">  
+    <tk type="file" 
+    flag="save nono" 
+    id="c2x-xml" 
+    label="(prop,_stats_conv_label)" 
+    base="(f,dir_of_file,(file,c2x-file))"
+    extension=".xml"
+    tip="(prop,_stats_conv_tip)"
+    test_first="1"/>
+    <tk id="c2x-root-name" flag="nono" test_first="0" label="(prop,_stats_conv_root_label)" tip="(prop,_stats_conv_root_tip)" cols="30"/>    
+    <tk id="c2x-row-name" flag="nono" test_first="0" label="(prop,_stats_conv_row_label)" tip="(prop,_stats_conv_row_tip)" cols="30"/>
+
+    <tk id="c2x-format" flag="nono" test_first="0" type="sel" label="(prop,_stats_conv_format_label)" tip="(prop,_stats_conv_format_tip)">
+      <sel label="(prop,_stats_conv_attributes)">a</sel>
+      <sel label="(prop,_stats_conv_elements)">e</sel>
+    </tk>
+  </tk>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,csv2xml-data)" />
+    <prop id="joe-in-regex" x="(prop,csv2xml-regex)" />
+  </call_job>  
+       
+  <csv2xml 
+    csv="(file,c2x-file)" 
+    xml="(file,c2x-xml)" 
+    row_name="(prop,c2x-row-name)"
+    root_name="(prop,c2x-root-name)"
+    format="(prop,c2x-format)"
+    csv_encoding="UTF-8"/>
+    
+  <ti label="(prop,_stats_conv_done)"/>  
+  <ti type="file" x="(file,c2x-xml)" label="(prop,_stats_conv_created)"/>  
+  
+</job>
+
+<job id="sql-see-it" role="hidden">
+   <need>(file,sr-file)</need>
+   <need>(prop,sr-file-name)</need>
+   
+   <ti label="(prop,sr-file-name)"/>
+  
+  <ti flag="html" x="&lt;font face=&quot;Courier&quot;&gt;(f,escape,_htmlb,(f,file_content,(file,sr-file)))&lt;font&gt;" />
+  
+  
+      <!-- <call_service job="fps">
+        <file id="fps-file">(file,sr-file)</file>      
+      </call_service>          -->
+        
+  <ti_hr/>
+  <ti type="file">(file,sr-file)</ti>   
+
+</job>
+
+</jobs>

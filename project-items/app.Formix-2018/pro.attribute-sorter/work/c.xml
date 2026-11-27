@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="name" add_edit="0" label="Attribute name" name_flag="1" tip="Attribute Name" view_flag="0" type="text" tk_test_first="0" nono="1" sel_multi_flag="0" sel_ref="0" position="2" /><field id="pos" add_edit="1" label="Position" name_flag="0" tip="Position" view_flag="1" type="text" nono="1" regex="\d+" position="1" /></fields>

@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+
+<job id="include-header-caller" joblevel="ws" role="test">
+  <call_service job="include-header"/>
+</job>
+<job id="include-header" joblevel="ws" role="hidden">
+
+  <choose>
+    <when test="(f,eq,de,(f,interpreter,lang))">
+      <!-- d=deutsch -->
+      <prop id="_menu_run">Ausf&#252;hren</prop>
+      <prop id="_menu_more">Mehr Hilfe</prop>
+      <prop id="_menu_pinfo">Zeigt die aktuelle &#220;bersicht Ihres (prop,app)-Projektes</prop>
+      <prop id="_menu_about">Dies ist eine Hilfestellungen bez&#252;glich der Jobs der Applikation</prop>
+      <prop id="_menu_about2">Fordern Sie zus&#228;tzliche Hilfeinformationen an oder f&#252;hren Sie die Jobs direkt aus ...</prop>
+      <prop id="_menu_about3">Nach der Liste der Jobs erhalten Sie allgemeine Informationen &#252;ber die Applikation</prop>      
+      <prop id="_menu_werkzeug">Werkzeug</prop>       
+      <prop id="_menu_pinfo">Projekt-Info</prop>           
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(prop,ling),es)">
+      <prop id="_pl_a">A</prop>
+      <prop id="_sl_a">A</prop>  
+      <prop id="_ex_b">B</prop>      
+    </when>  -->  
+    <otherwise>
+      <!-- e=englisch -->
+      <prop id="_menu_werkzeug">Toolbox</prop> 
+      <prop id="_menu_run">Run</prop>
+      <prop id="_menu_more">More help</prop>
+      <prop id="_menu_pinfo">Displays the current summary of your (prop,app)-Project</prop>
+      <prop id="_menu_about">This page shows helpful information regarding the jobs of the application</prop>
+      <prop id="_menu_about2">Request additional help-information or run the jobs immediately ...</prop> 
+      <prop id="_menu_about3">After the list of jobs you will see some general information about the application</prop>    
+      <prop id="_menu_pinfo">Project-Info</prop>       
+    </otherwise>
+  </choose>
+
+  <prop id="is-master-app">(f,eq_text,(prop,app),(f,request,prop,master_project_app))</prop> 
+  <prop id="is-master-pro">(f,eq_text,(f,request,dir,master_project),(dir,pro))</prop> 
+  <!--
+  <ti>()(prop,app)=()(prop,app) 
+  ()(f,request,prop,master_project_app)()=(f,request,prop,master_project_app)
+  ()(dir,pro)()=(dir,pro)
+  ()(f,request,dir,master_project)()=(f,request,dir,master_project)</ti>
+  
+  <ti label="dir pro" type="dir">(dir,pro)</ti>
+  <ti label=" ">(dir,pro)</ti>  
+
+  <ti label="dir master_project" type="dir">(f,request,dir,master_project)</ti>
+  <ti label=" ">(f,request,dir,master_project)</ti>  
+  
+
+  
+  <ti label="current app is master-app"/>
+  <ti>() (f,eq_text,(prop,app),(f,request,prop,master_project_app)) () = (f,eq_text,(prop,app),(f,request,prop,master_project_app))</ti>
+
+  <ti label="current pro-dir is master-pro-app"/>
+  <ti>() (f,eq_text,(f,request,dir,master_project),(dir,pro)) () = (f,eq_text,(f,request,dir,master_project),(dir,pro))</ti> 
+
+  <ti>() (prop,is-master-app) (prop,is-master-pro) ()=(prop,is-master-app) (prop,is-master-pro) </ti>
+  <ti type="dir" label="headers">(f,request,dir,session_home_fs)headers</ti>
+  
+  
+  -->                      
+  <!-- 
+  rein 1
+  <when test="1">
+  <ti type="file">(file,t1)</ti>
+  
+  rein 2
+  <when test="(f,not,(f,exists_file,(file,t1)))">
+     <dir id="pro2">(dir,pro)</dir>
+  -->          
+  <file id="t1" x="(f,request,dir,session_home_fs)headers(prop,fs)(prop,app)(prop,is-master-pro)(prop,fs)m1.xrs"/>
+  <!-- rein-anfang -->  
+  <when test="(f,not,(f,exists_file,(file,t1)))">    
+  <!-- rein-ende -->        
+     
+    <file id="t2" x="(f,request,dir,session_home_fs)headers(prop,fs)(prop,app)(prop,is-master-pro)(prop,fs)m2.xrs"/>
+
+
+    <print id="t1" out="(file,t1)" act="open"/> 
+    <print act="println" id="t1"><![CDATA[<?xml version="1.0" ?><steps><ti type="menu" master_class="appmenu">]]></print>
+      
+    <file id="ask" 
+      x="(dir,filetemp)ask.xml"
+      style="natural" /> 
+  
+    <!-- ask for system information<ti type="file">(file,ask)</ti> <ti>t1=(file,t1)</ti>    <ti>creatingo menu...</ti> -->
+    <ask 
+      what="apps" 
+      out="(file,ask)" 
+      app="(prop,app)"
+      style="escaped"/>
+   
+     
+     <choose> 
+       <when test="(f,eq_text,(prop,app),(f,request,prop,master_project_app))">
+             <prop id="expl">[ (prop,app) ]</prop>
+             <prop id="proinfo-button-class">stdProButtonSuper</prop>
+             <prop id="job-button-class">stdJobButton</prop>
+
+             <prop id="is-in-service-app">0</prop>
+             <prop id="is-in-service-app">(f,not,(prop,is-master-pro))</prop>
+             <when test="(f,not,(prop,is-master-pro))">
+                <prop id="proinfo-button-class">stdProButtonSecond</prop>
+                 <prop id="job-button-class">stdJobButtonSecond</prop>
+                 <prop id="is-in-service-app">1</prop>             
+             </when>
+       </when> 
+       <otherwise>
+          <prop id="expl">[[ (prop,app) ]]</prop>
+          <prop id="proinfo-button-class">stdProButtonSecond</prop>
+           <prop id="job-button-class">stdJobButtonSecond</prop>
+           <prop id="is-in-service-app">1</prop>
+       </otherwise>
+     </choose>
+
+     <!-- schleifenanfang -->
+     <prop id="ilang">(f,interpreter,lang)</prop>                 
+     <loop 
+      id="sx" 
+      xml="(file,ask)" 
+      xpath="apps/app/jobs/job" 
+      missing_strategy="empty">
+      <when test="(f,role,(loop,sx,@role))">                                   
+      <when test="(f,not,(f,ends_with,(loop,sx,@id),?))">
+      <when test="(f,or,(f,not,(f,has,(loop,sx,@lang))),(f,eq_text,(loop,sx,@lang),(prop,ilang)))">
+
+        <call_service job="include-header-the-class"/>     
+  
+         <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" explain="(x,(loop,sx,@id))" flag="silent button"
+            class="(x,(prop,the-class) (loop,sx,@class_menu))">
+            <prop id="from-app">(x,(prop,app))</prop>
+            <prop id="from-pro">(x,(prop,pro))</prop>
+            <dir id="from-pro">(x,(dir,pro))</dir>
+            <prop id="from-job">(x,(loop,sx,@id))</prop>   
+         </ti>]]></print>
+       
+        </when>    
+        </when> 
+        </when>
+      </loop>          
+     <!-- schleifenende --> 
+       <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-app-help" explain="[ ? ]" flag="silent button xbutton" class="stdHelpButton">]]></print>  
+       <print act="println" id="t1"><![CDATA[<file id="app-help-steps">(x,(file,t2))</file></ti>]]></print>  
+       
+    <!-- Standard Project Info nic123 wie job -->                
+     <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" explain="(x,(prop,expl))" 
+     flag="silent button xbutton" 
+     class="(prop,proinfo-button-class) stdButtonSuper">            
+        <prop id="from-app">(x,(prop,app))</prop>
+        <prop id="from-pro">(x,(prop,pro))</prop>
+        <dir id="from-pro">(x,(dir,pro))</dir>
+        <prop id="from-job">??</prop>   
+     </ti>]]></print>             
+    
+    
+    <choose>
+      <when test="(prop,is-in-service-app)" >
+       <!-- ein button zur master-app in den service-apps -->
+       <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" explain="(x,[ (f,request,prop,master_project_app) ])" 
+       flag="silent button xbutton" 
+       class="stdProButtonSuper stdButtonSuper">            
+          <prop id="from-app">(x,(f,request,prop,master_project_app))</prop>
+          <prop id="from-pro">(x,?)</prop>
+          <dir id="from-pro">(x,(f,request,dir,master_project))</dir>
+          <prop id="from-job">_olix_bfs_??</prop>   
+       </ti>]]></print>        
+    
+       <!-- werkzeug auch in service app , geht auf master-projekt mit olix tools-->
+       <!-- werkzeug immer-->
+       <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" 
+        explain="(prop,_menu_werkzeug)" 
+        flag="silent button"       
+        class="stdToolButtonSuper stdButtonSuper"
+        test=()"(f,not,(f,eq_text,public,(f,role)))"()>            
+          <prop id="from-app">(x,(f,request,prop,master_project_app))</prop>
+          <prop id="from-pro">(x,?)</prop>
+          <dir id="from-pro">(x,(f,request,dir,master_project))</dir>
+          <prop id="from-job">_olix_bfs_tools</prop>   
+       </ti>]]></print>          
+      
+      </when>
+      <otherwise>
+        <!-- wir wind hier in der maser-app -->
+         <!-- werkzeug immer-->
+         <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" 
+          explain="(prop,_menu_werkzeug)" 
+          flag="silent button"       
+          class="stdToolButtonSuper stdButtonSuper"
+          test=()"(f,not,(f,eq_text,public,(f,role)))"()>            
+            <prop id="from-app">(x,(f,request,prop,master_project_app))</prop>
+            <prop id="from-pro">(x,?)</prop>
+            <dir id="from-pro">(x,(f,request,dir,master_project))</dir>
+            <prop id="from-job">_olix_tools</prop>   
+         </ti>]]></print>        
+      
+      </otherwise>
+    
+    
+    </choose>
+    
+     
+    <!-- den aufruf von mymenu.xml einbauen -->>
+
+          
+    
+     
+
+      
+         <print act="println" id="t1"><![CDATA[</ti>]]></print> 
+         
+        <!--                  tiButtonMenu stdSysButton tiTab_call_serviceXY tiTab 
+         <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" explain="ccccccc" flag="silent button"
+            class="stdSysButton">
+            <prop id="from-app">(x,(prop,app))</prop>
+            <prop id="from-pro">(x,(prop,pro))</prop>
+            <dir id="from-pro">(x,(dir,pro))</dir>             tiButtonMenu stdSysButton 
+            <prop id="from-job">stdSysButton</prop>   
+         </ti>]]></print>              --> 
+       
+       <print act="println" id="t1"><![CDATA[
+       <when test=()"(f,exists_file,()(x,(dir,pro))()mymenu.xml)"() >
+         <ti_break/>
+         <call_app      
+  job="include-mymenu"
+  app="(x,(prop,app))"
+  pro_id="(x,(prop,pro))"
+  pro_dir="(x,(dir,pro))"
+  flag="silent"/>  
+        </when>       
+]]></print>         
+     <print act="println" id="t1"><![CDATA[<ti_break_hr/>]]></print>
+       <print act="println" id="t1"><![CDATA[</steps>]]></print>       
+      <print id="t1" act="close"/>            
+
+    <print id="t2" out="(file,t2)" act="open"/> 
+    <print act="println" id="t2"><![CDATA[<?xml version="1.0" ?><steps>]]></print>      
+                                      
+     <print act="println" id="t2"><![CDATA[<ti label="(x,(prop,app) - Jobs - (f,when,(f,eq_text,de,(f,interpreter,lang)),Hilfe,Help))"/>]]></print>  
+     <print act="println" id="t2"><![CDATA[<ti flag="wrap" type="ul">(x,(prop,_menu_about) ()(f,html,i,o)()(prop,app)()(f,html,i,c)()).</ti>]]></print>
+     <print act="println" id="t2"><![CDATA[<ti flag="wrap" type="ul">(x,(prop,_menu_about2))</ti>]]></print>   
+     <print act="println" id="t2"><![CDATA[<ti flag="wrap" type="ul">(x,(prop,_menu_about3) ()(f,html,i,o)()(prop,app)()(f,html,i,c)()).</ti>]]></print>       
+    <print act="println" id="t2"><![CDATA[<ti_hr/>]]></print>       
+     <print act="println" id="t2"><![CDATA[<ti_space height="4px"/>]]></print>  
+
+      <print act="println" id="t2"><![CDATA[<ti label="(x,(prop,app))"/>]]></print>
+      <print act="println" id="t2"><![CDATA[<ti flag="wrap">(x,(prop,_menu_pinfo))</ti>]]></print>                       
+      <print act="println" id="t2"><![CDATA[<ti type="menu" master_class="appmenu jobmenu">]]></print>
+             
+     <print act="println" id="t2"><![CDATA[<ti type="call_service" job="do-that-now" explain="(x,(prop,_menu_pinfo)): (x,(prop,app))" flag="silent button" class="(prop,proinfo-button-class)">
+        <prop id="from-app">(x,(prop,app))</prop>
+        <prop id="from-pro">(x,(prop,pro))</prop>
+        <dir id="from-pro">(x,(dir,pro))</dir>
+        <prop id="from-job">??</prop>   
+     </ti>]]></print>     
+     <print act="println" id="t2"><![CDATA[</ti>]]></print>                      
+      
+     <prop id="had-one-menue">1</prop> 
+     <loop 
+      id="sx" 
+      xml="(file,ask)" 
+      xpath="apps/app/jobs/job" 
+      missing_strategy="empty">
+      <when test="(f,role,(loop,sx,@role))">                                   
+      <when test="(f,not,(f,ends_with,(loop,sx,@id),?))">
+      <when test="(f,or,(f,not,(f,has,(loop,sx,@lang))),(f,eq_text,(loop,sx,@lang),(prop,ilang)))">
+
+        <call_service job="include-header-the-class"/>     
+        <!-- 
+         <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" explain="(x,(loop,sx,@id))" flag="silent button"
+            class="(x,(prop,the-class) (loop,sx,@class_menu))">
+            -->
+                  
+        <print act="println" id="t2" test="(prop,had-one-menue)"><![CDATA[<ti_hr/>]]></print> 
+        <prop id="had-one-menue">1</prop>
+        <prop id="search-id"></prop>
+        <prop id="search-id">(f,xpath_string,(loop,sx,@id)?)</prop>
+        <prop id="search-lang"></prop>
+        <when test="(f,has,(loop,sx,@lang))">
+          <prop id="search-lang">[@lang=(f,xpath_string,(loop,sx,@lang))]</prop>
+        </when>
+        <!-- <ti>menue  search-id=(prop,search-id)</ti> -->
+        <prop id="help-job-id"></prop>
+        <!-- <ti label="xpath">../job[@id=(prop,search-id)](prop,search-lang)</ti> -->
+        <prop id="help-job-id">(loop,sx,../job[@id=(prop,search-id)](prop,search-lang),@id)</prop> 
+        <prop id="m2-id">(loop,sx,@id)</prop>
+        <prop id="m2-id" test="(f,starts_with,(prop,m2-id),[ )">(f,substring_after,(prop,m2-id),[ )</prop>
+        <prop id="m2-id" test="(f,ends_with,(prop,m2-id), ])">(f,substring_before,(prop,m2-id), ])</prop>
+                                                                        
+        <print act="println" id="t2"><![CDATA[<ti label="(x,(prop,m2-id))"/>]]></print>
+        <when test="(f,has,(loop,sx,@tip))">
+           <print act="println" id="t2"><![CDATA[<ti flag="wrap">(x,(loop,sx,@tip))</ti>]]></print>                       
+        </when>
+                    
+        
+         <print act="println" id="t2"><![CDATA[<ti type="menu" master_class="appmenu jobmenu">]]></print> 
+          <choose> 
+            <when test="(f,has,prop,help-job-id)">
+               <print act="println" id="t2"><![CDATA[                                      
+                <ti flag="button block" type="call_service"  job="see-help-and-go" explain="(x,(prop,_menu_more))" class="stdHelpButton">
+                  <prop id="from-app">(x,(prop,app))</prop>
+                  <prop id="from-pro">(x,(prop,pro))</prop>
+                  <dir id="from-pro">(x,(dir,pro))</dir>
+                  <prop id="from-job">(x,(prop,help-job-id))</prop>   
+               </ti>]]></print>   
+                     
+            </when>
+            <otherwise>
+              <!-- 
+               <print act="println" id="t2"><![CDATA[                                      
+                <ti> </ti>]]></print>      -->         
+            </otherwise>           
+          </choose>
+          
+          <print act="println" id="t2"><![CDATA[<ti flag="button" type="call_service"  job="see-help-and-go" explain="(x,(prop,_menu_run)): (x,(prop,m2-id))" class="(x,(prop,the-class) (loop,sx,@class_menu))" altclass="(prop,job-button-class)">
+            <prop id="from-app">(x,(prop,app))</prop>
+            <prop id="from-pro">(x,(prop,pro))</prop>
+            <dir id="from-pro">(x,(dir,pro))</dir>
+            <prop id="from-job">(x,(loop,sx,@id))</prop>   
+         </ti><ti> </ti>]]></print>          
+
+   
+         <print act="println" id="t2"><![CDATA[</ti>]]></print>      
+                      
+         
+         <!-- <print act="println" id="t2"><![CDATA[<ti_space height="10px"/>]]></print> -->
+       
+        </when>    
+        </when> 
+        </when>
+      </loop>  
+              
+               <print act="println" id="t2"><![CDATA[    
+                       
+                   <ti_hr_break/>
+                              
+                  <call_service job="do-that-now" flag="silent">
+                  <prop id="from-app">(x,(prop,app))</prop>
+                  <prop id="from-pro">(x,(prop,pro))</prop>
+                  <dir id="from-pro">(x,(dir,pro))</dir>
+                  <prop id="from-job">?</prop>   
+               </call_service>]]></print>    
+                      
+                
+              
+
+                     
+       <print act="println" id="t2"><![CDATA[</steps>]]></print>     
+      <print id="t2" act="close"/>
+  
+  
+
+           
+  
+
+       <!-- 
+       
+            
+       <loop 
+        id="sx"                                                                          
+        xml="(file,ask)" 
+        xpath="apps/app/jobs/job"                                        
+        missing_strategy="empty">
+          <when test="(f,role,(loop,sx,@role))">                                   
+          <when test="(f,ends_with,(loop,sx,@id),?)">
+          <when test="(f,not,(f,or,(f,eq_text,(loop,sx,@id),?),(f,eq_text,(loop,sx,@id),??),(f,eq_text,(loop,sx,@id),???)))">
+          
+
+          <when test="(f,has,prop,main-job-id)">
+            <ti>job (prop,main-job-id) existiert</ti>
+            
+            <prop id="main-lang"></prop>        
+            <prop id="main-lang">(loop,sx,../job[@id=(prop,search-id)],@lang)</prop>
+            <choose>
+            <when test="(f,or,(f,not,(f,has,(prop,main-lang))),(f,eq_text,(prop,main-lang),(prop,ilang)))">
+              <prop id="main-tip"></prop>        
+              <prop id="main-tip">(loop,sx,../job[@id=(prop,search-id)],@tip)</prop>            
+    
+               <print act="println" id="t1"><![CDATA[<ti type="rec"><ti>?</ti><ti type="call_service" job="do-that-now" explain="(x,(prop,main-job-id))" yflag="silent">
+                  <prop id="from-app">(x,(prop,app))</prop>
+                  <prop id="from-pro">(x,(prop,pro))</prop>
+                  <dir id="from-pro">(x,(dir,pro))</dir>
+                  <prop id="from-job">(x,(loop,sx,@id))</prop>   
+               </ti><ti flag="wrap">(x,(prop,main-tip)) </ti></ti>]]></print>
+               
+            </when>
+            <otherwise>
+              <ti>- entspricht nicht der sprache</ti>
+            </otherwise>
+            </choose>
+          </when>
+          </when>    
+          </when> 
+          </when>
+        </loop>   
+                     
+       <print act="println" id="t1"><![CDATA[<ti type="call_service" job="job-help" explain="[ ? ]" flag="silent">
+          <prop id="from-app">(x,(prop,app))</prop>
+          <prop id="from-pro">(x,(prop,pro))</prop>
+          <dir id="from-pro">(x,(dir,pro))</dir>
+          <prop id="from-job">(x,(loop,sx,@id))</prop>   
+       </ti>]]></print>     -->         
+
+
+      </when>
+      
+      <!-- </when> <ti label="header">(f,file_content,(file,t1))</ti> -->
+       <!-- ok <ti_hr_break/>  -->    
+       
+      <include file="(file,t1)"/>     
+     
+</job>    
+
+<job id="include-header-the-class" role="hidden">
+
+  <prop id="the-class">(f,when,(f,or,(f,eq_text,[ Werkzeuge ],(loop,sx,@id)),(f,eq_text,[ Anmelden ],(loop,sx,@id)),(f,eq_text,[ Tools ],(loop,sx,@id)),(f,eq_text,[ Login ],(loop,sx,@id))),stdSysButton,(prop,job-button-class))</prop>  
+
+</job>
+                       
+<job id="do-that-app-help" joblevel="ws" role="hidden">
+  <include file="(file,app-help-steps)" flag="catch"/>
+</job>                          
+<job id="include-footer" joblevel="ws" role="hidden">
+
+  <ti_hr/>
+  <ti_break/>
+  <ti type="menu">
+    <ti type="call_service" explain="Project" xexplain="Project [(prop,pro)]" job="Project"/>
+    <ti type="call_service" job="Application" explain="App" xexplain="App [(prop,app)]"/>
+    <ti type="call_service" job="System Info"/>
+    <ti type="call_service" job="Applications"/>
+  </ti>
+</job>
+
+<job id="include-project-footer" joblevel="ws" role="hidden">
+  <ti_hr/>
+  <ti_break/>
+  <ti type="menu">
+    <ti type="call_service" explain="Project [(prop,pro)]" job="Project"/>
+    <ti type="call_service" job="Application" explain="App [(prop,app)]"/>
+  </ti>
+</job>
+
+<job id="include-header-multi" joblevel="ws" role="hidden">
+    <ti>bin im include-header-multi</ti>
+
+    <file id="t1" x="(dir,filetemp)(f,random_text,5)t1"/>
+    <print id="t1" out="(file,t1)" act="open"/> 
+    <print act="println" id="t1"><![CDATA[<?xml version="1.0" ?><steps><ti type="rec">]]></print>
+      
+    <file id="ask" 
+      x="(dir,filetemp)ask.xml"
+      style="natural" /> 
+  
+    <!-- ask for system information -->
+    <ask 
+      what="apps" 
+      out="(file,ask)" 
+      app="(prop,app)"
+      style="escaped"/>
+
+     <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" explain="Home" flag="silent">
+        <prop id="from-app">(x,(prop,app))</prop>
+        <prop id="from-pro">(x,(prop,pro))</prop>
+        <dir id="from-pro">(x,(dir,pro))</dir>
+        <prop id="from-job">??</prop>   
+     </ti>]]></print>
+     
+     <prop id="total" x="0"/>
+     <loop 
+      id="sx" 
+      xml="(file,ask)" 
+      xpath="apps/app/jobs/job" 
+      missing_strategy="empty">
+      <when test="(f,role,(loop,sx,@role))">
+      <when test="(f,not,(f,ends_with,(loop,sx,@id),?))">
+        <prop id="total" x="(f,add,1,(prop,total))"/>            
+        </when> 
+        </when>
+      </loop>  
+      
+     <!-- <ti>total=(prop,total)</ti> -->
+     <prop id="perline" x="(f,round,(f,div,(prop,total),(prop,lines)),0,CEILING)"/> 
+     <!-- <ti>perline=(prop,perline)</ti> -->   
+     
+     <prop id="count" x="0"/>  
+                      
+     <loop 
+      id="sx" 
+      xml="(file,ask)" 
+      xpath="apps/app/jobs/job" 
+      missing_strategy="empty">
+      <when test="(f,role,(loop,sx,@role))">
+      <when test="(f,not,(f,ends_with,(loop,sx,@id),?))">
+      
+         <prop id="count" x="(f,add,1,(prop,count))"/>
+         <when test="(f,gt_num,(prop,count),(prop,perline))">
+          <print act="println" id="t1"><![CDATA[</ti>]]></print>
+          <print act="println" id="t1"><![CDATA[<ti type="rec"><ti></ti>]]></print>
+          <prop id="count" x="1"/>
+         </when>
+  
+         <print act="println" id="t1"><![CDATA[<ti type="call_service" job="do-that-now" explain="(x,(loop,sx,@id))" flag="silent">
+            <prop id="from-app">(x,(prop,app))</prop>
+            <prop id="from-pro">(x,(prop,pro))</prop>
+            <dir id="from-pro">(x,(dir,pro))</dir>
+            <prop id="from-job">(x,(loop,sx,@id))</prop>   
+         </ti>]]></print>
+       
+            
+        </when> 
+        </when>
+      </loop>                 
+      <print act="println" id="t1"><![CDATA[</ti></steps>]]></print>     
+      <print id="t1" act="close"/>
+      <!-- <tk type="msg">(f,file_content,(file,t1))</tk> --> 
+      <include file="(file,t1)"/>    <!-- ist am 19.3.2019 kontrolliert -->
+      <ti_break/>
+      <ti_hr/> 
+     
+</job>
+
+
+
+<job id="include-header-2" joblevel="ws" role="hidden">
+  <call_service job="include-header-multi">
+    <prop id="lines" x="2"/>
+  </call_service>
+</job>
+
+<job id="include-header-3" joblevel="ws" role="hidden">
+  <call_service job="include-header-multi">
+    <prop id="lines" x="3"/>
+  </call_service>
+</job>
+
+<job id="include-header-4" joblevel="ws" role="hidden">
+  <call_service job="include-header-multi">
+    <prop id="lines" x="4"/>
+  </call_service>
+</job>
+
+<job id="include-header-5" joblevel="ws" role="hidden">
+  <call_service job="include-header-multi">
+    <prop id="lines" x="5"/>
+  </call_service>
+</job>
+
+<job id="include-header-6" joblevel="ws" role="hidden">
+  <call_service job="include-header-multi">
+    <prop id="lines" x="6"/>
+  </call_service>
+</job>
+</jobs>

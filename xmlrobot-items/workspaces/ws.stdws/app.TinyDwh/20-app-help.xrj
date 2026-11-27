@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+<job id="?">
+<ti_break/>
+<choose>
+  <when test="(f,eq_text,(prop,ling),de)">
+    <!-- d=deutsch -->
+    <ti label="Willkommen bei Hibiscus"/>
+    
+  </when>
+  <!-- s=spanish 
+  <when test="(f,eq_text,(prop,ling),es)">
+    <prop id="_pl_a">A</prop>
+    <prop id="_sl_a">A</prop>  
+    <prop id="_ex_b">B</prop>      
+  </when>  -->  
+  <otherwise>
+    <!-- e=englisch -->
+    <ti label="Welcome to Hibiscus"/>
+     
+
+  </otherwise>
+</choose>
+  
+
+  
+  <call_job job="sys_copyright"/>
+  
+  <call_job job="sys_version"/>
+  <ti_hr/>
+
+<choose>
+  <when test="(f,eq_text,(prop,ling),de)">
+    <!-- d=deutsch -->
+  <ti label="Was ist Hibiscus ?"/>
+  <ti type="ul">()Hibiscus ist eine Datenbank zum Sammeln von Daten aus einer Anzahl st&#228;ndig wachsender Datenquellen.()</ti>
+  <ti label="Besonderheiten von Hibiscus"/>
+  <ti type="ul">()Integration 
+Die sogenannte 'Integration' hat die Aufgabe, idente Datenobjekt zu identifizieren und ineinander &#252;berzuf&#252;hren. ()</ti>
+  <ti type="ul">()Autonome Datenquellen 
+Es wird in der System-Architektur davon ausgegangen, dass jede Datenquelle f&#252;r sich verarbeitbar ist. Dies bedeutet, dass jede f&#252;r sich allein oder im Verbund mit weiteren Datenquellen ins System eingebracht werden kann. Eine Datenquelle ist somit bez&#252;glich seiner Verarbeitbarkeit nicht von der Verarbeitung anderer Datenquellen abh&#228;ngig.()</ti>
+  
+    
+  </when>
+  <!-- s=spanish 
+    
+  <ti label="System-Bausteine"/>  
+  <ti type="ul">()Postgres Datenbank()</ti>
+  <ti type="ul">()Pentaho PDI Kettle()</ti>
+  <ti type="ul">()Hibiscus-Desktop Client()</ti>    
+  <when test="(f,eq_text,(prop,ling),es)">
+    <prop id="_pl_a">A</prop>
+    <prop id="_sl_a">A</prop>  
+    <prop id="_ex_b">B</prop>      
+  </when>
+    <ti label="System-Elements"/>  
+  <ti type="ul">()Postgres Database()</ti>
+  <ti type="ul">()Pentaho PDI Kettle()</ti>
+  <ti type="ul">()Hibiscus-Desktop Client()</ti> 
+    -->  
+  <otherwise>
+    <!-- e=englisch -->
+    <!-- d=deutsch -->
+  <ti label="What is Hibiscus ?"/>
+  <ti type="ul">()Hibiscus is a database for the collection of data from different resources. It is assumed that the number of resources is continiously growing.()</ti>
+  <ti label="Unique things about Hibiscus"/>
+  <ti type="ul">()Integration 
+The socalled 'Integration' performs the task of identifying dataobjects which are basically the same and constructing one unique object out of them. ()</ti>
+  <ti type="ul">()Autonomous resources of data 
+Es wird in der System-Architektur davon ausgegangen, dass jede Datenquelle f&#252;r sich verarbeitbar ist. Dies bedeutet, dass jede f&#252;r sich allein oder im Verbund mit weiteren Datenquellen ins System eingebracht werden kann. Eine Datenquelle ist somit bez&#252;glich seiner Verarbeitbarkeit nicht von der Verarbeitung anderer Datenquellen abh&#228;ngig. TBD: Translation()</ti>
+  
+
+  </otherwise>
+</choose>
+
+</job>
+
+
+
+</jobs>

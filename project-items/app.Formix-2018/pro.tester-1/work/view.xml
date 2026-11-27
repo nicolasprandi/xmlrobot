@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="computer-see-all" level="ws" role="hidden" tip="Lists all Computers">
+<prop id="nothing">1</prop>
+<loop id="i" missing_strategy="empty" xml="(file,computers)" xpath="(prop,computers_offset)computer(prop,computers_where)" sort="(prop,computers_sort_attribute)" number="(prop,computers_sort_number)" ignore_case="(prop,computers_sort_ignore_case)" desc="(prop,computers_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,computers_offset_label)),0)">
+<ti label="(prop,computers_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Computer"/>
+<ti x="Name"/>
+<ti x=""/>
+<ti x=" "/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<file id="computer_f1_temp_var_formix" x="(loop,i,@f1)"/>
+<unescape id="computer_f1_temp_var_formix" type="file"/>
+<translate id="computer_f1_temp_var_formix" type="file"/>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,i,@computer)(f,html,bold,close)" job="computer-see">
+<prop id="computer_key">(loop,i,@row)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,i,@computer))" type="text" x="(loop,i,@computer)"/>
+<ti test="(f,not,(f,has,(loop,i,@computer)))"/>
+<ti test="(f,has,(loop,i,@name))" type="text" x="(loop,i,@name)"/>
+<ti test="(f,not,(f,has,(loop,i,@name)))"/>
+<ti test="(f,has,(loop,i,@f1))" type="file" x="(file,computer_f1_temp_var_formix)" flag="translate"/>
+<ti test="(f,not,(f,has,(loop,i,@f1)))"/>
+<ti test="(f,role,admin)" type="call_job" explain="Edit" job="computer-edit">
+<prop id="computer_key">(loop,i,@row)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+<ti test="(f,role,admin)" type="call_job" explain="Del" job="computer-del">
+<prop id="computer_key">(loop,i,@row)</prop>
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti>No Computers found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,computers_offset),node(e:o)(e:c)))">
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain_nix="computer-add" explain="Add another" job="computer-add">
+<file id="computers">(file,computers)</file>
+<prop id="computers_offset">(prop,computers_offset)</prop>
+<prop id="computers_offset_label">(prop,computers_offset_label)</prop>
+<prop id="computers_offset_new_key">(prop,computers_offset_new_key)</prop>
+<prop id="computers_sort_attribute">(prop,computers_sort_attribute)</prop>
+<prop id="computers_sort_number">(prop,computers_sort_number)</prop>
+<prop id="computers_where">(prop,computers_where)</prop>
+<prop id="computers_return_job">(prop,computers_return_job)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,computers)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,computers_offset)),0)">(prop,computers_offset)</ti>
+</ti>
+</when>
+</job>

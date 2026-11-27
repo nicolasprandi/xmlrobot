@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="objekt_typ" add_edit="1" label="(prop,_hint_object_typ_l)" tip="(prop,_hint_object_typ_t)" type="sel" view_flag="1" nono="1" sel_file="(dir,repo)osel-(prop,tip-term-class).xml" /><field id="name" add_edit="1" label="(prop,_hint_name_l)" name_flag="1" tip="(prop,_hint_name_t)" name_len="25" type="text" nono="1" cols="30" /><field id="doku" label="(prop,_hint_doku_l)" tip="(prop,_hint_doku_t)" type="textblock" cols="30" /></fields>

@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+<job id="Print Movie">
+ <call_job job="tk_print_edit"/>
+ 
+ <file id="target">(dir,pro)target-(prop,print_what).xml</file>
+ 
+ <call_job job="tk_input_read"/>
+ 
+  <excel_table 
+    excel="(file,input_excel)" 
+    out="(file,target)"
+    sheet="functions"
+    root_name="root"
+    row_name="row"
+    style="short"
+    filler="gruppe"/> 
+    <!-- 
+  <ti label="Inputs" />  
+    <ti type="file" label="Excel">(file,input_excel)</ti>
+    <ti type="file" label="Xml">(file,target)</ti>-->
+<ti_hr/>
+<prop id="last-gruppe"></prop>
+<loop 
+    id="l" 
+    xml="(file,target)" 
+    xpath="row[@m(prop,print_what)=(f,xpath_string,(prop,print_what))]"
+    missing_strategy="empty">
+    
+    <when test="(f,not,(f,eq_text,(loop,l,@gruppe),(prop,last-gruppe)))">
+        <prop id="last-gruppe">(loop,l,@gruppe)</prop>
+        <ti label="(prop,last-gruppe)" />
+    </when>
+    <ti x="(loop,l,@thema)" />
+</loop>
+ 
+</job>
+
+
+
+</jobs>

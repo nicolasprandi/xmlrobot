@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zut-read">
+<need>(prop,zut_key)</need>
+<spirit act="open" missing_strategy="empty" id="zuts_spirit_tc" xml="(file,zuts)"/>
+<prop id="zut_dt_upd">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@dt_upd)</prop>
+<prop id="zut_dt_add">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@dt_add)</prop>
+<prop id="zut_bez">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@bez)</prop>
+<prop id="zut_menge">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@menge)</prop>
+<prop id="zut_einheit">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@einheit)</prop>
+<prop id="zut_kat1">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@kat1)</prop>
+<prop id="zut_beschreibung">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@beschreibung)</prop>
+<prop id="zut_preis">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@preis)</prop>
+<prop id="zut_kalkulation">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@kalkulation)</prop>
+<prop id="zut_komp_key">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@komp_key)</prop>
+<prop id="zut_inttxt">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@inttxt)</prop>
+<file flag="cool" id="zut_logo">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@logo)</file>
+<unescape type="file" id="zut_logo"/>
+<translate type="file" id="zut_logo"/>
+<prop id="zut_logo_max_x">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@logo_max_x)</prop>
+<prop id="zut_logo_max_y">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@logo_max_y)</prop>
+<prop id="zut_logo_max_x_main">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@logo_max_x_main)</prop>
+<prop id="zut_logo_max_y_main">(f,spirit,zuts_spirit_tc,(prop,zuts_offset)zut[@row=(f,xpath_string,(prop,zut_key))],@logo_max_y_main)</prop>
+<spirit act="close" id="zuts_spirit_tc"/>
+</job>

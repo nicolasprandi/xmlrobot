@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extension-edit">
+<need>(prop,extension_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="extension-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="extension-editor"/>
+<call_job job="extension-write"/>
+<ti align="right" x="Did update Project Extension '(prop,extension_titel)'"/>
+<call_job job="extension-see-all"/>
+</job>

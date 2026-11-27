@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="group-read">
+<need>(prop,group_key)</need>
+<spirit act="open" missing_strategy="empty" id="groups_spirit_tc" xml="(file,groups)"/>
+<prop id="group_dt_upd">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@row=(f,xpath_string,(prop,group_key))],@dt_upd)</prop>
+<prop id="group_dt_add">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@row=(f,xpath_string,(prop,group_key))],@dt_add)</prop>
+<prop id="group_titel">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@row=(f,xpath_string,(prop,group_key))],@titel)</prop>
+<spirit act="close" id="groups_spirit_tc"/>
+</job>

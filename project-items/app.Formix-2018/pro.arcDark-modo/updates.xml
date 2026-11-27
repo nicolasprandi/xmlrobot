@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="Expected Counts abkuerzen" file_class="view" search="x=&quot;Expected Counts&quot;" search_type="text" expectation="1" replace="x=&quot;Counts&quot;" />
+  <update row="2" titel="write last_signature" file_class="editor" search="&lt;/job&gt;" search_type="text" expectation="1" replace="&lt;prop id=&quot;joe-in-regex&quot; x=&quot;(prop,last_signature-regex)&quot; /&gt;&#xA;&lt;file id=&quot;joe-in-store&quot; x=&quot;(file,last_signature)&quot; /&gt;&#xA;&lt;call_job job=&quot;go-joe-write&quot;/&gt;&#xA;&lt;/job&gt;" />
+  <update row="3" titel="read last_signature" file_class="add" search="&lt;prop id=&quot;isAdd&quot;&gt;1&lt;/prop&gt;" search_type="text" expectation="1" replace="&lt;prop id=&quot;isAdd&quot;&gt;1&lt;/prop&gt;&#xA;&lt;prop id=&quot;joe-in-regex&quot; x=&quot;(prop,last_signature-regex)&quot; /&gt;&#xA;&lt;file id=&quot;joe-in-store&quot; x=&quot;(file,last_signature)&quot; /&gt;&#xA;&lt;call_job job=&quot;go-joe-read&quot;/&gt;&#xA;" />
+</updates>

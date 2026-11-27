@@ -1,0 +1,153 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="build-repo" role="hidden">
+<tp>Repo-Build started ...</tp>
+<prop id="test-build-repo">1</prop>
+<prop id="test-build-repo">(f,and,(prop,test-build-repo),(f,role,test))</prop>
+
+<!-- <interpreter watch="1"/>  -->
+<file id="br-vok">(file,vok)</file>
+<dir id="br-out">(dir,myrepo)</dir>
+<!-- <interpreter watch="0"/> -->
+<need>(file,br-vok)</need>
+<need>(dir,br-out)</need>
+<delete dir="(dir,myrepo)" flag="catch"/>
+<mkdir dir="(dir,myrepo)"/>
+
+<!-- repo copy -->
+<copy file="(file,br-vok)" tofile="(dir,br-out)vok.xml"/>
+<!-- TBD: hier die fachlichen namen und dokus noch rausnehmen -->
+
+<!-- attr-selektor -->
+<xslt 
+    xml="(file,br-vok)" 
+    xsl="(dir,app)vok2attrsel.xsl" 
+    out="(dir,br-out)attr-sel-tc.xml">
+    <params>nav_naming_attribute='0'</params>
+</xslt>
+<ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)attr-sel-tc.xml</ti>
+
+<xslt 
+    xml="(file,br-vok)" 
+    xsl="(dir,app)vok2attrsel.xsl" 
+    out="(dir,br-out)attr-sel-nm.xml">
+    <params>nav_naming_attribute='1'</params>
+</xslt>
+<ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)attr-sel-nm.xml</ti> 
+
+
+<!-- objects.xml -->
+<xslt 
+    xml="(file,br-vok)" 
+    xsl="(dir,app)repo-objects.xsl" 
+    out="(dir,br-out)objects.xml"/>
+
+<ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)objects.xml</ti>
+
+<xslt 
+    xml="(file,br-vok)" 
+    xsl="(dir,app)repo-search.xsl" 
+    out="(dir,br-out)search-tc.xml">
+    <params>usage='tc'</params>
+</xslt>
+<ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)search-tc.xml</ti>
+<xslt 
+    xml="(file,br-vok)" 
+    xsl="(dir,app)repo-search.xsl" 
+    out="(dir,br-out)search-nm.xml">
+    <params>usage='nm'</params>
+</xslt>
+<ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)search-nm.xml</ti>
+
+<loop id="object" xml="(file,br-vok)" xpath="ots/ot">
+
+  <xslt 
+      xml="(file,br-vok)" 
+      xsl="(dir,app)repo-object.xsl" 
+      out="(dir,br-out)ot-(loop,object,@obj_typ)-tc.xml">
+      <params>object_typ='(loop,object,@obj_typ)' usage='tc'</params>
+  </xslt>
+  <ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)ot-(loop,object,@obj_typ)-tc.xml</ti>
+  
+  <xslt 
+      xml="(file,br-vok)" 
+      xsl="(dir,app)repo-object.xsl" 
+      out="(dir,br-out)ot-(loop,object,@obj_typ)-nm.xml">
+      <params>object_typ='(loop,object,@obj_typ)' usage='nm'</params>
+  </xslt>
+  <ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)ot-(loop,object,@obj_typ)-nm.xml</ti>  
+  
+  <xslt 
+      xml="(file,br-vok)" 
+      xsl="(dir,app)attr-sel-per-objtyp.xsl" 
+      out="(dir,br-out)ot-(loop,object,@obj_typ)-asel-nm.xml">
+      <params>object_typ='(loop,object,@obj_typ)'  usage='nm' identonly='0'</params>
+  </xslt>
+  <ti type="file" label="Created attr-sel-nm:" test="(prop,test-build-repo)">(dir,br-out)ot-(loop,object,@obj_typ)-asel-nm.xml</ti>   
+  <xslt 
+      xml="(file,br-vok)" 
+      xsl="(dir,app)attr-sel-per-objtyp.xsl" 
+      out="(dir,br-out)ot-(loop,object,@obj_typ)-asel-tc.xml">
+      <params>object_typ='(loop,object,@obj_typ)'  usage='tc' identonly='0'</params>
+  </xslt>
+  <ti type="file" label="Created attr-sel-tc:" test="(prop,test-build-repo)">(dir,br-out)ot-(loop,object,@obj_typ)-asel-tc.xml</ti>   
+  
+  <xslt 
+      xml="(file,br-vok)" 
+      xsl="(dir,app)attr-sel-per-objtyp.xsl" 
+      out="(dir,br-out)ot-(loop,object,@obj_typ)-asel-nm-ident.xml">
+      <params>object_typ='(loop,object,@obj_typ)'  usage='nm' identonly='1'</params>
+  </xslt>
+  <ti type="file" label="Created attr-sel-nm:" test="(prop,test-build-repo)">(dir,br-out)ot-(loop,object,@obj_typ)-asel-nm-ident.xml</ti>   
+  <xslt 
+      xml="(file,br-vok)" 
+      xsl="(dir,app)attr-sel-per-objtyp.xsl" 
+      out="(dir,br-out)ot-(loop,object,@obj_typ)-asel-tc-ident.xml">
+      <params>object_typ='(loop,object,@obj_typ)'  usage='tc' identonly='1'</params>
+  </xslt>
+  <ti type="file" label="Created attr-sel-tc:" test="(prop,test-build-repo)">(dir,br-out)ot-(loop,object,@obj_typ)-asel-tc-ident.xml</ti>    
+</loop>
+
+
+<xslt 
+    xml="(file,br-vok)" 
+    xsl="(dir,app)repo-beziehungen.xsl" 
+    out="(dir,br-out)bez-tc.xml">
+    <params>usage='tc'</params>
+</xslt>
+<ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)bez-tc.xml</ti>
+
+<xslt 
+    xml="(file,br-vok)" 
+    xsl="(dir,app)repo-beziehungen.xsl" 
+    out="(dir,br-out)bez-nm.xml">
+    <params>usage='nm'</params>
+</xslt>
+<ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)bez-nm.xml</ti>
+
+
+
+<loop id="attr" xml="(file,br-vok)" xpath="ats/at">
+
+  <xslt 
+      xml="(file,br-vok)" 
+      xsl="(dir,app)repo-attribute.xsl" 
+      out="(dir,br-out)at-(loop,attr,@attr_typ).xml">
+      <params>attr_typ='(loop,attr,@attr_typ)'</params>
+  </xslt>
+  <ti type="file" label="Created:" test="(prop,test-build-repo)">(dir,br-out)at-(loop,attr,@attr_typ).xml</ti>
+   
+
+</loop>
+
+<tp>Repo-Build done.</tp>
+<ti label="(prop,_ivo_repodone)" type="dir">(dir,br-out)</ti>
+
+</job>
+
+
+
+
+</jobs>

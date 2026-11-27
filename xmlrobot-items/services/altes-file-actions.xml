@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<job id="see_dir_actions" joblevel="ws" role="hidden">
+<interpreter act="check-login"/>
+  <need>(dir,with)</need>
+  <!-- <ti type="dir" x="(dir,with)"/>  -->
+ 
+  <ti type="call_service" job="Goto-Panorama">
+    <dir id="with">(dir,with)</dir>
+  </ti>
+                           
+  <when test="1" xtest="(f,guicontroller,may,operate-dir,)">
+    <ti label="Directory Actions"/> 
+    <ti explain="See ALL FILES under this dir" type="call_service" job="Panorama-Dir-Activity-SEE-ALL-FILES">
+      <dir id="with" x="(dir,with)"/>
+    </ti>  
+        
+    <ti explain="ZIP the directory" type="call_service" job="Panorama-Dir-Activity-ZIP" >
+      <dir id="with" x="(dir,with)"/>
+    </ti>  
+
+    <ti explain="Copy specific files" type="call_service" job="Panorama-Dir-Activity-COPY-FILES">
+      <dir id="with" x="(dir,with)"/>
+    </ti>  
+        
+        
+    <ti explain="see vfs infos" type="call_service" job="Panorama-Dir-Activity-VFS">
+      <dir id="with" x="(dir,with)"/>
+    </ti>   
+    
+    <ti explain="Create a directory" type="call_service" job="srv-mkdir">
+      <dir id="with" x="(dir,with)"/>
+    </ti>     
+    
+    <ti explain="cmr copy neue fileoperation" type="call_service" job="Panorama-Dir-Activity-CMR-CORE">
+      <dir id="with" x="(dir,with)"/>
+      <prop id="cmr-type" x="copy"/>
+    </ti> 
+        
+    <ti explain="Move specific files" type="call_service" job="Panorama-Dir-Activity-MOVE-FILES">
+      <dir id="with" x="(dir,with)"/>
+    </ti>    
+    
+    <ti explain="Rename specific files" type="call_service" job="Panorama-Dir-Activity-RENAME-FILES">
+      <dir id="with" x="(dir,with)"/>
+    </ti>     
+    <when test="(f,role,admin)"   >
+    <ti label="4 admins"/>
+    <ti explain="Delete specific files" type="call_service" job="Panorama-Dir-Activity-DELETE-FILES">
+      <dir id="with" x="(dir,with)"/>
+    </ti>   
+    
+    
+     <ti explain="Delete specific dirs" type="call_service" job="Panorama-Dir-Activity-DELETE-DIRS">
+      <dir id="with" x="(dir,with)"/>
+    </ti>   
+    
+    <ti explain="Delete empty dirs" type="call_service" job="Panorama-Dir-Activity-DELETE-EMPTY-DIRS">
+      <dir id="with" x="(dir,with)"/>
+    </ti>  
+    <ti exxpylain="" type="call_service" job="Panorama-Dir-Activity-DELETE-THIS-DIR">
+      <dir id="with" x="(dir,with)"/>
+    </ti>   
+    
+ 
+    <ti explain="Unzip all contained zips" type="call_service" job="Panorama-Dir-Activity-UNZIPALL">
+      <dir id="with" x="(dir,with)"/>
+    </ti>          
+    
+    </when>   
+    
+    <ti explain="Delete directory" type="call_service" job="Panorama-Dir-Activity-DELETE">
+      <dir id="with" x="(dir,with)"/>
+    </ti>       
+  
+     <ti explain="SEARCH for text in text-files" type="call_service" job="Panorama-Dir-Activity-SEARCH">
+      <dir id="with" x="(dir,with)"/>
+    </ti>      
+    <!-- 
+    
+  
+        
+
+    
+    <ti explain="" type="call_service" job="">
+      <dir id="with" x="(dir,with)"/>
+    </ti>   
+    
+    <ti explain="" type="call_service" job="">
+      <dir id="with" x="(dir,with)"/>
+    </ti>    
+        <ti explain="Unzip all contained zips" type="call_service" job="">
+      <dir id="with" x="(dir,with)"/>
+    </ti>   
+    
+    <ti explain="See ALL FILES under this dir" type="call_service" job="">
+      <dir id="with" x="(dir,with)"/>
+    </ti>  
+        -->
+    
+
+    
+
+    
+    
+    
+
+    
+    
+
+    
+     
+     
+  </when>
+  <!-- 
+  <ti label="ZIP the directory" type="call_service" job="Panorama-Dir-Activity-ZIP">
+    <file id="with" x="(file,with)"/>
+  </ti>  
+  
+   <ti label="ZIP the directory" type="call_service" job="Panorama-Dir-Activity-ZIP">
+    <file id="with" x="(file,with)"/>
+  </ti>      
+  -->
+  
+</job>
+<job id="go-on" role="hidden">
+  <need>(dir,with)</need>
+  <call_service job="Goto-Panorama"/>
+  
+  <call_service job="see_file_actions"/>
+</job>
+    
+<job id="see_file_actions" joblevel="ws" role="hidden">
+<interpreter act="check-login"/>
+  <need>(file,with)</need>
+  <ti_break/>
+  <when test="(f,guicontroller,choose,file,is-on)">
+    <ti label="(f,html,b,o)Coosing file (f,html,b,c)(f,when,(f,guicontroller,choose,file,has-save),to write,):" x="(f,guicontroller,choose,file,label)"/>   
+    <ti label=" " x="(f,guicontroller,choose,file,tip)" 
+        test="(f,has,(f,guicontroller,choose,file,tip))"/>    
+    <ti type="file" label=" " x="(file,with)" flag="choose label_right"
+     explain="Keep (f,name_of_file,(file,with))" prefix="[ choose ]"/>
+    <ti_hr/>
+  </when>
+
+  <prop id="src" x="(file,with)"/>
+  <!-- 
+  <ti>(f,html,b,o)Calculated(f,html,b,c)</ti>
+  <prop id="x" x="(f,vfs,(prop,src),friendly_uri)" label=" "/>
+  <when test="(f,starts_with,(prop,x),file:///)">
+    <prop id="x" x="(f,substring,(prop,x),8)"/>
+  </when>
+  <ti x="(prop,x)" flag="catch" label=" "/>  
+  
+  <ti x="(prop,x)" type="file" flag="catch" test="(f,eq,file,(f,vfs,(prop,src),type))" label=" " />    
+  <ti x="(prop,x)" type="dir" flag="catch" test="(f,eq,folder,(f,vfs,(prop,src),type))" label=" "/>   
+  <ti_break/>
+  -->
+  
+  <ti label="Basics"/>
+  <ti label="base" x="(f,vfs,(prop,src),base)" flag="catch"/>  
+  <ti label="scheme" x="(f,vfs,(prop,src),scheme)" flag="catch"/>  
+  <ti label="type" x="(f,vfs,(prop,src),type)" flag="catch"/>
+ 
+
+  <ti label="extension" x="(f,vfs,(prop,src),extension)" flag="catch"/>
+  <ti label="depth" x="(f,vfs,(prop,src),depth)" flag="catch"/>   
+  <ti label="uri" x="(f,vfs,(prop,src),uri)" flag="catch"/> 
+  
+     <ti explain="Split Textfile" type="call_service" job="Panorama-File-SPLIT">
+    
+      <!--<file id="with" x="(prop,src)"/> -->
+     </ti>   
+    
+  <when test="1" xtest="(f,guicontroller,may,operate-file,)">
+    <ti label="File Actions"/> 
+    
+     <ti explain="tage" type="call_service" job="Panorama-File-Activity-GUTENTAG"><file id="with" x="(file,with)"/></ti> 
+     <ti explain="EDIT a text-file" type="call_service" job="Panorama-File-Activity-EDIT"><file id="with" x="(file,with)"/></ti>  
+        
+     <ti explain="Rename File" type="call_service" job="Panorama-File-Activity-RENAME"><file id="with" x="(file,with)"/></ti> 
+     <ti explain="Extract a ZIP file" type="call_service" job="Panorama-File-Activity-EXTRACTZIP"><file id="with" x="(file,with)"/></ti>
+     <ti explain="Calculate Checksums (e:o)md5(e:s) sha1(e:c)" type="call_service" job="Panorama-File-Activity-CHECKSUM"><file id="with" x="(file,with)"/></ti>
+     <ti explain="Continue with Directory-Operation ..." type="call_service" job="go-on">
+      <dir id="with" x="(f,dir_of_dir,(file,with))"/>
+
+     </ti>    
+    
+     <ti explain="Split Textfile" type="call_service" job="Panorama-File-SPLIT">
+    
+      <!--<file id="with" x="(prop,src)"/> -->
+     </ti> 
+    
+    
+    
+    
+    <ti explain="See file-content" type="call_service" job="see_file_content" pxrefix="&gt;&gt; ">
+      <file id="with" x="(file,with)"/>
+    </ti>  
+    
+    <ti explain="Copy File" type="call_service" job="Panorama-File-Activity-COPY">
+      <file id="with" x="(file,with)"/>
+    </ti>   
+    
+    <ti type="call_service" job="Panorama-File-Activity-DUPLICATE">
+      <file id="with" x="(file,with)"/>
+    </ti>  
+    
+    <ti type="call_service" job="Panorama-File-Activity-MOVE">
+      <file id="with" x="(file,with)"/>
+    </ti>   
+    
+    <ti type="call_service" job="Panorama-File-Activity-TRASH">
+      <file id="with" x="(file,with)"/>
+    </ti>   
+    
+    <ti type="call_service" job="Panorama-File-Activity-DELETE">
+      <file id="with" x="(file,with)"/>
+    </ti>   
+
+    <ti type="call_service" job="Panorama-File-Activity-RENAME">
+      <file id="with" x="(file,with)"/>
+    </ti>  
+    
+    <ti type="call_service" job="Panorama-File-Activity-PDF2TXT">
+      <file id="with" x="(file,with)"/>
+    </ti> 
+    
+    
+                                   
+     <ti explain="Treat File as Directory"  xprefix="&gt;&gt; " type="call_service" job="Panorama-File-Activity-TREAT"><file id="with" x="(file,with)"/></ti> 
+       
+
+    
+    <ti_break/>  
+  </when>
+
+  <ti label="URL &amp; URI"/>
+                   
+  <ti label="friendly_uri" x="(f,vfs,(prop,src),friendly_uri)" flag="catch"/>   
+  <ti label="url" x="(f,vfs,(prop,src),url)" flag="catch"/>  
+  <ti label="url_prot" x="(f,vfs,(prop,src),url_prot)" flag="catch"/> 
+   
+  
+
+
+  <ti label="Path"/>
+  <ti label="path" x="(f,vfs,(prop,src),path)" flag="catch"/>
+  <ti label="path_decoded" x="(f,vfs,(prop,src),path_decoded)" flag="catch"/> 
+
+  <ti label="Root"/>
+  <ti label="root_path" x="(f,vfs,(prop,src),root_path)" flag="catch"/>  
+  <ti label="root_path_decoded" x="(f,vfs,(prop,src),root_path_decoded)" flag="catch"/>
+  <ti label="root_base" x="(f,vfs,(prop,src),root_base)" flag="catch"/>
+  <ti label="root_uri" x="(f,vfs,(prop,src),root_uri)" flag="catch"/>
+       
+  <ti label="Bits"/>  
+  <ti label="name_is_file" x="(f,vfs,(prop,src),name_is_file)" flag="catch"/>   
+  <ti label="exists" x="(f,vfs,(prop,src),exists)" flag="catch"/>  
+  <ti label="is_attached" x="(f,vfs,(prop,src),is_attached)" flag="catch"/>
+  <ti label="is_content_open" x="(f,vfs,(prop,src),is_content_open)" flag="catch"/>
+
+  <ti label="is_executable" x="(f,vfs,(prop,src),is_executable)" flag="catch"/>
+  <ti label="is_file" x="(f,vfs,(prop,src),is_file)" flag="catch"/>
+  <ti label="is_folder" x="(f,vfs,(prop,src),is_folder)" flag="catch"/>  
+  
+  <ti label="is_hidden" x="(f,vfs,(prop,src),is_hidden)" flag="catch"/>
+  <ti label="is_readable" x="(f,vfs,(prop,src),is_readable)" flag="catch"/>
+  <ti label="is_writable" x="(f,vfs,(prop,src),is_writable)" flag="catch"/>   
+    
+
+  <!-- 
+  <ti label="Real-file infos"/>     
+  <ti label="file_uri" x="(f,vfs,(prop,src),file_uri)" flag="catch"/>
+  <ti label="file_url" x="(f,vfs,(prop,src),file_url)" flag="catch"/>
+  
+  <when test="(f,guicontroller,may,operate-file,)">
+    <ti label="Actions"/> 
+    <ti label="See file-content" type="call_service" job="see_file_content">
+      <file id="with" x="(file,with)"/>
+    </ti>  
+    
+    <ti label="Copy File" type="call_service" job="Panorama-File-Activity-COPY">
+      <file id="with" x="(file,with)"/>
+    </ti>    
+    
+     <ti label="Treat File as Directory" type="call_service" job="Panorama-File-Activity-TREAT"><file id="with" x="(file,with)"/></ti> 
+     <ti label="Rename File" type="call_service" job="Panorama-File-Activity-RENAME"><file id="with" x="(file,with)"/></ti>
+     <ti label="Extract a ZIP file" type="call_service" job="Panorama-File-Activity-EXTRACTZIP"><file id="with" x="(file,with)"/></ti>
+     <ti label="Calculate Checksums (e:o)md5(e:s) sha1(e:c)" type="call_service" job="Panorama-File-Activity-CHECKSUM"><file id="with" x="(file,with)"/></ti>
+     <ti label="Continue with Directory-Operation ..." type="call_service" job="Panorama-File-Activity-DIRACTIVITY"><file id="with" x="(file,with)"/></ti>
+  </when>
+  -->
+                   
+  
+</job>
+<job id="see_file_content" joblevel="ws" role="hidden">
+  <need>(file,with)</need>
+  <prop id="encoding" x="UTF-8"/>
+  <tk type="text" id="encoding" x="UTF-8" />
+
+  <ti_hr/>
+  <ti>(f,file_content,(file,with),(prop,encoding))</ti>
+</job>
+
+
+<job id="Panorama-File-SPLIT" joblevel="ws" role="hidden">
+  <need>(file,with)</need>
+  
+  <tk flag="nono"
+      type="sel" id="target1" label="Target Specification" tip="Where should the files be placed? This directory is: ">
+    <sel label="Under this directory">this</sel>
+    <sel label="Somwhere else">else</sel>
+  </tk>
+  
+  <choose>
+    <when test="(f,eq_text,(prop,target1),this)">
+      <tk id="dirname" label="New Directory" 
+      tip="a new directory will be created under (f,dir_of_file,(file,with)). Thats its name"
+      flag="nono"/>
+      <dir id="target2">(f,dir_of_file,(file,with))(prop,dirname)</dir>
+      
+    </when>
+    
+    <when test="(f,eq_text,(prop,target1),else)">
+      <tk id="target2" label="New Directory" type="dir" 
+      tip="Select your target directory"
+      flag="nono"/>
+      <dir id="target2">(f,dir_of_file,(file,with))(prop,dirname)</dir>
+      
+    </when>    
+  
+  </choose>
+  <prop id="encoding" x="UTF-8"/>
+  <tk label="Finish the parameters" flag="sum">  
+  <tk id="linenums" label="Number of lines" tip="number of lines per result-file" test_first="1"/>
+
+  <tk type="text" id="encoding" test_first="0" />
+      <tk id="target2" label="New Directory" type="dir" 
+      tip="Select your target directory"
+      flag="nono" test_first="0"/>
+  </tk>  
+  
+  <dump_ti/>
+</job>
+ 
+
+
+ 
+
+</jobs>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="find-tk">
+    <need default="">(prop,finds_tk_control)</need>
+    <when test="(f,has_flag,(prop,finds_tk_control),print_only)">
+        <choose>
+            <when test="(f,has_flag,(prop,finds_tk_control),print_all_fields)">
+                <ti label="(prop,find_default_label_class) (prop,find_default_label_name)"/>
+            </when>
+            <otherwise>
+                <ti flag="label_right" label="(prop,find_default_label_class)" x="(f,html,b,o)(prop,find_default_label_name)(f,html,b,c)"/>
+            </otherwise>
+        </choose>
+    </when>
+    <tk label="(f,when,(f,has_flag,(prop,finds_tk_control),print_only),,(prop,find_default_label_class)(f,when,(f,has,prop,find_default_label_name), (prop,find_default_label_name),))" flag="(prop,finds_tk_control) wrap ">
+        <tk label="Xpath" id="find_xpath" x="" test_first="1" tip="the xpath" type="textblock" flag=" "/>
+        <tk label="Titel" id="find_titel" x="" test_first="1" tip="der Titel" type="text" flag=" "/>
+        <tk label="Beschreibung" id="find_desc" x="" test_first="0" tip="Beschreibung" type="textblock" flag=" "/>
+        <tk label="Special Search-Styles" x="Special Search-Styles" test_first="0" type="msg" flag=" "/>
+        <tk label="Style" id="find_style" x="by_xpath" test_first="0" tip="Der Stil der …" type="sel" flag=" nono  nono ">
+            <sel label="XPath">by_xpath</sel>
+            <sel label="LinkText">by_link_text</sel>
+            <sel label="PartialLinkText">by_partial_link_text</sel>
+            <sel label="ClassName">by_class_name</sel>
+            <sel label="Css">by_css</sel>
+            <sel label="Id">by_id</sel>
+            <sel label="Name">by_name</sel>
+            <sel label="TagName">by_tag_name</sel>
+        </tk>
+        <tk label="LinkText" id="find_by_link_text" x="" test_first="0" type="textblock" flag=" "/>
+        <tk label="PartialLinkText" id="find_by_partial_link_text" x="" test_first="0" type="textblock" flag=" "/>
+        <tk label="ClassName" id="find_by_class_name" x="" test_first="0" type="textblock" flag=" "/>
+        <tk label="Css" id="find_by_css" x="" test_first="0" type="textblock" flag=" "/>
+        <tk label="Id" id="find_by_id" x="" test_first="0" type="textblock" flag=" "/>
+        <tk label="Name" id="find_by_name" x="" test_first="0" type="textblock" flag=" "/>
+        <tk label="TagName" id="find_by_tag_name" x="" test_first="0" type="textblock" flag=" "/>
+        <tk label="Xsl" x="Xsl" test_first="0" type="msg" flag=" "/>
+        <tk label="Xsl-File" id="find_xsl_file" x="" test_first="0" tip="An Xsl-File to extract the data" base="(dir,xsl)" type="file" flag=" "/>
+        <tk label="Xsl-Parameters" id="find_xsl_paras" x="" test_first="0" type="textblock" flag=" "/>
+    </tk>
+</job>

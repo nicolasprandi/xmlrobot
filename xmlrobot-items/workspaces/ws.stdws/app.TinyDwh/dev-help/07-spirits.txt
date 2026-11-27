@@ -1,0 +1,14 @@
+<!-- load xml into memory/spirit -->
+<spirit 
+  id="obs" 
+  xml="(dir,repo)objects.xml"
+  act="open" />
+
+<!-- request information -->  
+<ti>(f,spirit,obs,//ot,@tc)</ti>
+<ti>(spirit,obs,ot[@tp=(f,xpath_string,(loop,rec,obj_typ))],@tc)</ti>
+
+<!-- close it -->
+<spirit 
+  id="obs" 
+  act="close"  flag="catch"/>

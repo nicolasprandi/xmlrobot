@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zsel-see">
+<need>(prop,zsel_key)</need>
+<call_job job="zsel-read"/>
+<prop x="print print_only" id="zsels_tk_control"/>
+<prop id="zsel_default_label" x="ZelixBlockSelection: (f,html,bold,open)(f,tk_sel_translate,(prop,zsel_zblock),(file,zblock-selector))(f,html,bold,close)(f,when,(f,has,(prop,zsels_offset_label)), - (prop,zsels_offset_label),)"/>
+<call_job job="zsel-tk"/>
+<ti_space height="3px"/>
+</job>

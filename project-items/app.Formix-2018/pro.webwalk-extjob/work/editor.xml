@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extjob-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="extjob_default_label_class" x="+ Job"/>
+<prop id="extjob_default_label_name" x="(f,when,(f,has,(prop,extjobs_offset_label)), | (prop,extjobs_offset_label),)"/>
+<prop id="extjobs_tk_control" x=""/>
+</when>
+<otherwise>
+<need>(prop,extjob_key)</need>
+<prop id="extjob_default_label_class" x="Job"/>
+<prop id="extjob_default_label_name" x="(prop,extjob_jobid)(f,when,(f,has,(prop,extjobs_offset_label)), - (prop,extjobs_offset_label),)"/>
+<prop id="extjobs_tk_control" x=""/>
+</otherwise>
+</choose>
+<call_job job="extjob-tk"/>
+</job>

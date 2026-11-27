@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+<job id="ready-and-done-file2" role="hidden">
+
+  <file id="files2">(file,orga)</file>
+  
+  <prop id="files2_offset">./</prop>
+  <prop id="files2_offset_label"/>
+  <prop id="files2_offset_new_key">//</prop>
+  <prop id="files2_sort_attribute"/>
+  <prop id="files2_sort_number"/>
+  <prop id="files2_sort_ignore_case"/>
+  <prop id="files2_sort_desc"/>
+  <prop id="files2_where"/>
+  <prop id="files2_return_job">file2-see-all</prop>
+        
+  <call_job job="file2-see-all"/>
+      
+</job>                                                          
+
+<job id="ready-and-done-modo2" role="hidden">
+
+  <prop id="file2_key">(f,substring_after,(prop,orga_offset),file2[@row=)</prop> 
+  <prop id="file2_key">(f,substring_before,(prop,file2_key),])</prop>      
+  
+    <file id="files2">(file,orga)</file>
+  <prop id="files2_offset">./</prop>
+  <prop id="files2_offset_label"/>
+  <prop id="files2_offset_new_key">//</prop>
+  <prop id="files2_sort_attribute"/>
+  <prop id="files2_sort_number"/>
+  <prop id="files2_sort_ignore_case"/>
+  <prop id="files2_sort_desc"/>
+  <prop id="files2_where"/>
+  <prop id="files2_return_job">file2-see-all</prop> 
+    
+    <call_job job="file2-see"/>
+
+</job>
+
+</jobs>

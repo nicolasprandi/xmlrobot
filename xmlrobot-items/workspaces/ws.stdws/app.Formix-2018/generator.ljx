@@ -1,0 +1,854 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015 Nicolas Prandstaetter. All rights reserved. 
+
+
+                                                                                                                
+
+
+
+ -->
+
+<jobliste>
+
+<call_job job="prolog" />
+<!-- 
+<job id="Edit Restart-Options">
+  <call_job job="tk_later_edit"/>
+</job>
+<job id="Edit Restart-Options?">
+  <call_job job="tk_later_print_values_tips"/>
+</job>
+-->
+<job id="Import Configuration from Template" tip="Choose a template as configuration">
+
+  <tk type="file" id="copy" base="(dir,app)templates"
+      label="Template to import"
+      flag="nono"/>
+      
+  <when test="(f,exists_file,(file,conf-excel))">
+    <tk type="msg" x="Current Configuration will be overwritten!!"/>
+  </when>
+  
+  <copy file="(file,copy)" tofile="(file,conf-excel)"/>
+  <ti label="Import done">
+    <ti type="file" label="from:" x="(file,copy)"/>
+    <ti type="file" label="to:" x="(file,conf-excel)"/>
+  </ti>
+</job>
+
+<job id="Edit" tip="Opens the configuration for edit"  >
+  <ti type="file" label="Excel-Configuration:">(file,conf-excel)</ti>
+  <call_service job="sel_open_file" flag="silent">
+    <file id="with">(file,conf-excel)</file>
+  </call_service>
+  <ti label="xml-data" type="file">(file,conf)</ti>
+</job>
+
+
+
+<job id="Convert"  tip="Creates the desired scripts - Go">
+  <try_catch>
+    <try>
+      <call_job job="Read Configuration"/>
+    </try>
+    <catch>
+      <tp>Some Problem with the Configuration</tp>
+      <ti label="EDIT THIS" size="4">
+        <ti type="file">(file,conf-excel)</ti>
+      </ti>
+      <throw_again/>
+    </catch>
+  </try_catch>
+  <call_job job="Create Jobs"/>
+  <call_job job="Finalize"/>
+  
+</job>
+
+
+
+<job id="Export" tip="Copies the scripts to an application (srv)" >
+  <!-- <ti_log vars="1"/> -->
+  <prop id="export_ask">(f,xpathx,1,(file,memo),.,@export_ask)</prop>
+  
+  <prop id="usage">(f,xpath,(file,conf),s2,@usage)</prop>
+  <when test="1" label="Making Defaults">
+    <choose>
+      <when test="(f,eq,(prop,usage),service)">
+        <prop id="def-X">(dir,services)</prop>
+      </when>
+      <when test="(f,eq,(prop,usage),app)">
+        <prop id="def-X">(dir,workspace)</prop>
+      </when>   
+    </choose> 
+  </when>
+  
+  <interpreter watch="1"/>
+
+  <when test="1" label="From memo to dir:dest">
+    <need>(prop,def-X) (file,memo)</need>
+    <prop id="read_rel_dest2">(f,xpathx,?,(file,memo),.,@dest_rel3)</prop>
+    <choose>
+      <when test="(f,eq,?,(prop,read_rel_dest2))">
+        <prop id="export_ask">1</prop>
+        <dir id="dest">(f,xpathx,(prop,def-X),(file,memo),.,@dest)</dir>
+      </when>
+      <otherwise>
+        <unescape type="prop" id="read_rel_dest2"/>
+        <translate type="prop" id="read_rel_dest2"/>
+        
+  	     <!-- <tk id="read_rel_dest2"/> -->
+        <dir id="dest">(prop,read_rel_dest2)</dir>
+      </otherwise>
+    </choose>
+    <need>(dir,dest)</need>
+  </when>
+  
+  <!-- input -->
+  <tk id="dest" type="dir" label="Destination of Generated Code (e:o)an App or Services(e:c)"
+    test="(prop,export_ask)"/>
+
+  <ti type="file" label="Writing Memo">(file,memo)</ti>
+    
+  <!-- Hier die konvertierung  begin -->
+  <when test="1">
+    <need>(dir,dest) (dir,services)</need>
+    <choose>
+      <when test="(f,eq,(dir,dest),(dir,services))">
+        <prop id="rel_dest2">(e:o)dir(e:s)services(e:c)</prop>
+      </when>  
+      <otherwise>      
+        <try_catch>
+          <try>
+            <prop id="rel_dest">(f,relative_dir,(dir,dest),(dir,services))</prop>     
+            <prop id="rel_dest2">(e:o)dir(e:s)services(e:c)(prop,rel_dest)</prop>
+            
+          </try>
+          <catch>
+            <prop id="rel_dest2">(dir,dest)</prop>
+            
+          </catch>
+        </try_catch>
+      </otherwise>
+    </choose>
+            
+    
+
+          
+    <prop id="rel_dest3">(f,replace,(prop,rel_dest2),(prop,fs),(e:o)prop(e:s)fs(e:c))</prop>
+  
+    <echo type="prop" id="rel_dest2" label="REL DEST 2"/>
+    <echo type="prop" id="rel_dest3" label="REL DEST 3"/>
+    <need>(prop,rel_dest2) (prop,rel_dest3)</need>
+  </when>
+  
+  <xml_update 
+    what="(file,memo)" where="." how="set_attribute"
+    attribute="dest_rel" value="(prop,rel_dest2)" />  
+
+    <prop id="jack-result-prop" x="(f,random_text,5)"/>
+    <prop id="jack-result-did-prop" x="(f,random_text,5)"/>  
+        
+	<call_service job="go-jack-do-dir" flag="silent">
+		<dir id="jack-in" x="(dir,dest)" />
+      <prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+      <prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>     
+	</call_service>
+
+  <global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>    
+	
+  <xml_update 
+    what="(file,memo)" where="." how="set_attribute" 
+    attribute="dest_rel3" value="(prop,jack-result)" />     
+  <xml_update 
+    what="(file,memo)" where="." how="set_attribute" 
+    attribute="dest" value="(dir,dest)" />
+ 
+  <file id="destination">(dir,dest)gen-(f,xpath,(file,conf),s1,@plural_id).xrj</file>
+  <file id="destination2">(dir,dest)(f,xpath,(file,conf),s1,@plural_id)-prolog.xrs</file>
+  <file id="destination3">(dir,dest)(f,xpath,(file,conf),s1,@plural_id)-adapter-sample.ljx</file>
+  <prop id="what">(f,xpathx,jobs prolog,(file,memo),.,@what)</prop>
+  <tk test="(prop,export_ask)" label="Select Files to Export" type="sel" id="what" flag="multi">
+    <sel label="Job-Sources">jobs</sel>
+    <sel label="Job-Prolog">prolog</sel>
+    <sel label="Adapter-Sample" test="0">adapter</sel>
+  </tk>
+  <xml_update 
+    what="(file,memo)" where="." how="set_attribute" 
+    attribute="what" value="(prop,what)" />
+      
+  <prop id="overwrite">0</prop>
+  <prop id="overwrite_msg"></prop>
+ 
+  <when test="(f,has_flag,(prop,what),jobs)">
+    <when test="(f,file_exists,(file,destination))">
+      <prop id="overwrite">1</prop>
+      <prop id="overwrite_msg">(prop,overwrite_msg)(file,destination)
+      </prop>
+    </when>
+  </when>
+  
+  <when test="(f,has_flag,(prop,what),prolog)">
+    <when test="(f,file_exists,(file,destination2))">
+      <prop id="overwrite">1</prop>
+      <prop id="overwrite_msg">(prop,overwrite_msg)(file,destination2)
+      </prop>
+    </when>
+  </when>
+  
+  <when test="(f,has_flag,(prop,what),adapter)">
+    <when test="(f,file_exists,(file,destination3))">
+      <prop id="overwrite">1</prop>
+      <prop id="overwrite_msg">(prop,overwrite_msg)(file,destination3)
+      </prop>
+    </when>
+  </when>    
+  
+  <when test="(prop,overwrite)">
+    <tk test="(prop,export_ask)" type="msg" msg_type="w">Going to overwrite the following files:
+      (prop,overwrite_msg)</tk>
+  </when>
+
+  <ti label="Generated"/>
+    
+  <when test="(f,has_flag,(prop,what),jobs)">
+    <copy file="(file,x)" tofile="(file,destination)" overwrite="true"/>
+    <tp>Jobs    went to: (file,destination)</tp>
+    <ti type="file" label="Job-File">(file,destination)</ti>
+  </when>
+  
+  <when test="(f,has_flag,(prop,what),prolog)">
+    <copy file="(file,y)" tofile="(file,destination2)" overwrite="true"/>
+    <tp>Prolog  went to: (file,destination)</tp>
+    <ti type="file" label="Prolog-File">(file,destination2)</ti>
+  </when>
+  
+  <when test="(f,has_flag,(prop,what),adapter)">
+    <copy file="(file,z)" tofile="(file,destination3)" overwrite="true"/>
+    <tp>Adapter went to: (file,destination3)</tp>
+    <ti type="file" label="Sample Adapter">(file,destination3)</ti>
+  </when>    
+
+</job>
+
+<job id="Convert, Export" tip="Runs Convert &amp; Export in a bunch" >
+  <call_job job="Convert"/>
+  <call_job job="Export"/>
+  
+</job>
+
+<job id="Convert, Export, Restart" tip="Runs Convert &amp; Export and Restart in a bunch" >
+  <call_job job="Convert"/>
+  <call_job job="Export"/>
+  
+    <call_job job="tk_resto_read"/>
+    <choose>
+      <when test="(f,has,prop,resto_runjob)">
+      
+        <tk type="msg" test="0">Going to restart now with
+        job=(prop,resto_runjob) 
+        app=(prop,resto_runapp)
+        pro=(prop,resto_runpro)         
+        </tk>
+      
+        <create_file out="(dir,systemp)written.lsx"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <steps>
+      <call_app 
+        job="(prop,resto_runjob)" 
+        app="(prop,resto_runapp)"
+        pro_id="(prop,resto_runpro)" 
+        pro_dir="(f,ask,pro_dir,(prop,resto_runapp),(prop,resto_runpro))"/>
+  </steps>]]></create_file>
+  
+        <call_service job="restarter">
+         <file id="with-lsx" x="(dir,systemp)written.lsx" />
+        </call_service>
+  
+        <restart app="(prop,resto_runapp)" pro="(prop,resto_runpro)"/>    
+      
+      </when>
+      <when test="(f,has,prop,resto_runpro)">
+        <restart app="(prop,resto_runapp)" pro="(prop,resto_runpro)"/>
+      </when>
+      
+      <when test="(f,has,prop,resto_runapp)">
+        <restart app="(prop,resto_runapp)" />
+      </when>
+      <otherwise>
+        <restart/>
+      </otherwise>
+            
+    </choose>
+    
+
+ 
+  <!-- <restart/> -->
+  
+</job>
+
+
+
+<job id="Define: Questening on Export" tip="Rules asking-behaviour at exports ">
+  <prop id="export_ask">(f,xpathx,1,(file,memo),.,@export_ask)</prop>
+  <tk id="export_ask" type="bool" label="Ask Questions on Export?" />
+  <xml_update 
+    what="(file,memo)" where="." how="set_attribute" 
+    attribute="export_ask" value="(prop,export_ask)" />  
+</job>
+<job id="Define: Questening on Export?">
+  <ti label="About: Define Questioning on Export">
+    <ti type="ul">Specifies the behaviour on overwriting files during export</ti>
+    <ti type="call_job" job="Clear Memory" test="(f,has,prop,pro)"/>
+  </ti>
+</job>
+<job id="Finalize"   role="hidden">
+
+  <create_file out="(file,z)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <!-- ()Copyright © 2015 Nicolas Prandstaetter. All rights reserved. 
+This file was generated by Formix (Xml-Robot). ()-->
+  <jobs><job id="View Whatever (f,xpath,(file,conf),s1,@plural_label)" level="(f,xpath,(file,conf),s1,@job_level)" role="(f,xpath,(file,conf),s1,@job_role_view)"></job></jobs>]]></create_file>
+
+  <xml_update
+    what="(file,z)"
+    with_what="childs"
+    how="insert_in"
+    where="job"
+    with="(file,prolog)" />
+    
+  <xml_update
+    what="(file,z)"
+    with_what="root"
+    how="insert_in"
+    where="job">
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <call_job job="(f,xpath,(file,conf),s2,@job_city_view)" />
+    ]]>
+    </inline>
+  </xml_update>    
+    
+    
+  <ti type="file" label="Result SampleAdapter">(file,z)</ti>
+    
+
+    <copy file="(file,prolog)" tofile="(file,y)" overwrite="true"/>
+
+  <ti type="file" label="Result Prolog">(file,y)</ti>
+  
+  <spirit id="update" xml="(file,updates)" act="open"/>
+  <ti label="Possible updates ..."/>
+  
+  <create_file out="(file,x)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<jobs>  
+  <!--() Copyright © 2015 Nicolas Prandstaetter. All rights reserved. 
+This file was generated by Formix (Xml-Robot). ()-->
+</jobs>]]></create_file>
+  
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,prolog-include)"/>
+    <prop id="class" x="prolog-include"/>   
+  </call_job>
+  
+  <xml_update
+    what="(file,x)"
+    with_what="childs"
+    how="append"
+    with="(file,prolog-include)" />
+
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,tkcore)"/>
+    <prop id="class" x="tkcore"/>   
+  </call_job>
+   
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,tkcore)" />      
+
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,view)"/>
+    <prop id="class" x="view"/>
+  </call_job>
+        
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,view)" /> 
+    
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,tomemory)"/>
+    <prop id="class" x="tomemory"/>
+  </call_job>       
+
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,tomemory)" />    
+    
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,details)"/>
+    <prop id="class" x="details"/>
+  </call_job>      
+    
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,details)" />  
+    
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,details2)"/>
+    <prop id="class" x="details2"/>
+  </call_job>      
+    
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,details2)" />      
+    
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,edit)"/>
+    <prop id="class" x="edit"/>
+  </call_job>       
+    
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,edit)" />    
+   
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,delete)"/>
+    <prop id="class" x="delete"/>
+  </call_job>  
+      
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,delete)" />   
+    
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,editor)"/>
+    <prop id="class" x="editor"/>
+  </call_job>            
+    
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,editor)" />  
+    
+    
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,add)"/>
+    <prop id="class" x="add"/>
+  </call_job>     
+     
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,add)" />    
+ 
+
+  <call_job 
+    job="do-the-updates">
+    <file id="toupdate" x="(file,tofile)"/>
+    <prop id="class" x="tofile"/>
+  </call_job> 
+      
+  <xml_update
+    what="(file,x)"
+    how="append"
+    with="(file,tofile)" />         
+    
+  <spirit id="update" act="close"/>               
+
+  <ti type="file" label="!! Result Jobs !!">(file,x)</ti>
+  
+  <spirit id="update" xml="(file,updates)" act="open"/>
+
+</job>
+
+<job  id="do-the-updates" role="hidden">
+  <need>(prop,class) (file,toupdate)</need>
+  <ti test="(prop,debug)">do-the-updates: (file,toupdate) (prop,class)</ti>
+  
+  <prop id="upd-content" x="(f,file_content,(file,toupdate))"/>
+  <prop id="upd-did-it" x="0"/>
+  <loop id="upd2" spirit="update" xpath="update[@file_class=(f,xpath_string,(prop,class))]" missing_strategy="empty">
+    <when test="(f,not,(f,eq,1,(loop,upd2,@off)))">
+
+    <prop id="upd-did-it" x="1"/>
+    <ti label="Update (f,html,b,o)(prop,class)(f,html,b,c)">(loop,upd2,@titel)</ti>
+    
+    <!-- checking expectations -->
+    <choose>
+      <when test="(f,eq_text,text,(loop,upd2,@search_type))">
+        <prop id="upd-found-count" x="(f,count_text,(prop,upd-content),(loop,upd2,@search))"/>
+      </when>
+      <when test="(f,eq_text,regex,(loop,upd2,@search_type))">
+        <prop id="upd-found-count" x="(f,count_regex,(prop,upd-content),(loop,upd2,@search))"/>
+      </when>
+      <otherwise>
+        <throw>no search_type found for class '(prop,class)'. found the search_type '(loop,upd2,@search_type)'</throw>
+      </otherwise>
+    </choose>
+    <when test="(f,not,(f,eq_num,(prop,upd-found-count),(loop,upd2,@expectation)))">
+      <create_file file="(dir,status)formix-update-problem.txt">(prop,upd-content)</create_file>
+      <ti label="problem" type="file">(dir,status)formix-update-problem.txt</ti>
+      <ti label="searched for (loop,upd2,@search_type)">(loop,upd2,@search)</ti>
+      <throw >Expectations not fullfilled. expected=(loop,upd2,@expectation) found=(prop,upd-found-count)</throw>
+    </when>
+
+    <!-- replacement -->
+    <choose>
+      <when test="(f,eq_text,text,(loop,upd2,@search_type))">
+        <prop id="upd-content" x="(f,replace,(prop,upd-content),(loop,upd2,@search),(loop,upd2,@replace))"/>
+      </when>
+      <when test="(f,eq_text,regex,(loop,upd2,@search_type))">
+        <prop id="upd-content" x="(f,replace_regex,(prop,upd-content),(loop,upd2,@search),(loop,upd2,@replace))"/>
+      </when>
+    </choose>    
+    </when>    
+  </loop>
+  
+  <when test="(prop,upd-did-it)">
+    <create_file file="(file,toupdate)">(prop,upd-content)</create_file>
+    <ti label=" " type="file">(file,toupdate)</ti>
+  </when>  
+
+</job>
+
+<job id="Create Jobs"   role="hidden">
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-prolog.xsl" 
+  out="(file,prolog)"  
+  home="(dir,app)"/>
+  
+<ti type="file" label="Prolog">(file,prolog)</ti>
+  
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-prolog-include.xsl" 
+  out="(file,prolog-include)" 
+  home="(dir,app)" />  
+
+<ti type="file" label="Prolog-Include">(file,prolog-include)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-view.xsl" 
+  out="(file,view)" 
+  home="(dir,app)"/>
+
+<ti type="file" label="View">(file,view)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-tomemory.xsl" 
+  out="(file,tomemory)" 
+  home="(dir,app)" />
+
+<ti type="file" label="To Memory">(file,tomemory)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-details.xsl" 
+  out="(file,details)" 
+  home="(dir,app)"/>
+
+<ti type="file" label="Details">(file,details)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-details2.xsl" 
+  out="(file,details2)" 
+  home="(dir,app)"/>
+
+<ti type="file" label="Details2">(file,details2)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-edit.xsl" 
+  out="(file,edit)" 
+  home="(dir,app)" />
+
+<ti type="file" label="Edit">(file,edit)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-delete.xsl" 
+  out="(file,delete)" 
+  home="(dir,app)" />
+
+<ti type="file" label="Delete">(file,delete)</ti>
+ 
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-editor.xsl" 
+  out="(file,editor)" 
+  home="(dir,app)" />
+
+<ti type="file" label="Editor">(file,editor)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-tkcore.xsl" 
+  out="(file,tkcore)" 
+  home="(dir,app)" />
+
+<ti type="file" label="TkCore">(file,tkcore)</ti>
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-add.xsl" 
+  out="(file,add)" 
+  home="(dir,app)" />
+
+<ti type="file" label="Editor">(file,add)</ti> 
+
+<xslt 
+  xml="(file,conf)" 
+  xsl="(dir,app)create-tofile.xsl" 
+  out="(file,tofile)" 
+  home="(dir,app)" />
+
+<ti type="file" label="To File">(file,tofile)</ti>   
+</job>
+
+<job id="Read Configuration"   role="hidden">
+
+<ti type="file" label="Excel Configuration">(file,conf-excel)</ti>
+
+<excel_form
+  excel="(file,conf-excel)"
+  sheet="single"
+  out="(file,a)" 
+  style="short"
+  root_name="s1"/>
+
+<ti type="file" label="read single=a">(file,a)</ti>
+
+<xslt 
+  xml="(file,a)" 
+  xsl="(dir,app)create-conf2.xsl" 
+  out="(file,b)" />
+  
+<ti type="file" label="adds to single=b">(file,b)</ti> 
+
+<choose>
+  <when test="(f,file_exists,(file,conf-excel-fields))">  
+  <i>Recognized special excel for fields</i>  
+    <excel_table
+      excel="(file,conf-excel-fields)"
+      sheet="fields"
+      out="(file,c)" 
+      style="short"
+      root_name="fields"
+      row_name="field"
+      y1="11" />   
+  </when>
+  <otherwise>
+    <excel_table
+      excel="(file,conf-excel)"
+      sheet="fields"
+      out="(file,c)" 
+      style="short"
+      root_name="fields"
+      row_name="field"
+      y1="11" />  
+  </otherwise>
+</choose>
+
+
+<ti type="file" label="read fields base">(file,c)</ti> 
+<excel_table
+  excel="(file,conf-excel)"
+  sheet="selections"
+  out="(file,d)" 
+  style="short"
+  root_name="selections"
+  row_name="sel"/>
+
+<ti type="file" label="read selections">(file,d)</ti>
+
+<file id="cx" x="(dir,pro)cx.xml"/>
+
+<xml_update
+  what="(file,c)"
+  how="append"
+  with="(file,d)"
+  out="(file,cx)"/>
+  
+<ti type="file" x="(file,cx)" label="das ist cx"/>  
+<xslt 
+  xml="(file,cx)" 
+  xsl="(dir,app)convert-fields.xsl" 
+  out="(file,c2)">
+  <params>view_loop_id='(f,xslp,(f,xpath,(file,b),.,@view_loop_id))' singular_id='(f,xslp,(f,xpath,(file,a),.,@singular_id))' name_separator=' X (f,xslp,(f,xpath,(file,a),.,@name_separator))'</params>
+</xslt>
+
+<ti type="file" label="wurde produziert=c">(file,c2)</ti>
+
+ 
+
+<choose>
+  <when test="(f,file_exists,(file,conf-excel-parents))"> 
+    <i>Recognized special excel for parents</i> 
+    <excel_table
+      excel="(file,conf-excel-parents)"
+      sheet="parents"
+      out="(file,f)" 
+      style="short"
+      root_name="parents"
+      row_name="parent" />    
+  </when>
+  <otherwise>
+    <excel_table
+      excel="(file,conf-excel)"
+      sheet="parents"
+      out="(file,f)" 
+      style="short"
+      root_name="parents"
+      row_name="parent" />  
+  </otherwise>
+</choose>
+
+
+
+<ti type="file" label="parents">(file,f)</ti> 
+<file id="g1">(dir,work)g1.xml</file>
+<excel_table
+  excel="(file,conf-excel)"
+  sheet="actions"
+  out="(file,g1)" 
+  style="short"
+  root_name="actions"
+  row_name="action" />
+
+<ti type="file" label="actions1">(file,g1)</ti> 
+
+<file id="g">(dir,work)g.xml</file>
+<xslt 
+  xml="(file,g1)" 
+  xsl="(dir,app)convert-actions.xsl" 
+  out="(file,g)">
+</xslt>
+
+
+<file id="h">(dir,work)h.xml</file>
+<excel_table
+  excel="(file,conf-excel)"
+  sheet="hooks"
+  out="(file,h)" 
+  style="short"
+  root_name="hooks"
+  row_name="hook"
+  count_base="1"/>
+
+<ti type="file" label="hooks2">(file,h)</ti>
+<create_file out="(file,conf)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <conf/>]]></create_file>
+    
+<xml_update
+  what="(file,conf)"
+  how="append"
+  with="(file,a)" />
+
+<xml_update
+  what="(file,conf)"
+  how="append"
+  with="(file,b)" />
+  
+<xml_update
+  what="(file,conf)"
+  how="append"
+  with="(file,c2)" />
+  
+<xml_update
+  what="(file,conf)"
+  how="append"
+  with="(file,d)" />   
+  
+<xml_update
+  what="(file,conf)"
+  how="append"
+  with="(file,f)" />   
+  
+<xml_update
+  what="(file,conf)"
+  how="append"
+  with="(file,g)" />     
+  
+<xml_update
+  what="(file,conf)"
+  how="append"
+  with="(file,h)" />     
+  
+<ti type="file" label="Xml Configuration">(file,conf)</ti>   
+  
+</job>  
+<!--
+
+
+<prop id="cities_offset"></prop>
+<prop id="cities_offset_new_key">//</prop>
+<prop id="cities_offset_label"></prop>
+-->
+
+<job id="Clear Memory" role="hidden">
+  <delete file="(file,memo)"/>
+  <ti>Memory Cleared</ti>
+</job>
+
+<job id="sys_project_setup" tip="Specifies the project from scratch" >
+  <when test="(f,not,(f,file_exists,(file,conf-excel)))">
+  <tk type="msg">You can now import a configuration template
+that is an excel-file 
+which you can select ...</tk>
+  <call_job job="Import Configuration from Template"/>
+  
+  <tk id="to-do" 
+    type="sel" 
+    label="What do you want to do now?">
+    <sel label="Edit the Excel">edit</sel>
+    <sel label="Run the Configuration">convert</sel>
+    <sel label="Its finished for now">nothing</sel>
+   </tk> 
+   
+   <choose>
+    <when test="(f,not,(f,has,prop,to-do))">
+    </when>
+    <when test="(f,eq,nothing,(prop,to-do))">
+    </when> 
+    <when test="(f,eq,edit,(prop,to-do))">
+      <call_job job="Edit"/>
+    </when>    
+    <when test="(f,eq,convert,(prop,to-do))">
+      <tp>Converting ...</tp>
+      <call_job job="Convert"/>
+      <tk type="msg" x="Continue with Export ..."/>
+      <call_job job="Export"/>
+      <tk type="msg" x="Continue with Restart ..."/>
+      <restart/>      
+    </when>               
+   </choose>
+   </when>
+</job>
+
+
+<job id="Updates" roxle="hidden">
+  <call_job job="update-see-all"/>
+</job>
+
+<job id="check-login" role="hidden">
+  
+</job>
+</jobliste>

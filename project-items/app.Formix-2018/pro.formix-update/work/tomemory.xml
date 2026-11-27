@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="update-read">
+<need>(prop,update_key)</need>
+<spirit act="open" missing_strategy="empty" id="updates_spirit_tc" xml="(file,updates)"/>
+<prop id="update_dt_upd">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@dt_upd)</prop>
+<prop id="update_dt_add">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@dt_add)</prop>
+<prop id="update_titel">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@titel)</prop>
+<prop id="update_file_class">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@file_class)</prop>
+<prop id="update_desc">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@desc)</prop>
+<prop id="update_search">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@search)</prop>
+<prop id="update_search_type">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@search_type)</prop>
+<prop id="update_expectation">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@expectation)</prop>
+<prop id="update_replace">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@replace)</prop>
+<prop id="update_off">(f,spirit,updates_spirit_tc,(prop,updates_offset)update[@row=(f,xpath_string,(prop,update_key))],@off)</prop>
+<spirit act="close" id="updates_spirit_tc"/>
+</job>

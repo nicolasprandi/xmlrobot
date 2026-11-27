@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rez-write">
+<need>(prop,rez_key) (prop,isAdd)</need>
+<spirit act="open" id="rezs_spirit_tc" xml="(file,rezs)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,rezs_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,rezs_offset),0,(f,sub,(f,len,(prop,rezs_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,rezs_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="rezs_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;rez row="(prop,rez_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="bez" value="(f,vob,prop,rez_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="character" value="(f,vob,prop,rez_character)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="beschreibung" value="(f,vob,prop,rez_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="portionen" value="(f,vob,prop,rez_portionen)"/>
+<when test="(f,exists,file,rez_logo)">
+<file id="jack-in" x="(file,rez_logo)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="logo" value="(prop,jack-result)"/>
+</when>
+<when test="(f,exists,prop,rez_logo_max_x)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="logo_max_x" value="(f,vob,prop,rez_logo_max_x)"/>
+</when>
+<when test="(f,exists,prop,rez_logo_max_y)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="logo_max_y" value="(f,vob,prop,rez_logo_max_y)"/>
+</when>
+<when test="(f,exists,prop,rez_logo_max_x_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="logo_max_x_main" value="(f,vob,prop,rez_logo_max_x_main)"/>
+</when>
+<when test="(f,exists,prop,rez_logo_max_y_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="logo_max_y_main" value="(f,vob,prop,rez_logo_max_y_main)"/>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="rezeptstatus" value="(f,vob,prop,rez_rezeptstatus)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="bewertung" value="(f,vob,prop,rez_bewertung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="rezs_spirit_tc" where="(prop,rezs_offset)rez[@row='(prop,rez_key)']" attribute="detail" value="(f,vob,prop,rez_detail)"/>
+<spirit act="close" flag="save pretty" id="rezs_spirit_tc"/>
+</job>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zsel-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="zsel_default_label" x="+ ZelixBlockSelection(prop,zsels_offset_label)"/>
+<prop x="sum" id="zsels_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,zsel_key)</need>
+<prop id="zsel_default_label" x="ZelixBlockSelection [(f,tk_sel_translate,(prop,zsel_zblock),(file,zblock-selector))](prop,zsels_offset_label)"/>
+<prop x="sum_only" id="zsels_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="zsel-tk"/>
+</job>

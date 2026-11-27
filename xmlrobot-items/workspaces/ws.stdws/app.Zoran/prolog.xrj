@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<job id="prolog" role="hidden">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is Zoran</throw>
+<interpreter turbo="1"/>
+
+  
+   <when test="(f,has,prop,pro)">  
+
+   <file id="gummi-data" x="(dir,pro)gummi-data.xml"/>
+  <prop id="gummi-regex" x="gummi_.+"/>
+    <file id="sand-data" x="(dir,pro)sand-data.xml"/>
+  <prop id="sand-regex" x="sand_.+"/>    
+<file id="ziramis">(dir,pro)ziramis.xml</file>
+<when test="(f,not,(f,exists_file,(file,ziramis)))">
+<create_file out="(file,ziramis)">&lt;ziramis/&gt;</create_file>
+<i>Created: (file,ziramis)</i>
+</when>
+<prop id="ziramis_offset">./</prop>
+<prop id="ziramis_offset_label"/>
+<prop id="ziramis_offset_new_key">//</prop>
+<prop id="ziramis_sort_attribute"/>
+<prop id="ziramis_sort_number"/>
+<prop id="ziramis_sort_ignore_case"/>
+<prop id="ziramis_sort_desc"/>
+<prop id="ziramis_where"/>
+<prop id="ziramis_return_job">zirami-see-all</prop>   
+    
+    <file id="para-data" x="(dir,pro)para-data.xml"/>
+    <prop id="para-regex" x="para_.+"/>
+  
+    <file id="conf-data" x="(dir,pro)conf-data.xml"/>
+    <prop id="conf-regex" x="conf_.+"/>
+    
+    <file id="stat-data" x="(dir,pro)stat-data.xml"/>
+    <prop id="stat-regex" x="stat_.+"/>  
+      
+  
+    
+  <file id="anser-data" x="(dir,pro)anser-data.xml"/>
+  <prop id="anser-regex" x="anser_.+"/>    
+  
+  </when> 
+</job>
+
+</jobs>

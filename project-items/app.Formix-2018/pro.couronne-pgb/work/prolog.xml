@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="pgbs">(dir,pro)pgbs.xml</file>
+<when test="(f,not,(f,exists_file,(file,pgbs)))">
+<create_file out="(file,pgbs)">&lt;pgbs/&gt;</create_file>
+<i>Created: (file,pgbs)</i>
+</when>
+<prop id="pgbs_offset">./</prop>
+<prop id="pgbs_offset_label"/>
+<prop id="pgbs_offset_new_key">//</prop>
+<prop id="pgbs_sort_attribute"/>
+<prop id="pgbs_sort_number"/>
+<prop id="pgbs_sort_ignore_case"/>
+<prop id="pgbs_sort_desc"/>
+<prop id="pgbs_where"/>
+<prop id="pgbs_return_job">pgb-see-all</prop>
+</prolog>

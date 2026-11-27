@@ -1,0 +1,7 @@
+<?xml version="1.0" ?><steps>
+<prop id="later_runapp">Formix-Rezeptblock</prop>
+<prop id="later_runjob">Aktuelles Rezept</prop>
+<prop id="later_runpro">Standard-Project</prop>
+<prop id="later_type">regex</prop>
+<dir id="later_dir">ram:///memtemp/86VQT3SI3Z/</dir>
+</steps>

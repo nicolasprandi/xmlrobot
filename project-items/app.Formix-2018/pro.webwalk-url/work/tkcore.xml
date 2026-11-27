@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="url-tk">
+    <need default="">(prop,urls_tk_control)</need>
+    <when test="0">
+        <choose>
+            <when test="(f,has_flag,(prop,urls_tk_control),print_all_fields)">
+                <ti label="(prop,url_default_label_class) (prop,url_default_label_name)"/>
+            </when>
+            <otherwise>
+                <ti flag="label_right" label="(prop,url_default_label_class)" x="(f,html,b,o)(prop,url_default_label_name)(f,html,b,c)"/>
+            </otherwise>
+        </choose>
+    </when>
+    <tk label="(f,when,(f,has_flag,(prop,urls_tk_control),print_only),,(prop,url_default_label_class)(f,when,(f,has,prop,url_default_label_name), (prop,url_default_label_name),))" flag="(prop,urls_tk_control) wrap ">
+        <tk label="Url" id="url_url" x="" test_first="1" tip=" https://www.wikipedia.org/" type="textblock" flag=" nono "/>
+        <tk label="Options" x="Options" test_first="0" type="msg" flag=" "/>
+        <tk label="Description" id="url_desc" x="" test_first="0" tip="What is this url about" type="textblock" flag="  big "/>
+        <tk label="History" id="url_history" x="" test_first="0" tip="History of Downloads and your doings" type="textblock" flag="  big "/>
+    </tk>
+</job>

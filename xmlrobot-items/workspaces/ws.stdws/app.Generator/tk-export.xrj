@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+<job id="export_input_only" role="hidden">
+	
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>
+  </call_job>
+   
+  <call_job job="do export input">
+	<prop id="askquestions" x="1"/>
+	<prop id="exportinputflag" x="print" />
+  </call_job>
+
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>
+  </call_job>
+  
+</job>
+
+<job id="see_export_input_only" role="hidden">
+	
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>
+  </call_job>
+   
+  <call_job job="do export input">
+	<prop id="askquestions" x="1"/>
+	<prop id="exportinputflag" x="print print_only" />
+  <prop id="see-angular-index" x="1"/>
+  </call_job>
+ 
+</job>
+
+<job id="see_export_input_only_tips" role="hidden">
+	
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>    
+  </call_job>
+   
+  <call_job job="do export input">
+	<prop id="askquestions" x="1"/>
+	<prop id="exportinputflag" x="print print_only print_with_tips print_all_fields" />
+  </call_job>
+ 
+</job>
+
+<job id="Explain export parameters" role="hidden">
+	
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>    
+  </call_job>
+   
+  <call_job job="do export input">
+	<prop id="askquestions" x="1"/>
+	<prop id="exportinputflag" x="print print_only print_with_tips" />
+  </call_job>
+  <!-- 
+  <ti_hr style="2"/>
+  <ti type="call_job" job="Explain all export parameters" label=" "/>
+  -->
+ 
+</job>
+
+<job id="Explain all export parameters" role="hidden">
+	
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>    
+  </call_job>
+   
+  <call_job job="do export input">
+	<prop id="askquestions" x="1"/>
+	<prop id="exportinputflag" x="print print_only print_with_tips print_all_fields print_tips_only" />
+  </call_job>
+ 
+</job>
+
+<job id="do export input" role="hidden">
+  <!-- (prop,pro-tk) -->
+  <need default="0">(prop,see-angular-index)</need>
+  <choose>
+    <when test="(prop,see-angular-index)">
+      <choose>
+        <when test="(f,exists_file,(dir,export-angular)index.html)">
+          <file id="saa" x="(dir,export-angular)index.html"/>
+        </when>
+        <otherwise>
+          <remove type="file" id="saa" flag="catch"/>
+        </otherwise>      
+      </choose>
+    </when>  
+    <otherwise>
+      <remove type="file" id="saa" flag="catch"/>
+    </otherwise>
+  </choose>
+  <dump_ti label="from do export input" test="0"/>
+  <when test="(f,not,(f,exists_file,(f,vob,dir,conf)ic-export.ljx))">
+    <dir id="export-angular" x="(dir,angulardir)" test="(f,not,(f,has_flag,(f,vob,prop,exportinputflag),print_only))"/>
+    <prop id="export-precision" x="2" test="(f,not,(f,has_flag,(f,vob,prop,exportinputflag),print_only))"/>
+  </when>
+  <tk label="Exporter" 
+	  test="(prop,askquestions)" 
+	  flag="sum_only (f,vob,prop,exportinputflag)"
+	  tip="()The EXPORTER converts the results of the transformation (Test Data Generation or Sheet Conversion) to the specified formats.()">
+                 
+ 
+     <tk type="file" 
+        id="saa" 
+        test="(f,has,file,saa)"
+        label="Angular index.html"
+	      tip="The central html-file for using the angular-app"/>                  
+    <tk type="dir" 
+        id="export-angular" 
+        label="AngularJS Folder"
+        flag="save force_extension"
+        x2="(dir,angulardir)"
+	      tip="A folder where an AngularJS-application will be generated. The generated AngularJS comes with all the additional files like javascript(e:s) json(e:s) angular and css. These files will be saved in the same folder like this &apos;AngularJS Html&apos; file. The user of the angular-app can sort and filter the data-table. Use Firefox to view it locally(e:s) !"/>
+
+
+    
+    <!-- 
+    <tk type="sel" 
+        id="export-angular-opt" 
+        label="AngularJS Filter" 
+        tip="()Specifies how filters are presented in the AngularJS-application. Filters are input-fields in the html which react immediately on user-input. They update the selected data on the screen without the need of an enter-key. For every letter you type on the keyboard things change immediatelly! Options: (a) Above each column: Every columns gets it's own filter (b) A block of fields on top: Again every column with it's own filter, but this time they locate as a compact input-block on top (c) One field for all columns: This is the most convinient variation for the user()">
+      <sel>All options</sel>
+      <sel>Above each column one input-field</sel>
+      <sel>A block of fields on top</sel>
+      <sel>One field for all columns</sel>
+    </tk>
+    -->
+    <tk type="msg" x="Data Files"/>
+    <tk type="file" 
+        id="export-html" 
+        label="Html"  
+        flag="save force_extension" 
+        extension=".html"
+        xxbase="(dir,edir)"
+        x2="(dir,edir)"
+	      tip="A html-file to be exported."/>      
+    <!--
+    <tk type="file" 
+        id="export-xml-plain" 
+        label="Xml" 
+        flag="save force_extension" 
+        extension=".xml"
+        base="(dir,edir)"
+	      tip="an xml-file to be exported. The extensible model languag used &gt; &lt; and / to sturcure data in a file"
+        test="0"/>
+	-->
+    <tk type="file" 
+        id="export-excel" 
+        label="Excel"  
+        flag="save" 
+        extension=".xls .xlsx"
+        base="(dir,edir)"
+        x2="(dir,edir)data.xlsx"
+	      tip="()A excel-file to be exported. Format: Microsoft Excel 2007-2013 XML (.xlsx) -or- Microsoft Excel 97-2003 (.xls)()"/>          
+       
+    <tk type="file" 
+        id="export-csv" 
+        label="Csv"  
+        flag="save force_extension" 
+        extension=".csv"
+        x2="(dir,edir)data.csv"
+        base="(dir,edir)"
+	      tip="A csv-file to be exported: Comma Separated File"/>  
+
+    <tk type="file" 
+        id="export-json" 
+        label="Json"  
+        flag="save force_extension" 
+        extension=".json"
+        x2="(dir,edir)data.json"
+        base="(dir,edir)"
+	      tip="()A json-file to be exported. Structured Textfile, Java Script Object Notation.()"/>
+
+    <tk type="file" 
+        id="export-xml" 
+        label="Xml"  
+        flag="save force_extension" 
+        extension=".xml"
+        x2="(dir,edir)data.xml"
+        base="(dir,edir)"
+        test="1"
+	      tip="()A xml-file to be exported. For each record one element, for each column one attribute.()"/>
+        
+    <tk type="file" 
+        id="export-xml-elements" 
+        label="Xml Elements"  
+        flag="save force_extension" 
+        extension=".xml"
+        x2="(dir,edir)data-elements.xml"
+        base="(dir,edir)"
+        test="1"
+	      tip="()A xml-file to be exported. For each record one element, for each column also an element.()"/>		  
+        		  
+	      
+	<!--
+    <tk type="file" 
+        id="export-xml-gen" 
+        label="Descriptive Xml"  
+        flag="save force_extension" 
+        extension=".xml"
+        base="(dir,edir)"
+        test="(f,role,test)"
+	      tip="an descriptive-xml-file to be exported. desriptive xml has data and metadata in xml"/>
+  
+    <tk type="file" 
+        id="export-xml-tr" 
+        label="TableReport Xml"  
+        flag="save force_extension" 
+        extension=".xml"
+        base="(dir,edir)"
+        test="(f,role,test)"
+	      tip="an table report with detailed information"/>
+	-->
+    <tk type="msg" x="Script Files"/>
+    
+    <tk type="file" 
+        id="export-sql" 
+        label="Sql"  
+        flag="save force_extension" 
+        extension=".sql"
+        x2="(dir,edir)data.sql"
+        base="(dir,edir)"
+	      tip="()A sql-insert-file to be exported. File to be processed by a database: Sql insert statements()"/>           
+             
+    <tk type="msg" 
+        x="Individual Format by Xsl" 
+        test="(f,role,expert)"
+        tip="()Uses a custom-format for the export. The format can only be a text-based file. To create this individual export-file a xsl-script is used. It is apllied on the resuling data-xml and generate the new export file. Role: Expert()"/>
+    
+    <tk type="file" 
+        id="export-indiv-1" 
+        label="Individual Export File" 
+        flag="save"
+        base="(dir,edir)" 
+        test="(f,role,expert)"
+        tip="()The inidivdual export-file to be produced. This file will contain the data in the individual file-format.()"
+        tip2="()The xsl file for the production of an individual format. When this file does not exist, a template is proposed by the system. Choose between the following templates and adapt them: Xml, Sql, individual export file is an export-file which is generated by a defined xsl-file. This xsl can produce whatever you want. The xsl-file itself is specified by the parameter 'Private Xsl'.()"/>    
+    
+    <tk type="file" 
+        id="export-indiv-1-xsl" 
+        label="Xsl" 
+        tip="()The xsl-file used to create the 'Individual Export File'. If it doesn't exist, a template will be proposed. Choose between the following templates and adapte them: sql, xls, xml, csv or html()" flag="save force_extension" extension=".xsl" test="(f,role,expert)"/>
+    
+    <tk type="bool" 
+        id="export-indiv-1-xsl-gen" 
+        label="Do Generate Xsl" 
+        test="(f,role,expert)" 
+        xflag="no_is_0"
+        tip="()A flag which signals that the template for the individual-export should be generated. If it is 'No' or not defined, nothing will be generated.()"/>
+       
+    <tk type="textblock" 
+        id="export-indiv-1-xsl-params" 
+        label="Xsl Params" 
+        test="(f,role,expert)"
+        tip="The xsl-parameters to control the individual xsl-execution. Write eg hase='8'. If you want to have a single quote (e:o)'(e:c) in your parameter used 2 of them(e:s) eg hase='''' "/>        
+
+    <tk type="dir" 
+    	  id="export-indiv-1-xsl-home" 
+    	  label="Location of Xsl Resources" 
+    	  tip="Specifies where to look for Xsl-Requests: document(e:o)(e:c) xsl:include or xsl:import"
+        test_first="0"
+        test="(f,role,expert)"/>
+      
+    <!-- <tk type="file" id="export-indiv-2" label="Output: Individual 2" flag="save"/> -->
+    
+    <tk type="msg" x="Field Attributes"/>   
+    
+   <tk id="export-numeric" 
+        label="Numeric Columns" 
+        test_first="0" 
+        type="sel"
+        test="(f,exists_file,(f,vob,file,colsel))"
+        xml="(file,colsel)"
+        flag="multi"
+        tip="()Identifies the numeric columns for the export. It is used for the formats: Sql, Json and AngularJS()"/>
+
+    <tk id="export-summable" 
+        label="Summable Numeric Columns" 
+        test_first="0" 
+        type="sel"
+        test="(f,exists_file,(f,vob,file,colsel))"
+        xml="(file,colsel)"
+        flag="multi"
+        tip="()Cols for aggregations()"/>
+                
+    <tk id="export-precision" 
+        label="Precicion of NumCols" 
+        test_first="0" 
+        type="text"
+        regex="\d+"
+        xtest="(f,exists_file,(f,vob,file,colsel))"
+        xxml="(file,colsel)"
+        xflag="multi"
+        xtip="()Identifies the numeric columns for the export. It is used for the formats: Sql, Json and AngularJS()"/> 
+        
+    <tk id="export-agg" 
+        label="Aggretations of NumCols" 
+        test_first="0" 
+        type="sel"
+        xtest="(f,exists_file,(f,vob,file,colsel))"
+        xxml="(file,colsel)"
+        flag="multi"
+        xtip="()xx()">
+        <sel label="Count">cnt</sel>
+        <sel label="Sum">sum</sel>
+        <sel label="Average">avg</sel>
+     </tk>        
+     
+    <tk id="export-sumontop" 
+        label="Summary on top" 
+        test_first="0" 
+        type="bool"
+        xtest="(f,exists_file,(f,vob,file,colsel))"
+        xxml="(file,colsel)"
+        xflag="multi"
+        xtip="()xx()">
+        <sel label="Count">cnt</sel>
+        <sel label="Sum">sum</sel>
+        <sel label="Average">avg</sel>
+     </tk>               
+        
+    <tk id="export-bool" 
+        label="Boolean Columns" 
+        test_first="0" 
+        type="sel"
+        test="(f,exists_file,(f,vob,file,colsel))"
+        xml="(file,colsel)"
+        flag="multi"
+        tip="()Identifies the boolean columns for the export. Such a boolean column may have a 0 or a 1 as value. It is used for the formats: Sql, Json and AngularJS. A boolean sql-value will by default be a true or false. If you want to stick to a 0 or 1 value, you can specify that in the project-configuration, parameter 'Bool Sql Export Strategy'.()"/>   
+
+    <tk id="export-remove" 
+        label="Columns NOT to export" 
+        test_first="0" 
+        type="sel"
+        test="(f,exists_file,(f,vob,file,colsel))"
+        xml="(file,colsel)"
+        flag="multi"
+        tip="()Identifies columns which shouln't be exported.()"/> 
+                   
+  </tk>
+  
+</job>
+
+</jobs>

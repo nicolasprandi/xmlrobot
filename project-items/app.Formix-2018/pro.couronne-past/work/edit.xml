@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="past-edit">
+    <need>(prop,past_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="past-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="past-editor"/>
+    <call_job job="past-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- (prop,_sl_past) '(prop,past_for)'"/>
+    </ti>
+    <call_job job="past-see"/>
+</job>

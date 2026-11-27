@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="monat-see">
+<need>(prop,monat_key)</need>
+<call_job job="monat-read"/>
+<prop x="print print_only" id="monate_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,monat_monat),30)(f,html,bold,close)(prop,monate_offset_label)"/>
+<ti test="(f,role,user)" type="call_job" explain="Bearbeite Monat" job="monat-edit">
+<prop id="monat_key">(prop,monat_key)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+</ti>
+<call_job job="monat-tk"/>
+<ti_space height="3px"/>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook_rezeptdetails</trace>
+<call_job job="hook_rezeptdetails"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: monat-details: end.0">
+<ti> hook_job=hook_rezeptdetails hook=end page=details station=0 object=monat</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

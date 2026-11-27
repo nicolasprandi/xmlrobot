@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+  
+  
+<job id="list_jobs?">
+  <ti>Sorry, Help for list jobs not available</ti>
+</job>
+<job id="list_jobs" joblevel="ws" tip="Lists Jobs of Services or Application" role="hidden">
+  <!-- optional expecint 
+      (prop,list_jobs_type): services, app
+      (prop,list_jobs_app) : application id -->
+      
+  <!-- Preperations -->
+  <file id="ws" x="(dir,filetemp)ws.xml"/>
+  <ask what="apps services" out="(file,ws)" style="natural"/>
+  <!-- <ti type="file" label="ask" x="(file,ws)"/> -->
+  
+  <!-- Conditional Parameter Construction -->
+  <when test="(f,not,(f,exists,prop,list_jobs_type))">
+    <tk type="sel" label="Which jobs do you want to list?" id="list_jobs_type" x="services">
+      <sel label="Service Jobs">services</sel>
+      <sel label="Application Jobs">app</sel>
+    </tk>
+    
+    <when test="(f,eq,(prop,list_jobs_type),app)">
+      <xslt
+        xml="(file,ws)"
+        out="(dir,filetemp)sel.app.xml">
+        <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <xsl:stylesheet version="1.0"
+            xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+          <xsl:output method="xml"/>
+          <xsl:template match="/">
+            <sels>
+            <xsl:for-each select="//app">
+              <sel><xsl:value-of select="@id"/></sel>
+            </xsl:for-each>
+            </sels>
+          </xsl:template>	
+          </xsl:stylesheet>  ]]>
+        </inline>
+      </xslt> 
+      <ti type="file" label="sel" x="(dir,filetemp)sel.app.xml"/>
+      <tk type="sel" label="Select the Application" xml="(dir,filetemp)sel.app.xml" id="list_jobs_app"/>    
+    </when>
+    
+  </when>
+  
+  <!-- Process   -->
+  
+  <!-- Define xpath to search for jobs   -->
+  <choose>
+    <when test="(f,eq,(prop,list_jobs_type),services)">
+      <prop id="xpath_jobs" x="services/job" />
+      <ti label="Service-Jobs"/> 
+    </when>
+    <otherwise>
+      <need>(prop,list_jobs_app)</need>
+      <prop id="xpath_jobs" 
+            x="apps/app[@id=(f,xpath_string,(prop,list_jobs_app))]/jobs/job" />
+      <ti label="Application-Jobs: (prop,list_jobs_app)"/>
+    </otherwise>  
+  </choose>
+  
+  <!-- Loop around jobs and print them   -->
+  <loop id="job" 
+        xml="(file,ws)" 
+        xpath="(prop,xpath_jobs)" 
+        sort="@id" 
+        ignore_case="@id">
+    <ti label="(loop,job,@id)" type="file" x="(loop,job,@file)" />
+    <ti label=" " test="(loop,job,exists?,@computer)" x="(f,html,bold,open)(loop,job,@computer)(f,html,bold,close) = computer" />
+    <ti label=" " test="(loop,job,exists?,@os)" x="(loop,job,@os) = os" />
+    <ti label=" " test="(loop,job,exists?,@tip)" x="(loop,job,@tip)" />
+  </loop>
+  
+  <ti type="call_service" job="dump_all" />
+  <!-- <dump_all/> -->
+</job>
+  
+ 
+</jobs>

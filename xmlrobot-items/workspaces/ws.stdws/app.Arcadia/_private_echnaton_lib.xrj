@@ -1,0 +1,174 @@
+<?xml version="1.0" ?>
+<jobs>
+<job id="systema-echnaton-lib" role="hidden">
+  <need>(dir,systema-dir)</need>
+  <need>(file,systema-scan)</need>
+  <need>(prop,systema-encoding)</need>
+  <need>(dir,systema-residence)</need>
+
+  <call_job job="tk_echlib_edit">
+    <prop id="title-of-echlib">(f,substring_after,(f,name_of_dir,(dir,systema-residence)),-store-)</prop>
+    <file id="echlib-data" x="(dir,systema-residence)echlib.xrs"/>
+    <prop id="echlib-regex" x="echlib_.*"/>
+  </call_job>
+  <remove id="title-of-echlib" type="prop"/>
+    
+  <ti_hr/>
+
+      
+  <dump_ti label="systema-echnaton-lib" test="0"/>
+  <interpreter watch="0"/>
+   <choose>
+      <when test="(f,not,(prop,jvcp_never_overwrite_java))">                            
+        
+        <file id="sk" x="(file,systema-scan)"/>
+ 
+        <ti type="file" x="(file,sk)" label="derscan"/>
+        
+        <tp>Timestamp java-source-files ...</tp>
+        <ti>Timestamp java-source-files ...(prop,javaitem_path)/src (dir,src)</ti>
+        <!-- timer insert -->
+        <prop id="timer-insert">
+		if (e:o)new java.util.Date(e:o)(e:c).getTime(e:o)(e:c)() &gt; 
+			// new java.text.SimpleDateFormat(&quot;yyyyMMdd&quot;).parse()(e:o)&quot;(prop,echlib_ablaufdatum)&quot;(e:c).getTime(e:o)(e:c)
+      (f,add,86400000,(f,timef,get_time,(prop,echlib_ablaufdatum),yyyyMMdd))L
+      (e:c) 
+			throw new Exception(e:o)&quot;This is the end of software!&quot;(e:c);
+		        
+ </prop>      
+ 
+        <!-- customer insert -->
+         <prop id="customer-insert">        
+            System.out.println(e:o)&quot;(f,escape,java,(prop,echlib_sw_name)-Testversion)&quot;(e:c);
+            System.out.println(e:o)&quot;Copyright (f,escape,java,(prop,echlib_sw_copyright)). All rights reserved.&quot;(e:c);            
+            System.out.println(e:o)&quot;&quot;(e:c);
+            System.out.println(e:o)&quot;Customer:                 (f,escape,java,(prop,echlib_customer))&quot;(e:c);  </prop>
+       
+         <when test="(f,has,prop,echlib_customer_notice)">
+           <prop id="customer-insert">(prop,customer-insert)
+            System.out.println(e:o)&quot;                          (f,escape,java,(prop,echlib_customer_notice))&quot;(e:c);</prop>         
+         </when>  
+       
+         
+         <prop id="customer-insert">(prop,customer-insert)        
+            System.out.println(e:o)&quot;Expiry:                   (f,escape,java,(prop,echlib_ablaufdatum)) &quot;(e:c);
+            System.out.println(e:o)&quot;&quot;(e:c);
+            </prop>         
+
+            
+         <prop id="search-expire-time">32503676400000L</prop>   
+         <prop id="replace-expire-time">(f,add,86400000,(f,add,86400000,(f,timef,get_time,(prop,echlib_ablaufdatum),yyyyMMdd)))L</prop>
+                                              
+        
+        <prop id="just-time-search">&quot;20300101&quot;</prop>  
+        <prop id="just-time">&quot;(prop,echlib_ablaufdatum)&quot;</prop> 
+    
+        <ti label="Insert Specifications"/>            
+        <ti label="timer-insert:" key="/*[requo-timer]*/">(prop,timer-insert)</ti>
+        <ti label="customer-insert:" key="/*[requo-customer]*/">(prop,customer-insert)</ti>  
+        <ti label="just-time:" key="(prop,just-time-search)">(prop,just-time)</ti>      
+        <ti label="timed-file:" key="(prop,search-expire-time)">(prop,replace-expire-time)</ti>
+        <ti_hr/> 
+
+        
+        <prop id="count-did-timer">0</prop>
+        <prop id="count-just-time">0</prop>        
+        <prop id="count-did-customer">0</prop>
+        <prop id="count-did-expire">0</prop>
+
+
+
+        <loop id="m" xml="(file,sk)" xpath="//file" missing_strategy="empty">
+          <when test="(f,eq_text,java,(loop,m,@ext))">
+            
+            <prop id="rt">(f,file_content,(loop,m,@fn),(prop,systema-encoding))</prop>
+            
+            <when test="(f,contains,(prop,rt),/*[requo-timer]*/)">
+
+              <ti label="requo-timer:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),/*[requo-timer]*/,(prop,timer-insert))</prop>
+              <ti label=" " tyxpe="file" test="0">(prop,rt)</ti>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+              
+              <prop id="count-did-timer">(f,add,1,(prop,count-did-timer))</prop>
+
+            </when>
+            
+            <when test="(f,contains,(prop,rt),(prop,just-time-search))">
+              <prop id="rt">(f,replace,(prop,rt),(prop,just-time-search),(prop,just-time))</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+              <ti label="just-time"  type="file">(loop,m,@fn)</ti>
+              <prop id="count-just-time">(f,add,1,(prop,count-just-time))</prop>
+            </when>      
+            
+            <when test="(f,contains,(prop,rt),(prop,search-expire-time))">
+
+              <ti label="requo-timed-file:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),(prop,search-expire-time),(prop,replace-expire-time))</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+              
+              <prop id="count-did-expire">(f,add,1,(prop,count-did-expire))</prop>
+                     
+            </when>                            
+            
+            <when test="(f,contains,(prop,rt),/*[requo-customer]*/)">
+              <ti label="requo-customer:" type="file">(loop,m,@fn)</ti>
+              <prop id="rt">(f,replace,(prop,rt),/*[requo-customer]*/,(prop,customer-insert))</prop>
+              <create_file out="(loop,m,@fn)" encoding="(prop,systema-encoding)">(prop,rt)</create_file>
+                      
+              <prop id="count-did-customer">(f,add,1,(prop,count-did-customer))</prop>
+
+            </when>               
+
+                   
+                               
+            
+          </when>
+
+                    
+        </loop> 
+        
+        <ti label="Summary of common replacements"/>
+        <ti label="/*[requo-timer]*/">(prop,count-did-timer)</ti>
+        <ti label="/*[requo-customer]*/">(prop,count-did-customer)</ti>
+        <ti label="(prop,just-time-search)" key="(prop,just-time)">(prop,count-just-time)</ti>
+        <ti label="(prop,search-expire-time)" key="(prop,replace-expire-time)">(prop,count-did-expire)</ti>        
+
+        <prop id="echnaton-lib-failed"></prop>
+        
+        <when test="(f,not,(f,eq_num,(prop,echlib_expected_did-timer),(prop,count-did-timer)))">
+          <prop id="echnaton-lib-failed">(prop,echnaton-lib-failed)Gefunden anzahl nicht korrekt: gesucht nach /*[requo-timer]*/ erwartet=(prop,echlib_expected_did-timer) gefunden=(prop,count-did-timer) 
+</prop> 
+        </when>
+        
+        <when test="(f,not,(f,eq_num,(prop,echlib_expected_just-time),(prop,count-just-time)))">
+          <prop id="echnaton-lib-failed">(prop,echnaton-lib-failed)Gefunden anzahl nicht korrekt: gesucht nach &quot;20300101&quot; erwartet=(prop,echlib_expected_just-time) gefunden=(prop,count-just-time) 
+</prop> 
+        </when>
+        
+        <when test="(f,not,(f,eq_num,(prop,echlib_expected_did-expire),(prop,count-did-expire)))">
+          <prop id="echnaton-lib-failed">(prop,echnaton-lib-failed)Gefunden anzahl nicht korrekt: gesucht nach 32503676400000L erwartet=(prop,echlib_expected_did-expire) gefunden=(prop,count-did-expire) 
+</prop> 
+        </when>      
+        
+        <when test="(f,not,(f,eq_num,(prop,echlib_expected_did-customer),(prop,count-did-customer)))">
+          <prop id="echnaton-lib-failed">(prop,echnaton-lib-failed)Gefunden anzahl nicht korrekt: gesucht nach /*[requo-customer]*/ erwartet=(prop,echlib_expected_did-customer) gefunden=(prop,count-did-customer) 
+</prop> 
+        </when>            
+                
+        <when test="(f,has,prop,echnaton-lib-failed)">
+          <ti label="Problem in echnaton-lib: "/>
+          <ti>(prop,echnaton-lib-failed)</ti>
+          <throw>(prop,echnaton-lib-failed)</throw>
+        </when>
+
+                                       
+      </when>
+      <otherwise>
+        <ti>i am not overwrting java files although you asked to timestamp !!!</ti>
+      </otherwise>
+    </choose>  
+</job>
+
+
+</jobs>

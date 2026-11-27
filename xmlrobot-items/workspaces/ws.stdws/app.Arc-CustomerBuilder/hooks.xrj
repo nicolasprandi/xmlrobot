@@ -1,0 +1,203 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+                                                  
+<job id="action_see_folders" role="hidden">
+<call_job job="custset-read" />
+<ti x="(f,html,b,o)(prop,custset_name)(f,html,b,c) (e:o)key=(prop,custset_key) serial=(prop,custset_serial)(e:c)"/>
+
+<ti_hr/>
+<ti label="(f,html,b,o)Delivery(f,html,b,c)" type="dir">(dir,custset_result)</ti>
+<ti_hr/>
+<call_job job="action_see_folders_dir">
+  <dir id="with">(dir,pro)runtimes/(prop,custset_key)/</dir>
+  <prop id="titel">Production</prop>
+</call_job>
+
+<!-- 
+
+<ti label="Delivery" type="dir">(dir,custset_result)</ti>
+<ti label="Prod-Papers" type="dir">(dir,pro)runtimes/(prop,custset_key)/</ti>
+
+<call_service job="open_dir" >
+   <dir id="with"></dir>
+</call_service>                         -->
+</job>
+
+<job id="action_see_folders_dir" role="hidden">
+  <need>(dir,with)</need>
+  <need>(prop,titel)</need>
+  <!-- <ti label="(prop,titel)"/>  -->
+  <ti x="(dir,with)" type="dir" label="(f,html,b,o)(prop,titel)(f,html,b,c)"/>
+  
+  <file id="cn-scan" x="(dir,filetemp)cn-scan.xml"/> 
+  <scan dir="(dir,with)" out="(file,cn-scan)" field="fn" level_limit="2"/>
+  <!-- <ti>(f,file_content,(file,cn-scan))</ti>   -->
+  <loop id="scan" xml="(file,cn-scan)" xpath="dir">
+    <ti label="(loop,scan,@rpath)" type="dir">(dir,with)(loop,scan,@ipath)</ti> 
+  </loop>   
+  <loop id="scan" xml="(file,cn-scan)" xpath="file">
+    <try_catch><try>
+      <ti label="(loop,scan)">(f,file_content,(loop,scan,@fn))</ti>
+    </try><catch>
+      <ti label="(loop,scan)" type="file">(loop,scan,@fn)</ti>
+    </catch></try_catch> 
+  </loop>
+ 
+  
+
+</job>
+
+<job id="hook_details_end_custset" role="hidden">
+<!--
+<ti_hr/>
+<ti type="call_service" job="open_dir" explain="See Results - (prop,custset_key)">
+   <dir id="with">(dir,pro)runtimes/(prop,custset_key)/</dir>
+</ti>
+   
+  <try_catch>
+    <try>
+      <call_job job="hook_details_end_custset_inner">
+      </call_job>
+    </try>
+    <catch>
+      <ti label="problem with details"/>
+      <ti>(prop,catched_msg)</ti>
+    </catch>
+  </try_catch>        -->
+
+</job>
+
+<job id="hook_details_end_custset_inner" role="hidden">
+
+  <prop id="compis_offset">custset[@row=(prop,custset_key)]/</prop>
+
+  <prop id="compis_offset_label">Custset [ (f,xpath,(file,custsets),custset[@row=(prop,custset_key)],@name) ]</prop>
+  
+  <call_job job="do_load_this_list">
+    <prop id="dltl-compis-offset" x="(prop,compis_offset)"/>
+  </call_job>  
+
+  <call_job job="compi-see-all" /> 
+<ti_hr/>
+<ti type="call_job" job="custset-see-all" explain="Goto List" />
+
+</job>
+
+<job id="do_load_this_list" role="hidden">
+  <need>(prop,dltl-compis-offset)</need>
+       <interpreter watch="0"/>
+      <call_job job="tk_base_read"/>
+      
+      <try_catch>
+      <try>
+      <prop id="the-arcadia-project">(f,xpath,(file,custsets),(f,substring_before,(prop,dltl-compis-offset),/),@arcadia_pro)</prop> 
+      <dir id="the-pro-dir">(f,ask,pro_dir,(prop,base_appid_arcadia),(prop,the-arcadia-project))</dir>
+      
+      <file id="sx">(dir,systemp)the-scan-of-this.xml</file>
+  <scan out="(file,sx)" dir="(dir,the-pro-dir)" level_limit="1" field="fn" />
+  
+     <xslt 
+          xml="(file,sx)" 
+          out="(dir,pro)current-compi-compile-selection.xml">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//dir"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="dir">
+  <xsl:if test="starts-with(e:o)@rpath(e:s)'compile-'(e:c)">
+   <sel><xsl:value-of select="@rpath"/></sel>
+  </xsl:if>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>  
+  
+      </try>
+      <catch>
+        <ti>(prop,catched_msg) das attribute @arcadia_pro ist nicht definiert</ti>
+        
+      </catch>
+      </try_catch>  
+</job>
+
+
+<job id="hook_compi_detail_end" role="hidden">
+  <ti>bin im hook_compi_editor_begin</ti>
+  <!-- 
+  <tk type="msg" msg="bin im hook_compi_editor_begin"/>  
+  
+  <call_job job="do_load_this_list">
+    <prop id="dltl-compis-offset" x="(prop,compis_offset)"/>    </call_job>  -->
+ 
+</job>
+
+
+<job id="hook_compi_editor_begin" role="hidden">
+  <ti>bin im hook_compi_editor_begin</ti>
+  <!-- 
+  <tk type="msg" msg="bin im hook_compi_editor_begin"/>    -->
+  
+  <call_job job="do_load_this_list">
+    <prop id="dltl-compis-offset" x="(prop,compis_offset)"/>
+  </call_job>
+
+
+      
+      
+</job>
+
+<!--
+
+  <dump_ti label="generate-compile-selektor"/>
+      <ti_flush/>
+      
+
+<call_job job="asdf"/>
+
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

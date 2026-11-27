@@ -1,0 +1,214 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="check-login"/>
+
+<call_job job="prolog" />
+
+<job id="Pano" role="hidden" tip="Kicking of the filebrowser 'Panorama'">
+  <file id="lpref" x="(dir,pro)little-panorama.txt"/>
+  <ti label="Maybe"/>
+  <ti type="call_job" job="Check-Panorama" explain="You want to make a [ fresh parorama ] here "/>
+  <ti_hr/>
+  <choose>
+    <when test="(f,exists_file,(file,lpref))">
+      <call_job job="See-Little-Panorama"/>
+    </when>
+    <when test="1">
+      <call_job job="Check-Panorama" explain="[ New Little-Panorama ]"/>
+    </when>    
+  </choose>
+  
+  <ti type="call_job" job="See-Little-Panorama" explain="[ Little-Panorama ]" label=" "/>
+
+</job>
+
+<job id="Config" xrole="hidden">
+
+   <ti type="rec" label="zeile">
+    <ti type="img" pic="(dir,libro)thai/thai1/3b.jpg" alt="Hans" max_x="123" max_y="132"/>
+    <ti type="img" pic="(dir,libro)thai/thai2/10b.jpg" alt="Hans2" max_x="60"/>
+
+    <ti type="call_job" job="HaseFalsch" pic="(dir,libro)thai/thai4/14b.jpg" alt="Hans2" max_x="30"/>
+    
+  </ti>
+  <ti_hr/>
+  <ti_break/>
+   <ti type="rec" xlabel="zeile2" flag="divs">
+    <ti type="img" pic="(dir,libro)thai/thai1/3b.jpg" alt="Hans" max_x="123" max_y="132"/>
+    <ti type="img" pic="(dir,libro)thai/thai2/10b.jpg" alt="Hans2" max_x="60"/>
+
+    <ti type="call_job" job="HaseFalsch" pic="(dir,libro)thai/thai4/14b.jpg" alt="Hans2" max_x="30"/>
+    
+
+</ti>
+      <ti type="call_job" job="Login2" explain="Login" />
+      <ti type="call_job" job="Idioma2" explain="Lang" />     
+   
+  <ti type="call_job" job="tk_conf_print_values_tips" explain="Konfiguration der Bestellungen">
+    <when test="1">
+    <ti type="call_job" job="tk_conf_edit" explain="Edit this" test="(f,role,boss)"/> 
+    </when>
+  </ti>  
+  
+  <ti type="call_job" job="tk_doku_print_values_tips" explain="Allgemeines zu diesem Rezeptblock" xlabel=" ">
+    <when test="1">
+    <ti type="call_job" job="tk_doku_edit" explain="Edit this" test="(f,role,expert)"/> 
+    </when>
+  </ti>  
+  <ti type="call_job" job="get-new-key" explain="New Key"  />   
+  <ti_hr/>
+  <!-- 
+  <ti type="call_job" job="tk_uc_print_values_tips" explain="Benutzer Konfiguration">
+    <when test="1">
+    <ti type="call_job" job="tk_uc_edit" explain="Edit this" test="(f,role,expert)"/> 
+    </when>
+  </ti>     -->
+  <ti type="call_job" job="tk_uc_edit" explain="Edit this" test="(f,role,expert)"/>
+  <call_job job="tk_uc_print_values_tips"/>
+  <ti>
+  
+  </ti>
+  
+  <!-- 
+  <ti_hr/>
+  
+     
+
+  <ti type="call_job" job="TEST" explain="TEST"  xtest="(f,role,boss)"/>  -->
+  
+
+  
+</job>
+
+<job id="make-after-zuord-add" role="hidden">
+  <!-- 
+  <interpreter watch="1"/>
+   <dump_ti label="sadfa (prop,kompzut_key)-(prop,rez_key)"/>         -->
+  <need>(prop,kompzut_key) (prop,rez_key)</need>
+ 
+  <prop id="komp_key" x="(f,xpath,(file,kompzuts),rez[@row=(f,xpath_string,(prop,rez_key))]/kompzut[@row=(f,xpath_string,(prop,kompzut_key))],@komp_key)"/>
+  
+  <prop id="rezeptname" x="(f,xpath,(file,rezs),rez[@row=(f,xpath_string,(prop,rez_key))],@bez)"/>  
+  
+  
+  <prop id="komps_offset">rez[@row=(f,xpath_string,(prop,rez_key))]/</prop>
+  <prop id="komps_offset_label"> Rezept (prop,rezeptname)</prop>
+  
+  <call_job job="komp-see"/>      
+</job>
+
+<job id="neue-zuordnung" role="hidden">
+  <need>(prop,rez_key) (prop,komp_key) (prop,rezeptname)</need>
+
+ 
+ <prop id="kompzuts_offset">rez[@row=(prop,rez_key)]/</prop>
+<prop id="kompzuts_offset_label"> / (prop,rezeptname)</prop>
+<prop id="kompzut_komp_key" x="(prop,komp_key)"/>
+
+<prop id="post_add_script_kompzut"><![CDATA[<?xml version="1.0" ?><steps>
+<call_job job="show-komponte">
+  <prop id="rez_key">(prop,rez_key)</prop>
+  <prop id="komp_key">(prop,komp_key)</prop>
+</call_job>
+</steps>]]></prop>
+  
+  <call_job job="kompzut-add"/>
+ 
+
+</job>
+
+<job id="show-komponte" role="hidden">
+  <need default="6">(prop,rez_key)</need>
+  <need default="5">(prop,komp_key)</need>
+        <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>  
+  <call_job job="komp-see"/>
+  <!-- 
+  <loop id="i" 
+        missing_strategy="empty" 
+        xml="(file,komps)" 
+        xpath="rez[@row=(prop,rez_key)]/komp[@row=(prop,komp_key)]" >
+        <ti>Komponente (loop,i,@bez)</ti>
+        <prop id="komps_offset">rez[@row=(prop,rez_key)]/</prop>
+        <prop id="komps_offset_label">(loop,i,..,@bez)</prop>
+
+        <call_job job="komp-see"/>                                        
+        
+      
+  </loop>       -->
+
+</job>
+
+<job id="neuer-vorgang" role="hidden">
+  <need>(prop,rez_key) (prop,komp_key) (prop,rezeptname) (prop,komponentenname)</need>
+
+ 
+ <prop id="ephasen_offset">rez[@row=(prop,rez_key)]/komp[@row=(prop,komp_key)]/</prop>
+<prop id="ephasen_offset_label"> / (prop,komponentenname) (prop,rezeptname)</prop>
+  
+  <call_job job="ephase-add"/>
+ 
+
+</job>
+
+<job id="show-zuordnung" role="hidden">
+  <need>(prop,rez_key) (prop,kompzut_key) (prop,zut_key) (prop,komp_key) (prop,rezeptname)</need>
+
+ 
+ <prop id="kompzuts_offset">rez[@row=(prop,rez_key)]/</prop>
+<prop id="kompzuts_offset_label"> / (prop,rezeptname)</prop>
+<prop id="kompzuts_return_job">Aktuelles Rezept</prop>
+  
+  <call_job job="kompzut-see"/>
+ 
+
+</job>
+
+<job id="show-zutat" role="hidden">
+  <need>(prop,rez_key) (prop,kompzut_key) (prop,zut_key) (prop,komp_key) (prop,rezeptname)</need>
+  <call_job job="show-zuordnung"/>  
+  <ti_hr/>
+  <prop id="zuts_offset">rez[@row=(prop,rez_key)]/</prop>
+<prop id="zuts_offset_label"> / (prop,rezeptname)</prop> 
+<prop id="zuts_return_job">Aktuelles Rezept</prop> 
+  <call_job job="zut-see"/>
+  
+
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

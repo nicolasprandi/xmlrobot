@@ -1,0 +1,51 @@
+<?xml version="1.0" ?><steps>
+<ti type="rec">
+<ti type="menu" span="10">
+  <ti  type="call_job" explain="Sammlung2-Abfrage"  job="squery-see-all" flag="button block" class="fb fbBulk"  >
+    <file id="squerys">(dir,xdbQb)queries/Sammlung2/queries-list.xml</file>
+  </ti>   
+  
+  <ti  type="call_job" explain="ad-hoc-tests-Stapel"  job="bulk-see-all" flag="button block" class="fb fbGo"  >
+    <file id="bulks">(dir,xdbQb)bulks/ad-hoc-tests/bulks-list.xml</file>
+  </ti>   
+    
+  <ti  type="call_job" explain="Green-Testdataset" job="dsi-see-all" flag="button  block" class="fb fbAdd"  >
+    <file id="dsis">(dir,xdbTest)Green-Testdataset/records-list.xml</file>
+    
+  </ti>    
+  
+  <ti  type="call_job" explain="AehnlicheLaender-Composition" job="hint-see-all" flag="button  block" class="fb fbGo"  >
+    <file id="hints">(dir,xdbComp)AehnlicheLaender/compositions-list.xml</file>
+    
+  </ti>    
+  
+  <ti  type="call_job" explain="Integrate" job="_integrate" flag="button" class="fb "  >
+  </ti>  
+  
+  <ti  type="call_job" explain="Statistics" job="_new_stat" flag="button" class="fb "  >
+  </ti>    
+  
+  <ti  type="call_job" explain="My Config" job="_configurations" flag="button" class="fb fbBulk"  >
+  </ti>   
+  <!-- 
+   job="Type-Of-Object"
+   job="event_past_run"
+   job="_searched"
+   job="_mat_views"
+   job="count-tables"
+   job="_statistics"
+   job=""
+   job=""
+   job=""   
+  -->
+</ti>   
+
+</ti>
+                                           <!-- 
+CREATE TABLE testdate (
+                testdate_id INTEGER NOT NULL AUTO_INCREMENT,
+                date_string CHAR(8),
+                PRIMARY KEY (testdate_id));
+                                                     -->
+
+</steps>

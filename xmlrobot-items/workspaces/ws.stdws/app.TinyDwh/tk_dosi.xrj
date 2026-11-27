@@ -1,0 +1,153 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+     <when test="(f,has,prop,pro)">  
+  <file id="dosi-data" x="(dir,pro)dosi-data.xrs"/>
+  <prop id="dosi-regex" x="dosi_.+"/>
+</when>
+-->
+<call_job job="prolog"/>
+
+
+<!-- gui Adapters: to copy in the app .... 
+
+<job id="See Values: dosi_" role="dev">
+  <call_job job="tk_dosi_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_dosi_clear" explain="Clear this data"/>  
+</job>
+
+<job id="Edit: dosi_">
+  <call_job job="tk_dosi_edit"/>
+</job>
+
+<job id="Edit: dosi_?">
+  <call_job job="tk_dosi_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_dosi_clear" explain="Clear this data"/>
+</job>                 -->
+
+<!-- 
+ <job id="Clear Data: dosi_">
+  <tk type="msg" x="Sure to clear data of dosi_ ?" msg_type="w"/>
+  <call_job job="tk_dosi_clear"/>
+</job>
+
+<job id="Print Values:  dosi_">
+  <call_job job="tk_dosi_print_values"/>
+</job>
+<job id="Print Help: dosi_" role="dev">
+  <call_job job="tk_dosi_print_help"/>
+</job>
+
+-->
+
+<!-- setting the default-values -->
+<job id="tk_dosi_default" role="hidden">
+  <need default="(dir,pro)created-pdi/created.ktr">(file,dosi_out)</need>
+  <need default="(dir,filetemp)">(dir,dosi_dir)</need>
+</job>
+
+
+<!-- dosi-core, make your changes here -->
+<job id="tk_dosi_core" role="hidden" tip="dosi_: Tk Internal">
+
+  <need default="">(prop,tk_dosi_add_flag)</need>
+
+  <tk label="Parameters: ETL-JOB-Template Creation" 
+      flag="(prop,tk_dosi_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+    <tk id="dosi_out" 
+        type="file" 
+        label="Oupt File"  
+        flag="nono save write"                 
+        base="(dir,pro)created-pdi/"
+        tip="()A directory which serves as intial directory for the file-search.()"/>
+ 
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_dosi_edit" tip="dosi_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,dosi-data))">
+      <!-- data exists already -->
+      <prop id="tk_dosi_add_flag" x="sum_only print"/>
+      <call_job job="tk_dosi_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_dosi_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_dosi_default"/>
+  <!-- doing input -->
+  <call_job job="tk_dosi_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_dosi_write"/>
+
+</job>
+
+
+
+<job id="tk_dosi_print_values" tip="dosi_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_dosi_read"/>
+  
+  <call_job job="tk_dosi_core">
+    <prop id="tk_dosi_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_dosi_print_values_tips" tip="dosi_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_dosi_read"/>
+  
+  <call_job job="tk_dosi_core">
+    <prop id="tk_dosi_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_dosi_print_help" tip="dosi_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_dosi_core">
+    <prop id="tk_dosi_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_dosi_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,dosi-data)" />
+    <prop id="joe-in-regex" x="(prop,dosi-regex)" />
+  </call_job>
+  <call_job job="tk_dosi_default"/>
+  
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_dosi_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,dosi-data)" />
+    <prop id="joe-in-regex" x="(prop,dosi-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_dosi_clear"  tip="dosi_: Clears the data" role="hidden">
+  <delete file="(file,dosi-data)"/>
+</job>
+
+
+</jobs>

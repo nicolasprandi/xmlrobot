@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jobs>  
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<call_job job="prolog"/><job id="View File-Categories" joblevel="ws" role="hidden" tip="Lists all File-Categories">
+<prop id="nothing">1</prop>
+<loop id="i" xml="(file,groups)" xpath="(prop,groups_offset)group(prop,groups_where)" sort="(prop,groups_sort_attribute)" number="(prop,groups_sort_number)" ignore_case="(prop,groups_sort_ignore_case)" desc="(prop,groups_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,groups_offset_label)),0)">
+<ti>(f,html,bold,open)(prop,groups_offset_label): (f,html,bold,close)</ti>
+</when>
+<ti type="rec" label=" ">
+<ti x="Active" />
+<ti x="Sort" />
+<ti x=" " />
+<ti x=" " />
+<ti x=" " />
+<ti x=" " />
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec" label="(f,html,bold,open)(loop,i,@title)(f,html,bold,close)">
+<ti type="text" x="(f,when,(loop,i,exists?,@active),(f,when,(loop,i,@active),Yes,No),?)" />
+<ti type="text" x="(loop,i,@sort)" />
+<ti type="call_job" explain="See" job="See File-Category">
+<prop id="group_key">(loop,i,@id)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Edit" job="Edit File-Category">
+<prop id="group_key">(loop,i,@id)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Delete" job="Del File-Category">
+<prop id="group_key">(loop,i,@id)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_job" page="view" explain="ExtensionList" job="List All Extensions">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">ext_string</prop>
+<prop page="view" id="group_key">(loop,i,@id)</prop>
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<trace>AAA Hook Station page=view station=1 hook=2 hook_job=pnx_hook_view_21</trace>
+<call_job job="pnx_hook_view_21" />
+</try>
+<catch>
+<ti label="Hook must be implemented: group-view: 2.1">
+<ti>AAA hook_job=pnx_hook_view_21 hook=2 page=view station=1 object=group</ti>
+<ti>(prop,catched_msg)</ti>
+</ti>
+</catch>
+</try_catch>
+</loop>
+<when test="(prop,nothing)">
+<ti>No File-Categories found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,groups_offset),node(e:o)(e:c)))">
+<ti label=" " type="call_job" explain="Add another File-Category" explain_alt="Add another File-Category(prop,groups_offset_label)" job="Add another File-Category">
+<file id="groups">(file,groups)</file>
+<prop id="groups_offset">(prop,groups_offset)</prop>
+<prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+<prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+<prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+<prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+<prop id="groups_where">(prop,groups_where)</prop>
+<prop id="groups_return_job">(prop,groups_return_job)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,info,level))">
+<ti_hr />
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,groups)</ti>
+<ti label="Xml-Offset:" test="(f,gt,(f,len,(prop,groups_offset)),0)">(prop,groups_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=pnx_hook_view_groups_end</trace>
+<call_job job="pnx_hook_view_groups_end" />
+</try>
+<catch>
+<ti label="Hook must be implemented: group-view: end.0">
+<ti> hook_job=pnx_hook_view_groups_end hook=end page=view station=0 object=group</ti>
+</ti>
+</catch>
+</try_catch>
+</job><job role="hidden" id="To Memory File-Category">
+<need>(prop,group_key)</need>
+<spirit act="open" id="groups_spirit_tc" xml="(file,groups)"  
+  flag="nuevo"
+  missing_strategy="empty"/>
+<prop id="group_dt_upd">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@id='(prop,group_key)'],@dt_upd)</prop>
+<prop id="group_dt_add">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@id='(prop,group_key)'],@dt_add)</prop>
+<prop id="group_title">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@id='(prop,group_key)'],@title)</prop>
+<prop id="group_active">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@id='(prop,group_key)'],@active)</prop>
+<prop id="group_sort">(f,spirit,groups_spirit_tc,(prop,groups_offset)group[@id='(prop,group_key)'],@sort)</prop>
+<spirit act="close" id="groups_spirit_tc" />
+</job><job role="hidden" id="See File-Category">
+<need>(prop,group_key)</need>
+<call_job job="To Memory File-Category" />
+<ti_hr />
+<ti label="[ (prop,group_title) ]" key="#(prop,group_key)" />
+<ti padding_top="0px" laxxbel="(prop,group_title)(prop,groups_offset_label)">
+<ti label="Title:" type="text" test="(f,has,prop,group_title)">(prop,group_title)</ti>
+<ti label="Active:" type="text" test="(f,has,prop,group_active)">(f,when,(prop,group_active),Yes,No)</ti>
+<ti label="Sort:" type="text" test="(f,has,prop,group_sort)">(prop,group_sort)</ti>
+</ti>
+<call_job job="pnx_hook_details_group_end" />
+</job><job role="hidden" id="Edit File-Category">
+<need>(prop,group_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="To Memory File-Category" />
+<prop id="isAdd">0</prop>
+<call_job job="File-Category Editor" />
+<call_job job="To File File-Category" />
+<ti label="Did update File-Category:" x="(f,html,bold,open)(prop,group_title)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_job job="(prop,groups_return_job)" />
+</when>
+</job><job role="hidden" id="Del File-Category">
+<need>(prop,group_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="To Memory File-Category" />
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting [ (prop,group_title) (prop,groups_offset_label)] ?" x="()Do you really want to delete that?&#xA;If you are not sure, make a backup of the project.()">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()" />
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,groups)" where="(prop,groups_offset)group[@id='(prop,group_key)']" />
+<i>Deleted (prop,group_title) #(prop,group_key) (prop,group_title)</i>
+<ti label="Did delete File-Category:" x="(f,html,bold,open)(prop,group_title)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_job job="(prop,groups_return_job)" />
+</when>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+</job><job role="hidden" id="File-Category Editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new File-Category(prop,groups_offset_label)" />
+<tk label="Title" id="group_title" x="Sample Title" type="text" flag="nono " />
+<tk label="Sort" id="group_sort" x="1" type="text" flag=" " />
+<tk label="(prop,label)" flag="sum_only">
+<tk label="Title" id="group_title" x="Sample Title" type="text" flag="nono " />
+<tk label="Active" id="group_active" x="1" type="bool" flag="nono " />
+<tk label="Sort" id="group_sort" x="1" type="text" flag=" " />
+</tk>
+</when>
+<otherwise>
+<need>(prop,group_key)</need>
+<prop id="label" x="(prop,group_title)(prop,groups_offset_label)" />
+<tk label="Update: (prop,label)" flag="sum_only">
+<tk label="Title" id="group_title" x="Sample Title" type="text" flag="nono" />
+<tk label="Active" id="group_active" x="1" type="bool" flag="nono " />
+<tk label="Sort" id="group_sort" x="1" type="text" flag=" " />
+</tk>
+</otherwise>
+</choose>
+</job><job id="Add another File-Category" joblevel="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="File-Category Editor" />
+<prop id="group_key">1</prop>
+<when test="(f,not,(f,exists,prop,groups_offset_new_key))">
+<prop id="groups_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,groups)" sort="@id" number="@id" xpath="(prop,groups_offset_new_key)group">
+<trace>max key=(loop,max,@id)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="group_key">(f,add,(loop,max,@id),1)</prop>
+</loop>
+<i>Generated Key for new File-Category: #(prop,group_key)</i>
+<call_job job="To File File-Category" />
+<ti label="Did add File-Category:" x="(f,html,bold,open)(prop,group_title)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_job job="(prop,groups_return_job)" />
+</when>
+</job><job role="hidden" id="To File File-Category">
+<need>(prop,group_key) (prop,isAdd)</need>
+<spirit act="open" id="groups_spirit_tc" xml="(file,groups)" flag="nuevo" />
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,groups_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,groups_offset),0,(f,sub,(f,len,(prop,groups_offset)),1))" />
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,groups_offset)" />
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="groups_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;group id="(prop,group_key)" /&gt;</inline>
+</spirit>
+<spirit act="xml_update" how="set_attribute" attribute="dt_add" id="groups_spirit_tc" where="(prop,groups_offset)group[@id='(prop,group_key)']" value="(f,time)" />
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" attribute="dt_upd" id="groups_spirit_tc" where="(prop,groups_offset)group[@id='(prop,group_key)']" value="(f,time)" />
+<spirit act="xml_update" how="set_attribute" id="groups_spirit_tc" where="(prop,groups_offset)group[@id='(prop,group_key)']" attribute="title" value="(prop,group_title)" />
+<spirit act="xml_update" how="set_attribute" id="groups_spirit_tc" where="(prop,groups_offset)group[@id='(prop,group_key)']" attribute="active" value="(prop,group_active)" />
+<spirit act="xml_update" how="set_attribute" id="groups_spirit_tc" where="(prop,groups_offset)group[@id='(prop,group_key)']" attribute="sort" value="(prop,group_sort)" />
+<spirit act="close" flag="save" id="groups_spirit_tc" />
+</job></jobs>

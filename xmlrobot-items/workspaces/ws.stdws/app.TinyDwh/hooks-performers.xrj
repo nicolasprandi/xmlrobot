@@ -1,0 +1,1511 @@
+<?xml version="1.0" ?>
+<jobs>
+
+<call_job job="prolog"/>
+
+<job id="sqli_event_run" role="hidden">
+  <need default="0">(prop,run-sqli-from-steward)</need>                                                               
+  <need default="?">(prop,sqli-by)</need>
+  <call_job job="tr_sqli" />
+  <call_job job="tr_squery" />
+
+
+  <when test="(f,not,(prop,run-sqli-from-steward))">
+                       
+    <ti_break class_table="tabNavigator"/>
+                                                                       
+    <choose>
+      <when test="(f,eq_text,abfrage-dev,(prop,sqli-by))">
+        <ti type="rec" label=" ">    
+        <ti type="call_job" job="_select" explain="(prop,_x_go_back_sys)" align="right" flag="button" class="justback">   
+        </ti>     
+        </ti>      
+      </when>
+      <when test="(f,eq_text,sqli-liste,(prop,sqli-by))">
+        <ti type="rec" label=" ">    
+        <ti type="call_job" job="squery-see" explain="(prop,_x_go_back_sys)" align="right" flag="button" class="justback"> 
+          <file id="squerys">(file,squerys)</file>
+          <prop id="squerys_offset">./</prop>
+          <prop id="squerys_offset_label"></prop> 
+          <prop id="squery_key">(prop,squery_key)</prop>           
+        </ti>     
+        </ti>      
+      </when>      
+      
+      <otherwise>
+        <ti type="rec" label=" ">    
+        <ti type="call_job" job="sqli-see" explain="(prop,_x_go_back_sys)" align="right" flag="button" class="justback">
+          <file id="sqlis">(file,sqlis)</file>
+          <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+          <prop id="sqlis_offset_label"></prop> 
+          <prop id="sqli_key">(prop,sqli_key)</prop>
+              
+          <file id="squerys">(file,squerys)</file>
+          <prop id="squerys_offset">./</prop>
+          <prop id="squerys_offset_label"></prop> 
+          <prop id="squery_key">(prop,squery_key)</prop>      
+        </ti>     
+        </ti>      
+      </otherwise>
+    </choose>
+    <spirit id="sum" act="open" xml="(file,sqlis)"/>
+    <ti_break/>
+    
+  <ti type="rec">  
+  <ti x="Running iFace: (f,html,b,o)(f,spirit,sum,//sqli[@row='(prop,sqli_key)'],@name)(f,html,b,c) (e:o)(prop,_sl_squery) (f,spirit,sum,//squery[@row='(prop,squery_key)'],@id)(e:c)"/>
+  </ti>  
+   <ti_hr_break class_table="tabVerticalMiddle"/>        
+    <call_job job="squery_editrun_links"/>
+    <call_job job="sqli_editrun_links"/>
+    
+    <spirit id="sum" act="close"/>  
+    <!-- <ti_break/> -->
+  </when>
+ 
+  <!-- 
+  <call_job job="tk_iro_edit">
+    <file id="iro-data" x="(dir,pro)iro-data.xrs"/>
+    <prop id="iro-regex" x="iro_.+"/>
+    
+    <prop id="piro-interrupt" x="0"/>
+    <prop id="piro-bulk-row-sel" x="0"/>
+  </call_job>    
+  --> 
+  
+  <!-- iro-optionen uebertragen 
+  <prop id="ir-run">(prop,iro_run)</prop>
+  <prop id="ir-coll">(prop,iro_coll)</prop>  
+  -->
+  <prop id="ir-interrupt">0</prop>
+  <prop id="ir-run">1</prop>
+  <prop id="ir-coll">0</prop>      
+  <choose>
+    <when test="(prop,ir-coll)"> 
+      <dir id="ir-coll">(dir,iro_coll)</dir>
+      <call_job job="ir-coll-index"/>  
+    </when>
+    <otherwise>  
+      <remove id="ir-coll" type="dir" test="(f,exists,dir,ir-coll)" />                                                     
+      <remove id="ir-coll-index" type="prop" test="(f,exists,prop,ir-coll-index)" />
+      <prop id="ir-coll-my-index">0</prop>
+    </otherwise>  
+  </choose>                
+  
+  <call_job job="sqli-read"/>
+
+  <call_job job="ir1">
+    <prop id="ir-show-started">0</prop>
+    <prop id="ir-test">1</prop>
+    <prop id="ir-style">s</prop>        
+    <file id="ir-sqli">(file,sqlis)</file>
+    <prop id="ir-sqli-rows">(prop,sqli_key)</prop>    
+  </call_job>    
+  
+  <when test="(f,not,(f,exists,prop,sqli-run-dont-print-finals))">
+    <ti_hr_break/>
+
+    <ti>(prop,_sqli_done1)(prop,_sl_sqli)(prop,_sqli_done2)</ti>
+
+  </when>
+  
+</job>
+
+
+<job id="ir9" role="hidden">
+
+
+  <tk type="msg" test="0" xtest="(prop,ir-test)">ir9
+  sqli: (f,loop_xml,ir2-sqli,@name) #(f,loop_xml,ir2-sqli,@row)
+  query: (f,spirit,(prop,ir-query-spirit),squery[@row='(prop,ir9-query-row)'],@id) #(prop,ir9-query-row)
+  return: (file,ir9-return)                
+  </tk>
+  <call_job job="ir8"/>
+  
+  
+  <print id="s" out="(file,ir9-return)" act="open"/> 
+  <print id="s" act="println"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>]]></print>
+  <print id="s" act="println"><![CDATA[<steps>]]></print> 
+  
+  <prop id="hasFinally">(f,gt_num,(f,len,(prop,_sc_fin)),0)</prop>
+  
+  <when test="(prop,hasFinally)">  
+    <print id="s" act="println"><![CDATA[
+<try_catch>
+<try>
+]]></print>    
+  </when>
+  
+  <when test="(f,has,prop,ir-bscript)">
+  <print id="s" act="println"><![CDATA[<!-- Beginning-Script from Bulk -->
+(prop,ir-bscript)]]>
+</print>     
+  </when>
+  
+  <call_job job="ir7">
+    <prop id="ir7-script-type">top</prop>  
+  </call_job>
+
+  <print id="s" act="println"><![CDATA[<!-- Session: Initial -->
+<call_job job="request-session">
+  <prop id="request-commit-session">(prop,_cmt_session)</prop>
+  <prop id="request-update-import">(prop,_rq_import)</prop>
+  <prop id="request-update-central">(prop,_rq_central)</prop>  
+  <!-- BATCH: use long lasting dbc 
+  <prop id="request-dbc-id">(f,random_text,5)</prop>
+  <prop id="request-dbci-id">fulla__</prop>  
+  -->
+</call_job>]]>
+</print>   
+
+<!-- urspruenglich position CASPAR -->
+  <!-- limit festsetzen: bulk-limit-final ; ueberschreiben mit bulk-limit-over -->                                               
+  <choose>
+    <when test="(f,has,prop,bulk-limit-over)">
+      <!-- das limit wird ueberschrieben -->
+      <prop id="bulk-limit-final">(prop,bulk-limit-over)</prop>
+      <ti type="rec">
+      <ti align="center" flag="wrap_word">(prop,_qu_lim_over) '(f,when,(f,gt_num,(prop,bulk-limit-over),-1),(prop,bulk-limit-over),Unlimited)'</ti>
+      </ti>
+    </when>
+    <otherwise>
+      <!-- limit aus abfrage-spec -->
+      <prop id="bulk_squery_limit_typ">(f,spirit,(prop,ir-query-spirit),squery[@row='(prop,ir9-query-row)'],@limit_typ)</prop>
+      <choose>
+        <when test="(f,eq_text,conf,(prop,bulk_squery_limit_typ))">
+          <call_job job="tk_limit_read" test="(f,not,(f,exists,prop,sql_limit_queries))" />
+          <prop id="bulk-limit-final">(prop,sql_limit_queries)</prop>        
+        </when>
+        
+        <when test="(f,eq_text,no,(prop,bulk_squery_limit_typ))">
+          <prop id="bulk-limit-final">-1</prop>
+        </when>    
+        
+        <when test="(f,eq_text,indiv,(prop,bulk_squery_limit_typ))">
+          <prop id="bulk-limit-final">(f,spirit,(prop,ir-query-spirit),squery[@row='(prop,ir9-query-row)'],@limit_indiv)</prop>
+        </when>        
+      
+      </choose>  
+      
+      <remove type="prop" id="bulk_squery_limit_typ" />
+    
+    </otherwise>
+  </choose>  
+  <print id="s" act="println" test="(f,gt_num,(prop,bulk-limit-final),-1)"><![CDATA[<!-- BATCH: set your limit -->
+<prop id="loop-limit">(f,vob,prop,bulk-limit-final)</prop>]]>
+</print>   
+
+  <print id="s" act="println"><![CDATA[<!-- BATCH: dont use to. set to 0 -->
+<prop id="commits-to-ti">1</prop>]]>
+</print>   
+
+
+  <!-- max-record-ids -->
+  <when test="(prop,_max_ids)">
+  
+      <print id="s" act="println"><![CDATA[<!-- Get max ids-->   
+<call_job job="get-max-ids"/>
+]]>                                                             
+    </print>   
+  
+  </when>
+  
+  <!-- commit: init -->
+  <choose>
+    <when test="(f,eq_text,al,(prop,_cmt_style))">
+      <!-- always -->
+    <throw test="(f,not,(f,has,prop,_cmt_size))">Commit-Size requested</throw>  
+    <print id="s" act="println"><![CDATA[<!-- Commit: Initial -->
+<prop id="commitCount">0</prop>]]>
+</print>               
+    </when>
+    <when test="(f,eq_text,if,(prop,_cmt_style))">
+      <throw test="(f,not,(f,has,prop,_cmt_size))">Commit-Size requested</throw> 
+      <!-- in case if -->
+      <print id="s" act="println"><![CDATA[<!-- Commit: Initial -->
+<prop id="commitSession">0</prop>   <!-- da kommt noch die nachfrage im dbc rein --> 
+<prop id="commitCount">0</prop>]]>
+</print>               
+    </when>      
+  </choose>
+    
+  <!-- objectRefresh: init -->
+  
+  <!-- squery-prolog -->
+  <when test="(f,spirit,(prop,ir-query-spirit),exists?,squery[@row='(prop,ir9-query-row)'],@prolog)">
+  <when test="(f,has,(f,spirit,(prop,ir-query-spirit),squery[@row='(prop,ir9-query-row)'],@prolog))">
+    <print id="s" act="println"><![CDATA[<!-- Prolog of query: Begin -->
+(f,spirit,(prop,ir-query-spirit),squery[@row='(prop,ir9-query-row)'],@prolog)
+<!-- Prolog of query: End -->
+]]></print>  
+  </when>
+  </when>
+  
+  <!-- loop-begin -->
+  <prop id="ir9-translate">(f,spirit,(prop,ir-query-spirit),squery[@row='(prop,ir9-query-row)'],@translate)</prop>
+  
+  <!-- position CASPAR -->
+  
+
+  
+  <print id="s" act="println"><![CDATA[<!-- Loop: Begin -->
+<loop id="rec" 
+  select="(x,(f,when,(f,not,(prop,ir9-translate)),(e:o)(e:c),)(f,spirit,(prop,ir-query-spirit),squery[@row='(prop,ir9-query-row)'],@sql)(f,when,(f,not,(prop,ir9-translate)),(e:o)(e:c),))" 
+  dbc="()(prop,mydbc)()" 
+  missing_strategy="empty"]]>(f,when,(f,gt_num,(prop,bulk-limit-final),-1),
+  limit=&quot;(e:o)prop(e:s)loop-limit(e:c)&quot; ,)&gt;
+</print>      
+  
+  <call_job job="ir7">
+    <prop id="ir7-script-type">intro</prop>  
+  </call_job>
+  
+  <call_job job="ir7">
+    <prop id="ir7-script-type">main</prop>  
+  </call_job>  
+  
+  <!-- commit: perform it -->
+  <choose>
+    <when test="(f,eq_text,al,(prop,_cmt_style))">
+      <!-- always -->
+    <print id="s" act="println"><![CDATA[<!-- Commit: increase and perform in case -->
+<prop id="commitCount">()(f,add,(prop,commitCount),1)()</prop>    
+<when test="()(f,eq_num,(prop,commitCount),()(prop,_cmt_size)(e:c)"> 
+  <ti test="()(prop,commits-to-ti)()">()Doing commit (loop,rec,#i)()</ti>
+  <tp>()Commit (loop,rec,#i)()</tp>
+  <dbc id="()(prop,mydbc)()" act="commit" /> 
+  <prop id="commitCount">0</prop>
+</when>
+]]></print>         
+    
+    </when>
+    <when test="(f,eq_text,if,(prop,_cmt_style))">
+      <!-- in case if -->
+    <print id="s" act="println"><![CDATA[<!-- Commit: increase and perform in case -->
+<prop id="commitCount">()(f,add,(prop,commitCount),1)()</prop>    
+<when test="()(f,and,(prop,commitSession),(f,eq_num,(prop,commitCount),()(prop,_cmt_size)(e:c)(e:c)"> 
+  <ti test="()(prop,commits-to-ti)()">()Doing commit (loop,rec,#i)()</ti>
+  <tp>()Commit (loop,rec,#i)()</tp>
+  <dbc id="()(prop,mydbc)()" act="commit" /> 
+  <prop id="commitCount">0</prop>
+</when>
+]]></print>       
+    </when>    
+     
+  </choose>  
+  
+  
+  <!-- loop-end -->
+  <print id="s" act="println"><![CDATA[<!-- Loop: End -->
+</loop>
+]]></print>  
+
+  <!-- commit: final -->
+  <choose>
+    <when test="(f,eq_text,al,(prop,_cmt_style))">
+      <!-- always -->
+      <print id="s" act="println"><![CDATA[<!-- Commit: final-perform in case -->   
+  <ti test="()(prop,commits-to-ti)()">Doing final commit</ti>
+  <tp>Doing final commit</tp>
+  <dbc id="()(prop,mydbc)()" act="commit" />    
+]]></print>      
+    </when>
+    <when test="(f,eq_text,if,(prop,_cmt_style))">
+      <!-- in case if -->
+      <print id="s" act="println"><![CDATA[<!-- Commit: final-perform in case -->  
+<when test="()(prop,commitSession)()">  
+  <ti test="()(prop,commits-to-ti)()">Doing final commit</ti>
+  <tp>Doing final commit</tp>
+  <dbc id="()(prop,mydbc)()" act="commit" />   
+</when>
+]]></print>    
+    </when>    
+      
+  </choose>  
+  
+  <call_job job="ir7">
+    <prop id="ir7-script-type">extro</prop>  
+  </call_job>  
+  
+  <!-- objectRefresh: do it  
+        <prop id="_rq_import">(f,loop_xml,ir2-sqli,@rq_import)</prop>
+      <prop id="_gb_import">(f,loop_xml,ir2-sqli,@gb_import)</prop>
+      <prop id="_rq_central">(f,loop_xml,ir2-sqli,@rq_central)</prop>
+      <prop id="_gb_central">(f,loop_xml,ir2-sqli,@gb_central)</prop>
+      <prop id="_cmt_session">(f,loop_xml,ir2-sqli,@cmt_session)</prop>
+      <prop id="_close_session">(f,loop_xml,ir2-sqli,@close_session)</prop>   -->   
+      
+  
+  <!-- session-closing -->    
+  <print id="s" act="println"><![CDATA[<!-- Session: Closing -->
+<tp>Doing final actions</tp>
+<call_job job="finish-session">
+  <prop id="do-close-session">(prop,_close_session)</prop>
+  <prop id="giveback-update-import">(prop,_gb_import)</prop>
+  <prop id="giveback-update-central">(prop,_gb_central)</prop>  
+</call_job>]]>
+</print>   
+
+  <!-- 
+  <call_job job="ir7">
+    <prop id="ir7-script-type">bot</prop>  
+  </call_job>   --> 
+  
+  <when test="(prop,hasFinally)"> 
+    <call_job job="ir7">
+      <prop id="ir7-script-type">fin</prop>  
+    </call_job>    
+     
+    <print id="s" act="println"><![CDATA[
+</try>
+<catch>
+]]></print>   
+
+    <call_job job="ir7">
+      <prop id="ir7-script-type">fin</prop>  
+    </call_job>  
+
+    <print id="s" act="println"><![CDATA[
+</catch>
+</try_catch>
+]]></print>  
+     
+  </when>  
+        
+  <print id="s" act="println"><![CDATA[</steps>]]></print>        
+  
+  <print id="s" act="close"/>
+  
+  
+</job>
+
+<!-- ausfuerhen eines sqli direkt aus dem query/sqli -->
+<job id="ir-coll-index" role="hidden">
+  <need>(dir,iro_coll) (prop,iro_coll_style)</need>
+  
+  <choose>
+    <when test="(f,eq_text,a,(prop,iro_coll_style))"> 
+      <!-- append -->
+      <file id="coll-scanner" x="(dir,filetemp)coll-scanner.xml"/>
+      <!-- <file id="coll-scanner" x="(dir,pro)coll-scanner.xml"/> -->
+      <scan out="(file,coll-scanner)" 
+            dir="(dir,iro_coll)"
+            level_limit="1" />   
+      <prop id="ir-coll-index">0</prop>
+      <loop id="coll-scanner" xml="(file,coll-scanner)" xpath="file">
+        <prop id="coll-scanner-num">(f,substring,(loop,coll-scanner),0,3)</prop>
+        <when test="(f,gt_num,(prop,coll-scanner-num),(prop,ir-coll-index))">
+          <prop id="ir-coll-index">(prop,coll-scanner-num)</prop>
+        </when>
+      </loop>      
+      
+      <remove id="coll-scanner-num" type="prop" test="(f,exists,prop,coll-scanner-num)"/>
+      <remove id="coll-scanner" type="file" flag="catch"/>
+             
+    </when>
+    <when test="(f,eq_text,o,(prop,iro_coll_style))"> 
+      <!-- overwrite -->
+      <delete content_of_dir="(dir,iro_coll)" flag="catch"/>
+      <prop id="ir-coll-index">0</prop>
+    </when>         
+  </choose>  
+    
+  <need>(prop,ir-coll-index)</need>
+     
+</job>
+
+
+
+<!-- ausfuehren eines bulk-eintrages -->
+<job id="bulk-hook-run-all" role="hidden">
+  <need>(file,bulks)</need>
+  <prop id="is-single-bulk">0</prop>
+  
+  <prop id="qra-show-seps">0</prop>
+  
+  <ti_break class_table="tabNavigator"/>
+      <ti type="rec" >
+        <ti type="call_job" job="_bulk" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+            align="right" >          
+        </ti>  
+      </ti>     
+  <ti_break/>  
+  
+  <file id="piro-bulk-row-sel">(dir,pro)cache/bulk-selector.xml</file>        
+  
+  
+  <xslt 
+    xml="(file,bulks)" 
+    xsl="(dir,app)bulk-entry-sel.xsl" 
+    out="(file,piro-bulk-row-sel)"  />
+  
+  <prop id="das-bulk-buch">(f,name_of_dir,(f,dir_of_file,(file,bulks)))</prop>
+    
+  <call_job job="tk_iro_edit">
+    <!-- <file id="iro-data" x="(f,dir_of_file,(file,bulks))iro-data.xrs"/> -->
+    <file id="iro-data" x="(dir,ghome)miro/(prop,das-bulk-buch)/iro-data.xrs"/>
+    <prop id="iro-regex" x="iro_.+"/>
+    
+    <!-- <file id="iro2-data" x="(f,dir_of_file,(file,bulks))bulk-choice-run.xml"/> -->
+    <file id="iro2-data" x="(dir,ghome)miro/(prop,das-bulk-buch)/bulk-choice-run.xml"/>
+    <prop id="iro2-regex" x="iro2_bulk_rows"/>    
+    
+    <prop id="piro-interrupt" x="1"/>
+    <prop id="piro-bulk-row-sel" x="1"/>
+  </call_job>    
+  
+  <!-- iro limit uebertragen -->
+  <choose>
+    <when test="(f,eq_text,keep,(prop,iro_limit_style))">
+      <remove type="prop" id="bulk-limit-over" test="(f,exists,prop,bulk-limit-over)"/>
+    </when>
+    
+    <when test="(f,eq_text,no,(prop,iro_limit_style))">
+      <prop id="bulk-limit-over">-1</prop>
+    </when>    
+    
+    <when test="(f,eq_text,indiv,(prop,iro_limit_style))">
+      <prop id="bulk-limit-over">(prop,iro_limit_indiv)</prop>
+    </when>        
+  
+  </choose>  
+  
+  
+  <!-- iro-optionen uebertragen -->
+  <prop id="ir-interrupt">(prop,iro_interrupt)</prop>
+  <prop id="ir-run">(prop,iro_run)</prop>
+  <prop id="ir-coll">(prop,iro_coll)</prop>
+  <choose>
+    <when test="(prop,ir-coll)"> 
+      <dir id="ir-coll">(dir,iro_coll)</dir>
+      <call_job job="ir-coll-index"/>  
+    </when>
+    <otherwise>  
+      <remove id="ir-coll" type="dir" test="(f,exists,dir,ir-coll)" />                                                     
+      <remove id="ir-coll-index" type="prop" test="(f,exists,prop,ir-coll-index)" />
+      <prop id="ir-coll-my-index">0</prop>
+    </otherwise>  
+  </choose>    
+  
+  <prop id="executed-bulk-entry">0</prop>
+  <prop id="qra-no-back-button">1</prop>
+
+  <loop id="bulk" xml="(file,bulks)" xpath="bulk" missing_strategy="empty">
+    
+    <!-- pruefen ob dieser bulk genommen werden soll -->
+    <choose>
+      <!-- wenn keine selektion werden alle genommen -->
+      <when test="(f,not,(f,has,prop,iro2_bulk_rows))">
+        <prop id="take-bulk">1</prop>
+      </when>
+      <when test="(f,has_flag,(prop,iro2_bulk_rows),(loop,bulk,@row))">
+         <prop id="take-bulk">1</prop>
+      </when>
+      <otherwise>
+        <prop id="take-bulk">0</prop>
+      </otherwise>    
+    </choose>
+
+    <!-- wenn dieser bulk genommen wird -->
+    <when test="(prop,take-bulk)">
+      <!-- werte aus der loop in die variablen -->
+      <prop id="executed-bulk-entry">(f,add,1,(prop,executed-bulk-entry))</prop>
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti_hr_break class_table="tabNavigator"/>
+      <!-- 
+      <choose>
+        <when test="(f,implement,online)">
+          <ti_hr_break test="(f,gt_num,(prop,executed-bulk-entry),1)"/>
+        </when>
+        <otherwise>
+          <ti_hr_break />
+        </otherwise>
+      
+      </choose>
+      -->
+      
+      <ti type="rec">
+      <ti align="center">(prop,_iro_msg_next_bulk) #(prop,executed-bulk-entry) (e:o)(loop,bulk,@type)(e:c)
+(f,html,b,o)(loop,bulk,@name)(f,html,b,c)</ti>
+      </ti>
+      <tk type="msg" test="(prop,ir-interrupt)">(prop,_iro_msg_next_bulk) #(prop,executed-bulk-entry) [ (loop,bulk,@name) ] (e:o)(loop,bulk,@type)(e:c)</tk>
+
+      <prop id="bulk_type">(loop,bulk,@type)</prop>
+      <prop id="bulk_flags">(loop,bulk,@flags)</prop>
+      <prop id="bulk_sqli_file">(loop,bulk,@sqli_file)</prop>
+      <prop id="bulk_sqli_row">(loop,bulk,@sqli_row)</prop>
+      <prop id="bulk_qu_file">(loop,bulk,@qu_file)</prop>
+      <prop id="bulk_qu_row">(loop,bulk,@qu_row)</prop> 
+      <prop id="bulk_name">(loop,bulk,@name)</prop>     
+      <prop id="bulk_script">(loop,bulk,@script)</prop> 
+      <prop id="bulk_bscript">(loop,bulk,@bscript)</prop>
+      <dir id="ir-bulks">(f,dir_of_file,(file,bulks))</dir>
+      <prop id="ir-bulk-key">(loop,bulk,@row)</prop>      
+      
+      <call_job job="bulk-hook-run-core"/>
+    </when>  
+  </loop>
+
+  <ti_hr_break class_table="tabNavigator"/>
+  <ti type="rec">
+  <ti align="center" flag="break_word">(f,html,b,o)(prop,_iro_msg_done_1)(e:s)
+(prop,_iro_msg_done_2) (prop,executed-bulk-entry) (prop,_iro_msg_done_3)(f,html,b,c)</ti>
+  </ti>
+  
+      
+</job>
+
+<!-- ausfuehren eines bulk-eintrages -->
+
+<job id="bulk-hook-edit-run" role="hidden">
+  <call_job job="bulk-edit"/>
+  <call_job job="bulk-hook-run"/>
+</job>
+
+<!-- hier wird eine einzelene bulk-Aktion ausgefuehrt -->
+<job id="bulk-hook-run" role="hidden">
+
+<prop id="is-single-bulk">1</prop>
+<ti_break class_table="tabNavigator"/>
+<choose>
+  <when test="(f,eq_text,bl,(f,vob,prop,qra-from))">
+    <ti type="rec">
+    <ti type="call_job" job="_bulk" flag="button" class="justback" align="right" explain="(prop,_x_go_up_sys)"/>
+    </ti>
+  </when>
+  <when test="(f,eq_text,bd,(f,vob,prop,qra-from))">
+    <ti type="rec">
+    <ti type="menu" span="10" align="right">
+      <ti type="call_job" job="_bulk" flag="button" class="fb justback" align="right" explain="(prop,_x_go_up_sys)"/>
+      <ti type="call_job" job="bulk-see" flag="button" class="fb justback" align="right" explain="(prop,_x_go_back_sys)">
+        <file id="bulks">(file,bulks)</file>
+        <prop id="bulk_key">(prop,bulk_key)</prop>
+      </ti>
+      
+    </ti>
+    </ti>
+  </when>  
+</choose>
+ 
+  
+ 
+
+  <prop id="ir-interrupt">0</prop>
+  <prop id="ir-run">1</prop>
+  <prop id="ir-coll">0</prop>  
+  <prop id="ir-coll-my-index">0</prop>
+  
+  <call_job job="bulk-read"/>
+  
+ 
+  
+  <dir id="ir-bulks">(f,dir_of_file,(file,bulks))</dir>  
+  <prop id="ir-bulk-key">(prop,bulk_key)</prop>
+                                                    
+  <prop id="das-bulk-buch">(f,name_of_dir,(dir,ir-bulks))</prop>
+  
+  <!-- miro parameter eingeben -->
+  <when test="(f,not,(f,eq_text,script,(prop,bulk_type)))">
+  
+    <call_job job="tk_gpref_read"/>
+    
+    <choose>
+      <when test="(f,or,(prop,gpref_askaction),(f,has_flag,(f,vob,prop,bulk_flags),limit))">   
+        <call_job job="tk_miro_edit">
+         <prop id="head-for-miro">(prop,_sl_bulk): (prop,bulk_name)</prop>
+         <!-- <file id="miro-data" x="(dir,ir-bulks)miro-data-(prop,bulk_key).xrs"/>   -->
+         <file id="miro-data" x="(dir,ghome)miro/(prop,das-bulk-buch)/miro-data-(prop,bulk_key).xrs"/>
+         <prop id="miro-regex" x="miro_.+"/>
+        </call_job>    
+        <remove type="prop" id="head-for-miro"/>
+      </when>
+      <otherwise>
+        <call_job job="tk_miro_read">
+         <!-- <file id="miro-data" x="(dir,ir-bulks)miro-data-(prop,bulk_key).xrs"/>    -->
+         <file id="miro-data" x="(dir,ghome)miro/(prop,das-bulk-buch)/miro-data-(prop,bulk_key).xrs"/>
+         <prop id="miro-regex" x="miro_.+"/>
+        </call_job>          
+      
+      </otherwise>
+    </choose>
+    
+  
+    <!-- miro limit uebertragen -->
+    <choose>
+      <when test="(f,eq_text,keep,(prop,miro_limit_style))">
+        <remove type="prop" id="bulk-limit-over" test="(f,exists,prop,bulk-limit-over)"/>
+      </when>
+      
+      <when test="(f,eq_text,no,(prop,miro_limit_style))">
+        <prop id="bulk-limit-over">-1</prop>
+      </when>    
+      
+      <when test="(f,eq_text,indiv,(prop,miro_limit_style))">
+        <prop id="bulk-limit-over">(prop,miro_limit_indiv)</prop>
+      </when>        
+    
+    </choose>     
+  </when>
+        
+  <call_job job="bulk-hook-run-core"/>
+  
+</job>
+
+<job id="bulk-hook-run-core" role="hidden">
+  <!-- <ti_hr_break/> -->
+  <prop id="das-bulk-buch">(f,name_of_dir,(dir,ir-bulks))</prop>                                    
+   
+   <file id="bscript-paras" x="" />
+   <!-- <file id="bscript-paras" test="(f,has,prop,bulk_bscript)">(dir,ir-bulks)paras-bs-(prop,ir-bulk-key).xml</file>     -->
+   
+   <file id="bscript-paras" test="(f,has,prop,bulk_bscript)">(dir,phome)bulks/(prop,das-bulk-buch)/paras-bs-(prop,ir-bulk-key).xml</file>
+   
+  
+  <choose>
+    <when test="(f,eq_text,sqli,(prop,bulk_type))">
+      <!-- ein sqli gewaehlt, die query liegt einfach darueber -->
+      <throw test="(f,not,(f,has,prop,bulk_sqli_file))">Missing Interface-File in Bulk '(prop,bulk_name)'</throw>
+      <throw test="(f,not,(f,has,prop,bulk_sqli_row))">Missing Interface-Row in Bulk '(prop,bulk_name)'</throw>
+      <call_job job="ir1">
+        <prop id="ir-test">1</prop>
+        <prop id="ir-style">s</prop>        
+        <file id="ir-sqli">(dir,goMoon)queries/(prop,bulk_sqli_file)/queries-list.xml</file>
+        <prop id="ir-sqli-rows">(prop,bulk_sqli_row)</prop>    
+        <prop id="ir-bscript">(f,vob,prop,bulk_bscript)</prop>
+      </call_job>      
+    </when>
+    <when test="(f,eq_text,qu_sqli,(prop,bulk_type))">
+      <!-- ein sqli und eine query gewaehlt, die beiden werden kombiniert -->
+      <throw test="(f,not,(f,has,prop,bulk_sqli_file))">Missing Interface-File in Bulk '(prop,bulk_name)'</throw>
+      <throw test="(f,not,(f,has,prop,bulk_sqli_row))">Missing Interface-Row in Bulk '(prop,bulk_name)'</throw>   
+      <throw test="(f,not,(f,has,prop,bulk_qu_file))">Missing Query-File in Bulk '(prop,bulk_name)'</throw>
+      <throw test="(f,not,(f,has,prop,bulk_qu_row))">Missing Query-Row in Bulk '(prop,bulk_name)'</throw>        
+      
+      <call_job job="ir1">
+        <prop id="ir-test">1</prop>
+        <prop id="ir-style">b</prop>        
+        <file id="ir-sqli">(dir,goMoon)queries/(prop,bulk_sqli_file)/queries-list.xml</file>
+        <prop id="ir-sqli-rows">(prop,bulk_sqli_row)</prop>     
+        <file id="ir-query">(dir,goMoon)queries/(prop,bulk_qu_file)/queries-list.xml</file>
+        <prop id="ir-query-row">(prop,bulk_qu_row)</prop>     
+        <prop id="ir-bscript">(f,vob,prop,bulk_bscript)</prop>       
+      </call_job> 
+    </when>  
+    
+    <when test="(f,eq_text,qu,(prop,bulk_type))">
+    
+      <throw test="(f,not,(f,has,prop,bulk_qu_file))">Missing Query-File in Bulk '(prop,bulk_name)'</throw>
+      <throw test="(f,not,(f,has,prop,bulk_qu_row))">Missing Query-Row in Bulk '(prop,bulk_name)'</throw>    
+      <!-- limit-from-bulk qra-limit-over -->
+      <choose>
+        <when test="(f,has,prop,bulk-limit-over)">
+          <prop id="qra-limit-over">(prop,bulk-limit-over)</prop>
+        </when>
+        <when test="(f,has,prop,qra-limit-over)">
+          <remove type="prop" id="qra-limit-over" />
+        </when>
+      </choose>
+
+      <prop id="limit-from-bulk">(f,vob,prop,iro_limit)</prop>
+      <call_job job="event_squery_run">
+        <prop id="squery_key">(prop,bulk_qu_row)</prop>
+        <prop id="qra-bscript">(f,vob,prop,bulk_bscript)</prop>
+        <file id="squerys">(dir,goMoon)queries/(prop,bulk_qu_file)/queries-list.xml</file>   
+        <prop id="squerys_offset_label"></prop> 
+          
+        <!-- <file id="query-paras">(dir,ir-bulks)paras-q-(prop,bulk_qu_row).xml</file> -->
+        <ti test="0">query-paras #3</ti>
+        <file id="query-paras">(dir,phome)bulks/(prop,das-bulk-buch)/paras-q-(prop,ir-bulk-key).xml</file>
+        
+                                 
+      </call_job> 
+
+    </when>  
+        
+    <when test="(f,eq_text,script,(prop,bulk_type))">
+      <!-- ein sqli und eine query gewaehlt, die beiden werden kombiniert 
+      <tk type="msg">im script</tk>
+      <interpreter watch="1"/>
+      <dump_ti/>                -->
+      
+      <file id="script-to-run">(dir,pro)cache/bulk-script-runner.xml</file>
+      <create_file file="(file,script-to-run)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>(f,vob,prop,bulk_bscript)
+      (f,vob,prop,bulk_script)</steps>]]></create_file>
+                 
+          
+      <ti type="rec"><ti align="center">Started Script(f,when,(prop,is-single-bulk),: (f,html,i,o)(f,vob,prop,bulk_name)(f,html,i,c),)</ti></ti>
+      <ti_hr_break/>
+      <!-- <file id="script-paras">(dir,ir-bulks)paras-s-(prop,ir-bulk-key).xml</file> -->
+      <file id="script-paras">(dir,phome)bulks/(prop,das-bulk-buch)/paras-s-(prop,ir-bulk-key).xml</file>
+
+      <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+      <interpreter turbo="0"/>
+      <include file="(file,script-to-run)"/>
+      <interpreter turbo="(prop,turbo-antes)"/>
+           
+      <!-- <ti type="rec"><ti align="right">Finished Bulk-Script: (f,html,i,o)(f,vob,prop,bulk_name)(f,html,i,c)</ti></ti>  -->
+          
+          <!--    
+      <choose>
+        <when test="(f,eq_text,(prop,bulk_script_type),given)">
+          <create_file file="(file,script-to-run)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>(f,vob,prop,bulk_script_script)</steps>]]></create_file>
+          <include file="(file,script-to-run)"/>        
+        </when>
+        
+        <when test="(f,eq_text,(prop,bulk_script_type),ref)">
+          
+          <create_file file="(file,script-to-run)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>(f,file_content,(file,bulk_script_file))</steps>]]></create_file>
+          <include file="(file,script-to-run)"/>
+        </when>        
+      
+      </choose>      --> 
+
+    </when>      
+    <otherwise>                                                       
+      <ti>der Typ (prop,bulk_type) ist noch nicht implementiert</ti>
+    </otherwise>
+  
+  </choose>
+  
+  <remove type="prop" id="das-bulk-buch"/>
+
+</job>
+
+<!-- interface runner 1-->
+<job id="ir1" role="hidden">
+  <need default="0">(prop,ir-test)</need>
+  <need default="1">(prop,ir-show-started)</need>
+  
+  <!-- s=standard b=bulk -->
+  <need>(prop,ir-style)</need> 
+  
+  <!-- fuer beide styles, bei bulk steht nur eine row drinnen -->
+  <need>(file,ir-sqli) (prop,ir-sqli-rows)</need>
+  
+  <!-- nur fuer bulk -->
+  <need test="(f,eq_text,(prop,ir-style),b)">(file,ir-query) (prop,ir-query-row)</need>
+  
+  <!-- macht bei mehreren ausgefuehrten sqli's eine tk-message -->
+  <need default="0">(prop,ir-interrupt)</need>
+  
+  <!-- fuehrt die dinger auch aus -->
+  <need default="1">(prop,ir-run)</need>
+
+  <!-- sammelt die scriptcodes ein, das dir waehre dann der forlder zum speichern-->
+  <need default="0">(prop,ir-coll)</need>
+  <need test="(prop,ir-coll)">(dir,ir-coll)</need>
+  <need test="(prop,ir-coll)">(prop,ir-coll-index)</need>
+  
+  <tk type="msg" test="0" xtest="(prop,ir-test)">ir1
+  ir-test = (prop,ir-test)
+  ir-style = (prop,ir-style)
+  ir-sqli = (file,ir-sqli)
+  ir-sqli-rows = (prop,ir-sqli-rows)
+  ir-query =  (f,vob,file,ir-query)
+  ir-query-row = (f,vob,prop,ir-query-row)
+  ir-interrupt = (prop,ir-interrupt)    
+  ir-run = (prop,ir-run)  
+  ir-coll = (prop,ir-coll)  
+  ir-coll-dir = (f,vob,dir,ir-coll)   
+  ir-coll-index = (f,vob,prop,ir-coll-index)                  
+  </tk>
+  
+  <!-- vorbereiten des ir2-aufrufes -->
+  <prop id="ir-sqli-spirit">ir-sqli</prop>
+  <spirit 
+    id="(prop,ir-sqli-spirit)"
+    act="open"
+    file="(file,ir-sqli)" />
+   
+  <!-- wenn bulk dann ein separates spirit fuer die queried --> 
+  <choose>
+    <when test="(f,eq_text,(prop,ir-style),b)">    
+      <prop id="ir-query-spirit">ir-query</prop>
+      <spirit 
+        id="(prop,ir-query-spirit)"
+        act="open"
+        file="(file,ir-query)" />        
+    </when>
+    <otherwise>
+       <prop id="ir-query-spirit">(prop,ir-sqli-spirit)</prop>
+    </otherwise>      
+  </choose> 
+  
+  <!-- ir2 aufrufen -->
+  <call_job job="ir2" /> 
+  
+  <!-- spirits schliessen -->
+  <spirit 
+    id="(prop,ir-sqli-spirit)"
+    act="close" />  
+    
+  <when test="(f,eq_text,(prop,ir-style),b)">    
+    <spirit 
+      id="(prop,ir-query-spirit)"
+      act="close" />        
+  </when>    
+   
+
+
+</job>
+
+<!-- interface runner 2-->
+<job id="ir2" role="hidden">
+  <need default="0">(prop,ir-test)</need>
+  
+  <!-- s=standard b=bulk -->
+  <need>(prop,ir-style)</need> 
+  
+  <!-- fuer beide styles, bei bulk steht nur eine row drinnen -->
+  <need>(prop,ir-sqli-spirit) (prop,ir-sqli-rows)</need>
+  
+  <need>(prop,ir-query-spirit)</need>
+  <!-- nur fuer bulk -->
+  <need test="(f,eq_text,(prop,ir-style),b)">(prop,ir-query-row)</need>
+  
+  <!-- macht bei mehreren ausgefuehrten sqli's eine tk-message -->
+  <need default="0">(prop,ir-interrupt)</need>
+  
+  <!-- fuehrt die dinger auch aus -->
+  <need default="1">(prop,ir-run)</need>
+
+  <!-- sammelt die scriptcodes ein, das dir waehre dann der forlder zum speichern-->
+  <need default="0">(prop,ir-coll)</need>
+  <need test="(prop,ir-coll)">(dir,ir-coll)</need>
+  <need test="(prop,ir-coll)">(prop,ir-coll-index)</need>
+  
+  <tk type="msg" test="0" xtest="(prop,ir-test)">ir2
+  ir-test = (prop,ir-test)
+  ir-style = (prop,ir-style)
+  ir-sqli-spirit = (prop,ir-sqli-spirit)
+  ir-sqli-rows = (prop,ir-sqli-rows)
+  ir-query-spirit =  (prop,ir-query-spirit)
+  ir-query-row = (f,vob,prop,ir-query-row)
+  ir-interrupt = (prop,ir-interrupt)    
+  ir-run = (prop,ir-run)  
+  ir-coll = (prop,ir-coll)  
+  ir-coll-dir = (f,vob,dir,ir-coll)   
+  ir-coll-index = (f,vob,prop,ir-coll-index)                
+  </tk>
+  <dir id="ir-script-temp">(dir,pro)cache/script-temps</dir>
+  <mkdir dir="(dir,ir-script-temp)" />
+ 
+ 
+  <loop_xml 
+    act="open" 
+    id="ir2-sqli" 
+    spirit="(prop,ir-sqli-spirit)" 
+    xpath="//sqli"  missing_strategy="empty"/>
+    
+  <loop 
+    id="while-ir2-sqli" 
+    while="()(f,loop_xml,ir2-sqli,has_next?)()">
+    <loop_xml act="next" id="ir2-sqli" />  
+     
+    
+    <when test="(f,has_flag,(prop,ir-sqli-rows),(f,loop_xml,ir2-sqli,@row))">   
+         
+      <!-- <ti_break/> dieses sqli wird verarbeitet       
+      <ti>Going to do sqli: (f,loop_xml,ir2-sqli,@name) #(f,loop_xml,ir2-sqli,@row)</ti>      -->
+       
+      
+      <!-- ermitteln des return-files -->
+      <choose>
+        <when test="(prop,ir-coll)">
+          <!-- bei collect wird in das gegebene verzeichnis geschrieben -->
+          <prop id="ir-coll-index">(f,add,1,(prop,ir-coll-index))</prop>
+          <file id="ir9-return">(dir,ir-coll)(f,format,(prop,ir-coll-index),000)-(f,loop_xml,ir2-sqli,@name).xrs</file>
+          
+          <ti label="Collected/Gesammeltes Sql-Interface"/>
+          <ti type="file" label="(f,loop_xml,ir2-sqli,@name)">(file,ir9-return)</ti>
+          <!-- 
+          <ti type="call_job" label=" " job="ir6" explain="Run">
+            <file id="ir9-return">(file,ir9-return)</file>          
+          </ti>    -->
+          
+        </when>
+        <otherwise>
+          <prop id="ir-coll-my-index">(f,add,1,(prop,ir-coll-my-index))</prop>
+          <file id="ir9-return">(dir,ir-script-temp)(f,format,(prop,ir-coll-my-index),000)-(f,loop_xml,ir2-sqli,@name).xrs</file>
+        </otherwise>
+      </choose>     
+      
+      <!-- ermitteln des row der query -->
+      <choose>
+        <when test="(f,eq_text,b,(prop,ir-style))">
+          <prop id="ir9-query-row">(prop,ir-query-row)</prop>
+        </when>
+        <when test="(f,eq_text,s,(prop,ir-style))">
+          <prop id="ir9-query-row">(f,loop_xml,ir2-sqli,..,@row)</prop>
+        </when>
+      </choose>  
+      
+      <!-- jetzt die locations von den paras ermitteln -->
+      <choose>
+        <when test="(f,exists,dir,ir-bulks)">
+          <!-- wir kommen wirklich aus den bulks 
+          <file id="query-paras">(dir,ir-bulks)paras-q-(prop,ir9-query-row).xml</file>
+          <file id="sqli-paras">(dir,ir-bulks)paras-i-(f,loop_xml,ir2-sqli,@row).xml</file>     -->
+          
+          <!-- <file id="query-paras">(dir,ir-bulks)paras-q-(prop,ir-bulk-key).xml</file> -->
+          <ti test="0">query-paras &amp; sqli-paras #4</ti>
+          <prop id="das-bulk-buch">(f,name_of_dir,(dir,ir-bulks))</prop> 
+          <file id="query-paras">(dir,phome)bulks/(prop,das-bulk-buch)/paras-q-(prop,ir-bulk-key).xml</file>          
+                                                                            
+          <!-- <file id="sqli-paras">(dir,ir-bulks)paras-i-(prop,ir-bulk-key).xml</file>    -->    
+          <file id="sqli-paras">(dir,phome)bulks/(prop,das-bulk-buch)/paras-i-(prop,ir-bulk-key).xml</file>  
+        </when>
+        <otherwise>
+          <!-- wir kommen aus der sqli-direkt-ausfuehrung
+               dh die daten liegen im qurey folder -->
+          <!-- <file id="query-paras">(f,dir_of_file,(file,ir-sqli))paras-q-(prop,ir9-query-row).xml</file> -->
+          <ti test="0">query-paras &amp; sqli-paras  #5</ti>
+          <prop id="das-query-buch">(f,name_of_dir,(f,dir_of_file,(file,ir-sqli)))</prop>            
+          <file id="query-paras">(dir,phome)queries/(prop,das-query-buch)/paras-q-(prop,ir9-query-row).xml</file>                  
+                    
+          <!-- <file id="sqli-paras">(f,dir_of_file,(file,ir-sqli))paras-i-(f,loop_xml,ir2-sqli,@row).xml</file> -->
+          <file id="sqli-paras">(dir,phome)queries/(prop,das-query-buch)/paras-i-(f,loop_xml,ir2-sqli,@row).xml</file>
+                         
+        </otherwise>
+      
+      </choose>
+      
+      <!-- aufruf ir9 
+      <ti_hr_break xstyle="2"/>     -->
+      <call_job job="ir9"/>        
+      <ti label=" " test="0">(f,file_content,(file,ir9-return))</ti>
+      <when test="(prop,ir-run)">
+        <when test="(prop,ir-show-started)">
+          <ti type="rec"><ti align="center">Started iFace: (f,html,i,o)(f,loop_xml,ir2-sqli,@name)(f,html,i,c)</ti></ti>
+        </when>
+        
+        <when test="(f,right,source)">
+          <ti_hr style="3"/>
+          <ti type="rec">
+            <ti span="2"> </ti>
+            <ti type="file">(file,ir9-return)</ti>
+          </ti>
+          <!-- <ti xlabel="Running" type="file">(file,ir9-return)</ti> -->
+        </when>
+        <ti_hr_break/>
+        <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+        <interpreter turbo="0"/>
+        <include file="(file,ir9-return)"/>
+        <interpreter turbo="(prop,turbo-antes)"/>
+        
+        
+        <!--
+        <choose>
+          <when test="(f,right,fork)">
+            <tk type="sel" id="run-sqli-as-fork" x="0" flag="nono" >
+               <sel label="0=Run Script as always by just including it">0</sel>
+               <sel label="1=Run Script by internal call_job but NO FORK">1</sel>
+               <sel label="1=Run BY FORK">2</sel>
+            </tk>
+            <choose>
+              <when test="(f,eq_num,0,(prop,run-sqli-as-fork))">
+                <include file="(file,ir9-return)"/>
+              </when>
+              
+              <when test="(f,eq_num,1,(prop,run-sqli-as-fork))">
+                <call_app 
+                  app="(prop,app)"
+                  pro_id="(prop,pro)"
+                  pro_dir="(dir,pro)"
+                  job="do-fork-include">
+                  <file id="to-include">(file,ir9-return)</file>
+                  <file id="query-paras">(file,query-paras)</file>
+                  <file id="sqli-paras">(file,sqli-paras)</file>
+                </call_app>
+              </when>
+                            
+              <otherwise>
+                <tk type="msg">Going to do the fork ...</tk>
+                <call_app 
+                  app="(prop,app)"
+                  pro_id="(prop,pro)"
+                  pro_dir="(dir,pro)"
+                  job="do-fork-include"
+                  flag="fork">
+                  <file id="to-include">(file,ir9-return)</file>
+                  <file id="query-paras">(file,query-paras)</file>
+                  <file id="sqli-paras">(file,sqli-paras)</file>
+                </call_app>
+              </otherwise>
+            </choose>
+          </when>
+          <otherwise>
+            
+          </otherwise>
+        </choose>
+        -->
+        <!-- 
+        nic321
+        <ti type="rec"><ti align="right">Finished iFace: (f,html,i,o)(f,loop_xml,ir2-sqli,@name)(f,html,i,c)</ti></ti>  -->
+
+      </when>
+      
+          
+    </when>
+  
+  </loop>
+  
+  <loop_xml 
+    act="close" 
+    id="ir2-sqli" />
+
+</job>
+
+<job id="do-fork-include" role="hidden">
+  <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+  <interpreter turbo="0"/>
+  <include file="(file,to-include)"/>
+  <interpreter turbo="(prop,turbo-antes)"/>      
+  
+
+</job>
+
+
+<!-- Einbringen eines scripts mit beruecksichtigung des stewards -->
+<job id="ir7" role="hidden">
+  <need>(prop,ir7-script-type)</need>
+  
+  <loop_xml 
+    act="open" 
+    id="ir7" 
+    spirit="(prop,ir-sqli-spirit)" 
+    xpath="//sqli[@row='(f,loop_xml,ir2-sqli,@row)']/stew"  missing_strategy="empty"/>
+ 
+  <prop id="ir7-not-done">1</prop>          
+  <loop 
+    id="while-ir7" 
+    while="()(f,and,(f,loop_xml,ir7,has_next?),(prop,ir7-not-done))()">
+    <loop_xml act="next" id="ir7" />
+                                                                        
+    <!-- pruefen ob dieser steward passt -->   
+    <prop id="ir7-cur-off">(f,loop_xml,ir7,@off)</prop>
+    <prop id="ir7-cur-off" test="(f,not,(f,has,prop,ir7-cur-off))">0</prop>
+    <when test="(f,and,(f,eq_text,(f,loop_xml,ir7,@type),(prop,ir7-script-type)),(f,not,(prop,ir7-cur-off)))"> 
+      <!-- ja, der steward passt und ist nicht komplett ausgeschaltet 
+      <ti>steward gefunden fuer (prop,ir7-script-type)</ti>        -->
+      <print id="s" act="println"><![CDATA[<!-- (prop,ir7-script-type)-Script: Begin -->]]></print>
+      
+      <!-- dann verlassen wir bei naechster gelegenheit die schleife -->
+      <prop id="ir7-not-done">0</prop>
+      
+      <!-- das script fuer diesen typ rausschreiben -->
+      
+      <!-- intro wird nur beim ersten record gemacht: when begin -->
+      <when test="(f,eq_text,intro,(prop,ir7-script-type))">
+        <print id="s" act="println"><![CDATA[<when test="()(f,eq_num,1,(loop,rec,#i))()" >]]></print>                                                             
+      </when>
+                                                              
+      <!-- wenn exception-script vorhanden ein try-catch: begin -->
+      <when test="(f,and,(f,or,(f,has,(f,loop_xml,ir7,@ex_script)),(f,has,(f,loop_xml,ir7,@ex_file))),(f,not,(f,eq_text,no,(f,loop_xml,ir7,@ex_usage))))">
+        <print id="s" act="println"><![CDATA[<try_catch>]]></print>   
+        <print id="s" act="println"><![CDATA[<try>]]></print>                                                          
+      </when>    
+      
+      <!-- header-script -->
+      <choose>
+        <when test="(f,eq_text,sc,(f,loop_xml,ir7,@hd_usage))">
+          <print id="s" act="println">(f,loop_xml,ir7,@hd_script)</print>                                                             
+        </when> 
+        <when test="(f,eq_text,fr,(f,loop_xml,ir7,@hd_usage))">
+          <file id="frex" flag="cool">(f,loop_xml,ir7,@hd_file)</file>
+          <unescape type="file" id="frex" />
+          <translate type="file" id="frex" />
+          <print id="s" act="println">(f,file_content,(file,frex))</print>                                                          
+        </when>                   
+      </choose>
+      
+      <!-- overwrite bzw original script -->
+      <choose>
+        <when test="(f,eq_text,sc,(f,loop_xml,ir7,@ow_usage))">
+          <print id="s" act="println">(f,loop_xml,ir7,@ow_script)</print>                                                             
+        </when> 
+        <when test="(f,eq_text,fr,(f,loop_xml,ir7,@ow_usage))">
+        
+          <file id="frex" flag="cool">(f,loop_xml,ir7,@ow_file)</file>
+          <unescape type="file" id="frex" />
+          <translate type="file" id="frex" />
+                  
+          <print id="s" act="println">(f,file_content,(file,frex))</print>                                                             
+        </when>            
+        <when test="(f,has,prop,_sc_(prop,ir7-script-type))"> 
+          <print id="s" act="println">(f,vob,prop,_sc_(prop,ir7-script-type))</print>                                                            
+        </when>           
+               
+      </choose>      
+
+      <!-- wenn footer-script vorhanden ist -->
+      <choose>
+        <when test="(f,eq_text,sc,(f,loop_xml,ir7,@ft_usage))">
+          <print id="s" act="println">(f,loop_xml,ir7,@ft_script)</print>                                                             
+        </when> 
+        <when test="(f,eq_text,fr,(f,loop_xml,ir7,@ft_usage))">
+          <file id="frex" flag="cool">(f,loop_xml,ir7,@ft_file)</file>
+          <unescape type="file" id="frex" />
+          <translate type="file" id="frex" />        
+          <print id="s" act="println">(f,file_content,(file,frex))</print>                                                             
+        </when>                   
+      </choose>
+            
+      <!-- wenn exception-script vorhanden ein try-catch: ende -->
+      <when test="(f,and,(f,or,(f,has,(f,loop_xml,ir7,@ex_script)),(f,has,(f,loop_xml,ir7,@ex_file))),(f,not,(f,eq_text,no,(f,loop_xml,ir7,@ex_usage))))">
+        <print id="s" act="println"><![CDATA[</try>]]></print>   
+        <print id="s" act="println"><![CDATA[<catch>]]></print>        
+        <choose>
+          <when test="(f,eq_text,sc,(f,loop_xml,ir7,@ex_usage))">
+            <print id="s" act="println">(f,loop_xml,ir7,@ex_script)</print>                                                             
+          </when> 
+          <when test="(f,eq_text,fr,(f,loop_xml,ir7,@ex_usage))">
+            <file id="frex" flag="cool">(f,loop_xml,ir7,@ex_file)</file>
+            <unescape type="file" id="frex" />
+            <translate type="file" id="frex" />             
+            <print id="s" act="println">(f,file_content,(file,frex))</print>                                                             
+          </when>                   
+        </choose>                
+        <print id="s" act="println"><![CDATA[</catch>]]></print>   
+        <print id="s" act="println"><![CDATA[</try_catch>]]></print>                                                            
+      </when>         
+
+      <!-- intro wird nur beim ersten record gemacht: when end -->
+      <when test="(f,eq_text,intro,(prop,ir7-script-type))">
+        <print id="s" act="println"><![CDATA[</when>]]></print>                                                             
+      </when>  
+      <print id="s" act="println"><![CDATA[<!-- (prop,ir7-script-type)-Script: End -->
+]]></print>                                   
+    </when>
+  </loop>
+
+  <loop_xml 
+    act="close" 
+    id="ir7" />   
+    
+  <!-- falls jedoch kein steward gefunden wurde gibt es das original falls es das gibt -->
+  <when test="(prop,ir7-not-done)" >
+  
+    <when test="(f,has,prop,_sc_(prop,ir7-script-type))">
+      <print id="s" act="println"><![CDATA[<!-- (prop,ir7-script-type)-Script: Begin -->]]></print>
+      <when test="(f,eq_text,intro,(prop,ir7-script-type))">
+        <print id="s" act="println"><![CDATA[<when test="()(f,eq_num,1,(loop,rec,#i))()" >]]></print>                                                             
+      </when>      
+      <print id="s" act="println">(f,vob,prop,_sc_(prop,ir7-script-type))</print>  
+      <when test="(f,eq_text,intro,(prop,ir7-script-type))">
+        <print id="s" act="println"><![CDATA[</when>]]></print>                                                             
+      </when>       
+      <print id="s" act="println"><![CDATA[<!-- (prop,ir7-script-type)-Script: End -->
+]]></print>                                                            
+    </when>      
+  
+  </when>
+  
+  <remove id="ir7-not-done" type="prop"/>  
+  
+  <remove id="ir7-cur-off" type="prop" test="(f,exists,prop,ir7-cur-off)"/>
+  
+
+
+</job>
+
+<!-- definition der vordefinierten sqli-typen -->
+<job id="ir8" role="hidden">
+  <prop id="ir8-type">(f,loop_xml,ir2-sqli,@type)</prop>
+  <choose>
+    <when test="(f,eq_text,private,(prop,ir8-type))">
+      <prop id="_sc_main">(f,loop_xml,ir2-sqli,@sc_main)</prop>
+      <prop id="_sc_top">(f,loop_xml,ir2-sqli,@sc_top)</prop>
+      <prop id="_sc_bot">(f,loop_xml,ir2-sqli,@sc_bot)</prop>      
+      <prop id="_sc_intro">(f,loop_xml,ir2-sqli,@sc_intro)</prop>
+      <prop id="_sc_extro">(f,loop_xml,ir2-sqli,@sc_extro)</prop>
+      <prop id="_rq_import">(f,loop_xml,ir2-sqli,@rq_import)</prop>
+      <prop id="_gb_import">(f,loop_xml,ir2-sqli,@gb_import)</prop>
+      <prop id="_rq_central">(f,loop_xml,ir2-sqli,@rq_central)</prop>
+      <prop id="_gb_central">(f,loop_xml,ir2-sqli,@gb_central)</prop>
+      <prop id="_cmt_session">(f,loop_xml,ir2-sqli,@cmt_session)</prop>
+      <prop id="_cmt_style">(f,loop_xml,ir2-sqli,@cmt_style)</prop>
+      <prop id="_cmt_size">(f,loop_xml,ir2-sqli,@cmt_size)</prop>
+      <prop id="_close_session">(f,loop_xml,ir2-sqli,@close_session)</prop>
+      <prop id="_max_ids">(f,loop_xml,ir2-sqli,@max_ids)</prop>  
+      <prop id="_sc_fin">(f,loop_xml,ir2-sqli,@sc_fin)</prop>
+    </when>
+    
+    <otherwise>
+      <file id="zeppelin">(dir,goMoon)bulks/zeppelin/bulks-list.xml</file>
+      <!-- hier mal die sqli-daten rausholen , und zwar zum (prop,ir8-type)-->
+      <spirit id="zep" act="open" xml="(file,zeppelin)"/>
+      
+      <prop id="zep_sqli_file">(f,spirit,zep,bulk[@row=(f,xpath_string,(prop,ir8-type))],@sqli_file)</prop>
+      <prop id="zep_sqli_row">(f,spirit,zep,bulk[@row=(f,xpath_string,(prop,ir8-type))],@sqli_row)</prop>
+      
+      <spirit id="zep" act="close"/>
+      
+      <file id="zep_sqli_query">(dir,goMoon)queries/(prop,zep_sqli_file)/queries-list.xml</file>
+      
+      <spirit id="zep-target" act="open" xml="(file,zep_sqli_query)"/>
+      
+      <loop id="zep" 
+            xxxxml="(file,zep_sqli_query)" 
+            spirit="zep-target"
+            xpath="//sqli[@row=(f,xpath_string,(prop,zep_sqli_row))]" 
+            limit="1"
+            missing_strategy="empty">
+      
+        <prop id="_sc_main">(loop,zep,@sc_main)</prop>
+        
+        <prop id="_sc_top">(loop,zep,@sc_top)</prop>
+        <prop id="_sc_bot">(loop,zep,@sc_bot)</prop>      
+        <prop id="_sc_intro">(loop,zep,@sc_intro)</prop>
+        <prop id="_sc_extro">(loop,zep,@sc_extro)</prop>
+        <prop id="_rq_import">(loop,zep,@rq_import)</prop>
+        <prop id="_gb_import">(loop,zep,@gb_import)</prop>
+        <prop id="_rq_central">(loop,zep,@rq_central)</prop>
+        <prop id="_gb_central">(loop,zep,@gb_central)</prop>
+        <prop id="_cmt_session">(loop,zep,@cmt_session)</prop>
+        <prop id="_cmt_style">(loop,zep,@cmt_style)</prop>
+        <prop id="_cmt_size">(loop,zep,@cmt_size)</prop>
+        <prop id="_close_session">(loop,zep,@close_session)</prop>
+        <prop id="_max_ids">(loop,zep,@max_ids)</prop>  
+        <prop id="_sc_fin">(loop,zep,@sc_fin)</prop>           
+        
+        <call_job job="ir5">
+          <prop id="ir5-script-type">top</prop>  
+          <prop id="ir5-prop-id">_sc_top</prop>
+        </call_job>
+      
+        <call_job job="ir5">
+          <prop id="ir5-script-type">intro</prop>  
+          <prop id="ir5-prop-id">_sc_intro</prop>
+        </call_job>
+        
+        <call_job job="ir5">
+          <prop id="ir5-script-type">main</prop>  
+          <prop id="ir5-prop-id">_sc_main</prop>
+        </call_job> 
+      
+        <call_job job="ir5">
+          <prop id="ir5-script-type">extro</prop>  
+          <prop id="ir5-prop-id">_sc_extro</prop>
+        </call_job>  
+      
+        <call_job job="ir5">
+          <prop id="ir5-script-type">fin</prop> 
+          <prop id="ir5-prop-id">_sc_fin</prop> 
+        </call_job>         
+      </loop>
+      
+      <spirit id="zep-target" act="close"/>
+      
+    </otherwise>
+  
+  
+  </choose>
+  
+  <remove id="ir8-type" type="prop"/>
+</job>
+
+<job id="ir5" role="hidden">
+  <!-- einbinden der stewards ins zeppelin -->
+  <need>(prop,ir5-script-type) (prop,ir5-prop-id) (prop,zep_sqli_row)</need>
+  
+ <loop_xml 
+    act="open" 
+    id="ir5" 
+    spirit="zep-target" 
+    xpath="//sqli[@row=(f,xpath_string,(prop,zep_sqli_row))]/stew"  missing_strategy="empty"/>
+ 
+  <prop id="ir5-not-done">1</prop>          
+  <loop 
+    id="while-ir5" 
+    while="()(f,and,(f,loop_xml,ir5,has_next?),(prop,ir5-not-done))()">
+    <loop_xml act="next" id="ir5" />
+                                                                        
+    <!-- pruefen ob dieser steward passt -->   
+    <prop id="ir5-cur-off">(f,loop_xml,ir5,@off)</prop>
+    <prop id="ir5-cur-off" test="(f,not,(f,has,prop,ir5-cur-off))">0</prop>
+    <when test="(f,and,(f,eq_text,(f,loop_xml,ir5,@type),(prop,ir5-script-type)),(f,not,(prop,ir5-cur-off)))"> 
+      <!-- ja, der steward passt und ist nicht komplett ausgeschaltet 
+      <ti>steward gefunden fuer (prop,ir7-script-type)</ti>        -->
+      
+      <!-- ow replace, ersetzen -->
+      <choose>
+        <when test="(f,eq_text,sc,(f,loop_xml,ir5,@ow_usage))">
+          <prop id="(prop,ir5-prop-id)"><![CDATA[<!-- zep.stew.ow.script.begin -->]]> (f,loop_xml,ir5,@ow_script) <![CDATA[<!-- zep.stew.ow.script.end -->]]></prop>      
+        </when>
+        <when test="(f,eq_text,fr,(f,loop_xml,ir5,@ow_usage))">           
+          <file id="frex" flag="cool">(f,loop_xml,ir5,@ow_file)</file>
+          <unescape type="file" id="frex" />
+          <translate type="file" id="frex" />
+          <prop id="(prop,ir5-prop-id)"><![CDATA[<!-- zep.stew.ow.fr.begin -->]]> (f,file_content,(file,frex)) <![CDATA[<!-- zep.stew.ow.fr.end -->]]></prop>                       
+        </when>      
+      </choose>  
+      
+      <!-- hd davor -->
+      
+      <choose>
+        <when test="(f,eq_text,sc,(f,loop_xml,ir5,@hd_usage))">                                                                                                
+          <prop id="(prop,ir5-prop-id)"><![CDATA[<!-- zep.stew.hd.script.begin -->]]> (f,loop_xml,ir5,@hd_script) <![CDATA[<!-- zep.stew.hd.script.end -->]]>(f,vob,prop,(prop,ir5-prop-id))</prop>      
+        </when>
+        <when test="(f,eq_text,fr,(f,loop_xml,ir5,@hd_usage))">            
+          <file id="frex" flag="cool">(f,loop_xml,ir5,@hd_file)</file>
+          <unescape type="file" id="frex" />
+          <translate type="file" id="frex" />
+          <prop id="(prop,ir5-prop-id)"><![CDATA[<!-- zep.stew.hd.fr.begin -->]]> (f,file_content,(file,frex)) <![CDATA[<!-- zep.stew.hd.fr.end -->]]>(f,vob,prop,(prop,ir5-prop-id))</prop>                       
+        </when>      
+      </choose>        
+      
+      <!-- ft danach -->
+      
+      <choose>
+        <when test="(f,eq_text,sc,(f,loop_xml,ir5,@ft_usage))">                                                                                                
+          <prop id="(prop,ir5-prop-id)">(f,vob,prop,(prop,ir5-prop-id)) <![CDATA[<!-- zep.stew.ft.script.begin -->]]> (f,loop_xml,ir5,@ft_script) <![CDATA[<!-- zep.stew.ft.script.end -->]]></prop>      
+        </when>
+        <when test="(f,eq_text,fr,(f,loop_xml,ir5,@hd_usage))">            
+          <file id="frex" flag="cool">(f,loop_xml,ir5,@hd_file)</file>
+          <unescape type="file" id="frex" />
+          <translate type="file" id="frex" />
+          <prop id="(prop,ir5-prop-id)">(f,vob,prop,(prop,ir5-prop-id)) <![CDATA[<!-- zep.stew.ft.fr.begin -->]]> (f,file_content,(file,frex)) <![CDATA[<!-- zep.stew.ft.fr.end -->]]></prop>                       
+        </when>      
+      </choose>        
+      
+      <!-- ex fehler -->
+      
+      <choose>
+        <when test="(f,eq_text,sc,(f,loop_xml,ir5,@ex_usage))">                                                                                                        
+          <prop id="(prop,ir5-prop-id)"><![CDATA[<try_catch><try>]]> (f,vob,prop,(prop,ir5-prop-id)) <![CDATA[</try><catch><!-- zep.stew.ex.script.begin -->]]> (f,loop_xml,ir5,@ex_script) <![CDATA[<!-- zep.stew.ex.script.end --></catch></try_catch> ]]></prop>      
+        </when>
+        <when test="(f,eq_text,fr,(f,loop_xml,ir5,@hd_usage))">            
+          <file id="frex" flag="cool">(f,loop_xml,ir5,@hd_file)</file>
+          <unescape type="file" id="frex" />
+          <translate type="file" id="frex" />
+          <prop id="(prop,ir5-prop-id)"><![CDATA[<try_catch><try>]]> (f,vob,prop,(prop,ir5-prop-id)) <![CDATA[</try><catch><!-- zep.stew.ex.fr.begin -->]]> (f,file_content,(file,frex)) <![CDATA[<!-- zep.stew.ex.fr.end --></catch></try_catch> ]]></prop>                 
+        </when>      
+      </choose>        
+      
+    </when>
+  </loop>
+
+  <loop_xml 
+    act="close" 
+    id="ir5" />   
+  
+  
+  <remove id="ir5-not-done" type="prop"/>  
+  
+  <remove id="ir5-cur-off" type="prop" test="(f,exists,prop,ir5-cur-off)"/>  
+  <remove id="frex" type="prop" test="(f,exists,prop,frex)"/> 
+
+</job>
+
+<job id="ir6" role="hidden">
+  <ti_hr_break/>
+  <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+  <interpreter turbo="0"/>
+  <include file="(file,ir9-return)"/>
+  <interpreter turbo="(prop,turbo-antes)"/>
+  
+  
+</job>
+
+
+<!--
+<prop id="_"></prop>
+<prop id="_"></prop>
+<prop id="_"></prop>
+<prop id="_"></prop>
+<prop id="_"></prop>
+<prop id="_"></prop>
+<prop id="_"></prop>
+
+<prop id="_sc_main">(f,loop_xml,ir2-sqli,@sc_main)</prop>
+<prop id="_sc_top">(f,loop_xml,ir2-sqli,@sc_top)</prop>
+<prop id="_sc_intro">(f,loop_xml,ir2-sqli,@sc_intro)</prop>
+<prop id="_sc_extro">(f,loop_xml,ir2-sqli,@sc_extro)</prop>
+<prop id="_rq_import">(f,loop_xml,ir2-sqli,@rq_import)</prop>
+<prop id="_gb_import">(f,loop_xml,ir2-sqli,@gb_import)</prop>
+<prop id="_rq_central">(f,loop_xml,ir2-sqli,@rq_central)</prop>
+<prop id="_gb_central">(f,loop_xml,ir2-sqli,@gb_central)</prop>
+<prop id="_cmt_session">(f,loop_xml,ir2-sqli,@cmt_session)</prop>
+<prop id="_close_session">(f,loop_xml,ir2-sqli,@close_session)</prop>
+<prop id="_max_ids">(f,loop_xml,ir2-sqli,@max_ids)</prop>
+<prop id="_ref_init">(f,loop_xml,ir2-sqli,@ref_init)</prop>
+<prop id="_ref_run">(f,loop_xml,ir2-sqli,@ref_run)</prop>
+
+
+<prop id="_"><![CDATA[
+
+]]></prop>
+
+
+
+sc_main
+sc_top
+sc_intro
+sc_extro
+
+rq_import
+gb_import
+
+rq_central
+gb_central
+
+cmt_session
+close_session
+max_ids
+
+ref_init
+ref_run
+-->
+
+<!--
+del_obj
+del_attr
+del_attr_obj_type
+del_attr_obj_usg
+del_attr_type
+del_wert
+del_bez
+del_box
+value_type
+value_usg
+list_objects
+private
+
+-->
+
+<!--
+
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

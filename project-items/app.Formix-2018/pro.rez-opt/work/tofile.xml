@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="opt-write">
+<need>(prop,opt_key) (prop,isAdd)</need>
+<spirit act="open" id="opts_spirit_tc" xml="(file,opts)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,opts_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,opts_offset),0,(f,sub,(f,len,(prop,opts_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,opts_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="opts_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;opt row="(prop,opt_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="opts_spirit_tc" where="(prop,opts_offset)opt[@row='(prop,opt_key)']" attribute="bez" value="(f,vob,prop,opt_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="opts_spirit_tc" where="(prop,opts_offset)opt[@row='(prop,opt_key)']" attribute="besch" value="(f,vob,prop,opt_besch)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="opts_spirit_tc" where="(prop,opts_offset)opt[@row='(prop,opt_key)']" attribute="klasse" value="(f,vob,prop,opt_klasse)"/>
+<spirit act="close" flag="save pretty" id="opts_spirit_tc"/>
+</job>

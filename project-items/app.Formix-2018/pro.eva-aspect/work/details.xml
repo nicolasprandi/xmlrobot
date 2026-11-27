@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="aspect-see">
+<need>(prop,aspect_key)</need>
+<call_job job="aspect-read"/>
+<prop x="print print_only" id="aspects_tk_control"/>
+<prop id="label" x="Aspect: (f,html,bold,open)(prop,aspect_titel)(f,html,bold,close)(f,when,(f,has,(prop,aspects_offset_label)), - (prop,aspects_offset_label),)"/>
+<call_job job="aspect-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="[ ? ]" align="right" job="aspect-see-more">
+<prop id="aspect_key">(prop,aspect_key)</prop>
+<file id="aspects">(file,aspects)</file>
+<prop id="aspects_offset">(prop,aspects_offset)</prop>
+<prop id="aspects_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="aspects_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="aspects_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="aspects_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="aspects_where">(prop,aspects_where)</prop>
+<prop id="aspects_return_job">(prop,aspects_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit" job="aspect-edit">
+<prop id="aspect_key">(prop,aspect_key)</prop>
+<file id="aspects">(file,aspects)</file>
+<prop id="aspects_offset">(prop,aspects_offset)</prop>
+<prop id="aspects_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="aspects_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="aspects_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="aspects_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="aspects_where">(prop,aspects_where)</prop>
+<prop id="aspects_return_job">(prop,aspects_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,business)" type="call_job" explain="Delete" job="aspect-del">
+<prop id="aspect_key">(prop,aspect_key)</prop>
+<file id="aspects">(file,aspects)</file>
+<prop id="aspects_offset">(prop,aspects_offset)</prop>
+<prop id="aspects_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="aspects_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="aspects_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="aspects_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="aspects_where">(prop,aspects_where)</prop>
+<prop id="aspects_return_job">(prop,aspects_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-aspect-details-end</trace>
+<call_job job="hook-aspect-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: aspect-details: end.0">
+<ti> hook_job=hook-aspect-details-end hook=end page=details station=0 object=aspect</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

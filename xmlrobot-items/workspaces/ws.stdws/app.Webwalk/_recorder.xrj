@@ -1,0 +1,221 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />   
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+<interpreter waxtch="1"/>
+
+<job id="test-recorder" role="hidden">
+<call_job job="record">
+  <prop id="steps"><![CDATA[
+()<ti label="hallo" x="welt (prop,pro)" />()
+]]></prop>
+</call_job>
+
+</job>
+
+<job id="Start Recorder" role="hidden">
+  <call_job job="rec-start-recorder">
+    <prop id="is-manual-start" x="1"/>
+  </call_job>
+</job>
+
+<job id="Stop Recorder" role="hidden">
+  <call_job job="rec-stop-recorder">
+  </call_job>
+</job>
+
+<job id="Check Recorder" role="hidden">
+  <call_job job="rec-get-is-started"/>
+  <ti label="Result of Recorder-Check"/>
+  <ti label="status =">(f,when,(prop,ret-is-started),ON,OFF)</ti>
+  
+  <!-- <call_job job="tk_reco_print_values_tips"/> -->
+</job>
+
+<job id="record" role="hidden">
+  <need>(prop,steps)</need>
+  
+  <call_job job="rec-get-is-started"/>
+  
+  <prop id="recorder-is-on" x="0"/>
+  <choose>
+    <when test="(prop,ret-is-started)">
+      <prop id="recorder-is-on" x="1"/>
+    </when>
+    <when test="(f,not,(prop,ret-is-started))">
+    
+      <call_job job="rec-start-recorder"/>
+      
+      <prop id="recorder-is-on" x="1"
+            test="(prop,did-start-recorder)"/>
+    
+    </when>
+  </choose>
+  
+  <prop id="steps-trans1" x="(prop,steps)"/>
+  <unescape id="steps-trans1" type="prop"/>
+  <translate id="steps-trans1" type="prop"/>
+  <warn>RECORDER</warn>
+  <warn>
+(prop,steps)</warn>
+  <warn>
+(prop,steps-trans1)</warn> 
+  
+  <when test="(prop,recorder-is-on)">
+    <!-- <call_job test="(f,not,(f,has,prop,reco_ask))" job="tk_reco_read"/> -->
+    <prop id="do-really-record" x="1"/>
+    <!--
+    <choose>
+      <when test="(f,has_flag,(prop,reco_classes),(prop,class))">
+        <when test="(prop,reco_ask)">
+    
+          <prop id="steps-trans" x="(prop,steps)"/>
+          <unescape id="steps-trans" type="prop"/>
+          <translate id="steps-trans" type="prop"/>
+                        
+    			<tk label="Do record this: ?" 
+    					type="accept" 
+    					id="do-really-record" 
+    					x="===== Continue with Recording of ? =======&#xA;(prop,steps)&#xA;===== which is =======&#xA;(prop,steps-trans)" 
+    					label_accept="Record" 
+    					label_decline="Skip" 
+    					xidth="300" hxeight="150">
+    						<q id="input-stop-all" label="()Cancel All()"/>
+    			</tk>
+          <when test="(prop,input-stop-all)">
+            <throw>Stopped all on request</throw>
+          </when>
+        </when>      
+      </when>
+      <otherwise>
+        <prop id="do-really-record" x="0"/>
+      </otherwise>
+    </choose>
+    -->
+    
+
+    
+    <choose>
+      <when test="(prop,do-really-record)">
+          <prop id="steps-trans2" x="(prop,steps)"/>
+          <unescape id="steps-trans2" type="prop"/>
+          <translate id="steps-trans2" type="prop"/>      
+          
+          <choose>
+            <when test="(f,eq_text,(prop,steps),(prop,steps-trans2))">
+        <print id="(prop,recid)" act="println"><![CDATA[(prop,steps)
+]]></print>             
+            </when>
+            <otherwise>
+        <print id="(prop,recid)" act="println"><![CDATA[(prop,steps)
+  <!-- 
+  was in effective:
+(prop,steps-trans2) 
+  -->                                                
+]]></print>             
+            </otherwise>
+          </choose>
+ 
+       <!-- > <ti label="Recorded:" flag="label_right" xtest="0">(prop,steps)</ti>  
+       <ti label=" " key="Recorded ..."></ti>  -->
+       <ti flag="html" align="right">&lt;font size="2" face="Courier"&gt;(f,escape,_htmlb,Recorded ...)&lt;font&gt;</ti>
+        
+      </when>
+      <otherwise>
+        <ti key="skipped recording..." x=" " />
+      </otherwise>
+    </choose>
+  </when>
+  
+  <!-- jetzt noch ausfuehren -->
+  <file id="runner" x="(dir,temp)runner.xml"/>
+  
+  <create_file out="(file,runner)" code="runner"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>(prop,steps)
+</steps>
+    ]]></create_file>
+      
+  <ti label="torun" type="file" x="(file,runner)" test="(prop,debug)"/>
+  <include file="(file,runner)" code="runner"/>
+</job>
+
+<job id="rec-start-recorder" role="hidden">
+  <need default="0">(prop,is-manual-start)</need>
+  <call_job job="tk_reco_read"/>
+  <need>(file,reco_file) (prop,reco_turn) (prop,reco_history)</need>
+  <prop id="did-start-recorder" x=""/>
+  <choose>
+    <when test="(f,eq_text,auto,(prop,reco_turn))">
+      <prop id="did-start-recorder" x="1"/>
+    </when>
+    <when test="(f,eq_text,manu,(prop,reco_turn))">
+      <prop id="did-start-recorder" x="(prop,is-manual-start)"/>
+    </when>
+    <when test="(f,eq_text,ask,(prop,reco_turn))">
+      <tk type="bool" id="did-start-recorder" flag="nono" label="Start Recorder?"/>
+    </when>        
+    <otherwise>
+      <prop id="did-start-recorder" x="0"/>
+    </otherwise>
+  </choose>
+  
+
+    <when test="(prop,did-start-recorder)">
+      <when test="(f,exists_file,(file,reco_file))">
+      <when test="(prop,reco_history)">
+        <sequence act="open" xml="(dir,pro)recorder-history-sequence.xml" id="hr" len="4"/>
+        <sequence act="next" id="hr" />
+        <file id="copybackup" x="(f,dir_of_file,(file,reco_file))(f,name_of_file2,(file,reco_file))(f,sequence,hr).xml" />
+        <sequence act="close" id="hr" />
+        <throw test="(f,exists_file,(file,copybackup))">that (file,copybackup) exists already</throw>
+        <copy file="(file,reco_file)" 
+              tofile="(file,copybackup)"/>
+        <ti label="Did Create Backup" type="file" x="(file,copybackup)"/>      
+      
+      </when>
+      </when>
+      <ti label="Start Record to" type="file" x="(file,reco_file)"/>
+      <print id="(prop,recid)" act="open" out="(file,reco_file)" flag="autoflush"/>
+      <print id="(prop,recid)" act="println"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>]]></print>
+    </when>
+
+  
+  <need>(prop,did-start-recorder)</need>
+</job>
+
+<job id="rec-stop-recorder" role="hidden">
+  <call_job job="tk_reco_read"/>
+  <ti label="Finish Record to" type="file" x="(file,reco_file)"/>
+  <print id="(prop,recid)" act="println"><![CDATA[</steps>]]></print>  
+  <print id="(prop,recid)" act="close"/>
+</job>
+
+<job id="rec-get-is-started" role="hidden">
+
+  <try_catch>
+    <try>
+      <!-- <prop id="test">(f,spirit,(prop,recid),exists?,anything)</prop>   -->
+      <print id="(prop,recid)" act="print"></print>
+      <prop id="ret-is-started" x="1"/>
+    </try>
+    <catch>
+      <prop id="ret-is-started" x="0"/>
+    </catch>
+  </try_catch>
+</job>
+
+
+<!-- 
+<job id="xpath-samples" role="hidden">
+  <ti>//div[@id='content']//ul[@class='menu']/li/a
+  
+  //div[@id='navigation']//ul[@class='menu']/li/a
+  </ti>
+</job>
+
+-->
+
+
+</jobs>

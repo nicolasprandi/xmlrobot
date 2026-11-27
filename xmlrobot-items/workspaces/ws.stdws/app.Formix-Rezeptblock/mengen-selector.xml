@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<sel>
+  <sel label="Gramm">gr</sel>
+  <sel label="Kilogramm">kg</sel>
+  <sel label="Stueck">st</sel>
+  <sel label="Prisen">pr</sel>
+  <sel label="Tonnen">to</sel>
+  <sel label="Tube">tu</sel>
+  <sel label="Liter">li</sel>
+  <sel label="Centiliter">cli</sel>
+  <sel label="Essloeffel">el</sel>
+  <sel label="Teeloeffel">tl</sel>
+</sel>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extension-tk">
+<need default="">(prop,extensions_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,extensions_tk_control) wrap ">
+<tk label="Titel" id="extension_titel" x="" test_first="1" tip="GruppenTitel" type="text" flag=" nono "/>
+<tk label="Key" id="extension_pk" x="" test_first="1" tip="Extension Key: wird zur refernzierung verwendet; sollte nur einmalig vergeben werden und konstant bleiben" type="text" flag=" nono "/>
+<tk label="Anmerkungen" id="extension_desc" x="" test_first="0" type="textblock" flag=" "/>
+</tk>
+</job>

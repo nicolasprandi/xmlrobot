@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="appconf-write">
+<need>(prop,appconf_key) (prop,isAdd)</need>
+<spirit act="open" id="appconfs_spirit_tc" xml="(file,appconfs)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,appconfs_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,appconfs_offset),0,(f,sub,(f,len,(prop,appconfs_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,appconfs_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="appconfs_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;appconf row="(prop,appconf_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="app" value="(f,vob,prop,appconf_app)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="displayname" value="(f,vob,prop,appconf_displayname)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="eclipseproject" value="(f,vob,prop,appconf_eclipseproject)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="login" value="(f,vob,prop,appconf_login)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="public" value="(f,vob,prop,appconf_public)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="apps" value="(f,vob,prop,appconf_apps)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="desc" value="(f,vob,prop,appconf_desc)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="rule_base" value="(f,vob,prop,appconf_rule_base)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="project_dir" value="(f,vob,prop,appconf_project_dir)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="clone_project_dir_on" value="(f,vob,prop,appconf_clone_project_dir_on)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="css" value="(f,vob,prop,appconf_css)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="firstjob" value="(f,vob,prop,appconf_firstjob)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="header" value="(f,vob,prop,appconf_header)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="header_job" value="(f,vob,prop,appconf_header_job)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="footer" value="(f,vob,prop,appconf_footer)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="footer_job" value="(f,vob,prop,appconf_footer_job)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="trace_on" value="(f,vob,prop,appconf_trace_on)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="role" value="(f,vob,prop,appconf_role)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="bits" value="(f,vob,prop,appconf_bits)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_wf_bits" value="(f,vob,prop,appconf_uri_wf_bits)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_wf_prov_pro" value="(f,vob,prop,appconf_uri_wf_prov_pro)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_rf_bits" value="(f,vob,prop,appconf_uri_rf_bits)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_rf_prov_app" value="(f,vob,prop,appconf_uri_rf_prov_app)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_rf_prov_pro" value="(f,vob,prop,appconf_uri_rf_prov_pro)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_wd_bits" value="(f,vob,prop,appconf_uri_wd_bits)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_wd_prov_pro" value="(f,vob,prop,appconf_uri_wd_prov_pro)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_rd_bits" value="(f,vob,prop,appconf_uri_rd_bits)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_rd_prov_app" value="(f,vob,prop,appconf_uri_rd_prov_app)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="appconfs_spirit_tc" where="(prop,appconfs_offset)appconf[@row='(prop,appconf_key)']" attribute="uri_rd_prov_pro" value="(f,vob,prop,appconf_uri_rd_prov_pro)"/>
+<spirit act="close" flag="save pretty" id="appconfs_spirit_tc"/>
+</job>

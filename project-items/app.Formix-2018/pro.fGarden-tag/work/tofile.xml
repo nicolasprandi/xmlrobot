@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="tag-write">
+<need>(prop,tag_key) (prop,isAdd)</need>
+<spirit act="open" id="tage_spirit_tc" xml="(file,tage)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,tage_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,tage_offset),0,(f,sub,(f,len,(prop,tage_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,tage_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="tage_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;tag row="(prop,tag_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tage_spirit_tc" where="(prop,tage_offset)tag[@row='(prop,tag_key)']" attribute="bez" value="(f,vob,prop,tag_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tage_spirit_tc" where="(prop,tage_offset)tag[@row='(prop,tag_key)']" attribute="besch" value="(f,vob,prop,tag_besch)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tage_spirit_tc" where="(prop,tage_offset)tag[@row='(prop,tag_key)']" attribute="klasse" value="(f,vob,prop,tag_klasse)"/>
+<spirit act="close" flag="save pretty" id="tage_spirit_tc"/>
+</job>

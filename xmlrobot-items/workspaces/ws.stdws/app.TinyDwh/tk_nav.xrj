@@ -1,0 +1,254 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2018-2020 Nicolas Prandstaetter. All rights reserved.  -->
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="tk_nav_default" role="hidden">
+  <!-- <need default="0">(prop,nav_datenfiles)</need>  -->
+  <need default="0">(prop,nav_wann)</need> 
+  <need default="0">(prop,nav_keys)</need>
+  <need default="0">(prop,nav_vonbis)</need>
+  <need default="0">(prop,nav_top)</need>
+  <need default="0">(prop,nav_link_wert)</need>  
+  <need default="de">(prop,nav_vk1)</need>
+  <need default="2">(prop,nav_nk1)</need> 
+  <need default="1">(prop,nav_naming_attribute)</need>
+  <need default="1">(prop,nav_only_latest_values)</need>
+  <need default="1">(prop,nav_int_wie_num)</need>
+
+<need default="1">(prop,nav_naming_attribute)</need>
+  
+  
+  
+  <!-- 
+  <need default="0">(prop,nav_but_conf_std)</need>
+  <need default="0">(prop,nav_but_limit_std)</need>          -->
+  
+</job>
+
+<!-- nav-core, make your changes here -->
+<job id="tk_nav_core" role="hidden" tip="nav_: Tk Internal">
+
+  <need default="">(prop,tk_nav_add_flag)</need>
+  <call_job job="tk_nav_default"/>
+  
+  <call_job job="tr_nav"/>
+  
+  
+  <tk xlabel="(prop,_nav_l)" 
+      label="(f,when,(f,has_flag,(prop,tk_nav_add_flag),print_tips_only),(prop,_nav_l_desc),(prop,_nav_l))" 
+      flag="(prop,tk_nav_add_flag)"
+      tip="(prop,_nav_t)"
+      tk_id="21"> 
+
+    <tk type="msg" msg="(prop,_nav_msg_terms_l)"
+        test_first="0"/> 
+              
+        <tk id="nav_naming_attribute"
+            label="(prop,_nav_naming_attribute_l)" 
+            tip="(prop,_nav_naming_attribute_t)"      
+          	test_first="0" type="sel" flag="nono">
+            <sel label="(prop,_nav_naming_attribute_name_l)">1</sel>        
+            <sel label="(prop,_nav_naming_attribute_tech_l)">0</sel>
+        </tk>     
+              
+    <tk type="msg" msg="(prop,_nav_msg_detailinfos_l)"
+        test_first="0"/> 
+    <tk id="nav_link_wert"
+        type="bool"
+        label="(prop,_nav_link_wert_l)"      
+        tip="(prop,_nav_link_wert_t)" 
+      	test_first="0"
+        flag="no_is_0"/>  
+    <tk type="msg" msg="(prop,_nav_msg_werte_l)"
+         
+        test_first="0"/>    <!--xtip="(prop,_nav_msg_werte_t)"  testen test_first -->
+   
+    <tk id="nav_only_latest_values"
+    
+        label="(prop,_nav_only_latest_values_l)"       
+        tip="(prop,_nav_only_latest_values_t)"
+      	test_first="0"        
+        flag="no_is_0 nono" type="sel">       <!-- testen test_first -->
+        <sel label="(prop,_nav_only_latest_values_1_l)">1</sel>        
+        <sel label="(prop,_nav_only_latest_values_0_l)">0</sel>
+
+    </tk>   
+    <tk id="nav_top"
+        type="bool"
+        label="(prop,_nav_top_l)"      
+        tip="(prop,_nav_top_t)" 
+      	test_first="0"            
+        flag="no_is_0"/>        
+    <tk id="nav_vonbis"
+        type="bool"
+        label="(prop,_nav_vonbis_l)"       
+        tip="(prop,_nav_vonbis_t)"
+      	test_first="0"
+        flag="no_is_0"/>      
+  
+    <tk id="nav_wann"
+        type="bool"
+        test="(f,right,details)"
+        label="(prop,_nav_wann_l)"      
+        tip="(prop,_nav_wann_t)" 
+      	test_first="0"
+        flag="no_is_0"/>            
+   <tk type="msg" msg="(prop,_nav_msg_zahlenformat_l)"
+        test_first="0" tip="tip zur msg zahlenformat"/>            
+        
+    <tk id="nav_vk1"
+    
+        label="(prop,_nav_vk_l)"       
+        tip="(prop,_nav_vk_t)"
+      	test_first="0"        
+        flag=" nono" type="sel">      
+        <sel label="(prop,_nav_vk_de)">de</sel>        
+        <sel label="(prop,_nav_vk_us)">us</sel>
+
+    </tk>    
+    
+    <tk id="nav_nk1"
+                                  
+        label="(prop,_nav_nk_l)"       
+        tip="(prop,_nav_nk_t)"
+      	test_first="0"        
+        flag=" nono" type="sel">       <!-- testen test_first -->
+        <sel label="(prop,_nav_nk_4)">4</sel>
+        <sel label="(prop,_nav_nk_3)">3</sel>
+        <sel label="(prop,_nav_nk_2)">2</sel>
+        <sel label="(prop,_nav_nk_1)">1</sel>
+        <sel label="(prop,_nav_nk_0)">0</sel>                                        
+
+    </tk>    
+    
+    <tk id="nav_int_wie_num"
+        type="bool"
+        label="(prop,_nav_iwn_l)"      
+        tip="(prop,_nav_iwn_t)" 
+      	test_first="0"
+        flag="no_is_0"/>         
+
+     
+             <!-- testen test_first -->        
+    <!-- 
+    <tk type="msg" msg="(prop,_nav_msg_props_l)"
+        tip="(prop,_nav_msg_props_t)"
+        test_first="0"/>     -->
+      
+    <!--       
+       -->
+                
+
+    <tk type="msg" msg="(prop,_nav_msg_tech_l)"
+        test_first="0"/>        
+        
+    <tk id="nav_keys"
+        type="bool"
+        label="(prop,_nav_keys_l)"     
+        tip="(prop,_nav_keys_t)"  
+      	test_first="0"
+        flag="no_is_0"/>                      
+   
+        
+        
+            
+    
+      
+              
+                             
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_nav_edit" tip="nav_: Edit the Data" role="hidden">
+
+  <need default="1">(prop,edit-navi-and-print)</need>
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,nav-data))">
+      <!-- data exists already -->
+      <prop id="tk_nav_add_flag" x="sum_only (f,when,(prop,edit-navi-and-print),print,)"/>
+      <call_job job="tk_nav_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_nav_add_flag" x="sum (f,when,(prop,edit-navi-and-print),print,)"/>
+    </otherwise>
+  </choose>
+  
+  <!-- doing input -->
+  <call_job job="tk_nav_core"/>
+
+  <call_job job="build-event">
+    <prop id="build-event-type">updated_navi</prop>
+  </call_job>
+  
+  <!-- writing data -->
+  <call_job job="tk_nav_write"/>
+
+</job>
+
+
+
+<job id="tk_nav_print_values" tip="nav_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_nav_read"/>
+  
+  <call_job job="tk_nav_core">
+    <prop id="tk_nav_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_nav_print_values_tips" tip="nav_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_nav_read"/>
+  
+  <call_job job="tk_nav_core">
+    <prop id="tk_nav_add_flag" x="print_only print_with_tips print_all_fields"/>
+  </call_job>
+    <ti_hr/>
+    <ti type="rec" label=" " > 
+      <ti type="call_job" job="Nav Conf" explain="(prop,_x_edit)" flag="button" class="fx fxEdit fxEditDetail fxEditDetailConf fxEditDetailConfNav" label=" "/>
+      <ti> </ti>
+
+    </ti>  
+  
+</job>
+
+<job id="tk_nav_print_help" tip="nav_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_nav_core">
+    <prop id="tk_nav_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_nav_read" role="hidden">
+  <call_job job="go-joe-read">
+    <prop id="joe-in-regex" x="(prop,nav-regex)" />
+    <file id="joe-in-store" x="(file,nav-data)" />
+  </call_job>
+  <call_job job="tk_nav_default"/>  
+
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_nav_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,nav-data)" />
+    <prop id="joe-in-regex" x="(prop,nav-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_nav_clear"  tip="nav_: Clears the data" role="hidden">
+  <delete file="(file,nav-data)"/>
+</job>
+
+
+</jobs>

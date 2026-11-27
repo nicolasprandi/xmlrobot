@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ephase-write">
+<need>(prop,ephase_key) (prop,isAdd)</need>
+<spirit act="open" id="ephasen_spirit_tc" xml="(file,ephasen)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,ephasen_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,ephasen_offset),0,(f,sub,(f,len,(prop,ephasen_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,ephasen_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="ephasen_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;ephase row="(prop,ephase_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="zut_key" value="(f,vob,prop,ephase_zut_key)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="besch" value="(f,vob,prop,ephase_besch)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="details" value="(f,vob,prop,ephase_details)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="phase" value="(f,vob,prop,ephase_phase)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="zeitangaben" value="(f,vob,prop,ephase_zeitangaben)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="kostenangaben" value="(f,vob,prop,ephase_kostenangaben)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="notiz" value="(f,vob,prop,ephase_notiz)"/>
+<when test="(f,exists,file,ephase_logo)">
+<file id="jack-in" x="(file,ephase_logo)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="logo" value="(prop,jack-result)"/>
+</when>
+<when test="(f,exists,prop,ephase_logo_max_x)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="logo_max_x" value="(f,vob,prop,ephase_logo_max_x)"/>
+</when>
+<when test="(f,exists,prop,ephase_logo_max_y)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="logo_max_y" value="(f,vob,prop,ephase_logo_max_y)"/>
+</when>
+<when test="(f,exists,prop,ephase_logo_max_x_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="logo_max_x_main" value="(f,vob,prop,ephase_logo_max_x_main)"/>
+</when>
+<when test="(f,exists,prop,ephase_logo_max_y_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ephasen_spirit_tc" where="(prop,ephasen_offset)ephase[@row='(prop,ephase_key)']" attribute="logo_max_y_main" value="(f,vob,prop,ephase_logo_max_y_main)"/>
+</when>
+<spirit act="close" flag="save pretty" id="ephasen_spirit_tc"/>
+</job>

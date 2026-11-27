@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="thefile" add_edit="1" label="File" name_flag="1" tip="File to stamp" view_flag="0" type="sel" nono="1" sel_multi_flag="0" sel_file="(file,file-selector-any)" position="1" /><field id="off" label="Off" tip="Turns this file off" view_flag="1" type="bool" nono="0" position="2" /></fields>

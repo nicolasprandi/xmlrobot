@@ -1,0 +1,302 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<include file="(dir,app)prolog.xrs"/>
+
+<!-- para-core, make your changes here -->
+<job id="tk_para_core" role="hidden" tip="para_: Tk Internal">
+
+  <need default="">(prop,tk_para_add_flag)</need>
+  <prop id="xml_entity_tip">&lt;=&amp;lt; &gt;=&amp;gt; &amp;=&amp;amp; &quot;=&amp;quot; &apos;=&amp;apos;</prop>
+  <tk label="Parameters: (prop,pro)"
+      flag="(prop,tk_para_add_flag)"
+      xtip="Creates a mac-application on base of a jar file">
+
+    <tk type="file" 
+      	id="in-jar" 
+      	label="()Jar-File()" 
+      	tip="(prop,tip-jar)"
+      	flag="nono force_extension"
+      	extension=".jar"/>    	
+    
+    <!-- application name -->    
+    <tk type="text" 
+      	id="in-name" 
+      	label="Name"     		 
+      	tip="(prop,tip-name)"
+      	flag="nono"
+        rule="filename"
+        regex="[^\.]+"
+        regex_msg="Application name can't have dots"/> 
+
+    <!-- optional parameters header -->
+    <ti type="msg" x="Presentation"
+    tip="Optical representation and keys for identification"/>
+    
+    <!-- icon -->
+    <tk type="file"
+      	id="in-icon"
+      	label="Icon"
+        tip="()Icon-File: a picture for the visual representation()"
+      	extension=".icns"
+        flag="force_extension"/>    
+    
+    <!-- version -->
+    <tk type="text"
+      	id="in-shortversion"
+      	label="Version"
+      	tip="()Version-text of the application: will be presented in the about-menu-dialog()"/>
+    
+    <!-- copyright -->
+    <tk type="text"
+      	id="in-copyright"
+      	label="Copyright Info"
+      	tip="()Copyright-Statement: will be presented in the about-menu-dialog, write the COMPLETE copyright-statement!()"/>
+    
+    <!-- bundle identifier -->
+    <tk type="text"
+      	id="in-identifier"
+      	label="Bundle Identifier"
+      	tip="()The bundle-identifier is a mean to deploy updates. Should be worldwide unique. Use eg: uk.seraton.JumperApp.RichardSeraton()"/>
+        
+    <!-- apple applicatin category -->
+    <tk type="text"
+      	id="in-applicationcategory"
+      	label="App Category"
+      	tip="()Some mac-categorization, eg public.app-category.developer-tools()" />
+
+    <!-- technical things, header -->
+    <ti type="msg" x="Include JRE on Mac" 
+	      tip="()To make the created application independent from a local java-installation, you can include a Java-Runtime-Environment (JRE). Otherwise, java would have to be installed on the execution-computer. Specify the folder of the JRE as a parameter. This inclusion of a JRE works only on mac-computers.()"/>
+        
+    <!-- jdk-runtime for making application independent of local java install -->
+    <tk type="bool"
+        test="1"
+      	id="in-jdk-use"
+      	label="Use JRE"
+        tip="()Flag whether to include a JRE()"
+        x="0"
+        flag="nono"/>
+    
+    <tk type="dir"
+        test="1"
+      	id="in-jdk-runtime"
+      	label="Location of JRE"
+        tip="()The JRE to be attached to the produced application. Specifiy the locations of the 'Contents/Home' folder. eg /Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/()"
+        base="/Library/Java/JavaVirtualMachines/"/>
+    
+    <!-- technical things, header -->
+    <ti type="msg" x="Execution control"
+				tip="()Technical things to control the application during runtime()"/>
+
+    <!-- Work Directory for applicatin INSIDE application -->
+    <tk type="bool" 
+      	id="in-work-inside" 
+      	label="Work-Dir Inside"     		 
+      	tip="()Sets the working-directory inside of the application. Standard is outside. No=Outside. Yes=Inside.()"
+      	flag="no_is_0"
+      	x="0"/>
+		
+    <!-- java main class, will be detected if not specified -->
+    <tk type="text"
+      	id="in-main-class"
+      	label="Main Class" 
+      	tip="()The java-main-class to be used as entry-point for the application. Optional. Will be detected automatically. eg: net.xmlrobot.tigers()"/>
+
+    <!-- application arguments -->
+    <tk type="textblock"
+      	id="in-arg"
+      	label="Arguments Main/xml"
+      	tip="()Arguments to the application. In xml-format and compatible to appbundler. Eg: &lt;argument value=&quot;vienna&quot;/&gt;&lt;argument value=&quot;paris&quot;/&gt; Use xml-entities for the values: () (prop,xml_entity_tip)"
+				xx="&lt;argument value=&quot;vienna&quot;/&gt;&#xA;&lt;argument value=&quot;paris&quot;/&gt;"/>
+		
+    <!-- java memory minimum -->
+    <tk type="text"
+      	id="in-xms"
+      	label="Heap Min Size"
+      	tip="()Minimal (initial) memory size to be allocated to the application, eg: 512m, units: g/m/k()"
+      	regex="(e:o)\d+[g|G|m|M|k|K](e:c)"
+      	regex_msg="()A Number and Unit (g,G,m,M,k,K) &#xA;eg 1G or 512m()"
+	      x="512m"/>
+    
+    <!-- java memory maximum -->
+    <tk type="text"
+      	id="in-xmx"
+      	label="Heap Max Size"
+      	tip="()Maximal memory size to be allocated to the application, eg: 1024m or 2048m; units: g/m/k()"
+      	regex="(e:o)\d+[g|G|m|M|k|K](e:c)"
+      	regex_msg="()A Number and Unit (g,G,m,M,k,K) &#xA;eg 1G or 1024m()"
+	      x="1024m"/>     
+
+    
+		<!-- technical things, header -->
+    <ti type="msg" x="Individual Bundling"
+				tip="()Advanced options for the appbundler-task()"/>
+    <tk type="textblock"
+      	id="in-more"
+      	label="Bundler Paras/xml"
+      	tip="()Xml-Arguments which will to be forewarded to the appbundler. This allows more paramters. Use xml-entities:() (prop,xml_entity_tip)"/>	
+        
+    <tk type="sel"
+      	id="in-feat"
+      	label="Disable Features"
+      	flag="multi"
+      	tip="()Options for omitting default-bundler-parameters: NoSignature, NoScreenMenubar, NoXdock &amp; NoWorkdir()">
+      	<sel label="NoSignature">NoSignature</sel>
+      	<sel label="NoScreenMenubar">NoScreenMenubar</sel>
+      	<sel label="NoXdock">NoXdock</sel>
+        <sel label="NoWorkdir">NoWorkdir</sel>
+    </tk>	        	
+
+    <ti type="msg" x="Options of Jar-2-Mac"
+				tip="()Parameters for jar-2-mac()"/>
+    <!-- individual option, xml -->
+
+    <!-- Work Directory for applicatin INSIDE application -->
+    <tk type="bool" 
+      	id="in-runner" 
+      	label="Create sh- &amp; bat-file"     		 
+      	tip="()Will create os-specific runners for linux and windows. They will include the main-arguments and heap-sizes. Arguments containing problematic characters like &amp;%^&lt;&gt;| or similars will lead to a warning-message. A copy of the jar-file will be deployed as well.()"
+      	flag="no_is_0"
+      	x="0"/>
+		
+    <tk type="bool" 
+      	id="in-clear" 
+      	label="Clear results"     		 
+      	tip="Clears the result-folder whenever an application is created. Say 'No' to host several applications. Say 'Yes' to overwrite things."
+      	flag="no_is_0"
+      	x="1"/>		
+                
+  </tk>  
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_para_edit" tip="para_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,para-data))">
+      <!-- data exists already -->
+      <prop id="tk_para_add_flag" x="sum_only print"/>
+      <call_job job="tk_para_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_para_add_flag" x="sum_only print"/>
+      <tk label="Welcome to Jar-2-Mac: (prop,pro)">
+      <tk label="Your are now requested to:" 
+        type="accept" 
+        id="psi-1" 
+        x="()1. Select a Jar-file to convert&#xA;2. Give the application a name&#xA;3. Enter further parameters on the review-page (optional)&#xA;4. Confirm the review-page with [ Ok ] and &#xA;5. See the resuls of the jar-to-app conversion()" 
+        label_accept="Ok(e:s) lets go" 
+        label_decline="Cancel" 
+        width="300" height="120">
+        <q id="psi-2" label="()Show me the demo-jar-files()"/>
+      </tk>
+      </tk>
+      
+      <!-- fail if question not answered properly -->
+      <when test="(f,not,(prop,psi-1))">
+        <throw>Project-setup cancelled.</throw>
+      </when>
+	                     
+	  <tk label="Project: (prop,pro)">
+   
+		<!-- jar-file -->
+		<tk type="file" 
+			id="in-jar" 
+			label="()1. Select a jar-file()" 
+			tip="(prop,tip-jar)"
+			flag="nono"
+			extension=".jar"
+      base="(f,when,(prop,psi-2),(dir,app)DEMO,)"/>
+     </tk>   
+    
+		<!-- application name -->
+		<tk label="Project: (prop,pro)">    
+			<tk type="text" 
+				id="in-name" 
+				label="2. Give the application a name"     		 
+				tip="(prop,tip-name)"
+				flag="nono"
+				rule="filename"
+				regex="[^\.]+"
+				regex_msg="Application name can't have dots"
+				x="(f,name_of_file2,(file,in-jar))"/> 
+		</tk>   	  
+	  
+    </otherwise>
+  </choose>
+  
+  <!-- doing input -->
+  <call_job job="tk_para_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_para_write"/>
+
+</job>
+
+
+
+<job id="tk_para_print_values" tip="para_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_para_read"/>
+  
+  <call_job job="tk_para_core">
+    <prop id="tk_para_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_para_print_values_tips" tip="para_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_para_read"/>
+  
+  <call_job job="tk_para_core">
+    <prop id="tk_para_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_para_print_help" tip="para_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_para_core">
+    <prop id="tk_para_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_para_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,para-data)" />
+  </call_job>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_para_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,para-data)" />
+    <prop id="joe-in-regex" x="(prop,para-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_para_clear"  tip="para_: Clears the data" role="hidden">
+  <delete file="(file,para-data)"/>
+</job>
+
+<job id="tk_paras_exists" role="hidden">
+	
+  <prop id="tk_paras_exists" x="0" />
+  
+	<when test="(f,has,prop,pro)">
+	<when test="(f,exists_file,(file,para-data))">
+    <prop id="tk_paras_exists" x="1" />
+	</when>
+	</when>
+
+</job>
+</jobs>

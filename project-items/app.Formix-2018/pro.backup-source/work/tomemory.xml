@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="source-read">
+<need>(prop,source_key)</need>
+<spirit act="open" missing_strategy="empty" id="sources_spirit_tc" xml="(file,sources)"/>
+<prop id="source_dt_upd">(f,spirit,sources_spirit_tc,(prop,sources_offset)source[@row=(f,xpath_string,(prop,source_key))],@dt_upd)</prop>
+<prop id="source_dt_add">(f,spirit,sources_spirit_tc,(prop,sources_offset)source[@row=(f,xpath_string,(prop,source_key))],@dt_add)</prop>
+<dir flag="cool" id="source_dir_rel">(f,spirit,sources_spirit_tc,(prop,sources_offset)source[@row=(f,xpath_string,(prop,source_key))],@dir_rel)</dir>
+<unescape type="dir" id="source_dir_rel"/>
+<translate type="dir" id="source_dir_rel"/>
+<prop id="source_name">(f,spirit,sources_spirit_tc,(prop,sources_offset)source[@row=(f,xpath_string,(prop,source_key))],@name)</prop>
+<prop id="source_includes">(f,spirit,sources_spirit_tc,(prop,sources_offset)source[@row=(f,xpath_string,(prop,source_key))],@includes)</prop>
+<prop id="source_excludes">(f,spirit,sources_spirit_tc,(prop,sources_offset)source[@row=(f,xpath_string,(prop,source_key))],@excludes)</prop>
+<spirit act="close" id="sources_spirit_tc"/>
+</job>

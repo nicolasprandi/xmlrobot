@@ -1,0 +1,1004 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+
+<job id="do-the-integration-fast" role="hidden">  
+  <!-- <call_job job="int-ensure-starter-set"/> 
+  <ti x="Doing Fast-Integration ..."/>                 -->
+  
+  
+  <file id="ipax-data" x="(f,request,dir,libro2)fast/fast-integration-paras.xrs" />
+    
+  <call_job job="ipax-read"/> 
+
+
+           
+      <ti_hr/>
+
+  <prop id="do-int-how">fast</prop>
+  <prop id="int-standard-dbci">fasta__</prop>
+
+  <call_job job="ipax-run"/>  
+
+</job>
+
+<job id="do-the-integration-rebuild" role="hidden">  
+
+  <!-- <ti x="Doing Full-Integration ..."/> -->
+  
+   <ti x="Doing Full-Integration ..."/>
+  <call_job job="int-ensure-starter-set"/>
+  
+  <call_job job="ipaxx-read"/>
+    
+  <call_job job="ipax-read"/> 
+
+  <call_job job="ipax-edit"/>
+  
+  <call_job job="ipax-write"/>
+           
+      <ti_hr/>
+
+  <prop id="do-int-how">full</prop>
+  <prop id="int-standard-dbci">fulla__</prop>
+
+  <call_job job="ipax-run"/>  
+
+</job>
+
+<job id="ipaxx-read" role="hidden">
+  <file id="ipax-data" x="(dir,pro)integration-paras.xrs" />
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ipaxx-data)" />
+    <prop id="joe-in-regex" x="(prop,ipaxx-regex)" />
+  </call_job> 
+  
+</job>
+
+<job id="ipaxx-print" role="hidden">
+  <file id="ipax-data" x="(dir,pro)integration-paras.xrs" />
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ipaxx-data)" />
+    <prop id="joe-in-regex" x="(prop,ipaxx-regex)" />
+  </call_job> 
+  
+  <ti label="Current Full-Integration-Parameters"/>
+  <ti type="file" label="locate in:">(file,ipax-data)</ti>
+  <ti type="call_job" job="ipaxx-edit" explain="Edit" flag="button" class="fx" label=" "> 
+  </ti>    
+
+   <ti_hr_break/>
+   <call_job job="_configurations_header2"/>
+  
+</job>
+<job id="ipaxx-edit" role="hidden">
+  <file id="ipax-data" x="(dir,pro)integration-paras.xrs" />
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ipaxx-data)" />
+    <prop id="joe-in-regex" x="(prop,ipaxx-regex)" />
+  </call_job> 
+  
+  <tk label="Full-Integration-Patameters" 
+      flag="print"
+      tip="..."
+      tk_id="0"> 
+
+    <tk id="ipax-data"
+        type="file"  
+      	label="Parameter file" 
+        flag=" save"          
+        tip="Parameters for full integration will be stored in this file"/>        
+                          
+  </tk>     
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ipaxx-data)" />
+    <prop id="joe-in-regex" x="(prop,ipaxx-regex)" />
+  </call_job> 
+   <ti_hr_break/>
+   <call_job job="_configurations_header2"/>  
+</job>
+
+<job id="ipax-read" role="hidden">
+  <need>(file,ipax-data)</need>
+  <ti type="file" label="Reading:">(file,ipax-data)</ti> 
+    
+  <remove type="prop"  id="dropindex" flag="catch"/>
+  <remove type="prop"  id="runstats" flag="catch"/>
+  <remove type="prop"  id="explain" flag="catch"/>
+  <remove type="prop"  id="projectdb" flag="catch"/>
+  <remove type="prop"  id="ip_commit" flag="catch"/>
+  <remove type="prop"  id="ip_report" flag="catch"/>
+  <remove type="prop"  id="ip_checkonly" flag="catch"/>
+  <remove type="prop"  id="ip_adapt" flag="catch"/>
+  <remove type="prop"  id="ip_dss" flag="catch"/>
+  <remove type="prop"  id="ip_numform" flag="catch"/>
+  <remove type="prop"  id="ip_solo" flag="catch"/>
+  <remove type="prop"  id="ip_smart" flag="catch"/>
+  <remove type="prop"  id="ip_smart_in_opti" flag="catch"/>
+  <remove type="prop"  id="ip_simple" flag="catch"/>
+  <remove type="prop"  id="ip_doubleoccupation" flag="catch"/>
+  <remove type="prop"  id="ip_pso" flag="catch"/>
+  <remove type="prop"  id="ip_kopfgrouped" flag="catch"/>
+  <remove type="prop"  id="ip_flags" flag="catch"/>
+  <remove type="prop"  id="ip_intensive" flag="catch"/>  
+  <remove type="prop"  id="ip_domv" flag="catch"/>
+  <remove type="file"  id="ip_mv" flag="catch"/>
+  <remove type="prop"  id="ip_dokick" flag="catch"/>
+  <remove type="prop"  id="ip_dokickconfirm" flag="catch"/>
+  <remove type="file"  id="ip_kick" flag="catch"/>    
+  <remove type="prop"  id="ip_doindex" flag="catch"/>
+  <remove type="file"  id="ip_index" flag="catch"/>
+  <remove type="prop"  id="ip_dobreak" flag="catch"/>
+  <remove type="file"  id="ip_break" flag="catch"/>
+  <remove type="prop"  id="ip_isdetails" flag="catch"/>
+  <remove type="prop"  id="upp" flag="catch"/>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ipax-data)" />
+    <prop id="joe-in-regex" x="(prop,ipax-regex)" />
+  </call_job>  
+  
+  <need default="0">(prop,ip_isdetails)</need>   
+  <need default="0">(prop,dropindex)</need>
+  <need default="0">(prop,runstats)</need>
+  <need default="0">(prop,explain)</need>
+  <need default="0">(prop,projectdb)</need>
+  <need default="1">(prop,ip_dss)</need> 
+  <need default="0">(prop,ip_numform)</need>
+  <need default="0">(prop,ip_solo)</need> 
+  <need default="1">(prop,ip_smart)</need>
+  <need default="0">(prop,ip_smart_in_opti)</need>
+  <need default="0">(prop,ip_simple)</need>
+  <need default="100">(prop,ip_commit)</need>
+  <need default="20000">(prop,ip_report)</need>
+  <need default="1">(prop,ip_doubleoccupation)</need>
+  <need default="0">(prop,ip_checkonly)</need>
+  <need default="1">(prop,ip_adapt)</need>
+  <need default="0">(prop,ip_doindex)</need>
+  <!-- <need default="">(file,ip_index)</need> -->
+  <need default="0">(prop,ip_dobreak)</need>
+  <need default="0">(prop,ip_dokick)</need>
+  <need default="0">(prop,ip_dokickconfirm)</need>
+  <!-- <need default="1">(file,ip_break)</need> -->
+  <need default="">(prop,ip_flags)</need>
+  <need default="1">(prop,ip_intensive)</need>  
+  <need default="upp_mig upp_heal upp_top">(prop,upp)</need> 
+  <need default="0">(prop,ip_kopfgrouped)</need>
+  <need default="0">(prop,ip_domv)</need>
+  <need default="1">(prop,ip_pso)</need>   
+  
+</job>
+
+<job id="ipax-write" role="hidden">
+  <need>(file,ipax-data)</need>
+  <ti type="file" label="Writing:">(file,ipax-data)</ti>
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ipax-data)" />
+    <prop id="joe-in-regex" x="(prop,ipax-regex)" />
+  </call_job>  
+</job>
+
+<job id="ipax-edit" role="hidden">
+  <prop id="has_databaselink">0</prop>     
+  <prop id="has_databaselink" flag="catch">(f,has,(f,request,dir,databaselink))</prop>
+      
+      <!-- eingabe teil 1 -->
+      <tk label="(prop,_int_integration)"> 
+  			<tk label="(prop,_int_sure_l)"            
+  					type="accept" 
+  					id="int-accept" 
+  					x="(prop,_int_continue_l)&#xA;(f,time,yyyy-MM-dd HH:mm:ss)&#xA;"
+            tip="(prop,_int_i_tip)"
+  
+  					label_accept="(prop,_int_integrieren)" 
+  					label_decline="(prop,_int_abbrechen)" 
+  					width="300" height="100">
+  						<q id="dropindex" label="(prop,_int_do_idx)(f,when,(prop,bpRebuild),, (e:o)Won&apos;t be executed(e:c))" flag="load"/>              
+              
+  
+              <q id="explain" label="Explain (e:o)(prop,_int_moeglich): (f,right,explain)(e:c)" flag="load"/>
+              <q id="runstats" label="(prop,_int_do_statistics)" flag="load"/>
+              <q id="ip_checkonly" label="Check Only" flag="load"/>
+              <q id="ip_pso" label="Prepare Migration-Selections Once-pso" flag="load"/>
+              <q id="ip_dss" label="Database Specific Statements" flag="load"/>
+              <q id="ip_solo" label="Poor Top-Solo-Algorithm" flag="load"/>
+              <q id="ip_smart" label="Smart Key Reduction" flag="load"/> 
+              <q id="ip_smart_in_opti" label="Smart Key Reduction during Optimization" flag="load"/>            
+              <q id="ip_doubleoccupation" label="Double-Occupation" flag="load"/>
+              <q id="ip_numform" label="Hopefull Value-Conversion" flag="load"/>
+              <q id="ip_simple" label="Hopefull Integer-Conversion" flag="load"/>
+              <q id="ip_isdetails" label="Print index-setup" flag="load"/>          
+              <q id="ip_kopfgrouped" label="Kopf-Updated grouped by ObjectType" flag="load"/>
+                                   
+              <q id="projectdb" label="(prop,_int_do_rep_pdb) (e:o)(prop,_int_moeglich): (prop,has_databaselink)(e:c)" flag="load"  test="(prop,has_databaselink)"/>
+             
+  			</tk>
+      </tk>
+      
+       <throw test="(f,not,(prop,int-accept))">(prop,_int_abgebrochen)</throw>
+      
+      <!-- eingabe teil 2-->
+      <tk label="Commit-Logic &amp; Index-Scenrio" tk_id="0" flag="sum_only print"
+          tip="">
+        <tk label="Commit-Size" id="ip_commit" flag="nono" cols="20"
+            tip="Die Commit-Size bestimmt nach wievielen 'verarbeiteten' Datensätzen ein Commit auf die Datenbank abgesetzt werden."/>
+        <tk label="Adapt Commit-Size" id="ip_adapt" type="bool" flag="nono"
+            tip="Triggert(e:s) dass bei mehreren Updates eines Verarbeitungsschrittes die effektive Commit-Size an die Anzahl der zu erwartenden Updates angepasst wird"/>
+        <tk label="Large Report per" id="ip_report" flag="nono" cols="20"
+            tip="Betrifft Verarbeitungsschritte(e:s) bei denen viele Tabellen-Zeilen abgearbeitet werden. Definiert bei wieviel abgearbeiteten Zeilen jeweils eine Fortschritssmeldung auf den Integration-Log geschrieben wird."/>
+        
+        <tk type="msg" test="(prop,bpRebuild)" tip="Hiermit kann der Auf- und Abbau der Indizes während der Integration indivuell gesteuert werden. Indexszenarios greifen prinzipiell nur dann(e:s) wenn der Parameter '(prop,_int_do_idx)' gesetzt wurde. Teile des Index-Szenarios greifen nur dann wenn der Parameter '(prop,_int_do_statistics)' gesetzt wurde.">Personal Index-Szenarios</tk>
+        
+        <tk label="Use Index-Scenario" id="ip_doindex" type="bool" flag="nono"  test="(prop,bpRebuild)"
+            tip="Soll ein Index-Scenrio grundsätzlich verwendet werden? Dann muss auch das File 'Index-Scenario' definiert werden. Dieses enthält entsprechende Abläufe zum Auf- und Abbau der Indizes."/>
+        <tk label="Index-Scenario" id="ip_index" type="file"  test="(prop,bpRebuild)"
+            tip="()Das File eines Index-Szenarios. Sie finden solche unter IHR-HIBISCUS-PROJEKT/xDb/index/BUCHNAME/imp-list.xml()"/>
+        
+        <tk label="Perform Breakpoints" id="ip_dobreak" type="bool" flag="nono"    test="(prop,bpRebuild)"
+            tip="Im Index-Szenario können auch Break-Points definiert werden. Um diese grundsätzlich auszuführen muss dieses Feld gesetzt werden. Bei der Rückmeldung eines Breakpoint wird darauf gewartet bis eine definierte Datei vom benutzer gelöscht wird. Diese Datei ist zu definieren. "/>
+        <tk label="Breakpoint-File" id="ip_break" type="file" flag="write save"     test="(prop,bpRebuild)"
+            tip="Die Datei(e:s) die Zwecks Fortsetzung der Integration bei einem Breakpoint vom Benutzer gelöscht werden muss"/>      
+        <tk label="Custom-Flag(e:o)s(e:c)" id="ip_flags" type="textblock"           test="(prop,bpRebuild)"
+            tip="Damit können zusätzliche Konditionalitäten eines IndexSzenrios angewendet werden."/>
+        <tk label="Intensive Rounds" id="ip_intensive" type="text" 
+            test="(prop,bpRebuild)"
+             
+            tip="Anzahl der Runden bis zum Release/Rel."/>      
+        <tk label="Update-Packages" id="upp" type="sel" flag="multi" 
+            test="(prop,bpRebuild)"
+            tip="Welche update-packages von pronto2">
+            <sel label="Migration">upp_mig</sel>
+            <sel label="Healing">upp_heal</sel>
+            <sel label="Top-Calc">upp_top</sel>
+        </tk>   
+         
+        <tk type="msg" tip="Selection Update" test="(f,right,spr)">Personal Selection-Update</tk>
+         
+        <tk label="Perform Selection-Update" id="ip_dokick" type="bool" flag="nono" test="(f,right,spr)"
+            xtip="Im Index-Szenario können auch Break-Points definiert werden. Um diese grundsätzlich auszuführen muss dieses Feld gesetzt werden. Bei der Rückmeldung eines Breakpoint wird darauf gewartet bis eine definierte Datei vom Benutzer gelöscht wird. Dieses ist zu definieren. "/>
+        <tk label="Selection-Bulk-File" id="ip_kick" type="file" xflag="write save" test="(f,right,spr)"
+            xtip="Die Datei(e:s) die Zwecks fortsetzung der Integration bei einem Breakpoint vom benutzer gelöscht werden muss"/>
+        <tk label="Confirm" id="ip_dokickconfirm" type="bool" flag="nono" test="(f,right,spr)"
+            tip="Do confirm the file right now"/>  
+        <tk type="msg" tip="&#220;bergabe eines Regel-Files">MatView-Rules</tk>      
+        <tk label="Perform MatView-Rules" id="ip_domv" type="sel" flag="nono" 
+            xtip=" ">
+            <sel label="No">0</sel>
+            <sel label="Yes: by DSS">1</sel>
+            <sel label="Yes: by JDBC">2</sel>
+        </tk>   
+        <tk label="MatView-Rules-File" id="ip_mv" type="file"   
+            xtip="Die Datei(e:s) die Zwecks fortsetzung der Integration bei einem Breakpoint vom benutzer gelöscht werden muss"/>                                     
+      </tk>    
+      
+
+
+</job>
+
+<job id="ipax-run" role="hidden">
+                                  
+  <tp>(prop,_int_started_l)</tp>
+  <ti label="(prop,_int_started_l)"/>  
+  <!-- <ti>do-int-how=(prop,do-int-how)  int-standard-dbci=(prop,int-standard-dbci)  </ti> -->                   
+  
+  <when test="(f,not,(f,right,explain))">
+    <prop id="explain">0</prop>
+  </when>  
+
+  <prop id="has_databaselink">0</prop>     
+  <prop id="has_databaselink" flag="catch">(f,has,(f,request,dir,databaselink))</prop>  
+  <when test="(f,not,(prop,has_databaselink))">
+    <prop id="projectdb">0</prop>
+    <!-- <ti>projectdb was refused</ti> --> 
+  </when>        
+  
+  <choose>
+    <when test="(prop,projectdb)">
+     <dir id="integration-log-dir">(f,request,dir,databaselink)hibiscus-integro/(f,time,yyyy-MM)/(f,time,dd)/(f,time,HH-mm-ss)/</dir>    
+    </when>
+    <otherwise> 
+       <dir id="integration-log-dir">(dir,pro)integro/(f,time,yyyy-MM)/(f,time,dd)/(f,time,HH-mm-ss)/</dir>    
+    </otherwise>
+  </choose>
+  
+  <file id="integration-log">(dir,integration-log-dir)log.txt</file>
+  <file id="explain-log">(dir,integration-log-dir)explain.xml</file>
+  
+  <prop id="integration-flag">debug</prop>
+  <choose>
+    <when test="(prop,explain)">
+      <prop id="explain-para">(file,explain-log)</prop>
+    </when>
+    <otherwise>
+      <prop id="explain-para"></prop>
+    </otherwise>  
+  </choose>
+
+  <ti_flush/>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)integro/last-integration.xml" />
+    <prop id="joe-in-regex" x="integration-log(f,when,(prop,explain),|explain-log,)" />  
+  </call_job>   
+  
+  <!-- index-szenario parameters vorbereiten |ip_doindex|ip_index|ip_dobreak|ip_break|ip_flags-->
+  <!-- 
+  grundsaetzlich muss der index erneuert werden
+  wenn do-index hakerl gesetzt aber kein index-file gegeben ist dann fliegen
+  wenn do-break hakerl gesetzt dann brauchts ein break-file
+  cust-flag 
+  -->
+  <file id="in_break"></file>
+  <prop id="in_cust_flags"></prop>
+  <file id="in_index"></file>
+  <file id="in_kick"></file>
+  
+  <file id="in_mv"></file>
+  <prop id="in_mv_style"></prop>
+  
+  <when test="(f,gt_num,(prop,ip_domv),0)">
+    <throw test="(f,not,(f,has,file,ip_mv))">mv-rule-file wird gebraucht</throw>
+    <ti type="file" label="Using mv-rules">(file,ip_mv)</ti> 
+    <file id="in_mv">(file,ip_mv)</file>
+    <prop id="in_mv_style">(prop,ip_domv)</prop>
+  </when>
+
+  <when test="(prop,ip_dokick)">
+  <when test="(f,right,spr)">
+    <throw test="(f,not,(f,has,file,ip_kick))">kick-file wird gebraucht</throw>
+
+    <ti type="file" label="Using sel-updates">(file,ip_kick)</ti>
+ 
+     <call_job job="convert-bulk-to-ims">
+       <file id="bulk-file" x="(file,ip_kick)"/>    
+       <file id="new-ims-file" x="(dir,integration-log-dir)select-replacements.xml"/>   
+     </call_job>   
+    <file id="in_kik">(file,new-ims-file)</file>
+  </when>
+  </when>
+
+  <when test="(prop,ip_doindex)">
+    
+    <throw test="(f,not,(f,has,file,ip_index))">index-file wird gebraucht</throw>
+    <file id="in_index">(file,ip_index)</file>
+    <copy file="(file,ip_index)" tofile="(dir,integration-log-dir)index-manipulations.xml"/>
+    
+    <ti type="file" label="Using index points">(file,ip_index)</ti>    
+    
+    <when test="(prop,ip_dobreak)">
+      <throw test="(f,not,(f,has,file,ip_break))">break-file wird gebraucht</throw>
+      <file id="in_break">(file,ip_break)</file>
+    </when>
+    
+    <prop id="in_cust_flags">(f,replace,(f,vob,prop,ip_flags),&#xA;, )</prop>
+    
+  </when>        
+               
+  <dir id="iLog">(f,request,dir,session_home_fs)integration-temp/</dir>
+  <prop id="iflag">(f,when,(prop,ip_kopfgrouped),kopfgrouped,) (f,when,(prop,ip_dss),dss,) (f,when,(prop,ip_numform),numform,) (f,when,(prop,ip_solo),solo,) (f,when,(prop,ip_smart),smart,) (f,when,(prop,ip_smart_in_opti),smart_in_opti,) (f,when,(prop,ip_simple),simple,) (f,when,(prop,ip_doubleoccupation),doubleoccupation,) (f,when,(prop,ip_adapt),adapt,) (f,when,(prop,ip_pso),pso,) (f,when,(prop,ip_checkonly),checkonly,) (f,when,(prop,ip_isdetails),isdetails,) (prop,upp)</prop>
+  
+  <prop id="x_drop_index" x="(f,when,(prop,bpRebuild),(prop,dropindex),0)" />
+  <when test="(f,and,(f,not,(prop,bpRebuild)),(prop,dropindex))">
+    <ti>Your request to (f,html,b,o)drop the index will be ignored(f,html,b,c) due to your not enabled privileg</ti>
+  </when>
+  
+  <!-- ab hier wirds interessant -->
+  <call_job job="do-int-core"/>
+  
+  <call_job job="tr_rij"/>
+  <ti>(prop,_int_in_back_started)</ti>
+
+  <ti_break/>  
+
+  
+  <ti type="rec" label="(prop,_int_int_log)">
+    <ti type="call_job" job="see-log-file" explain="(prop,_x_rij_seelogcont)" flag=" button" class="fx"> 
+      <file id="logging">(file,integration-log)</file>
+    </ti>    
+    <ti type="file" >(file,integration-log)</ti>
+  </ti>  
+
+    <when test="(prop,explain)">
+      
+        <ti_space height="7px"  test="(f,implement,online)"/>
+        <ti label="(prop,_int_expl_report)" type="rec">
+          <ti type="call_job" job="see-explain" explain="(prop,_int_explain_expl)" flag=" button" class="fx fxAdd" >
+            <file id="explain-to-see">(file,explain-log)</file>
+          </ti>
+          <ti type="file" >(file,explain-log)</ti>               
+        </ti>
+       </when>
+       
+     <ti label=" " type="call_job" job="process-admin" explain="Laufende Prozesse" flag="button " class="fx redButton"/>         
+    
+    
+  
+
+</job>
+
+<!--
+<call_job job="ipax-read"/> 
+<call_job job="ipax-write"/> 
+<call_job job="ipax-edit"/> 
+<call_job job="ipax-run"/> 
+
+<file id="ipax-data" x="(dir,pro)integration-paras.xrs" />
+-->
+
+
+
+<job id="int-ensure-starter-set" role="hidden">
+
+<when test="(f,not,(f,exists_file,(dir,pro)integration-paras.xrs))">
+    <!-- erstmalig volle integration, hier wird im prinzip eine standardvorlage für die index-points aus einem starter-set ins projekt kopiert -->
+    <tk label="Integration">
+    <tk type="msg">Integration mit index-rebuild wurde zum ersten mal angefordert ...
+Integration with index-rebuild was requested for the first time ...</tk>
+    </tk>
+    <!-- dbms checken -->
+    <call_job job="tk_db_read_dbms"/>
+    <choose>
+        <when test="(f,implement,online)">
+            <dir id="starter-set">(f,request,dir,libro2)starter-set</dir>
+        </when>
+        <otherwise>
+            <dir id="starter-set">(dir,app)starter-set</dir>
+        </otherwise>
+    </choose>
+    <choose>
+        <when test="(f,not,(f,exists_dir,(dir,starter-set)))">
+            <tk label="Integration">
+            <tk type="msg" msg_type="e">Das sogenannte &apos;Starter-Set&apos; wurde nicht gefunden. Es wurde im folgenden Verzeichnis erwartet:
+(dir,starter-set) 
+aber dieses existiert nicht.
+
+Kontaktieren Sie kompetentes Personal und veranlassen Sie die Erzeugung des genannten Verzeichnisses mit den Daten des Starter-Sets.
+
+The socalled &apos;Starter-Set&apos; was not found. It is expected to be in the directory:
+(dir,starter-set) 
+but the folder does not exist.
+
+Contact a professional and create the Starter-Set on base of the Hibiscus-Application where you find the folder &apos;Starter-Set&apos;
+</tk></tk>
+<throw>Starter-Set nicht gefunden. Starter-Set not found.</throw>
+                    
+        
+        </when>
+        <otherwise>
+          <when test="(f,not,(f,has,prop,db_dbms))">
+              <tk label="Integration" flag="sum">
+                <tk type="msg">Kein dbms spezifiziert(e:s) Spezifizieren Sie nun ein Dbms um einen Vorschlag für die Indexpoints zu erhalten und weitermachen zu koennen</tk>
+                <tk type="sel" id="db_dbms" flag="nono">
+                  <sel label="MariaDb">maria</sel>
+                  <sel label="MySql">mysql</sel>
+                  <sel label="Postgres">postgres</sel>
+                  <sel label="Ignorieren und Weiter">ignore</sel>
+                </tk>
+              </tk>
+          </when>          
+        
+          <choose>
+
+            <when test="(f,or,(f,eq_text,(prop,db_dbms),maria),(f,eq_text,(prop,db_dbms),mysql))">
+                
+                <copy 
+                    file="(dir,starter-set)standard-intparas-maria-mysql-(f,implement,online).xrs" 
+                    tofile="(dir,pro)integration-paras.xrs"/>
+                <tk label="Integration">
+                <tk type="msg">Entsprechende standardmässige Index-Point-Definitionen wurden vom Starter-Set importiert.
+    Relevant Default-Index-Point-Definitions have been imported from Starter-Set.</tk>
+                </tk>
+            </when>
+            <when test="(f,eq_text,(prop,db_dbms),postgres)">
+                <tk label="Integration">
+                <tk type="msg">Das definierte dbms ist &apos;postgres&apos;.
+    Hierfür gibt es bis dato noch keine standardmässigen Definitionen für die Index-Points.
+    Kontaktieren Sie kompetentes Personal.
+    No Index-Point-Definitions in Starter-Set found for dbms &apos;postgres&apos;.
+    Do connect to professionals.</tk>
+                </tk>
+                <copy 
+                    file="(dir,starter-set)standard-intparas-postgres.xrs" 
+                    tofile="(dir,pro)integration-paras.xrs"/>
+            </when>   
+            <when test="(f,eq_text,(prop,db_dbms),ignore)">
+            </when>
+            <otherwise>
+                <tk label="Integration">
+                <tk type="msg">Unbekanntes dbms &apos;(prop,db_dbms)&apos; erkannt(e:s) Kontaktieren Sie kompetentes Personal.
+    Unknown dbms &apos;(prop,db_dbms)&apos; specified(e:s) do connect to professionals.</tk>
+                </tk>
+            </otherwise>           
+          </choose>
+        
+        </otherwise>
+
+    </choose>
+  
+  </when>
+  <!-- erstmalige vorlage ex starter-set für index-points erledigt -->
+
+
+</job>
+
+
+
+<job id="do-int-core" role="hidden">
+  <throw test="(f,not,(f,right,int))">Keine Berechtigung zur Integration</throw>
+  <prop id="do-by-standard-dbci">0</prop>
+  <ti label="int.flags" x="(prop,iflag)"  /> 
+  <choose>
+    <when test="(prop,bpDb)" >
+      <!-- eigener DB-Access --> 
+      
+      <!-- fast mit eigener db -->
+      <call_job job="do-int-mydb"/>
+        
+
+  
+      <choose>
+        <when test="(prop,do-int-mydb)">
+          <!-- letztendlich wirklich mit eigener db-->
+          <call_job job="tk_db_read"/>
+          <choose>
+            <when test="(f,eq_text,url,(prop,db_how))">
+              <!-- eigene db mit url-spec -->
+              <ti>Running Integration with your INDIVIDUAL Db-Access specified by URL</ti>
+              <call_job job="pre-int"/>
+              <ti_flush/>
+              <integriere
+                how="url"               
+                log="(dir,iLog)"
+                index="(file,in_index)"
+                break="(file,in_break)"
+                mv="(file,in_mv)"
+                mv_style="(prop,in_mv_style)"
+                kick="(file,in_kick)"
+                cust_flag="(prop,in_cust_flags)"
+                intensive_rounds="(prop,ip_intensive)"                                 
+                test="(f,right,int)"
+                db="(prop,db_dbms)"
+                url="(prop,db_url)"
+                user="(prop,db_userid)"
+                password="(prop,db_pix)" 
+                log_file="(file,integration-log)"
+                log_flag="(prop,integration-flag)"
+                drop_index="(prop,x_drop_index)"
+                explain="(prop,explain-para)"
+                runstats="(prop,runstats)"
+                background="1"
+                pronto="2"
+                commit="(prop,ip_commit)"
+                report="(prop,ip_report)"
+                flag="(prop,iflag)"              />
+                <!-- <call_job job="post-int"/> -->                             
+            </when>
+            <when test="(f,eq_text,dbci,(prop,db_how))">
+              <!-- eigene db mit dbci spec -->
+              
+              <!-- default hibiscus bei a__ -->
+              <when test="(f,ends_with,(prop,db_dbci),a__)">
+              <when test="(f,not,(f,has,prop,db_app))">
+                <prop id="db_app">Hibiscus</prop>
+                <ti>Assumed &apos;Hibiscus&apos; as default for dbci called &apos;(prop,db_dbci)&apos;</ti>
+              </when>
+              </when>           
+              
+              <ti>Running Integration with your INDIVIDUAL Db-Access specified by DBCI</ti>
+              <call_job job="pre-int"/>
+              <ti_flush/>
+              <integriere            
+                how="dbci"
+                dbci="(prop,db_dbci)"
+                dbci_app="(prop,db_app)"
+                log="(dir,iLog)"
+                index="(file,in_index)"
+                break="(file,in_break)"
+                mv="(file,in_mv)"             
+                mv_style="(prop,in_mv_style)"
+                kick="(file,in_kick)"
+                cust_flag="(prop,in_cust_flags)"
+                intensive_rounds="(prop,ip_intensive)"                                 
+                test="(f,right,int)"
+                log_file="(file,integration-log)"
+                log_flag="(prop,integration-flag)"
+                drop_index="(prop,x_drop_index)"
+                explain="(prop,explain-para)"
+                runstats="(prop,runstats)"
+                background="1"
+                pronto="2"
+                commit="(prop,ip_commit)"
+                report="(prop,ip_report)"
+                flag="(prop,iflag)"                
+              />    
+              <!-- <call_job job="post-int"/> -->           
+            </when>          
+            <otherwise>
+              <throw>unknown db_how=(prop,db_how)</throw>         
+            </otherwise>       
+          </choose>   <!-- eigene db mit url oder dbci -->
+          
+          <remove type="prop" id="db_dbms" flag="catch"/>
+          <remove type="prop" id="db_url" flag="catch"/>
+          <remove type="prop" id="db_userid" flag="catch"/>
+          <remove type="prop" id="db_pix" flag="catch"/>  
+          <remove type="prop" id="db_dbci" flag="catch"/>
+          <remove type="prop" id="db_app" flag="catch"/>    
+          
+        </when>   <!-- ende letztendlich eigene db -->
+        <otherwise>
+          <prop id="do-by-standard-dbci">1</prop>
+          <ti>Running Integration with DEFAULT Db-Access</ti>
+          <ti_flush/>
+          <!-- eigene db existiert aber trotzdem mit standard db    -->   
+        </otherwise>
+      </choose>
+    </when>
+    <otherwise>    
+      <!-- fast mit standard-db -->
+      <prop id="do-by-standard-dbci">1</prop>
+      <ti>Running Integration with DEFAULT Db-Access</ti>
+      <ti_flush/>
+    </otherwise>
+  </choose>  
+
+  <when test="(prop,do-by-standard-dbci)">
+    <!-- mit dem standard-dbci, kann 2 gruende haben... -->
+    <call_job job="pre-int"/>  
+    <integriere            
+      how="dbci"
+
+      dbci="(prop,int-standard-dbci)"
+      dbci_app="Hibiscus" 
+      log="(dir,iLog)"
+      index="(file,in_index)"
+      break="(file,in_break)"
+      mv="(file,in_mv)"                      
+      mv_style="(prop,in_mv_style)"
+      kick="(file,in_kick)"
+      cust_flag="(prop,in_cust_flags)"
+      intensive_rounds="(prop,ip_intensive)"                                 
+      test="(f,right,int)"
+      log_file="(file,integration-log)"
+      log_flag="(prop,integration-flag)"
+      drop_index="(prop,x_drop_index)"
+      explain="(prop,explain-para)"
+      runstats="(prop,runstats)"
+      background="1"
+      pronto="2"
+      commit="(prop,ip_commit)"
+      report="(prop,ip_report)"
+      flag="(prop,iflag)"                
+    />    
+    <!-- <call_job job="post-int"/> -->               
+     
+  </when>  
+  <!--                             
+  <ti label="(prop,_int_is_done)"/>
+  <ti type="call_job" job="see-log-file" explain="(prop,_int_see_log)" flag="button " > 
+    <file id="logging">(file,integration-log)</file>
+  </ti>       -->
+</job>
+
+
+
+<job id="pre-int" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)icl.xrs" />
+    <prop id="joe-in-regex" x="integration-log|explain-para" />
+  </call_job>   
+  <call_job job="-db-close-on-purpose-"  flag="catch"/>
+</job>
+
+<job id="do-int-mydb" role="hidden">
+
+  <need>(prop,do-int-how)</need>
+
+
+  <choose>
+    <when test="(f,right,intmydb)">
+      <remove id="withmydb" type="prop" flag="catch" />
+      
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)gui/intmydb-(prop,do-int-how).xrs" />
+        <prop id="joe-in-regex" x="withmydb" />
+      </call_job>    
+      
+      <tk type="bool" id="withmydb" flag="nono"
+          label="Integrate.(prop,do-int-how) with Your-Db"/>
+      
+      <call_job job="go-joe-write" />
+      
+      <prop id="do-int-mydb">(prop,withmydb)</prop>     
+    </when>
+    <otherwise>
+      <prop id="do-int-mydb">0</prop> 
+    </otherwise>
+  </choose>
+
+</job>
+                                                                                      
+<job id="do-the-integration" role="hidden" xclass_menu="amConfig">
+ 
+  <throw test="(f,not,(f,right,int))">Keine Berechtigung zur Integration</throw>
+  <call_job job="tr_int" />
+  
+  <prop id="integration-main-rebuild">fast</prop>
+  <choose>
+    <when test="(prop,bpRebuild)">
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)gui/main-wish-integration.xml" />
+        <prop id="joe-in-regex" x="integration-main-rebuild" />
+      </call_job>              
+      <tk label="(prop,_int_requ4)">                                        
+      <tk type="sel" id="integration-main-rebuild" flag="nono" label="(prop,_int_how_to)?">
+        <sel label="(prop,_int_do_rebuild)">rebuild</sel>
+        <sel label="(prop,_int_do_fast)">fast</sel>
+      </tk>
+      </tk>
+      <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(dir,pro)gui/main-wish-integration.xml" />
+        <prop id="joe-in-regex" x="integration-main-rebuild" />
+      </call_job>     
+    </when>    
+    <otherwise>
+        <tk label="(prop,_int_requ4)">
+        <tk type="msg">(prop,_int_doing_fast) ...</tk>
+        </tk>
+    </otherwise>
+   </choose>              
+   <!-- 
+   <choose>
+    <when test="(f,implement,echnaton)">
+      <taskdef id="integriere" class="at.nicolas.x.hibiscus.a" jar="(dir,app)hibiscus-first-echnaton.jar"/>
+    </when>
+    <otherwise>
+      <taskdef id="ee" class="at.nicolas.x.hibiscus.a" jar="(dir,app)hibiscus-first.jar"/>
+    </otherwise>
+  </choose>   -->
+      
+   <call_job job="do-the-integration-(prop,integration-main-rebuild)" />
+</job>
+  <!--
+<job id="do-the-integration-fast-alt" role="hidden">
+
+  <dir id="fast2">(f,request,dir,libro2)fast/</dir>
+  
+  <file id="fast_kick">(dir,fast2)selects.xml</file>
+  <ti type="file" label="search kick">(file,fast_kick)</ti>
+  <choose>
+    <when test="(f,exists_file,(file,fast_kick))">  
+      <ti label=" ">found</ti>
+    </when>  
+    <otherwise>
+      <ti label=" ">not found</ti>   
+      <file id="fast_kick"></file>      
+    </otherwise>       
+  </choose>     
+
+  <file id="fast_mv">(dir,fast2)mv.xml</file>
+  <ti type="file" label="search mv">(file,fast_mv)</ti>
+  <choose>
+    <when test="(f,exists_file,(file,fast_mv))">  
+      <ti label=" ">found</ti>
+    </when>  
+    <otherwise>
+      <ti label=" ">not found</ti>   
+      <file id="fast_mv"></file>      
+    </otherwise>       
+  </choose>     
+  
+  <file id="fast_paras">(dir,fast2)paras.xrs</file>
+  <ti type="file" label="search paras">(file,fast_paras)</ti>
+  <ti label=" ">fast_flag fast_commit fast_report fast_mv_style</ti>
+
+  <prop id="fast_flag">dss rapid doubleoccupation pso upp_mig upp_heal upp_top</prop>    
+  <prop id="fast_commit">100</prop>
+  <prop id="fast_report">20000</prop> 
+  <prop id="fast_mv_style">0</prop>
+  <choose>
+    <when test="(f,exists_file,(file,fast_paras))">  
+      <ti label=" ">found</ti>
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,fast_paras)" />
+        <prop id="joe-in-regex" x="fast_flag|fast_commit|fast_report|fast_mv_style" />  
+      </call_job>
+      <ti label="fast_flag:">(prop,fast_flag)</ti>        
+      <ti label="fast_commit:">(prop,fast_commit)</ti>
+      <ti label="fast_report:">(prop,fast_report)</ti>
+      <ti label="fast_mv_style:">(prop,fast_mv_style)</ti>
+    </when>  
+    <otherwise>
+      <ti label=" ">not found</ti>        
+    </otherwise>       
+  </choose>       
+  
+                                             
+  <dir id="integration-log-dir">(dir,pro)integro/(f,time,yyyy-MM)/(f,time,dd)/(f,time,HH-mm-ss)/</dir>   
+  <file id="integration-log">(dir,integration-log-dir)log.txt</file>  
+  
+  <prop id="background">0</prop>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)integro/last-integration.xml" />
+    <prop id="joe-in-regex" x="integration-log|background" />  
+  </call_job>  
+  
+  <dir id="int.log">(f,request,dir,session_home_fs)integration-temp/</dir>
+  
+  <prop id="int.runstats">0</prop>           
+  <prop id="int.background">1</prop>
+  <prop id="int.pronto">2</prop>
+  
+  <prop id="do-by-standard-dbci">0</prop>
+  <choose>
+    <when test="(prop,bpDb)" >
+
+      <call_job job="do-int-mydb">
+        <prop id="do-int-how">fast</prop>
+      </call_job>
+  
+      <choose>
+        <when test="(prop,do-int-mydb)">
+
+          <call_job job="tk_db_read"/>
+          <choose>
+            <when test="(f,eq_text,url,(prop,db_how))">
+
+              <ti>Running Integration with your INDIVIDUAL Db-Access specified by URL</ti>
+              <call_job job="pre-int"/>
+              <ti_flush/>
+              <integriere
+                how="url"
+                test="(f,right,int)"
+                log="(dir,int.log)"
+                kick="(file,fast_kick)"
+                log_file="(file,integration-log)"                                     
+                db="(prop,db_dbms)"
+                url="(prop,db_url)"
+                user="(prop,db_userid)"
+                password="(prop,db_pix)" 
+                runstats="(prop,int.runstats)"
+                background="(prop,int.background)"
+                pronto="(prop,int.pronto)"
+                commit="(prop,fast_commit)"
+                report="(prop,fast_report)"
+                flag="(prop,fast_flag)"
+                mv="(file,fast_mv)"
+                mv_style="(prop,fast_mv_style)"
+              />                
+               
+            </when>
+            <when test="(f,eq_text,dbci,(prop,db_how))">
+
+              <when test="(f,ends_with,(prop,db_dbci),a__)">
+              <when test="(f,not,(f,has,prop,db_app))">
+                <prop id="db_app">Hibiscus</prop>
+                <ti>Assumed &apos;Hibiscus&apos; as default for dbci called &apos;(prop,db_dbci)&apos;</ti>
+              </when>
+              </when>           
+              
+              <ti>Running Integration with your INDIVIDUAL Db-Access specified by DBCI</ti>
+              <call_job job="pre-int"/>
+              <ti_flush/>
+              <integriere            
+                how="dbci"
+                test="(f,right,int)"
+                log="(dir,int.log)"
+                kick="(file,fast_kick)"
+                log_file="(file,integration-log)"                                     
+                dbci="(prop,db_dbci)"
+                dbci_app="(prop,db_app)"
+                runstats="(prop,int.runstats)"
+                background="(prop,int.background)"
+                pronto="(prop,int.pronto)"
+                commit="(prop,fast_commit)"
+                report="(prop,fast_report)"
+                flag="(prop,fast_flag)"
+                mv="(file,fast_mv)"
+                mv_style="(prop,fast_mv_style)"
+              />    
+                   
+            </when>          
+            <otherwise>
+              <throw>unknown db_how=(prop,db_how)</throw>         
+            </otherwise>       
+          </choose>   
+          
+          <remove type="prop" id="db_dbms" flag="catch"/>
+          <remove type="prop" id="db_url" flag="catch"/>
+          <remove type="prop" id="db_userid" flag="catch"/>
+          <remove type="prop" id="db_pix" flag="catch"/>  
+          <remove type="prop" id="db_dbci" flag="catch"/>
+          <remove type="prop" id="db_app" flag="catch"/>
+          
+        </when>   
+        <otherwise>
+          <prop id="do-by-standard-dbci">1</prop>
+          <ti>Running Integration with DEFAULT Db-Access for FAST-Integration-Process</ti>
+          <ti_flush/>
+
+        </otherwise>
+      </choose>
+    </when>
+    <otherwise>    
+
+      <prop id="do-by-standard-dbci">1</prop>
+      <ti>Running Integration with DEFAULT Db-Access for FAST-Integration-Process</ti>
+      <ti_flush/>
+    </otherwise>
+  </choose>  
+
+  <when test="(prop,do-by-standard-dbci)">
+
+    <call_job job="pre-int"/>
+    <integriere
+      how="dbci"
+      test="(f,right,int)"
+      log="(dir,int.log)"
+      kick="(file,fast_kick)"
+      log_file="(file,integration-log)"        
+      dbci="fasta__"
+      dbci_app="Hibiscus"      
+      runstats="(prop,int.runstats)"                                      
+      background="(prop,int.background)"
+      pronto="(prop,int.pronto)"
+      commit="(prop,fast_commit)"
+      report="(prop,fast_report)"
+      flag="(prop,fast_flag)"
+      mv="(file,fast_mv)"
+                mv_style="(prop,fast_mv_style)"
+    />    
+  
+  </when>  
+                              
+  <ti label="(prop,_int_is_done)"/>
+  <ti type="call_job" job="see-log-file" explain="(prop,_int_see_log)" flag="button " > 
+    <file id="logging">(file,integration-log)</file>
+  </ti>  
+            
+</job>
+
+-->
+<!--
+<job id="int-log-archify" role="hidden">
+  <need>(dir,integration-log-dir)</need>
+  <dir id="int-arch">(dir,integration-log-dir)../archive/(f,time,yyyy-MM-dd_HH-mm-ss)</dir>
+  
+  <copy
+    uri="(dir,integration-log-dir)"
+    touri="(dir,int-arch)"/>
+
+  <ti label="Did archify latest integration-report"/>
+  <ti type="dir" label="Archive">(dir,int-arch)</ti>
+
+
+</job>
+ -->
+<!-- 
+<job id="integration-build-ro" role="hidden">
+  <call_job job="-db-open-" /> 
+  
+  <dbc id="(prop,mydbc)"    
+  act="update">TRUNCATE r_o;</dbc> 
+  
+  <dbc id="(prop,mydbc)"    
+  act="update">()INSERT into r_o ( obj_typ, anzahl ) 
+  SELECT 
+ min(obj.obj_typ) as obj_typ,  
+count(*) as anzahl 
+from 
+  obj as obj
+group by
+  obj.obj_typ
+order by
+  obj.obj_typ;()</dbc>
+    
+</job>            -->
+
+
+</jobs>

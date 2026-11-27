@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgo-write">
+    <need>(prop,pgo_key) (prop,isAdd)</need>
+    <need default="./">(prop,pgos_offset)</need>
+    <spirit act="open" id="pgos_spirit_tc" xml="(file,pgos)"/>
+    <when test="(prop,isAdd)">
+        <choose>
+            <when test="(f,ends_with,(prop,pgos_offset),/)">
+                <prop id="offset2" x="(f,substring,(prop,pgos_offset),0,(f,sub,(f,len,(prop,pgos_offset)),1))"/>
+            </when>
+            <otherwise>
+                <prop id="offset2" x="(prop,pgos_offset)"/>
+            </otherwise>
+        </choose>
+        <spirit act="xml_update" how="insert_in" id="pgos_spirit_tc" where="(prop,offset2)">
+            <inline attribute="with">&lt;pgo row="(prop,pgo_key)" /&gt;</inline>
+        </spirit>
+        <i>Added a new record</i>
+    </when>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="pgos_spirit_tc" where="(prop,pgos_offset)pgo[@row='(prop,pgo_key)']" attribute="objekttyp" value="(f,vob,prop,pgo_objekttyp)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="pgos_spirit_tc" where="(prop,pgos_offset)pgo[@row='(prop,pgo_key)']" attribute="detail" value="(f,vob,prop,pgo_detail)"/>
+    <spirit act="close" flag="save pretty" id="pgos_spirit_tc"/>
+</job>

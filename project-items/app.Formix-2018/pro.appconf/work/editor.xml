@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="appconf-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new AppConf(prop,appconfs_offset_label)"/>
+<prop x="sum" id="appconfs_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,appconf_key)</need>
+<prop id="label" x="AppConf [(prop,appconf_displayname)](prop,appconfs_offset_label)"/>
+<prop x="sum_only" id="appconfs_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="appconf-tk"/>
+</job>

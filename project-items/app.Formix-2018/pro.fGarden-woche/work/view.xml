@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="woche-see-all" level="ws" role="hidden" tip="Lists all Wochen">
+<prop id="nothing">1</prop>
+<loop id="i" missing_strategy="empty" xml="(file,wochen)" xpath="(prop,wochen_offset)woche(prop,wochen_where)" sort="(prop,wochen_sort_attribute)" number="(prop,wochen_sort_number)" ignore_case="(prop,wochen_sort_ignore_case)" desc="(prop,wochen_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,wochen_offset_label)),0)">
+<ti label="(prop,wochen_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti align="right" type="call_job" explain="(f,html,bold,open)(f,text,cut_nice,(loop,i,@bez),30)(f,html,bold,close) : " job="woche-see">
+<prop id="woche_key">(loop,i,@row)</prop>
+<file id="wochen">(file,wochen)</file>
+<prop id="wochen_offset">(prop,wochen_offset)</prop>
+<prop id="wochen_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="wochen_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="wochen_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="wochen_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="wochen_where">(prop,wochen_where)</prop>
+<prop id="wochen_return_job">(prop,wochen_return_job)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,i,@beschreibung),50).(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@klasse),1),Schwer zu Organisieren(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),2),Leicht verfügbar(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),3),Saisonales(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),4),Bio-Aufpreis(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),5),Gute Connection(e:s),),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@ersatz),1),Sojaflocken(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),2),Kürbiskerne(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),3),Soja-Block(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),4),Tofu(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),5),Saiblinger(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),6),Honig(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),7),Sonnenblumenkerne(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),8),Erdnüsse(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),9),Polenta(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),10),Cottage Cheese(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),11),Jogurt(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),12),Dosentunfisch(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),13),Rindfleisch(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),14),Hafer(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),15),Nuesse(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),16),Fermentiertes Erdnusslaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),17),Gemischtes Kornlaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),18),Unersetzbar weil ESSENTiELL(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),19),Tomatenmark(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),20),Rosinen(e:s),),30)</ti>
+<ti test="(f,has,(loop,i,@menge))" type="text" x="(loop,i,@menge)"/>
+<ti test="(f,not,(f,has,(loop,i,@menge)))"/>
+<ti test="(f,has,(loop,i,@einheit))" type="text" x="(f,when,(f,has_flag,(loop,i,@einheit),1),gramm(e:s),)(f,when,(f,has_flag,(loop,i,@einheit),2),kilogramm(e:s),)"/>
+<ti test="(f,not,(f,has,(loop,i,@einheit)))"/>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine Woche gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,wochen_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,user)" label=" " type="call_job" explain_nix="woche-add" explain="[ + Woche ]" job="woche-add">
+<file id="wochen">(file,wochen)</file>
+<prop id="wochen_offset">(prop,wochen_offset)</prop>
+<prop id="wochen_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="wochen_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="wochen_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="wochen_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="wochen_where">(prop,wochen_where)</prop>
+<prop id="wochen_return_job">(prop,wochen_return_job)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_service" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,wochen)</file>
+<prop id="orga_offset">(prop,wochen_offset)</prop>
+<prop id="orga_offset_label">(prop,wochen_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,wochen_offset_new_key)</prop>
+<prop id="orga_segment_plural">wochen</prop>
+<prop id="orga_segment_singular">woche</prop>
+<prop id="orga_segment_plural_label">Wochen</prop>
+<prop id="orga_segment_singular_label">Woche</prop>
+<prop id="orga_sort_attribute">(prop,wochen_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,wochen_sort_number)</prop>
+<prop id="orga_where">(prop,wochen_where)</prop>
+<prop id="orga_name_expression_loop">()(f,html,bold,open)(f,text,cut_nice,(loop,i,@bez),30)(f,html,bold,close)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,i,@beschreibung),50).(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@klasse),1),Schwer zu Organisieren(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),2),Leicht verfügbar(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),3),Saisonales(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),4),Bio-Aufpreis(e:s),)(f,when,(f,has_flag,(loop,i,@klasse),5),Gute Connection(e:s),),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@ersatz),1),Sojaflocken(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),2),Kürbiskerne(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),3),Soja-Block(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),4),Tofu(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),5),Saiblinger(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),6),Honig(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),7),Sonnenblumenkerne(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),8),Erdnüsse(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),9),Polenta(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),10),Cottage Cheese(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),11),Jogurt(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),12),Dosentunfisch(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),13),Rindfleisch(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),14),Hafer(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),15),Nuesse(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),16),Fermentiertes Erdnusslaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),17),Gemischtes Kornlaibchen(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),18),Unersetzbar weil ESSENTiELL(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),19),Tomatenmark(e:s),)(f,when,(f,has_flag,(loop,i,@ersatz),20),Rosinen(e:s),),30)()</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+<prop id="monat_key">(prop,monat_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,wochen)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,wochen_offset)),0)">(prop,wochen_offset)</ti>
+</ti>
+</when>
+</job>

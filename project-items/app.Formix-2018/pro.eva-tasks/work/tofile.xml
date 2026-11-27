@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="task-write">
+<need>(prop,task_key) (prop,isAdd)</need>
+<spirit act="open" id="tasks_spirit_tc" xml="(file,tasks)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,tasks_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,tasks_offset),0,(f,sub,(f,len,(prop,tasks_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,tasks_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="tasks_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;task row="(prop,task_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="name" value="(f,vob,prop,task_name)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="description" value="(f,vob,prop,task_description)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="full" value="(f,vob,prop,task_full)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="status" value="(f,vob,prop,task_status)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="types" value="(f,vob,prop,task_types)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="date_active" value="(f,vob,prop,task_date_active)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="date_build" value="(f,vob,prop,task_date_build)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="tasks_spirit_tc" where="(prop,tasks_offset)task[@row='(prop,task_key)']" attribute="date_closed" value="(f,vob,prop,task_date_closed)"/>
+<spirit act="close" flag="save pretty" id="tasks_spirit_tc"/>
+</job>

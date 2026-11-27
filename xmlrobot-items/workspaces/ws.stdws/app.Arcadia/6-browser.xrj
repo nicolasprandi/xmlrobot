@@ -1,0 +1,387 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+<job id="browse-java-item-replay" role="hidden">
+  <need>(prop,path)</need>
+  <need>(prop,name)</need>
+  
+  <choose>
+    <when test="(f,starts_with,(f,lower,(prop,name)),app.)">
+      <prop id="name-clear" x="(f,substring,(prop,name),4)"/>
+    </when>
+    <otherwise>
+      <prop id="name-clear" x="(prop,name)"/>
+    </otherwise>
+  </choose>
+  <prop id="name-clear" x="(f,lower,(f,replace,(prop,name-clear),.,))"/>
+  
+  <call_job job="tk_replay_edit">
+    <file id="replay-data" x="(dir,pro)replay-(prop,name).xrs"/>
+    <prop id="replay-regex" x="replay_.*"/>
+  </call_job>
+  <ti_hr/>  
+  
+  <dump_ti label="replay" test="0"/>
+  
+  <prop id="tgt">(dir,replay_app)(prop,replay_prefix)-</prop>
+  
+  <!-- first party -->
+  <choose>
+    <when test="(prop,replay_original)">
+      <file id="first-src" x="(dir,pro)compile-(prop,name)/compiled-bin-original.jar"/>
+    </when>
+    <otherwise>
+      <file id="first-src" x="(dir,pro)compile-(prop,name)/compiled-bin.jar"/>
+    </otherwise>
+  </choose>  
+  
+  <file id="first-target" x="(prop,tgt)first.jar"/>
+  <ti label="1(e:c) First Party ..."/>
+  <choose> 
+    <when test="(f,not,(f,exists_file,(file,first-src)))">
+      <ti label=" ">Omitted because there is no first-party-jar</ti>
+    </when>  
+    <when test="(f,try,()(f,eq_text,(f,file_info,hash,md5,(file,first-src)),(f,file_info,hash,md5,(file,first-target)))(),0,0)">
+      <ti label=" ">Omitted because the file did not change</ti>
+    </when>      
+    <otherwise>  
+  
+      <try_catch>
+        <try>
+          <tk type="msg" msg_type="w" test="(f,and,(f,exists_file,(file,first-target)),(prop,replay_ask))">Going to overwrite first-party-jar
+    which is:
+    (file,first-target)
+    Continue ??
+    </tk>
+          <copy uri="(file,first-src)"
+                touri="(file,first-target)"/>
+          <ti label="Copied first-party"/>
+          <ti type="file" label="Target:">(file,first-target)</ti>
+          <ti type="file" label="From:">(file,first-src)</ti>
+        </try>
+        <catch>
+          <ti label="Exception"/>
+          <ti>Problem in doing copy of first-part</ti>
+          <ti label="Reason">(prop,catched_msg)</ti>
+        </catch>  
+      </try_catch>
+      
+    </otherwise>
+  </choose>
+  
+  <!-- third party -->
+  
+  <file id="third-src" x="(dir,pro)compile-(prop,name)/3rd-party-bin.jar"/>
+  <file id="third-target" x="(prop,tgt)third.jar"/>
+                                                             
+  <ti label="2(e:c) Third Party ..."/>
+
+  <choose>    
+    <when test="(f,not,(prop,replay_3rd))">
+      <ti label=" ">Omitted due to your configuration</ti>
+    </when>
+    
+    <when test="(f,not,(f,exists_file,(file,third-src)))">
+      <ti label=" ">Omitted because there is no third-party-jar</ti>
+    </when>
+                          
+    
+    <when test="(f,try,()(f,eq_text,(f,file_info,hash,md5,(file,third-src)),(f,file_info,hash,md5,(file,third-target)))(),0,0)">
+      <ti label=" ">Omitted because the file did not change</ti>
+    </when>      
+    <otherwise>
+    
+      <try_catch>
+        <try>
+          <tk type="msg" msg_type="w" test="(f,and,(f,exists_file,(file,third-target)),(prop,replay_ask))">Going to overwrite third-party-jar
+    which is:
+    (file,third-target)
+    Continue ??
+    </tk>
+          <copy uri="(file,third-src)"
+                touri="(file,third-target)"/>
+          <ti label="Copied third-party"/>
+          <ti type="file" label="Target:">(file,third-target)</ti>
+          <ti type="file" label="From:">(file,third-src)</ti>
+        </try>
+        <catch>
+          <ti label="Exception"/>
+          <ti>Problem in doing copy of third-party</ti>
+          <ti label="Reason">(prop,catched_msg)</ti>
+        </catch>  
+      </try_catch>  
+      
+    </otherwise>
+    
+  </choose>
+  
+  
+</job>
+
+<job id="see-downloaded-apps" role="hidden">
+  <throw>asdf</throw>
+  <need default="1">(prop,display-java-compilations)</need>
+  <prop id="has-java-compilations-at-all" x="0"/>
+  <interpreter test="0" watch="1"/>
+  <file id="x" x="(dir,temp)x.xml"/>
+  <scan dir="(dir,pro)" level_limit="1" out="(file,x)"/>
+  <loop id="dirs" xml="(file,x)" xpath="dir">
+    <when test="(f,starts_with,(loop,dirs,@rpath),compile-)">
+      <prop id="y" x="(f,substring_after,(loop,dirs,@rpath),compile-)"/>
+      <ti label=" " type="rec"
+          test="(prop,display-java-compilations)">
+        <ti type="dir" x="(dir,pro)(loop,dirs,@rpath)"/>
+        <ti type="call_job" job="jump-into-java-compilation" explain="(f,html,bold,open)(prop,y)(f,html,bold,close)">
+          <prop id="jump-to-compile-dir" x="(loop,dirs,@rpath)"/>
+        </ti>
+      </ti>
+      <prop id="has-java-compilations-at-all" x="1"/>
+    </when>
+  </loop>
+
+</job>
+
+<job id="see-java-compilations" role="hidden">
+  <need default="1">(prop,display-java-compilations)</need>
+  <prop id="has-java-compilations-at-all" x="0"/>
+  <interpreter test="0" watch="1"/>
+  <file id="x" x="(dir,temp)x.xml"/>
+  <scan dir="(dir,pro)" level_limit="1" out="(file,x)"/>
+  <loop id="dirs" xml="(file,x)" xpath="dir">
+    <when test="(f,starts_with,(loop,dirs,@rpath),compile-)">
+      <prop id="y" x="(f,substring_after,(loop,dirs,@rpath),compile-)"/>
+      <ti label=" " type="rec"
+          test="(prop,display-java-compilations)">
+        <ti test="0" type="dir" x="(dir,pro)(loop,dirs,@rpath)"/>
+        <ti type="call_job" job="jump-into-java-compilation" explain="(f,html,bold,open)(prop,y)(f,html,bold,close)">
+          <prop id="jump-to-compile-dir" x="(loop,dirs,@rpath)"/>
+        </ti>
+      </ti>
+      <prop id="has-java-compilations-at-all" x="1"/>
+    </when>
+  </loop>
+
+</job>
+
+<job id="browse-java-item-compile" role="hidden">
+   <call_job job="do-compile-java-blind"/>
+</job>
+
+<job id="browse-java-item-remove" role="hidden">
+  <need>(prop,path)</need>
+  <need>(prop,name)</need>
+  <need>(dir,local-path)</need>
+  <tk label="Confirm remove">
+  <tk type="msg" x="Going to remove directory: &#xA;(dir,local-path)&#xA;das inkludiert alle downloads und zwischenergebnisse der compilierung&#xA;Es enthaelt nicht die parameter&#xA;Continue ?" msg_type="w"/>
+  </tk>
+  <tp>Removing ...</tp>
+  <delete content_of_dir = "(dir,local-path)" />
+  <!-- 
+   <ant level="info">
+    <delete dir="(f,dir,classic,(dir,local-path))"/>
+   </ant>                       -->
+   <ti label="Ok(e:s) content of directory deleted" />
+   <ti type="dir" label="(prop,name)" x="(dir,local-path)"/>
+   <ti_hr/>
+   <ti label="New Status ..."/>
+   <call_job job="browse-java-item">
+    <prop id="path" x="(prop,path)"/>
+    <prop id="name" x="(prop,name)"/>
+   </call_job>
+</job>
+
+<job id="browse-java-item" role="hidden">
+
+  
+  <need>(prop,name)</need>
+  <need>(prop,path)</need>  
+  <call_job job="connect"/>
+  <call_job job="tk_jvcp_read"/>
+  <dir id="local-path" x="(dir,pro)compile-(prop,name)"/>
+  <ti label="Lib: (prop,name)"/>
+    <when test="(f,exists_dir,(dir,local-path))">
+      <ti label="Lately compiled:" x="(dir,local-path)" type="dir"/>
+      <ti label=" " x="(dir,local-path)application-complete.jar" type="file"
+            test="(f,exists_file,(dir,local-path)application-complete.jar)"/>
+      
+   
+    </when>
+    
+    <ti label=" " x="not compiled yet"
+        test="(f,not,(f,dir_exists,(dir,local-path)))"/> 
+
+    <ti type="call_job"    label="Action"
+        job="browse-java-item-compile"
+        explain="Download(e:s) Compile &amp; Build">
+        <prop id="path" x="(prop,path)"/>
+        <prop id="name" x="(prop,name)"/>
+    </ti>  
+    
+      
+    
+    <when test="(f,exists_dir,(dir,local-path))">
+    
+      <ti type="call_job"    label=" "
+          job="browse-java-item-replay"
+          explain="Copy jars to XmlRobot-App">
+          <prop id="path" x="(prop,path)"/>
+          <prop id="name" x="(prop,name)"/>
+      </ti>  
+        
+    </when>
+
+    <call_job job="load">
+      <prop id="load-type" x="parameters"/>
+      <prop id="paras-app-name" x="(prop,name)"/>
+      <prop id="paras-app-id" x="(prop,name)"/>
+      <prop id="paras-app-gh-path" x="(prop,path)"/>
+    </call_job>
+    
+    <ti_hr/>
+    <call_job job="docu-java-step">
+      <prop id="steps" x="d1 d2 d2b d2c d2d d3 d4 d5"/>
+      <prop id="scripted" x="1"/>
+    </call_job>
+
+    <ti_hr/>
+    
+    <ti label="Details">   
+      <ti label="Path:" x="(prop,path)"/>              
+      <ti label="Github:" x="(prop,gh-web-1)/(prop,jvcp_repo)/tree/master/(prop,path)" type="web"/> 
+    </ti>
+    <ti_hr/>
+    <ti label="Remove"> 
+      <ti type="call_job"    
+          laxbel=" "
+          job="browse-java-item-remove"
+          explain="Remove old compilation (e:o)Prepare for relocation(e:c)">
+          <dir id="local-path" x="(dir,local-path)"/>
+          <prop id="path" x="(prop,path)"/>
+          <prop id="name" x="(prop,name)"/>
+      </ti>  
+      
+
+    </ti>      
+          
+</job>
+<job id="create-new-java-index" role="hidden">
+  <delete file="(file,lJava)"/>
+  <call_job job="browse-java"/>
+</job>
+
+<job id="browse-java" role="hidden">  
+  <call_job job="connect"/>
+
+  <choose>
+    <when test="(f,not,(f,exists_file,(file,lJava)))">
+      <tp>reading list of java-items from github ...</tp>
+      <xrghub  
+              act="list" 
+              out="(file,lJava)"
+              path="java-items"
+              level="2"
+              flag="folderOnly"/>    
+
+    </when>
+    <otherwise>
+
+      <ti type="call_job" job="create-new-java-index" 
+      label=" "
+        explain="Reused Index of java-libs(e:s) to get the newest one click here ..."/>
+    </otherwise>
+  </choose>
+                                                    
+          
+   <ti label="Java Libraries"/>
+   
+   <loop id="b" xml="(file,lJava)" xpath="dir[@name='grp.XmlRobot']/dir">  
+    <ti label=" " x="(loop,b,@name)" type="call_job" job="browse-java-item"
+      explain="(loop,b,@name)">
+        <prop id="name" x="(loop,b,@name)"/>
+        <prop id="path" x="(loop,b,@path)"/>
+    </ti>       
+   </loop> 
+        
+   <loop id="a" xml="(file,lJava)" xpath="dir">
+    <ti label="(loop,a,@name)" test="(f,not,(f,eq_text,grp.XmlRobot,(loop,a,@name)))"/>
+    
+     <loop id="b" xml="(file,lJava)" xpath="dir[@name='(loop,a,@name)']/dir">  
+      <ti label=" " x="(loop,b,@name)" type="call_job" job="browse-java-item"
+        explain="(loop,b,@name)"
+        test="(f,not,(f,eq_text,grp.XmlRobot,(loop,a,@name)))">
+          <prop id="name" x="(loop,b,@name)"/>
+          <prop id="path" x="(loop,b,@path)"/>
+      </ti>       
+     </loop> 
+       
+   </loop>    
+   
+   <ti type="call_job" job="Compile-Some-Libs"/>
+   
+
+              
+</job>
+
+<job id="Compile-Some-Libs" role="hidden"> 
+
+   <ti type="file" x="(file,lJava)" test="0"/>
+   
+  <file id="lib-selector" x="(dir,filetemp)lib-selector.xml"/>          
+  <xslt
+        xml="(file,lJava)"
+        xsl="(dir,app)javalist-2-selector.xsl"
+        out="(file,lib-selector)"
+        >
+        <params></params>
+      </xslt>
+  <call_job job="tk_libs_edit" />
+  
+  <loop id="all-libs" xml="(file,lJava)" xpath="dir/dir">
+    <ti test="0">working on lib (loop,all-libs,..,@name):(loop,all-libs,@name) </ti>
+    
+      <when test="(f,has_flag,(prop,libs_sel),(loop,all-libs,..,@name):(loop,all-libs,@name))">
+        <ti_hr/>
+        <ti label="(loop,all-libs,..,@name):(loop,all-libs,@name)"/>
+        <ti_hr/>
+        <when test="(prop,libs_clear)">
+          <delete content_of_dir="(dir,pro)compile-(loop,all-libs,@name)"/>
+          <ti label="Cleared" type="dir" x="(dir,pro)compile-(loop,all-libs,@name)"/>
+        </when>
+        <call_job job="browse-java-item-compile">
+            <prop id="name" x="(loop,all-libs,@name)"/>
+            <prop id="path" x="(loop,all-libs,@path)"/>
+            <prop id="ask-questions" x="(prop,libs_questions)"/>
+        </call_job>     
+        <ti_flush/>
+      </when>  
+  </loop>       
+</job>
+
+<job id="browse-java?" role="hidden"> 
+
+    <when test="(f,exists_file,(file,jc-hist))">
+      <ti label="Past Java-Compiles"/> 
+      <loop id="m" xml="(file,jc-hist)" xpath="did" flag="back" missing_strategy="empty">
+        <ti label="(loop,m,@id) " type="rec" >
+        <ti  x="(loop,m,@time)" />
+        <ti x="(dir,pro)compile-(loop,m,@id)" type="dir" />
+        </ti>
+      </loop>
+      <prop id="has-active-project" x="1"/>
+      <ti_hr/>
+    </when>
+    
+  <ti label="About: List Java-Libraries">
+    <ti type="ul">List java-libraries from github</ti>
+    <ti type="ul">Download them</ti>
+    <ti type="ul">Compile &amp; build them</ti>
+  </ti>    
+    
+
+</job>
+
+
+
+</jobs>

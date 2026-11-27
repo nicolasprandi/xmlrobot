@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+                                      
+<job id="Jobs-Importiere Daten?" lang="de">
+  <ti label="Job &apos;Importiere Daten/Jobs&apos;"/>
+  <ti type="rec"><ti flag="wrap">Hier k&#246;nnen Sie Import-Jobs starten(e:s) um Daten in die Datenbank einzubringen. F&#252;hren Sie danach die 'Integration' durch.</ti></ti>
+
+  <ti label="1(e:c) (prop,_pl_kjob)"/>
+
+  <ti type="ul">Hinterlegen Sie Verweise auf eigene Import-Jobs(e:s) um diese komfortabel auszuf&#252;hren.</ti>
+  <ti type="ul">W&#228;hlen Sie hief&#252;r ein Pentah-Job-File mit der Datei-Erweiterung 'kjb' aus.</ti>
+  <ti type="ul">Verwenden Sie den Link 'Ausf&#252;hren' um einen Job auszuf&#252;hren.</ti>
+  <ti type="ul">Um neue Jobs hinzuzuf&#252;gen(e:s) w&#228;hlen Sie die Rolle 'admin2'.</ti>  
+  <ti label="2(e:c) (prop,_pl_sample)"/>  
+
+  <ti type="ul">Laden Sie die mitgelieferten Beispiele in die Hibiscus-Datenbank.</ti>
+  <ti type="ul">&#196;ndern Sie die zugrundeliegenden Excel-files um das System zu testen und dessen Verhalten zu erkunden.</ti>
+  <ti type="ul">Laden Sie alle Beispiele auf einmal oder laden Sie nur Teilbereiche.</ti>
+
+  <ti label="Allgemeines zur Jobausf&#252;hrung"/>  
+  <ti type="ul">Die Jobs werden nicht vollautomatisch gestartet.</ti>
+  <ti type="ul">Es wird ein Terminal-Fenster in Ihrem Betriebssystem ge&#246;ffnet.</ti>
+  <ti type="ul">Weiters wird Ihnen ein Befehlstext angeboten(e:s) den Sie mit Strg-C in die Zwischenablage kopieren.</ti>
+  <ti type="ul">F&#252;gen Sie den Befehlstext mit Strg-V im Terminal-Fenster ein und bet&#228;tigen Sie mit der Eingabe-Taste</ti>  
+  <ti type="ul">Warten Sie die Fertigstellung des Jobs im Terminal-Fenster ab</ti>    
+  <ti type="ul">Kehren Sie zur Hibiscus-Applikation zur&#252;ck und klicken Sie gegebenenfalls auf &lt;Berichts-Datei einsehen&gt;</ti>  
+
+  <call_job job="?kjob-para-help"/>
+</job>
+
+<job id="Jobs-Import Data?" lang="en">
+
+  <ti label="Job &apos;Import Data/Jobs&apos;"/>
+  <ti>(f,html,b,o)1(e:c) (prop,_pl_kjob)(f,html,b,o)</ti>
+  <ti type="ul">Register your own import-jobs(e:s) so that you can execute them comfortabely</ti>
+  <ti type="ul">To do so(e:s) choose a pentaho-job-file with the extension 'kjb'</ti>
+  <ti type="ul">Use the link 'Run' to execute a job</ti>
+  <ti>(f,html,b,o)2(e:c) (prop,_pl_sample)(f,html,b,o)</ti>
+  <ti type="ul">Load all example of data into the hibiscus-database</ti>
+  <ti type="ul">Update the underlying excel-file in case you want to test the system</ti>
+  <ti type="ul">Load all samples or load them piece by piece</ti>
+
+  <call_job job="?kjob-para-help"/>
+</job>
+
+
+
+
+
+<job id="?kjob-para-help" role="hidden">
+  <ti_hr/>
+  <prop id="kjobs_tk_control">print_only print_with_tips print_tips_only print_all_fields</prop>
+  <call_job job="kjob-tk"/>                        
+  <!-- 
+prop x="" id=""/><prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,squery_id),50)(f,html,bold,close)(f,when,(f,has,(prop,squerys_offset_label)), - (prop,squerys_offset_label),)"/>     -->
+</job>
+
+
+</jobs>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zblock-write">
+<need>(prop,zblock_key) (prop,isAdd)</need>
+<spirit act="open" id="zblocks_spirit_tc" xml="(file,zblocks)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,zblocks_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,zblocks_offset),0,(f,sub,(f,len,(prop,zblocks_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,zblocks_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="zblocks_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;zblock row="(prop,zblock_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zblocks_spirit_tc" where="(prop,zblocks_offset)zblock[@row='(prop,zblock_key)']" attribute="content" value="(f,vob,prop,zblock_content)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zblocks_spirit_tc" where="(prop,zblocks_offset)zblock[@row='(prop,zblock_key)']" attribute="titel" value="(f,vob,prop,zblock_titel)"/>
+<spirit act="close" flag="save pretty" id="zblocks_spirit_tc"/>
+</job>

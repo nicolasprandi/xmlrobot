@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="product-edit">
+    <need>(prop,product_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="product-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="product-editor"/>
+    <call_job job="product-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- Product '(prop,product_name)'"/>
+    </ti>
+    <call_job job="product-see"/>
+</job>

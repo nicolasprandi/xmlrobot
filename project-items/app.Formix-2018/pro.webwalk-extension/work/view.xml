@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="extension-see-all" level="ws" role="hidden" tip="Lists all Project Extensions">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="extension_loop" xml="(file,extensions)" xpath="(prop,extensions_offset)extension(prop,extensions_where)" sort="(prop,extensions_sort_attribute)" number="(prop,extensions_sort_number)" ignore_case="(prop,extensions_sort_ignore_case)" desc="(prop,extensions_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,extensions_offset_label)),0)">
+<ti label="(prop,extensions_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,extension_loop,@titel)(f,html,bold,close)" job="extension-see">
+<prop id="extension_key">(loop,extension_loop,@row)</prop>
+<file id="extensions">(file,extensions)</file>
+<prop id="extensions_offset">(prop,extensions_offset)</prop>
+<prop id="extensions_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="extensions_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="extensions_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="extensions_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="extensions_where">(prop,extensions_where)</prop>
+<prop id="extensions_return_job">(prop,extensions_return_job)</prop>
+</ti>
+<ti>(f,text,cut_nice,(loop,extension_loop,@desc),40)</ti>
+<ti type="call_job" explain="Edit" job="extension-edit">
+<prop id="extension_key">(loop,extension_loop,@row)</prop>
+<file id="extensions">(file,extensions)</file>
+<prop id="extensions_offset">(prop,extensions_offset)</prop>
+<prop id="extensions_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="extensions_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="extensions_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="extensions_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="extensions_where">(prop,extensions_where)</prop>
+<prop id="extensions_return_job">(prop,extensions_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Project Extensions found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,extensions_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="extension-add" explain="[ Add another Project Extension ]" job="extension-add">
+<file id="extensions">(file,extensions)</file>
+<prop id="extensions_offset">(prop,extensions_offset)</prop>
+<prop id="extensions_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="extensions_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="extensions_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="extensions_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="extensions_where">(prop,extensions_where)</prop>
+<prop id="extensions_return_job">(prop,extensions_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,extensions)</file>
+<prop id="orga_where">(prop,extensions_where)</prop>
+<prop id="orga_view_loop_id">extension_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,extensions_offset)</prop>
+<prop id="orga_offset_label">(prop,extensions_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,extensions_offset_new_key)</prop>
+<prop id="orga_segment_plural">extensions</prop>
+<prop id="orga_segment_singular">extension</prop>
+<prop id="orga_segment_plural_label">Project Extensions</prop>
+<prop id="orga_segment_singular_label">Project Extension</prop>
+<prop id="orga_sort_attribute">(prop,extensions_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,extensions_sort_number)</prop>
+<prop id="orga_where">(prop,extensions_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,extension_loop,@titel)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,extension_loop,@desc),40)()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,extensions)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,extensions_offset)),0)">(prop,extensions_offset)</ti>
+</ti>
+</when>
+</job>

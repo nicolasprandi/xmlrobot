@@ -1,0 +1,434 @@
+<?xml version="1.0" ?>
+<jobs>
+
+<job id="tr_statistics_vok" role="hidden">
+  <need>(prop,trsn-in)</need>
+  
+  <prop id="trsn-out"></prop>
+
+  <choose>
+
+      
+  
+    <when test="(f,eq_text,1-Attribut-Typen,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">List Types of Attributes</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Liste der Attribut-Typen</prop>
+        </when>        
+      </choose>    
+    </when>   
+    
+    <when test="(f,eq_text,2-Attribut-Usage,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">List of Attribute-Usages per Type of Object</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Liste der Attribut-Verwendungen je Objekt-Type</prop>
+        </when>        
+      </choose>    
+    </when>  
+    
+    <when test="(f,eq_text,3-Attribut-Usage-Explained,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">List of Attribute-Usages per Type of Object(e:s) EXPLAINED</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Liste der Attribut-Verwendungen je Objekt-Type(e:s) ERLAEUTERT</prop>
+        </when>       
+      </choose>    
+    </when>  
+    
+    <when test="(f,eq_text,4-Beziehungs-Typen,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">List of Types of Relations</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Liste der Beziehungs-Typen</prop>
+        </when>        
+      </choose>    
+    </when>  
+    
+    <when test="(f,eq_text,0-Objekte-Typen,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">List of Types of Objects</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">List der Objekt-Typen</prop>
+        </when>        
+      </choose>    
+    </when>  
+                    
+        
+  </choose>
+  
+  <prop id="trsn-out" test="(f,not,(f,has,prop,trsn-out))">(prop,trsn-in)</prop>
+
+</job>
+
+<job id="tr_statistics_sql-box" role="hidden">
+  <need>(prop,trsn-in)</need>
+  
+  <prop id="trsn-out"></prop>
+
+  <choose>
+    <when test="(f,eq_text,2-Count-BoxStatus,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Number of Boxes per Status</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Anzahl der Boxen je Zustand</prop>
+        </when>        
+      </choose>    
+    </when>   
+    
+    <when test="(f,eq_text,1-Count-ObjectsPerBox,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Number of Objects per Box</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Anzahl der Objekte je Box</prop>
+        </when>        
+      </choose>    
+    </when>   
+        
+</choose>
+  
+  <prop id="trsn-out" test="(f,not,(f,has,prop,trsn-out))">(prop,trsn-in)</prop>
+
+</job>
+<job id="tr_statistics_sql-list-all" role="hidden">
+  <need>(prop,trsn-in)</need>
+  
+  <prop id="trsn-out"></prop>
+
+  <choose>
+    <when test="(f,eq_text,01-Usages-Objekttyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Usages per type of object</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Verwendungen je Objekt-Typ</prop>
+        </when>        
+      </choose>    
+    </when>   
+    <when test="(f,eq_text,02-Usages-Attributtyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Usages per type of attribute</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Verwendungen je Attribut-Typ</prop>
+        </when>        
+      </choose>    
+    </when>      
+    <when test="(f,eq_text,03-Usages-Objekttyp-Attributtyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Usages per type of object &amp; attribute</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Verwendungen je Objekt-Typ und Attribut-Typ</prop>
+        </when>        
+      </choose>    
+    </when> 
+        
+    <when test="(f,eq_text,04-Usages-Beziehungstyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Usages per type of relation</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Verwendungen je Beziehungs-Typ</prop>
+        </when>        
+      </choose>    
+    </when>  
+    
+    <when test="(f,eq_text,05-Usages-Beziehungstyp-Objekttyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Usages per type of relation &amp; objects</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Verwendungen je Beziehungs-Typ &amp; Objekt-Typen</prop>
+        </when>        
+      </choose>    
+    </when>    
+    
+    <when test="(f,eq_text,06-Unused-Objekttyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Not used types of objects</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Nicht verwendete Objekt-Typen</prop>
+        </when>        
+      </choose>    
+    </when>        
+
+    <when test="(f,eq_text,07-Unused-Attributtyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Not used types of attributes</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Nicht verwendete Attribut-Typen</prop>
+        </when>        
+      </choose>    
+    </when>      
+ 
+    <when test="(f,eq_text,08-Unused-Beziehungstyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Not used types of relations</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Nicht verwendete Beziehungs-Typen</prop>
+        </when>        
+      </choose>    
+    </when>  
+    
+    <when test="(f,eq_text,09-Undeclared-Objekttyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Unknown types of objects</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Unbekannte Objekt-Typen</prop>
+        </when>        
+      </choose>    
+    </when>     
+    
+    <when test="(f,eq_text,10-Undeclared-Objekttyp-Details,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Unknown typs of objects - Full List</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Unbekannte Objekt-Typen - Komplette Liste</prop>
+        </when>        
+      </choose>    
+    </when>       
+    
+    <when test="(f,eq_text,11-Undeclared-Attributtyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Unknown types of attributes</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Unbekannte Attribut-Typen</prop>
+        </when>        
+      </choose>    
+    </when>     
+    
+    <when test="(f,eq_text,12-Undeclared-Attributtyp-Details,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Unknown types of attributes - Full List</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Unbekannte Attribut-Typen - Komplette Liste</prop>
+        </when>        
+      </choose>    
+    </when>     
+    
+    <when test="(f,eq_text,13-Undeclared-Beziehungstyp,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Unknown types of relations</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Unbekannte Beziehungs-Typen</prop>
+        </when>        
+      </choose>    
+    </when>     
+    
+    <when test="(f,eq_text,14-Undeclared-Beziehungstyp-Details,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Unknown types of relations - Full List</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Unbekannte Beziehungs-Typen - Komplette Liste</prop>
+        </when>        
+      </choose>    
+    </when>         
+    
+    
+
+    <when test="(f,eq_text,46-Max-Ids,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Maximal Value of Record Ids / Current Sequences</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Maximale Werte der Record Ids / Aktuelle Sequences</prop>
+        </when>        
+      </choose>    
+    </when>          
+    
+    <when test="(f,eq_text,47-Historie-Migrationen,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Report of Object-Migrations</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Bericht der Objekt-Migrationen</prop>
+        </when>        
+      </choose>    
+    </when>    
+    
+    <when test="(f,eq_text,48-Connections,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">DB-Connections</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">DB-Connections</prop>
+        </when>        
+      </choose>    
+    </when>     
+    
+                
+        
+  </choose>
+  
+  <prop id="trsn-out" test="(f,not,(f,has,prop,trsn-out))">(prop,trsn-in)</prop>
+
+</job>
+
+
+
+<job id="tr_statistics_import" role="hidden">
+  <need>(prop,trsn-in)</need>
+  
+  <prop id="trsn-out"></prop>
+
+  <choose>
+    <when test="(f,eq_text,XXXXX,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out"></prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out"></prop>
+        </when>        
+      </choose>    
+    </when>   
+        
+  </choose>
+  
+  <prop id="trsn-out" test="(f,not,(f,has,prop,trsn-out))">(prop,trsn-in)</prop>
+
+</job>
+
+<!-- 
+<job id="tr_statistics_import" role="hidden">
+  <need>(prop,trsn-in)</need>
+  
+  <prop id="trsn-out"></prop>
+
+  <choose>
+    <when test="(f,eq_text,XXXXX,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out"></prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out"></prop>
+        </when>        
+      </choose>    
+    </when>   
+        
+  </choose>
+  
+  <prop id="trsn-out" test="(f,not,(f,has,prop,trsn-out))">(prop,trsn-in)</prop>
+
+</job>
+-->
+
+
+<job id="tr_statistics_clear" role="hidden">
+  <need>(prop,trsn-in)</need>
+  
+  <prop id="trsn-out"></prop>
+
+  <choose>
+    <when test="(f,eq_text,0-trunc-import-int,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Truncate [ IMPORT ] and [ INT ] Tables</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">[ IMPORT ] und [ INT ] Tabellen entleeren</prop>
+        </when>        
+      </choose>    
+    </when>  
+    <when test="(f,eq_text,1-trunc-import,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Truncate [ IMPORT ] Tables</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">[ IMPORT ] Tabellen entleeren</prop>
+        </when>        
+      </choose>    
+    </when>
+    <when test="(f,eq_text,2-trunc-int,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Truncate [ INT ] Tables</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">[ INT ] Tabellen entleeren</prop>
+        </when>        
+      </choose>    
+    </when>    
+    
+    <when test="(f,eq_text,5-clear-boxes,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Reset all boxes to 'NOT IMPORTED yet'</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Setze alle Boxen auf 'noch NICHT IMPORTIERT'</prop>
+        </when>        
+      </choose>    
+    </when>   
+    
+
+    
+    
+    <when test="(f,eq_text,9-trunc-mig-obj-hist,(prop,trsn-in))">
+      <choose>
+        <when test="(f,eq_text,en,(prop,ling))">
+          <prop id="trsn-out">Delete the Report of Object-Migrations</prop>
+        </when>
+        <when test="(f,eq_text,de,(prop,ling))">
+          <prop id="trsn-out">Loeschen des Berichts der Objekt-Migrationen</prop>
+        </when>        
+         
+      </choose>    
+    </when>                  
+        
+  </choose>
+  
+  
+
+  <prop id="trsn-out" test="(f,not,(f,has,prop,trsn-out))">(prop,trsn-in)</prop>
+
+</job>
+
+
+
+
+</jobs>

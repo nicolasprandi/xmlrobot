@@ -1,0 +1,415 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>                                                                                                           
+
+<!--
+
+-->
+<call_job job="prolog" />
+
+<job id="driver-state-display" role="hidden">
+
+  <ti label="Current state of webdriver = (f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid))" />
+  <choose>
+    <when test="(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid))">
+      <ti label=" ">Driver is currently running</ti>
+      <ti type="call_job" job="do-driver-stop" explain="Stop Driver" label=" "/>
+    </when>
+    <otherwise>
+      <ti label=" ">Driver is currently not running</ti>
+      <ti type="call_job" job="do-driver-start" explain="Start Driver" label=" "/>
+    </otherwise>
+  </choose>
+  <ti_hr/>
+  <call_job job="tk_conf_print_values_tips" />
+
+  
+    
+</job>
+
+<job id="driver-startup-phase" role="hidden">
+  <!-- <ti label="()(f,not,(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid)))()">(f,not,(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid)))</ti>   -->
+  <!-- <ti>exists-helloconfig=(f,exists,prop,helloconfig)</ti>    -->
+  <choose>
+    <when test="(f,exists,prop,helloconfig)">
+    </when>
+    <when test="(f,not,(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid)))">
+      <!-- es existiert kein laufender webdriver -->
+      <ti type="rec" flag="block">
+      <ti>Driver is currently NOT RUNNING:</ti>
+      <ti type="call_job" job="do-driver-start" explain="Start Driver"/>
+      </ti>
+      <ti_break/>
+    
+    </when>
+    <otherwise>
+      <ti test="0">Continue with existing webdriver ...</ti>
+      <call_job job="rec-get-is-started"/>
+      <prop id="rechts">Recording OFF</prop>
+      <prop id="rechts" test="(prop,ret-is-started)">Recording ON</prop>
+      <!-- <ti label=" " key="(prop,rechts)"></ti> -->      
+    </otherwise>
+  </choose>
+ 
+</job>
+<job id="do-driver-stop" role="hidden">
+  <tp>Going to stop WebDriver ...</tp>
+  <wdriver id="(prop,wdid)"
+           act="closeit"/>  
+  <ti label="Webdriver was stopped"/>
+                   
+</job>                                      
+<job id="do-driver-start" role="hidden">
+  <choose>
+    <when test="(f,not,(f,exists_file,(file,conf-data)))">
+      <call_job job="tk_conf_edit" />
+      <ti_flush/>
+      <tk type="msg">Starting WebDriver now</tk>
+    </when>
+    <otherwise>
+      <call_job job="tk_conf_read" />
+      <ti label="Starting Webdriver"/>        
+    </otherwise>
+  </choose>                    
+  
+  <when test="(f,not,(f,has,prop,conf_implicit))">
+    <prop id="conf_implicit">0</prop>
+  </when>  
+
+  <choose>
+          
+    <when test="(f,eq_text,firefox,(prop,conf_driver_type))">
+      <tp>Starting Firefox-Webdriver ...</tp>
+      <choose>
+        <when test="(f,has,file,conf_driver_firefox)">
+          <ti>Starting webdriver: 1 firefox und driver (file,conf_driver_firefox)</ti>
+          <wdriver id="(prop,wdid)"
+                   act="open"
+                   driver_type="firefox"
+                   driver_firefox="(file,conf_driver_firefox)"
+                   implicit_wait_seconds="(prop,conf_implicit)"/>              
+        </when>
+        <otherwise>
+          <ti>Starting webdriver: 2 firefox</ti>
+          <wdriver id="(prop,wdid)"
+                   act="open"
+                   driver_type="firefox" 
+                   implicit_wait_seconds="(prop,conf_implicit)"/>              
+        </otherwise>
+      </choose>
+      <ti>Did start Firefox-Webdriver.</ti>
+      <ti type="call_job" job="do-driver-stop" explain="Stop WebDriver"/>
+    </when>
+    
+    <when test="(f,eq_text,chrome,(prop,conf_driver_type))">
+      <tp>Starting Chrome-Webdriver ...</tp>
+                   
+      <wdriver id="(prop,wdid)"
+               act="open"
+               driver_type="chrome"
+               conf_chrome_binary="(f,vob,file,conf_chrome_binary)"
+               conf_chrome_driver="(f,vob,file,conf_chrome_driver)"
+               conf_driver_headless_chrome="(f,vob,prop,conf_driver_headless_chrome)"
+               conf_driver_disablegpu_chrome="(f,vob,prop,conf_driver_disablegpu_chrome)"
+               implicit_wait_seconds="(prop,conf_implicit)"/>    
+               
+      <ti>Did start Chrome-Webdriver.</ti>
+      <ti type="call_job" job="do-driver-stop" explain="Stop WebDriver"/>                                          
+    </when>   
+    
+    <when test="(f,eq_text,edge,(prop,conf_driver_type))">
+      <tp>Starting Edge-Webdriver ...</tp>
+                   
+      <wdriver id="(prop,wdid)"
+               act="open"
+               driver_type="edge"
+               conf_edge_driver="(f,vob,file,conf_edge_driver)"
+
+               implicit_wait_seconds="(prop,conf_implicit)"/>    
+               
+      <ti>Did start Edge-Webdriver.</ti>
+      <ti type="call_job" job="do-driver-stop" explain="Stop WebDriver"/>                                          
+    </when>  
+               
+    <otherwise>
+      <throw>unknown type of driver: [(prop,conf_driver_type)]</throw>
+    </otherwise>
+  
+  </choose>
+
+  <choose>
+    <when test="(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid))">         
+      <wdriver default_id="(prop,wdid)"
+               act="set_default_id"/> 
+    </when>
+    <otherwise>
+      <throw>Webdriver was started but was afterwards not found in system under the coop-id (prop,wdid). Looks like a app-problem. Problem: the coop at.nicolas.webwalk.wd called (prop,wdid) does not exist.</throw>
+    </otherwise>
+  </choose>   
+                    
+</job>
+
+
+
+<!-- setting the default-values -->
+<job id="tk_conf_default" role="hidden">
+  
+  <need default="chrome">(prop,conf_driver_type)</need>
+  <need default="">(file,conf_chrome_binary)</need>
+  <need default="">(file,conf_chrome_driver)</need>
+  <need default="">(file,conf_edge_driver)</need>
+  <need default="">(prop,conf_driver_headless_chrome)</need>  
+  <need default="">(prop,conf_driver_disablegpu_chrome)</need>   
+  <need default="">(file,conf_driver_firefox)</need> 
+  <need default="">(prop,conf_implicit)</need>
+  
+  
+    
+  <!-- 
+  <need default="2">(prop,conf_implicit)</need>   
+  <need default="1">(prop,conf_scale_loc_x)</need>
+  <need default="1">(prop,conf_scale_loc_y)</need>
+  <need default="1">(prop,conf_scale_size_x)</need>
+  <need default="1">(prop,conf_scale_size_y)</need>     -->
+  
+  
+  
+</job>
+
+<!-- 
+    <tk id="conf_scale_loc_x" 
+        label="Location X"
+        test_first="0" />      
+        
+    <tk id="conf_scale_loc_y" 
+        label="Location Y"
+        test_first="0" />      
+        
+    <tk id="conf_scale_size_x" 
+        label="Size X"
+        test_first="0" />      
+        
+    <tk id="conf_scale_size_y" 
+ element = driver.find_element_by_id("lst-ib")
+
+location = element.location
+size = element.size
+
+driver.save_screenshot("shot.png")
+
+x = location['x']
+y = location['y']
+w = size['width']
+h = size['height']
+width = x + w
+height = y + h
+
+im = Image.open('shot.png')
+im = im.crop((int(x), int(y), int(width), int(height)))
+im.save('image.png')
+
+I'm pretty sure that element.size is given in points, whereas the screenshot produced by driver.save_screenshot has dimensions of pixels. If your screen has a pixel-to-point ratio other than 1 (e.g., retina MacBooks have two pixels per point  a ratio of 2) then you need to multiply w and h by that ratio.
+BallpointBen
+ Jan 19, 2019 at 23:25
+-->
+<!-- conf-core, make your changes here -->
+<job id="tk_conf_core" role="hidden" tip="conf_: Tk Internal">
+
+  <need default="">(prop,tk_conf_add_flag)</need>
+
+  <tk label="Configuration" 
+      flag="(prop,tk_conf_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+    <!-- 
+    <tk id="conf_wdh" 
+        type="sel" 
+        label="Driver-Request"  
+        flag="nono"                 
+        tip="()Do generally start the driver()">        
+        <sel label="NO">0</sel>
+        <sel label="YES">1</sel>    
+    </tk>    -->
+    
+    <tk id="conf_driver_type" 
+        type="sel" 
+        label="Type of Driver"  
+        flag="nono dynamoX"                 
+        tip="()The Implementation of the WebDriver you wan to use()">        
+        <sel label="Chrome">chrome</sel>
+        <sel label="Firefox">firefox</sel>    
+        <sel label="Edge">edge</sel>    
+    </tk>    
+    <tk type="msg" test_first="0" >-CHROME-</tk>        
+    <tk id="conf_chrome_binary" 
+        label="Chrome: Binary-Exe"
+        type="file"
+        test_first="0" 
+        tip="If you use a Chrome(e:s) do link the file 'chrome.exe' here"
+         />    
+        
+    <tk id="conf_chrome_driver" 
+        label="Chrome: Driver"
+        type="file"
+        test_first="0" 
+        tip="If you use a Chrome(e:s) do link the file 'chromedriver.exe' "
+        />  
+        
+                  
+    <tk id="conf_driver_headless_chrome"
+        type="bool"
+        label="Headless-Option"       
+      	test_first="0"
+        />  
+        
+    <tk id="conf_driver_disablegpu_chrome"
+        type="bool"
+        label="DisableGpu-Option"       
+      	test_first="0"
+        />                  
+      
+    <tk type="msg" test_first="0" 
+        >-FIREFOX-</tk> 
+    <tk id="conf_driver_firefox" 
+        label="Firefox: Driver"
+        type="file"
+        test_first="0"
+        tip="geckodriver.exe"/>  
+        
+    <tk type="msg" test_first="0" >-EDGE-</tk>        
+        
+    <tk id="conf_edge_driver" 
+        label="Edge: Driver"
+        type="file"
+        test_first="0" 
+        tip="If you use a edge(e:s) do link the file 'msedgedriver.exe' "
+        />          
+        
+     <tk type="msg"
+        x="General Parameters"
+        xtip="Used for Screenshot of Element. If no values defined the scaling will be internally 1. Use dot. for as decimal-point."
+      
+        test_first="0"/>       
+        
+    <tk id="conf_implicit" 
+        label="Implicit-Wait-Seconds" 
+        test_first="0" />     
+                  
+    <!-- 
+    <tk id="conf_scale_loc_x" 
+        label="Location X"  tip="eg 1.1"
+        test_first="0" />      
+        
+    <tk id="conf_scale_loc_y" 
+        label="Location Y"    tip="eg 1.1"
+        test_first="0" />      
+        
+    <tk id="conf_scale_size_x" 
+        label="Size X"              tip="eg 1.1"
+        test_first="0" />      
+        
+    <tk id="conf_scale_size_y" 
+        label="Size Y"              tip="eg 1.1"
+        test_first="0" />                 
+     -->            
+ 
+                          
+  </tk>                                   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_conf_edit" tip="conf_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,conf-data))">
+      <!-- data exists already -->
+      <prop id="tk_conf_add_flag" x="sum_only print"/>
+      <call_job job="tk_conf_read"/>                  
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_conf_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_conf_default"/>
+  <!-- doing input -->
+  <call_job job="tk_conf_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_conf_write"/>
+  <when test="(f,not,(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid)))">
+  <ti label="Next"/>
+  <ti type="call_job" job="do-driver-start" explain="Do start the driver now"/>
+  </when>
+                    
+
+</job>
+
+
+
+<job id="tk_conf_print_values" tip="conf_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_conf_read"/>
+  
+  <call_job job="tk_conf_core">
+    <prop id="tk_conf_add_flag" x="print_only"/>
+  </call_job>
+  
+  
+                    
+  
+</job>
+
+<job id="tk_conf_print_values_tips" tip="conf_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_conf_read"/>
+  
+  <call_job job="tk_conf_core">
+    <prop id="tk_conf_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_conf_print_values_tips_all" tip="conf_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_conf_read"/>
+  
+  <call_job job="tk_conf_core">
+    <prop id="tk_conf_add_flag" x="print_only print_with_tips print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_conf_print_help" tip="conf_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_conf_core">
+    <prop id="tk_conf_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_conf_read" role="hidden">
+  <call_job job="go-joe-read">
+    <prop id="joe-in-regex" x="(prop,conf-regex)" />  
+    <file id="joe-in-store" x="(file,conf-data)" />
+  </call_job>
+  <call_job job="tk_conf_default"/>
+  
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_conf_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,conf-data)" />
+    <prop id="joe-in-regex" x="(prop,conf-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_conf_clear"  tip="conf_: Clears the data" role="hidden">
+  <delete file="(file,conf-data)"/>
+</job>
+
+</jobs>

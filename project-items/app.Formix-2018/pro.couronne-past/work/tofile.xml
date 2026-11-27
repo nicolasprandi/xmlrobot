@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="past-write">
+    <need>(prop,past_key) (prop,isAdd)</need>
+    <need default="./">(prop,pasts_offset)</need>
+    <spirit act="open" id="pasts_spirit_tc" xml="(file,pasts)"/>
+    <when test="(prop,isAdd)">
+        <choose>
+            <when test="(f,ends_with,(prop,pasts_offset),/)">
+                <prop id="offset2" x="(f,substring,(prop,pasts_offset),0,(f,sub,(f,len,(prop,pasts_offset)),1))"/>
+            </when>
+            <otherwise>
+                <prop id="offset2" x="(prop,pasts_offset)"/>
+            </otherwise>
+        </choose>
+        <spirit act="xml_update" how="insert_in" id="pasts_spirit_tc" where="(prop,offset2)">
+            <inline attribute="with">&lt;past row="(prop,past_key)" /&gt;</inline>
+        </spirit>
+        <i>Added a new record</i>
+    </when>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="pasts_spirit_tc" where="(prop,pasts_offset)past[@row='(prop,past_key)']" attribute="for" value="(f,vob,prop,past_for)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="pasts_spirit_tc" where="(prop,pasts_offset)past[@row='(prop,past_key)']" attribute="type" value="(f,vob,prop,past_type)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="pasts_spirit_tc" where="(prop,pasts_offset)past[@row='(prop,past_key)']" attribute="obj_tech_name" value="(f,vob,prop,past_obj_tech_name)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="pasts_spirit_tc" where="(prop,pasts_offset)past[@row='(prop,past_key)']" attribute="attr_tech_name" value="(f,vob,prop,past_attr_tech_name)"/>
+    <spirit act="close" flag="save pretty" id="pasts_spirit_tc"/>
+</job>

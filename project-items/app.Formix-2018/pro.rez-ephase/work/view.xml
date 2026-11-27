@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="ephase-see-all" level="ws" role="hidden" tip="Lists all Vorgaenge">
+<try_catch>
+<try>
+<call_job job="hook-ephase-editor-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: ephase-view: begin.0">
+<ti> hook_job=hook-ephase-editor-begin hook=begin page=view station=0 object=ephase</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="ephase_loop" xml="(file,ephasen)" xpath="(prop,ephasen_offset)ephase(prop,ephasen_where)" sort="(prop,ephasen_sort_attribute)" number="(prop,ephasen_sort_number)" ignore_case="(prop,ephasen_sort_ignore_case)" desc="(prop,ephasen_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,ephasen_offset_label)),0)">
+<ti label="(prop,ephasen_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<try_catch>
+<try>
+<call_job job="hook-every-ephase-list"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: ephase-view: 2.0">
+<ti> hook_job=hook-every-ephase-list hook=2 page=view station=0 object=ephase</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<ti type="rec" key="(f,when,(f,not,(f,eq_num,40,(loop,ephase_loop,@phase))),(f,tk_sel_translate,(loop,ephase_loop,@phase),(file,phasen-selektor)),)">
+<ti flag="block">(f,text,cut_nice,(f,tk_sel_translate,(loop,ephase_loop,@zut_key),(file,akt-zutatenliste-komponente)),30):</ti>
+<ti type="call_job" explain="(f,html,b,o)(f,text,cut_nice,(loop,ephase_loop,@besch),40)(f,html,b,c)" job="ephase-see">
+<prop id="ephase_key">(loop,ephase_loop,@row)</prop>
+<file id="ephasen">(file,ephasen)</file>
+<prop id="ephasen_offset">(prop,ephasen_offset)</prop>
+<prop id="ephasen_offset_label">(prop,ephasen_offset_label)</prop>
+<prop id="ephasen_offset_new_key">(prop,ephasen_offset_new_key)</prop>
+<prop id="ephasen_sort_attribute">(prop,ephasen_sort_attribute)</prop>
+<prop id="ephasen_sort_number">(prop,ephasen_sort_number)</prop>
+<prop id="ephasen_where">(prop,ephasen_where)</prop>
+<prop id="ephasen_return_job">(prop,ephasen_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="komps">(file,komps)</file>
+<prop id="komps_offset">(prop,komps_offset)</prop>
+<prop id="komps_offset_label">(prop,komps_offset_label)</prop>
+<prop id="komps_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="komps_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="komps_sort_number">(prop,komps_sort_number)</prop>
+<prop id="komps_where">(prop,komps_where)</prop>
+<prop id="komps_return_job">(prop,komps_return_job)</prop>
+<prop id="komp_key">(prop,komp_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keinen Vorgang gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,ephasen_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="ephase-add" explain="[ + weiterer Vorgang ]" job="ephase-add">
+<file id="ephasen">(file,ephasen)</file>
+<prop id="ephasen_offset">(prop,ephasen_offset)</prop>
+<prop id="ephasen_offset_label">(prop,ephasen_offset_label)</prop>
+<prop id="ephasen_offset_new_key">(prop,ephasen_offset_new_key)</prop>
+<prop id="ephasen_sort_attribute">(prop,ephasen_sort_attribute)</prop>
+<prop id="ephasen_sort_number">(prop,ephasen_sort_number)</prop>
+<prop id="ephasen_where">(prop,ephasen_where)</prop>
+<prop id="ephasen_return_job">(prop,ephasen_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="komps">(file,komps)</file>
+<prop id="komps_offset">(prop,komps_offset)</prop>
+<prop id="komps_offset_label">(prop,komps_offset_label)</prop>
+<prop id="komps_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="komps_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="komps_sort_number">(prop,komps_sort_number)</prop>
+<prop id="komps_where">(prop,komps_where)</prop>
+<prop id="komps_return_job">(prop,komps_return_job)</prop>
+<prop id="komp_key">(prop,komp_key)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,ephasen)</file>
+<prop id="orga_where">(prop,ephasen_where)</prop>
+<prop id="orga_view_loop_id">ephase_loop</prop>
+<prop id="orga_finished_job">event-ephase-orga-finished</prop>
+<prop id="orga_offset">(prop,ephasen_offset)</prop>
+<prop id="orga_offset_label">(prop,ephasen_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,ephasen_offset_new_key)</prop>
+<prop id="orga_segment_plural">ephasen</prop>
+<prop id="orga_segment_singular">ephase</prop>
+<prop id="orga_segment_plural_label">Vorgaenge</prop>
+<prop id="orga_segment_singular_label">Vorgang</prop>
+<prop id="orga_sort_attribute">(prop,ephasen_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,ephasen_sort_number)</prop>
+<prop id="orga_where">(prop,ephasen_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(f,tk_sel_translate,(loop,ephase_loop,@zut_key),(file,akt-zutatenliste-komponente)),30).(f,text,cut_nice,(loop,ephase_loop,@besch),40)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="komps">(file,komps)</file>
+<prop id="komps_offset">(prop,komps_offset)</prop>
+<prop id="komps_offset_label">(prop,komps_offset_label)</prop>
+<prop id="komps_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="komps_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="komps_sort_number">(prop,komps_sort_number)</prop>
+<prop id="komps_where">(prop,komps_where)</prop>
+<prop id="komps_return_job">(prop,komps_return_job)</prop>
+<prop id="komp_key">(prop,komp_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,ephasen)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,ephasen_offset)),0)">(prop,ephasen_offset)</ti>
+</ti>
+</when>
+</job>

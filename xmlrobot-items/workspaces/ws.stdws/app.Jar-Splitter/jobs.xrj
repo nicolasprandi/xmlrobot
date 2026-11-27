@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<include file="(dir,app)prolog.xrs"/>
+<job id="see-that-dir" role="hidden">
+  <need>(dir,with)</need>
+  <scan dir="(dir,with)" out="(dir,temp)x.xml" level_limit="1" field="mb kb bytes"/>
+  <loop id="j" xml="(dir,temp)x.xml" xpath="file">
+    <ti label="(loop,j)" x="(loop,j,@kb) kb"/>
+  </loop>
+ 
+  
+</job>
+
+<job id="Run">
+  <interpreter watch="0"/>
+  <call_job job="tk_split_edit"/>
+  
+  <dir id="extracted" x="(dir,temp)extracted"/>
+  <mkdir dir="(dir,extracted)"/>
+  
+  <dir id="collected" x="(dir,temp)collected"/>
+  <mkdir dir="(dir,collected)"/>  
+
+  <tp>unzip...</tp>     
+  <ant level="debug">
+    <unzip 
+    src="(f,file,classic,(file,split_jar))" 
+    dest="(f,dir,classic,(dir,extracted))"/>
+  </ant>     
+  <file id="x" x="(dir,temp)dir.xml"/>
+  <scan out="(file,x)" 
+        dir="(dir,extracted)" field="fn kb"/>
+        
+  <prop id="block" x="1"/>
+  <prop id="sum" x="0"/>
+  <dir id="block" x="(dir,collected)(prop,fs)(prop,block)"/>
+  <copy intodir2="(dir,block)META-INF" dir="(dir,extracted)META-INF" flag="catch"/>
+  <loop id="f" xml="(file,x)" xpath="//file">
+    <copy file="(loop,f,@fn)"
+          intodir="(dir,block)(loop,f,..,@ipath)"/>
+    <prop id="sum" x="(f,add,(prop,sum),(loop,f,@kb))"/>
+    <when test="(f,lt_num,(prop,split_size),(prop,sum))">
+      <ti>(prop,split_size) (prop,sum)</ti>
+      <prop id="block" x="(f,add,(prop,block),1)"/>
+      <prop id="sum" x="0"/>
+      <dir id="block" x="(dir,collected)(prop,fs)(prop,block)"/>
+     <copy intodir2="(dir,block)META-INF" dir="(dir,extracted)META-INF" flag="catch"/>
+      <tp>Next Block: (prop,block)</tp>
+    </when>
+  </loop>
+  
+  <file id="y" x="(dir,temp)artefacts.xml"/>
+  <scan out="(file,y)" 
+        dir="(dir,collected)" level_limit="1"/>
+  <interpreter watch="1"/>    
+  <prop id="firstname2" x="(f,name_of_file2,(file,split_jar))"/> 
+  <prop id="firstname" x="(f,name_of_file,(file,split_jar))"/>
+  <ti>fielnaem (file,split_jar)</ti>
+  
+  <prop id="last_dot_index" x="(f,last_index_of,(prop,firstname),.)"/>
+  <prop id="part1" x="(f,substring,(prop,firstname),0,(prop,last_dot_index))"/>
+  <prop id="part2" x="(f,substring,(prop,firstname),(prop,last_dot_index))"/>
+  <prop id="extension" x="(f,substring,(prop,firstname),(f,len,(prop,firstname2)))"/>   
+  <loop id="g" xml="(file,y)" xpath="dir"> 
+    <file id="write" x="(dir,split_dir)(prop,part1)[-(loop,g,@rpath)-](prop,part2)"/>             
+    <tp>zipping (f,name_of_file,(file,write)) ...</tp> 
+     <ant level="debug">
+     <!-- 
+      <zip 
+      basedir="(dir,collected)(loop,g,@ipath)" 
+      destfile="(file,write)"/>
+              -->
+     <jar destfile="(f,file,classic,(file,write))" basedir="(f,dir,classic,(dir,collected)(loop,g,@ipath))"/> 
+    </ant>      
+  </loop>  
+  <ti label="Results"/>
+   <ti type="dir" x="(dir,collected)"/>       
+  <ti type="dir" x="(dir,split_dir)"/>
+  <ti type="call_job" job="See Results" />
+
+
+</job>
+<job id="??">
+  <call_job job="See Results"/>
+  
+  <call_job job="tk_split_print_values"/>
+  
+</job>
+<job id="See Results">
+
+<call_job job="tk_split_read"/>
+
+<call_job job="see-that-dir">
+  <dir id="with" x="(dir,split_dir)"/>
+</call_job>
+
+<call_service job="Goto-Panorama">
+  <dir id="with" x="(dir,split_dir)"/>
+</call_service>
+
+</job>
+
+<job id="Clear Results">
+  <tk type="msg" x="Sure to clear results?"/>
+  <call_job job="tk_split_read"/>
+  <ti label="Clearing:" x="(dir,split_dir)" type="dir"/>
+  <delete content_of_dir="(dir,split_dir)"/>
+
+</job>
+
+
+<job id="???" >
+ 
+  <choose>
+    <when test="(f,exists_file,(file,split-data))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <ti label="Welcome to JAR SPLITTER">
+        <ti type="call_job" job="Run" explain="Go &amp; split a jar..."/>
+      </ti>
+      <ti_hr/>
+      <call_job job="?" />
+    </otherwise>
+  </choose>
+</job>
+
+<job id="?">
+    
+  <ti label="When to use Application (f,html,i,open)Jar-Splitter(f,html,i,close):">
+    <ti type="ul">(f,html,bold,open)You want to split a jar-file into several ones(f,html,bold,close)</ti>
+    <ti type="ul">(f,html,bold,open)You want to control the sizes of files of the results(f,html,bold,close)</ti>
+
+
+  </ti>
+
+
+    
+    <call_service job="app-info-final" flag="silent">
+      <prop id="aif-app" x="(prop,app)"/>
+    </call_service>  
+</job>
+
+</jobs>

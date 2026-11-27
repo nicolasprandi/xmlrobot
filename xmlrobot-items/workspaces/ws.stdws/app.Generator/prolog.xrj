@@ -1,0 +1,189 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<job id="api-olix" role="hidden">
+
+  <!-- <ti type="call_job" job="sys_project_setup" />   -->
+  <call_job job="prolog"/>
+  <call_job job="??"/>
+
+</job>
+
+<job id="prolog" role="hidden">
+
+
+<throw test="(f,not,(f,eq_text,(prop,app),Generator))">Sorry</throw>  
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>
+
+<prop id="pn1" x="test data generation"/>
+<prop id="pn2" x="sheet conversion"/>   
+<prop id="pn3" x="data generator"/>  
+
+<prop id="pn1b" x="Test Data Generator"/>
+<prop id="pn2b" x="Sheet Converter"/>
+
+<choose>
+  <when test="(f,has,prop,pro)" >
+    <prop id="pro-tk" x="  &lt; (prop,pro) &gt;" />
+    <dir id="work" x="(dir,filetemp)" />
+    
+    
+    <!--  <dir id="work" x="(dir,pro)WorkingData" /> 
+    <mkdir dir="(dir,work)"/>    -->
+  
+    <file id="matrix" x="(dir,work)01_matrix.xml"/>
+    
+    <dir id="conf" x="(dir,pro)Configuration" />
+    <dir id="cache" x="(dir,pro)cache" />
+    <mkdir dir="(dir,cache)"/>
+    <mkdir dir="(dir,conf)"/>
+    <file id="colsel" x="(dir,conf)colsel.xml"/>
+    <dir id="coll" x="(dir,pro)Collections" />
+    <!-- <mkdir dir="(dir,coll)"/>  -->
+    
+    <dir id="userinputs" x="(dir,pro)userinputs" />
+    <mkdir dir="(dir,userinputs)"/>
+    
+    <file id="cs" x="(dir,conf)excel-analysis.xml"/>
+    <file id="cse" x="(dir,conf)excel-analysis-export.xml"/>
+    <file id="cs_unique" x="(dir,work)unique.xml"/>
+    
+    <file id="rep_stat" x="(dir,conf)rep_stat.lsx"/>
+    <file id="rep_unique" x="(dir,conf)rep_unique.lsx"/>
+    <file id="rep_first" x="(dir,conf)rep_first.lsx"/>
+    <file id="rep_first2" x="(dir,conf)rep_first2.lsx"/>
+    <file id="rep_second" x="(dir,conf)rep_second.lsx"/>
+    <file id="nrr" x="(dir,conf)nrr.lsx"/>
+    
+
+    
+    <file id="input" x="(dir,pro)input.xls"/>
+    <dir id="templates">(dir,app)excel-templates</dir>
+    <dir id="sexs">(dir,app)sample-export-xsls</dir>
+    
+    
+    
+    <!-- <file id="shuffle" x="(dir,work)03_shuffle.xml"/> -->
+    <file id="shuffle2b" x="(dir,conf)output-generic.xml"/>
+    <file id="shuffle3b" x="(dir,conf)output.xml"/>
+    <file id="sr" x="(dir,conf)output.xml"/>
+    <file id="src" x="(dir,conf)output-generic.xml"/>
+    <file id="pt" x="(dir,conf)project-type.xml"/>
+    
+    <file id="resultset" x="(file,shuffle3b)"/>
+    
+    <file id="eb" x="(dir,pro)data.xml"/>
+    <file id="ebc" x="(dir,pro)export-base-complex.xml"/>
+    
+    <file id="cl" x="(dir,conf)collection-list.xml"/>
+    
+    <dir id="excel-backups" x="(dir,pro)Backups(prop,fs)Excel"/>
+    <!-- <mkdir dir="(dir,excel-backups)" flag="cascade"/> -->   
+    
+    <dir id="xsl" x="(dir,pro)Xsl"/>
+    <mkdir dir="(dir,xsl)"/>
+    <dir id="loxo" x="(dir,pro)XmlRobot"/>
+    <mkdir dir="(dir,loxo)"/>    
+    <file id="indiv1" x="(dir,xsl)indiv-1.xsl"/>
+    <file id="indiv2" x="(dir,xsl)indiv-2.xsl"/>
+    
+    <dir id="edir" x="(dir,pro)Exports"/>
+    <mkdir dir="(dir,edir)"/>
+    <dir id="angulardir" x="(dir,edir)AngularJS"/>
+    <mkdir dir="(dir,angulardir)"/>    
+    
+    <sequence id="eb" xml="(dir,conf)sequence-backups.xml" len="3" act="open"/>
+    
+    <prop id="xsl-add" x="tdg-add.xsl" />
+    <file id="xsl-add" x="(dir,app)(prop,xsl-add)" />
+    
+    <file id="fileref" x="(dir,conf)excel-input-spec.xml"/>
+    <prop id="fileref_regex" x="excel|excel-loc" />    
+    
+    <file id="ic-a" x="(dir,conf)ic-sheet.ljx"/>
+    <prop id="sheet_regex" x="sheet|wish|first_row|last_row|reporting_unique_max|do_export|do_no_skip|do_export_silent|ext_columns|ext_xsl|ext_params|ext_loxo|ext_loxo_params|main_.+" />
+    
+    <file id="ic-b" x="(dir,conf)ic-collection.ljx"/>
+    
+    <file id="ic-c" x="(dir,conf)ic-export.ljx"/>
+    <prop id="export_regex" x="saa|export-.+" />
+    
+    <file id="ic-conf" x="(dir,conf)ic-config.ljx"/>
+    <prop id="conf_regex" x="conf-.+" />
+    
+    <file id="ic-e" x="(dir,conf)ic-e.ljx"/>
+    <file id="ic-f" x="(dir,conf)ic-f.ljx"/>
+    <file id="ic-g" x="(dir,conf)ic-g.ljx"/>
+    <file id="ic-h" x="(dir,conf)ic-h.ljx"/>
+        
+    <file id="empty">(dir,app)empty.xls</file>
+    <file id="emptyx">(dir,app)empty.xlsx</file>
+    <file id="tpl" x="(dir,app)template-extension-xsl.xslo"/>
+    <file id="tploxo" x="(dir,app)template-extension-loxo.lsxo"/>
+    <file id="split" x="(dir,work)splitted-additional-columns.xml"/>
+    
+    <file id="sheet-selector" x="(dir,conf)ui-sheet-selector.xml" />
+    <file id="empty-selection" x="(dir,app)empty-selection.xml"/>
+    <when test="(f,not,(f,exists_file,(file,sheet-selector)))">
+      <copy file="(file,empty-selection)" tofile="(file,sheet-selector)"/>
+    </when>
+        
+    <!-- prepare config if it doesnt exist -->
+    <choose>
+      <when test="(f,file_exists,(file,ic-conf))">
+        <call_job job="read conf" />
+      
+      </when>
+      <otherwise>
+        <call_job job="create conf default" />
+     
+      </otherwise>
+    </choose>
+  
+  </when>
+  <otherwise>
+    <!-- <call_job job="?" /> -->
+    <prop id="pro-tk" x="" />
+    <interpreter jovial="1"/>
+  </otherwise>
+</choose>
+
+
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

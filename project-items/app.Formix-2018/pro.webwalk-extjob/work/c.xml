@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="jobid" label="JobId" tip="Das ist die Job-Id die aufgerufen werden soll" position="1" type="text" add_edit="1" name_flag="1" desc_flag="0" nono="1" sel_multi_flag="0" /><field id="desc" label="Beschreibung" tip="Was macht der Job" position="1" type="textblock" add_edit="1" name_flag="0" desc_flag="1" desc_len="40" sel_multi_flag="0" /></fields>

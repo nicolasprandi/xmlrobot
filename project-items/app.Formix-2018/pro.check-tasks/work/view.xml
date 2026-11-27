@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="task-see-all" level="ws" role="hidden" tip="Lists all Tasks">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-task-view-begin</trace>
+<call_job job="hook-task-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: task-view: begin.0">
+<ti> hook_job=hook-task-view-begin hook=begin page=view station=0 object=task</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="task_loop" xml="(file,tasks)" xpath="(prop,tasks_offset)task(prop,tasks_where)" sort="(prop,tasks_sort_attribute)" number="(prop,tasks_sort_number)" ignore_case="(prop,tasks_sort_ignore_case)" desc="(prop,tasks_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,tasks_offset_label)),0)">
+<ti label="(prop,tasks_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Classes"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,task_loop,@name),32)(f,html,bold,close)" job="task-see">
+<prop id="task_key">(loop,task_loop,@row)</prop>
+<file id="tasks">(file,tasks)</file>
+<prop id="tasks_offset">(prop,tasks_offset)</prop>
+<prop id="tasks_offset_label">(prop,tasks_offset_label)</prop>
+<prop id="tasks_offset_new_key">(prop,tasks_offset_new_key)</prop>
+<prop id="tasks_sort_attribute">(prop,tasks_sort_attribute)</prop>
+<prop id="tasks_sort_number">(prop,tasks_sort_number)</prop>
+<prop id="tasks_where">(prop,tasks_where)</prop>
+<prop id="tasks_return_job">(prop,tasks_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,task_loop,@classes))" type="text" x="(loop,task_loop,@classes)" flag="wrap"/>
+<ti test="(f,not,(f,has,(loop,task_loop,@classes)))"/>
+<ti test="(f,role,user)" type="call_job" explain="Edit" job="task-edit">
+<prop id="task_key">(loop,task_loop,@row)</prop>
+<file id="tasks">(file,tasks)</file>
+<prop id="tasks_offset">(prop,tasks_offset)</prop>
+<prop id="tasks_offset_label">(prop,tasks_offset_label)</prop>
+<prop id="tasks_offset_new_key">(prop,tasks_offset_new_key)</prop>
+<prop id="tasks_sort_attribute">(prop,tasks_sort_attribute)</prop>
+<prop id="tasks_sort_number">(prop,tasks_sort_number)</prop>
+<prop id="tasks_where">(prop,tasks_where)</prop>
+<prop id="tasks_return_job">(prop,tasks_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Tasks found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,tasks_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain_nix="task-add" explain="Add a Task" job="task-add">
+<file id="tasks">(file,tasks)</file>
+<prop id="tasks_offset">(prop,tasks_offset)</prop>
+<prop id="tasks_offset_label">(prop,tasks_offset_label)</prop>
+<prop id="tasks_offset_new_key">(prop,tasks_offset_new_key)</prop>
+<prop id="tasks_sort_attribute">(prop,tasks_sort_attribute)</prop>
+<prop id="tasks_sort_number">(prop,tasks_sort_number)</prop>
+<prop id="tasks_where">(prop,tasks_where)</prop>
+<prop id="tasks_return_job">(prop,tasks_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,boss)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,tasks)</file>
+<prop id="orga_where">(prop,tasks_where)</prop>
+<prop id="orga_view_loop_id">task_loop</prop>
+<prop id="orga_finished_job">task-see-all</prop>
+<prop id="orga_offset">(prop,tasks_offset)</prop>
+<prop id="orga_offset_label">(prop,tasks_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,tasks_offset_new_key)</prop>
+<prop id="orga_segment_plural">tasks</prop>
+<prop id="orga_segment_singular">task</prop>
+<prop id="orga_segment_plural_label">Tasks</prop>
+<prop id="orga_segment_singular_label">Task</prop>
+<prop id="orga_sort_attribute">(prop,tasks_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,tasks_sort_number)</prop>
+<prop id="orga_where">(prop,tasks_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,task_loop,@name),32)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,tasks)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,tasks_offset)),0)">(prop,tasks_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-task-view-end</trace>
+<call_job job="hook-task-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: task-view: end.0">
+<ti> hook_job=hook-task-view-end hook=end page=view station=0 object=task</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

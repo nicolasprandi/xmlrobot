@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ephase-read">
+<need>(prop,ephase_key)</need>
+<spirit act="open" missing_strategy="empty" id="ephasen_spirit_tc" xml="(file,ephasen)"/>
+<prop id="ephase_dt_upd">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@dt_upd)</prop>
+<prop id="ephase_dt_add">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@dt_add)</prop>
+<prop id="ephase_zut_key">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@zut_key)</prop>
+<prop id="ephase_besch">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@besch)</prop>
+<prop id="ephase_details">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@details)</prop>
+<prop id="ephase_phase">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@phase)</prop>
+<prop id="ephase_zeitangaben">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@zeitangaben)</prop>
+<prop id="ephase_kostenangaben">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@kostenangaben)</prop>
+<prop id="ephase_notiz">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@notiz)</prop>
+<file flag="cool" id="ephase_logo">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@logo)</file>
+<unescape type="file" id="ephase_logo"/>
+<translate type="file" id="ephase_logo"/>
+<prop id="ephase_logo_max_x">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@logo_max_x)</prop>
+<prop id="ephase_logo_max_y">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@logo_max_y)</prop>
+<prop id="ephase_logo_max_x_main">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@logo_max_x_main)</prop>
+<prop id="ephase_logo_max_y_main">(f,spirit,ephasen_spirit_tc,(prop,ephasen_offset)ephase[@row=(f,xpath_string,(prop,ephase_key))],@logo_max_y_main)</prop>
+<spirit act="close" id="ephasen_spirit_tc"/>
+</job>

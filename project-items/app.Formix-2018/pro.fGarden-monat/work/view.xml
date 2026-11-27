@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="monat-see-all" level="ws" role="hidden" tip="Lists all Monate">
+<prop id="nothing">1</prop>
+<loop id="i" missing_strategy="empty" xml="(file,monate)" xpath="(prop,monate_offset)monat(prop,monate_where)" sort="(prop,monate_sort_attribute)" number="(prop,monate_sort_number)" ignore_case="(prop,monate_sort_ignore_case)" desc="(prop,monate_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,monate_offset_label)),0)">
+<ti label="(prop,monate_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@monat),1),Jänner(e:s),)(f,when,(f,has_flag,(loop,i,@monat),2),Februar(e:s),)(f,when,(f,has_flag,(loop,i,@monat),3),März(e:s),)(f,when,(f,has_flag,(loop,i,@monat),4),April(e:s),)(f,when,(f,has_flag,(loop,i,@monat),5),Mai(e:s),)(f,when,(f,has_flag,(loop,i,@monat),6),Juni(e:s),)(f,when,(f,has_flag,(loop,i,@monat),7),Juli(e:s),)(f,when,(f,has_flag,(loop,i,@monat),8),August(e:s),)(f,when,(f,has_flag,(loop,i,@monat),9),September(e:s),)(f,when,(f,has_flag,(loop,i,@monat),10),Oktober(e:s),)(f,when,(f,has_flag,(loop,i,@monat),11),November(e:s),)(f,when,(f,has_flag,(loop,i,@monat),12),Dezember(e:s),),30)(f,html,bold,close)" job="monat-see">
+<prop id="monat_key">(loop,i,@row)</prop>
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keinen Monat gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,monate_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,user)" label=" " type="call_job" explain_nix="monat-add" explain="Neuer Monat" job="monat-add">
+<file id="monate">(file,monate)</file>
+<prop id="monate_offset">(prop,monate_offset)</prop>
+<prop id="monate_offset_label">(prop,monate_offset_label)</prop>
+<prop id="monate_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="monate_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="monate_sort_number">(prop,monate_sort_number)</prop>
+<prop id="monate_where">(prop,monate_where)</prop>
+<prop id="monate_return_job">(prop,monate_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_service" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,monate)</file>
+<prop id="orga_offset">(prop,monate_offset)</prop>
+<prop id="orga_offset_label">(prop,monate_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,monate_offset_new_key)</prop>
+<prop id="orga_segment_plural">monate</prop>
+<prop id="orga_segment_singular">monat</prop>
+<prop id="orga_segment_plural_label">Monate</prop>
+<prop id="orga_segment_singular_label">Monat</prop>
+<prop id="orga_sort_attribute">(prop,monate_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,monate_sort_number)</prop>
+<prop id="orga_where">(prop,monate_where)</prop>
+<prop id="orga_name_expression_loop">()(f,html,bold,open)(f,text,cut_nice,(f,when,(f,has_flag,(loop,i,@monat),1),Jänner(e:s),)(f,when,(f,has_flag,(loop,i,@monat),2),Februar(e:s),)(f,when,(f,has_flag,(loop,i,@monat),3),März(e:s),)(f,when,(f,has_flag,(loop,i,@monat),4),April(e:s),)(f,when,(f,has_flag,(loop,i,@monat),5),Mai(e:s),)(f,when,(f,has_flag,(loop,i,@monat),6),Juni(e:s),)(f,when,(f,has_flag,(loop,i,@monat),7),Juli(e:s),)(f,when,(f,has_flag,(loop,i,@monat),8),August(e:s),)(f,when,(f,has_flag,(loop,i,@monat),9),September(e:s),)(f,when,(f,has_flag,(loop,i,@monat),10),Oktober(e:s),)(f,when,(f,has_flag,(loop,i,@monat),11),November(e:s),)(f,when,(f,has_flag,(loop,i,@monat),12),Dezember(e:s),),30)(f,html,bold,close)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,monate)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,monate_offset)),0)">(prop,monate_offset)</ti>
+</ti>
+</when>
+</job>

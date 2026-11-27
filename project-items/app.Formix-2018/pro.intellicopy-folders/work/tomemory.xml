@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="folder-read">
+<need>(prop,folder_key)</need>
+<spirit act="open" missing_strategy="empty" id="folders_spirit_tc" xml="(file,folders)"/>
+<prop id="folder_dt_upd">(f,spirit,folders_spirit_tc,(prop,folders_offset)folder[@row=(f,xpath_string,(prop,folder_key))],@dt_upd)</prop>
+<prop id="folder_dt_add">(f,spirit,folders_spirit_tc,(prop,folders_offset)folder[@row=(f,xpath_string,(prop,folder_key))],@dt_add)</prop>
+<dir flag="cool" id="folder_from">(f,spirit,folders_spirit_tc,(prop,folders_offset)folder[@row=(f,xpath_string,(prop,folder_key))],@from)</dir>
+<unescape type="dir" id="folder_from"/>
+<translate type="dir" id="folder_from"/>
+<dir flag="cool" id="folder_to">(f,spirit,folders_spirit_tc,(prop,folders_offset)folder[@row=(f,xpath_string,(prop,folder_key))],@to)</dir>
+<unescape type="dir" id="folder_to"/>
+<translate type="dir" id="folder_to"/>
+<prop id="folder_name">(f,spirit,folders_spirit_tc,(prop,folders_offset)folder[@row=(f,xpath_string,(prop,folder_key))],@name)</prop>
+<spirit act="close" id="folders_spirit_tc"/>
+</job>

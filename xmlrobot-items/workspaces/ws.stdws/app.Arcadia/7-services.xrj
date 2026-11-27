@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>   
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+<job id="Check Services" xpri="10"
+    tip="Downloads XmlRobot-Services from Github" role="test">
+  <tk type="msg" x="Continue with downloading the services?"/>
+  <call_job job="connect"/>
+
+  <tp>Delete old files</tp>
+  <mkdir dir="(dir,ghsrv)"/>
+  <ant level="info">
+   <delete verbose="true">
+    <fileset 
+             dir="(f,dir,classic,(dir,ghsrv))" 
+             includes="*.*" 
+             defaultexcludes="false"/>
+   </delete>
+  </ant>  
+  
+  <tp>Copy services from github</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="xmlrobot-items/services"/>
+    <dir id="caf-target" x="(dir,ghsrv)"/>
+    <dir id="caf-retry" x="1"/>
+  </call_job> 
+  
+  <call_service job="Goto-Compare-Dirs">
+    <dir id="old" x="(dir,services)"/>
+    <dir id="new" x="(dir,ghsrv)"/>
+  </call_service>
+    
+</job>
+</jobs>

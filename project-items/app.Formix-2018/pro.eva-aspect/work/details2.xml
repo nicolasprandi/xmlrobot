@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="aspect-see-more">
+<need>(prop,aspect_key)</need>
+<call_job job="aspect-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="aspects_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,aspect_titel)(f,html,bold,close)(f,when,(f,has,(prop,aspects_offset_label)), - (prop,aspects_offset_label),)"/>
+<call_job job="aspect-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="Edit" job="aspect-edit">
+<prop id="aspect_key">(prop,aspect_key)</prop>
+<file id="aspects">(file,aspects)</file>
+<prop id="aspects_offset">(prop,aspects_offset)</prop>
+<prop id="aspects_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="aspects_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="aspects_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="aspects_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="aspects_where">(prop,aspects_where)</prop>
+<prop id="aspects_return_job">(prop,aspects_return_job)</prop>
+</ti>
+</ti>
+</job>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="ass-add" level="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="ass-editor"/>
+<prop id="ass_key">1</prop>
+<when test="(f,not,(f,exists,prop,asss_offset_new_key))">
+<prop id="asss_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,asss)" sort="@row" number="@row" xpath="(prop,asss_offset_new_key)ass">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="ass_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Arbeitsschritt: #(prop,ass_key)</i>
+<call_job job="ass-write"/>
+<ti label="Did add Arbeitsschritt:" x="(f,html,bold,open)(prop,ass_bez)(f,html,bold,close)"/>
+<ti_hr/>
+<choose>
+<when test="(f,has,prop,post_add_script_ass)">
+<create_file file="(dir,temp)abdert.xrs">(prop,post_add_script_ass)</create_file>
+<include file="(dir,temp)abdert.xrs"/>
+</when>
+<otherwise>
+<call_job job="ass-see-all-event"/>
+</otherwise>
+</choose>
+</job>

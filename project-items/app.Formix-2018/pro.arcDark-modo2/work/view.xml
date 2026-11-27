@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="modo2-see-all" level="ws" role="hidden">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="modo2_loop" xml="(file,modos2)" xpath="(prop,modos2_offset)modo2(prop,modos2_where)" sort="(prop,modos2_sort_attribute)" number="(prop,modos2_sort_number)" ignore_case="(prop,modos2_sort_ignore_case)" desc="(prop,modos2_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,modos2_offset_label)),0)">
+<ti label="(prop,modos2_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Probability"/>
+<ti x="Xpath"/>
+<ti x="a. Xml"/>
+<ti x="b. Value"/>
+<ti x="Expected Counts"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti flag="" type="call_job" prefix="  " explain="(f,html,bold,open)(f,when,(f,has_flag,(loop,modo2_loop,@how),append),append(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_in),insert_in(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_in_begin),insert_in_begin(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_before),insert_before(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_after),insert_after(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),replace),replace(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),remove),remove(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),set_attribute),set_attribute(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),remove_attribute),remove_attribute(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),set_text),set_text(e:s),)(f,html,bold,close)" job="modo2-see">
+<prop id="modo2_key">(loop,modo2_loop,@row)</prop>
+<file id="modos2">(file,modos2)</file>
+<prop id="modos2_offset">(prop,modos2_offset)</prop>
+<prop id="modos2_offset_label">(prop,modos2_offset_label)</prop>
+<prop id="modos2_offset_new_key">(prop,modos2_offset_new_key)</prop>
+<prop id="modos2_sort_attribute">(prop,modos2_sort_attribute)</prop>
+<prop id="modos2_sort_number">(prop,modos2_sort_number)</prop>
+<prop id="modos2_sort_ignore_case">(prop,modos2_sort_ignore_case)</prop>
+<prop id="modos2_sort_desc">(prop,modos2_sort_desc)</prop>
+<prop id="modos2_where">(prop,modos2_where)</prop>
+<prop id="modos2_return_job">(prop,modos2_return_job)</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+<prop id="file2_key">(prop,file2_key)</prop>
+</ti>
+<ti test="(f,has,(loop,modo2_loop,@prob))" type="text" x="(loop,modo2_loop,@prob)"/>
+<ti test="(f,not,(f,has,(loop,modo2_loop,@prob)))"/>
+<ti test="(f,has,(loop,modo2_loop,@where))" type="text" x="(f,text,cut_nice,(loop,modo2_loop,@where),200)" flag="wrap"/>
+<ti test="(f,not,(f,has,(loop,modo2_loop,@where)))"/>
+<ti test="(f,has,(loop,modo2_loop,@with))" type="textblock" x="(f,text,cut_nice,(loop,modo2_loop,@with),200)" flag="wrap"/>
+<ti test="(f,not,(f,has,(loop,modo2_loop,@with)))"/>
+<ti test="(f,has,(loop,modo2_loop,@value))" type="text" x="(loop,modo2_loop,@value)"/>
+<ti test="(f,not,(f,has,(loop,modo2_loop,@value)))"/>
+<ti test="(f,has,(loop,modo2_loop,@count))" type="text" x="(loop,modo2_loop,@count)"/>
+<ti test="(f,not,(f,has,(loop,modo2_loop,@count)))"/>
+<ti type="call_job" flag="button" explain="Edit" class="fx fxEdit fxEditView fxEditViewModo2" job="modo2-edit">
+<prop id="modo2_key">(loop,modo2_loop,@row)</prop>
+<file id="modos2">(file,modos2)</file>
+<prop id="modos2_offset">(prop,modos2_offset)</prop>
+<prop id="modos2_offset_label">(prop,modos2_offset_label)</prop>
+<prop id="modos2_offset_new_key">(prop,modos2_offset_new_key)</prop>
+<prop id="modos2_sort_attribute">(prop,modos2_sort_attribute)</prop>
+<prop id="modos2_sort_number">(prop,modos2_sort_number)</prop>
+<prop id="modos2_sort_ignore_case">(prop,modos2_sort_ignore_case)</prop>
+<prop id="modos2_sort_desc">(prop,modos2_sort_desc)</prop>
+<prop id="modos2_where">(prop,modos2_where)</prop>
+<prop id="modos2_return_job">(prop,modos2_return_job)</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+<prop id="file2_key">(prop,file2_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Modificators found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,modos2_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="button obutton " label=" " type="call_job" explain_nix="modo2-add" class="fx fxAdd fxAddModo2" explain="Add" job="modo2-add">
+<file id="modos2">(file,modos2)</file>
+<prop id="modos2_offset">(prop,modos2_offset)</prop>
+<prop id="modos2_offset_label">(prop,modos2_offset_label)</prop>
+<prop id="modos2_offset_new_key">(prop,modos2_offset_new_key)</prop>
+<prop id="modos2_sort_attribute">(prop,modos2_sort_attribute)</prop>
+<prop id="modos2_sort_number">(prop,modos2_sort_number)</prop>
+<prop id="modos2_sort_ignore_case">(prop,modos2_sort_ignore_case)</prop>
+<prop id="modos2_sort_desc">(prop,modos2_sort_desc)</prop>
+<prop id="modos2_where">(prop,modos2_where)</prop>
+<prop id="modos2_return_job">(prop,modos2_return_job)</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+<prop id="file2_key">(prop,file2_key)</prop>
+</ti>
+<ti flag="button" label=" " type="call_job" class="fx fxOrga fxOrgaModo2" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,modos2)</file>
+<prop id="orga_where">(prop,modos2_where)</prop>
+<prop id="orga_view_loop_id">modo2_loop</prop>
+<prop id="orga_finished_job">ready-and-done-modo2</prop>
+<prop id="orga_offset">(prop,modos2_offset)</prop>
+<prop id="orga_offset_label">(prop,modos2_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,modos2_offset_new_key)</prop>
+<prop id="orga_segment_plural">modos2</prop>
+<prop id="orga_segment_singular">modo2</prop>
+<prop id="orga_segment_plural_label">Modificators</prop>
+<prop id="orga_segment_singular_label">Modificator</prop>
+<prop id="orga_sort_attribute">(prop,modos2_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,modos2_sort_number)</prop>
+<prop id="orga_where">(prop,modos2_where)</prop>
+<prop id="orga_name_expression_loop">()(f,when,(f,has_flag,(loop,modo2_loop,@how),append),append(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_in),insert_in(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_in_begin),insert_in_begin(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_before),insert_before(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),insert_after),insert_after(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),replace),replace(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),remove),remove(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),set_attribute),set_attribute(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),remove_attribute),remove_attribute(e:s),)(f,when,(f,has_flag,(loop,modo2_loop,@how),set_text),set_text(e:s),)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<file id="files2">(file,files2)</file>
+<prop id="files2_offset">(prop,files2_offset)</prop>
+<prop id="files2_offset_label">(prop,files2_offset_label)</prop>
+<prop id="files2_offset_new_key">(prop,files2_offset_new_key)</prop>
+<prop id="files2_sort_attribute">(prop,files2_sort_attribute)</prop>
+<prop id="files2_sort_number">(prop,files2_sort_number)</prop>
+<prop id="files2_sort_ignore_case">(prop,files2_sort_ignore_case)</prop>
+<prop id="files2_sort_desc">(prop,files2_sort_desc)</prop>
+<prop id="files2_where">(prop,files2_where)</prop>
+<prop id="files2_return_job">(prop,files2_return_job)</prop>
+<prop id="file2_key">(prop,file2_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,modos2)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,modos2_offset)),0)">(prop,modos2_offset)</ti>
+</ti>
+</when>
+</job>

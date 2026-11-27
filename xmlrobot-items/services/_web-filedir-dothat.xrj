@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="do-that-now" role="hidden">
+  <need>(prop,from-app) (prop,from-pro) (prop,from-job) (dir,from-pro)</need>
+  <need default="0">(prop,from-really-silent)</need>
+  <!-- 
+  <unescape type="prop" id="from-app"/>
+  <unescape type="prop" id="from-job"/>
+  <unescape type="prop" id="from-pro"/>
+    <echo id="from-job"/>
+  <echo id="from-app"/>
+  <echo id="from-pro"/>
+  -->
+  <ti_flush/>
+  <tp>working on (prop,from-job) for (prop,from-pro)</tp> 
+
+  <call_app
+  job="(prop,from-job)"
+  app="(prop,from-app)"
+  pro_id="(prop,from-pro)"
+  pro_dir="(dir,from-pro)"
+  xflag="(f,when,(prop,from-really-silent),silent,)"/>  
+</job>
+
+
+
+<job id="see-help-and-go" role="hidden">
+  <need>(prop,from-app) (prop,from-pro) (prop,from-job) (dir,from-pro)</need>
+  <!-- 
+  <unescape type="prop" id="from-app"/>
+  <unescape type="prop" id="from-job"/>
+  <unescape type="prop" id="from-pro"/>
+    <echo id="from-job"/>
+  <echo id="from-app"/>
+  <echo id="from-pro"/>
+  -->
+  <ti_flush/>
+  <tp>working on (prop,from-job) for (prop,from-pro)</tp> 
+
+  <call_app
+  job="(prop,from-job)"
+  app="(prop,from-app)"
+  pro_id="(prop,from-pro)"
+  pro_dir="(dir,from-pro)"
+  fxlag="silent"/>  
+  <!--  
+  <ti_hr/>
+  <prop id="the-jobs-name">(f,substring,(prop,from-job),0,(f,sub,(f,len,(prop,from-job)),1))</prop>
+ 
+    <choose> 
+     <when test="(f,eq_text,(prop,from-app),(f,request,prop,master_project_app))">
+           <prop id="expl">[ (prop,app) ]</prop>
+           <prop id="proinfo-button-class">stdProButton</prop>
+           <prop id="job-button-class">stdJobButton</prop>
+     </when> 
+     <otherwise>
+        <prop id="expl">[[ (prop,from-app) ]]</prop>
+        <prop id="proinfo-button-class">stdProButtonSecond</prop>
+         <prop id="job-button-class">stdJobButtonSecond</prop>
+     </otherwise>
+    </choose>
+       
+  <prop id="the-class">(f,when,(f,or,(f,eq_text,[ Werkzeug ],(prop,the-jobs-name)),(f,eq_text,[ Anmelden ],(prop,the-jobs-name)),(f,eq_text,[ Tools ],(prop,the-jobs-name)),(f,eq_text,[ Login ],(prop,the-jobs-name))),stdSysButton,(prop,job-button-class))</prop>
+          
+  <ti type="call_service" explain="(prop,the-jobs-name)" job="do-that-now" flag="button" class="(prop,the-class)">
+    <prop id="from-app">(prop,from-app)</prop>
+    <prop id="from-pro">(prop,from-pro)</prop>
+    <prop id="from-job">(prop,the-jobs-name)</prop>
+    <dir id="from-pro">(dir,from-pro)</dir>
+  </ti>       
+  -->
+
+</job>
+
+</jobs>

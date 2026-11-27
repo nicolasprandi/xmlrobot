@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="task-read">
+<need>(prop,task_key)</need>
+<spirit act="open" missing_strategy="empty" id="tasks_spirit_tc" xml="(file,tasks)"/>
+<prop id="task_dt_upd">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@dt_upd)</prop>
+<prop id="task_dt_add">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@dt_add)</prop>
+<prop id="task_name">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@name)</prop>
+<prop id="task_description">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@description)</prop>
+<prop id="task_full">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@full)</prop>
+<prop id="task_status">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@status)</prop>
+<prop id="task_types">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@types)</prop>
+<prop id="task_date_active">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@date_active)</prop>
+<prop id="task_date_build">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@date_build)</prop>
+<prop id="task_date_closed">(f,spirit,tasks_spirit_tc,(prop,tasks_offset)task[@row=(f,xpath_string,(prop,task_key))],@date_closed)</prop>
+<spirit act="close" id="tasks_spirit_tc"/>
+</job>

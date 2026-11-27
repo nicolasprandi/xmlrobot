@@ -1,0 +1,644 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+
+
+<job id="sqli_jump_sqli_implementation" role="hidden"> 
+  <need>(prop,ref_sqli_type)</need>
+  
+      <file id="zeppelin">(dir,goMoon)bulks/zeppelin/bulks-list.xml</file>
+      <!-- hier mal die sqli-daten rausholen , und zwar zum (prop,ir8-type)-->
+      <spirit id="zep" act="open" xml="(file,zeppelin)"/>
+      
+      <prop id="zep_sqli_file">(f,spirit,zep,bulk[@row=(f,xpath_string,(prop,ref_sqli_type))],@sqli_file)</prop>
+      <prop id="zep_sqli_row">(f,spirit,zep,bulk[@row=(f,xpath_string,(prop,ref_sqli_type))],@sqli_row)</prop>
+      
+      <spirit id="zep" act="close"/>
+      <file id="zep_sqli_query">(dir,goMoon)queries/(prop,zep_sqli_file)/queries-list.xml</file>
+      <spirit id="zep-target" act="open" xml="(file,zep_sqli_query)"/>
+      <loop id="zep" 
+            spirit="zep-target"
+            xpath="//sqli[@row=(f,xpath_string,(prop,zep_sqli_row))]" 
+            limit="1"
+            missing_strategy="empty">
+         <prop id="zep_squery_row">(loop,zep,..,@row)</prop>   
+      </loop>
+      
+      <spirit id="zep-target" act="close"/>            
+                  
+      
+      
+      <call_job job="sqli-see">
+        <file id="sqlis">(dir,goMoon)queries/(prop,zep_sqli_file)/queries-list.xml</file>
+        <prop id="sqli_key">(prop,zep_sqli_row)</prop>
+        <prop id="squery_key">(prop,zep_squery_row)</prop>
+        <prop id="squerys_offset">./</prop>
+        <prop id="sqlis_offset">squery[@row='(prop,zep_squery_row)']/</prop>
+        
+         
+      
+      </call_job>
+        
+</job>
+
+<job id="sqli_event_post_detail_data" role="hidden">  
+
+  <when test="(f,not,(f,eq_text,(prop,sqli_type),private))">
+  <when test="(f,exists_file,(dir,goMoon)sqli-types/(prop,sqli_type).txt)">
+    <ti label="(prop,_sqli_type_docu):">(f,file_content,(dir,goMoon)sqli-types/(prop,sqli_type).txt)</ti>
+  </when>  
+  <ti type="call_job" label=" " job="sqli_jump_sqli_implementation" explain="(prop,_sqli_jump_impl)">
+    <prop id="ref_sqli_type">(prop,sqli_type)</prop>
+  </ti>
+  </when>
+</job>
+
+<job id="sqli_event_loop_end" role="hidden">
+
+      <prop id="sqli_docu_adder"></prop>
+      <try_catch><try>
+      <choose>
+        <when test="(f,eq_text,private,(loop,sqli_loop,@type))">
+          <choose>                   
+            <when  test="(loop,sqli_loop,exists?,@docu)">
+              <prop id="sqli_docu_adder">[Type] Private Script [Docu] (f,text,cut_nice,(f,replace,(loop,sqli_loop,@docu),&#xA;, ),300)</prop>
+            </when>
+            <otherwise>
+              <prop id="sqli_docu_adder">[Type] Private Script</prop>
+            </otherwise>
+          </choose>
+          
+        </when>
+        <otherwise>                          
+          <prop id="sqli_docu_adder">[Type] (f,tk_sel_translate,(loop,sqli_loop,@type),(file,sqlisel_type))</prop>
+          <when test="(loop,sqli_loop,exists?,@docu)">
+            <prop id="sqli_docu_adder">(prop,sqli_docu_adder) [Docu] (f,text,cut_nice,(f,replace,(loop,sqli_loop,@docu),&#xA;, ),200)</prop>
+          </when>                                   
+           
+          <when test="(f,exists_file,(dir,goMoon)sqli-types/(loop,sqli_loop,@type).txt)">
+            <prop id="sqli_docu_adder">(prop,sqli_docu_adder) [Sqli-Type-Docu] (f,text,cut_nice,(f,replace,(f,file_content,(dir,goMoon)sqli-types/(loop,sqli_loop,@type).txt),&#xA;, ),200)</prop>
+          </when>          
+          
+        </otherwise>
+      </choose>
+      </try><catch><prop id="sqli_docu_adder">??</prop><throw_again/></catch></try_catch>
+      <prop id="sqli_docu_adder">(f,replace,(prop,sqli_docu_adder),&#xA;, )</prop>
+       
+</job>
+<!-- stew edit and run -->
+<job id="sqli_event_follow_type" role="hidden">
+
+<when test="(f,has,prop,isAdd)">
+<when test="(prop,isAdd)">
+<when test="(f,not,(f,eq_text,private,(prop,sqli_type)))">
+<when test="(f,not,(f,has,prop,sqli_name))">
+  <prop id="sqli_name">(f,tk_sel_translate,(prop,sqli_type),(file,sqlisel_type))</prop>   
+  <prop id="sqli_name">(f,substring_before,(prop,sqli_name), (e:o))</prop>   
+</when>
+</when>
+</when>
+</when>
+
+</job>
+<job id="hook_stew_editnrun" role="hidden">
+  <prop id="no-post-see">eben</prop>
+  <call_job job="stew-edit"/>
+  <call_job job="hook_stew_run"/>
+  
+</job>                                         
+
+<job id="hook_stew_run" role="hidden">
+
+  
+  <call_job job="tr_stew" />
+  <call_job job="tr_sqli" />
+  <call_job job="tr_squery" />
+  <spirit id="sum" act="open" xml="(file,stews)"/>                                                         
+   
+  
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec" label=" ">
+
+    <ti type="call_job" job="stew-see" explain="(prop,_x_go_back_sys)" flag="button" align="right" class="fx justback">
+      <file id="stews">(file,stews)</file>
+      <prop id="stews_offset">(prop,stews_offset)</prop>
+      <prop id="stew_key">(prop,stew_key)</prop>
+      <prop id="stews_offset_label"></prop>
+      
+      <file id="squerys">(file,stews)</file>
+      <prop id="squery_key">(prop,squery_key)</prop>    
+      
+      <file id="sqlis">(file,stews)</file>
+      <prop id="sqli_key">(prop,sqli_key)</prop>
+      
+    </ti> 
+        
+ 
+    </ti>
+    <ti_break/>
+  <ti type="rec">  
+  <ti x="Running (prop,_sl_stew): (f,html,b,o)(f,spirit,sum,//stew[@row='(prop,stew_key)'],@type)(f,html,b,c) (e:o)(prop,_sl_sqli) (f,spirit,sum,//sqli[@row='(prop,sqli_key)'],@name) / (prop,_sl_squery) (f,spirit,sum,//squery[@row='(prop,squery_key)'],@id)(e:c)"/>
+  </ti>  
+   <ti_hr_break class_table="tabVerticalMiddle"/>
+  <call_job job="squery_editrun_links"/>   
+  <call_job job="sqli_editrun_links"/>     
+  <call_job job="stew_editrun_links" />
+
+  
+  <spirit id="sum" act="close"/>
+  <!-- <ti_break/> -->
+
+  <call_job job="sqli_event_run">
+    <prop id="sqli-run-dont-print-finals">1</prop>
+    <prop id="run-sqli-from-steward">1</prop>
+    
+  </call_job>
+  
+  <ti_hr_break/>                              
+
+  <ti>(prop,_sqli_done1)(prop,_sl_stew)(prop,_sqli_done2)</ti>
+ 
+  
+</job>
+
+<!-- sqli editrun und run -->
+
+<job id="sqli_event_editrun" role="hidden">
+  <prop id="no-post-see">eben</prop>
+  <call_job job="sqli-edit"/>
+  
+  <call_job job="sqli_event_run">
+    <prop id="sqli-run-dont-print-finals">1</prop>
+  </call_job>
+  
+
+</job>   
+
+
+
+<job id="stew_editrun_links" role="hidden">
+  <!-- <ti type="rec"><ti x="(f,html,b,o)(prop,_sl_stew)(f,html,b,c)"/></ti> -->
+  <ti type="rec">
+  
+    <ti type="call_job" job="hook_stew_run" explain="(prop,_stew_act_run)" 
+        flag="button xblock" class="fb fbActionStewRun">
+      <file id="stews">(file,stews)</file>
+      <prop id="stews_offset">(prop,stews_offset)</prop>
+      <prop id="stew_key">(prop,stew_key)</prop>
+      <prop id="stews_offset_label"></prop>
+      
+      <file id="squerys">(file,stews)</file>
+      <prop id="squery_key">(prop,squery_key)</prop>    
+      <prop id="sqli_key">(prop,sqli_key)</prop>
+      
+      <file id="sqlis">(file,stews)</file>
+      <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+      <prop id="sqli_key">(prop,sqli_key)</prop>      
+      
+    </ti>   
+    <ti type="call_job" job="hook_stew_editnrun" explain="(prop,_stew_act_editnrun)" flag="button" 
+    class="fb fbAction fbActionStewEdit"  test="(prop,bpDev)">
+      <file id="stews">(file,stews)</file>
+      <prop id="stews_offset">(prop,stews_offset)</prop>
+      <prop id="stew_key">(prop,stew_key)</prop>
+      <prop id="stews_offset_label"></prop>
+      
+      <file id="squerys">(file,stews)</file>
+      <prop id="squery_key">(prop,squery_key)</prop>    
+      
+      <prop id="sqli_key">(prop,sqli_key)</prop>
+      
+      <file id="sqlis">(file,stews)</file>
+      <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+      <prop id="sqli_key">(prop,sqli_key)</prop>      
+      
+    </ti>    
+    <ti flag="xblock" type="call_job" job="stew-see" explain="(f,spirit,sum,//stew[@row='(prop,stew_key)'],@type)">
+      <file id="stews">(file,stews)</file>
+      <prop id="stews_offset">(prop,stews_offset)</prop>
+      <prop id="stew_key">(prop,stew_key)</prop>
+      <prop id="stews_offset_label"></prop>
+      
+      <file id="squerys">(file,stews)</file>
+      <prop id="squery_key">(prop,squery_key)</prop>    
+      
+      <file id="sqlis">(file,stews)</file>
+      <prop id="sqli_key">(prop,sqli_key)</prop>
+      
+    </ti>
+  </ti> 
+  <!-- 
+  <ti_space heigth="2px" mark="zwischending"/>
+  <ti type="rec">
+  <ti type="menu" flag="block">
+
+  
+    
+     
+    
+
+    <ti type="call_job" flag="button" class="fb fbEdit" explain="(prop,_x_edit)" job="stew-edit" test="(prop,bpDev)">
+      <file id="stews">(file,stews)</file>
+      <prop id="stews_offset">(prop,stews_offset)</prop>
+      <prop id="stew_key">(prop,stew_key)</prop>
+      <prop id="stews_offset_label"></prop>
+      
+      <file id="squerys">(file,stews)</file>
+      <prop id="squery_key">(prop,squery_key)</prop>    
+      <prop id="sqli_key">(prop,sqli_key)</prop>
+      
+      <file id="sqlis">(file,stews)</file>
+      <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+      <prop id="sqli_key">(prop,sqli_key)</prop>      
+      
+    </ti>    
+  
+  </ti>
+  
+  </ti>  
+  -->
+           
+  
+</job>
+
+
+<job id="sqli_editrun_links" role="hidden">
+  <!-- <ti type="rec"><ti x="(f,html,b,o)(prop,_sl_sqli)(f,html,b,c)"/></ti> -->
+  
+
+  <ti type="rec" >
+
+     
+      <ti type="call_job" job="sqli_event_run" explain="(prop,_sqli_act_run)" 
+        flag="button xblock" class="fb fbActionSqliRun">
+        <file id="sqlis">(file,sqlis)</file>
+        <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+        <prop id="sqlis_offset_label"></prop> 
+        <prop id="sqli_key">(prop,sqli_key)</prop>
+            
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">./</prop>
+        <prop id="squerys_offset_label"></prop> 
+        <prop id="squery_key">(prop,squery_key)</prop>
+        
+      </ti>  
+        
+    <ti type="call_job" job="sqli_event_editrun" explain="(prop,_sqli_act_editnrun)" flag="button" 
+      class="fb fbSqli" test="(prop,bpDev)">
+        <file id="sqlis">(file,sqlis)</file>
+        <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+        <prop id="sqlis_offset_label"></prop> 
+        <prop id="sqli_key">(prop,sqli_key)</prop>
+            
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">./</prop>
+        <prop id="squerys_offset_label"></prop> 
+        <prop id="squery_key">(prop,squery_key)</prop>
+        
+      </ti>  
+      
+     <ti type="call_job" job="sqli-see" explain="(f,spirit,sum,//sqli[@row='(prop,sqli_key)'],@name)"
+      xflag="block">
+      <file id="sqlis">(file,sqlis)</file>
+      <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+      <prop id="sqlis_offset_label"></prop> 
+      <prop id="sqli_key">(prop,sqli_key)</prop>
+          
+      <file id="squerys">(file,squerys)</file>
+      <prop id="squerys_offset">./</prop>
+      <prop id="squerys_offset_label"></prop> 
+      <prop id="squery_key">(prop,squery_key)</prop>      
+    </ti>  
+    
+    
+    </ti>
+    <!-- 
+    <ti_space heigth="2px" mark="zwischending"/>
+    <ti type="rec">
+    <ti type="menu" flag="block">
+        
+      
+
+               
+       <ti explain="(prop,_x_edit)" type="call_job" job="sqli-edit"  flag="button" class="fb fbEdit" test="(prop,bpDev)">
+        <file id="sqlis">(file,sqlis)</file>
+        <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+        <prop id="sqlis_offset_label"></prop> 
+        <prop id="sqli_key">(prop,sqli_key)</prop>
+            
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">./</prop>
+        <prop id="squerys_offset_label"></prop> 
+        <prop id="squery_key">(prop,squery_key)</prop>     
+       </ti>             
+     </ti>     
+    </ti>
+    -->
+    
+     
+  
+
+</job>    
+
+<job id="squery_editrun_links" role="hidden">
+  <!-- <ti type="rec"><ti x="(f,html,b,o)(prop,_sl_squery)(f,html,b,c)"/></ti> -->
+
+  <ti type="rec">
+      <ti type="call_job" job="event_squery_run" explain="(prop,_squery_act_run)" 
+        flag="xblock button" class="fb fbActionSqueryRun">           
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">./</prop>
+        <prop id="squerys_offset_label"></prop> 
+        <prop id="squery_key">(prop,squery_key)</prop>
+        
+      </ti>     
+      <ti type="call_job" job="event_squery_defnrun" 
+        explain="(prop,_squery_act_defnrun)" flag="button" class="fb fbQuery"
+        test="(prop,bpDev)">
+            
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">./</prop>
+        <prop id="squerys_offset_label"></prop> 
+        <prop id="squery_key">(prop,squery_key)</prop>
+        
+      </ti>        
+    <ti type="call_job" job="squery-see"    flag="xblock"
+        explain="(f,spirit,sum,//squery[@row='(prop,squery_key)'],@id)">
+          
+      <file id="squerys">(file,squerys)</file>
+      <prop id="squerys_offset">./</prop>
+      <prop id="squerys_offset_label"></prop> 
+      <prop id="squery_key">(prop,squery_key)</prop>
+      
+    </ti> 
+    
+   </ti>    
+   <!--
+   <ti_space heigth="2px" mark="zwischending"/> 
+   <ti type="rec">
+    <ti type="menu" flag="block">
+  
+      
+   
+
+      <ti type="call_job" flag="button" class="fb fbEdit " explain="(prop,_x_edit)" job="squery-edit" test="(prop,bpDev)">
+            
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">./</prop>
+        <prop id="squerys_offset_label"></prop> 
+        <prop id="squery_key">(prop,squery_key)</prop>
+        
+      </ti> 
+            
+      
+    </ti> 
+    </ti>
+    -->
+        
+    
+    
+    
+    
+ 
+
+</job>  
+
+                                             
+                       
+<job id="sqli_event_details_top" role="hidden">
+
+ <ti type="rec">
+  <ti>(prop,_sl_sqli)</ti>
+  <ti >(f,html,b,o)(prop,sqli_name)(f,html,b,o)</ti>
+ </ti>   
+
+<ti label="in (prop,_sl_squery):" >(f,xpath,(file,sqlis),squery[@row=(f,xpath_string,(prop,squery_key))],@id)</ti>
+
+   <ti type="rec" label="in (prop,_sl_buch): ">
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,sqlis)))</ti>
+   </ti>  
+
+<ti_hr style="2" />
+
+</job>                       
+
+<job id="sqli_event_details_begin" role="hidden">
+
+ 
+
+   <!-- 
+   <ti type="rec" label="in (prop,_sl_squery)" flag="label_right">
+
+    <ti >(e:o)(f,xpath,(file,sqlis),squery[@row=(prop,squery_key)],@id)(f,html,b,c)(e:c)</ti>
+   </ti>   -->   
+    
+  
+</job>
+
+<job id="sqli-build-zeppelin" role="hidden">
+  <file id="zeppelin">(dir,goMoon)bulks/zeppelin/bulks-list.xml</file>
+  <delete dir="(dir,goMoon)sqli-types/" test="(f,exists_dir,(dir,goMoon)sqli-types/)"/>
+  <mkdir dir="(dir,goMoon)sqli-types/"/>
+  <choose>
+    <when test="(f,exists_file,(file,zeppelin))">
+    
+      <xslt 
+        xml="(file,zeppelin)" 
+        xsl="(dir,app)sqli-type-sel.xsl" 
+        out="(file,sqlisel_type)">
+      </xslt> 
+      <loop missing_strategy="empty" id="bulk_loop" xml="(file,zeppelin)" xpath="bulk">
+      
+        <create_file file="(dir,goMoon)sqli-types/(loop,bulk_loop,@row).txt" test="(loop,bulk_loop,exists?,@doku)"
+          >(loop,bulk_loop,@doku)</create_file>
+       
+      </loop>
+
+        
+    </when>
+    <otherwise>
+        <copy 
+          file="(dir,app)dummy-sqlisel-type.xml" 
+          tofile="(file,sqlisel_type)"/>  
+    </otherwise>
+  </choose>
+  
+  <ti label="Done"/>
+  <ti>(f,file_content,(file,sqlisel_type))</ti>
+  <ti_hr_break/>
+  <choose>
+    <when test="(f,has,prop,return-job-to-do)">
+      <call_job job="(prop,return-job-to-do)" />
+    </when>
+    <otherwise>
+      <call_job job="_configurations" />
+    </otherwise>
+  </choose>
+  
+
+</job>
+
+
+
+
+
+<!-- stew events -->
+
+<job id="stew-orga-finished" role="hidden">
+  <!-- 
+  <ti label="orga_offset">(prop,orga_offset)</ti>
+  <interpreter watch="1"/>
+  <interpreter watch="0"/>
+  -->
+
+  
+  <prop id="squery_key">(f,substring_after,(prop,orga_offset),squery[@row=')</prop> 
+  <prop id="squery_key">(f,substring_before,(prop,squery_key),')</prop>
+  <prop id="squerys_offset">./</prop>
+  <file id="squerys">(file,orga)</file>  
+  
+  <prop id="sqli_key">(f,substring_after,(prop,orga_offset),sqli[@row=')</prop> 
+  <prop id="sqli_key">(f,substring_before,(prop,sqli_key),')</prop>
+  <prop id="sqlis_offset">squery[@row='(prop,squery_key)']/</prop>
+  <file id="sqlis">(file,orga)</file>  
+  
+  <call_job job="sqli-see"/> 
+   
+
+</job>
+
+
+<job id="stew_event_details_top" role="hidden">
+                                               
+ <ti type="rec" label="(prop,_pl_stew)" >
+  <ti>(f,html,bold,open)(f,when,(f,has_flag,(prop,stew_type),top),(prop,_stew_s_1_top),)(f,when,(f,has_flag,(prop,stew_type),intro),(prop,_stew_s_1_intro),)(f,when,(f,has_flag,(prop,stew_type),main),(prop,_stew_s_1_main),)(f,when,(f,has_flag,(prop,stew_type),extro),(prop,_stew_s_1_extro),)(f,when,(f,has_flag,(prop,stew_type),fin),(prop,_stew_s_1_fin),)(f,html,bold,close)</ti>
+ </ti>   
+ 
+ <ti label="in (prop,_sl_sqli):" >(f,xpath,(file,stews),squery[@row=(f,xpath_string,(prop,squery_key))]/sqli[@row=(f,xpath_string,(prop,sqli_key))],@name)</ti>
+ <ti label="in (prop,_sl_squery):" >(f,xpath,(file,stews),squery[@row=(f,xpath_string,(prop,squery_key))],@id)</ti>
+ <ti type="rec" label="in (prop,_sl_buch): ">
+  <ti >(f,name_of_dir,(f,dir_of_file,(file,stews)))</ti>
+ </ti> 
+   
+
+ <ti_hr style="2" />
+ <!-- <ti label="in Abfrage" flag="label_right">(e:o)(f,xpath,(file,sqlis),squery[@row=(f,xpath_string,(prop,squery_key))],@id)(e:c)</ti>    -->
+
+</job>   
+
+<job id="stew_event_post_update" role="hidden">
+  <call_job job="stew-see" 
+    test="(f,not,(f,exists,prop,no-post-see))"/>
+
+</job>
+
+<job id="stew_event_view_begin" role="hidden">
+  <ti label="(prop,_pl_stew)" />
+
+</job>
+
+<job id="stew_event_details_end" role="hidden">
+  <!-- 
+  <prop id="squery_key">(f,substring_after,(prop,stew_offset),squery[@row=')</prop> 
+  <prop id="squery_key">(f,substring_before,(prop,squery_key),')</prop>
+  -->  
+  
+  <ti_hr/>
+  <ti type="rec" label=" ">
+  <ti type="call_job" job="sqli-see" explain="(prop,_stew_goto_sqli) ..."  flag="button" class="fx fxAction justblack" >
+      <file id="sqlis">(file,stews)</file>
+
+      <prop id="sqlis_offset">squery[@row='(prop,squery_key)']/</prop>  
+      <prop id="sqli_key">(prop,sqli_key)</prop>
+      
+      <file id="squerys">(file,stews)</file>      
+      <prop id="squery_key">(prop,squery_key)</prop>
+      <prop id="squerys_offset">./</prop>  
+  </ti>
+  </ti>  
+
+</job>
+
+<job id="stew_event_view_end" role="hidden">
+
+
+</job>
+
+<!-- sqli events -->
+
+<job id="sqli-orga-finished" role="hidden">
+  
+  <prop id="squery_key">(f,substring_after,(prop,orga_offset),squery[@row=')</prop> 
+  <prop id="squery_key">(f,substring_before,(prop,squery_key),')</prop>
+  <file id="squerys">(file,orga)</file>
+  <call_job job="squery-see"/> 
+   
+
+</job>
+
+<job id="sqli_event_post_update" role="hidden">
+
+  <when test="(f,not,(f,exists,prop,no-post-see))">
+    <choose>
+      <when test="(f,exists,prop,sqli-add-back-special)">
+        <call_job 
+        job="_select" />
+      </when>
+      <otherwise>
+        <call_job 
+        job="sqli-see" />      
+      </otherwise>
+    </choose>
+  
+  </when>
+
+
+</job>
+
+
+
+<job id="sqli_event_view_begin" role="hidden">
+  <ti label="(prop,_pl_sqli)" />
+
+</job>
+
+<job id="sqli_event_details_end" role="hidden">
+  <!-- 
+  <prop id="squery_key">(f,substring_after,(prop,sqli_offset),squery[@row=')</prop> 
+  <prop id="squery_key">(f,substring_before,(prop,squery_key),')</prop>
+  -->  
+  
+  <when test="(f,right,sqli)">
+    <ti_hr/>
+    <call_job job="stew-see-all">
+      <file id="stews">(file,sqlis)</file>
+      <prop id="stews_offset">squery[@row='(prop,squery_key)']/sqli[@row='(prop,sqli_key)']/</prop>
+      <prop id="stews_offset_label"></prop>
+    </call_job>
+    <ti_hr/>
+  </when>
+  <!-- <ti_break /> -->    
+  <!-- 
+  <ti type="rec" label=" ">
+    
+    <ti type="call_job" job="squery-see" explain="(prop,_sqli_goto_query) ..." flag="button" class="fx fxAction justblack" >
+      
+      <file id="squerys">(file,sqlis)</file>
+      <prop id="squerys_offset">./</prop>  
+      <prop id="squery_key">(prop,squery_key)</prop>
+    </ti>
+  </ti>  
+  -->
+
+</job>
+
+<job id="sqli_event_view_end" role="hidden">
+
+
+</job>
+
+
+
+</jobs>

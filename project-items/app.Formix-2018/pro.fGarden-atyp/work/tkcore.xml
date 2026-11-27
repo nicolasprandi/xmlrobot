@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="atyp-tk">
+<need default="">(prop,atyps_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" flag="(prop,atyps_tk_control)">
+<tk label="Bezeichung" id="atyp_bez" x="" test_first="1" tip="Ueberschrift Titel" type="text" flag=" nono "/>
+<tk label="Intervall" id="atyp_intervall" x="" test_first="1" tip="Welche Geschmäcker sind für das Rezept bestimmend" type="sel" flag=" ">
+<sel label="Täglich">9</sel>
+<sel label="Wöchentlich">7</sel>
+<sel label="Monatlich">4</sel>
+<sel label="Jährlich">1</sel>
+</tk>
+<tk label="Beschreibung" id="atyp_beschreibung" x="" test_first="0" tip="Eine kurze bescheibung im überlick" type="textblock" flag=" "/>
+<tk label="Wahrscheinlichkeit" id="atyp_wahrscheinlichkeit" x="1" test_first="1" tip="Wahrscheinlichkeit im gewählten Intervall; Zahl zwischen 0 und 1" type="text" flag=" "/>
+<tk label="Anmerkung" id="atyp_anmerkung" x="" test_first="0" type="textblock" flag=" "/>
+</tk>
+</job>

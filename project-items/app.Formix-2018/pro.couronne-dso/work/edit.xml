@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dso-edit">
+<need>(prop,dso_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="dso-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="dso-editor"/>
+<call_job job="dso-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_dso) '(f,text,cut_nice,(prop,dso_name),25)'"/>
+</ti>
+<call_job job="dso_did_edit"/>
+</job>

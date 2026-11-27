@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ephase-edit">
+<need>(prop,ephase_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="ephase-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="ephase-editor"/>
+<call_job job="ephase-write"/>
+<ti align="right" x="Did update Vorgang '(f,text,cut_nice,(f,tk_sel_translate,(prop,ephase_zut_key),(file,akt-zutatenliste-komponente)),30).(f,text,cut_nice,(prop,ephase_besch),40)'"/>
+<call_job job="show-komponte"/>
+</job>

@@ -1,0 +1,143 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog" />
+
+<job id="x" role="hidden">
+  <call_job job="x"/>
+</job>
+
+<job id="See Server Information" role="hidden">
+  <call_job job="??"/>
+</job>
+
+<job id="See Oriented-Mirror" xrole="hidden">
+  <call_service job="Goto-Panorama">
+    <dir id="with">C:\Users\nicolas\Documents\_tomcats\anton\oriented-daten</dir>
+  </call_service>
+
+</job>
+
+<job id="See Configurations" xrole="hidden">
+  <call_service job="Goto-Panorama">
+    <dir id="with">(dir,loc)conf</dir>
+  </call_service>
+
+</job>
+
+<job id="See Shares" xrole="hidden">
+  <ti type="dir" x="(dir,loc)shared"/>
+</job>
+<job id="See Users.xml" xrole="hidden">
+  <ti type="file" x="(dir,loc)conf/tomcat-users.xml"/>
+  <ti>(f,file_content,(dir,loc)conf/tomcat-users.xml)</ti>
+</job>
+<job id="See Logfiles" xrole="hidden">
+  <need default="" xdefault="catalina">(prop,log-type)</need>
+  <ti type="dir" label="Logging catalina" x="(dir,tomcat-logs)"/>
+  <ti_hr/>
+  <file id="scan-logs">(dir,filetemp)scan-logs.xml</file>
+  <scan dir="(dir,tomcat-logs)" out="(file,scan-logs)" level_limit="1" field="kb date time lm"/>
+  <loop id="l" xml="(file,scan-logs)" xpath="file" sort="@lm" flag="back">
+    <when test="(f,starts_with,(loop,l),(prop,log-type))">
+      
+      <ti
+        label="(f,substring,(loop,l,@lm),0,4)-(f,substring,(loop,l,@lm),4,6)-(f,substring,(loop,l,@lm),6,8) (f,substring,(loop,l,@lm),9,11):(f,substring,(loop,l,@lm),11,13)"
+        type="file" 
+        x="(dir,tomcat-logs)(loop,l)"
+        key="(loop,l,@kb)kb" />
+    </when>
+  </loop>
+
+</job>
+
+<job id="Start - Stop">
+  <call_job job="server-start-stop"/>
+</job>
+<job id="Start - Stop?">
+  <ti label="linux win:">You need to set the environment variable 'JAVA_HOME' or 'JRE_HOME'. It should point to the local java-installation.</ti>
+</job>
+
+<job id="List WebApps">
+  <call_job job="webapp-list"/>
+</job>
+
+
+
+<job id="List Important Server Items" pri="10">
+  <call_job job="list-important"/>
+</job>
+
+<job id="List Configuration Server Items" pri="10">
+  <call_job job="list-config"/>
+</job>
+
+<job id="Start Server" pri="10" role="hidden">
+  <call_job job="server-startup"/>
+</job>
+
+<job id="Stop Server" pri="10" role="hidden">
+  <call_job job="server-shutdown"/>
+</job>
+
+<job id="See Developer Tips" pri="10" role="hidden">
+  <call_job job="show-snippets"/>
+</job>
+
+<job id="Open Terminal in bin"  level="pro" tip="Opens a terminal-console in the bin-direcory">
+  <dir id="task-terminal-dir">(dir,bin)</dir>
+  <call_job job="open-terminal-internal" />
+</job>
+
+<job id="Open Terminal in bin?"  level="pro" txip="Opens a terminal-console in the bin-direcory">
+  <call_job job="script-info" />
+</job>
+
+<job id="Open Terminal ..."  level="ws"  pri="10" role="dev">
+    <tk type="dir" id="where" />
+    <call_job job="Terminal-Os-Intern (?)" />
+
+</job>
+
+<job id="Admin" level="app" role="user">
+    <ti type="call_job" job="Refresh Server Info" />
+    <ti type="call_job" job="Generate Kings Vars" />
+    <ti type="call_job" job="Tips" />
+    <ti type="call_job" job="See Developer Tips" />
+    <ti_hr/>
+    <ti type="call_job" job="Fresh Project" />
+    <ti type="call_job" job="Encrypt Password" />
+    <ti_hr/>
+    <ti type="call_job" job="Add a Dummy-Application" />
+    <ti type="call_job" job="Add a WebDav-Application" />  
+</job>  
+
+<job id="Fresh Project"  level="pro"  role="hidden" tip="Keeps the project but deletes the entire content. Use this if you want to rebuild the project from scratch.">
+    <tk type="bool" x="0" id="sure" label="Sure about the project '(prop,pro)'?" flag="nono"/>
+    <when test="(f,eq,1,(prop,sure))">
+      <delete file="(file,setup)"/>
+      <ti label="Deleted:">(file,setup)</ti>
+      
+      <tk type="bool" x="0" id="del_install" label="Should the tomcat-server also be deleted from the filesystem?" flag="nono" tip="This would delete: (dir,loc)"/>
+      <when test="(f,eq,1,(prop,del_install))">
+        <ant level="info">
+          <delete dir="(dir,loc)"/>
+        </ant>
+        <ti label="Deleted:">(dir,loc)</ti>
+      </when>         
+    </when>
+    
+</job>
+
+<job id="Refresh Server Info"  level="pro"  role="hidden">
+    <call_job job="brain-forget" />
+    <call_job job="??"/>
+</job>
+
+<job id="Add a Dummy-Application" pri="10" role="hidden">
+  <call_job job="webapp-add"/>
+</job>
+
+<job id="Add a WebDav-Application" pri="10" role="hidden">
+  <call_job job="webapp-dav-add"/>
+</job>
+</jobs>

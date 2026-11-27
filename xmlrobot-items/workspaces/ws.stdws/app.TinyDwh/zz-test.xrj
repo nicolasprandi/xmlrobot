@@ -1,0 +1,796 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+<job id="test-dbci1" role="hidden">
+  <prop id="dbci_id">ci1s__</prop>                
+  <dbci id="(prop,dbci_id)" act="open"
+        url="jdbc:mysql://localhost:3306/hibiscus"
+        user="root"
+        password="root"
+        db="mysql "/>
+        
+  <dbc id="db1" act="open" how="dbci" dbci="(prop,dbci_id)"/>
+  
+  <file id="on-3" x="(dir,pro)cache/t1.xml"/>
+  
+    
+  <dbc id="db1"
+    out="(file,on-3)"
+    style="a"
+    act="select"
+    root_name="werte"
+    row_name="wert"    
+    flag="trim">()select * from obj limit 10;()</dbc> 
+    
+  <ti>(f,file_content,(file,on-3))</ti>
+  
+  
+  <dbc id="db1" act="close"/>
+        
+  <dbci id="(prop,dbci_id)" act="close" />      
+
+</job>
+
+<job id="test-web" role="hidden">
+  <ti label="simple" type="web">https://www.xmlrobot.net</ti>
+  <ti type="rec" label="rec">
+      <ti  type="web">https://www.xmlrobot.net</ti>
+  </ti>
+</job>
+
+<job id="test-run2" role="hidden">
+
+      <file id="scripts">(dir,pro)cache/bulk-script-runner.xml</file>
+      <create_file file="(file,scripts)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>
+      <ti>hallo</ti>
+      <ti test="0" job_id="77">
+        <ti>im job 77</ti>
+      </ti>  
+      <ti test="0" job_id="88">
+        <ti>hallo imm 88</ti>
+        <try_catch><try>
+        <call_job job="Object">
+          <prop id="on-id">88</prop>
+        </call_job>
+        </try><catch><ti>hallo im catch 88 ()(prop,catched_msg)()</ti>
+        <tk type="msg">object with number 88 was not found</tk>
+        <tk id="my-object-numer" flag="nono"/>
+        <call_job job="Object">
+          <prop id="on-id">()(prop,my-object-numer)()</prop>
+        </call_job>        
+        </catch></try_catch>>
+      </ti>               
+      </steps>]]></create_file>
+      <spirit act="open" id="scripts" file="(file,scripts)" />
+      <ti label="the file">(f,spirit,scripts,xml?,.)</ti>
+      <ti label="Running xpath ."/>
+      <spirit act="run" id="scripts"  xpath="." />
+      <ti label="Running xpath //ti[@job_id=77]"/>
+      <spirit act="run" id="scripts"  xpath="//ti[@job_id=77]" />      
+
+       <ti label="Running xpath //ti[@job_id=88]"/>
+      <spirit act="run" id="scripts"  xpath="//ti[@job_id=88]" />         
+      <spirit act="close" id="scripts"  />
+        
+</job>
+
+<job id="test-run" role="hidden">
+
+      <file id="scripts">(dir,pro)cache/bulk-script-runner.xml</file>
+      <create_file file="(file,scripts)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>
+      <ti>hallo</ti>
+      <ti test="0" job_id="77">
+        <ti>im job 77</ti>
+      </ti>  
+      <ti test="0" job_id="88">
+        <ti>hallo imm 88</ti>
+        <try_catch><try>
+        <call_job job="Object">
+          <prop id="on-id">88</prop>
+        </call_job>
+        </try><catch><ti>hallo im catch 88 ()(prop,catched_msg)()</ti>
+        <tk type="msg">object with number 88 was not found</tk>
+        <tk id="my-object-numer" flag="nono"/>
+        <call_job job="Object">
+          <prop id="on-id">()(prop,my-object-numer)()</prop>
+        </call_job>        
+        </catch></try_catch>>
+      </ti>               
+      </steps>]]></create_file>
+      <spirit act="open" id="scripts" file="(file,scripts)" />
+      <ti label="the file">(f,spirit,scripts,xml?,.)</ti>
+      <ti label="Running xpath ."/>
+      <spirit act="run" id="scripts"  xpath="." />
+      <ti label="Running xpath //ti[@job_id=77]"/>
+      <spirit act="run" id="scripts"  xpath="//ti[@job_id=77]" />      
+       
+      <spirit act="close" id="scripts"  />
+        
+</job>
+
+<job id="test-libro" role="hidden">
+  <ti label="request libro ">(f,request,dir,libro)</ti>  
+  <ti label="request libro2">(f,request,dir,libro2)</ti>  
+  
+  <ti label="request libro " type="dir">(f,request,dir,libro)</ti>  
+  <ti label="request libro2" type="dir">(f,request,dir,libro2)</ti>    
+</job>
+
+<job id="test-textarea-solo" role="hidden">
+  <tk type="textblock" id="eingabe"/> 
+  <ti label="erhalten:">(prop,eingabe)</ti>  
+</job>
+
+<job id="test-textarea-sum" role="hidden">
+  <tk label="textarea-sum" flag="sum_only">
+  <tk type="textblock" id="eingabe"/> 
+  </tk>
+  <ti label="erhalten:">(prop,eingabe)</ti>
+</job>
+
+
+<job id="test-menu-2" role="hidden">
+  <ti type="rec" key="col#12">
+    <ti>col#1</ti>
+    <ti>col#2</ti>
+    <ti>col#3</ti>
+    <ti>col#4</ti>
+    <ti>col#5</ti>
+    <ti>col#6</ti>
+    <ti>col#7</ti>
+    <ti>col#8</ti>
+    <ti>col#9</ti>
+    <ti>col#10</ti>
+    <ti>col#11</ti>
+  </ti>
+  
+  <ti type="rec">
+    <ti>a</ti>
+    <ti type="menu" master_class="appmenu">
+      <ti type="call_job" job="_select" flag="button" class="stdJobButton "/>
+      <ti type="call_job" job="_connect" flag="button" class="stdJobButton stdToolButtonSuper "/>
+      <ti type="call_job" job="_bulk" flag="button" class="stdToolButtonSuper stdButtonSuper "/>
+      <ti type="call_job" job="_mat_views" flag="button" class="stdJobButton "/>
+         
+    </ti>  
+    <ti>b</ti>
+   </ti>  
+   
+  <ti type="rec" label="deutsch span=3">
+    <ti>a</ti>
+    <ti type="menu" master_class="appmenu" span="3">
+      <ti type="call_job" job="Suche" flag="button" class="stdJobButton "/>
+      <ti type="call_job" job="Gesucht" flag="button" class="stdJobButton stdToolButtonSuper "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="stdToolButtonSuper stdButtonSuper "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="stdJobButton "/>
+         
+    </ti>  
+    <ti>b</ti>
+   </ti>     
+   
+  <ti type="rec" label="deutsch span=3">
+    <ti type="call_job" job="Suche" flag="button" class="stdJobButton "/>
+    <ti type="menu" master_class="appmenu" span="3">
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+         
+    </ti>  
+    <ti>b</ti>
+   </ti>     
+   
+  <ti type="rec" label="deutsch letztes">
+    <ti type="call_job" job="Suche" flag="button" class="stdJobButton "/>
+    <ti type="menu" master_class="appmenu" >
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>            
+         
+    </ti>  
+
+   </ti>       
+   
+  <ti type="rec" label="span 2 - 2 mal">
+    <ti type="call_job" job="Suche" flag="button" class="stdJobButton "/>
+    <ti type="menu" master_class="appmenu" span="2">
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+         
+    </ti>  
+    <ti type="menu" master_class="appmenu" span="2">
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+         
+    </ti>      
+    <ti>b</ti>
+   </ti>      
+   
+   <ti label="ganz am anfang span2 und span1"/>
+   
+  <ti type="rec" >
+
+    <ti type="menu" master_class="appmenu" span="2">
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+         
+    </ti>  
+    <ti type="menu" master_class="appmenu" span="1">
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+         
+    </ti>      
+    <ti>b</ti>
+   </ti>        
+   
+   <ti label="ganz am anfang span2 und span1 - mit block"/>
+   
+  <ti type="rec" >
+
+    <ti type="menu" master_class="appmenu" span="2" flag="block">
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+         
+    </ti>  
+    <ti type="menu" master_class="appmenu" span="1">
+      
+      <ti type="call_job" job="Gesucht" flag="button" class="fb fbAsk "/>
+      <ti type="call_job" job="Abfragen" flag="button" class="fb fbEdit "/>
+      <ti type="call_job" job="Aktionen" flag="button" class="fb fbGo "/>
+         
+    </ti>      
+    <ti>b</ti>
+   </ti>      
+   
+  
+</job>
+<job id="test-menu" role="hidden">
+  <ti type="rec" key="col#12">
+    <ti>col#1</ti>
+    <ti>col#2</ti>
+    <ti>col#3</ti>
+    <ti>col#4</ti>
+    <ti>col#5</ti>
+    <ti>col#6</ti>
+    <ti>col#7</ti>
+    <ti>col#8</ti>
+    <ti>col#9</ti>
+    <ti>col#10</ti>
+    <ti>col#11</ti>
+  </ti>
+  
+  <ti label="normal"/>
+  <ti type="menu" master_class="appmenu">
+    <ti type="call_job" job="_select" flag="button" class="stdJobButton "/>
+    <ti type="call_job" job="_connect" flag="button" class="stdJobButton stdToolButtonSuper "/>
+    <ti type="call_job" job="_bulk" flag="button" class="stdToolButtonSuper stdButtonSuper "/>
+    <ti type="call_job" job="_mat_views" flag="button" class="stdJobButton "/>
+       
+  </ti>
+                                                                                                 
+  <ti label="3-6"/>
+  <ti type="menu" master_class="appmenu" first_cell="3" last_cell="6">
+    <ti type="call_job" job="_select" flag="button" class="stdJobButton "/>
+    <ti type="call_job" job="_connect" flag="button" class="stdJobButton stdToolButtonSuper "/>
+    <ti type="call_job" job="_bulk" flag="button" class="stdToolButtonSuper stdButtonSuper "/>
+    <ti type="call_job" job="_mat_views" flag="button" class="stdJobButton "/>
+       
+  </ti>      
+  
+  <ti label="5-8"/>                                              
+  <ti type="menu"  first_cell="5" last_cell="8">
+    <ti type="call_job" job="_select" flag="button" class="fb "/>
+    <ti type="call_job" job="_connect" flag="button" class="fb fbAdd "/>
+    <ti type="call_job" job="_bulk" flag="button" class="fb fbEdit"/>
+    <ti type="call_job" job="_mat_views" flag="button" class="fb fbGo "/>
+    <ti type="call_job" job="_mat_views" flag="button" class="fb fbService "/>
+       
+  </ti>     
+  
+  <ti label="5-5"/>                                              
+  <ti type="menu" master_class="appmenu" first_cell="5" last_cell="5">
+    <ti type="call_job" job="_select" flag="button" class="stdJobButton "/>
+    <ti type="call_job" job="_connect" flag="button" class="stdJobButton stdToolButtonSuper "/>
+    <ti type="call_job" job="_bulk" flag="button" class="stdToolButtonSuper stdButtonSuper "/>
+    <ti type="call_job" job="_mat_views" flag="button" class="stdJobButton "/>
+       
+  </ti>     
+  
+  <ti label="6-7"/>                                              
+  <ti type="menu" master_class="appmenu" first_cell="6" last_cell="7">
+    <ti type="call_job" job="_select" flag="button" class="stdJobButton "/>
+    <ti type="call_job" job="_connect" flag="button" class="stdJobButton stdToolButtonSuper "/>
+    <ti type="call_job" job="_bulk" flag="button" class="stdToolButtonSuper stdButtonSuper "/>
+    <ti type="call_job" job="_mat_views" flag="button" class="stdJobButton "/>
+       
+  </ti>     
+
+</job>
+<job id="test-encrypt" role="hidden">
+  <tk label="ecryptor" flag="sum">
+    <tk id="k1" flag="nono"/>
+    <tk id="k2" flag="nono"/>
+    <tk id="silent" flag="nono"/>
+  </tk>
+  <throw test="(f,not,(f,eq_text,(prop,k1),(prop,k2)))">k1 und k2 muessen gleich sein</throw>
+  
+      <crypto id="scra" act="open" type="(prop,k1)" flag="secret" />
+      <remove type="prop" id="k1"/>
+      <remove type="prop" id="k2"/>
+      <crypto id="scra" act="encrypt" in="(prop,silent)" out="ergebnis"/>
+      <remove type="prop" id="silent"/>
+    
+      <crypto id="scra" act="close" />    
+      <ti label="ergebnis">(prop,ergebnis)</ti> 
+        
+</job>
+<job id="test-zentrale" role="hidden">
+<ti label="Web-Gui-Tests"/>
+  <ti type="call_job" job="test-web"/>
+
+
+<ti label="Tests fuer Run">
+  <ti type="call_job" job="test-run"/>
+  <ti type="call_job" job="test-run2"/>
+</ti>
+
+<ti label="Tests fuer Libro">
+  <ti type="call_job" job="test-libro"/>
+</ti>
+
+<ti label="Tests fuer die Textarea">
+  <ti type="call_job" job="test-textarea-solo"/>
+  <ti type="call_job" job="test-textarea-sum"/>
+</ti>
+
+<ti label="Sicherheitsrelevante tests"/>
+  <ti type="call_job" job="test-menu"/>
+  <ti type="call_job" job="test-encrypt"/>
+
+  <ti type="call_job" job="exe-test"/>
+  <ti type="call_job" job="ant-test"/>
+  <ti type="call_job" job="test-include"/>  
+
+<ti label="Test der Hibiscus-Privilegien"/>
+<ti type="call_job" job="Test-Privilegs"/>
+
+<ti label="Tk"/>
+<ti type="call_job" job="test-files"/>
+  <ti type="call_job" job="test-msg"/>
+  <ti type="call_job" job="test-accept"/>
+
+<ti label="Html"/>
+ <ti type="call_job" job="test-symbols"/>
+<ti type="call_job" job="test-html-b"/>
+<ti type="call_job" job="test-html-i"/>
+<ti type="call_job" job="test-html-s"/>
+<ti type="call_job" job="test-html-small"/>
+
+<ti label="Ti"/>
+<ti type="call_job" job="test-ti"/>
+ 
+<ti label="secret"/>
+<ti type="call_job" job="test-secret"/>
+</job>
+
+<!-- 
+<job id="get-ddl-postgres" xrole="hidden">
+  <call_job job="get-ddl">
+    <prop id="get-ddl-dbms">postgres</prop>
+  </call_job>
+  
+
+
+</job>
+
+<job id="get-ddl-myssql" xrole="hidden">
+  <call_job job="get-ddl">
+    <prop id="get-ddl-dbms">mysql</prop>
+  </call_job>
+  
+</job>
+
+  -->
+  
+<job id="test-secret" pri="10" role="hidden">
+  <when test="adsf">
+  <ti>(f,asdfasdf)</ti>
+  </when>
+</job>
+
+<job id="test-html-b" pri="10" role="hidden">
+  <ti>(f,html,b,o)das ist fett(f,html,b,c) und das nicht</ti>
+</job>
+
+<job id="test-html-i" pri="10" role="hidden">
+  <ti>(f,html,i,o)das ist fett(f,html,i,c) und das nicht</ti>
+</job>
+
+<job id="test-html-s" pri="10" role="hidden">
+  <ti>(f,html,s,o)das ist fett(f,html,s,c) und das nicht</ti>
+</job>
+
+<job id="test-html-small" pri="10" role="hidden">
+  <ti>(f,html,small,o)das ist fett(f,html,small,c) und das nicht</ti>
+</job>
+
+<job id="test-html-b" pri="10" role="hidden">
+  <ti>(f,html,b,o)das ist fett(f,html,b,c) und das nicht</ti>
+</job>
+  
+<job id="test-include" pri="10" role="hidden">
+
+  <try_catch>
+    <try>
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)test-include-data.xrs" />
+        <prop id="joe-in-regex" x="torun" />  
+      </call_job>
+      <prop id="thetip">&lt;steps&gt;
+  &lt;ti&gt;hallo&lt;/ti&gt;
+&lt;/steps&gt;</prop>
+      <tk type="textblock" flag="big bigbig nono" id="torun" tip="(prop,thetip)" x="(prop,thetip)"/>
+      
+      <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(dir,pro)test-include-data.xrs" />
+        <prop id="joe-in-regex" x="torun" />  
+      </call_job>  
+      
+      <file id="test-include">(dir,pro)test-include-to-run.xrs</file>
+      
+      <create_file out="(file,test-include)">(prop,torun)</create_file>
+      <ti type="file" label="Created:">(file,test-include)</ti>
+      <ti_hr/>
+      <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+      <interpreter turbo="0"/>
+      <include file="(file,test-include)"/>
+      <interpreter turbo="(prop,turbo-antes)"/>      
+      
+      <ti_hr/>
+      <ti>task &apos;include&apos; funktiert!</ti>    
+    </try>
+    <catch>
+      <ti>task &apos;include&apos; funktiert nicht oder das script hat einen fehler!</ti>
+      <ti label="Message">(prop,catched_msg)</ti>
+      <ti_hr/>
+      <throw_again/>      
+    </catch>
+  </try_catch>
+
+  <ti_hr/>
+  
+  <ti label="Again:" type="call_job" job="test-include"/>
+  
+</job>
+
+<job id="exe-test" os="win" pri="10" role="hidden">
+
+  <try_catch>
+    <try>
+      <exe xdir="file:///C:/Users/nicolas/Desktop/Links/" dir="(dir,pro)">
+        <arg>cmd</arg>
+        <arg>/c</arg>
+        <arg>start</arg>
+      </exe>    
+      <ti>task &apos;exe&apos; unter windows funktiert!</ti>
+    </try>
+    <catch>
+      <ti>task &apos;exe&apos; unter windows funktiert nicht</ti>
+      <ti label="Message">(prop,catched_msg)</ti>
+      <ti_hr/>
+      <throw_again/>      
+    </catch>
+  </try_catch>
+  
+</job>
+
+<job id="exe-test" os="linux" pri="10" role="hidden">
+
+  <try_catch>
+    <try>
+      <exe> 
+        <arg>nautilus</arg> 
+        <arg>(dir,pro)</arg> 
+      </exe>  
+      <ti>task &apos;exe&apos; unter linux funktiert!</ti>
+    </try>
+    <catch>
+      <ti>task &apos;exe&apos; unter linux funktiert nicht!</ti>
+      <ti label="Message">(prop,catched_msg)</ti>
+      <ti_hr/>
+      <throw_again/>      
+    </catch>
+  </try_catch>
+  
+</job>
+
+<job id="exe-test" os="mac" pri="10" role="hidden">
+
+  <try_catch>
+    <try>
+      <exe>
+        <arg>open</arg>
+        <arg>(dir,pro)</arg>
+      </exe>
+      <ti>task &apos;exe&apos; unter mac funktiert!</ti>
+    </try>
+    <catch>
+      <ti>task &apos;exe&apos; unter mac funktiert nicht!</ti>
+      <ti label="Message">(prop,catched_msg)</ti>
+      <ti_hr/>
+      <throw_again/>      
+      
+    </catch>
+  </try_catch>
+  
+</job>
+
+<job id="ant-test" pri="10" role="hidden">
+  <try_catch>
+    <try>
+      <interpreter watch="1"/>
+      <file id="ant-test-file-from">(dir,pro)ant-test-file-from.txt</file>
+      <file id="ant-test-file-to">(dir,pro)ant-test-file-to.txt</file>
+      <when test="(f,file_exists,(file,ant-test-file-to))">
+        <delete file="(file,ant-test-file-to)"/>
+      </when>
+      <create_file out="(file,ant-test-file-from)">(f,time)</create_file>
+      
+      <ant>
+      <copy file="(f,file,classic,(file,ant-test-file-from))" 
+            todir="(f,dir,classic,(file,ant-test-file-to))" 
+            preservelastmodified="true" 
+            overwrite="true"/>
+      </ant>
+
+      <ti>task &apos;ant&apos; funktiert!</ti>  
+      <ti label="did copy file"/>
+      <ti type="file">(file,ant-test-file-from)</ti>
+      <ti type="file">(file,ant-test-file-to)</ti>
+    
+    </try>
+    <catch>
+      <ti>task &apos;ant&apos; funktiert nicht!</ti>
+      <ti label="Message">(prop,catched_msg)</ti>
+      <ti_hr/>
+      <throw_again/>
+    </catch>
+  </try_catch>
+
+
+  
+</job>
+
+<job id="test-pic" role="hidden">
+  <interpreter watch="1"/>
+  <prop id="i" x="+000000034700000.0100"/>
+  <prop id="vk">(f,substring,(prop,i),0,16)</prop>
+  <prop id="vk">(f,format,(prop,vk),(e:s)##0,us)</prop>
+  
+  
+  <prop id="nk">(f,substring,(prop,i),16,21)</prop>
+                                 
+</job>                                
+<job id="test-symbols" role="hidden">
+    <prop id="t">[&#402;i &#8489;&#8593;&#8595;&#8834;&#8847;&#9021;&#9651;&#9652;&#10773; +&#8591;++&#8592;+++&#8593;++++&#8594;+++++&#8595;++++++&#8596;]</prop>
+    
+    <ti>== ti text ==</ti>
+    <ti>(prop,t)</ti>
+    
+    <ti>== ti call ==</ti>
+    <ti type="call_job" job="abc" explain="(prop,t)"/>    
+    
+    <ti>== ti call button ==</ti>
+    <ti type="call_job" job="abc" explain="(prop,t)" 
+        class="testClass" flag="button obutton"/>   
+        
+    <ti>== ti rec . text . call call button==</ti>
+    <ti type="rec">
+      <ti>(prop,t)</ti>
+      <ti type="call_job" job="abc" explain="(prop,t)"/> 
+      <ti type="call_job" job="abc" explain="(prop,t)" 
+        class="testClass" flag="button obutton"/>      
+    </ti>        
+</job>
+
+
+
+<job id="test-ti" role="hidden">
+
+  <ti type="file">(dir,pro)disconnect.off</ti>
+  <ti_hr/>
+  <ti>[diverses]</ti>
+  <ti>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</ti>
+  <ti>[tiLabel]</ti>
+  
+  <ti label="derLabel">xx</ti>
+  
+  <ti>[tiLabelRight]</ti>
+  
+  <ti label="derLabel" flag="label_right">xx</ti>
+    
+  <ti>[tiLabelOnly]</ti>
+
+  <ti label="derLabel"/>
+  <ti>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</ti>    
+  <ti>[GridLabel]</ti>
+  
+  <ti type="rec" label="der Label"><ti>xx</ti><ti>yy</ti></ti>
+  
+  <ti>[GridNoLabel]</ti>
+  
+  <ti type="rec"><ti>xx</ti><ti>yy</ti></ti>  
+  
+  <ti>[GridLabel-block]</ti>
+  
+  <ti type="rec" label="der Label"><ti flag="block">xx</ti><ti>yy</ti></ti>
+  
+  <ti>[GridNoLabel-block]</ti>
+  
+  <ti type="rec"><ti flag="block">xx</ti><ti>yy</ti></ti>    
+
+    
+  <!-- 
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>    
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>
+  
+  <ti>[]</ti>      -->
+
+</job>
+ 
+
+<job id="test-files" role="hidden">
+  <tk label="Test" flag="sum_only">
+    <tk type="file" label="File/Read" id="fr0" tip="Tip zu file-read"  />
+    <tk type="file" label="File/Read b" id="fr1" tip="Tip zu file-read: base" base="(dir,app)" />
+    <tk type="file" label="File/Read x" id="fr2" tip="Tip zu file-read: x" x="(file,log)" />
+    <tk type="file" label="File/Read x2" id="fr3" tip="Tip zu file-read: x2" x2="(dir,filetemp)beispiel.txt" />
+    <tk type="file" label="File/Read b x" id="fr4" tip="Tip zu file-read: base x" base="(dir,app)"  x="(file,log)"/>  
+    <tk type="file" label="File/Read b x2" id="fr5" tip="Tip zu file-read: base x2" base="(dir,app)"  x2="(dir,filetemp)beispiel.txt"/>  
+    <tk type="file" label="File/Read b x x2" id="fr6" tip="Tip zu file-read: base x x2" base="(dir,app)"  x="(file,log)" x2="(dir,filetemp)beispiel.txt"/>  
+    <tk type="file" label="File/Read x x2" id="fr7" tip="Tip zu file-read: x x2" x="(file,log)" x2="(dir,filetemp)beispiel.txt"/>  
+    
+    <tk type="file" label="File/Write" id="fw0" tip="Tip zu file-write"  flag="save write"/>
+    <tk type="file" label="File/Write b" id="fw1" tip="Tip zu file-write: base" base="(dir,app)"   flag="save write"/>
+    <tk type="file" label="File/Write x" id="fw2" tip="Tip zu file-write: x" x="(file,log)"  flag="save write" />
+    <tk type="file" label="File/Write x2" id="fw3" tip="Tip zu file-write: x2" x2="(dir,filetemp)beispiel.txt"   flag="save write"/>
+    <tk type="file" label="File/Write b x" id="fw4" tip="Tip zu file-write: base x" base="(dir,app)"  x="(file,log)"  flag="save write"/>  
+    <tk type="file" label="File/Write b x2" id="fw5" tip="Tip zu file-write: base x2" base="(dir,app)"  x2="(dir,filetemp)beispiel.txt"  flag="save write"/>  
+    <tk type="file" label="File/Write b x x2" id="fw6" tip="Tip zu file-write: base x x2" base="(dir,app)"  x="(file,log)" x2="(dir,filetemp)beispiel.txt"  flag="save write"/>  
+    <tk type="file" label="File/Read x x2" id="fr7" tip="Tip zu file-read: x x2" x="(file,log)" x2="(dir,filetemp)beispiel.txt"/>      
+          
+    <tk type="dir" label="Dir/Write" id="dw" tip="Tip zu dir-write" base="(dir,app)"  flag="save"/>
+    
+    <tk type="dir" label="Dir/Read" id="dr0" tip="Tip zu dir-read"  />
+    <tk type="dir" label="Dir/Read b" id="dr1" tip="Tip zu dir-read: base" base="(dir,app)" />
+    <tk type="dir" label="Dir/Read x" id="dr2" tip="Tip zu dir-read: x" x="(dir,pro)" />
+    <tk type="dir" label="Dir/Read x2" id="dr3" tip="Tip zu dir-read: x2" x2="(dir,filetemp)" />
+    <tk type="dir" label="Dir/Read b x" id="dr4" tip="Tip zu dir-read: base x" base="(dir,app)"  x="(dir,pro)"/>  
+    <tk type="dir" label="Dir/Read b x2" id="dr5" tip="Tip zu dir-read: base x2" base="(dir,app)"  x2="(dir,filetemp)"/>  
+    <tk type="dir" label="Dir/Read b x x2" id="dr6" tip="Tip zu dir-read: base x x2" base="(dir,app)"  x="(dir,pro)" x2="(dir,filetemp)beispiel.txt"/>  
+    <tk type="dir" label="Dir/Read x x2" id="dr7" tip="Tip zu dir-read: x x2" x="(dir,pro)" x2="(dir,filetemp)"/>  
+          
+    <tk type="dir" label="Dir/Write" id="dw0" tip="Tip zu dir-write"  flag="save"/>
+    <tk type="dir" label="Dir/Write b" id="dw1" tip="Tip zu dir-write: base" base="(dir,app)"  flag="save"/>
+    <tk type="dir" label="Dir/Write x" id="dw2" tip="Tip zu dir-write: x" x="(dir,pro)"  flag="save"/>
+    <tk type="dir" label="Dir/Write x2" id="dw3" tip="Tip zu dir-write: x2" x2="(dir,filetemp)"  flag="save"/>
+    <tk type="dir" label="Dir/Write b x" id="dw4" tip="Tip zu dir-write: base x" base="(dir,app)"  x="(dir,pro)" flag="save"/>  
+    <tk type="dir" label="Dir/Write b x2" id="dw5" tip="Tip zu dir-write: base x2" base="(dir,app)"  x2="(dir,filetemp)" flag="save"/>  
+    <tk type="dir" label="Dir/Write b x x2" id="dw6" tip="Tip zu dir-write: base x x2" base="(dir,app)"  x="(dir,pro)" x2="(dir,filetemp)beispiel.txt" flag="save"/>  
+    <tk type="dir" label="Dir/Write x x2" id="dw7" tip="Tip zu dir-read: x x2" x="(dir,pro)" x2="(dir,filetemp)" flag="save"/>     
+   
+  </tk>
+
+</job>
+<job id="test-msg2" role="hidden">
+
+   <tk type="msg" msg="bla bla" />
+   <!-- 
+   <tk label="aber jetzt">
+   <tk type="msg" msg="bla bla" />
+   </tk>           -->
+
+</job>
+<job id="test-id" role="hidden">
+
+   <tk id="adfa" />
+   <!-- 
+   <tk label="aber jetzt">
+   <tk type="msg" msg="bla bla" />
+   </tk>           -->
+
+</job>
+<job id="test-msg" role="hidden">
+   <tk type="msg">das ist die msg</tk>
+   <tk type="msg" msg="bla bla" />
+   <ti>und dann gings auch weiter...</ti>
+</job>
+
+<job id="test-accept" role="hidden">
+      <tk label="delete"> 
+			<tk label="accpept label"            
+					type="accept" 
+					id="delete-confirm-1" 
+					x="&quot;fragge&quot;fragge&#xA;fragge&#xA;fragge&#xA;fragge"
+
+					label_accept="ja ok" 
+					label_decline="abbrrechen" 
+					width="300" height="200">
+						<q id="delete-confirm-2" label="fuer imer"/>
+			</tk>
+      </tk>
+      <dump_ti/>
+</job>
+<!--
+
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+
+-->
+
+
+</jobs>

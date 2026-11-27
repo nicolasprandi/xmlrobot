@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="compi-see-all" level="ws" role="hidden" tip="Lists all Arcadia-Compilations">
+<try_catch>
+<try>
+<call_job job="hook_compi_listbegin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: compi-view: begin.0">
+<ti> hook_job=hook_compi_listbegin hook=begin page=view station=0 object=compi</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="compi_loop" xml="(file,compis)" xpath="(prop,compis_offset)compi(prop,compis_where)" sort="(prop,compis_sort_attribute)" number="(prop,compis_sort_number)" ignore_case="(prop,compis_sort_ignore_case)" desc="(prop,compis_sort_desc)">
+<when test="(prop,nothing)">
+<ti>
+<ti/>
+</ti>
+<when test="(f,gt,(f,len,(prop,compis_offset_label)),0)">
+<ti label="(prop,compis_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(f,tk_sel_translate,(loop,compi_loop,@compilation),(dir,pro)current-compi-compile-selection.xml),50)(f,html,bold,close)" job="compi-see">
+<prop id="compi_key">(loop,compi_loop,@row)</prop>
+<file id="compis">(file,compis)</file>
+<prop id="compis_offset">(prop,compis_offset)</prop>
+<prop id="compis_offset_label">(prop,compis_offset_label)</prop>
+<prop id="compis_offset_new_key">(prop,compis_offset_new_key)</prop>
+<prop id="compis_sort_attribute">(prop,compis_sort_attribute)</prop>
+<prop id="compis_sort_number">(prop,compis_sort_number)</prop>
+<prop id="compis_where">(prop,compis_where)</prop>
+<prop id="compis_return_job">(prop,compis_return_job)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+<prop id="custset_key">(prop,custset_key)</prop>
+</ti>
+<ti test="(f,role,user)" type="call_job" explain="Edit" job="compi-edit">
+<prop id="compi_key">(loop,compi_loop,@row)</prop>
+<file id="compis">(file,compis)</file>
+<prop id="compis_offset">(prop,compis_offset)</prop>
+<prop id="compis_offset_label">(prop,compis_offset_label)</prop>
+<prop id="compis_offset_new_key">(prop,compis_offset_new_key)</prop>
+<prop id="compis_sort_attribute">(prop,compis_sort_attribute)</prop>
+<prop id="compis_sort_number">(prop,compis_sort_number)</prop>
+<prop id="compis_where">(prop,compis_where)</prop>
+<prop id="compis_return_job">(prop,compis_return_job)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+<prop id="custset_key">(prop,custset_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine CustomerSets gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,compis_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,user)" label=" " type="call_job" explain_nix="compi-add" explain="[ + Neues Compilation ]" job="compi-add">
+<file id="compis">(file,compis)</file>
+<prop id="compis_offset">(prop,compis_offset)</prop>
+<prop id="compis_offset_label">(prop,compis_offset_label)</prop>
+<prop id="compis_offset_new_key">(prop,compis_offset_new_key)</prop>
+<prop id="compis_sort_attribute">(prop,compis_sort_attribute)</prop>
+<prop id="compis_sort_number">(prop,compis_sort_number)</prop>
+<prop id="compis_where">(prop,compis_where)</prop>
+<prop id="compis_return_job">(prop,compis_return_job)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+<prop id="custset_key">(prop,custset_key)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,user)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,compis)</file>
+<prop id="orga_where">(prop,compis_where)</prop>
+<prop id="orga_view_loop_id">compi_loop</prop>
+<prop id="orga_finished_job">custset-see-all</prop>
+<prop id="orga_offset">(prop,compis_offset)</prop>
+<prop id="orga_offset_label">(prop,compis_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,compis_offset_new_key)</prop>
+<prop id="orga_segment_plural">compis</prop>
+<prop id="orga_segment_singular">compi</prop>
+<prop id="orga_segment_plural_label">Arcadia-Compilations</prop>
+<prop id="orga_segment_singular_label">Arcadia-Compilation</prop>
+<prop id="orga_sort_attribute">(prop,compis_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,compis_sort_number)</prop>
+<prop id="orga_where">(prop,compis_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(f,tk_sel_translate,(loop,compi_loop,@compilation),(dir,pro)current-compi-compile-selection.xml),50)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+<prop id="custset_key">(prop,custset_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,compis)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,compis_offset)),0)">(prop,compis_offset)</ti>
+</ti>
+</when>
+</job>

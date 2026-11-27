@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+
+<job id="service-connector" role="hidden">
+  <ti label="What you can do here"/>
+  <ti type="call_job" job="Compare Directories"/>
+  <ti type="call_job" job="Compare Files"/>
+  <call_job job="??"/>
+
+</job>
+
+
+</jobs>

@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<!-- <throw test="(f,not,(f,eq_text,(prop,app),Compare))">Sorry</throw>  -->
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>
+
+<job id="prolog" role="hidden">
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">COMpARE out of service</throw>
+    
+
+    <interpreter jovial="1"/>  
+    <interpreter turbo="1"/>
+    <interpreter test="(f,implement,online)" act="check-login"/>
+    <choose>
+      <when test="(f,implement,echnaton)">
+        <file id="compare-jar-first" x="(dir,app)compare-first-echn.jar"/>       
+      </when>
+      <otherwise>
+        <file id="compare-jar-first" x="(dir,app)compare-first-reco.jar"/>     
+      </otherwise>
+    </choose>    
+        
+ 
+       
+    <file id="compare-jar-third" x="(dir,app)compare-third.jar"/>
+     
+    <!-- fuer compare dirs --> 
+
+         
+
+  <prop id="dm">0</prop>
+  <when test="(f,has,prop,pro)">
+
+    <!-- <interpreter watch="1"/>     -->
+    <file id="cd-dirlist">(dir,pro)api-comp-dirs-dirlist.xml</file>
+    <file id="cd-dirlist-2">(dir,pro)api-comp-dirs-dirlist-2.xml</file>
+    <file id="cd-dirlist-3">(dir,pro)api-comp-dirs-dirlist-3.xml</file>
+    <file id="cd-paras">(dir,pro)api-comp-dirs.xml</file>
+    <file id="gui">(dir,pro)app-compare-gui.xml</file> 
+    
+    <file id="cd-dirlist">(dir,pro)api-comp-dirs-dirlist.xml</file>
+    
+    <file id="dircomp-data" x="(dir,pro)input-cache-cd1.xml"/>
+    <prop id="dircomp-regex" x="dir_left|dir_right|level_limit"/>    
+    
+    <file id="out_comp_dirs">(dir,pro)dir-diff.xml</file> 
+    
+    <!-- <interpreter watch="0"/>  -->              
+  </when> 
+
+</job>
+
+
+</jobs>

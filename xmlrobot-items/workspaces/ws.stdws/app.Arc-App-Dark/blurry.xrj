@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="sys_project_setup" role="hidden">
+
+
+<ti label="Next"/>
+<ti type="call_job" job="1. Edit App-Base"/>
+<ti type="call_job" job="3. Edit &amp; Produce"/>
+</job>
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

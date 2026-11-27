@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<jobs>
+<call_job job="prolog" />
+<!-- 
+<job id="See Values: conf_" role="dev">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>  
+</job>
+
+<job id="Edit: conf_">
+  
+</job>
+
+<job id="Edit: conf_?">
+  <call_job job="tk_conf_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_conf_clear" explain="Clear this data"/>
+</job>
+-->
+ <job id="List of Ziramis" role="user">
+   <call_job job="zirami-see-all"/>
+   <ti_hr/>
+   <ti type="call_job" job="perform-xsl"/>
+   <ti type="call_job" job="create-folder-in-app"/>
+   <ti_hr/>
+   <ti label="&#8721;summenzeichen:">&#8721;x</ti>
+   
+</job>
+<job id="List of Ziramis?">
+  <call_job job="zirami-see-all"/>
+</job>
+
+
+
+<job id="Run" role="user">
+     <call_job job="tk_para_edit"/>
+     <tk type="msg" x="Continue with core-operation ..." test="0"/>
+     <call_job job="core-operation"/>
+     <ti>Did run</ti>
+   
+</job>
+
+<job id="Run?">
+   <call_job job="tk_para_print_values_tips"/>
+  
+</job>
+
+<job id="Edit Parameters" role="user">
+    
+      <call_job job="tk_para_edit"/>
+      
+</job>
+
+<job id="Edit Parameters?">
+     <call_job job="tk_para_print_values_tips"/>
+</job>
+
+
+<job id="see" role="hidden">
+  <ti>(f,role) (f,role,public) (f,role,user) (f,role,expert) (f,role,boss) (f,role,admin) (f,role,test)</ti>
+     <call_job job="tk_conf_print_values_tips"/>
+</job>
+
+<job id="Edit Programm" pri="10" role="expert">
+  <prop id="content">(f,file_content,(dir,app)app-info.xml)</prop>
+  <prop id="content2">(prop,content)</prop>
+  <tk type="textblock" id="content2" flag="bigbig nono" label="programm"/>
+  <prop id="equals">(f,eq_text,(prop,content),(prop,content2))</prop>
+  <ti>equals = (f,eq_text,(prop,content),(prop,content2))</ti>
+  <when test="(f,not,(prop,equals))">
+    <ti>(prop,content)</ti>
+    <ti>(prop,content2)</ti>
+    <tk type="msg" >Continue with seeing contents</tk>
+<tk type="msg" tip="both">(prop,content)
+(prop,content2)</tk>    
+  </when>
+</job>
+
+<job id="Encrypt something" pri="10" role="expert">
+  <call_service job="Dir-Encrypt" explain="Encrypt e Password"/>
+</job>
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

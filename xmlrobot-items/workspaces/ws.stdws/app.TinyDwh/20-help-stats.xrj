@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Statistiken?" role="hidden" lang="de">
+
+  <ti label="Job &apos;Statistiken&apos;"/>
+  <ti type="ul">()F&#252;hren Sie vorgefertigte Statistiken hier aus.()</ti>
+   
+
+  <!--   
+  <ti type="ul">()()</ti>
+  <ti type="ul">()()</ti>
+  <ti type="ul">()()</ti>
+  <ti type="ul">()()</ti>    
+  <ti type="rec"><ti flag="wrap">Hier k&#246;nnen Sie Import-Jobs starten(e:s) um Daten in die Datenbank einzubringen. F&#252;hren Sie danach die 'Integration' durch.</ti></ti>
+
+  <ti label="1(e:c) (prop,_pl_kjob)"/>
+
+  <ti type="ul">Hinterlegen Sie Verweise auf eigene Import-Jobs(e:s) um diese komfortabel auszuf&#252;hren.</ti>
+  <ti type="ul">W&#228;hlen Sie hief&#252;r ein Pentah-Job-File mit der Datei-Erweiterung 'kjb' aus.</ti>
+  <ti type="ul">Verwenden Sie den Link 'Ausf&#252;hren' um einen Job auszuf&#252;hren.</ti>
+  <ti type="ul">Um neue Jobs hinzuzuf&#252;gen(e:s) w&#228;hlen Sie die Rolle 'admin2'.</ti>  
+  <ti label="2(e:c) (prop,_pl_sample)"/>  
+
+  <ti type="ul">Laden Sie die mitgelieferten Beispiele in die Hibiscus-Datenbank.</ti>
+  <ti type="ul">&#196;ndern Sie die zugrundeliegenden Excel-files um das System zu testen und dessen Verhalten zu erkunden.</ti>
+  <ti type="ul">Laden Sie alle Beispiele auf einmal oder laden Sie nur Teilbereiche.</ti>
+
+  <ti label="Allgemeines zur Jobausf&#252;hrung"/>  
+  <ti type="ul">Die Jobs werden nicht vollautomatisch gestartet.</ti>
+  <ti type="ul">Es wird ein Terminal-Fenster in Ihrem Betriebssystem ge&#246;ffnet.</ti>
+  <ti type="ul">Weiters wird Ihnen ein Befehlstext angeboten(e:s) den Sie mit Strg-C in die Zwischenablage kopieren.</ti>
+  <ti type="ul">F&#252;gen Sie den Befehlstext mit Strg-V im Terminal-Fenster ein und bet&#228;tigen Sie die Eingabe-Taste</ti>  
+  <ti type="ul">Warten Sie die Fertigstellung des Jobs im Terminal-Fenster ab</ti>    
+  <ti type="ul">Kehren Sie zur Hibiscus-Applikation zur&#252;ck und klicken Sie gegebenenfalls auf &lt;Berichts-Datei einsehen&gt;</ti>        -->
+  
+
+</job>
+
+
+
+
+</jobs>

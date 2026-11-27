@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ephase-tk">
+<need default="">(prop,ephasen_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,ephasen_tk_control) wrap ">
+<tk label="(f,vob,prop,mcBetrifftZutat)" id="ephase_zut_key" x="" test_first="1" type="sel" flag="multi " xml="(file,akt-zutatenliste-komponente)"/>
+<tk label="(f,vob,prop,mcAktion)" id="ephase_besch" x="" test_first="1" tip="Was getan wird" type="text" flag=" nono "/>
+<tk label="Doku" id="ephase_details" x="" test_first="0" tip="Publizierter Beschreibungstext" type="textblock" flag=" "/>
+<tk label="Phasentyp" id="ephase_phase" x="40" x2="40" test_first="0" tip="Klasse der Aktivitaet" type="sel" flag=" nono  dynamo " xml="(file,phasen-selektor)"/>
+<tk label="Kalkulation" x="Kalkulation" test_first="0" type="msg" flag=" "/>
+<tk label="Zeiten" id="ephase_zeitangaben" x="" test_first="0" tip="Arbeitszeit entsprechend Rezept-Portionen" type="textblock" flag=" "/>
+<tk label="Kosten" id="ephase_kostenangaben" x="" test_first="0" tip="Betriebskosten entsprechend Rezept-Portionen" type="textblock" flag=" "/>
+<tk label="Interne Notizen" id="ephase_notiz" x="" test_first="0" tip="Wird nicht veroeffentlicht" type="textblock" flag=" "/>
+<tk label="Logo" x="Logo" test_first="0" test="(f,role,business)" type="msg" flag=" "/>
+<tk label="Bild" id="ephase_logo" x="" test_first="0" tip="ein Bild" test="(f,role,business)" type="file" flag=" "/>
+<tk label="List-Max Breite/Px" id="ephase_logo_max_x" x="" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+<tk label="List-Max Höhe/px" id="ephase_logo_max_y" x="" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+<tk label="Detail-Max Höhe/px" id="ephase_logo_max_x_main" x="" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+<tk label="Detail-Max Höhe/px" id="ephase_logo_max_y_main" x="" test_first="0" tip="in pixel" test="(f,role,business)" type="text" flag=" "/>
+</tk>
+</job>

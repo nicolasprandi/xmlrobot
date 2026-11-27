@@ -1,0 +1,958 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<job id="Dir-Again" role="hidden">
+  <need>(dir,with)</need>
+  <ti_hr/>
+  <call_service job="tr_fdag"/>
+  <ti type="call_service" job="see_dir_actions_present" explain="(prop,_fdag_dir_another)">
+    <dir id="with">(dir,with)</dir>
+    
+  </ti>
+
+</job>
+
+<job id="_add_dir_in_dir" role="hidden">
+
+</job>
+<job id="stat-action-dir-head" role="hidden">
+         <ti type="rec">
+          <ti> </ti>
+          <ti align="center" flag="wrap" span="4">- (prop,_dirst_total) -</ti>
+        
+          <ti>|</ti>
+
+          <ti align="center" flag="wrap" span="4">- (prop,_dirst_inthisfol) -</ti>       
+                  
+
+          <ti align="right" flag="wrap"> </ti>
+        </ti>
+        <ti type="rec">
+          <ti></ti>   
+          <ti align="center" flag="wrap">(prop,_dirst_lvl)</ti>
+          <ti align="right" flag="wrap">(prop,_dirst_nbroffiles)</ti>
+          <ti> </ti>
+
+          <ti align="right" flag="wrap">(prop,_dirst_storage)</ti>  
+          <ti>|</ti>   
+          <ti align="right" flag="wrap">(prop,_dirst_avg)</ti>       
+          <ti align="right" flag="wrap">(prop,_dirst_nbroffiles)</ti>
+          <ti> </ti>
+          <ti align="right" flag="wrap">(prop,_dirst_storage)</ti>
+          <ti></ti>          
+
+          
+        </ti>   
+</job>
+
+<job id="stat-action-dir-zeile" role="hidden">
+            <ti type="rec">
+              <ti type="call_service" job="stat-action-dir" explain="(loop,y,@ipath)">
+                <dir id="weg">(dir,weg)</dir>
+                <file id="weg">(file,y)</file>
+                <prop id="weg">(loop,y,@ipath)</prop>
+              </ti>   
+              <ti xalign="right">(f,substring,01234567890...,1,(loop,y,@level)) - </ti>
+              <ti align="right">(loop,y,@agg_files) (prop,_dirst_f)</ti>
+              <ti>=</ti>
+    
+              <ti align="right">(f,format,(loop,y,@agg_bytes),(e:s)##0) bytes</ti>
+              <ti>|</ti>   
+              <ti align="right">(f,try,()(f,format,(f,round,(f,div,(loop,y,@agg_bytes),(loop,y,@agg_files))),(e:s)##0) bytes/(prop,_dirst_f)())</ti>
+                       
+              <ti align="right">(loop,y,@files) (prop,_dirst_f)</ti>
+              <ti>=</ti>
+              <ti align="right">(f,format,(loop,y,@bytes),(e:s)##0) bytes</ti>          
+              <ti> </ti>
+              
+            </ti>
+</job>
+         
+ <job id="stat-action-dir" role="hidden">
+  <need>(dir,weg) (file,weg) (prop,weg)</need>
+  <call_service job="tr_dirst"/>
+  <call_service job="stat-action-dir-head" />
+  <file id="y" x="(file,weg)" />
+  
+          
+  <ti label="Folderlist"/>
+  <loop id="y" xml="(file,weg)" xpath="//dir[starts-with(e:o)@ipath(e:s)(f,xpath_string,(prop,weg))(e:c)]" missing_strategy="empty">
+
+
+    <dir id="weg" x="(loop,y,/dir,@dir)(loop,y,@ipath)"/>
+    
+        <call_service job="stat-action-dir-zeile" /> 
+        <!-- 
+        <ti type="rec">
+          <ti type="call_service" job="stat-action-dir" explain="(loop,y,@ipath)">
+            <dir id="weg">(dir,weg)</dir>
+            <file id="weg">(file,weg)</file>
+            <prop id="weg">(loop,y,@ipath)</prop>
+          </ti>   
+          <ti align="center">(f,substring,01234567890...,1,(loop,y,@level)) - </ti>
+          <ti align="right">(loop,y,@agg_files) f tot</ti>
+
+          <ti align="right">= (f,format,(loop,y,@agg_bytes),(e:s)##0) kb-tot</ti>   
+          
+          <ti align="right">-&gt; (f,try,()(f,format,(f,round,(f,div,(loop,y,@agg_bytes),(loop,y,@agg_files))),(e:s)##0)()) kb/file</ti>          
+                   
+          <ti align="right">(loop,y,@files) f</ti>
+          <ti align="right">= (f,format,(loop,y,@kb),(e:s)##0) kb</ti>          
+
+          
+        </ti>          -->
+
+
+  </loop>  
+ 
+  <ti_break_hr/>
+  <call_service job="Goto-Panorama">
+    <dir id="with">(dir,weg)</dir>
+  </call_service>
+ </job>
+ 
+<job id="Dir-Stat" role="hidden">
+  <call_service job="tr_dirst"/>
+  <!--  <interpreter watch="1"/>   -->                   
+  <file id="y" x="(f,request,dir,session_home_fs)services/dir-stat/scan.xml"/>
+  <ti type="dir" label="Stat:">(dir,with)</ti>
+  
+  <call_service job="go-joe-read">
+      <file id="joe-in-store" x="(f,request,dir,session_home_fs)services/dir-stat-action.lsx" />
+      <prop id="joe-in-regex" x="style|levels|match|sort" />
+  </call_service>
+  
+  <prop id="the-dir-name">(f,name_of_dir,(dir,with))</prop>  
+  <tk label="(prop,_dirst_folderstats):  (prop,the-dir-name)" flag="sum_only" tip="(prop,_dirst_scanning)">
+  <tk id="style" type="sel" label="(prop,_dirst_stil)" flag="nono" x="size">
+    
+    <sel label="(prop,_dirst_dirs)">size</sel>
+    <sel label="(prop,_dirst_files)" xtest="0">files</sel>
+    <sel label="(prop,_dirst_dirs2)">std</sel>
+  </tk>
+  <tk id="sort" label="(prop,_dirst_sort)" tip="(prop,_dirst_sortopt)" test_first="0" type="sel">
+    <sel label="(prop,_dirst_size)">size</sel>
+  </tk>  
+  <tk id="match" label="(prop,_dirst_filematch)"/>
+  <tk id="levels" x="99" label="(prop,_dirst_maxlevels)" tip="(prop,_dirst_maxlevels_t)" test_first="0" type="sel">
+    <sel label="1">1</sel>
+    <sel label="(prop,_dirst_2dbbackup)">2</sel>
+    <sel label="(prop,_dirst_2dblink)">3</sel>
+    <sel label="4">4</sel>
+    <sel label="5">5</sel>
+    <sel label="10">10</sel>
+    <sel label="15">15</sel>
+    <sel label="20">20</sel>
+    <sel label="(prop,_dirst_all)">99</sel>
+  </tk>  
+  </tk>
+  <call_service job="go-joe-write">
+      <file id="joe-in-store" x="(f,request,dir,session_home_fs)services/dir-stat-action.lsx" />
+      <prop id="joe-in-regex" x="style|levels|match|sort" />
+  </call_service>  
+  <scan dir="(dir,with)" 
+        out="(file,y)" 
+        level_limit="99"
+        field="files bytes level"
+        agg="files bytes"/>
+  <!-- <ti type="file" label="(prop,_dirst_statsin)" x="(file,y)"/>  --> 
+  <prop id="found" x="0"/>
+  <prop id="found-e" x="0"/>
+  <prop id="found-f" x="0"/>    
+  <prop id="found-t" x="0"/>
+  <prop id="found-kb" x="0"/>   
+  <!-- <ti x="(dir,with)" flag="wrap"/> 
+  <ti type="dir" x="(dir,with)"/>   -->
+  
+  <ti_break/>
+  <ti_hr/>
+  
+      <when test="(f,eq_text,size,(prop,style))">     
+        <call_service job="stat-action-dir-head" />      
+     
+        
+      </when>
+      
+  <choose>
+    <when test="(f,or,(f,eq_text,size,(prop,style)),(f,eq_text,std,(prop,style)))">
+    
+      <prop id="the_sort"></prop>
+      <prop id="the_number"></prop>
+      <prop id="the_desc"></prop>
+            
+      <when test="(f,has,prop,sort)">
+        <when test="(f,eq_text,size,(prop,sort))">
+          <prop id="the_sort">@agg_bytes</prop>
+          <prop id="the_number">@agg_bytes</prop>  
+          <prop id="the_desc">@agg_bytes</prop>  
+          <ti label="sorting by" test="1">(prop,the_sort) (prop,the_number) (prop,the_desc)</ti>    
+        </when>
+      </when>    
+      <!-- achtung -->
+      <when test="(f,eq_text,std,(prop,style))">
+        <ti  flag="label_right" x="(prop,_dirst_nbroffiles) - (prop,_dirst_nbroffilesftotal)"/>
+      </when>      
+      <loop id="y" xml="(file,y)" xpath="//dir[@level &lt;= (f,add,1,(prop,levels))]" 
+        missing_strategy="empty"
+        sort="(prop,the_sort)" number="(prop,the_number)" desc="(prop,the_desc)">
+        <prop id="found" x="(loop,y,#i)"/> 
+    
+        <dir id="weg" x="(dir,with)(loop,y,@ipath)"/>
+        
+        <choose>
+          <when test="(f,eq_text,std,(prop,style))">
+            <ti type="dir" x="(dir,weg)" flag="label_right" label="(loop,y,@files) (prop,_dirst_f) - (loop,y,@agg_files) (prop,_dirst_ftot)"/>
+          </when>
+          <when test="(f,eq_text,size,(prop,style))">
+          
+            <call_service job="stat-action-dir-zeile" />
+
+          </when>
+          <when test="(f,eq_text,std,(prop,style))">
+          </when>
+          <when test="(f,eq_text,std,(prop,style))">
+          </when>
+          <when test="(f,eq_text,std,(prop,style))">
+          </when>
+        </choose>                        
+        
+         
+        
+        <choose>
+          <when test="(f,eq_num,0,(loop,y,@files))">
+            <prop id="found-e" x="(f,add,1,(prop,found-e))"/>
+          </when>
+          <otherwise>
+            <prop id="found-f" x="(f,add,1,(prop,found-f))"/>
+            <prop id="found-t" x="(f,add,(loop,y,@files),(prop,found-t))"/>
+          </otherwise>
+        </choose>
+        
+        <!-- 
+        <when test="(f,exists_dir,(dir,weg))">
+          <ti type="dir" label="Deleting" test="0">(dir,weg)</ti>
+          <delete dir="(dir,weg)" test="1"/>
+        </when>     
+        -->
+    
+      </loop>
+      <ti_break/>
+      <ti label="(prop,_dirst_resume)"/>
+      <ti label="(prop,_dirst_nbr_tot_dirs)">(prop,found)</ti>
+      <ti label="(prop,_dirst_nbr_empty_dirs)">(prop,found-e)</ti>
+      <ti label="(prop,_dirst_nbr_filled_dirs)">(prop,found-f)</ti>
+      <ti label="(prop,_dirst_nbr_tot_files)">(prop,found-t)</ti>    
+    </when>
+    
+    <when test="(f,eq_text,files,(prop,style))">
+    
+      <prop id="xpath">//file</prop>
+      <prop id="the_sort"></prop>
+      <prop id="the_number"></prop>
+      <prop id="the_desc"></prop>
+      
+      <when test="(f,has,prop,match)">
+        <prop id="xpath">//file[contains(e:o).(e:s)(f,xpath_string,(prop,match))(e:c)]</prop>
+      </when>
+      
+      <when test="(f,has,prop,sort)">
+        <when test="(f,eq_text,size,(prop,sort))">
+          <prop id="the_sort">@bytes</prop>
+          <prop id="the_number">@bytes</prop>  
+          <prop id="the_desc">@bytes</prop>     
+          <!-- <ti label="sorting by">(prop,the_sort) (prop,the_number) (prop,the_desc)</ti>  -->
+        </when>
+      </when>
+      <ti>(prop,_dirst_pos_kb)</ti>
+      <loop id="z" xml="(file,y)" xpath="(prop,xpath)" missing_strategy="empty"
+        sort="(prop,the_sort)" number="(prop,the_number)" desc="(prop,the_desc)">
+        <ti type="file" flag="label_right" label="(loop,z,#i) _ (loop,z,@bytes) bytes" xkey="(loop,z,@bytes) bytess">(dir,with)(loop,z,..,@ipath)(loop,z)</ti>
+      </loop>
+    </when>
+  
+  </choose>
+  <!-- 
+  <ti_break/>       
+
+  <call_service job="Goto-Panorama">
+    <dir id="with">(dir,with)</dir>
+  </call_service>      -->
+  <call_service job="Dir-Again"/>
+</job>
+
+<job id="Dir-Encrypt" role="hidden" joblevel="ws">
+
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/zip-encrypt-decrypt.lsx</file>
+    <prop id="joe-in-regex">style</prop>   
+  </call_service>
+  
+  <tk label="Encrypt a text" flag="sum">
+  
+    <tk type="sel" flag="nono"
+        id="style"
+        label="Encrypt-or-Decrypt"
+        x="encrypt">
+        <sel label="Encrypt">encrypt</sel>
+        <sel label="Decrypt">decrypt</sel>
+    </tk>
+          
+    <tk id="in" label="Text" flag="nono" tip="This is the text to be encrypted/decrypted" type="textblock"/>  
+    <tk id="pw1" label="Pw" flag="nono password" tip="This is the secret key with which the given text is encrypted/decrypted"/>
+    <tk id="pw2" label="Pw-Again" flag="nono password" tip="This is the secret key with which the given text is encrypted/decrypted once again"/>
+  </tk>
+  
+  <call_service job="go-joe-write"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/zip-encrypt-decrypt.lsx</file>
+    <prop id="joe-in-regex">style</prop>   
+  </call_service>  
+  
+  <throw test="(f,not,(f,eq_text,(prop,pw1),(prop,pw2)))">Passwords differs</throw>
+  
+  <crypto id="scra" act="open" type="(prop,pw1)"/>
+  <crypto id="scra" act="(prop,style)" in="(prop,in)" out="ergebnis"/>
+
+  <crypto id="scra" act="close" />
+  
+  <tk type="msg" tip="Result for copy and paste" msg_type="c" label="Result" cols="70" rows="4">(prop,ergebnis)</tk>
+  
+  <call_service job="Dir-Again"/>
+</job>
+
+<job id="see_dir_actions" joblevel="ws" role="hidden">
+  
+  <call_service job="see_dir_actions_present" />
+</job>
+<job id="see_dir_actions_XXX" joblevel="ws" role="hidden">
+  <interpreter act="check-login"  test="(f,implement,online)"/> 
+  <need xdefault="C:\Users\nicolas\Desktop\Links\test">(dir,with)</need>
+
+  <call_service job="go-joe-read">
+      <file id="joe-in-store" x="(f,request,dir,session_home_fs)services/dir-action.lsx" />
+      <prop id="joe-in-regex" x="what" />
+  </call_service>
+  
+  <ti type="call_service" job="see_dir_actions" explain="Do another Actions ...">
+    <dir id="with">(dir,with)</dir>
+  </ti>
+  <ti_hr/>
+  
+  <call_service job="tr_wdi"/>  
+  
+  <tk label="(prop,_wdi_folder_actions) (dir,with)" tip="(dir,with)"
+      test="(f,interpreter,has_priv,opDirs)">
+    <tk type="sel" id="what">
+      <!-- <sel label="Zip the directory">zip</sel> -->
+      <sel label="(prop,_wdi_do_seeinf)" test="(f,interpreter,has_priv,opInfo)">vfs</sel>
+      <sel label="(prop,_wdi_do_pano)" test="(f,interpreter,has_priv,opInfo)">panorama</sel>
+      <sel label="(prop,_wdi_do_seepics)" test="(f,interpreter,has_priv,opContent)">pic</sel>
+      <sel label="(prop,_wdi_do_deldir)" test="(f,interpreter,has_priv,opDelete)">delete</sel>
+      <sel label="(prop,_wdi_do_mkdir)" test="(f,interpreter,has_priv,opDelete)">mkdir</sel>
+      <sel label="(prop,_wdi_do_seeallfiles)" test="(f,interpreter,has_priv,opAnalyze)">all</sel>
+      <sel label="(prop,_wdi_do_stats)" test="(f,interpreter,has_priv,opAnalyze)">stat</sel>
+      <sel label="(prop,_wdi_do_seeemptys)" test="(f,interpreter,has_priv,opAnalyze)">seeempty</sel>   
+      <sel label="(prop,_wdi_do_compare)" test="(f,interpreter,has_priv,opAnalyze)">compare</sel>
+        
+      <sel label="(prop,_wdi_do_encrypt)" test="(f,interpreter,has_priv,opCrypto)">encrypt</sel>
+        
+    </tk>
+  </tk>
+  
+  <call_service job="go-joe-write">
+      <file id="joe-in-store" x="(f,request,dir,session_home_fs)services/dir-action.lsx" />
+      <prop id="joe-in-regex" x="what" />
+  </call_service>
+  
+  <choose>
+    <when test="(f,eq_text,panorama,(prop,what))">
+      <call_service job="Dir-Panorama"/>
+    </when>  
+    <when test="(f,eq_text,zip,(prop,what))">
+      <call_service job="Dir-Zip"/>
+    </when>
+    <when test="(f,eq_text,pic,(prop,what))">
+      <call_service job="Dir-Pic"/>
+    </when>  
+    <when test="(f,eq_text,vfs,(prop,what))">
+      <call_service job="Dir-Vfs"/>
+    </when>  
+    <when test="(f,eq_text,delete,(prop,what))">
+      <call_service job="Dir-Delete"/>
+    </when>   
+    <when test="(f,eq_text,all,(prop,what))">
+      <call_service job="Dir-All"/>
+    </when>  
+    <when test="(f,eq_text,seeempty,(prop,what))">
+      <call_service job="Dir-SeeEmpties"/>
+    </when>    
+    <when test="(f,eq_text,stat,(prop,what))">
+      <call_service job="Dir-Stat"/>
+    </when>    
+    
+    <when test="(f,eq_text,compare,(prop,what))">
+      <call_service job="Dir-Compare"/>
+    </when>     
+    
+    <when test="(f,eq_text,encrypt,(prop,what))">
+      <call_service job="Dir-Encrypt"/>
+    </when>       
+    <when test="(f,eq_text,mkdir,(prop,what))">
+      <call_service job="Dir-Create"/>
+    </when>      
+    
+    <!--              "Dir-SeeEmpties"
+    <when test="(f,eq_text,1,(prop,what))">
+    </when>  
+    -->
+  
+  </choose>
+
+
+</job>
+
+<job id="see_dir_actions_present" joblevel="ws" role="hidden">
+  <interpreter act="check-login"  test="(f,implement,online)"/> 
+  <need>(dir,with)</need>
+  
+  <!-- <ti label="(f,name_of_dir,(dir,with))"/>     -->
+  <ti type="dir" x="(dir,with)"/>
+  <ti_break/>
+    
+  <call_service job="tr_wdi" test="(f,not,(f,exists,prop,_wdi_folder_actions))"/>
+  
+  <ti_hr_break/>
+  
+  <ti label="(prop,_wdi_folder_actions)"/>
+  
+
+  <ti type="rec">
+    <ti type="call_service" job="Dir-Create" explain="(prop,_wdi_do_mkdir)" flag="block button"  class="fx"
+       test="(f,interpreter,has_priv,opDelete)">
+      <dir id="with">(dir,with)</dir>  
+    </ti>  
+    
+    <ti type="call_service" job="Dir-Delete" explain="(prop,_wdi_do_deldir)" flag=" button"     class="fx redButton"
+      test="(f,interpreter,has_priv,opDelete)">
+      <dir id="with">(dir,with)</dir>  
+    </ti>       
+  </ti>
+  
+
+    <ti type="call_service" job="Dir-Copy" explain="(f,html,b,o)Copy(f,html,b,c)" flag=" block button"        class="fx"
+      test="(f,interpreter,has_priv,opDelete)">
+      <dir id="with">(dir,with)</dir>  
+    </ti>    
+    
+  <ti type="rec" test="(f,interpreter,has_priv,opZip)">
+    <ti type="call_service" job="Dir-Zip" explain="(prop,_wdi_do_zip)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti>        
+  <!--   
+  <ti type="rec" >
+  
+  </ti>          -->
+    
+
+  <ti_space height="5px" />
+  <ti type="rec" test="(f,interpreter,has_priv,opContent)">
+    <ti type="call_service" job="Dir-Pic" explain="(prop,_wdi_do_seepics)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti> 
+  
+
+  
+
+  
+  
+  
+  <ti type="rec" test="(f,interpreter,has_priv,opAnalyze)">
+    <ti type="call_service" job="Dir-All" explain="(prop,_wdi_do_seeallfiles)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti>  
+  
+  <ti type="rec" test="(f,interpreter,has_priv,opAnalyze)">
+    <ti type="call_service" job="Dir-Stat" explain="(prop,_wdi_do_stats)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti>  
+  
+  <ti type="rec" test="(f,interpreter,has_priv,opAnalyze)">
+    <ti type="call_service" job="Dir-SeeEmpties" explain="(prop,_wdi_do_seeemptys)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti>     
+  <ti_space height="5px" />
+  <ti type="rec" test="(f,interpreter,has_priv,opAnalyze)">
+    <ti type="call_service" job="Dir-Compare" explain="(prop,_wdi_do_compare)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti>  
+  
+
+  <ti_space height="5px" />
+   
+  
+  <ti type="rec" test="(f,interpreter,has_priv,opInfo)">
+    <ti type="call_service" job="Dir-Panorama" explain="(prop,_wdi_do_pano)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti>       
+  
+  <ti explain="(prop,_wdi_do_seeinf)" type="call_service" job="File-Dir-VFS" 
+      test="(f,interpreter,has_priv,opInfo)">   
+    <prop id="with" x="(dir,with)"/>
+  </ti>  
+  
+  <ti_hr test="(f,interpreter,has_priv,opCrypto)"/>
+  <ti type="rec" test="(f,interpreter,has_priv,opCrypto)">
+    <ti type="call_service" job="Dir-Encrypt" explain="(prop,_wdi_do_encrypt)" flag="block">
+      <dir id="with">(dir,with)</dir>  
+    </ti>
+  </ti>    
+  
+  <ti_hr_break/>
+  <ti label="(prop,_wdi_complete):"/>
+  <ti type="rec">
+  <ti  flag="block wrap" x="(dir,with)" />
+  </ti>
+
+
+
+</job>
+<job id="Dir-Create" role="hidden">
+  <call_service job="tr_wda"/>
+  <need default="1">(prop,perform-again)</need>
+  
+  <tk id="dirname" flag="nono" rule="filename" label="(prop,_wda_cr_dirname)" cols="30"/>
+  <dir id="newdir">(dir,with)(prop,dirname)</dir>
+  <choose>
+    <when test="(f,exists_dir,(dir,newdir))">
+      <ti>Directory &apos;(dir,newdir)&apos; existiert bereits</ti>
+    </when>
+    <otherwise>
+      <mkdir dir="(dir,newdir)"/>
+      <ti label="(prop,_wda_cr_created)"/>
+      <ti label="(prop,_wda_cr_newdir)" type="dir">(dir,newdir)</ti>
+    </otherwise>
+  </choose>
+  <call_service job="Dir-Again" test="(prop,perform-again)"/>
+</job>
+
+<job id="Dir-Panorama" role="hidden">
+  <call_service job="Goto-Panorama"/>
+  <call_service job="Dir-Again"/>
+</job>
+
+<job id="Dir-Compare" role="hidden">
+  <call_service job="tr_wda"/>
+  <!-- 
+  <call_service job="go-jil-run" flag="silent">
+    <prop id="jil-question" x="(prop,_wda_cmp_select) (dir,with)"/>
+  </call_service>
+  <global act="get" id="jil-result"/>
+ 
+ <dir id="this" x="(prop,jil-result)" />      -->
+ <tk label="(prop,_wda_cmp_confirm)" flag="sum">
+  <tk type="dir" id="with" label="(prop,_wda_cmp_olddir)" flag="nono" test_first="0" tip="(prop,_wda_cmp_olddir_t)"/>
+  <tk type="dir" id="this" label="(prop,_wda_cmp_newdir)" flag="nono" test_first="1" base="(dir,with)"
+  tip="(prop,_wda_cmp_newdir_t)"/>
+ </tk>
+ 
+ <call_service job="Goto-Compare-Dirs">
+  <dir id="old">(dir,with)</dir>
+  <dir id="new">(dir,this)</dir>
+ </call_service>   
+ <call_service job="Dir-Again"/>    
+</job>
+
+<job id="Dir-Pic" role="hidden">
+  <call_service job="tr_wda"/>
+  
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/service-dir-pic.lsx</file>
+    <prop id="joe-in-regex">size-max-x|size-max-y</prop>   
+  </call_service>
+      
+  
+  <interpreter watch="0" />
+  <prop id="size-them" x="1"/>
+  <when test="(prop,size-them)">
+      <tk label="(prop,_wda_pics_l)" flag="sum_only">
+        <tk id="size-max-x" label="(prop,_wda_pics_maxx_l)" x="160"/>
+        <tk id="size-max-y" label="(prop,_wda_pics_maxy_l)"/>  
+      </tk>
+      
+    <call_service job="go-joe-write"> 
+      <file id="joe-in-store">(f,request,dir,session_home_fs)services/service-dir-pic.lsx</file>
+      <prop id="joe-in-regex">size-max-x|size-max-y</prop>      
+    </call_service>        
+  </when>
+  <file id="y" x="(dir,filetemp)scan12.xml"/>
+  <scan dir="(dir,with)" 
+        out="(file,y)" 
+        level_limit="1"/>
+  <ti test="0">SCAN:
+(f,file_content,(file,y))</ti>      
+
+  <ti label="(prop,_wda_pics_picsof_l) (dir,with)"/>
+  <ti_hr/>
+  <loop id="f" xml="(file,y)" xpath="file">
+    <prop id="s">(f,lower,(loop,f))</prop>
+    <choose>
+      <when test="(f,or,(f,ends_with,(prop,s),.jpg),(f,ends_with,(prop,s),.png))">
+        
+        <choose>
+          <when test="(f,and,(prop,size-them),(f,has,prop,size-max-x),(f,has,prop,size-max-y))">
+            <ti type="img" max_x="(prop,size-max-x)" max_y="(prop,size-max-y)">(dir,with)(loop,f)</ti>
+          </when>        
+          <when test="(f,and,(prop,size-them),(f,has,prop,size-max-x))">
+            <ti type="img" max_x="(prop,size-max-x)">(dir,with)(loop,f)</ti>
+          </when>
+          <when test="(f,and,(prop,size-them),(f,has,prop,size-max-y))">
+            <ti type="img" max_y="(prop,size-max-y)">(dir,with)(loop,f)</ti>
+          </when>          
+          <otherwise>
+            <ti type="img">(dir,with)(loop,f)</ti>
+          </otherwise>
+        </choose>
+          
+        <ti>(f,html,b,o)(loop,f)(f,html,b,c)</ti>
+        <ti>(dir,with)(loop,f)</ti>
+        <ti type="file">(dir,with)(loop,f)</ti>
+        <ti_hr/>
+      </when> 
+      <otherwise>
+        <ti label="no image">(loop,f)</ti>
+      </otherwise>
+    </choose>
+ 
+  </loop>
+  <call_service job="Dir-Again"/>
+</job>
+
+
+
+
+<job id="Dir-SeeEmpties" role="hidden">
+  <call_service job="tr_wda"/>
+
+  <tk type="msg">(prop,_wda_empty_going)
+(dir,with)</tk>  
+  <file id="y" x="(dir,filetemp)scan12.xml"/>
+  <scan dir="(dir,with)" 
+        out="(file,y)" 
+        level_limit="99"
+        field="files"
+        agg="files"/>
+  <prop id="found" x="0"/>      
+  <ti label="(dir,with)"/>
+  <ti_break/>
+  <loop id="y" xml="(file,y)" xpath="//dir[@agg_files=0]">
+    <prop id="found" x="(loop,y,#i)"/> 
+
+    <dir id="weg" x="(dir,with)(loop,y,@ipath)"/>
+    <ti type="dir" x="(dir,weg)" label="(prop,_wda_empty_empty)"/>
+    
+    <!-- 
+    <when test="(f,exists_dir,(dir,weg))">
+      <ti type="dir" label="Deleting" test="0">(dir,weg)</ti>
+      <delete dir="(dir,weg)" test="1"/>
+    </when>     
+    -->
+
+  </loop>
+  <ti>(prop,_wda_empty_found) = (prop,found)</ti>
+  <call_service job="Dir-Again"/>
+</job>
+
+<job id="Dir-All" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  
+  <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+  <mkdir dir="(dir,pro_temp)" flag="cascade"/>
+  
+    
+  <dir id="temp-pro" x="(dir,pro_temp)"/>
+  <file id="para" x="(dir,temp-pro)api-2.xml"/>
+  <mkdir dir="(dir,temp-pro)"/>
+  
+  <create_file out="(file,para)" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <api2 dir_to_see="(x,(dir,with))"/>]]></create_file>        
+  <call_app
+    job="api-2"
+    app="Panorama"
+    pro_dir="(dir,temp-pro)"
+    pro_id="Second-Pano at (f,time)"
+    flag="silent"/> 
+  
+  <call_service job="Dir-Again"/>
+  <ti xtype="dir" label="Indiv PanoProject:" x="(dir,pro_temp)" test="(f,role,test)"/>
+</job>
+
+<job id="Dir-Copy" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  
+  <tk id="target" label="TargetDir" type="dir"/>
+  <tk type="msg">Sure to copy
+from 
+  (dir,with)
+to 
+  (dir,target)
+?</tk>
+  <copy uri="(dir,with)" touri="(dir,target)"/>
+  <ti label="Copy performed"/>
+  <ti type="call_service" job="Goto-Panorama" explain="See the result" label=" ">
+    <dir id="with">(dir,target)</dir>
+  </ti>          
+  
+</job>
+
+<job id="Dir-Delete" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <call_service job="tr_wda"/>
+  
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/zip-service-moda.lsx</file>
+    <prop id="joe-in-regex">delete-how</prop>   
+  </call_service>
+  
+
+    
+   <tk type="sel" id="delete-how" label="(prop,_wda_del_how)" x="content" flag="nono">
+    <sel label="(prop,_wda_del_compl)">complete</sel>
+    <sel label="(prop,_wda_del_cont)">content</sel>
+  </tk>
+
+  <call_service job="go-joe-write"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/zip-service-moda.lsx</file>
+    <prop id="joe-in-regex">delete-how</prop>   
+  </call_service>
+  <prop id="quest-delete-2" x="1"/>        
+  <tk label="(prop,_wda_del_delfolder) (f,name_of_dir,(dir,with)) ?" 
+      type="accept" 
+      id="quest-delete-1" 
+      x="(prop,_wda_del_goingdel)&#xA;(dir,with)"
+      label_accept="(prop,_wda_del_delete)"
+      label_decline="(prop,_wda_del_forget)"
+      width="300"
+      height="150">
+    <q id="quest-delete-2" label="(prop,_wda_del_iknow)" flag="load"/>       
+  </tk>
+  <choose>  
+    <when test="(f,not,(f,and,(prop,quest-delete-1),(prop,quest-delete-2)))">
+      <ti label="(prop,_wda_del_stopped)"/>
+      <throw>Operation stopped</throw>
+    </when>
+    <otherwise>
+
+      
+      <choose>
+        <when test="(f,eq_text,complete,(prop,delete-how))">
+          <delete dir="(dir,with)"/>
+        </when>
+        <otherwise>
+          <delete content_of_dir="(dir,with)"/>
+        </otherwise>
+      </choose>
+
+      <ti label="(prop,_wda_del_performed): (f,when,(f,eq_text,content,(prop,delete-how)),(prop,_wda_del_cont),(prop,_wda_del_compl))">
+        <ti label="(prop,_wda_del_deleted):">(dir,with)</ti>
+      </ti>    
+      <ti_hr/>
+      <ti  wrap="word"  type="call_service" job="Goto-Panorama" explain="(prop,_wda_del_seepano_parent2) (e:o)(f,html,b,o)(f,name_of_dir,(f,dir_of_dir,(f,dir_of_dir,(dir,with))))(f,html,b,c)(e:c)" xlabel=" ">
+        <dir id="with">(f,dir_of_dir,(dir,with))</dir>
+      </ti>   
+      
+      <choose>
+        <when test="(f,eq_text,content,(prop,delete-how))">
+        
+          <ti   wrap="word" type="call_service" job="Goto-Panorama" explain="(prop,_wda_del_seepano_parent) (e:o)(f,html,b,o)(f,name_of_dir,(f,dir_of_dir,(dir,with)))(f,html,b,c)(e:c)" xlabel=" ">
+            <dir id="with">(f,dir_of_dir,(dir,with))</dir>
+          </ti>     
+          <ti_hr />         
+          <ti wrap="word" flag="button"  class="fx" type="call_service" job="Goto-Panorama" explain="(prop,_wda_del_seepano) (e:o)(f,html,b,o)(f,name_of_dir,(dir,with))(f,html,b,c)(e:c)" xlabel=" ">
+            <dir id="with">(dir,with)</dir>
+          </ti>
+        </when>
+        <otherwise>
+          <ti_hr />        
+          <ti wrap="word" flag="button"  class="fx" type="call_service" job="Goto-Panorama" explain="(prop,_wda_del_seepano_parent) (e:o)(f,html,b,o)(f,name_of_dir,(f,dir_of_dir,(dir,with)))(f,html,b,c)(e:c)" xlabel=" ">
+            <dir id="with">(f,dir_of_dir,(dir,with))</dir>
+          </ti>     
+        </otherwise>
+      </choose>
+   
+              
+      
+    </otherwise>
+  </choose>
+  <!-- <call_service job="Dir-Again"/> -->
+</job>
+
+<job id="Dir-Vfs" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <file id="with" x="(dir,with)" />
+  <call_service job="File-Dir-VFS"/>
+
+</job>
+
+<job id="Dir-Info-Panorama" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>
+  <prop id="src" x="(dir,with)"/>
+
+  <call_service job="tr_wdi"/>
+  <ti label="(prop,_wdi_folder)"/>
+  
+  <!-- 
+  <ti>(f,name_of_dir,(dir,with))</ti>
+  <ti>(f,vfs,(prop,src),uri)/</ti>
+       -->
+ 
+  <when test="(f,interpreter,has_priv,opDirs)">
+    <call_service job="see_dir_actions_present"/>
+    <!-- 
+    <ti label="Next"/>                
+    <ti type="call_service" job="see_dir_actions" xlabel="Perform:" explain="Perform Directory-Operation" prefix="&gt;&gt;">
+      <dir id="with" x="(dir,with)"/>
+    </ti>           -->
+  </when>  
+
+</job>
+
+<job id="Dir-Zip" role="hidden" joblevel="ws">
+  <need>(dir,with)</need>                   
+  <need default="zip">(prop,target-format)</need>    
+  <!-- <prop id="nof" x="(prop,with-filename-zip)"/> -->
+  
+
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/zip-service-moda.lsx</file>
+    <prop id="joe-in-regex">target-is-source|target-my</prop>   
+  </call_service>
+ 
+  <choose>
+    <when test="(f,has,dir,target-my)">
+      <tk label="Zip Destination" tip="Where to store the zip in general">
+        <tk type="sel" flag="nono"
+            id="target-is-source"
+            label="Where to store?">
+            <sel label="Same directory: xxx(prop,fs)(f,upper,(f,name_of_dir,(dir,with))) ">1</sel>
+            <sel label="Like last time: xxx(prop,fs)(f,upper,(f,name_of_dir,(dir,target-my)))">2</sel>
+            <sel label="Just Download">3</sel>
+            <sel label="Somwhere else ... ">0</sel>
+        </tk>
+      </tk>
+          
+    </when> 
+    <otherwise>
+    
+      <tk label="Zip Destination" tip="Where to store the zip in general">
+        <tk type="sel" flag="nono"
+            id="target-is-source"
+            label="Where to store?">
+            <sel label="Same directory: xxx(prop,fs)(f,upper,(f,name_of_dir,(dir,with))) ">1</sel>
+            <sel label="Just Download">3</sel>
+            <sel label="Somwhere else ... ">0</sel>
+        </tk>
+      </tk>
+          
+    </otherwise>
+  </choose>
+    
+  <call_service job="go-joe-write"> 
+    <file id="joe-in-store">(f,request,dir,session_home_fs)services/zip-service-moda.lsx</file>
+    <prop id="joe-in-regex">target-is-source|target-my</prop>   
+  </call_service>      
+         
+  <choose>
+    <when test="(f,eq_num,1,(prop,target-is-source))">
+      <dir id="target" x="(dir,with)"/>
+    </when>
+    <when test="(f,eq_num,2,(prop,target-is-source))">
+      <dir id="target" x="(dir,target-my)"/>
+    </when>    
+    
+    <when test="(f,eq_num,3,(prop,target-is-source))">
+      <dir id="target" x="(f,request,dir,session_home_fs)justDownload/"/>
+    </when>     
+    
+    <otherwise>
+
+      <tk type="msg">Select a folder
+Waehlen Sie ein Verzeichnis aus
+Vous elige selectionier une nouvelle directory.
+Nous vous presenter une selection de directoies possible</tk>
+
+      <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question" x="Selection of directories as target for your new zip-file"/>
+      </call_service>
+      <global act="get" id="jil-result"/>        
+      <dir id="target" x="(prop,jil-result)" />
+      <dir id="target-my" x="(prop,jil-result)" />
+      <call_service job="go-joe-write"> 
+        <file id="joe-in-store">(f,request,dir,session_home_fs)services/zip-service-moda.lsx</file>
+        <prop id="joe-in-regex">target-is-source|target-my</prop>   
+      </call_service>  
+        
+    </otherwise>
+  </choose>
+
+  
+  <prop id="nof" x="(f,replace,(f,name_of_dir,(dir,with)),.,_)_(f,time).zip"/>
+  
+  <when test="(f,not,(f,eq_num,3,(prop,target-is-source)))">
+    <tk id="nof" label="Filename" flag="nono" tip="this will be the name of the zip-file"/>
+    <tk label="Zip-File-Destination" flag="sum_only print">
+      <tk id="target" label="Target Directory" type="dir" flag="nono"/>
+      <tk id="nof" label="Filename" flag="nono"/>
+    </tk>
+  </when>
+      
+
+
+  <file id="new">(dir,target)(prop,nof)</file>
+  
+
+  <when test="(f,file_exists,(file,new))">
+    <tk label="Overwrite file ?" 
+      type="accept" 
+      id="delete-pro-1" 
+      x="The file exists already: (f,name_of_file,(file,new))&#xA;Do you want to overwrite it?" 
+      label_accept="Overwrite" 
+      label_decline="Forget it" 
+      width="300" height="150">
+      <q id="delete-pro-2" label="()Yes, I know that the existing file will be gone forever()"/>
+    </tk>
+    
+    <!-- fail if question not answered properly -->
+    <when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+      <throw>Operation terminated on request.</throw>
+    </when>
+  </when>
+  <choose>
+    <when test="(f,eq_text,zip,(prop,target-format))">
+      <tp>doing zip</tp>
+
+        <zip  destfile="(file,new)"
+              basedir="(dir,with)" />
+
+    </when>
+    <when test="(f,eq_text,jar,(prop,target-format))">
+      <throw>out of service</throw>
+
+    </when>    
+  </choose>
+  <ti label="Zip performed...">
+    <ti type="dir" label="From:" x="(dir,with)" />
+    <ti type="file" label="To:" flag="download" x="(file,new)" />
+
+  </ti>  
+ <call_service job="Dir-Again"/> 
+</job>
+
+
+</jobs>

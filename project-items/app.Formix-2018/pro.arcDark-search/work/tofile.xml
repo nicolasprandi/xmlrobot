@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="search-write">
+<need>(prop,search_key) (prop,isAdd)</need>
+<spirit act="open" id="searches_spirit_tc" xml="(file,searches)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,searches_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,searches_offset),0,(f,sub,(f,len,(prop,searches_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,searches_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="searches_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;search row="(prop,search_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="searches_spirit_tc" where="(prop,searches_offset)search[@row='(prop,search_key)']" attribute="search" value="(f,vob,prop,search_search)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="searches_spirit_tc" where="(prop,searches_offset)search[@row='(prop,search_key)']" attribute="type" value="(f,vob,prop,search_type)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="searches_spirit_tc" where="(prop,searches_offset)search[@row='(prop,search_key)']" attribute="desc" value="(f,vob,prop,search_desc)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="searches_spirit_tc" where="(prop,searches_offset)search[@row='(prop,search_key)']" attribute="techname" value="(f,vob,prop,search_techname)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="searches_spirit_tc" where="(prop,searches_offset)search[@row='(prop,search_key)']" attribute="before" value="(f,vob,prop,search_before)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="searches_spirit_tc" where="(prop,searches_offset)search[@row='(prop,search_key)']" attribute="after" value="(f,vob,prop,search_after)"/>
+<spirit act="close" flag="save pretty" id="searches_spirit_tc"/>
+</job>

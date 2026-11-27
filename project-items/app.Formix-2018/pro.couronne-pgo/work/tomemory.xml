@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgo-read">
+    <need>(prop,pgo_key)</need>
+    <spirit act="open" missing_strategy="empty" id="pgos_spirit_tc" xml="(file,pgos)"/>
+    <prop id="pgo_dt_upd">(f,spirit,pgos_spirit_tc,(prop,pgos_offset)pgo[@row=(f,xpath_string,(prop,pgo_key))],@dt_upd)</prop>
+    <prop id="pgo_dt_add">(f,spirit,pgos_spirit_tc,(prop,pgos_offset)pgo[@row=(f,xpath_string,(prop,pgo_key))],@dt_add)</prop>
+    <prop id="pgo_objekttyp">(f,spirit,pgos_spirit_tc,(prop,pgos_offset)pgo[@row=(f,xpath_string,(prop,pgo_key))],@objekttyp)</prop>
+    <prop id="pgo_detail">(f,spirit,pgos_spirit_tc,(prop,pgos_offset)pgo[@row=(f,xpath_string,(prop,pgo_key))],@detail)</prop>
+    <spirit act="close" id="pgos_spirit_tc"/>
+</job>

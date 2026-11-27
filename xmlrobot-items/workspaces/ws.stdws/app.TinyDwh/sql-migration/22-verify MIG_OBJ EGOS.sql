@@ -1,0 +1,1 @@
+select * from int.mig_obj where master_obj_id = slave_obj_id;

@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="api-olix" role="hidden">
+
+  <call_job job="prolog"/>
+  <call_job job="??"/>
+
+</job>
+
+<job id="prolog" role="hidden">
+
+<throw test="(f,not,(f,eq_text,(prop,app),Xsl-Transformer))">Sorry</throw>  
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>
+ <choose>
+  <when test="(f,has,dir,pro)">
+    <dir id="conf" x="(dir,pro)project-configuration"/>
+    <mkdir dir="(dir,conf)"/>
+    <file id="joe-in-store" x="(dir,conf)ic-main.xml" />
+	<file id="import-history" x="(dir,conf)import-history.xml" />
+    <file id="xml2" x="(dir,pro)spreadsheet-converted.xml"/>
+    <file id="xsl-result" x="(dir,pro)result-of-transformation.xml"/>
+    <!-- <ti labxel="Log:" type="file" x="(file,log)" len="10"/>
+    <ti_break/>  -->
+    
+    <file id="ic-a" x="(dir,conf)ic-main.xml" />
+    <file id="lastproc" x="(dir,conf)last_proc_time.txt" />
+    <file id="sheet-selector" x="(dir,conf)ui-sheet-selector.xml" />
+    <file id="empty-selection" x="(dir,app)empty-selection.xml"/>
+    <when test="(f,not,(f,exists_file,(file,sheet-selector)))">
+      <copy file="(file,empty-selection)" tofile="(file,sheet-selector)"/>
+    </when>
+  </when>
+  <otherwise>
+    <!-- <interpreter jovial="1"/>   -->
+  </otherwise>
+</choose>
+</job>
+
+</jobs>

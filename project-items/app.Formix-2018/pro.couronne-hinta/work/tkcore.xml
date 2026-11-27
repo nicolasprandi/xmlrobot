@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="namaste-tk">
+<call_job job="tr_namaste"/>
+<need default="">(prop,namastes_tk_control)</need>
+<when test="(f,has_flag,(prop,namastes_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,namastes_tk_control),print_all_fields)">
+<ti label="(prop,namaste_default_label_class) (prop,namaste_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,namaste_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<when test="(f,not,(f,has_flag,(prop,namastes_tk_control),print_only))">
+<when test="(f,not,(prop,isAdd))">
+<tk label="(prop,_namaste_value_l)" id="namaste_value" x="" test_first="1" tip="(prop,_namaste_value_t)" type="text" cols="30" flag=" nono "/>
+</when>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,namastes_tk_control),print_only),,(prop,namaste_default_label_class)(f,when,(f,has,prop,namaste_default_label_name), (prop,namaste_default_label_name),))" tip="(prop,_namaste_t)" tk_id="16" flag="(prop,namastes_tk_control) wrap ">
+<tk label="(prop,_namaste_attributtyp_l)" id="namaste_attributtyp" x="" test_first="1" tip="(prop,_namaste_attributtyp_t)" type="sel" flag=" nono " xml="(file,pdi-sel-attr)"/>
+<tk label="(prop,_namaste_value_l)" id="namaste_value" x="" test_first="1" tip="(prop,_namaste_value_t)" type="text" cols="30" flag=" nono "/>
+</tk>
+</job>

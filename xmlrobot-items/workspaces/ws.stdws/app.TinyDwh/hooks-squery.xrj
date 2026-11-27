@@ -1,0 +1,2110 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="event_squery_loop_end" role="hidden">
+   
+   <loop missing_strategy="empty" id="squery_iface_loop" spirit="squerys_spirit_tc" xpath="(prop,squerys_offset)squery[@row='(loop,squery_loop,@row)']/sqli" >
+      <!-- <call_job job="cd">
+        <prop id="cd-in">(loop,squery_iface_loop,@docu)</prop>    (e:s) (prop,_squery_sqli_act_run)
+      </call_job> -->  
+      
+      <prop id="sqli-docu-text"></prop>
+      <try_catch><try>
+      <choose>
+        <when test="(f,eq_text,private,(loop,squery_iface_loop,@type))">
+          <choose>                   
+            <when  test="(loop,squery_iface_loop,exists?,@docu)">
+              <prop id="sqli-docu-text">[Type] Private Script [Docu] (f,text,cut_nice,(f,replace,(loop,squery_iface_loop,@docu),&#xA;, ),300)</prop>
+            </when>
+            <otherwise>
+              <prop id="sqli-docu-text">[Type] Private Script</prop>
+            </otherwise>
+          </choose>
+          
+        </when>
+        <otherwise>                          
+          <prop id="sqli-docu-text">[Type] (f,tk_sel_translate,(loop,squery_iface_loop,@type),(file,sqlisel_type))</prop>
+          <when test="(loop,squery_iface_loop,exists?,@docu)">
+            <prop id="sqli-docu-text">(prop,sqli-docu-text) [Docu] (f,text,cut_nice,(f,replace,(loop,squery_iface_loop,@docu),&#xA;, ),200)</prop>
+          </when>                                   
+          <!-- <ti>searching for (dir,goMoon)sqli-types/(loop,squery_iface_loop,@type).txt</ti>  -->           
+          <when test="(f,exists_file,(dir,goMoon)sqli-types/(loop,squery_iface_loop,@type).txt)">
+            <prop id="sqli-docu-text">(prop,sqli-docu-text) [Sqli-Type-Docu] (f,text,cut_nice,(f,replace,(f,file_content,(dir,goMoon)sqli-types/(loop,squery_iface_loop,@type).txt),&#xA;, ),200)</prop>
+          </when>          
+          
+        </otherwise>
+      </choose>
+      </try><catch><prop id="sqli-docu-text">??</prop></catch></try_catch>
+       
+     <ti type="rec" >
+     
+       <!-- <ti align="right">iFace:</ti>  -->
+       <ti xprefix=" i &gt; " explain="(prop,_squery_sqli_act_run)" type="call_job" job="sqli_event_run" flag="block button" class="fx fxAction fxActionSqliRun" >
+        <file id="sqlis">(file,squerys)</file>                                
+        <prop id="sqli_key">(loop,squery_iface_loop,@row)</prop>        
+        <prop id="squery_key">(loop,squery_loop,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(loop,squery_loop,@row)']/</prop>  
+        <prop id="sqli-by">abfrage-dev</prop>            
+       </ti>  
+            
+       <ti explain="(loop,squery_iface_loop,@name)" type="call_job" job="sqli-see"   xflag="button" class="sqliQueryList">    
+        <file id="sqlis">(file,squerys)</file>                                                                                 
+        <prop id="sqli_key">(loop,squery_iface_loop,@row)</prop>        
+        <prop id="squery_key">(loop,squery_loop,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(loop,squery_loop,@row)']/</prop>  
+        <prop id="sqli-by">abfrage-dev</prop>            
+        <prop id="sqli-called-by-list">1</prop> 
+        
+       </ti>    
+        
+
+       
+       <ti explain="(prop,_squery_sqli_act_editrun)" type="call_job" test="(prop,bpDev)" job="sqli_event_editrun" flag="button" class="fx fxAction fxActionSqliEditrun" >
+        <file id="sqlis">(file,squerys)</file>                                
+        <prop id="sqli_key">(loop,squery_iface_loop,@row)</prop>        
+        <prop id="squery_key">(loop,squery_loop,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(loop,squery_loop,@row)']/</prop>  
+        <prop id="sqli-by">abfrage-dev</prop>      
+        <prop id="sqlis_offset_label">(loop,squery_loop,@id)</prop>      
+       </ti>        
+       
+       <ti explain="Edit" type="call_job" job="sqli-edit-by-view" flag="button" class="fx"  test="(prop,bpDev)" >
+        <file id="sqlis">(file,squerys)</file>                                
+        <prop id="sqli_key">(loop,squery_iface_loop,@row)</prop>        
+        <prop id="squery_key">(loop,squery_loop,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(loop,squery_loop,@row)']/</prop>  
+        <prop id="sqli-by">abfrage-dev</prop>      
+        <prop id="sqlis_offset_label">(loop,squery_loop,@id)</prop>      
+       </ti>              
+       
+       
+       <ti>(prop,sqli-docu-text)</ti>
+       
+      </ti>
+      
+      
+     
+   </loop>
+</job>
+
+<job id="sqli-see-back-modern" role="hidden">
+  
+  <ti_break class_table="tabNavigator"/>
+
+  <ti type="rec" >
+    <ti type="call_job" job="_select" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+        align="right" >          
+    </ti>  
+  </ti>     
+  
+  <ti_break/>  
+  
+  <call_job job="sqli-see" />
+  
+</job>
+                                                                                                                 
+<job id="event_squery_central" role="hidden">   
+<ti_break/>
+
+<need default="1">(prop,see-sql-limit)</need>
+<need default="root">(prop,qra-xml-root)</need>
+<need default="row">(prop,qra-xml-row)</need>
+<need default="x">(prop,qra-from)</need>
+<need default="0">(prop,qra-no-back-button)</need>
+<need default="1">(prop,qra-show-seps)</need>
+
+
+
+<call_job job="tr_qres"/>
+<!-- 
+<ti_hr_break/> -->
+
+<prop id="squerys_offset">./</prop>
+<call_job job="squery-read" />
+
+<!-- <call_job job="squery-pre-action-buttons-back"/> -->
+<call_job job="squery-action-see-back-button">
+  <prop id="qra-headline">(prop,_squery_run_query)</prop>
+</call_job>
+
+<!-- 
+<ti type="rec">
+  <ti x="(prop,_squery_run_query)" />
+</ti>
+-->
+
+<ti type="rec">
+  <ti flag="block" explain="(f,html,b,o)(prop,squery_id)(f,html,b,c)" type="call_job" job="squery-see">
+        <file id="squerys">(file,squerys)</file>                                
+        <prop id="squery_key">(prop,squery_key)</prop>   
+  </ti>
+</ti>
+
+<!-- 
+
+       <ti explain="(f,html,b,o)(f,loop_xml,squerys,@id)(f,html,b,c)" type="call_job" job="squery-see"  flag="button block" span="10" 
+       postfix="(prop,keytext)" class="justmainQuery">
+        <file id="squerys">(file,squerys)</file>                                
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>       
+        
+        <prop id="squerys_offset">(prop,squerys_offset)</prop>
+        <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+        <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+        <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+        <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+        <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+        <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+        <prop id="squerys_where">(prop,squerys_where)</prop>
+        <prop id="squerys_return_job">(prop,squerys_return_job)</prop>        
+       </ti>
+<when test="(f,eq_text,select,(prop,squery_class1))">   
+</when>
+-->
+
+<call_job job="squery-pre-action-buttons"/>   
+
+
+<prop id="das-query-buch">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</prop> 
+
+<when test="(f,not,(f,has,file,query-paras))">
+  <!-- <ti>query-paras #1</ti> -->
+  <file id="query-paras">(dir,phome)queries/(prop,das-query-buch)/paras-q-(prop,squery_key).xml</file>
+  <!-- <file id="query-paras">(f,dir_of_file,(file,squerys))paras-q-(prop,squery_key).xml</file>  -->
+</when>
+<!-- central -->
+<dir id="root">(dir,rhome)queries/(prop,das-query-buch)/(prop,squery_id)</dir>
+
+<choose>
+  <when test="(f,eq_num,0,(prop,squery_archify))">
+    <!-- kein archiev -->
+    <dir id="root">(dir,pro)cache/</dir>
+  </when>
+  <when test="(f,eq_num,1,(prop,squery_archify))">
+      <dir id="root">(dir,root)(f,time,YYYY-MM-dd)-(f,time,HH-mm-ss)</dir>
+  </when>
+  <when test="(f,eq_num,2,(prop,squery_archify))">
+      <dir id="root">(dir,root)(f,time,YYYY-MM-dd)(prop,fs)(f,time,HH-mm-ss)</dir>
+  </when>
+  <when test="(f,eq_num,3,(prop,squery_archify))">
+      <!-- im projekt einfach, alles beim alten -->
+  </when>  
+</choose>
+
+<mkdir dir="(dir,root)"/>
+
+<!-- 
+<when test="(f,has,prop,squery_update)">
+<when test="(prop,squery_update)">
+   <tk id="squery_sql" type="textblock" flag="big" label="YOUR Query to run"/>
+</when>
+</when>      -->
+
+<!-- Ausgabe-stil setzen -->
+
+<need default="c">(prop,qra-typus)</need>
+<prop id="silent-typus">(prop,qra-typus)</prop>
+
+<choose>
+  <when test="(f,eq_text,c,(prop,qra-typus))">
+    <file id="qra-out">(dir,root)result.csv</file>
+  </when>
+  <when test="(f,eq_text,xa,(prop,qra-typus))">
+    <file id="qra-out">(dir,root)result.xml</file>
+    <prop id="silent-typus">a</prop>
+  </when>  
+  <when test="(f,eq_text,xe,(prop,qra-typus))">
+    <file id="qra-out">(dir,root)result.xml</file>
+    <prop id="silent-typus">e</prop>
+  </when>    
+  <when test="(f,eq_text,e,(prop,qra-typus))">
+    <file id="qra-out">(dir,root)excel-vorstufe.xml</file>
+    <prop id="silent-typus">g</prop>
+  </when> 
+  <when test="(f,eq_text,ex,(prop,qra-typus))">
+    <file id="qra-out">(dir,root)excel-vorstufe.xml</file>
+    <prop id="silent-typus">g</prop>
+  </when>   
+</choose>   
+
+<!-- metatadate fields parameter setzen -->
+
+<need default="0">(prop,qra-meta)</need>
+<prop id="qra-fields"></prop>
+<when test="(prop,qra-meta)">
+  <prop id="qra-fields">(dir,root)metadata.xml</prop>
+</when> 
+
+<!-- limit festsetzen -->                                               
+<choose>
+  <when test="(f,has,prop,qra-limit-over)">
+    <!-- das limit wird ueberschrieben -->
+    <prop id="qra-limit">(prop,qra-limit-over)</prop>
+    <ti flag="wrap_word">(prop,_qu_lim_over) '(f,when,(f,gt_num,(prop,qra-limit-over),-1),(prop,qra-limit-over),Unlimited)'</ti>
+  </when>
+  <otherwise>
+    <!-- limit aus abfrage-spec -->
+    <choose>
+      <when test="(f,eq_text,conf,(prop,squery_limit_typ))">
+        <prop id="qra-limit">(prop,sql_limit_queries)</prop>        
+      </when>
+      
+      <when test="(f,eq_text,no,(prop,squery_limit_typ))">
+        <prop id="qra-limit">-1</prop>
+      </when>    
+      
+      <when test="(f,eq_text,indiv,(prop,squery_limit_typ))">
+        <prop id="qra-limit">(prop,squery_limit_indiv)</prop>
+      </when>        
+    
+    </choose>  
+  
+  </otherwise>
+</choose>
+<!-- 
+<prop test="(f,not,(f,has,prop,qra-limit))" id="qra-limit"></prop>
+
+<when test="(f,has,prop,limit-from-bulk)">
+<when test="(f,lt_num,(prop,limit-from-bulk),(prop,qra-limit))">
+  <ti>Effective limit of query or query-conf (e:o)(prop,qra-limit)(e:c) was replaced by limit of bulk (e:o)(prop,limit-from-bulk)(e:c)</ti>
+  <prop id="qra-limit">(prop,limit-from-bulk)</prop>
+</when>
+</when>
+-->
+  
+<!-- ausgabefile loeschne -->
+<delete file="(file,qra-out)" flag="catch"/> 
+                    
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>   
+  
+<try_catch>
+<try>  
+
+<!-- prolog ausfueren -->
+<when test="(f,or,(f,has,prop,squery_prolog),(f,has,prop,qra-bscript))">
+
+  <file id="sql_prolog">(dir,filetemp)sql_prolog.xrs</file>
+  <create_file file="(file,sql_prolog)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>(f,vob,prop,qra-bscript)(f,vob,prop,squery_prolog)</steps>]]></create_file>
+  <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+  <interpreter turbo="0"/>
+  <include file="(file,sql_prolog)"/>
+  <interpreter turbo="(prop,turbo-antes)"/>
+  
+  <remove type="file" id="sql_prolog"/>
+
+</when>
+
+<!-- abfrage womoeglich uebersetzen -->
+
+<prop id="real-query">(prop,squery_sql)</prop>
+<when test="(prop,squery_translate)">
+  <unescape id="real-query" type="prop"/>
+  <translate id="real-query" type="prop"/>
+</when>
+
+<!-- wenn das 'do-nosql' gefunden wurde -->
+<choose prodconf="nosql_abfrage_choose">
+  <when test="(prop,do-nosql)" prodconf="nosql_abfrage_do">
+    <!-- sql wird NICHT durchgefuehrt, nosql -->
+    <call_job job="do-nosql">
+      <prop id="nosql-label">(prop,_qres_abfrage)</prop>
+      <prop id="nosql-explain">(prop,squery_id)</prop>
+      <prop id="nosql-sql">(prop,real-query)</prop>
+      <file id="nosql-result-csv">(file,qra-out)</file>  
+      <prop id="nosql-limit">(prop,sql_limit_queries)</prop> 
+      <prop id="nosql-act">(prop,squery_class1)</prop> 
+    </call_job>    
+  </when>
+  
+  <!-- sql wird durchgefuehrt  fields="(prop,qra-fields)" -->
+  <otherwise prodconf="nosql_abfrage_dont">    
+    <call_job job="-db-open-"/>
+    
+    <dbc id="(prop,mydbc)"
+      out="(file,qra-out)"
+      style="(prop,silent-typus)"
+      act="(prop,squery_class1)"
+      limit="(f,when,(f,gt_num,(prop,qra-limit),-1),(prop,qra-limit),)"
+      flag="(f,when,(prop,squery_trim),trim,) "
+      fields="(prop,qra-fields)"
+      root_name="(prop,qra-xml-root)"
+      row_name="(prop,qra-xml-row)"
+      update_return_prop="sql-update-return">(prop,real-query)</dbc>   
+    <remove type="prop" id="silent-typus" />
+    
+    <call_job job="-db-commit-" test="(f,eq_text,update,(prop,squery_class1))"/>
+      
+  </otherwise>
+
+</choose>
+
+<!-- womoeglich das excel erzeugen -->
+
+<!-- excel xsl -->
+<when test="(f,eq_text,e,(prop,qra-typus))">
+  <!-- <interpreter watch="1" />   -->
+  <file id="qra-out-excel-vorstufe">(file,qra-out)</file>
+ 
+  <file id="qra-out-excel">(dir,root)data.xls</file>
+  <excel_update 
+    what="(dir,app)dummy-sheet.xls"
+    out="(file,qra-out-excel)"
+    how="add"
+    with="(file,qra-out)" 
+    sheet_name="data"
+    remove_sheet="dummy" />
+  <file id="qra-out">(file,qra-out-excel)</file>       
+</when> 
+
+<!-- excel xsls -->
+
+<when test="(f,eq_text,ex,(prop,qra-typus))">
+  <!-- <interpreter watch="1" />   -->
+  <file id="qra-out-excel-vorstufe">(file,qra-out)</file>
+ 
+  <file id="qra-out-excel">(dir,root)data.xlsx</file>
+  <excel_update 
+    what="(dir,app)dummy-sheet.xlsx"
+    out="(file,qra-out-excel)"
+    how="add"
+    with="(file,qra-out)" 
+    sheet_name="data"
+    remove_sheet="dummy" />
+  <file id="qra-out">(file,qra-out-excel)</file>       
+</when> 
+
+
+<need default="1">(prop,qra-print)</need>    
+
+<choose>
+  <when test="(prop,qra-show-seps)">
+    <ti_hr_break/>
+  </when>
+  <otherwise>
+    <ti_break/><ti_space height="7px"/>
+  </otherwise>
+</choose>
+        
+      
+  <choose>
+    <!-- update -->
+    <when test="(f,eq_text,update,(prop,squery_class1))">
+      <ti label="OK">
+        <ti>(prop,_qres_rows) = (prop,sql-update-return)</ti>  
+      </ti> 
+    </when>
+    
+    <!-- select -->
+    <otherwise>
+       
+      <choose>
+        <when test="(f,not,(f,exists_file,(file,qra-out)))">
+          <!-- das ausgabefile existiert nicht problem -->
+          <ti label="(prop,_squery_run_noresult_lb)">(prop,_squery_run_noresult_tp2)</ti>        
+        </when>
+        
+        <otherwise>
+        
+           <when test="(prop,qra-print)">
+            <choose>
+              <when test="(f,or,(f,eq_text,ex,(prop,qra-typus)),(f,eq_text,e,(prop,qra-typus)))">
+              
+                <call_service job="fps">
+                  <file id="fps-file">(file,qra-out-excel-vorstufe)</file>   
+                  <prop id="fps-regex">(f,text_to_regex,&lt;/row&gt;
+)</prop>
+                  <prop id="fps-limit">(f,add,1,(prop,sql_limit_print))</prop>
+                  <prop id="fps-header">1</prop>    
+                    
+                </call_service>
+
+              </when>
+              
+              <when test="(f,eq_text,xa,(prop,qra-typus))">     <!-- xml attributes -->
+              
+                <call_service job="fps">
+                  <file id="fps-file">(file,qra-out)</file>   
+                  <prop id="fps-regex">(f,text_to_regex,/&gt;
+)</prop>
+                  <prop id="fps-limit">(prop,sql_limit_print)</prop>
+                  <prop id="fps-header">0</prop>    
+                    
+                </call_service>
+
+              </when>
+              
+              <when test="(f,eq_text,xe,(prop,qra-typus))">     <!-- xml elements  -->
+              
+                <call_service job="fps">
+                  <file id="fps-file">(file,qra-out)</file>   
+                  <prop id="fps-regex">(f,text_to_regex,&lt;/(prop,qra-xml-row)&gt;
+)</prop>
+                  <prop id="fps-limit">(prop,sql_limit_print)</prop>
+                  <prop id="fps-header">0</prop>    
+                    
+                </call_service>
+
+              </when>              
+              
+              <when test="(f,eq_text,c,(prop,qra-typus))">     <!-- csv -->
+              
+                <call_service job="fps">
+                  <file id="fps-file">(file,qra-out)</file>   
+                  <prop id="fps-regex">\n</prop>
+                  <prop id="fps-limit">(f,add,1,(prop,sql_limit_print))</prop>
+                  <prop id="fps-header">1</prop>      
+                    
+                </call_service>
+
+              </when>              
+                            
+              <otherwise>
+                <!-- alles andere was es eigentlich nicht geben sollte -->
+                <ti>ERROR</ti>
+                <call_service job="fps">
+                  <file id="fps-file">(file,qra-out)</file>      
+                </call_service>
+                <!--               
+                <ti flag="html" x="&lt;font face=&quot;Courier&quot;&gt;(f,escape,_htmlb,(f,file_content,(file,qra-out),UTF-8))&lt;font&gt;" />
+                -->
+
+              </otherwise>
+            
+            </choose>
+          </when>
+        </otherwise>
+      
+      </choose>    
+    
+    </otherwise>
+  
+  </choose>
+  
+<!-- Ergebnisse anzeigen   -->
+<when test="(f,eq_text,select,(prop,squery_class1))">  
+<choose>
+  <when test="(prop,qra-show-seps)">
+    <ti_hr_break/>
+  </when>
+  <otherwise>
+    <ti_break/><ti_space height="7px"/>
+  </otherwise>
+</choose>
+</when>
+
+<!-- copy       -->
+<when test="(f,has,file,qra-copy)">
+  <copy
+    uri="(file,qra-out)"
+    touri="(file,qra-copy)"/>
+  <ti label="(prop,_qres_kopiert):" type="file" flag="naked">(file,qra-copy)</ti>
+</when>
+
+<ti label="(prop,_qres_ergebnis):" x="(file,qra-out)" type="file" flag="naked" test="(f,exists_file,(file,qra-out))"/>     
+  
+<when test="(prop,qra-meta)">
+  <ti label="(prop,_qres_metadata):" x="(prop,qra-fields)" type="file" flag="naked" /> 
+</when>
+
+<when test="(f,eq_text,e,(prop,qra-typus))">
+  <ti label="(prop,_qres_vorstufe):" x="(file,qra-out-excel-vorstufe)" type="file" flag="naked" /> 
+</when>
+ 
+<when test="(f,eq_text,c,(prop,qra-typus))">
+<when test="(f,and,(f,exists_file,(file,qra-out)),(f,right,convert))">
+  <ti_break xclass_table="tabNavigator"/>
+  <ti type="rec" >
+  <ti type="call_job" job="csv2xml" explain="(prop,_squery_run_convert)"  flag="button block" class="fx fxAction" xalign="right">
+    <file id="c2x-file" x="(file,qra-out)"/>   
+  </ti> 
+  </ti>  
+</when>  
+</when>
+
+
+<when test="(f,and,(prop,qra-print),(f,eq_text,select,(prop,squery_class1)))">  
+
+<choose>
+  <when test="(prop,qra-show-seps)">
+    <ti_hr_break/>
+  </when>
+  <otherwise>
+    <ti_break/><ti_space height="7px"/>
+  </otherwise>
+</choose>
+</when>
+  
+<when test="(f,eq_text,select,(prop,squery_class1))">   
+  <call_job job="squery-post-action-buttons">
+    <prop id="see-sql-limit">1</prop>
+    <prop id="see-any-limit">1</prop>
+  </call_job>   
+</when> 
+
+<choose>
+  <when test="(prop,qra-show-seps)">
+    <ti_hr_break/>
+  </when>
+  <otherwise>
+    <ti_break/><ti_space height="7px"/>
+  </otherwise>
+</choose>
+  
+<ti label="(prop,_squery_run_doing)"/>
+<ti>(prop,squery_sql)</ti>
+<when test="(prop,squery_translate)">   
+<ti>(f,html,b,o)&lt;=&gt;(f,html,b,c)</ti>
+<ti>(prop,real-query)</ti>          
+</when>
+
+
+<ti x="LIMIT = (f,when,(f,gt_num,(prop,qra-limit),-1),(prop,qra-limit),Unlimited)" />
+
+<choose>
+  <when test="(prop,qra-show-seps)">
+   
+  </when>
+  <otherwise>
+    <ti_break/><ti_space height="7px"/>
+  </otherwise>
+</choose>
+<!--                                   
+<ti_hr_break/>
+
+<call_job job="squery-post-action-buttons-limit">
+  <prop id="see-sql-limit">1</prop>
+  <prop id="see-any-limit">1</prop>
+</call_job>   
+
+-->
+  
+</try>
+<catch>
+  <ti_hr/>
+  <ti label="(prop,_squery_run_noresult_tp2)"/>
+  <ti label=" ">(prop,catched_msg)</ti>
+ 
+  <ti label="(prop,_squery_run_doing)"/>
+  <ti label=" ">(prop,squery_sql)</ti>   
+                        
+</catch>
+</try_catch>  
+
+<call_job job="-db-close-"/>
+ 
+</job>
+
+
+<job id="event_squery_editor" role="hidden">     
+  <when test="(f,exists,prop,is-defnrun)">
+  <when test="(prop,is-defnrun)">
+    <tk label="(prop,_squery_sql_l)" id="squery_sql"  tip="(prop,_squery_sql_t)" type="textblock" flag="  big bigbig "/>
+  </when>  
+  </when>
+
+  
+  <prop id="new-and-first-query">0</prop>
+  
+  <when test="(f,has,prop,isAdd)">
+  <when test="(prop,isAdd)">
+  <when test="(f,has,prop,squery_key)">
+  <when test="(f,eq_num,(prop,squery_key),1)">
+      <prop id="new-and-first-query">1</prop>
+  </when>
+  </when>
+  </when>
+  </when>
+
+</job>
+
+<job id="sqli-edit-by-view" role="hidden">
+
+      
+
+  <call_job job="sqli-edit"/>
+  <ti_hr_break class_table="tabNavigator"/>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti> 
+  <ti type="rec"><ti>|</ti><ti span="10" align="center">(f,html,i,o)Zurück zum Abfrage-Buch(f,html,i,c)</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti span="10" align="center">(f,html,i,o)Back to the book of queries(f,html,i,c)</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti> 
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti>   
+  <ti_hr_break/>   
+        <call_job 
+        job="_select" />   
+        
+       
+</job>  
+
+<job id="squery-edit-by-view" role="hidden">
+  
+  <call_job job="squery-edit"/>
+  <ti_hr_break class_table="tabNavigator"/>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti> 
+  <ti type="rec"><ti>|</ti><ti span="10" align="center">(f,html,i,o)Zurück zum Abfrage-Buch(f,html,i,c)</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti span="10" align="center">(f,html,i,o)Back to the book of queries(f,html,i,c)</ti><ti align="right">|</ti></ti>
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti> 
+  <ti type="rec"><ti>|</ti><ti align="right">|</ti></ti>   
+  <ti_hr_break/>    
+  <call_job job="_select"/>
+  
+   
+</job>          
+                              
+<job id="event_post_update_squery" role="hidden">     
+                                                            
+  <call_job 
+    job="squery-see"
+    test="(f,not,(f,exists,prop,no-post-see))" />
+
+</job>
+
+<job id="event_post_insert_squery" role="hidden">   
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)gui/gui-run-new-query-now.xml" />
+    <prop id="joe-in-regex" x="run_query_now" />
+  </call_job>
+ 
+  <tk id="run_query_now" label="(prop,_squery_add_label)(prop,squery_id)(prop,_squery_add_label2)" flag="nono" type="bool" x="1"/>
+  
+  <call_job job="go-joe-write"/>
+  
+  <choose>
+    <when test="(prop,run_query_now)">
+      <call_job job="event_squery_run"/>
+    </when> 
+    <otherwise>
+      <call_job job="event_post_update_squery"/>    
+    </otherwise>    
+  </choose>  
+
+</job>
+                                     
+<job id="squery-see-all" role="hidden">
+  <call_job job="tk_gpref_read"/>
+  <prop id="book-name">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</prop>
+  
+  <create_file out="(dir,ghome)last-books/queries_last.txt">(prop,book-name)</create_file>
+  
+  <!-- hier der up button zur liste der abfrage-buecher -->  
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec"  >
+    <ti flag="block wrap_word" x="(f,html,b,o)(prop,book-name)(f,html,b,c) (e:o)(prop,_sl_squery)-(prop,_sl_buch)(e:c)"/>
+  
+    <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="mm-tester-squeries"/>  
+  </ti>   
+  
+  <call_job job="tk_bd_intro">
+      <dir id="book-master">(dir,goMoon)queries/</dir>
+      <prop id="book-type">queries</prop>
+      <prop id="book-type-name">(prop,_sl_squery)</prop>
+      <!-- book name schon oben festgelegt -->
+      <prop id="book-home-job">_select</prop>  
+  </call_job>
+    
+  <!--    
+    <ti type="rec">                  
+  </ti>  
+  <ti type="rec">                  
+    <ti x="(prop,_sl_squery)-(prop,_sl_buch) (f,html,b,o)(f,name_of_dir,(f,dir_of_file,(file,squerys)))(f,html,b,c)"/>
+  </ti>   
+    
+ 
+  <ti_hr/>    -->
+ 
+  <ti type="rec"  test="(f,and,(prop,bpDev),(prop,gpref_querystyle))" >
+    <ti flag="button" align="right" type="call_job" explain_nix="squery-add" class="fb fbAdd" explain="+ (prop,_sl_squery)" job="squery-add">
+      <file id="squerys">(file,squerys)</file>
+      <prop id="squerys_offset_label"></prop>
+    </ti>
+  </ti>  
+  
+  <call_job job="tk_gpref_show_button" >
+    <prop id="what_gpref">querystyle</prop>
+    <prop id="ready_job">_select</prop>
+    <prop id="with_hr">0</prop>
+    <prop id="do_align">right</prop>
+  </call_job>   
+ 
+  <ti_hr_break/>
+  <choose>
+    <when test="(prop,gpref_querystyle)">
+  
+      <call_job job="squery-see-all-modern" />
+      
+    </when>
+    <otherwise>
+       
+       <call_job job="squery-see-all-native" />
+        
+    </otherwise>
+  </choose>
+  
+<!-- Ansicht wechseln  
+
+
+
+<call_job job="tk_gpref_show_button" >
+  <prop id="what_gpref">querystyle</prop>
+  <prop id="ready_job">_select</prop>
+  <prop id="with_hr">1</prop>
+  <prop id="do_align"></prop>
+</call_job>                    
+
+   -->
+<ti type="rec" label="(f,when,(prop,gpref_querystyle),, )">    
+<ti type="call_job"                 
+    job="bulk-create-all" explain="(prop,_fresh)" flag="button" xalign="right" class="fx fxAdd">
+    <prop id="refresh-back-job">_select</prop>
+</ti>   
+</ti>        
+
+</job>
+
+<job id="squery-see-all-modern" role="hidden">
+  <need default="">(prop,squerys_sort_attribute)</need>
+  <need default="">(prop,squerys_sort_number)</need>
+  <need default="">(prop,squerys_sort_ignore_case)</need>
+  <need default="">(prop,squerys_sort_desc)</need>
+  <need default="">(prop,squerys_where)</need>
+  <need default="">(prop,squerys_offset_label)</need>
+  <need default="./">(prop,squerys_offset)</need>
+  <need default="">(prop,squerys_return_job)</need>
+  <need default="//">(prop,squerys_offset_new_key)</need>
+  <need default="0">(prop,squerys_no_header)</need>
+  <call_job job="event_squery_beginn" />
+  <prop id="nothing">1</prop>
+
+  <call_job job="tr_squery" />
+  <call_job job="tr_sqli" />
+
+  <spirit act="open" id="squerys" xml="(file,squerys)" missing_strategy="empty"/>
+    
+  <loop_xml 
+    act="open" 
+    id="squerys" 
+    spirit="squerys" 
+    xpath="squery"  missing_strategy="empty"/>                                                           
+    
+  <loop 
+    id="while-squerys" 
+    while="()(f,loop_xml,squerys,has_next?)()">
+    <loop_xml act="next" id="squerys" />  
+    <prop id="nothing">0</prop>
+    
+    <when test="(f,gt_num,(f,loop_xml,squerys,#i),1)">
+      <ti_hr/>        
+    </when>     
+    
+    <prop id="keytext"></prop>
+    
+    <when test="(f,eq_text,update,(f,loop_xml,squerys,@class1))">
+         <prop id="keytext"> (e:o)Update(e:c)</prop>
+    </when>       
+    
+    <when test="(f,loop_xml,squerys,exists?,@prolog)">
+         <prop id="keytext">(prop,keytext) (e:o)Scripted(e:c)</prop>
+    </when>           
+    
+   
+    <ti type="rec" >
+       <!-- <ti flag="block">(f,loop_xml,squerys,@row)</ti>   -->
+
+       <ti explain="(f,html,b,o)(f,loop_xml,squerys,@id)(f,html,b,c)" type="call_job" job="squery-see"  flag="bxutton block" span="10" 
+       postfix="(prop,keytext)" xclass="justmainQuery">
+        <file id="squerys">(file,squerys)</file>                                
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>       
+        
+        <prop id="squerys_offset">(prop,squerys_offset)</prop>
+        <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+        <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+        <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+        <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+        <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+        <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+        <prop id="squerys_where">(prop,squerys_where)</prop>
+        <prop id="squerys_return_job">(prop,squerys_return_job)</prop>        
+       </ti>
+      <!--                                              
+       <ti align="right">(f,when,(f,eq_text,update,(f,loop_xml,squerys,@class1)),Update,(prop,_sl_squery))</ti>           
+    
+       
+        <ti flag="wrap">(prop,qu-add)(f,text,cut_nice,(f,loop_xml,squerys,@sql),70) (f,when,(f,loop_xml,squerys,exists?,@prolog),
++ (f,html,i,o)Script(f,html,i,c)
+(f,text,cut_nice,(f,loop_xml,squerys,@prolog),60),)</ti>         -->
+    </ti>    
+
+    
+    <ti type="menu" first_cell="2" >
+    
+       
+       
+      <ti explain="(prop,_squery_act_run)" type="call_job" job="event_squery_run"  flag="button" class="fb fbGoQuery">
+        <file id="squerys">(file,squerys)</file>                                
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>   
+        <prop id="squerys_offset">./</prop>       
+        <prop id="qra-from">ql</prop>
+        <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+      </ti>          
+       
+      <ti explain="(prop,_squery_act_defnrun)" test="(prop,bpDev)" type="call_job" job="event_squery_defnrun" flag="button" class="fb fbQueryEditRun">
+        <file id="squerys">(file,squerys)</file>                                
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>   
+        <prop id="squerys_offset">./</prop>   
+        <prop id="qra-from">ql</prop>    
+      </ti>      
+      
+      <ti explain="(prop,_x_edit)" type="call_job" test="(prop,bpDev)"  job="squery-edit-by-view" flag="button" class="fb fbEdit fbEditDetail fbEditDetailQuery ">
+        <file id="squerys">(file,squerys)</file>                                
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>   
+        <prop id="squerys_offset">./</prop>       
+        <prop id="squerys_offset_label"></prop>
+        
+      </ti>                    
+    </ti>
+
+    <when test="(f,loop_xml,squerys,exists?,@desc)">
+    
+      <call_job job="cd">
+        <prop id="cd-in">(f,loop_xml,squerys,@desc)</prop>
+      </call_job>    
+      
+      <ti label=" " type="rec">
+        <ti flag="wrap_word">(prop,cd-out)</ti>
+      </ti>
+      
+    </when>    
+                                                                                       
+    <ti label=" " type="rec">
+        <ti flag="wrap">[ Sql ]
+(f,text,cut_nice,(f,loop_xml,squerys,@sql),80) (f,when,(f,loop_xml,squerys,exists?,@prolog),
+[ Script ] 
+(f,text,cut_nice,(f,loop_xml,squerys,@prolog),130),)</ti>    
+    </ti>
+    
+
+        
+    <loop_xml 
+      act="open" 
+      id="sqlis" 
+      spirit="squerys" 
+      xpath="squery[@row=(f,loop_xml,squerys,@row)]/sqli" missing_strategy="empty"/>
+    <prop id="hat-atleast-sqli">0</prop>  
+    <loop 
+      id="while-sqlis" 
+      while="()(f,loop_xml,sqlis,has_next?)()">
+      <loop_xml act="next" id="sqlis" />  
+      <prop id="hat-atleast-sqli">1</prop> 
+      <ti_hr style="2" />
+      
+      <!-- stewards -->
+      <prop id="steward-count">0</prop>
+      <prop id="steward-text"></prop>
+      <loop_xml 
+        act="open" 
+        id="stews" 
+        spirit="squerys" 
+        xpath="squery[@row=(f,loop_xml,squerys,@row)]/sqli[@row=(f,loop_xml,sqlis,@row)]/stew[string-length(e:o)@off(e:c)=0 or @off='0']" missing_strategy="empty"/>      
+      <loop 
+        id="while-stews" 
+        while="()(f,loop_xml,stews,has_next?)()">
+        <loop_xml act="next" id="stews" />  
+        
+        <choose>
+          <when test="(f,eq_num,0,(prop,steward-count))">
+            <prop id="steward-text">(f,loop_xml,stews,@type)</prop>
+          </when>
+          <otherwise>
+            <prop id="steward-text">(prop,steward-text)(e:s) (f,loop_xml,stews,@type)</prop>
+          </otherwise>        
+        </choose>
+        
+        <prop id="steward-count">(f,add,1,(prop,steward-count))</prop>
+        
+        <!-- <ti label="steward">(f,loop_xml,stews,@type)</ti>    -->
+      </loop>     
+      <loop_xml 
+        act="close" 
+        id="stews" />        
+        
+      <when test="(f,gt_num,(prop,steward-count),0)">
+      
+        <prop id="steward-text">
+ (e:o)(prop,steward-count) (prop,_sl_stew): (prop,steward-text)(e:c)</prop>
+      
+      </when>
+        
+      <!-- stwareds ende>   (prop,commit-text) -->
+      
+        <prop id="commit-text"></prop>
+        <when test="(f,eq_text,private,(f,loop_xml,sqlis,@type))">
+          <try_catch>
+            <try>
+          <prop id="commit-text"
+                test="(f,loop_xml,sqlis,@cmt_session)"> (e:o)COMMIT(e:c) </prop>          
+            </try>
+            <catch><ti label=" ">hoops(e:s) no commit-definition</ti></catch></try_catch>
+        </when>
+              
+      
+      
+      <ti type="rec" label="iFace: " flag="label_right">
+                                                                                                             
+                                   
+       <ti explain="(f,html,b,o)(f,loop_xml,sqlis,@name)(f,html,b,c)"  type="call_job" job="sqli-see-back-modern"  
+         xflag="button" xclass="justmainSqli"
+         xspan="7">
+        <file id="sqlis">(file,squerys)</file>                                
+        <prop id="sqli_key">(f,loop_xml,sqlis,@row)</prop>        
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(f,loop_xml,squerys,@row)']/</prop>
+        <prop id="sqlis_offset_label">(f,loop_xml,squerys,@id)</prop>
+        <prop id="sqlis_offset_new_key">//</prop>       
+        <prop id="squerys_offset"></prop>
+        <prop id="squerys_offset_label"></prop>
+        <prop id="squerys_offset_new_key">//</prop>
+        
+       </ti>          
+    </ti>
+    
+    <ti type="rec" label=" ">
+       <ti>(e:o)(f,loop_xml,sqlis,#i). (f,tk_sel_translate,(f,loop_xml,sqlis,@type),(file,sqlisel_type)) (e:c)(prop,steward-text)(prop,commit-text)</ti>
+    </ti>    
+    
+    <when test="(f,has,(f,loop_xml,sqlis,@docu))">  
+      <call_job job="cd">
+        <prop id="cd-in">(f,loop_xml,sqlis,@docu)</prop>
+      </call_job>
+      
+      <ti type="rec"  >                                                                              
+         <ti> </ti>                                                         
+         <ti flag="wrap_word">(prop,cd-out) </ti>   
+      </ti> 
+    </when>   
+    
+    <ti type="menu" first_cell="2" xlast_cell="2">
+    
+          
+    
+       <ti explain="(prop,_sqli_act_run)" type="call_job" job="sqli_event_run"  flag="button" class="fb fbGoSqli">
+        <file id="sqlis">(file,squerys)</file>                                
+        <prop id="sqli_key">(f,loop_xml,sqlis,@row)</prop>        
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(f,loop_xml,squerys,@row)']/</prop>  
+        <prop id="sqli-by">abfrage-dev</prop>       
+       </ti>   
+                     
+       <ti explain="(prop,_sqli_act_editnrun)" type="call_job" job="sqli_event_editrun"  flag="button" class="fb fbEditGoSqli"  test="(prop,bpDev)" >
+        <file id="sqlis">(file,squerys)</file>                                
+        <prop id="sqli_key">(f,loop_xml,sqlis,@row)</prop>        
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(f,loop_xml,squerys,@row)']/</prop>  
+        <prop id="sqlis_offset_label">(f,loop_xml,squerys,@id)</prop>       
+       </ti>    
+       
+       <ti explain="(prop,_x_edit)" type="call_job" job="sqli-edit-by-view"  flag="button" class="fb fbEdit fbEditDetail fbEditDetailSqli"  test="(prop,bpDev)" >
+        <file id="sqlis">(file,squerys)</file>                                
+        <prop id="sqli_key">(f,loop_xml,sqlis,@row)</prop>        
+        <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>    
+        <file id="squerys">(file,squerys)</file>   
+        <prop id="sqlis_offset">squery[@row='(f,loop_xml,squerys,@row)']/</prop>  
+        <prop id="sqlis_offset_label">(f,loop_xml,squerys,@id)</prop>       
+       </ti>     
+      </ti>
+    
+      
+    
+    <!-- und hier den rest rein es ist ein eigenes script im sqli <ti>script</ti> -->
+    <when test="(f,eq_text,private,(f,loop_xml,sqlis,@type))">
+      
+      
+      <choose>
+        <when test="(f,loop_xml,sqlis,exists?,@sc_main)">
+          <ti label=" " type="rec">
+          <ti flag="wrap_word">[ (f,html,b,o)Every(f,html,b,c) ] 
+(f,text,cut_nice,(f,loop_xml,sqlis,@sc_main),155)</ti>
+          </ti>
+          <prop id="the-private-adder"></prop>
+          
+          <when test="(f,loop_xml,sqlis,exists?,@sc_top)">
+            <prop id="the-private-adder">(prop,the-private-adder) [ + Once at Beginning ]</prop>
+
+          </when>          
+          
+          <when test="(f,loop_xml,sqlis,exists?,@sc_intro)">
+            <prop id="the-private-adder">(prop,the-private-adder) [ + Mit erstem Satz ]</prop>
+          </when>        
+          
+          <when test="(f,has,prop,the-private-adder)">
+          
+            <ti label=" " type="rec">
+            <ti flag="wrap_word">(prop,the-private-adder)</ti>
+            </ti>          
+          </when>      
+        </when>
+        
+        <when test="(f,loop_xml,sqlis,exists?,@sc_top)">
+          <ti label=" " type="rec">
+          <ti flag="wrap_word">[ (f,html,b,o)Once at Beginning(f,html,b,c) ] 
+(f,text,cut_nice,(f,loop_xml,sqlis,@sc_top),155)</ti>
+          </ti>
+          
+          <prop id="the-private-adder"></prop>     
+          
+          <when test="(f,loop_xml,sqlis,exists?,@sc_intro)">
+            <prop id="the-private-adder">(prop,the-private-adder) [ + Mit erstem Satz ]</prop>
+          </when>        
+          
+          <when test="(f,has,prop,the-private-adder)">
+          
+            <ti label=" " type="rec">
+            <ti flag="wrap_word">(prop,the-private-adder)</ti>
+            </ti>          
+          </when>   
+                    
+        </when>
+        
+        <when test="(f,loop_xml,sqlis,exists?,@sc_intro)">
+          <ti label=" " type="rec">
+          <ti flag="wrap_word">[ (f,html,b,o)Mit erstem Satz(f,html,b,c) ] 
+(f,text,cut_nice,(f,loop_xml,sqlis,@sc_intro),155)</ti>
+          </ti>
+        </when>        
+                
+      </choose>
+    
+    </when>
+    
+    </loop>
+    <loop_xml act="close" id="sqlis" />
+    
+    <!-- sqli-abschlusse -->
+    <ti_hr style="2" test="(prop,hat-atleast-sqli)"/>
+
+    
+    
+<ti type="menu" first_cell="2" test="(f,or,(prop,bpDev),(prop,hat-atleast-sqli))">
+  <ti type="call_job" explain_nix="sqli-add" flag="button" class="fb fbAdd" explain="+ (prop,_sl_sqli)" job="sqli-add"  test="(prop,bpDev)" >
+  
+    <prop id="squery_key">(f,loop_xml,squerys,@row)</prop>    
+    <file id="squerys">(file,squerys)</file>   
+    
+    <file id="sqlis">(file,squerys)</file>                                
+    <!-- <prop id="sqli_key">(f,loop_xml,sqlis,@row)</prop> -->        
+  
+    <prop id="sqlis_offset">squery[@row='(f,loop_xml,squerys,@row)']/</prop>  
+    <prop id="sqlis_offset_label">(f,loop_xml,squerys,@id)</prop>     
+    <prop id="sqli-add-back-special">yes</prop>
+  </ti>
+  
+  <ti flag="button" test="(prop,hat-atleast-sqli)" type="call_job" class="fb fbOrg" explain="(prop,_x_organize)" job="do-org-me">
+    <file id="orga">(file,squerys)</file>
+    <prop id="orga_where"></prop>
+    <prop id="orga_view_loop_id">sqli_loop</prop>
+    <prop id="orga_finished_job">_select</prop>                
+    <prop id="orga_offset">squery[@row='(f,loop_xml,squerys,@row)']/</prop>
+    <prop id="orga_offset_label">(f,loop_xml,squerys,@id)</prop>
+    <prop id="orga_offset_new_key">//</prop>
+    <prop id="orga_segment_plural">sqlis</prop>
+    <prop id="orga_segment_singular">sqli</prop>
+    <prop id="orga_segment_plural_label">(prop,_pl_sqli)</prop>
+    <prop id="orga_segment_singular_label">(prop,_sl_sqli)</prop>
+    <prop id="orga_sort_attribute"></prop>
+    <prop id="orga_sort_number"></prop>
+    <prop id="orga_where"></prop>
+    <prop id="orga_name_expression_loop">()(loop,sqli_loop,@name)()</prop>
+    <prop id="orga_desc_expression_loop">()()</prop>  
+  </ti>     
+</ti>
+    
+    
+    
+  </loop>
+  
+  <loop_xml act="close" id="squerys" />
+      
+  <spirit act="close" id="squerys" />
+  
+  <choose>
+  <when test="(prop,nothing)">
+  <ti type="rec"> 
+    <ti flag="wrap_word">(prop,_squery_nodata_l)</ti>
+  </ti>
+  </when>
+  <otherwise>
+    <!-- <ti_hr/>  -->
+  </otherwise>
+  </choose>
+   
+  
+  
+<ti type="menu" first_cell="1" test="(f,or,(prop,bpDev),(f,not,(prop,nothing)))">
+<ti flag="button" label=" " type="call_job" explain_nix="squery-add" class="fb fbAdd" explain="+ (prop,_sl_squery)" job="squery-add"  test="(prop,bpDev)" >
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+<prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+<prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+<prop id="squerys_where">(prop,squerys_where)</prop>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+</ti>
+<ti flag="button" test="(f,not,(prop,nothing))" type="call_job" class="fb fbOrg" explain="(prop,_x_organize)" job="do-org-me">
+<file id="orga">(file,squerys)</file>
+<prop id="orga_where">(prop,squerys_where)</prop>
+<prop id="orga_view_loop_id">squery_loop</prop>
+<prop id="orga_finished_job">squery-orga-finished</prop>
+<prop id="orga_offset">(prop,squerys_offset)</prop>
+<prop id="orga_offset_label">(prop,squerys_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,squerys_offset_new_key)</prop>
+<prop id="orga_segment_plural">squerys</prop>
+<prop id="orga_segment_singular">squery</prop>
+<prop id="orga_segment_plural_label">(prop,_pl_squery)</prop>
+<prop id="orga_segment_singular_label">(prop,_sl_squery)</prop>
+<prop id="orga_sort_attribute">(prop,squerys_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,squerys_sort_number)</prop>
+<prop id="orga_where">(prop,squerys_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,squery_loop,@id),50)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>  
+
+
+</job>
+
+
+<job id="squery-orga-finished" role="hidden">
+      <prop id="mm-what">all</prop>
+      <file id="mm-liste">(file,orga)</file>
+    <call_job job="mm-op-queries"/>
+    <!-- 
+    <ti_hr_break/>
+    <call_job job="mm-tester-squeries"/>              -->
+ 
+</job>
+
+<job id="event_squery_prep_special" role="hidden">
+  <call_job job="tr_squery" />
+  <prop id="sqs-prolog"></prop>
+  <prop id="sqs-prolog" flag="catch">(f,xpath,(file,squerys),squery[@row=(f,xpath_string,(prop,squery_key))],@prolog)</prop>
+  <prop id="sqs-translate">0</prop>
+  <prop id="sqs-translate" flag="catch">(f,xpath,(file,squerys),squery[@row=(f,xpath_string,(prop,squery_key))],@translate)</prop>
+  <prop id="sqs-scripttext">(f,xpath,(file,squerys),squery[@row=(f,xpath_string,(prop,squery_key))],@sql)</prop>
+
+  <!-- <when test="(f,not,(f,has,file,query-paras))">   </when>
+    <file id="query-paras">(f,dir_of_file,(file,squerys))paras-q-(prop,squery_key).xml</file>      
+  <ti>query-paras #2</ti>              -->
+  <prop id="das-query-buch">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</prop>
+  <file id="query-paras">(dir,phome)queries/(prop,das-query-buch)/paras-q-(prop,squery_key).xml</file>  
+  
+  
+  <when test="(f,has,prop,sqs-prolog)">
+  
+    <file id="sql_prolog">(dir,filetemp)sql_prolog.xrs</file>
+    <create_file file="(file,sql_prolog)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>(prop,sqs-prolog)</steps>]]></create_file>
+    <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+    <interpreter turbo="0"/>
+    <include file="(file,sql_prolog)"/>
+    <interpreter turbo="(prop,turbo-antes)"/>
+
+    
+    <remove type="file" id="sql_prolog"/>
+  
+  </when>
+  
+  <when test="(prop,sqs-translate)">
+    <unescape id="sqs-scripttext" type="prop"/>
+    <translate id="sqs-scripttext" type="prop"/>
+  </when>
+  
+  <remove id="sqs-translate" type="prop" />
+  <remove id="sqs-prolog" type="prop" />
+  
+</job>
+
+<job id="event_squery_count" role="hidden">
+
+  <call_job job="event_squery_prep_special" />
+
+  <prop id="sc_pos">(f,last_index_of,(prop,sqs-scripttext),;)</prop>
+  <throw test="(f,eq_num,-1,(prop,sc_pos))">Da fehlt ein Semicolon am ende</throw>
+  <prop id="sqs-scripttext">select count(e:o)*(e:c) as (prop,_squery_run_count_anzahl) from (e:o)(f,substring,(prop,sqs-scripttext),0,(prop,sc_pos))(e:c) AS (prop,_squery_run_count_zaehler);</prop> 
+  <prop id="sqs-method">(prop,_squery_act_count)</prop>
+  <prop id="see-any-limit">1</prop>
+
+  <call_job job="event_squery_special" />  
+
+</job>
+
+<job id="event_squery_explain" role="hidden">
+  <call_job job="event_squery_prep_special" />
+    <prop id="sqs-scripttext">explain (prop,sqs-scripttext)</prop>  
+    <prop id="sqs-xml">1</prop>
+    <prop id="sqs-method">(prop,_squery_act_explain)</prop>
+    <prop id="see-any-limit">0</prop>
+  <call_job job="event_squery_special" />  
+
+</job>
+
+<job id="event_squery_special" role="hidden">
+  <need default="x">(prop,qra-from)</need>
+  <need default="0">(prop,qra-no-back-button)</need>  
+  <need>(prop,sqs-scripttext)</need>
+  <need default="0">(prop,sqs-xml)</need>
+  <need>(prop,sqs-method)</need>
+      
+  <call_job job="squery-read" />
+  <call_job job="squery-action-see-back-button" />
+  
+  <ti type="rec">
+    <ti x="(prop,sqs-method):" />
+  </ti>  
+  
+  <ti type="rec">
+    
+    <ti type="call_job" job="squery-see" explain="(f,html,b,o)(prop,squery_id)(f,html,b,c)" flag="block" >
+      <prop id="squery_key">(prop,squery_key)</prop>
+      
+      <prop id="squerys_offset">./</prop>
+      <file id="squerys">(file,squerys)</file>       
+    </ti>        
+  </ti>    
+  
+
+  
+  <prop id="das-query-buch">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</prop> 
+  <!-- special count or explain -->
+  <dir id="root">(dir,pro)cache/query-cnt-expl(prop,fs)(prop,das-query-buch)(prop,fs)(prop,squery_id)</dir>
+  <mkdir dir="(dir,root)"/>
+  <file id="csv">(dir,root)result.csv</file>
+  
+  <delete file="(file,csv)" flag="catch"/> 
+                      
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>   
+  
+  <call_job job="-db-open-"/>
+  
+  <dbc id="(prop,mydbc)"
+    out="(file,csv)"
+    style="c"
+    act="select">(prop,sqs-scripttext)</dbc>   
+       
+  <ti_hr_break/>
+
+  <choose>
+    <when test="(f,not,(f,exists_file,(file,csv)))">
+      <ti label="(prop,_squery_run_noresult_lb)">(prop,_squery_run_noresult_tp2)</ti>    
+      <ti_hr style="2" />                    
+      <ti_hr/>
+      <ti label="(prop,_squery_run_doing)">(prop,squery_sql)</ti>     
+         
+    </when>
+    <otherwise>
+        
+        <call_service job="fps">
+          <file id="fps-file">(file,csv)</file>  
+          <prop id="fps-limit">1000</prop>
+          <prop id="fps-header">1</prop>          
+        </call_service>
+        
+        <!-- 
+        <ti flag="html" x="&lt;font face=&quot;Courier&quot;&gt;(f,escape,_htmlb,(f,file_content,(file,csv),UTF-8))&lt;font&gt;" />
+        -->
+        
+             
+        <ti_hr_break/>
+        <ti  x="(file,csv)" type="file" test="(f,and,(f,exists_file,(file,csv)),(prop,sqs-xml))" 
+            label="(prop,_squery_run_erklaerung):"
+            flag="naked"/>  
+        <!-- <ti_break/> -->
+        
+        <when test="(f,and,(f,exists_file,(file,csv)),(f,right,convert),(prop,sqs-xml))">
+          <ti type="rec" ylabel=" ">
+          <ti type="call_job" job="csv2xml" explain="(prop,_squery_run_convert)"  flag="block button" class="fx fxAction" yalign="right">
+            <file id="c2x-file" x="(file,csv)"/>    
+          </ti>    
+          </ti>
+          <ti_hr_break/>
+        </when>
+         
+    </otherwise>
+  
+  </choose>                                                                               
+   <call_job job="tk_limit_read"/>
+  
+  
+  <ti x="(f,html,b,o)Sql(f,html,b,c)"/>
+  <ti>(prop,sqs-scripttext)</ti>
+  <ti_hr_break/>
+  <when test="(f,exists_file,(file,csv))">
+    <prop id="qra-export">1</prop>
+    <call_job job="squery-post-action-buttons">
+      <prop id="see-any-limit">0</prop>    
+      <prop id="see-sql-limit">0</prop>    
+    </call_job>
+  </when>
+
+  <!-- 
+  <file id="gbt-in">(file,squerys)</file>
+  <call_job job="gbt"/>
+  <ti_break/>
+  <ti type="rec">                                                                                               
+    <ti type="call_job" job="mm-op-queries" explain="(prop,gbt-out)" flag="button block obutton" class="fx fxAction justblack" align="right">
+      <prop id="mm-what">all</prop>
+      <file id="mm-liste">(file,squerys)</file>
+    </ti>          
+  </ti>  
+  -->
+  
+  
+                   
+  <call_job job="-db-close-"/>
+ 
+</job>
+
+<job id="gbt" role="hidden">
+  <prop id="gbt-out">(prop,_sl_buch_see) &apos;(f,name_of_dir,(f,dir_of_file,(file,gbt-in)))&apos; ...</prop>
+
+</job>
+
+
+<job id="event_squery_defnrun" role="hidden">
+
+  <prop id="squerys_offset_label"></prop>
+  <prop id="no-post-see">eben</prop>
+  <prop id="is-defnrun">1</prop>
+  <call_job job="squery-edit"/> 
+  <call_job job="event_squery_run"/> 
+</job>
+
+
+
+<job id="event_squery_run" role="hidden">
+
+  <call_job job="tk_limit_read"/>
+  <call_job job="tr_squery"/>
+  
+  <call_job job="event_squery_central"/>
+
+</job>       
+
+<job id="event_squery_run_as_solo" role="hidden">
+  <call_job job="squery-read" />
+  <call_job job="event_squery_run_as" />
+</job>
+
+<job id="event_squery_run_as" role="hidden">
+
+  <call_job job="squery-read" />  
+  
+  <prop id="das-query-buch">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</prop>
+  <!-- der exporter, hier liegen die parameter für den export, sollte in ghome -->
+  <!-- <dir id="the-holder">(dir,phome)query-runnings/(prop,das-query-buch)/(prop,squery_id)</dir>  -->
+
+  
+
+  <file id="qura-data" x="(dir,phome)queries/(prop,das-query-buch)/paras-export-(prop,squery_key).xml"/>
+  <!-- <mkdir dir="(f,dir_of_file,(file,qura-data))"/>  -->
+
+
+  <call_job job="tk_limit_read"/>
+  <call_job job="tr_squery"/>
+  
+  <call_job job="tk_qura_edit"/>
+  
+  <when test="(f,has,prop,qura_edit)">
+  <when test="(prop,qura_edit)">  
+    <prop id="squerys_offset_label"></prop>
+    <prop id="no-post-see">eben</prop>
+    <call_job job="squery-edit"/> 
+    <call_job job="squery-read" />  
+  </when>
+  </when>
+
+  <when test="(f,has,file,qura_copy)">
+    <file id="qra-copy">(file,qura_copy)</file>
+  </when>
+  
+  <choose>
+    <when test="(f,eq_text,keep,(prop,qura_limit_style))">
+      <remove type="prop" id="qra-limit-over" test="(f,exists,prop,qra-limit-over)"/>
+    </when>
+    
+    <when test="(f,eq_text,no,(prop,qura_limit_style))">
+      <prop id="qra-limit-over">-1</prop>
+    </when>    
+    
+    <when test="(f,eq_text,indiv,(prop,qura_limit_style))">
+      <prop id="qra-limit-over">(prop,qura_limit)</prop>
+    </when>        
+  
+  </choose>
+  
+
+  <when test="(f,has,prop,qura_xml_root)">
+    <prop id="qra-xml-root">(prop,qura_xml_root)</prop>
+  </when>
+  <need default="root">(prop,qra-xml-root)</need>
+    
+  <when test="(f,has,prop,qura_xml_row)">
+    <prop id="qra-xml-row">(prop,qura_xml_row)</prop>
+  </when> 
+  <need default="row">(prop,qra-xml-row)</need>
+ 
+
+  <ti_hr_break/>   
+  
+  <call_job job="event_squery_central">
+
+    <prop id="qra-typus">(prop,qura_typus)</prop>
+    <prop id="qra-meta">(prop,qura_meta)</prop>
+
+    <prop id="qra-print">(prop,qura_print)</prop>
+    <prop id="see-sql-limit">0</prop>
+    <prop id="qra-export">1</prop>
+
+  </call_job>
+
+
+</job>                               
+
+<job id="limit-conf-called-by-query" role="hidden">
+  <need>(file,squerys)</need>
+  <need>(prop,squery_key)</need>
+  
+  <call_job job="tk_limit_edit">
+    <prop id="edit-limit-and-print">0</prop>
+  </call_job>
+
+  <call_job job="squery-see">
+      <prop id="squery_key">(prop,squery_key)</prop>
+      <file id="squerys">(file,squerys)</file>  
+  </call_job>
+  
+  <!--      <ti_break_hr/> 
+  
+    <call_job job="mm-op-queries">
+        <prop id="mm-what">all</prop>
+        <file id="mm-liste">(file,squerys)</file>  
+    </call_job>
+    
+    <ti type="call_job" job="mm-op-queries" explain="(prop,_x_go_up)"  flag="button block" class="hibGoUp">
+      <prop id="mm-what">all</prop>
+      <file id="mm-liste">(file,squerys)</file>
+    </ti>       -->
+</job>
+
+<job id="event_squery_see" role="hidden">
+
+<need default="x">(prop,qra-from)</need>
+<need default="1">(prop,qra-no-back-button)</need>
+
+
+<call_job job="squery-read" />
+
+<call_job job="tr_squery"/>
+  <prop id="das-query-buch">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</prop> 
+  
+<!-- ergebnis-daten anzeigen   
+<dir id="root">(dir,pro)query-runnings/(prop,das-query-buch)/(prop,squery_id)</dir>  -->
+<dir id="root">(dir,rhome)</dir>
+
+<!-- <ti type="dir" label="Results of (prop,squery_id)">(dir,root)</ti>   -->
+<choose>
+  <when test="(f,exists_dir,(dir,root))">  
+    <call_service job="Goto-Panorama" flag="silent">
+      <dir id="with">(dir,root)</dir>
+    </call_service>
+    <ti_hr_break test="(f,implement,online)"/>
+  </when>
+  <otherwise>
+    <ti type="dir" label="cache-folder">(dir,pro)cache</ti>
+    <ti label="Verzeichnis existiert nicht / Folder does not exist"/>
+    <ti>Wahrscheinlich wurde die Abfrage noch nie ausgefuehrt</ti>
+    <ti>Probably the query was never run</ti>  
+    <ti_hr_break/>  
+  </otherwise>
+</choose>
+
+
+<!-- 
+<ti label="Aktionen(e:s) (prop,_sl_squery): (prop,squery_id)"/>
+
+<call_job job="tk_limit_read" />
+
+  <call_job job="squery-post-action-buttons">
+    <prop id="see-sql-limit">1</prop>
+    <prop id="see-any-limit">1</prop>    
+  </call_job>
+-->
+</job>
+
+<job id="event_squery_beginn" role="hidden">
+<ti_break class_table="tabLinklist" />
+<!-- 
+  <ti type="rec">                  
+    <ti x="(prop,_sl_squery)-(prop,_sl_buch) (f,html,b,o)(f,name_of_dir,(f,dir_of_file,(file,squerys)))(f,html,b,c)"/>
+  </ti>
+
+  <create_file out="(f,dir_of_dir,(f,dir_of_file,(file,squerys)))last.txt">(f,name_of_dir,(f,dir_of_file,(file,squerys)))</create_file>
+  -->
+</job>
+
+<job id="event_squery_detail_back_button" role="hidden">
+
+
+<call_job job="do_link_bulk" test="(f,has,prop,do_link_bulk)"/>     
+<call_job job="do_link_bulks" test="(f,has,prop,do_link_bulks)"/>       
+</job>
+
+<job id="event_squery_detail_buttons_hr" role="hidden">
+
+                                              
+  <ti type="rec" >
+    <ti >(prop,_sl_squery)</ti>
+    <ti x="(f,html,b,o)(prop,squery_id)(f,html,b,c)"/>
+  </ti>  
+  
+  <call_job job="event_squery_detail_buttons"/>
+  <choose>
+    <when test="(prop,gpref_ifacestyle)">
+      <ti_hr  />
+    </when>
+    <otherwise>
+      <ti_hr style="2" />
+    </otherwise>
+  </choose>
+  
+
+</job>
+
+
+
+<job id="event_squery_detail_buttons" role="hidden">
+
+   <call_job job="tk_gpref_read"/>
+ 
+   <ti type="rec" label="in (prop,_sl_buch): " xflag="label_right">
+    <ti >(f,name_of_dir,(f,dir_of_file,(file,squerys)))</ti>
+   </ti>  
+   
+<choose>                         
+  <when test="(prop,gpref_ifacestyle)">
+    
+      <when test="(f,right,sqli)">
+        
+        <ti_hr_break/>
+        <call_job job="sqli-see-all">
+          <file id="sqlis">(file,squerys)</file>
+          <prop id="sqlis_offset">squery[@row='(prop,squery_key)']/</prop>
+          <prop id="sqlis_offset_label"></prop>      
+          
+        </call_job>
+        <ti_hr_break/>
+  <ti type="rec" >
+    <ti >(prop,_sl_squery)</ti>
+    <ti x="(f,html,b,o)(prop,squery_id)(f,html,b,c)"/>
+  </ti>          
+      </when>  
+  </when>        
+  <otherwise>
+    <ti_hr style="2"/>
+  </otherwise>
+</choose>
+
+<ti type="menu" first_cell="2">
+  <ti type="call_job" flag="button" class=" fb fbEdit fbEditDetail fbEditDetailSquery" explain="(prop,_x_edit)" job="squery-edit"
+   test="(prop,bpDev)">
+    <prop id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>
+  
+  <ti type="call_job" flag="button" class="fb fbAskAsk" explain="(prop,_label_askask)" align="right" job="squery-see-more">
+    <prop id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+    <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+    <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+    <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+    <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+    <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+    <prop id="squerys_where">(prop,squerys_where)</prop>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+  </ti>
+  
+</ti>
+<ti_space height="4px" />
+
+<ti type="menu" first_cell="2">
+  <ti type="call_job" flag="button" class="fb fbGoQuery" explain="(prop,_squery_act_run)" job="event_squery_run">
+    <prop id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>
+
+  
+  <ti type="call_job" page="details" flag="button" class="fb fbQuery" explain="(prop,_squery_act_runby2)" job="event_squery_run_as">
+    <prop id="greetings_from_page">details</prop>
+    <prop id="greetings_from_action">runas</prop>
+    <prop page="details" id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>  
+
+  <ti type="call_job" flag="button" class="fb fbQuery" explain="(prop,_squery_act_defnrun)" job="event_squery_defnrun" test="(prop,bpDev)">
+    <prop id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>
+</ti>
+
+
+
+<ti_space height="4px" />
+
+<!-- 
+<choose>
+<when test="(f,eq_text,(prop,squery_class1),select)">   -->
+
+<ti type="menu" first_cell="2">
+  <ti type="call_job" page="details" flag="button" class="fb fbQueryService" 
+  explain="(prop,_squery_act_count)" job="event_squery_count"
+   test="(f,eq_text,(prop,squery_class1),select)" >
+    <prop id="greetings_from_page">details</prop>
+    <prop id="greetings_from_action">count</prop>
+    <prop page="details" id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>
+
+  <ti type="call_job" page="details" flag="button" class="fb fbQueryService" explain="(prop,_squery_act_explain)" job="event_squery_explain">
+    <prop id="greetings_from_page">details</prop>
+    <prop id="greetings_from_action">defnrun</prop>
+    <prop page="details" id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>
+</ti>
+<!-- 
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+  <ti>(prop,_squery_act_none)</ti>
+</ti>     </otherwise>
+</choose> -->
+
+
+
+
+
+
+
+</job>
+
+<job id="event_squery_details_ende" role="hidden">
+
+    <when test="(f,not,(prop,gpref_ifacestyle))">
+    <when test="(f,right,sqli)">
+      <ti_hr_break/>
+      
+      <call_job job="sqli-see-all">
+        <file id="sqlis">(file,squerys)</file>
+        <prop id="sqlis_offset">squery[@row='(prop,squery_key)']/</prop>
+        <prop id="sqlis_offset_label"></prop>      
+        
+      </call_job>
+      
+    </when>      
+    </when> 
+  
+    
+
+<!--
+<ti_hr_break class_table="tabNavigator" />
+<ti>ad (prop,_sl_squery) (f,html,b,o)(prop,squery_id)(f,html,b,c) :</ti>
+   
+    
+     
+<call_job job="event_squery_detail_buttons" />   
+<ti_hr style="2"/> 
+-->
+
+
+<call_job job="go-joe-write">
+  <file id="joe-in-store" x="(dir,pro)cache/current-squery.xml" />
+  <prop id="joe-in-regex" x="squerys|squery_key" />
+</call_job>
+
+  
+<call_job job="tk_gpref_show_button" >       
+  <prop id="what_gpref">ifacestyle</prop>
+  <prop id="ready_job">hook_changed_isql_position</prop>
+  <prop id="with_hr">1</prop>
+  <prop id="do_align">right</prop>
+  <prop id="do_break">0</prop>
+  
+  
+</call_job> 
+<!-- 
+<ti type="rec" label="  ">    
+<ti align="right"
+    type="call_job" page="details" flag="button" 
+    class="justseefolder" explain="(prop,_squery_act_see)" job="event_squery_see" >
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">see</prop>
+<prop page="details" id="squery_key">(prop,squery_key)</prop>
+<file id="squerys">(file,squerys)</file>
+<prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+<prop id="squerys_offset">(prop,squerys_offset)</prop>
+</ti>
+
+</ti>      -->
+  
+</job>
+
+<job id="hook_changed_isql_position" role="hidden">
+<call_job job="go-joe-read">
+  <file id="joe-in-store" x="(dir,pro)cache/current-squery.xml" />
+  <prop id="joe-in-regex" x=".*" />
+</call_job>
+<call_job job="squery-see" />
+</job>
+
+<!-- 
+<job id="squery-pre-action-buttons-back" role="hidden">
+
+  <ti_break class_table="tabNavigator"/>
+
+  <choose>
+    <when test="(f,eq_text,x,(prop,qra-from))">  
+      <ti type="rec" >
+        <ti type="call_job" job="squery-see" explain="(prop,_x_go_back_sys)" flag="button " class="fx fxAction justup"
+            align="right" >
+          <prop id="squery_key">(prop,squery_key)</prop>
+          <file id="squerys">(file,squerys)</file>       
+        </ti>  
+      </ti>      
+    </when>
+    
+    <when test="(f,eq_text,ql,(prop,qra-from))">
+      <ti type="rec" >
+        <ti type="call_job" job="_select" explain="(prop,_x_go_back_sys)" flag="button " class="fx fxAction justup"
+            align="right" >          
+        </ti>  
+      </ti>       
+    </when>
+    
+    <when test="(f,eq_text,bl,(prop,qra-from))">
+      <ti type="rec" >
+        <ti type="call_job" job="_bulk" explain="(prop,_x_go_back_sys)" flag="button " class="fx fxAction justup"
+            align="right" >          
+        </ti>  
+      </ti>       
+    </when>  
+    
+    <when test="(f,eq_text,bd,(prop,qra-from))">
+      <ti type="rec" >
+        <ti type="call_job" job="bulk-see" explain="(prop,_x_go_back_sys)" flag="button " class="fx fxAction justup"
+            align="right" >        
+           <prop id="bulk_key">(prop,bulk_key)</prop>
+           <file id="bulks">(file,bulks)</file>  
+        </ti>  
+      </ti>       
+    </when>      
+  </choose>
+  
+  <when test="(f,starts_with,(prop,qra-from),b)">  
+    <ti type="rec" >
+      <ti type="call_job" job="squery-see" explain="(prop,_qres_zur_abfrage)" flag="button " class="fx fxAction justup"
+          align="right" >
+        <prop id="squery_key">(prop,squery_key)</prop>
+        <file id="squerys">(file,squerys)</file>       
+      </ti>  
+    </ti>      
+  </when>   
+
+</job>
+-->
+
+<job id="squery-pre-action-buttons" role="hidden">
+
+  <when test="(f,not,(f,starts_with,(prop,qra-from),b))">  
+
+    <ti type="menu" flag="block">
+      <ti type="call_job" job="event_squery_run" explain="(prop,_squery_act_run)" flag="button block"  class="fb fbGoQuery">
+        <prop id="squery_key">(prop,squery_key)</prop>
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">(prop,squerys_offset)</prop>
+        <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop> 
+      </ti>         
+                     
+      <ti type="call_job" job="event_squery_defnrun" explain="(prop,_squery_act_defnrun)" flag="button "  class="fb fbQuery" test="(prop,bpDev)">
+        <prop id="squery_key">(prop,squery_key)</prop>
+        <file id="squerys">(file,squerys)</file>
+      <prop id="squerys_offset">(prop,squerys_offset)</prop>
+      <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop> 
+      </ti>     
+      <ti type="call_job" job="squery-edit" explain="(prop,_x_edit)" flag="button "  class="fb fbEdit fbEditDetail fbEditDetailSquery" test="(prop,bpDev)">
+        <prop id="squery_key">(prop,squery_key)</prop>
+        <file id="squerys">(file,squerys)</file>
+       
+        <prop id="squerys_offset">(prop,squerys_offset)</prop>
+        <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>        
+      </ti>              
+    </ti>
+    
+    <call_job job="squery-pre-post-export-button" test="(f,exists,prop,qra-export)"/>  
+  </when>
+
+
+  <ti_break/>
+
+</job>
+<job id="squery-pre-post-export-button" role="hidden">
+
+<ti type="menu" flag="block">
+
+
+  
+
+  
+  <ti type="call_job" page="details" flag="button block" class="fb fbQueryService" 
+  explain="(prop,_squery_act_count)" job="event_squery_count" test="(f,eq_text,(prop,squery_class1),select)">
+    <prop id="greetings_from_page">details</prop>
+    <prop id="greetings_from_action">count</prop>
+    <prop page="details" id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>
+
+  <ti type="call_job" page="details" flag="button (f,when,(f,not,(f,eq_text,(prop,squery_class1),select)),block,)" class="fb fbQueryService" explain="(prop,_squery_act_explain)" job="event_squery_explain">
+    <prop id="greetings_from_page">details</prop>
+    <prop id="greetings_from_action">defnrun</prop>
+    <prop page="details" id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti>
+</ti>    
+<ti type="menu" flag="block">
+  <ti type="call_job" page="details" flag="button block" class="fb fbQuery" explain="(prop,_squery_act_runby2)" job="event_squery_run_as">
+    <prop id="greetings_from_page">details</prop>
+    <prop id="greetings_from_action">runas</prop>
+    <prop page="details" id="squery_key">(prop,squery_key)</prop>
+    <file id="squerys">(file,squerys)</file>
+    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+  </ti> 
+  </ti>
+</job>
+
+<job id="squery-action-see-back-button" role="hidden">  
+
+<when test="(f,not,(prop,qra-no-back-button))">
+ <ti_break class_table="tabNavigator"/>
+
+  <choose>
+    <when test="(f,eq_text,x,(prop,qra-from))">  
+
+      <ti type="rec" >
+                
+            
+             <ti type="call_job" job="squery-see" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+                align="right" >
+              <prop id="squery_key">(prop,squery_key)</prop>
+              
+              <prop id="squerys_offset">./</prop>
+              <file id="squerys">(file,squerys)</file>       
+            </ti>             
+         
+      </ti>      
+      
+      <choose>
+        <when test="(f,has,prop,qra-headline)">
+        
+          <ti type="rec" >
+            <ti x="(prop,qra-headline)" />
+            <ti type="call_job" job="_select" explain="(prop,_x_go_up_sys)" flag="button " class="justup"
+            align="right" ></ti>  
+          </ti>  
+          
+          <remove id="qra-headline" type="prop" />
+                  
+        </when>
+        <otherwise>
+        
+          <ti type="rec" >
+<ti type="call_job" job="_select" explain="(prop,_x_go_up_sys)" flag="button " class="justup"
+            align="right" ></ti>  
+          </ti>  
+                  
+        </otherwise>
+      
+      </choose>
+      
+      <!--          
+      <ti type="rec" >
+        <ti type="menu" align="right" span="10">
+        <ti type="call_job" job="_select" explain="(prop,_x_go_up_sys)" flag="button " class="justback"
+            xalign="right" >          
+        </ti>  
+        
+         <ti type="call_job" job="squery-see" explain="(prop,_x_go_back_sys)" flag="button " class="justback"
+            xalign="right" >
+          <prop id="squery_key">(prop,squery_key)</prop>
+          
+          <prop id="squerys_offset">./</prop>
+          <file id="squerys">(file,squerys)</file>       
+        </ti>         
+        </ti>
+      </ti>    -->      
+    </when>
+    
+    <when test="(f,eq_text,ql,(prop,qra-from))">
+      <ti type="rec" >
+        <ti type="call_job" job="_select" explain="(prop,_x_go_up_sys)" xxexplain="(prop,_x_go_back_sys)" flag="button " class="justback"
+            align="right" >          
+        </ti>  
+      </ti>       
+    </when>
+    <!-- 
+    <when test="(f,eq_text,bl,(prop,qra-from))">
+      <ti type="rec" >
+        <ti type="call_job" job="_bulk" explain="(prop,_x_go_back_sys)" flag="button " class="fx fxAction justup"
+            align="right" >          
+        </ti>  
+      </ti>       
+    </when>  
+    
+    <when test="(f,eq_text,bd,(prop,qra-from))">
+      <ti type="rec" >
+        <ti type="call_job" job="bulk-see" explain="(prop,_x_go_back_sys)" flag="button " class="fx fxAction justup"
+            align="right" >        
+           <prop id="bulk_key">(prop,bulk_key)</prop>
+           <file id="bulks">(file,bulks)</file>  
+        </ti>  
+      </ti>       
+    </when>      
+    -->
+  </choose>   
+  
+</when>
+    <!-- 
+    <when test="(f,starts_with,(prop,qra-from),b)">  
+      <ti type="rec" >
+        <ti type="call_job" job="squery-see" explain="(prop,_qres_zur_abfrage)" flag="button " class="fx fxAction justup"
+            align="right" >
+          <prop id="squery_key">(prop,squery_key)</prop>
+          <file id="squerys">(file,squerys)</file>       
+        </ti>  
+      </ti>      
+    </when>      -->
+
+<ti_break/>   
+
+
+
+</job>
+
+<job id="squery-post-action-buttons" role="hidden">
+
+  <need>(prop,see-sql-limit)</need>
+  <need default="1">(prop,see-any-limit)</need>
+  <need default="0">(prop,see-back-first)</need>
+  
+  <call_job job="squery-action-see-back-button" test="(prop,see-back-first)"/>       
+  
+  <when test="(f,not,(f,starts_with,(prop,qra-from),b))">  
+
+    <ti type="menu" flag="block">
+      <ti type="call_job" job="event_squery_run" explain="(prop,_squery_act_run)" flag="button block"  class="fb fbGoQuery">
+        <prop id="squery_key">(prop,squery_key)</prop>
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squerys_offset">(prop,squerys_offset)</prop>
+        <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop> 
+      </ti>         
+                     
+      <ti type="call_job" job="event_squery_defnrun" explain="(prop,_squery_act_defnrun)" flag="button "  class="fb fbQuery" test="(prop,bpDev)">
+        <prop id="squery_key">(prop,squery_key)</prop>
+        <file id="squerys">(file,squerys)</file>
+      <prop id="squerys_offset">(prop,squerys_offset)</prop>
+      <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop> 
+      </ti>     
+      <ti type="call_job" job="squery-edit" explain="(prop,_x_edit)" flag="button "  class="fb fbEdit fbEditDetail fbEditDetailSquery" test="(prop,bpDev)">
+        <prop id="squery_key">(prop,squery_key)</prop>
+        <file id="squerys">(file,squerys)</file>
+       
+        <prop id="squerys_offset">(prop,squerys_offset)</prop>
+        <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>        
+      </ti>              
+    </ti> 
+    
+    <call_job job="squery-pre-post-export-button" test="(f,exists,prop,qra-export)"/>
+  </when>
+  
+  <when test="(prop,see-any-limit)">   
+  <when test="(f,not,(f,has,prop,limit-from-bulk))">                                                                                           
+     
+      
+      <ti type="call_job" job="limit-conf-called-by-query" 
+      explain="(prop,_sl_change_limit) (e:o)(f,when,(prop,see-sql-limit),Sql:(prop,sql_limit_queries)(e:s) ,)(f,when,(f,eq_text,(prop,ling),de),Druck,Print):(prop,sql_limit_print)(e:c)"  
+      flag="button " class="fx fxAction justlimit " >
+        <file id="squerys">(file,squerys)</file>
+        <prop id="squery_key">(prop,squery_key)</prop>
+      </ti>      
+    
+  </when>  
+  </when>      
+
+  <call_job job="squery-action-see-back-button" test="(f,not,(prop,see-back-first))"/> 
+ 
+</job>
+
+<job id="squery-post-action-buttons-limit" role="hidden">
+
+  <need>(prop,see-sql-limit)</need>
+  <need default="1">(prop,see-any-limit)</need>
+  
+  <when test="(prop,see-any-limit)">                                                                                              
+  <ti type="rec">     
+
+    <ti type="call_job" job="limit-conf-called-by-query" explain="(prop,_sl_change_limit) (e:o)(f,when,(prop,see-sql-limit),Sql:(prop,sql_limit_queries)(e:s) ,)(f,when,(f,eq_text,(prop,ling),de),Druck,Print):(prop,sql_limit_print)(e:c)"  flag="button block" class="fx fxAction justlimit" >
+      <file id="squerys">(file,squerys)</file>
+      <prop id="squery_key">(prop,squery_key)</prop>
+    </ti>      
+  </ti>    
+  </when>  
+  
+</job>  
+
+</jobs>                                

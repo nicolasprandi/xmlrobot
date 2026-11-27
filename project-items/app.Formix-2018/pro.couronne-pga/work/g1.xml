@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions sheet_name="actions" sheet_index="5"><action id="editieren" label="(prop,_x_edit)" view_first="1" width_px="100" hook_job="pga-edit" view="0" details="0" sort="1" /></actions>

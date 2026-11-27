@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ass-edit">
+<need>(prop,ass_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="ass-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="ass-editor"/>
+<call_job job="ass-write"/>
+<ti label="Did update Arbeitsschritt:" x="(f,html,bold,open)(prop,ass_bez)(f,html,bold,close)"/>
+<ti_break/>
+<ti_hr/>
+<call_job job="ass-see-all-event"/>
+</job>

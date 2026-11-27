@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="person-see-more">
+<need>(prop,person_key)</need>
+<call_job job="person-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="persons_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,person_name_nic)(f,html,bold,close)(f,when,(f,has,(prop,persons_offset_label)), - (prop,persons_offset_label),)"/>
+<call_job job="person-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="Edit" job="person-edit">
+<prop id="person_key">(prop,person_key)</prop>
+<file id="persons">(file,persons)</file>
+<prop id="persons_offset">(prop,persons_offset)</prop>
+<prop id="persons_offset_label">(prop,persons_offset_label)</prop>
+<prop id="persons_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="persons_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="persons_sort_number">(prop,persons_sort_number)</prop>
+<prop id="persons_where">(prop,persons_where)</prop>
+<prop id="persons_return_job">(prop,persons_return_job)</prop>
+</ti>
+</ti>
+</job>

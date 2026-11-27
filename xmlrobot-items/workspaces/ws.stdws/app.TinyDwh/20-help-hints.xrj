@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<jobs>                   
+<call_job job="prolog"/>
+
+<job id="Composits?" lang="en">
+  <ti label="Job &apos;Object-Units&apos;"/>
+  <ti>(f,html,b,o)1(e:c) (prop,_pl_kjob)(f,html,b,o)</ti>
+  <ti type="ul">Mit einer 'Objekt-Komposition' werden manuell zwei Objekte in ein einziges Objekt uebergefuehrt.</ti> 
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+    
+  <call_job job="?hint-namaste-para-help?"/>
+    
+  <call_job job="?hints-commons?">
+    <prop id="oh_add_hints_in">Your compositions locate in</prop>
+    <prop id="oh_add_folder">Folder:</prop>
+  </call_job>
+</job>  
+
+<job id="Komposits?" lang="de">
+  <ti label="Job &apos;Kompositionen&apos;"/>
+  <ti type="rec"><ti flag="wrap">Mit einer 'Komposition' werden manuell zwei Objekte in ein einziges Objekt &#252;bergef&#252;hrt.</ti></ti> 
+
+
+  
+  <ti label="Grundlage und Motiation"/>
+  <ti type="ul">()Bei der Zusammenf&#252;hrung unterschiedlicher Datenbest&#228;nde kommt es auf Grund mangelhafter Datenqualit&#228;t immerwieder zu Problemen bei der Zusammenf&#252;hrung von Objekten.()</ti>
+  <ti type="ul">()Es sind in der Regel immer nur ein kleinen Prozentsatz der angelieferten Datens&#228;tze, deren Informationen nicht den genormten Erwartungen entspricht.()</ti>
+
+  <ti type="ul">()Um diese Problem zu l&#246;sen, wird mit der 'Objekt-Komposition' eine M&#246;glichkeit zur Verf&#252;gung gestellt, um Objekte manuell ineinander &#252;berzuf&#252;hren.()</ti>
+   
+  <ti label="L&#246;sungsansatz"/>
+  <ti type="ul">()Um 2 Objekte miteinander zu kombinieren (=migrieren) m&#252;ssen die beiden Objekte im System 'irgendwie' als ident gekennzeichnet werden.()</ti>
+  <ti type="ul">()Diese Kennzeichnung kann jedoch nicht &#252;ber die technische Objekt-Id erfolgen, da diese variiert und bei einer Neubef&#252;llung des DWH g&#228;nzlich anders sein kann.()</ti>
+  <ti type="ul">()Es braucht somit einen Mechanismus, der wiederholbar d&#252;rchf&#252;hrbar ist.()</ti>
+  <ti type="ul">()Die L&#246;sung liegt in der k&#252;nstlichen Erzeugung eines Objekts, welches identifizierende Eigenschaften beider zu migrierenden Objekte besitzt. Dadurch werden diese bei der Integration ineinander &#252;bergef&#252;hrt.()</ti>
+  
+  <ti label="L&#246;sung im Detail"/>
+
+  <ti type="ul">()Das System biete die M&#246;glichkeit sogenannte 'Objekt-Kompositionen' zu definieren.
+Eine 'Objekt-Kompositionen' erzeugt eine neues (k&#252;nstliches) Objekt in der Datenbank.()</ti>
+  <ti type="ul">()Die Aufgabe einer 'Objekt-Komposition' besteht darin, ein oder mehrere Objekte zu migrieren.
+Eine 'Objekt-Komposition' wird einem Objekt-Typ zugeordnet.()</ti>
+  <ti type="ul">()Jeder 'Objekt-Komposition' k&#246;nnen mehrere Eigenschaften gegeben werden. Bei einer Eigenschaft handelt es sich um einen Attribut-Typ und einen Wert f&#252;r diesen Attribut-Typ.()</ti>
+  <ti type="ul">()Bei den Attribut-Typen sollten jedoch nur solche gew&#228;hlt werden, die als 'Identifizierend' gelten. Das sind jene Attribute die einen eindeutigen Schl&#252;ssel f&#252;r ein Objekt darstellen und als solche im Vokabular definiert sind.()</ti>
+  <ti type="ul">()'Objekt-Kompositionen' k&#246;nnen in weiter Folge 'an die Datenbank gesendet' werden. Das bedeutet, dass ein neues Objekt in die Datenbank eingef&#252;gt wird.()</ti>
+  <ti type="ul">()Danach sollte eine Integration gestartet werden, um die zu migrierenden Objekte ineinder &#252;berzuf&#252;hren()</ti>
+  <ti label="Technische Hilfestellung bei der Erfassung von Objekt-Kompositionen"/>  
+  <ti type="rec"><ti flag="wrap">Die Erfassung wird auf 2 Arten unterst&#252;tzt.</ti></ti>   
+  <ti type="ul">()Zum einen ist beim Objekt-Navigator die M&#246;glichkeit gegeben, das aktuelle Objekte semi-automatisch in die zuletzt bearbeitete Komposition zu inkludieren. W&#228;hlen Sie dazu [Konfig/Objekt zu Komposition hinzuf&#252;gen] aus. W&#228;hlen Sie danach jene Attribute des Objektes aus, die in die Komposition mitgenommen werden sollen.()</ti>
+  <ti type="ul">()Zum anderen gibt es auf der Ebene der Objekt-Komposition den Befehl 'inkludiere Objekt'. Geben Sie dabei die Objekt-Id des gew&#252;nschten Objektes ein. W&#228;hlen Sie dann jene Eigenschaften aus, die in die Objekt-Komposition mitgenommen werden sollen.()</ti>
+  <ti label="Objekt-Sammlungen"/>   
+  <ti type="ul">()Objekt-Sammlungen sind ein weiteres Werkzeug, um Sie bei der Arbeit mit Kompositionen zu unterst&#252;tzen.()</ti>
+  <ti type="ul">()Objekt-Kompositionen werden in diesen Sammlungen gespeichert. Jede Sammlung stellt letztendlich eine separate Datei da. Sie k&#246;nnen diese Datei archivieren, wiederverwenden und weitergeben.()</ti>
+  
+
+
+  <call_job job="?hint-namaste-para-help?"/>
+     
+  <call_job job="?hints-commons?">
+    <prop id="oh_add_hints_in">Ihre Kompositionen liegen im</prop>
+    <prop id="oh_add_folder">Verzeichnis:</prop>
+  </call_job>  
+</job>
+
+
+<job id="?hints-commons?">
+
+<need>(prop,oh_add_hints_in)</need>
+<need>(prop,oh_add_folder)</need>
+
+<when test="(f,exists,prop,pro)"> 
+  <ti_hr/>
+  <ti label="(prop,oh_add_hints_in)" />
+  <ti type="dir" label="(prop,oh_add_folder)" flag="label_right">(dir,hints)</ti>
+</when>
+ 
+</job> 
+
+<job id="?hint-namaste-para-help?" role="hidden">
+<prop id="hint_default_label_class" x="(prop,_sl_hint)" /> 
+<prop id="hint_default_label_name" x=" " />
+  <ti_hr/>
+
+  <prop id="hints_tk_control">print_only print_with_tips print_tips_only print_all_fields</prop>
+  <call_job job="hint-tk"/>   
+
+<prop id="namaste_default_label_class" x="(prop,_sl_namaste)" /> 
+<prop id="namaste_default_label_name" x="" />
+  
+  <prop id="namastes_tk_control">print_only print_with_tips print_tips_only print_all_fields</prop>
+  <call_job job="namaste-tk"/>                        
+</job>
+
+</jobs>

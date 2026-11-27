@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="hint-tk">
+<call_job job="tr_hint"/>
+<need default="">(prop,hints_tk_control)</need>
+<when test="(f,has_flag,(prop,hints_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,hints_tk_control),print_all_fields)">
+<ti label="(prop,hint_default_label_class) (prop,hint_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,hint_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,hints_tk_control),print_only),,(prop,hint_default_label_class)(f,when,(f,has,prop,hint_default_label_name), (prop,hint_default_label_name),))" tip="(prop,_hint_t)" tk_id="15" flag="(prop,hints_tk_control) wrap ">
+<tk label="(prop,_hint_object_typ_l)" id="hint_objekt_typ" x="" test_first="1" tip="(prop,_hint_object_typ_t)" type="sel" flag=" nono " xml="(dir,repo)osel-(prop,tip-term-class).xml"/>
+<tk label="(prop,_hint_name_l)" id="hint_name" x="" test_first="1" tip="(prop,_hint_name_t)" type="text" cols="30" flag=" nono "/>
+<tk label="(prop,_hint_doku_l)" id="hint_doku" x="" test_first="0" tip="(prop,_hint_doku_t)" type="textblock" cols="30" flag=" "/>
+</tk>
+</job>

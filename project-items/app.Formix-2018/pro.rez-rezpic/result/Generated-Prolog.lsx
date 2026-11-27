@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="rezpics">(dir,pro)rezpics.xml</file>
+<when test="(f,not,(f,exists_file,(file,rezpics)))">
+<create_file out="(file,rezpics)">&lt;rezpics/&gt;</create_file>
+<i>Created: (file,rezpics)</i>
+</when>
+<prop id="rezpics_offset">./</prop>
+<prop id="rezpics_offset_label"/>
+<prop id="rezpics_offset_new_key">//</prop>
+<prop id="rezpics_sort_attribute"/>
+<prop id="rezpics_sort_number"/>
+<prop id="rezpics_sort_ignore_case"/>
+<prop id="rezpics_sort_desc"/>
+<prop id="rezpics_where"/>
+<prop id="rezpics_return_job">rezpic-see-all</prop>
+</prolog>

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<include file="(dir,app)prolog.xrs"/>
+
+<job id="read-prot" role="hidden">
+	<call_job job="go-joe-read">
+		<file id="joe-in-store">(dir,conf)prot-ic.xml</file>
+	</call_job>
+</job>
+
+<job id="write-prot" role="hidden">
+	<call_job job="go-joe-write">
+		<file id="joe-in-store">(dir,conf)prot-ic.xml</file>
+		<prop id="joe-in-regex">prot-.+</prop>
+	</call_job>
+</job>
+
+</jobs>

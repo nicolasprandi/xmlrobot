@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exportfile-write">
+<need>(prop,exportfile_key) (prop,isAdd)</need>
+<spirit act="open" id="exportfiles_spirit_tc" xml="(file,exportfiles)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,exportfiles_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,exportfiles_offset),0,(f,sub,(f,len,(prop,exportfiles_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,exportfiles_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="exportfiles_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;exportfile row="(prop,exportfile_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<file id="jack-in" x="(file,exportfile_file)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="exportfiles_spirit_tc" where="(prop,exportfiles_offset)exportfile[@row='(prop,exportfile_key)']" attribute="file" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="exportfiles_spirit_tc" where="(prop,exportfiles_offset)exportfile[@row='(prop,exportfile_key)']" attribute="desc" value="(f,vob,prop,exportfile_desc)"/>
+<spirit act="close" flag="save pretty" id="exportfiles_spirit_tc"/>
+</job>

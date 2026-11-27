@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="monat-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Monat(prop,monate_offset_label)"/>
+<prop x="sum" id="monate_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,monat_key)</need>
+<prop id="label" x="Monat [(f,text,cut_nice,(prop,monat_monat),30)](prop,monate_offset_label)"/>
+<prop x="sum_only" id="monate_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="monat-tk"/>
+</job>

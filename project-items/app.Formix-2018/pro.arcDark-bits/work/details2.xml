@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bit-see-more">
+<need>(prop,bit_key)</need>
+<call_job job="bit-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="bits_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,bit_bit)(f,html,bold,close)(f,when,(f,has,(prop,bits_offset_label)), - (prop,bits_offset_label),)"/>
+<call_job job="bit-tk"/>
+<ti_hr/>
+<ti type="rec">
+<ti type="call_job" explain="Edit" job="bit-edit">
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+</ti>
+</ti>
+</job>

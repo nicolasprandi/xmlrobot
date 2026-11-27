@@ -1,0 +1,382 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<job id="act-plus" role="hidden">
+   <need>(prop,with-element)</need>
+  
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(dir,pro)plusact.xml" />
+      <prop id="joe-in-regex" x="plusact" />
+    </call_job>   
+    
+    <need default="">(prop,plusact)</need>
+                                                   
+    <tk type="sel" id="plusact" flag="nono" label="Element Operation">
+      <sel label="Change the highligt-color">act-color-ob</sel>
+      <sel label="Clear input field">act-clear-ob</sel>
+      <sel label="Clear and enter a text">act-enter-ob</sel>
+      <sel label="Clear and select a variable">act-varinput-ob</sel>
+      <sel label="Select this frame">act-frame-xp</sel>
+    </tk>
+        
+    <call_job job="go-joe-write">
+      <file id="joe-in-store" x="(dir,pro)plusact.xml" />
+      <prop id="joe-in-regex" x="plusact" />
+    </call_job> 
+        
+    <call_job job="prep-coop"/>
+    
+    <prop id="jtc">(f,substring,(prop,plusact),0,(f,sub,(f,len,(prop,plusact)),3))</prop>
+   
+    <call_job job="(prop,jtc)"/>
+    
+    <choose>
+      <when test="(f,ends_with,(prop,plusact),-ob)">   
+        <spirit act="open" id="(prop,ps-id)" file="(file,prot)" />
+        <prop id="ps-print-should-mark">(prop,with-element)</prop>
+        <call_job job="ps-print-spirit" />
+      </when>
+      <when test="(f,ends_with,(prop,plusact),-xp)">
+        <call_job job="find-see-all2"/>
+      </when>
+      
+    </choose>      
+  
+</job>
+<!-- 
+<call_job job="do-more"/>
+do-more zeigt die details zu einem element
+-->
+
+
+<job id="act-varinput" role="hidden">
+  <need>(prop,with-element)</need>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)variables.xml" />
+    <prop id="joe-in-regex" x="vai_.+" />
+  </call_job>   
+             
+  <tk label="By Parameters" flag="sum">
+    <tk type="sel" id="vai_type" flag="nono" label="Value to enter" test_first="1">
+      <sel >firstname</sel>
+      <sel >lastname</sel>
+      <sel >firstname_lastname</sel>
+      <sel >area</sel>
+      <sel >phone</sel>
+      <sel >area_phone</sel>  
+      <sel >email</sel> 
+      <sel >city</sel>  
+      <sel >street</sel> 
+      <sel >house</sel> 
+      <sel >door</sel> 
+      <sel >street_house</sel> 
+      <sel >street_house_door</sel> 
+      <sel >zip</sel> 
+      <sel >zip_city</sel> 
+      <sel >tit1</sel> 
+      <sel >tit2</sel> 
+      <sel >message</sel>
+  
+      <sel >NONE</sel>
+    </tk>
+      
+  <tk type="msg" test_first="0">Defined Values</tk>
+  <tk id="vai_firstname" label="First Name" tip="This is a html border style which is used for highlighting" test_first="0"/>
+  <tk id="vai_lastname" label="Last Name" tip="This is a html border style which is used for highlighting" test_first="0"/>
+
+  <tk id="vai_area" label="Area Code" tip="" test_first="0"/>
+  <tk id="vai_phone" label="Phone" tip="" test_first="0"/>
+  <tk id="vai_email" label="email" tip="" test_first="0"/>
+  <tk id="vai_city" label="city" tip="" test_first="0"/>
+  <tk id="vai_street" label="street" tip="" test_first="0"/>
+  <tk id="vai_house" label="house" tip="" test_first="0"/>
+  <tk id="vai_door" label="door" tip="" test_first="0"/>
+  <tk id="vai_zip" label="zip" tip="" test_first="0"/>
+  <tk id="vai_tit1" label="tit1" tip="" test_first="0"/>
+  <tk id="vai_tit2" label="tit2" tip="" test_first="0"/>
+  <tk id="vai_message" label="message" tip="" test_first="0" type="textblock"/>
+  </tk>
+      
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)variables.xml" />
+    <prop id="joe-in-regex" x="vai_.+" />
+  </call_job>    
+ 
+  <prop id="etx"></prop> 
+  <choose>
+    <when test="(f,eq_text,(prop,vai_type),NONE)">
+    </when>
+    <when test="(f,eq_text,(prop,vai_type),firstname)">
+      <prop id="etx">()(prop,vai_firstname)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),lastname)">
+      <prop id="etx">()(prop,vai_lastname)()</prop>
+    </when>     
+    <when test="(f,eq_text,(prop,vai_type),firstname_lastname)">
+      <prop id="etx">()(prop,vai_firstname) (prop,vai_lastname)()</prop>
+    </when>      
+    <!--
+    <when test="(f,eq_text,(prop,vai_type),street_house_door)">
+      <prop id="etx">()(prop,vai_street) (prop,vai_house) (prop,vai_door)()</prop>
+    </when>    -->   
+
+    <when test="(f,eq_text,(prop,vai_type),zip_city)">
+      <prop id="etx">()(prop,vai_zip) (prop,vai_city)()</prop>
+    </when>   
+            
+    <when test="(f,eq_text,(prop,vai_type),area)">
+      <prop id="etx">()(prop,vai_area)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),phone)">
+      <prop id="etx">()(prop,vai_phone)()</prop>
+    </when>     
+    <when test="(f,eq_text,(prop,vai_type),area_phone)">
+      <prop id="etx">()(prop,vai_area) (prop,vai_phone)()</prop>
+    </when>   
+    <when test="(f,eq_text,(prop,vai_type),email)">
+      <prop id="etx">()(prop,vai_email)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),city)">
+      <prop id="etx">()(prop,vai_city)()</prop>
+    </when>        
+    <when test="(f,eq_text,(prop,vai_type),street)">
+      <prop id="etx">()(prop,vai_street)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),house)">
+      <prop id="etx">()(prop,vai_house)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),door)">
+      <prop id="etx">()(prop,vai_door)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),zip)">
+      <prop id="etx">()(prop,vai_zip)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),tit1)">
+      <prop id="etx">()(prop,vai_tit1)()</prop>
+    </when>    
+    <when test="(f,eq_text,(prop,vai_type),tit2)">
+      <prop id="etx">()(prop,vai_tit2)()</prop>
+    </when>  
+    
+    <when test="(f,eq_text,(prop,vai_type),message)">
+      <prop id="etx">()(prop,vai_message)()</prop>
+    </when>      
+     
+    <when test="(f,eq_text,(prop,vai_type),street_house)">
+      <prop id="etx">()(prop,vai_street) (prop,vai_house)()</prop>
+    </when>  
+    <when test="(f,eq_text,(prop,vai_type),street_house_door)">
+      <choose>
+        <when test="(f,has,prop,vai_door)">
+          <prop id="etx">()(prop,vai_street) (prop,vai_house)/(prop,vai_door)()</prop>
+        </when>
+        <otherwise>
+          <prop id="etx">()(prop,vai_street) (prop,vai_house)()</prop>
+        </otherwise>
+      </choose>
+      
+    </when>  
+       
+    
+
+
+
+    <!--
+    
+    <when test="(f,eq_text,(prop,vai_type),)">
+      <prop id="etx">()(prop,vai_)()</prop>
+    </when>       
+    <when test="(f,eq_text,(prop,vai_type),)">
+      <prop id="etx">()(prop,vai_)()</prop>
+    </when>       
+    -->                                
+    <otherwise>
+    </otherwise>
+  </choose> 
+      
+            ...
+  <prop id="summary">(prop,etx)</prop>
+
+  
+  <unescape id="etx" type="prop"/>
+  <translate id="etx" type="prop"/>  
+  <ti>(prop,summary) = (prop,etx)</ti>
+
+  <call_job job="record">
+    <prop id="steps"><![CDATA[()                                             
+  <welement 
+    act="clear"
+    id="(prop,with-element)"/>
+()]]></prop>      
+  </call_job>   
+    
+  <call_job job="record">
+    <prop id="steps"><![CDATA[()                                             
+  <welement 
+    act="send_keys"
+    id="(prop,with-element)"
+    keys="(prop,etx)"/>      
+()]]></prop>      
+      </call_job>    
+    <ti label="... did select variable: (prop,etx)"/>    
+    
+  <when test="(f,has,prop,do-then-see-more)">
+    <call_job job="do-more"/>
+  </when>
+  <when test="(f,has,prop,do-then-find-again)">
+    <call_job job="find-see-all2"/>
+  </when>    
+</job>
+
+<job id="act-clear" role="hidden">
+  <need>(prop,with-element)</need>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(prop,dc-we)"
+    act="clear"         
+    sleep="(f,random,1000,2000)"/>
+()]]></prop>      
+      </call_job>       
+      <ti label="... did clear element"/>  
+
+  <when test="(f,has,prop,do-then-see-more)">
+    <call_job job="do-more"/>
+  </when>
+  <when test="(f,has,prop,do-then-find-again)">
+    <call_job job="find-see-all2"/>
+  </when>        
+</job>
+
+<job id="act-frame" role="hidden">
+  <need>(prop,with-element)</need>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(prop,dc-we)"
+    act="switch_to_this_frame"         
+    sleep="(f,random,1000,2000)"/>
+()]]></prop>      
+      </call_job>       
+      <ti label="... did switch to frame: (prop,dc-we)"/>  
+        
+</job>
+
+<job id="act-enter" role="hidden">
+  <need>(prop,with-element)</need>
+  
+  <call_job job="record">
+    <prop id="steps"><![CDATA[()  <need>(prop,with-element)</need>                                             
+  <welement 
+    act="clear"
+    id="(prop,with-element)"/>
+()]]></prop>      
+  </call_job>   
+  
+ <tk id="enter"/>
+  
+  <call_job job="record">
+    <prop id="steps"><![CDATA[()                                             
+  <welement 
+    act="send_keys"
+    id="(prop,with-element)"
+    keys="(prop,enter)"/>      
+()]]></prop>      
+      </call_job> 
+                                                 
+     
+  <ti label="... did clear and enter: (prop,enter)"/>
+
+  <when test="(f,has,prop,do-then-see-more)">
+    <call_job job="do-more"/>
+  </when>
+  <when test="(f,has,prop,do-then-find-again)">
+    <call_job job="find-see-all2"/>
+  </when>    
+</job>
+
+<job id="act-color" role="hidden">
+  <need>(prop,with-element)</need>
+  
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)highlight-color.xml" />
+    <prop id="joe-in-regex" x="color" />
+  </call_job>   
+      
+  <tk id="color" 
+      label="Html-Border-Style" 
+      x="3px solid red" 
+      flag="nono"
+      tip="This is a html border style which is used for highlighting"/>
+      
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)highlight-color.xml" />
+    <prop id="joe-in-regex" x="color" />
+  </call_job>         
+      
+  <call_job job="record">
+    <prop id="steps"><![CDATA[()   
+    <wdriver act="set_light_border"
+             light_border="(prop,color)"/>
+             ()]]></prop>      
+  </call_job>  
+  
+  <call_job job="record">
+    <prop id="steps"><![CDATA[()  <welement 
+    act="light"
+    id="(prop,with-element)" 
+    webdriver_id="(prop,wdid)"/>      
+    ()]]></prop>      
+  </call_job>    
+  
+  <ti label="... highlighted in new color" /> 
+  
+  <when test="(f,has,prop,do-then-see-more)">
+    <call_job job="do-more"/>
+  </when>
+  <when test="(f,has,prop,do-then-find-again)">
+    <call_job job="find-see-all2"/>
+  </when>
+</job>  
+  
+  
+
+
+<job id="make-light-element-colored" role="hidden">
+  <need>(prop,with-element)</need>
+  
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)highlight-color.xml" />
+    <prop id="joe-in-regex" x="color" />
+  </call_job>   
+      
+  <tk id="color" 
+      label="Html-Border-Style" 
+      x="3px solid red" 
+      flag="nono"
+      tip="This is a html border style which is used for highlighting"/>
+      
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)highlight-color.xml" />
+    <prop id="joe-in-regex" x="color" />
+  </call_job>         
+      
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  
+  
+  <wdriver act="set_light_border"
+           light_border="(prop,color)"/>
+           ()]]></prop>      
+      </call_job>        
+
+  
+  <call_job job="do-change-color"/>
+  <call_job job="make-light-element"/>
+  
+</job> 
+
+</jobs>
+
+

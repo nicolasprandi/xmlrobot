@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jobs>  
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<include file="(dir,services)snippets-prolog.lsx" /><job id="View Snippets" joblevel="ws" role="hidden" tip="Lists all Snippets">
+<prop id="nothing">1</prop>
+<loop id="i" xml="(file,snippets)" xpath="(prop,snippets_offset)snippet(prop,snippets_where)" sort="(prop,snippets_sort_attribute)" number="(prop,snippets_sort_number)" ignore_case="(prop,snippets_sort_ignore_case)" desc="(prop,snippets_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,snippets_offset_label)),0)">
+<ti>(f,html,bold,open)(prop,snippets_offset_label): (f,html,bold,close)</ti>
+</when>
+<ti type="rec" label=" ">
+<ti x="Description" />
+<ti x=" " />
+<ti x=" " />
+<ti x=" " />
+<ti x=" " />
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec" label="(f,html,bold,open)(loop,i,@label)(f,html,bold,close)">
+<ti type="textblock" x="(f,when,(loop,i,exists?,@desc),(f,substring,(loop,i,@desc),0,30),?)" />
+<ti type="call_service" explain="See" job="See Snippet">
+<prop id="snippet_key">(loop,i,@row)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+<ti type="call_service" explain="Edit" job="Edit Snippet">
+<prop id="snippet_key">(loop,i,@row)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="view" explain="Run" job="snippet_act_run">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">run</prop>
+<prop page="view" id="snippet_key">(loop,i,@row)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="view" explain="Edit&amp;Run" job="snippet_act_edit_and_run">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">edit_and_run</prop>
+<prop page="view" id="snippet_key">(loop,i,@row)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti>No Snippets found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,snippets_offset),node(e:o)(e:c)))">
+<ti label=" " type="call_service" explain="Add another Snippet" explain_alt="Add another Snippet(prop,snippets_offset_label)" job="Add another Snippet">
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,info,level))">
+<ti_hr />
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,snippets)</ti>
+<ti label="Xml-Offset:" test="(f,gt,(f,len,(prop,snippets_offset)),0)">(prop,snippets_offset)</ti>
+</ti>
+</when>
+</job><job role="hidden" id="To Memory Snippet">
+<need>(prop,snippet_key)</need>
+<spirit act="open" id="snippets_spirit_tc" xml="(file,snippets)"  
+  flag="nuevo"
+  missing_strategy="empty"/>
+<prop id="snippet_dt_upd">(f,spirit,snippets_spirit_tc,(prop,snippets_offset)snippet[@row='(prop,snippet_key)'],@dt_upd)</prop>
+<prop id="snippet_dt_add">(f,spirit,snippets_spirit_tc,(prop,snippets_offset)snippet[@row='(prop,snippet_key)'],@dt_add)</prop>
+<prop id="snippet_label">(f,spirit,snippets_spirit_tc,(prop,snippets_offset)snippet[@row='(prop,snippet_key)'],@label)</prop>
+<prop id="snippet_desc">(f,spirit,snippets_spirit_tc,(prop,snippets_offset)snippet[@row='(prop,snippet_key)'],@desc)</prop>
+<prop id="snippet_steps">(f,spirit,snippets_spirit_tc,(prop,snippets_offset)snippet[@row='(prop,snippet_key)'],@steps)</prop>
+<spirit act="close" id="snippets_spirit_tc" />
+</job><job role="hidden" id="See Snippet">
+<need>(prop,snippet_key)</need>
+<call_service job="To Memory Snippet" />
+<ti_hr />
+<ti label="[ (prop,snippet_label) ]" key="#(prop,snippet_key)" />
+<ti padding_top="0px" laxxbel="(prop,snippet_label)(prop,snippets_offset_label)">
+<ti label="Name:" type="text" test="(f,has,prop,snippet_label)">(prop,snippet_label)</ti>
+<ti label="Steps:" flag="html" test="(f,has,prop,snippet_steps)">&lt;font face="Courier"&gt;(f,escape,_htmlb,(prop,snippet_steps))&lt;font&gt;</ti>
+<ti label="Description:" type="text" test="(f,has,prop,snippet_desc)">(prop,snippet_desc)</ti>
+</ti>
+<ti_hr />
+<ti padding_top="6px" label="Snippet Actions">
+<ti type="call_service" explain="Edit" job="Edit Snippet">
+<prop id="snippet_key">(prop,snippet_key)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+<ti type="call_service" explain="Delete" job="Del Snippet">
+<prop id="snippet_key">(prop,snippet_key)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="details" explain="Run" job="snippet_act_run">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">run</prop>
+<prop page="details" id="snippet_key">(prop,snippet_key)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_service" page="details" explain="Edit&amp;Run" job="snippet_act_edit_and_run">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">edit_and_run</prop>
+<prop page="details" id="snippet_key">(prop,snippet_key)</prop>
+<file id="snippets">(file,snippets)</file>
+<prop id="snippets_offset">(prop,snippets_offset)</prop>
+<prop id="snippets_offset_label">(prop,snippets_offset_label)</prop>
+<prop id="snippets_offset_new_key">(prop,snippets_offset_new_key)</prop>
+<prop id="snippets_sort_attribute">(prop,snippets_sort_attribute)</prop>
+<prop id="snippets_sort_number">(prop,snippets_sort_number)</prop>
+<prop id="snippets_where">(prop,snippets_where)</prop>
+<prop id="snippets_return_job">(prop,snippets_return_job)</prop>
+</ti>
+</ti>
+</job><job role="hidden" id="Edit Snippet">
+<need>(prop,snippet_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Snippet" />
+<prop id="isAdd">0</prop>
+<call_service job="Snippet Editor" />
+<call_service job="To File Snippet" />
+<i label="Updated:" x="Snippet #(prop,snippet_key)" />
+<ti label=" " x="(prop,snippet_label)" />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,snippets_return_job)" />
+</when>
+</job><job role="hidden" id="Del Snippet">
+<need>(prop,snippet_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="To Memory Snippet" />
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting [ (prop,snippet_label) (prop,snippets_offset_label)] ?" x="()Do you really want to delete that?&#xA;If you are not sure, make a backup of the services.()">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()" />
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,snippets)" where="(prop,snippets_offset)snippet[@row='(prop,snippet_key)']" />
+<i>Deleted (prop,snippet_label) #(prop,snippet_key) (prop,snippet_label)</i>
+<ti label="Did delete Snippet:" x="(f,html,bold,open)(prop,snippet_label)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,snippets_return_job)" />
+</when>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+</job><job role="hidden" id="Snippet Editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Snippet(prop,snippets_offset_label)" />
+<tk label="Name" id="snippet_label" x="new name" tip="A name to remember the thing" type="text" flag=" nono " />
+<tk label="Steps" 
+    id="snippet_steps" x="&lt;dump flag=&quot;ti&quot;/&gt;" 
+    tip="()EchnatonCcc Steps, thats the script to be executed()" 
+    type="textblock" flag="big nono " />
+<tk label="Description" id="snippet_desc" x="what is the purpose of this snippet?" tip="That should give an idea whats going on" type="textblock" flag=" " />
+<tk label="(prop,label)" flag="sum_only">
+<tk label="Name" id="snippet_label" x="new name" tip="A name to remember the thing" type="text" flag=" nono " />
+<tk label="Steps" id="snippet_steps" x="&lt;dump flag=&quot;ti&quot;/&gt;" tip="()EchnatonCcc Steps()" type="textblock" flag=" nono big" />
+<tk label="Description" id="snippet_desc" x="what is the purpose of this snippet?" tip="That should give an idea whats going on" type="textblock" flag=" " />
+</tk>
+</when>
+<otherwise>
+<need>(prop,snippet_key)</need>
+<prop id="label" x="(prop,snippet_label)(prop,snippets_offset_label)" />
+<tk label="Update: (prop,label)" flag="sum_only">
+<tk label="Name" id="snippet_label" x="new name" tip="A name to remember the thing" type="text" flag=" nono " />
+<tk label="Steps" id="snippet_steps" x="&lt;dump flag=&quot;ti&quot;/&gt;" xtip="()EchnatonCcc Steps, thats the script to be executed()" type="textblock" flag="big nono " />
+<tk label="Description" id="snippet_desc" x="what is the purpose of this snippet?" tip="That should give an idea whats going on" type="textblock" flag=" " />
+</tk>
+</otherwise>
+</choose>
+</job><job id="Add another Snippet" joblevel="ws" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_service job="Snippet Editor" />
+<prop id="snippet_key">1</prop>
+<when test="(f,not,(f,exists,prop,snippets_offset_new_key))">
+<prop id="snippets_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,snippets)" sort="@row" number="@row" xpath="(prop,snippets_offset_new_key)snippet">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="snippet_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Snippet: #(prop,snippet_key)</i>
+<call_service job="To File Snippet" />
+<ti label="Did add Snippet:" x="(f,html,bold,open)(prop,snippet_label)(f,html,bold,close)" />
+<ti_hr />
+<when test="(prop,do_return_job)">
+<call_service job="(prop,snippets_return_job)" />
+</when>
+</job><job role="hidden" id="To File Snippet">
+<need>(prop,snippet_key) (prop,isAdd)</need>
+<spirit act="open" id="snippets_spirit_tc" xml="(file,snippets)" flag="nuevo" />
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,snippets_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,snippets_offset),0,(f,sub,(f,len,(prop,snippets_offset)),1))" />
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,snippets_offset)" />
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="snippets_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;snippet row="(prop,snippet_key)" /&gt;</inline>
+</spirit>
+<spirit act="xml_update" how="set_attribute" attribute="dt_add" id="snippets_spirit_tc" where="(prop,snippets_offset)snippet[@row='(prop,snippet_key)']" value="(f,time)" />
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" attribute="dt_upd" id="snippets_spirit_tc" where="(prop,snippets_offset)snippet[@row='(prop,snippet_key)']" value="(f,time)" />
+<spirit act="xml_update" how="set_attribute" id="snippets_spirit_tc" where="(prop,snippets_offset)snippet[@row='(prop,snippet_key)']" attribute="label" value="(prop,snippet_label)" />
+<spirit act="xml_update" how="set_attribute" id="snippets_spirit_tc" where="(prop,snippets_offset)snippet[@row='(prop,snippet_key)']" attribute="desc" value="(prop,snippet_desc)" />
+<spirit act="xml_update" how="set_attribute" id="snippets_spirit_tc" where="(prop,snippets_offset)snippet[@row='(prop,snippet_key)']" attribute="steps" value="(prop,snippet_steps)" />
+<spirit act="close" flag="save" id="snippets_spirit_tc" />
+</job></jobs>

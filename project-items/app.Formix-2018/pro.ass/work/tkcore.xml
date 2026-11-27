@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ass-tk">
+<need default="">(prop,asss_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" flag="(prop,asss_tk_control)">
+<tk label="Arbeitsschritt" id="ass_bez" x="" test_first="1" tip="Ueberschrift Titel" type="text" flag=" nono "/>
+<tk label="Beschreibung" id="ass_beschreibung" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="Dauer" id="ass_dauer" x="" test_first="0" type="text" flag=" "/>
+<tk label="Einheit" id="ass_einheit" x="" test_first="0" type="sel" flag=" ">
+<sel label="Minuten">1</sel>
+<sel label="Stunden">2</sel>
+</tk>
+</tk>
+</job>

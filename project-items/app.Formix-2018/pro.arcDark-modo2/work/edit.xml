@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo2-edit">
+<need>(prop,modo2_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="modo2-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="modo2-editor"/>
+<call_job job="modo2-write"/>
+<ti align="right" x="+/- Modificator '(prop,modo2_how)'"/>
+<call_job job="modo2-see"/>
+</job>

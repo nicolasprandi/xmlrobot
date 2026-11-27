@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="compi-edit">
+<need>(prop,compi_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="compi-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="compi-editor"/>
+<call_job job="compi-write"/>
+<ti align="right" x="Did update Arcadia-Compilation '(f,text,cut_nice,(f,tk_sel_translate,(prop,compi_compilation),(dir,pro)current-compi-compile-selection.xml),50)'"/>
+<call_job job="compi-see"/>
+</job>

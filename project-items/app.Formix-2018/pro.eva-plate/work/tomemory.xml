@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="plate-read">
+<need>(prop,plate_key)</need>
+<spirit act="open" missing_strategy="empty" id="plates_spirit_tc" xml="(file,plates)"/>
+<prop id="plate_dt_upd">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@dt_upd)</prop>
+<prop id="plate_dt_add">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@dt_add)</prop>
+<prop id="plate_name">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@name)</prop>
+<prop id="plate_category">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@category)</prop>
+<prop id="plate_character">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@character)</prop>
+<prop id="plate_beschreibung">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@beschreibung)</prop>
+<prop id="plate_price_buy">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@price_buy)</prop>
+<prop id="plate_price_sell">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@price_sell)</prop>
+<prop id="plate_parts">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@parts)</prop>
+<prop id="plate_detail">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@detail)</prop>
+<file flag="cool" id="plate_logo">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@logo)</file>
+<unescape type="file" id="plate_logo"/>
+<translate type="file" id="plate_logo"/>
+<prop id="plate_logo_max_x">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@logo_max_x)</prop>
+<prop id="plate_logo_max_y">(f,spirit,plates_spirit_tc,(prop,plates_offset)plate[@row=(f,xpath_string,(prop,plate_key))],@logo_max_y)</prop>
+<spirit act="close" id="plates_spirit_tc"/>
+</job>

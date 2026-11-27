@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="pic" label="Bild" tip="ein Bild" add_edit="1" type="file" desc_flag="0" view_flag="1" nono="1" /><field id="bez" label="Bezeichnung" tip="Bildbezeichnung" add_edit="1" type="text" name_flag="1" name_len="20" nono="1" /><field id="max_x_px" label="Max Breite/Px" tip="in pixel" add_edit="1" type="text" /><field id="max_y_px" label="Max Hoehe/px" default_value="300" tip="in pixel" add_edit="1" type="text" /></fields>

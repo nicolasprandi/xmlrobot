@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="user-tk">
+<need default="">(prop,users_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,users_tk_control) wrap ">
+<tk label="User Id" id="user_userid" x="" test_first="1" tip="The unique name of the Application" type="text" flag=" nono "/>
+<tk label="Db" id="user_db" x="0" test_first="1" tip="Has the user a database account" type="bool" flag=" nono "/>
+<tk label="Granted Apps" id="user_apps" x="" test_first="1" tip="The appliactions which the user can user" type="sel" flag="multi " xml="(dir,pro)app-selector-gui.xml"/>
+<tk label="Role" id="user_role" x="business" test_first="1" tip="The Role - user - expert -admin" type="sel" flag=" nono ">
+<sel label="user">user</sel>
+<sel label="expert">expert</sel>
+<sel label="business">business</sel>
+<sel label="admin">admin</sel>
+<sel label="test">test</sel>
+</tk>
+<tk label="Database" x="Database" test_first="0" tip="Database" type="msg" flag=" "/>
+<tk label="DbSize" id="user_db_size" x="" test_first="1" tip="Maximal size of database in BYTES. Default 1048576" regex="\d+" regex_msg="Must be a number" type="text" flag=" "/>
+<tk label="Privileg Roles" x="Privileg Roles" test_first="0" tip="Privileg Roles" type="msg" flag=" "/>
+<tk label="Privs Roles" id="user_right_privsRoles" x="all" test_first="1" tip="eg all" type="text" flag=" "/>
+<tk label="App Privs Roles" id="user_right_appPrivsRoles" x="all" test_first="1" tip="eg all" type="text" flag=" "/>
+<tk label="priv Paras Roles" id="user_right_privParasRoles" x="all" test_first="1" tip="eg all" type="text" flag=" "/>
+<tk label="Privilegs" x="Privilegs" test_first="0" tip="Privilegs" type="msg" flag=" "/>
+<tk label="Privs" id="user_right_privs" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="App Privs" id="user_right_appPrivs" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="priv Paras" id="user_right_privParas" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="User Information" x="User Information" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="First and Family Name" id="user_name" x="" test_first="0" tip="The blablabla of the blobloblo" type="text" flag=" "/>
+<tk label="Email-Address" id="user_email" x="" test_first="0" type="text" flag=" "/>
+<tk label="Phone numer" id="user_phone" x="" test_first="0" type="text" flag=" "/>
+<tk label="physical Address" id="user_address" x="" test_first="0" type="text" flag=" "/>
+</tk>
+<when test="(f,contains,(prop,users_tk_control),print_only)">
+<when test="(f,has,prop,user_db_size)">
+  <ti_hr/>
+  <ti label="Database Size"/>
+  <ti label="(f,format,(prop,user_db_size),#(e:s)###)" x="bytes" flag="label_right"
+       key=""/>
+  <ti label="(f,format,(f,div,(prop,user_db_size),1024,0),#(e:s)###)" x="kb"  flag="label_right"
+       key="1 kb = 1024 bytes"/>
+  <ti label="(f,format,(f,div,(prop,user_db_size),1048576,2),#(e:s)###)" x="mb"  flag="label_right"
+       key="1 mb = 1048576 bytes"/>
+</when>
+</when>
+
+</job>

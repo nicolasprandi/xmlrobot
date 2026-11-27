@@ -1,0 +1,170 @@
+<?xml version="1.0" ?>
+<jobs>
+  <!-- apps:
+  
+  <file id="joe-in-store">(file,gui-store)</file>  
+  <call_job job="go-joe-read"/>
+  
+  .... tk ....
+  
+    <prop id="joe-in-regex">in-.*</prop>
+  <file id="joe-in-store">(file,gui-store)</file>  
+  <call_job job="go-joe-write"/>
+  
+  -->
+<job id="jack-joe-version" role="dev">
+  <ti>version 3.Mai 2014 - Jar-Loxo-BUILDER - this is for apps !!</ti>
+</job>
+<job id="jack" level="pro" role="hidden">
+  <need>(dir,jack_in)</need>
+  <echo type="dir" id="jack_in" label="JACK RECEIVED:"/>
+  <prop id="jack-continue">1</prop>
+
+  <when test="(prop,jack-continue)">
+    <!-- workspace -->
+    <prop id="jack_out">(f,relative_dir,(dir,jack_in),(dir,workspace))</prop>
+    <cdata type="prop" id="jack_out"/>
+    <!-- <echo type="prop" id="jack_out" label="CONV AAAA:"/> -->
+    <choose>
+      <when test="(f,eq,(dir,jack_in),(dir,workspace))">
+        <prop id="jack_out">(entity:bo)dir(entity:co)workspace(entity:bc)</prop>
+        <prop id="jack-continue">0</prop>
+      </when>      
+      <when test="(f,eq,sorry,(prop,jack_out))">
+        <prop id="jack-continue">1</prop>
+        <prop id="jack_out">(dir,jack_in)</prop>
+      </when>
+      <otherwise>            
+        <prop id="jack_out">(entity:bo)dir(entity:co)workspace(entity:bc)(prop,jack_out)</prop>
+        <prop id="jack_out">(f,replace,(prop,jack_out),(prop,fs),(entity:bo)prop(entity:co)fs(entity:bc))</prop>
+        <prop id="jack-continue">0</prop>
+      </otherwise>
+    </choose>
+    
+  </when>   
+  <when test="(prop,jack-continue)">
+    <!-- system -->
+    <prop id="jack_out">(f,relative_dir,(dir,jack_in),(dir,system))</prop>
+    <choose>
+      <when test="(f,eq,(dir,jack_in),(dir,system))">
+        <prop id="jack_out">(entity:bo)dir(entity:co)system(entity:bc)</prop>
+        <prop id="jack-continue">0</prop>
+      </when>      
+      <when test="(f,eq,sorry,(prop,jack_out))">
+        <prop id="jack-continue">1</prop>
+        <prop id="jack_out">(dir,jack_in)</prop>
+      </when>
+      <otherwise>            
+        <prop id="jack_out">(entity:bo)dir(entity:co)system(entity:bc)(prop,jack_out)</prop>
+        <prop id="jack_out">(f,replace,(prop,jack_out),(prop,fs),(entity:bo)prop(entity:co)fs(entity:bc))</prop>
+        <prop id="jack-continue">0</prop>
+      </otherwise>
+    </choose>
+  </when>
+  <!-- museum 
+  <when test="(prop,jack-continue)">
+    
+    <prop id="jack_out">(f,relative_dir,(dir,jack_in),(dir,museum))</prop>
+    <choose>
+      <when test="(f,eq,(dir,jack_in),(dir,museum))">
+        <prop id="jack_out">(entity:bo)dir(entity:co)museum(entity:bc)</prop>
+        <prop id="jack-continue">0</prop>
+      </when>      
+      <when test="(f,eq,sorry,(prop,jack_out))">
+        <prop id="jack-continue">1</prop>
+        <prop id="jack_out">(dir,jack_in)</prop>
+      </when>
+      <otherwise>            
+        <prop id="jack_out">(entity:bo)dir(entity:co)museum(entity:bc)(prop,jack_out)</prop>
+        <prop id="jack_out">(f,replace,(prop,jack_out),(prop,fs),(entity:bo)prop(entity:co)fs(entity:bc))</prop>
+        <prop id="jack-continue">0</prop>
+      </otherwise>
+    </choose>
+    
+  </when>
+  -->
+  <when test="(f,starts_with,(prop,jack_out),sorry)">
+  <prop id="jack_out">(dir,jack_in)</prop>
+  </when>
+     
+  <!-- 
+  <echo type="dir" id="jack_in" label="Jack In"/>
+  <echo type="prop" id="jack_out" label="Jack Out"/> 
+  -->
+  
+</job>
+
+  <job id="go-joe-read" role="hidden">
+    <try_catch><try>
+    <need>(file,joe-in-store)</need>
+    <when test="(f,file_exists,(file,joe-in-store))">
+      <include file="(file,joe-in-store)"/>
+    </when>
+    </try><catch>
+    <tp>Some problem in reading gui-store: (file,joe-in-store)</tp>
+    </catch></try_catch>
+  </job>
+  
+  <job id="go-joe-write" role="hidden">
+    <dump vars="0"/>
+    <need>(prop,joe-in-regex) (file,joe-in-store)</need>
+    <file id="gj-ask">(dir,systemp)joe-ask.xml</file>
+    <dump vars="0"/>
+    <ask what="vars" out="(file,gj-ask)"/>
+    <ti type="file" x="(file,gj-ask)" test="0"/> 
+    <print act="open" id="jp" out="(file,joe-in-store)"/>
+    <print act="println" id="jp">&lt;?xml version="1.0" ?&gt;&lt;steps&gt;</print>
+    <loop id="j" xml="(file,gj-ask)" xpath="vars/var">
+      <prop id="do-this">1</prop>
+      <when test="(f,and,(f,eq,dir,(loop,j,@type)),(f,eq,(prop,fs),(loop,j)))">
+        <prop id="do-this">0</prop>
+      </when>
+      <when test="(f,matches_regex,(loop,j,@id),(prop,joe-in-regex))">
+      <when test="(prop,do-this)">
+       <ti test="0">(loop,j,@type),(loop,j,@id) = (loop,j)</ti>
+       
+       <print act="print" id="jp" test="(f,eq,prop,(loop,j,@type))">&lt;prop </print>
+       <print act="print" id="jp" test="(f,eq,file,(loop,j,@type))">&lt;file </print>
+       <print act="print" id="jp" test="(f,eq,dir,(loop,j,@type))">&lt;dir </print>
+
+       <print act="print" id="jp">id=&quot;(loop,j,@id)&quot;&gt;</print>
+       <choose>
+        <when test="(f,eq,,(loop,j))">
+          
+        </when>
+        <otherwise>
+          <choose>
+            <when test="(f,eq,prop,(loop,j,@type))">
+             <print act="print" id="jp">(f,ex_xml,(loop,j))</print>
+            </when>
+            <when test="(f,eq,file,(loop,j,@type))">
+             <dir id="jack_in">(f,dir_of_file,(loop,j))</dir>
+             <call_job job="jack"/>
+             <print act="print" id="jp">(f,ex_xml,(prop,jack_out)(f,name_of_file,(loop,j)))</print>
+            </when>
+            <when test="(f,eq,dir,(loop,j,@type))">
+             <dir id="jack_in">(loop,j)</dir>
+             <call_job job="jack"/>
+             <print act="print" id="jp">(f,ex_xml,(prop,jack_out))</print>
+            </when>                  
+          </choose>          
+        </otherwise>
+       </choose>
+
+       
+       <print act="print" id="jp">&lt;</print>
+       <print act="println" id="jp" test="(f,eq,prop,(loop,j,@type))">/prop&gt;</print>
+       <print act="println" id="jp" test="(f,eq,file,(loop,j,@type))">/file&gt;</print>
+       <print act="println" id="jp" test="(f,eq,dir,(loop,j,@type))">/dir&gt;</print>
+
+       </when>
+      </when>
+    </loop>
+    <print act="println" id="jp">&lt;/steps&gt;</print>
+    <print act="close" id="jp"/>
+    <ti_break/>
+    <ti_hr/>
+    <ti label="creator" type="file" test="0">(file,joe-in-store)</ti>
+  </job>
+
+</jobs>

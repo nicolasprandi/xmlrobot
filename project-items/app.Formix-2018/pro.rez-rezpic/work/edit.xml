@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rezpic-edit">
+<need>(prop,rezpic_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="rezpic-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="rezpic-editor"/>
+<call_job job="rezpic-write"/>
+<ti align="right" x="Did update Rezept-Pic '(f,text,cut_nice,(prop,rezpic_bez),20)'"/>
+<call_job job="rez-see"/>
+</job>

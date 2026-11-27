@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="appconf-tk">
+<need default="">(prop,appconfs_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,appconfs_tk_control) wrap ">
+<tk label="Application-XmlRobot" id="appconf_app" x="" test_first="1" tip="id of application in workspace" type="text" flag=" nono "/>
+<tk label="Display-Name" id="appconf_displayname" x="" test_first="1" tip="j2ee-display-name" type="text" flag=" nono "/>
+<tk label="Eclipse-Project-Name" id="appconf_eclipseproject" x="" test_first="1" tip="The name of the eclipse project" type="text" flag=" nono "/>
+<tk label="JeEE-Rolle" id="appconf_login" x="0" test_first="0" tip="Tomcat-rolle die fuer diese ccc-app gebraucht wird" type="text" flag=" "/>
+<tk label="Public App" id="appconf_public" x="0" test_first="0" tip="App can be run without privilegs" type="bool" flag=" nono "/>
+<tk label="Incuded Apps" id="appconf_apps" x="" test_first="1" tip="Applikationen und Services zur Auswahl" type="sel" flag="multi " xml="(dir,pro)app-selector-gui.xml"/>
+<tk label="Description" id="appconf_desc" x="" test_first="1" type="textblock" flag=" "/>
+<tk label="Rule Base" id="appconf_rule_base" x="STANDARD" test_first="1" tip="Which rules to apply" type="sel" flag=" nono ">
+<sel label="STANDARD">STANDARD</sel>
+<sel label="OVERWRITE_ALL">OVERWRITE_ALL</sel>
+<sel label="OVERWRITE_SOME">OVERWRITE_SOME</sel>
+</tk>
+<tk label="Special Project" x="Special Project" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Used Projec Dir" id="appconf_project_dir" x="" test_first="0" tip="project_dir" type="text" flag=" "/>
+<tk label="Clone project dir" id="appconf_clone_project_dir_on" x="" test_first="0" tip="clone_project_dir_on" type="bool" flag=" "/>
+<tk label="Design" x="Design" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Used Css" id="appconf_css" x="" test_first="0" tip="css" type="text" flag=" "/>
+<tk label="Job Embedding" x="Job Embedding" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="First Job" id="appconf_firstjob" x="" test_first="0" tip="The first job to run(e:s) default sys_project_setup" type="text" flag=" "/>
+<tk label="Header" id="appconf_header" x="" test_first="0" tip="header" type="sel" flag=" " xml="(dir,app)sel-header-footer.xml"/>
+<tk label="Special Header Job" id="appconf_header_job" x="" test_first="0" tip="header_job" type="text" flag=" "/>
+<tk label="Footer" id="appconf_footer" x="" test_first="0" tip="footer" type="sel" flag=" " xml="(dir,app)sel-header-footer.xml"/>
+<tk label="Special Footer Job" id="appconf_footer_job" x="" test_first="0" tip="footer_job" type="text" flag=" "/>
+<tk label="Privilegs" x="Privilegs" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Trace On" id="appconf_trace_on" x="" test_first="0" tip="trace_on" type="bool" flag=" "/>
+<tk label="User Role" id="appconf_role" x="" test_first="0" tip="role" type="sel" flag=" ">
+<sel label="expert">expert</sel>
+<sel label="admin">admin</sel>
+</tk>
+<tk label="SELECTION Control" x="SELECTION Control" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Bits" id="appconf_bits" x="" test_first="0" type="sel" flag="multi " xml="(dir,app)sel-bits.xml"/>
+<tk label="File Write" x="File Write" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Decision" id="appconf_uri_wf_bits" x="" test_first="0" type="sel" flag="multi " xml="(dir,app)sel-sel-bits-write.xml"/>
+<tk label="PROJECT Provision Path" id="appconf_uri_wf_prov_pro" x="" test_first="0" type="text" flag=" "/>
+<tk label="File Read" x="File Read" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Decision" id="appconf_uri_rf_bits" x="" test_first="0" type="sel" flag="multi " xml="(dir,app)sel-sel-bits-read.xml"/>
+<tk label="APP Provision Path" id="appconf_uri_rf_prov_app" x="" test_first="0" type="text" flag=" "/>
+<tk label="PROJECT Provision Path" id="appconf_uri_rf_prov_pro" x="" test_first="0" type="text" flag=" "/>
+<tk label="Dir Write" x="Dir Write" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Decision" id="appconf_uri_wd_bits" x="" test_first="0" type="sel" flag="multi " xml="(dir,app)sel-sel-bits-write.xml"/>
+<tk label="PROJECT Provision Path" id="appconf_uri_wd_prov_pro" x="" test_first="0" type="text" flag=" "/>
+<tk label="Dir Read" x="Dir Read" test_first="0" tip="Msg" type="msg" flag=" "/>
+<tk label="Decision" id="appconf_uri_rd_bits" x="" test_first="0" type="sel" flag="multi " xml="(dir,app)sel-sel-bits-read.xml"/>
+<tk label="APP Provision Path" id="appconf_uri_rd_prov_app" x="" test_first="0" type="text" flag=" "/>
+<tk label="PROJECT Provision Path" id="appconf_uri_rd_prov_pro" x="" test_first="0" type="text" flag=" "/>
+</tk>
+</job>

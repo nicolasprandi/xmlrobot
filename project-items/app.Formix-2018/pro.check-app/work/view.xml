@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="app-see-all" level="ws" role="hidden" tip="Lists all App">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-app-view-begin</trace>
+<call_job job="hook-app-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: app-view: begin.0">
+<ti> hook_job=hook-app-view-begin hook=begin page=view station=0 object=app</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="app_loop" xml="(file,apps)" xpath="(prop,apps_offset)app(prop,apps_where)" sort="(prop,apps_sort_attribute)" number="(prop,apps_sort_number)" ignore_case="(prop,apps_sort_ignore_case)" desc="(prop,apps_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,apps_offset_label)),0)">
+<ti label="(prop,apps_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,app_loop,@appid)(f,html,bold,close)" job="app-see">
+<prop id="app_key">(loop,app_loop,@row)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+<ti test="(f,role,user)" type="call_job" explain="Edit" job="app-edit">
+<prop id="app_key">(loop,app_loop,@row)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_job" page="view" explain="(f,html,b,o)(loop,app_loop,@appid)(f,html,b,c) &gt; Db" job="hook-action-app-dbcommand">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">dbcommand</prop>
+<prop page="view" id="app_key">(loop,app_loop,@row)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No App found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,apps_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain_nix="app-add" explain="Add an App" job="app-add">
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,boss)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,apps)</file>
+<prop id="orga_where">(prop,apps_where)</prop>
+<prop id="orga_view_loop_id">app_loop</prop>
+<prop id="orga_finished_job">app-see-all</prop>
+<prop id="orga_offset">(prop,apps_offset)</prop>
+<prop id="orga_offset_label">(prop,apps_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="orga_segment_plural">apps</prop>
+<prop id="orga_segment_singular">app</prop>
+<prop id="orga_segment_plural_label">App</prop>
+<prop id="orga_segment_singular_label">App</prop>
+<prop id="orga_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,apps_sort_number)</prop>
+<prop id="orga_where">(prop,apps_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,app_loop,@appid)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,apps)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,apps_offset)),0)">(prop,apps_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-app-view-end</trace>
+<call_job job="hook-app-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: app-view: end.0">
+<ti> hook_job=hook-app-view-end hook=end page=view station=0 object=app</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

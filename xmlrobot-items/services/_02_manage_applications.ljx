@@ -1,0 +1,1517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<job id="reflect-app-to-wow" role="hidden">
+  <need>(dir,app-tu)</need>
+  <need>(prop,app-tu)</need>
+  <call_service job="go-joe-read">
+    <prop id="joe-in-regex" x="ref_.*"/> 
+    <file id="joe-in-store" x="(dir,status)reflect-app-wow.xrs"/>
+  </call_service>
+
+
+         
+  <tk label="Update app (prop,app-tu)" flag="sum">
+    <tk type="dir" id="ref_repo" label="Local WOW-Repo" 
+    test_first="(f,not,(f,has,dir,ref_repo))"/>
+  </tk>
+  <call_service job="go-joe-write">
+    <file id="joe-in-store" x="(dir,status)reflect-app-wow.xrs"/>
+    <prop id="joe-in-regex" x="ref_.*"/>
+  </call_service>
+  
+  <need>(dir,ref_repo)</need>
+  <dir id="apps-home" x="(dir,ref_repo)xmlrobot-internals/system/service_apps"/>
+  <!-- <interpreter watch="1"/> -->
+  
+  <file id="e" x="(dir,filetemp)e.xml" />
+  <scan dir="(dir,apps-home)" level_limit="1"
+        out="(file,e)"/>
+  <loop id="e" xml="(file,e)" xpath="dir">
+    <when test="(f,eq_text,app.(prop,app-tu),(loop,e,@rpath))">
+      <ti label="tuutt">did found (loop,e,@ipath)</ti>
+      <prop id="found" x="(loop,e,@ipath)"/>    
+    </when>
+  </loop>
+  
+  <when test="(f,not,(f,has,prop,found))">
+    <!-- <interpreter watch="1" />  -->
+    <tk type="msg">This seems to be a new Application.
+The application  
+  [(prop,app-tu)] will be added to the 
+wow-repo 
+  [ (dir,ref_repo) ]
+and there especialle in the app folder
+  [ (dir,apps-home) ]</tk>
+  </when>
+  
+  <prop id="found" x="app.(prop,app-tu)"/>
+  <need>(prop,found)</need>
+
+  <dir id="ziel" x="(dir,apps-home)(prop,found)"/>
+  
+  <file id="appscan" x="(dir,filetemp)appscan.xml"/>
+  <scan dir="(dir,app-tu)" out="(file,appscan)" flag="app_no_pro" field="md5"/>
+  <xml_update
+    what="(file,appscan)"
+    how="remove"
+    where="dir[contains(e:o)@rpath(e:s)(f,xpath_string,nobackup)(e:c)]"
+    flag="catch"/>
+    
+    
+  <call_service job="copy-new">  
+    <dir id="cn-target" x="(dir,ziel)"/>
+    <file id="cn-from-scan" x="(file,appscan)"/>
+    <prop id="cn-report" x="1"/>
+  </call_service>
+
+</job>
+
+<job id="reflect-app-to-lgh" role="hidden">
+  <need>(dir,app-tu)</need>
+  <need>(prop,app-tu)</need>
+  <dump_ti_all label="reflect app to lgh" test="0"/>
+  
+  <!-- <interpreter act="reload" test="(f,not,(f,has,dir,system))"/>  
+  <dir id="status2"  xx="(dir,system)status" 
+       x="C:\Users\nicolas\Desktop\XS-0518\xmlrobot-base-RINO-2018-08-28\xmlrobot-internals\system\service_apps\app.Arc-Jar-Composer\pro.WebBase\cache\status\"/>          -->
+  <ti type="dir" label="status" x="(dir,status)"/>
+  <call_service job="go-joe-read">
+    <file id="joe-in-store" x="(dir,status)reflect-app-store.xrs"/>
+    <prop id="joe-in-regex" x="ref_.*"/>
+  </call_service>
+
+
+         
+  <tk label="Update app (prop,app-tu)" flag="sum">
+    <tk type="dir" id="ref_repo" label="Local GH-Repo" 
+    test_first="(f,not,(f,has,dir,ref_repo))"/>
+  </tk>
+  <call_service job="go-joe-write">
+    <file id="joe-in-store" x="(dir,status)reflect-app-store.xrs"/>
+    <prop id="joe-in-regex" x="ref_.*"/>
+  </call_service>
+  
+  <file id="e" x="(dir,filetemp)e.xml" />
+  <scan dir="(dir,ref_repo)xmlrobot-items(prop,fs)workspaces" level_limit="2"
+        out="(file,e)"/>
+  <loop id="e" xml="(file,e)" xpath="dir/dir">
+    <when test="(f,eq_text,app.(prop,app-tu),(loop,e,@rpath))">
+      <ti>(loop,e,@rpath)</ti>
+      <prop id="found" x="(loop,e,@ipath)"/>    
+    </when>
+  </loop>
+  
+  <when test="(f,not,(f,has,prop,found))">
+    <!-- <interpreter watch="1" />  -->
+    <call_service job="go-joe-read">
+      <file id="joe-in-store" x="(dir,status)reflect-new-app-1.xrs"/>  
+      <prop id="joe-in-regex" x="new-app-action"/>
+    </call_service>
+      
+    <tk label="This seems to be a new app">
+      <tk type="sel" id="new-app-action" flag="nono">
+        <sel label="Add to an existing workspace">inexisting</sel>
+        <sel label="Create a new workspace">create</sel>
+      </tk>       
+    </tk>
+    
+
+    <call_service job="go-joe-write">
+      <file id="joe-in-store" x="(dir,status)reflect-new-app-1.xrs"/>  
+      <prop id="joe-in-regex" x="new-app-action"/>
+    </call_service>    
+    
+    <choose>
+      <when test="(f,eq_text,(prop,new-app-action),inexisting)">
+      
+        <file id="wsscan" x="(dir,filetemp)workspace-scan.xml"/>
+        <scan dir="(dir,ref_repo)xmlrobot-items(prop,fs)workspaces(prop,fs)" 
+              out="(file,wsscan)" 
+              level_limit="1"/> 
+              
+              
+        <file id="wsscan2" x="(dir,filetemp)workspace-scan2.xml"/>      
+        <xslt 
+          xml="(file,wsscan)" 
+          out="(file,wsscan2)">
+          <inline attribute="xsl" flag="log"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="dir/dir"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="dir">
+   <sel><xsl:value-of select="@rpath"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>   
+      
+      <call_service job="go-joe-read">
+        <file id="joe-in-store" x="(dir,status)reflect-new-app-in-existing.xrs"/>  
+        <prop id="joe-in-regex" x="ws-ref"/>
+      </call_service>
+          
+      <tk label="Select a workspace">   
+      <tk type="sel"       
+      id="ws-ref" label="Workspace" xml="(file,wsscan2)" flag="nono" 
+      tip="The app '(prop,app-tu)' will be added to the seleced workspace"/>
+      </tk>
+      
+      <call_service job="go-joe-write">
+        <file id="joe-in-store" x="(dir,status)reflect-new-app-in-existing.xrs"/>  
+        <prop id="joe-in-regex" x="ws-ref"/>
+      </call_service>      
+      
+      
+        <prop id="found" x="(prop,ws-ref)(prop,fs)app.(prop,app-tu)"/>            
+
+              
+        
+      </when>
+      <when test="(f,eq_text,(prop,new-app-action),create)">
+        <tk id="ws-name" label="Workspacename" x="All-New" flag="nono"/>
+        <prop id="found" x="ws.(prop,ws-name)(prop,fs)app.(prop,app-tu)"/>
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+      
+      <mkdir dir="(dir,ref_repo)xmlrobot-items(prop,fs)workspaces(prop,fs)(prop,found)" />
+  </when>
+ 
+  <dir id="ziel" x="(dir,ref_repo)xmlrobot-items(prop,fs)workspaces(prop,fs)(prop,found)"/>
+  
+  <file id="appscan" x="(dir,filetemp)appscan.xml"/>
+  <scan dir="(dir,app-tu)" out="(file,appscan)" flag="app_no_pro" field="md5"/>
+  <xml_update
+    what="(file,appscan)"
+    how="remove"
+    where="dir[contains(e:o)@rpath(e:s)(f,xpath_string,nobackup)(e:c)]"
+    flag="catch"/>
+    
+    
+  <call_service job="copy-new">  
+    <dir id="cn-target" x="(dir,ziel)"/>
+    <file id="cn-from-scan" x="(file,appscan)"/>
+    <prop id="cn-report" x="1"/>
+  </call_service>
+
+</job>
+
+<job id="do manage current application" role="hidden">
+  <need default="1">(prop,dmca-details)</need>
+  <need default="Application Management">(prop,dmca-header)</need>
+  
+        <ti label="(prop,dmca-header)" xpadding_top="3px" xpadding_bottom="5px" xsize="2"/>
+               
+          <ti type="call_service" label="Backup:" job="Backup: Application" explain="Make a Backup of (f,upper,(prop,app))"/>     
+          <ti type="call_service" label=" " job="See Application Backups" explain="See Backups"/>
+          <!-- 
+          <ti type="call_service" label=" " job="update-app" explain="Update Application from a download">
+            <dir id="app-tu" x="(dir,app)"/>
+            <prop id="app-tu" x="(prop,app)"/>
+          </ti>     
+          -->   
+          
+           <ti type="call_service" label=" " job="reflect-app-to-lgh" explain="Reflect application to local GH-Repo"
+        xtest="(f,role,admin)">
+            <dir id="app-tu" x="(dir,app)"/>
+            <prop id="app-tu" x="(prop,app)"/>
+          </ti>    
+          
+           <ti type="call_service" label=" " job="reflect-app-to-wow" explain="Wow-Webserver (e:o)xmlrobot tomcat(e:c)"
+        test="(f,role,admin)">
+            <dir id="app-tu" x="(dir,app)"/>
+            <prop id="app-tu" x="(prop,app)"/>
+          </ti>                  
+             
+
+          <ti type="call_service" label="Admin:" job="ibc-import-bckconn-4app" explain="Import Backup-Connector"
+              test="(f,role,admin)">
+            <prop id="import-into-app">(prop,app)</prop>
+          </ti>  
+                      
+          <ti type="call_service" label="Developer:" job="list_jobs" explain="List Jobs sorted by Id">
+            <prop id="list_jobs_type">app</prop>
+            <prop id="list_jobs_app">(prop,app)</prop>
+          </ti>  
+          <ti label="Job Templates" test="(f,role,dev)"/>          
+          <ti type="call_service" label="Service Adapter:" test="(f,role,admin)"
+          		job="import-service-adapter" explain="Import Service Adapter">
+            <prop id="import-into-app">(prop,app)</prop>
+          </ti> 
+          
+          <ti type="call_service" label="Service Adapter:" test="(f,role,admin)"
+          		job="import-service-adapter-online" explain="Import Services Adapter ONLINE">
+            <prop id="import-into-app">(prop,app)</prop>
+          </ti>           
+                           
+          <ti type="call_service" label="Copy jobfiles:" test="(f,role,admin)"
+          		job="import-sample-job" explain="Coding Samples">
+            <prop id="import-into-app">(prop,app)</prop>
+            <prop id="simple">0</prop>
+          </ti>    
+          <ti type="call_service" label=" " test="(f,role,admin)"
+          		job="import-sample-job" explain="Very simple job">
+            <prop id="import-into-app">(prop,app)</prop>
+            <prop id="simple">1</prop>
+          </ti>              
+          
+          <ti type="call_service" label="Generate tk-structure:" test="(f,role,admin)"
+          		job="import-tk" explain="Tk Template">
+            <prop id="import-into-app">(prop,app)</prop>
+          </ti>            
+ 
+                                    
+        <choose>
+	      <when test="(prop,dmca-details)">
+	        <ti_hr />
+
+  	      <dir id="with">(dir,app)</dir>
+          <!--<ti label="Application-Folder" size="2" padding_top="10px"/>    -->
+          <call_service job="Goto-Panorama"/>
+        </when>
+        <otherwise>
+          <ti_break/> 
+          <ti_hr/>        
+        </otherwise>
+        </choose>
+</job>
+
+<job id="run-an-lsx" role="hidden">        
+  <need>(file,with)</need>
+  <try_catch>
+    <try>
+      <include file="(file,with)" test="(f,not,(f,guicontroller,general,is-web,))"/>
+    </try>
+    <catch>
+      <ti label="Problem"/>
+        <ti label="run-an-xsl" type="file" x="(file,with)"/>
+        <ti label="Message:"  x="(f,vob,prop,catched_msg)"/>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="Application Management?">
+  <ti label="About: Application Management">
+    <ti type="ul">Lets you see the Help for application</ti>
+    <ti type="ul">Lets you change the role for applications</ti>
+    <ti type="ul">Lets you see the License-Info for applications</ti>
+    <ti type="ul">Lets you manage the applications</ti>
+    <ti type="ul">Lets you add a new application</ti>
+    <ti type="call_service" job="Application Management" explain="Do Application Management now"/>
+    
+  </ti>
+  
+</job>
+
+<job id="Project Management?">
+  <ti label="About: Project Management">
+    <ti type="ul">Lets you create a new project</ti>
+    <ti type="ul">Lets you see all projects of an application</ti>
+    <ti type="ul">Lets you create a new project</ti>
+    <ti type="ul">Lets you manage the project</ti> 
+    <ti type="call_service" job="Project Management" explain="Do Project Management now"/>       
+  </ti>
+</job>
+<job id="Application Projectlist" role="hidden" joblevel="ws">
+  <need>(prop,with-app)</need>
+  <need default="1">(prop,with-current-pro)</need>
+  <need default="Projects">(prop,apl-header)</need>
+  <ti label="(prop,apl-header)"/>
+  <file id="ask" x="(dir,filetemp)manage-app-prolist.xml"/>
+  <ask out="(file,ask)" what="apps" app="(prop,with-app)" style="natural"/>
+  
+  <loop id="a" xml="(file,ask)" xpath="apps/app[@id=(f,xpath_string,(prop,with-app))]/pro" missing_strategy="empty">
+    <prop id="explain" x="(loop,a,@id)"/>
+    <prop id="link" x="1"/>
+    <when test="(f,and,(f,has,prop,pro),1)"> <!-- (prop,with-current-pro) -->
+      <when test="(f,and,(f,eq,(prop,pro),(loop,a,@id)),(f,eq,(prop,app),(loop,a,..,@id)))">
+        <prop id="explain" x="(f,html,bold,open)(loop,a,@id)(f,html,bold,close)"/>
+        <prop id="link" x="0"/>
+      </when>
+    </when>
+    <ti label="(loop,a,#i)." flag="label_right" type="rec">
+      <ti type="call_service" job="App goes Project" explain="(prop,explain)"
+          test="(prop,link)" flag="silent">
+        <prop id="with-app" x="(prop,with-app)"/>
+        <prop id="with-pro" x="(loop,a,@id)"/>
+        <prop id="with-current-pro" x="(f,vob,prop,pro)" test="(f,has,prop,pro)"/>
+      </ti>
+      <ti test="(f,not,(prop,link))">(loop,a,@id) *</ti>
+    </ti>
+  
+  </loop>
+  
+  <ti label="(f,html,bold,open)+(f,html,bold,close)" 
+      type="rec" 
+      flag="label_right">
+    <ti type="call_service" 
+        job="item-add-pro-empty" 
+        explain="(f,html,bold,open)New Project(f,html,bold,close)" 
+        flag="arrow">
+      <prop id="empty-app" x="(prop,with-app)"/>
+    </ti>
+  </ti>  
+  
+  
+</job>
+
+<job id="Application Projectlist-2" role="hidden" joblevel="ws">
+  <need>(prop,with-app)</need>
+  <need default="1">(prop,with-current-pro)</need>
+  <need default="Projects">(prop,apl-header)</need>
+  <ti label="Projects: (f,upper,(prop,with-app))" xlabel="(prop,apl-header)"/>
+    <ti type="call_service" 
+        job="Application Projectlist"
+        explain="See Projects"
+        labxel=" ">
+      <prop id="with-app">(prop,with-app)</prop>   
+      <prop id="with-current-pro">(prop,with-current-pro)</prop>   
+      <prop id="apl-header">Projects of (prop,with-app)</prop>
+    </ti>
+    
+    <ti type="call_service" 
+        job="item-add-pro-empty" 
+        explain="New Project" 
+        flag="arrow">
+      <prop id="empty-app" x="(prop,with-app)"/>
+    </ti>  
+  
+  
+</job>
+
+<job id="App goes Project" role="hidden">
+  <need>(prop,with-app) (prop,with-pro)</need>
+  <choose>
+    <when test="(f,not,(f,and,(f,eq_text,Standard-Project,(prop,with-pro)),(f,ask,app_has_static_pro,(prop,with-app))))">
+      <ti_switch app="(prop,with-app)" pro="(prop,with-pro)"/>
+    </when>
+    <otherwise>
+      <ti_switch app="(prop,with-app)" pxro=""/>
+    </otherwise>
+  </choose>
+  
+  <!-- <restart app="(prop,with-app)" pro="(prop,with-pro)"/> -->
+
+</job>
+
+<job id="Application Joblist" role="hidden" joblevel="ws">
+  <need>(prop,with-app)</need>
+  <need default="">(prop,with-pro)</need>
+  <need default="0">(prop,with-tip)</need>
+  <need default="1">(prop,with-intro)</need>
+  
+  <file id="ask" x="(dir,filetemp)manage-app-joblist.xml"/>
+  <ask out="(file,ask)" what="apps" style="natural"/>
+  
+  <when test="(f,and,(prop,with-tip),(prop,with-intro))">
+    <ti test="0" align="right">Searching for tip ...</ti>
+    <try_catch>
+      <try>          
+        <prop id="app-tip" 
+              x="(f,xpath,(file,ask),apps/app[@id=(f,xpath_string,(prop,with-app))],@tip)"/>
+        <ti label="App '(prop,with-app)'">
+          <ti flag="wrap">(f,html,i,open)(prop,app-tip)(f,html,i,close)</ti>
+        </ti>
+      </try>
+      <catch/>
+    </try_catch>  
+  </when>
+ 
+  <!-- standard apps -->
+  
+  <when test="(prop,with-intro)">  
+    <try_catch>
+      <try>          
+        <prop id="app-help" x="(f,xpath,(file,ask),apps/app[@id=(f,xpath_string,(prop,with-app))]/jobs/job[@id='?'])"/>
+        <ti label="? (prop,with-app)" type="rec">
+          <ti flag="wrap" span="9" test="0">(f,html,i,open)Prints the application help(f,html,i,close)</ti>
+          <ti type="call_service"
+              job="Job Information"
+              explain="About: App (prop,with-app)">
+              <prop id="with-app" x="(prop,with-app)"/>
+              <prop id="with-job" x="?"/>
+          </ti>
+        </ti>
+        <when test="(f,gt,(f,length,(prop,with-app)),10)">
+          <ti_break/>
+        </when>
+       
+      </try>
+      <catch/>
+    </try_catch>
+      
+  </when>
+
+  <ti_break/>
+  <ti_hr/>
+  <ti label="See job help"/>
+        
+  <loop id="a" 
+        xml="(file,ask)" 
+        xpath="apps/app[@id=(f,xpath_string,(prop,with-app))]/jobs/job"
+        missing_strategy="empty">
+    <prop id="take" x="0" />
+    <prop id="comment" x="" />
+    <choose>
+      <when test="(f,ends_with,(loop,a,@id),?)">
+        <prop id="take" x="0" />
+      </when>    
+      <when test="(f,eq,user,(loop,a,@role))">
+        <prop id="take" x="1" />
+      </when>
+      <when test="(f,eq,expert,(loop,a,@role))">
+        <prop id="take" x="1" />
+        <when test="(f,role,user)">
+          <prop id="comment" x="(e:o)Job is only available with role 'expert'(e:c)" />
+        </when>
+      </when> 
+      <when test="(f,role,(loop,a,@role))">
+        <prop id="take" x="1" />
+      </when>     
+    </choose>
+    
+    <when test="(prop,take)">
+      <try_catch>
+        <try>          
+          <prop id="help-job" 
+                x="(f,xpath,(file,ask),apps/app[@id=(f,xpath_string,(prop,with-app))]/jobs/job[@id=(f,xpath_string,(loop,a,@id)?)])"/>
+          <prop id="has-help" x="1"/>
+        </try>
+        <catch>
+          <prop id="has-help" x="0"/>
+        </catch>
+      </try_catch>
+
+        <ti test="(prop,has-help)" 
+            type="call_service"
+            job="Job Information"
+            explain="(loop,a,@id)   ?"
+	          key="(f,text,cut_nice,(loop,a,@tip),60)"
+	          flag="no_arrow noarrow nowrap no_wrap">
+            <prop id="with-app" x="(prop,with-app)"/>
+            <prop id="with-pro" x="(prop,with-pro)"/>
+            <prop id="with-job" x="(loop,a,@id)?"/>
+        </ti>
+         
+	      <ti test="(f,not,(prop,has-help))" 
+            x="(loop,a,@id)  " 
+            key="(f,text,cut_nice,(loop,a,@tip),60)"/>
+    </when>
+  </loop>
+  
+</job>
+
+<job id="Job Information" role="hidden">
+  <need>(prop,with-app)</need>
+  <need default="">(prop,with-pro)</need>
+  <need>(prop,with-job)</need>
+  <!-- <dump flag="ti"/> -->
+  
+  <choose>
+    <when test="(f,has,prop,with-pro)">
+      <call_job
+        job="(prop,with-job)"
+        app="(prop,with-app)"
+        pro="(prop,with-pro)"
+        flag="silent"/>    
+    </when>
+    <otherwise>
+      <call_job
+        job="(prop,with-job)"
+        app="(prop,with-app)"
+        flag="silent"/>     
+    </otherwise>
+  </choose>
+</job>
+
+<job  id="Applications?">
+
+    <ti label="About: Applications"/>
+    <ti>(f,html,bold,open)Lists the installed applications(f,html,bold,close)</ti>
+  <ti type="ul">See application-info by clicking 'App-Info'</ti>
+  <ti type="ul">See list of projects of an application by clicking 'Projects'</ti>
+  <ti type="ul">Change the user-role of a specific application by pressing eg. '&#8594;  user'. </ti>
+  <ti type="ul">With the user-role you can hide applications(e:s) but they are still working in background</ti>  
+    
+</job>
+<job  id="see-gh-apps" role="hidden">
+
+      <call_job app="Arcadia"
+                pro="Standard-Project"
+                job="List Applications"/>   
+      
+
+</job>
+<!-- 
+<job  id="Installed Applications" 
+      joblevel="ws" 
+      tip="Lists installed applications"
+      role="hidden"">
+
+
+  <call_service job="Applications"/>
+</job>
+
+<job  id="Installed Applications?" 
+      joblevel="ws" 
+      tip="Lists installed applications">
+      <call_service job="Applications?"/>
+</job>  -->
+
+<job  id="Applications" 
+      joblevel="ws" 
+      tip="Lists installed applications">
+  <try_catch>
+    <try>
+      <prop id="icap-has-standard-pro" x="1"/>
+      <prop id="sadfasdf" x="(f,ask,pro_data_dir,Arcadia,Standard-Project)"/>
+    </try>
+    <catch>
+      <prop id="icap-has-standard-pro" x="0"/>
+    </catch>
+  </try_catch>      
+  
+  <when test="(f,and,(f,ask,exists_app,Arcadia),(prop,icap-has-standard-pro))">
+    <ti type="call_service" job="see-gh-apps" explain="See apps from github"/>
+  </when>      
+  <prop id="ma-unsimple" x="0"/>
+  <need default="change-app-print">(prop,ma-detail-job)</need>
+  
+  <file id="ask" x="(dir,filetemp)manage-apps-ask.xml"/>
+  <ask out="(file,ask)" what="apps" style="natural"/>
+
+  <ti_space height="4px"/>
+  <!-- standard apps -->
+  <ti label="Applications" key="in workspace '(prop,workspace)'"/>
+  <loop id="a" xml="(file,ask)" xpath="apps/app[@sa='0']"  missing_strategy="empty">
+    <call_service job="applications-detail"/>
+  </loop>
+  <ti_hr/>
+
+  <!-- service apps -->
+  <ti label="Service Applications"/>
+  <loop id="a" xml="(file,ask)" xpath="apps/app[@sa='1']"  missing_strategy="empty">
+    <call_service job="applications-detail"/>
+  </loop>  
+  
+  <ti_hr/>
+  <ti label="Install"/>
+  <ti  
+       type="call_service"
+       job="item-add-app-zip"
+       explain="Install an application">
+       <dir id="target-dir">(dir,workspace)</dir>	
+  </ti>	
+ 
+</job>
+
+<job id="applications-detail" role="hidden" joblevel="ws">
+
+  
+
+  <ti type="rec" label="(f,html,bold,open)(loop,a,@id)(f,html,bold,close)">
+    <ti type="call_service"
+        job="change-app-role"
+        explain="! (loop,a,@role)" 
+        flag="arrow">
+        <prop id="chg-app" x="(loop,a,@id)"/>
+        <prop id="chg-app-role" x="(loop,a,@role)"/>
+        <dir id="chg-app" x="(loop,a,@dir)"/>
+    </ti>
+    <ti type="call_service"
+        job="See Application Help"
+        explain="App Info">
+        <prop id="with-app" x="(loop,a,@id)"/>
+    </ti>   
+    <ti type="call_service"
+        job="Application Projectlist"
+        explain="Projects">
+        <ti label="App '(loop,a,@id)'" />
+        <prop id="with-app" x="(loop,a,@id)"/>
+        <prop id="with-current-pro" x="0"/>
+    </ti>       
+ 
+    <ti flag="wrap" span="8">(f,html,i,open)(loop,a,@tip)(f,html,i,close)</ti>
+                     
+
+
+  </ti>
+</job>
+
+<job id="Application License" role="hidden">
+
+</job>
+
+<job  id="Panorama" 
+      joblevel="ws" 
+      tip="Select a folder and go to panorama" 
+      role="user">
+  <call_service job="Select Directory"/>
+</job>
+
+<job id="File-Action-History" role="dev" joblevel="ws">
+  <call_service job="cmr-hist-list-core">
+    <prop id="cmr-hist-list-last" x="1"/>
+  </call_service>
+</job>
+
+<job id="File-Action-History?" role="hidden" joblevel="ws">
+  <call_service job="tk_crmco_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_service" job="tk_crmco_edit" explain="Edit this"/>
+
+</job>
+
+<job id="Manage Projects of all Applications" role="hidden" joblevel="ws">
+  
+  <file id="ask" x="(dir,filetemp)manage-apps-ask.xml"/>
+  <ask out="(file,ask)" what="apps" style="natural"/>
+  
+  <!-- standard apps -->
+  <when test="(f,has,prop,app)">
+    <loop id="a" 
+          xml="(file,ask)" 
+          xpath="apps/app[@id=(f,xpath_string,(prop,app))]"
+           missing_strategy="empty">
+      <call_service job="change-app-print-2-v2"/>
+    </loop>
+  </when>
+  <ti_hr/>
+  <!-- <ti label="(f,html,i,open)All Applications(f,html,i,close)"/> --> 
+  <loop id="a" xml="(file,ask)" xpath="apps/app"  missing_strategy="empty">
+    <when test="(f,role,(loop,a,@role))">
+    	<call_service job="change-app-print-2"/>
+    </when>
+  </loop>
+  
+
+</job>
+
+<job id="change-app-print-2" role="hidden" joblevel="ws">
+
+  <prop id="key" x=""/>
+  <prop id="key" x="(f,xpath,(loop,a,@dir)app-info.xml,.,@tip)" flag="catch"/>
+
+  <ti type="rec" 
+	    label="(f,html,bold,open)(loop,a,@id)(f,when,(f,eq,(loop,a,@id),(prop,app)), *,)(f,html,bold,close)"
+	     key="(f,text,cut_nice,(prop,key),40)">
+
+    <ti type="call_service"
+        job="Application Projectlist"
+        explain="See Projects" 
+        flag="arrow">
+        <ti label="App '(loop,a,@id)'" />
+        <prop id="with-app" x="(loop,a,@id)"/>
+        <prop id="with-current-pro" x="0"/>
+    </ti>    
+    
+    <ti type="call_service" job="item-add-pro-empty" explain="New Project" flag="arrow">
+      <prop id="empty-app" x="(loop,a,@id)"/>
+    </ti>   
+
+  </ti>
+</job>
+
+
+<job id="change-app-print-2-v2" role="hidden" joblevel="ws">
+  <ti_space height="4px"/>
+    
+  <ti label="(f,upper,(loop,a,@id)):" type="call_service" job="item-add-pro-empty" explain="Add New Project" flag="arrow">
+    <prop id="empty-app" x="(loop,a,@id)"/>
+  </ti>
+
+  <ti label=" " 
+      type="call_service"
+      job="Application Projectlist"
+      explain="See Projects" 
+      flag="arrow">
+      <when test="1">
+      <ti label="Application (f,upper,(loop,a,@id))" />
+      </when>
+      <prop id="with-app" x="(loop,a,@id)"/>
+      <prop id="with-current-pro" x="0"/>
+  </ti>     
+  
+  <ti_space height="3px"/>
+</job>
+
+<job id="Manage Applications" role="hidden" joblevel="ws">
+  <need default="1">(prop,ma-unsimple)</need>
+  <need default="change-app-print">(prop,ma-detail-job)</need>
+  
+  <file id="ask" x="(dir,filetemp)manage-apps-ask.xml"/>
+  <ask out="(file,ask)" what="apps" style="natural"/>
+   
+  <prop id="ma-span" x="4" test="(prop,ma-unsimple)"/>
+  <prop id="ma-span" x="6" test="(f,not,(prop,ma-unsimple))"/>
+
+  <ti type="call_service" 
+      job="add-app-from-mgmt" 
+      label="Install a" 
+      explain="new application" />
+
+  <!-- current app -->
+  <when test="(f,has,prop,app)">
+    <loop id="a" xml="(file,ask)" xpath="apps/app[@id=(f,xpath_string,(prop,app))]"  missing_strategy="empty">
+      <ti label="(f,html,i,open)Current Application(f,html,i,close)"/>
+      <call_service job="(prop,ma-detail-job)"/>
+    </loop>
+  </when>
+  
+  <!-- standard apps -->
+  <ti_hr/>
+  <ti label="(f,html,i,open)Application in '(prop,workspace)'(f,html,i,close)"/>
+  <loop id="a" xml="(file,ask)" xpath="apps/app[@sa='0']"  missing_strategy="empty">
+    <call_service job="(prop,ma-detail-job)"/>
+  </loop>
+  
+  <!-- service apps -->
+  <ti_hr/>
+  <ti label="(f,html,i,open)Service Applications(f,html,i,close)"/>
+  <loop id="a" xml="(file,ask)" xpath="apps/app[@sa='1']"  missing_strategy="empty">
+    <call_service job="(prop,ma-detail-job)"/>
+  </loop>  
+
+</job>
+
+<job id="See Application Help" role="hidden" joblevel="ws">
+  <need>(prop,with-app)</need>
+  <call_job
+  job="?"
+  app="(prop,with-app)"
+  flag="silent"/>  
+  
+</job>
+<job id="change-app-print" role="hidden" joblevel="ws">
+
+  
+
+  <ti type="rec" label="(f,html,bold,open)(loop,a,@id)(f,html,bold,close)">
+    <!-- <ti flag="wrap">xxxxxxxxxxx(f,html,i,open)(loop,a,@tip)(f,html,i,close)</ti>                      -->
+    <ti type="call_service"
+        job="change-app-role"
+        explain="(loop,a,@role)" 
+        flag="arrow"
+        test="(prop,ma-unsimple)">
+        <prop id="chg-app" x="(loop,a,@id)"/>
+        <prop id="chg-app-role" x="(loop,a,@role)"/>
+        <dir id="chg-app" x="(loop,a,@dir)"/>
+    </ti>
+    <ti type="call_service"
+        job="Goto-Panorama"
+        explain="Folder" 
+        flag="arxrow"
+        test="(prop,ma-unsimple)">
+        <dir id="with" x="(loop,a,@dir)"/>
+    </ti>
+     <ti type="call_service"
+        job="See Application Help"
+        explain="Help" 
+        flag="arxrow">
+        <prop id="with-app" x="(loop,a,@id)"/>
+    </ti>   
+    <ti type="call_service"
+        job="Application Joblist"
+        explain="Jobs" 
+        flag="arxrow">
+        <prop id="with-app" x="(loop,a,@id)"/>
+        <prop id="with-tip" x="1"/>
+    </ti>
+    <ti type="call_service"
+        job="Application Projectlist"
+        explain="Pros" 
+        flag="arxrow">
+        <ti label="App '(loop,a,@id)'" />
+        <prop id="with-app" x="(loop,a,@id)"/>
+        <prop id="with-current-pro" x="0"/>
+    </ti>       
+ 
+    <ti flag="wrap" span="(prop,ma-span)">(f,html,i,open)(loop,a,@tip)(f,html,i,close)</ti>
+
+    
+ 
+
+
+  </ti>
+</job>
+
+<job id="change-app-print-3" role="hidden" joblevel="ws">
+
+
+  <choose>
+    <when test="(f,role,expert)">
+      <prop id="see" x="1"/>
+    </when>
+    <otherwise>
+      
+      <prop id="see" x="(f,role,(loop,a,@role))"/>
+      <ti test="0">checked for role (loop,a,@role)</ti>      
+    </otherwise>
+  </choose>
+
+  
+
+  <ti test="(prop,see)" type="rec" label="(f,html,bold,open)(loop,a,@id)(f,when,(f,eq,(prop,app),(loop,a,@id)), *,)(f,html,bold,close)">
+    <!-- <ti flag="wrap">xxxxxxxxxxx(f,html,i,open)(loop,a,@tip)(f,html,i,close)</ti>                      -->
+
+    <ti type="call_service"
+        job="manage-this-app"
+        explain="Manage" 
+        flag="arxrow">
+        <prop id="with-app" x="(loop,a,@id)"/>
+        
+    </ti>  
+     <ti type="call_service"
+        job="See Application Help"
+        explain="Help" 
+        flag="arxrow">
+        <prop id="with-app" x="(loop,a,@id)"/>
+    </ti>   
+    <ti type="call_service"
+        job="change-app-role"
+        explain="(loop,a,@role)" 
+        flag="arrow">
+        <prop id="chg-app" x="(loop,a,@id)"/>
+        <prop id="chg-app-role" x="(loop,a,@role)"/>
+        <dir id="chg-app" x="(loop,a,@dir)"/>
+    </ti>
+
+
+    
+
+    
+    
+ 
+    <ti flag="wrap" span="6">(f,html,i,open)(loop,a,@tip)(f,html,i,close)</ti>
+
+    
+ 
+
+
+  </ti>
+</job>
+
+<job id="manage-this-app" role="hidden">
+  <need>(prop,with-app)</need>
+  <choose>
+    <when test="(f,eq,(prop,app),(prop,with-app))">
+      <call_service job="Application"/>
+    </when>
+    <otherwise>
+
+      <create_file out="(dir,filetemp)written.lsx"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+<call_service job="Application"/> 
+</steps>]]></create_file>
+
+      <call_service job="restarter">
+       <file id="with-lsx" x="(dir,filetemp)written.lsx" />
+      </call_service>
+
+      <restart app="(prop,with-app)" pro=""/>
+   
+    </otherwise>
+  
+  </choose>
+
+
+
+</job>
+
+<job id="change-app-role" role="hidden" joblevel="ws">
+  <need>(prop,chg-app) (dir,chg-app) (prop,chg-app-role)</need>
+  <tk label="Change application visibility">
+  <tk type="sel" 
+      id="new-role" 
+      flag="nono"
+      x="(prop,chg-app-role)"
+      label="New Role for application: (prop,chg-app)"
+      tip="()Bring this application to another role. By attaching a specific role to an application you can chang the visiblity of the application in the user-interface. But its still here, you just dont see it. See the currently active role on the bottom of the screen. You find something like 'role: user'. Change your current role there!()">
+      <sel>public</sel>
+      <sel>user</sel>
+      <sel>expert</sel>
+      <sel>business</sel>
+      <sel>admin</sel>
+      <sel>test</sel>
+      <sel>dev</sel>
+      <sel>hidden</sel>
+  </tk>
+  </tk>
+  
+  <choose>
+    <when test="(f,eq,(prop,chg-app-role),(prop,new-role))">
+      <ti>Nothing changed(e:s) application '(prop,chg-app)' will stay with role '(prop,chg-app-role)' </ti>
+    </when>
+    <when test="(f,eq,,(prop,new-role))">
+      <ti>Nothing changed(e:s) application '(prop,chg-app)' will stay with role '(prop,chg-app-role)' </ti>
+    </when>    
+    <otherwise>
+      <!-- going to change -->
+      <file id="ai" x="(dir,chg-app)app-info.xml"/>
+      <choose>
+        <when test="(f,file_exists,(file,ai))">
+          <xml_update
+            what="(file,ai)"
+            where="."
+            how="set_attribute"
+            attribute="role"
+            value="(prop,new-role)"/>
+        </when>
+        <otherwise>
+          <create_file out="(file,ai)">&lt;app-info role=&quot;(prop,new-role)&quot;/&gt;</create_file>
+        </otherwise>
+      </choose>
+      <!-- nic123 insert here the restart job -->
+      
+      <create_file out="(dir,filetemp)written.lsx" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+
+<ti label="Did update role of application">
+  <ti label="Application:" x="(prop,chg-app)"/>
+  <ti label="New role:" x="(prop,new-role)"/>  
+  <ti label="Old role:" x="(prop,chg-app-role)"/>
+
+  <ti label="Updated config file:" type="file" x="(file,ai)"/>
+</ti>
+
+<ti_hr/>
+
+<call_service job="Applications"/> 
+</steps>]]></create_file>
+
+<call_service job="restarter">
+ <file id="with-lsx" x="(dir,filetemp)written.lsx" />
+</call_service>
+
+      <restart/>
+    </otherwise>
+  </choose>
+
+</job>
+<!-- <call_service job="project-info-final"/> -->
+<job id="project-info-final" role="hidden">
+  <need>(prop,from-app) (prop,from-pro) (dir,from-pro)</need>
+
+  <ti_hr/>
+  <file id="ask" 
+        x="(dir,filetemp)ask.xml"
+        style="natural" /> 
+  
+  <!-- ask for system information -->
+  <ask what="apps" 
+       out="(file,ask)" 
+       app="(prop,from-app)"
+       style="natural"/>
+  <!-- <ti label="(prop,from-pro) "/>   --> 
+  <ti label="Run a job in &apos;(prop,from-pro)&apos;"/> 
+  <loop 
+    id="sx" 
+    xml="(file,ask)" 
+    xpath="apps/app/jobs/job" 
+    missing_strategy="empty">
+    <when test="(f,role,(loop,sx,@role))">
+    <when test="(f,not,(f,ends_with,(loop,sx,@id),?))">
+     
+    <try_catch>
+      <try>          
+        <prop id="help-job" 
+              x="(f,xpath,(file,ask),apps/app[@id=(f,xpath_string,(prop,from-app))]/jobs/job[@id=(f,xpath_string,(loop,sx,@id)?)])"/>
+        <prop id="has-help" x="1"/>
+      </try>
+      <catch>
+        <prop id="has-help" x="0"/>
+      </catch>
+    </try_catch>
+
+    <ti type="rec" >  
+    <ti 
+      label="(loop,sx,#i)" 
+      type="call_service" 
+      job="do-that-now"
+      explain="&#x2192; Go:   (loop,sx,@id)">
+      <prop id="from-app">(prop,from-app)</prop>
+      <prop id="from-pro">(prop,from-pro)</prop>
+      <dir id="from-pro">(dir,from-pro)</dir>
+      <prop id="from-job">(loop,sx,@id)</prop>
+    </ti>
+    
+    <ti span="8">(f,html,i,open)(loop,sx,@tip)(f,html,i,close)</ti>
+
+        <ti test="(prop,has-help)" 
+            type="call_service"
+            job="Job Information"
+            explain="&#160;&#160;?&#160;&#160;"
+	          flag="no_arrow">
+            <prop id="with-app" x="(prop,from-app)"/>
+            <prop id="with-pro" x="(prop,from-pro)"/>
+            <prop id="with-job" x="(loop,sx,@id)?"/>
+        </ti>
+         
+	      <ti test="(f,not,(prop,has-help))" 
+            x="  "/>            
+    </ti>
+        
+    </when> 
+    </when>
+  </loop>       
+</job>
+
+
+
+<job id="app-info-final" role="hidden">
+  <need default="0">(prop,with-intro)</need>
+  <need>(prop,aif-app)</need>
+
+  <prop id="with-app" x="(prop,aif-app)"/>
+  <prop id="with-tip" x="1"/>
+  <when test="(f,eq,(prop,aif-app),(prop,app))">
+    <prop id="with-pro" x="(prop,pro)" test="(f,has,prop,pro)"/>
+  </when>
+  
+  <call_service job="Application Joblist"/>  
+
+
+
+
+
+        
+</job>
+
+<job id="Application Management" joblevel="ws" tip="Application Management" role="hidden">
+
+
+
+<call_service job="Manage Applications">
+  <prop id="ma-detail-job" x="change-app-print-3"/>
+</call_service>
+
+<ti_hr/>
+
+<!-- current application -->
+<when test="(f,exists,prop,app)">
+  <call_service job="do manage current application">
+    <prop id="dmca-details" x="0"/>
+    <prop id="dmca-header" x="(f,html,i,open)Manage Current Application:(f,html,i,close) (prop,app) *" />
+  </call_service>
+</when>
+
+
+</job>
+
+<job id="Application" role="hidden" joblevel="app" tip="informing about the current application">
+
+  <choose>
+    <when test="(f,exists,prop,app)">
+      
+      <call_service job="do manage current application"/>
+       <!-- <ti_break/>  -->
+            
+      <when test="(f,exists,prop,pro)">
+        <ti_flush/>
+        <ti_hr/>
+        <!-- <call_service job="Project"/> -->  
+      </when>
+      <ti_hr/>
+      <ti_break/>
+      <when test="1">
+        <prop id="aif-app" x="(prop,app)"/>
+        <call_service job="app-info-final" />
+      </when>
+         
+  
+      
+    </when>
+    <otherwise>
+      <ti label="No Application selected."/>
+    </otherwise>
+  </choose>  
+  <!-- 
+    <when test="(f,exists,prop,app)">
+      <when test="(f,role,expert)">
+        <prop id="with-app" x="(prop,app)"/>
+        <prop id="with-pro" x="(prop,pro)" test="(f,has,prop,pro)"/>
+        <prop id="with-tip" x="(f,role,expert)"/>
+        <call_service job="Application Joblist"/>  
+        
+        <ti type="call_service"
+           job="item-add-pro-empty"
+           label=" "
+           explain="(f,html,bold,open)Create a new (prop,app) PROJECT here ...(f,html,bold,close)"/>
+       <ti_hr/>
+      </when>  
+    </when>
+    -->
+  
+</job>
+
+<job id="update-app" role="hidden">
+  <need>(dir,app-tu)</need>
+  <need>(prop,app-tu)</need>
+  <call_service job="go-joe-read">
+    <file id="joe-in-store" x="(dir,status)update-app-store.xrs"/>
+  </call_service>
+  <dir id="dir-base" x=""/>
+  <dir id="dir-base" x="(f,dir_of_dir,(dir,new_dir))"
+       test="(f,has,dir,new_dir)"/>
+
+  <dir id="file-base" x=""/>
+  <dir id="file-base" x="(f,dir_of_file,(file,new_file))"
+       test="(f,has,file,new_file)"/>
+         
+  <tk label="Update app (prop,app-tu)" flag="sum_only">
+    <tk type="dir" id="new_dir" label="Application Directory" test_first="0"
+      base="(dir,dir-base)"/>
+    <tk type="file" id="new_file" label="Application Zip" test_first="0"
+      base="(dir,file-base)"/>
+  </tk>
+  <call_service job="go-joe-write">
+    <file id="joe-in-store" x="(dir,status)update-app-store.xrs"/>
+    <prop id="joe-in-regex" x="new_.*"/>
+  </call_service>
+
+  <choose>
+    <when test="(f,has,dir,new_dir)">
+      <dir id="from-dir" x="(dir,new_dir)"/>
+    </when>
+    <when test="(f,has,file,new_file)">
+      <dir id="from-dir" x="(dir,filetemp)extracted-app-zip-from-update"/>
+
+        <unzip 
+        file="(file,new_file)" 
+        todir="(dir,from-dir)"/>
+
+    </when>
+    <otherwise>
+      <throw>Specify Directory or Zip of newer Application-Source</throw>
+    </otherwise>    
+  </choose>
+  <tk type="msg" x="Did you do a backup first ??" msg_type="w"/>
+  
+  
+  <ti type="dir" x="(dir,app-tu)"/>  
+  <ti type="dir" x="(dir,from-dir)"/>
+  <ti_flush/>
+  <tk type="msg" x="Going to overwrite application"/>
+  
+  <call_service job="update-app-central"/>
+  
+</job>
+
+<job id="update-app-central" role="hidden">
+
+
+     <delete content_of_dir="(dir,app-tu)"/>
+     <copy uri="(dir,from-dir)" touri="(dir,app-tu)"/>
+   
+    <tk type="msg" x="Ok(e:s) you should restart now !"/>
+    <call_service job="Goto-Panorama">
+      <dir id="with" x="(dir,app-tu)"/>
+    </call_service>
+</job>
+
+
+
+<job id="Link: Application" role="hidden" joblevel="app">
+  
+  <tk id="app-to-link" 
+      label="Select the Application" 
+      tip="A link to this application is set"
+      type="dir"/>
+  <dir id="jack_in">(dir,app-to-link)</dir>
+  
+</job>
+
+<job id="Import: Application" role="hidden" joblevel="app">
+
+  <tk id="from" label="Select the Application" tip="A link to this application is set"
+      type="file" extension=".zip"/>
+
+</job>
+
+
+<job id="ibc-import-bckconn-4app" role="hidden" joblevel="app">
+    <need>(prop,import-into-app)</need>
+    <tk type="msg">Sure to import backup-connector?</tk>
+    <dir id="target-app" x="(f,ask,app_dir,(prop,import-into-app))"/>
+    <file id="target-file" x="(dir,target-app)zz-backup-adapter.xrj"/>
+    <when test="(f,file_exists,(file,target-file))">
+      <tk type="msg" msg_type="w" msg="The file 'zz-backup-adapter.xrj' exists already in the application. You have to specify another filename to write."/>
+      <tk type="file" id="target-file" flag="save nono" label="Save job-file as ..."/>
+    </when>
+    <when test="(f,file_exists,(file,target-file))">
+			<tk label="Overwrite existing File ?" 
+					type="accept" 
+					id="delete-pro-1" 
+					x="In your application '(prop,import-into-app)' exists already this file.&#xA;Its the file &#xA;(file,target-file)&#xA;This file will be replaced" 
+
+					label_accept="Overwrite" 
+					label_decline="Forget it" 
+					width="300" height="150">
+						<q id="delete-pro-2" label="()Yes, I know that the existing file will be gone forever()"/>
+			</tk>
+			<when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+				<throw>Operation terminated on request.</throw>
+			</when>
+    </when>    
+    
+    
+	 <copy file="(dir,services)zz-backup-adapter.xrj-template" tofile="(file,target-file)"/>
+	
+	<ti label="Import of sample-job performed">
+	 <ti label="Imported:" type="file" x="(file,target-file)"/>
+	 <ti label=" " type="call_service" 
+        job="Restart" />
+	</ti>
+      
+</job>
+
+<job id="import-sample-job" role="hidden" joblevel="app">
+	<need>(prop,import-into-app) (prop,simple)</need>
+	<file id="ask" x="(dir,filetemp)isa-ask.xml" />
+	<ask what="apps" out="(file,ask)" style="natural"/>	
+	<dir id="target-app">(f,xpath,(file,ask),apps/app[@id=(f,xpath_string,(prop,import-into-app))],@dir)</dir>
+	<tk label="(f,when,(prop,simple),Import Simple Job,Import Coding Samples)">
+  	<tk type="file" 
+        flag="save nono" 
+        id="target" 
+        x="(dir,target-app)jobs.xrj" 
+        label="Save job-template as ..."/>
+  </tk>
+
+	<choose>
+		<when test="(f,not,(f,file_exists,(file,target)))">
+			<!-- file doesnt exists, all right -->
+		</when>
+		<otherwise>
+			<!-- file exists, going to ask -->
+			<tk label="Overwrite existing File ?" 
+					type="accept" 
+					id="delete-pro-1" 
+					x="In your application '(prop,import-into-app)' exists already this file.&#xA;Its the file &#xA;(file,target)&#xA;This file will be replaced" 
+
+					label_accept="Overwrite" 
+					label_decline="Forget it" 
+					width="300" height="150">
+						<q id="delete-pro-2" label="()Yes, I know that the existing file will be gone forever()"/>
+			</tk>
+			<when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+				<throw>Operation terminated on request.</throw>
+			</when>
+		</otherwise>
+	</choose>
+
+	 <copy file="(dir,services)(f,when,(prop,simple),job-template-simple.xml,job-template.xml)" tofile="(file,target)"/>
+	
+	<ti label="Import of sample-job performed">
+	 <ti label="Imported:" type="file" x="(file,target)"/>
+	 <ti label=" " type="call_service" 
+        job="Restart" />
+	</ti>
+	
+</job>
+
+<job id="import-tk" role="hidden" joblevel="app">
+	<!-- <interpreter watch="1" /> -->
+	<need>(prop,import-into-app)</need>
+	<tk id="titel"
+      type="text"
+      label="Name"
+      flag="nono"
+      regex="()[a-z]{2,6}()"
+      regex_msg="2 to 6 small characters"
+      tip="This is the internal technical name. Will occure in the software."/>
+      
+  <file id="target" x="(f,ask,app_dir,(prop,import-into-app))tk_(prop,titel).xrj"/>
+  
+  <!-- file exists, going to ask -->
+  <when test="(f,file_exists,(file,target))">			
+		<tk label="Overwrite existing tk-file ?" 
+				type="accept" 
+				id="delete-pro-1" 
+				x="In your application '(prop,import-into-app)' exists already a tk-sample.&#xA;Its the file (file,target)&#xA;This file will be replaced" 
+				label_accept="Overwrite" 
+				label_decline="Forget it" 
+				width="300" height="150">
+					<q id="delete-pro-2" label="()Yes, I know that the existing tk-sample will be overwritten and gone forever()"/>
+		</tk>
+		<when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+			<throw>Operation terminated on request.</throw>
+		</when>  
+  </when>
+  
+  <!-- creating the sample -->
+  <create_file file="(file,target)">(f,replace,(f,file_content,(dir,services)tk_sample.xml),sample_,(prop,titel)_,sample-,(prop,titel)-)</create_file>
+
+  <ti label="Creation of tk-sample performed">
+		<ti label="New Tk:" type="file" x="(file,target)" />
+		<ti label="Service Adapter:" type="call_service" 
+        job="import-service-adapter"
+        explain="Import Service Adapter here"
+        test="(f,not,(f,exists_file,(f,ask,app_dir,(prop,import-into-app))service-adapter.ljx))">
+        <prop id="import-into-app" x="(prop,import-into-app)"/>
+    </ti>
+    <ti label=" " type="call_service" 
+        job="Restart" />
+	</ti>
+</job>
+<job id="import-service-adapter-online" role="hidden" joblevel="app">
+	<interpreter watch="1" />
+	<need>(prop,import-into-app)</need>
+	<file id="ask" x="(dir,filetemp)isa-ask.xml" />
+	<ask what="apps" out="(file,ask)" style="natural" />
+	
+	<dir id="target-app">(f,xpath,(file,ask),apps/app[@id=(f,xpath_string,(prop,import-into-app))],@dir)</dir>
+
+	<dir id="zoran-app">(f,xpath,(file,ask),apps/app[@id='Zoran'],@dir)</dir>
+	
+	<prop id="sa" x="zz-online-adapter.xrj" />
+	
+	<choose>
+		<when test="(f,not,(f,file_exists,(dir,target-app)(prop,sa)))">
+			<!-- file doesnt exists, all right -->
+		</when>
+		<otherwise>
+			<!-- file exists, going to ask -->
+			<tk label="Overwrite existing Service-Adapter ONLINE ?" 
+					type="accept" 
+					id="delete-pro-1" 
+					x="In your application '(prop,import-into-app)' exists already a service-adatpter.&#xA;Its the file (dir,target-app)(prop,sa)&#xA;This file will be replaced" 
+					label_accept="Overwrite" 
+					label_decline="Forget it" 
+					width="300" height="150">
+						<q id="delete-pro-2" label="()Yes, I know that the existing service-adapter will be gone forever()"/>
+			</tk>
+			<when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+				<throw>Operation terminated on request.</throw>
+			</when>
+		</otherwise>
+	</choose>
+	
+		<copy file="(dir,zoran-app)(prop,sa)" 
+					tofile="(dir,target-app)(prop,sa)" 
+					overwrite="true" 
+					preservelastmodified="true"/>
+	
+	<ti label="Import of service-adapter performed">
+		<ti label="New:" type="file" x="(dir,target-app)(prop,sa)" />
+		<ti label=" " type="call_service" 
+        job="Restart" />
+	</ti>
+	
+</job>
+
+<job id="import-service-adapter" role="hidden" joblevel="app">
+	<!-- <interpreter watch="1" /> -->
+	<need>(prop,import-into-app)</need>
+	<file id="ask" x="(dir,filetemp)isa-ask.xml" />
+	<ask what="apps" out="(file,ask)" style="natural" />
+	
+	<dir id="target-app">(f,xpath,(file,ask),apps/app[@id=(f,xpath_string,(prop,import-into-app))],@dir)</dir>
+
+	<dir id="panorama-app">(f,xpath,(file,ask),apps/app[@id='Panorama'],@dir)</dir>
+	
+	<prop id="sa" x="service-adapter.xrj" />
+	
+	<choose>
+		<when test="(f,not,(f,file_exists,(dir,target-app)(prop,sa)))">
+			<!-- file doesnt exists, all right -->
+		</when>
+		<otherwise>
+			<!-- file exists, going to ask -->
+			<tk label="Overwrite existing Service-Adapter ?" 
+					type="accept" 
+					id="delete-pro-1" 
+					x="In your application '(prop,import-into-app)' exists already a service-adatpter.&#xA;Its the file (dir,target-app)(prop,sa)&#xA;This file will be replaced" 
+					label_accept="Overwrite" 
+					label_decline="Forget it" 
+					width="300" height="150">
+						<q id="delete-pro-2" label="()Yes, I know that the existing service-adapter will be gone forever()"/>
+			</tk>
+			<when test="(f,not,(f,and,(prop,delete-pro-1),(prop,delete-pro-2)))">
+				<throw>Operation terminated on request.</throw>
+			</when>
+		</otherwise>
+	</choose>
+	
+		<copy file="(dir,panorama-app)(prop,sa)" 
+					tofile="(dir,target-app)(prop,sa)" 
+					overwrite="true" 
+					preservelastmodified="true"/>
+	
+	<ti label="Import of service-adapter performed">
+		<ti label="New:" type="file" x="(dir,target-app)(prop,sa)" />
+		<ti label=" " type="call_service" 
+        job="Restart" />
+	</ti>
+	
+</job>
+
+  <job id="Installed Apps?" joblevel="ws">
+
+    <ti label="About: Installed Apps">
+    <ti>(f,html,bold,open)Informs about applications(f,html,bold,close)</ti>
+    <ti type="ul">gives a list of applications</ti>
+<ti type="ul">offers standard application help</ti>
+<ti type="ul">offers a help for every job of the application</ti>
+<ti type="ul">gives a list of all projects of the application</ti>
+<ti type="call_service" job="Installed Apps" explain="See Installed Apps now"/>
+    </ti>
+    
+  </job>
+  
+  <job id="Panorama?" joblevel="ws">
+    
+    <call_service job="go-joe-read">
+      <file id="joe-in-store">(dir,status)last-pano-ic.lsx</file>  
+    </call_service>
+    <when test="(f,has,dir,dir_to_see)">
+      <ti type="dir" label="Last Dir:" x="(dir,dir_to_see)" />
+      <ti label=" " type="call_service" job="Goto-Panorama">
+        <dir id="with" x="(dir,dir_to_see)"/>
+      </ti>
+    </when>    
+
+    <ti label="About: Panorama"/>
+    <ti>(f,html,bold,open)Invokes the internal file-browser 'panorama'(f,html,bold,close)</ti>
+    <ti type="ul">Lets you select a directory</ti>
+<ti type="ul">Offers a list of xmlrobot-folder-types</ti>
+<ti type="ul">Remembers the last directory</ti>
+<ti type="ul">Jumps to panorama-browser</ti>
+    
+  </job>  
+  
+<job id="info_current_app" joblevel="ws" role="hidden">
+
+  <dir id="something" x="(dir,status)prim-pros(prop,fs)(prop,app)"/>
+  <mkdir dir="(dir,something)" flag="cascade"/>
+
+  <call_job
+      test="(f,ask,exists_job,(prop,app),?)" 
+      job="?"
+      app="(prop,app)"/>
+  
+</job>    
+<!-- 
+<job id="See Current Application Help" role="hidden">
+  
+  <call_job
+    job="?"
+    app="(prop,app)"
+    flxag="silent"/>
+  
+</job>  
+-->
+ 
+</jobs>

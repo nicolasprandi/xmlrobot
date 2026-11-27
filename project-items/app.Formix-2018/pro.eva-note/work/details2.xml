@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="note-see-more">
+<need>(prop,note_key)</need>
+<call_job job="note-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="notes_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,tk_sel_translate,(prop,note_aspect),(dir,pro)aspect-selector-gui.xml)(f,html,bold,close)(f,when,(f,has,(prop,notes_offset_label)), - (prop,notes_offset_label),)"/>
+<call_job job="note-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="Edit" job="note-edit">
+<prop id="note_key">(prop,note_key)</prop>
+<file id="notes">(file,notes)</file>
+<prop id="notes_offset">(prop,notes_offset)</prop>
+<prop id="notes_offset_label">(prop,notes_offset_label)</prop>
+<prop id="notes_offset_new_key">(prop,notes_offset_new_key)</prop>
+<prop id="notes_sort_attribute">(prop,notes_sort_attribute)</prop>
+<prop id="notes_sort_number">(prop,notes_sort_number)</prop>
+<prop id="notes_where">(prop,notes_where)</prop>
+<prop id="notes_return_job">(prop,notes_return_job)</prop>
+</ti>
+</ti>
+</job>

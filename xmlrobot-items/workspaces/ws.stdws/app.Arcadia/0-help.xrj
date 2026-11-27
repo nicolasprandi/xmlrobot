@@ -1,0 +1,365 @@
+<?xml version="1.0" ?>   
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+<job id="???" >
+  <call_job job="get-has-active-project" />
+  
+  <choose>
+    <when test="(prop,has-active-project)">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <call_job job="?"/>
+    </otherwise>
+  </choose>  
+
+
+</job>
+
+<job id="?">
+
+  <need default="1">(prop,with-joblist)</need>
+  <when test="(f,not,(f,file_exists,(file,project-exists)))">
+    <ti label="Welcome"/>
+    <ti type="call_job" job="sys_project_setup" explain="Go and configure the project ..."/>
+    <ti_hr/>
+  </when>
+
+  <ti label="When to use Application (f,html,i,open)Arcadia(f,html,i,close) :">
+    <ti type="ul">(f,html,bold,open)You want to download XmlRobot-Apps from a github-repository</ti>
+    <ti type="ul">(f,html,bold,open)You want to download Java-Libraries from a github-repository</ti>
+    <ti type="ul">(f,html,bold,open)You want to generate XmlRobot-Base from a github-repository</ti>
+  </ti>
+
+  <ti label="RECO: Source-Code-Upates in allen javas"/>
+  <ti label="/*[requo-timer]*/">Das setzt das Ablaufdatum in den source-code ein</ti>
+   <ti label="/*[requo-customer]*/">Das setzt die Kunden-Info in den source-code ein</ti>
+   <ti label="/*[requo-crypto]*/">Das setzt die cryptagraphisches verwirrungsdings ein; wird allerdings nur in core abgearbeitet</ti>
+   
+  <ti label="Einbinden CUSTOM-BUILDER"/>
+  <ti wrap="word">im compile gibt es als 2ten block (f,html,b,o)Prolog-Specification(f,html,b,c). Hier wird das import-file verlinkt</ti>
+  <ti wrap="word">Hier wird dann ein file verlinkt welches mit aller wahrscheinlichkeit in einem anderen arcadia-projekt liegt</ti>
+  <ti wrap="word">Dann geht man in dieses referenzierte arcadia-projekt und editiert dort die prolog-spec.</ti>
+  <call_service job="app-info-final" flag="silent" test="(prop,with-joblist)">
+    <prop id="aif-app" x="(prop,app)"/>
+  </call_service>
+</job>
+
+ 
+<job id="??">
+  <interpreter test="0" watch="1"/>
+  <need default="1">(prop,with-joblist)</need>  
+  
+  <call_job job="get-has-active-project" />
+  <choose>
+  <when test="(prop,has-active-project)">
+
+    <ti label="Current Project-Data: (prop,pro)" test="0"/>
+    <ti label="Generated XmlRobot" test="(f,exists_dir,(dir,ultimo2))">
+      <ti label="Result:" type="dir" x="(dir,ultimo2)"/>  
+    </ti>  
+    <ti label="Performed java-compilations"/>
+    <call_job job="see-java-compilations"/>   
+    <call_job job="docu-java-step">
+      <prop id="steps" x="material" />
+    </call_job>   
+    <ti_hr/>  
+    <call_job job="tk_jvcp_print_values_small"/>
+    <ti_hr/>
+    <ti type="call_job" label="Action" job="smart-up-project" explain="Reduce Project-Content for relocation (e:o)Prepare for relocation(e:c)"/>
+        
+   </when>  
+   <otherwise>
+    <ti label="Hi. Do something with Arcadia"/>
+    <ti type="call_job" job="sys_project_setup" explain="Go and configure the project ...">
+
+    </ti>
+   </otherwise>
+   
+   </choose>
+   
+  <call_service job="project-info-final" flag="silent">
+    <prop id="from-app" x="(prop,app)"/>
+    <prop id="from-pro" x="(prop,pro)"/>
+    <dir id="from-pro" x="(dir,pro)"/>
+  </call_service>    
+  <!-- 
+  <choose>
+  <when test="(prop,has-active-project)">     
+      <call_service job="app-info-final" flag="silent" test="(prop,with-joblist)">
+        <prop id="aif-app" x="(prop,app)"/>
+      </call_service>      
+    </when>
+    <otherwise>
+      <call_job job="?" />
+    </otherwise>
+  </choose> 
+  -->  
+ 
+
+
+</job> 
+
+<job id="smart-up-project" role="hidden">
+
+  <tk type="msg" msg="Sure to smartup project and reduce its content ?&#xA;Hier werden alle compiles und compile-ergebnisse geloescht. &#xA;nur die parameter bleiben erhalten.&#xA;zusaetzlich muessen noch die einzelnen compiles removed werden.&#xA;dafuer gibts einen link im compile." msg_type="w"/>
+  <prop id="cx">(f,random_text,3)</prop>
+  <tk id="cx2" label="Enter &quot;(prop,cx)&quot;" />
+  <throw test="(f,not,(f,eq_text,(prop,cx),(prop,cx2)))">sorry</throw>
+  <tk type="msg" msg="Final question: Sure to smartup project and reduce its content ?" msg_type="w"/>
+  <ti label="Deleting"/>
+  
+  <dir id="delfolder">(dir,zelix-logs)</dir>  <call_job job="del-folder" />
+
+  <dir id="delfolder">(dir,zelix-output)</dir>  <call_job job="del-folder"/>
+  
+  <dir id="delfolder">(dir,zelix-input)</dir>  <call_job job="del-folder"/>
+  
+
+  <dir id="delfolder">(dir,pro)working</dir>  <call_job job="del-folder"/>
+  
+  <dir id="delfolder">(dir,ultimo)</dir>  <call_job job="del-folder"/>
+  <dir id="delfolder">(dir,ultimo2)</dir>  <call_job job="del-folder"/>
+
+
+        
+</job>
+
+<job id="del-folder" role="hidden">
+  <need>(dir,delfolder)</need>
+  <choose>
+    <when test="(f,exists_dir,(dir,delfolder))">
+      <delete dir="(dir,delfolder)" />
+      <ti label="deleted" type="dir">(dir,delfolder)</ti>
+    </when>
+    <otherwise>
+      <ti label="no need to deleted-exists" type="dir">(dir,delfolder)</ti>
+    </otherwise>
+  </choose>
+</job>  
+
+<job id="get-has-active-project" role="hidden">
+
+
+
+  <prop id="has-active-project" x="(f,exists_file,(file,project-exists))"/>
+  <!--
+  <prop id="has-active-project" x="0"/>
+
+  <when test="(f,exists_dir,(dir,ultimo2))">
+    <prop id="has-active-project" x="1"/>
+  </when>
+  
+  <file id="x" x="(dir,temp)x.xml"/>
+  <scan dir="(dir,pro)" level_limit="1" out="(file,x)"/>
+  <loop id="dirs" xml="(file,x)" xpath="dir">
+    <when test="(f,starts_with,(loop,dirs,@rpath),compile-)">
+      <prop id="has-active-project" x="1"/>
+    </when>
+  </loop>  
+   -->
+</job>
+
+<job id="print-that" role="hidden">
+
+  <ti label="(prop,load-type)" test="(f,exists_dir,(dir,cc))"/>
+  <ti label="(prop,load-type)" type="dir" x="(dir,cc)" test="(f,exists_dir,(dir,cc))"/> 
+    
+  <ti label="AppPot" type="dir" x="(dir,bb)" test="(f,exists_dir,(dir,bb))"/> 
+  <ti label=" " type="file" x="(file,final-build)" test="(f,exists_file,(file,final-build))"/>
+         
+</job>
+
+<job id="Generate XmlRobot?" >
+  <ti label="About: Generate XmlRobot">
+    <ti type="ul">Build the complete XmlRobot based on github</ti>
+
+  </ti>
+  <when  test="(f,exists_dir,(dir,ultimo2))">
+    <ti_hr/>
+    <ti label="Current Job-Data"/>
+    <ti label="Generated XmlRobot"/>
+    <ti label="Presentation:" type="dir" x="(dir,ultimo2)"/>  
+    <prop id="has-active-project" x="1"/>
+  </when>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Generate XmlRobot" explain="Go"/>
+    </ti>
+  </when>
+</job> 
+
+<job id="Template?">
+  <ti label="About: ">
+    <ti type="ul"></ti>
+    <ti type="ul"></ti>
+    <ti type="ul"></ti>
+  </ti>
+</job>
+
+<job id="List Applications?">
+  <ti label="About: List Applications">
+    <ti type="ul">List applications from github</ti>
+    <ti type="ul">Download application</ti>
+    <ti type="ul">Compare with currently installed application</ti>
+    <ti type="ul">Refresh/Install application</ti>           
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="List Applications" explain="Go"/>
+    </ti>
+  </when>  
+</job>
+
+<job id="Compile/Build Core?">
+  <ti label="About: Compile/Build Core">
+    <ti type="ul">This is the 1st step in Generating XmlRobot</ti>
+    <ti type="ul">It compiles the xmlrobot-java software</ti>
+    <ti type="ul">That includes the interpreter and the terminal/client</ti>
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Compile/Build Core" explain="Go"/>
+    </ti>
+  </when>   
+</job>
+
+<job id="Compile/Build Apache Ant?">
+  <ti label="About: Compile/Build Apache Ant">
+    <ti type="ul">This is the 2nd step in Generating XmlRobot</ti>
+    <ti type="ul">It compiles the apache ant</ti>
+    <ti type="ul">Apache ant is an integrated part of XmlRobot</ti>
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Compile/Build Apache Ant" explain="Go"/>
+    </ti>
+  </when>     
+</job>
+
+<job id="Compile/Build Panorama?">
+  <ti label="About: Compile/Build Panorama">
+    <ti type="ul">This is the 3rd step in Generating XmlRobot</ti>
+    <ti type="ul">It compiles the java-libs used in the application &apos;Panorama&apos;</ti>
+    <ti type="ul">Panorama is an integrated part of XmlRobot</ti>
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Compile/Build Panorama" explain="Go"/>
+    </ti>
+  </when>   
+</job>
+
+<job id="Compile/Build Compare?">
+  <ti label="About: Compile/Build Compare">
+    <ti type="ul">This is the 4th step in Generating XmlRobot</ti>
+    <ti type="ul">It compiles the java-libs used in the application &apos;Compare&apos;</ti>
+    <ti type="ul">Compare is an integrated part of XmlRobot</ti>
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Compile/Build Compare" explain="Go"/>
+    </ti>
+  </when>   
+</job>
+
+<job id="Finish XmlRobot?">
+  <ti label="About: Finish XmlRobot">
+    <ti type="ul">This is the 5th step in Generating XmlRobot</ti>
+    <ti type="ul">It assembles all files for XmlRobot</ti>
+    <ti type="ul">That includes all previousely compiled items like: core(e:s) apache-ant(e:s) Panorama and Compare</ti>
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Finish XmlRobot" explain="Go"/>
+    </ti>
+  </when>   
+</job>
+
+<job id="Check Services?">
+  <ti label="About: Check Services">
+    <ti type="ul">Download the XmlRobot-Services from github</ti>
+    <ti type="ul">It assembles all files for XmlRobot</ti>
+    <ti type="ul">That includes all previousely compiled items like: core(e:s) apache-ant(e:s) Panorama and Compare</ti>
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Check Services" explain="Go"/>
+    </ti>
+  </when>   
+</job>
+
+<job id="Download files from GHub?">
+  
+  <ti label="About: Download files from GHub">
+    <ti type="ul">Download any files from github</ti>
+  </ti>
+  <ti_hr/>
+  <choose>
+    <when test="(f,exists_file,(file,caft-data))">
+     <call_job job="tk_caft_print_values_tips">
+      <prop id="caft_header" x="Current Job-Data"/>
+     </call_job>
+    </when>
+    <otherwise>
+      <call_job job="tk_caft_print_help">
+        <prop id="caft_header" x="Info about parameters"/>
+      </call_job>
+    </otherwise>
+  </choose>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Download files from GHub" explain="Go"/>
+    </ti>
+  </when>  
+</job>
+
+<job id="Edit: Configuration?">
+  
+  <ti label="About: Edit: Configuration">
+    <ti type="ul">()repository, credential, local java-compiler, wlan-options()</ti>
+  </ti>
+  <ti_hr/>
+  <choose>
+    <when test="(f,exists_file,(file,jvcp-data))">
+     <call_job job="tk_jvcp_print_values_tips">
+      <prop id="jvcp_header" x="Current Job-Data"/>
+     </call_job>
+    </when>  
+    <otherwise>
+      <call_job job="tk_jvcp_print_help">
+        <prop id="caft_header" x="Info about parameters"/>
+      </call_job>  
+    </otherwise>
+  </choose>
+
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Edit: Configuration" explain="Go"/>
+    </ti>
+  </when>    
+</job>
+
+</jobs>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="imp-read">
+    <need>(prop,imp_key)</need>
+    <spirit act="open" missing_strategy="empty" id="imps_spirit_tc" xml="(file,imps)"/>
+    <prop id="imp_dt_upd">(f,spirit,imps_spirit_tc,(prop,imps_offset)imp[@row=(f,xpath_string,(prop,imp_key))],@dt_upd)</prop>
+    <prop id="imp_dt_add">(f,spirit,imps_spirit_tc,(prop,imps_offset)imp[@row=(f,xpath_string,(prop,imp_key))],@dt_add)</prop>
+    <prop id="imp_point">(f,spirit,imps_spirit_tc,(prop,imps_offset)imp[@row=(f,xpath_string,(prop,imp_key))],@point)</prop>
+    <prop id="imp_on">(f,spirit,imps_spirit_tc,(prop,imps_offset)imp[@row=(f,xpath_string,(prop,imp_key))],@on)</prop>
+    <prop id="imp_desc">(f,spirit,imps_spirit_tc,(prop,imps_offset)imp[@row=(f,xpath_string,(prop,imp_key))],@desc)</prop>
+    <prop id="imp_work">(f,spirit,imps_spirit_tc,(prop,imps_offset)imp[@row=(f,xpath_string,(prop,imp_key))],@work)</prop>
+    <spirit act="close" id="imps_spirit_tc"/>
+</job>

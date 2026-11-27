@@ -1,0 +1,141 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="core-distribute" role="hidden">
+  <ti>core-distribute!!</ti>
+  
+ <interpreter watch="0"/>
+  <ti>in job: core-operation-integrate-zelix-outputs</ti>
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_para_print_values"/>
+  <ti_hr/>
+  <ti label="Performing Distribution to j2ee-server"/>
+  <ti type="dir" label="Outputs of Zelix" x="(dir,para_zelix_output)"/>
+  <ti type="call_service" job="Goto-Panorama" label=" ">
+    <dir id="with" x="(dir,para_zelix_output)"/>
+  </ti>  
+  <ti type="text" label="ServerType" x="(f,vob,prop,para_j2ee_sel)"/>
+  <dir id="server-target" x=""/>
+  <choose>
+    <when test="(f,eq_text,1,(f,vob,prop,para_j2ee_sel))">
+      <dir id="server-target" x="(dir,para_j2ee_1)"/>
+    </when>
+    <when test="(f,eq_text,2,(f,vob,prop,para_j2ee_sel))">
+      <dir id="server-target" x="(dir,para_j2ee_2)"/>
+    </when>    
+    <otherwise>
+      <throw>No Server selected</throw>
+    </otherwise>
+  </choose>
+  <ti type="dir" label="Server-Target" x="(dir,server-target)"/>
+  
+  <ti_hr/>  
+  <file id="scan" x="(dir,temp)scan.xml" />
+  
+  <scan dir="(dir,para_arc_pro)" 
+        level_limit="1"
+        out="(file,scan)"/>
+  <loop id="compiles" xml="(file,scan)" xpath="dir" >
+    <when test="(f,starts_with,(loop,compiles,@rpath),compile-)">
+      <ti label="(loop,compiles,@rpath)"/>
+      <prop id="name" x="(f,substring_after,(loop,compiles,@rpath),compile-)"/>
+      <dir id="root" x="(dir,para_arc_pro)(loop,compiles,@rpath)"/>
+
+      <file id="from-compiled" x="(dir,server-target)(prop,name)-obf.jar"/>
+      
+      <file id="obf-compiled" x="(dir,para_zelix_output)(prop,name)-compiled.jar"/>   
+      
+      <!-- 3rd-party -->
+      <file id="from-3rd" x="(dir,root)3rd-party-bin.jar"/>
+      <file id="target-3rd" x="(dir,server-target)(prop,name)-3rd.jar"/>
+      <choose>
+        <when test="(f,exists_file,(file,from-3rd))">
+        
+          <tp>copy (prop,name) 3rd-party JAR</tp>
+
+          <ant>
+          <copy file="(f,file,classic,(file,from-3rd))" tofile="(f,file,classic,(file,target-3rd))"/>
+          </ant>                  
+
+          <ti x="Copy 3rd-party-lib"/>
+          <ti type="file" label="from" x="(file,from-3rd)"/>          
+          <ti type="file" label="to" x="(file,target-3rd)"/>             
+        </when>
+        <otherwise>
+          <ti>no 3rd-party-lib found</ti>
+        </otherwise>
+      </choose>      
+      <!-- compiled -->
+      <choose>
+        <when test="(f,exists_file,(file,obf-compiled))">
+
+          <tp>copy (prop,name) obfuriscated JAR</tp>
+          <!--
+          <delete file="(file,from-compiled)" flag="catch"/>
+          <copy file="(file,obf-compiled)" tofile="(file,from-compiled)"/>
+                      -->
+          <ant>
+          <copy file="(f,file,classic,(file,obf-compiled))" tofile="(f,file,classic,(file,from-compiled))"/>
+          </ant>                  
+          <!-- <ti>&lt;copy file="(f,file,classic,(file,obf-compiled))" tofile="(f,file,classic,(file,from-compiled))"/&gt;</ti>  -->
+          <ti x="Copy Obfuriscated"/>
+          <!-- <ti xtype="file" label="from" x="(file,obf-compiled)"/>   -->
+          <ti type="file" label="from" x="(file,obf-compiled)"/>          
+          <!-- <ti xtype="file" label="to" x="(file,from-compiled)"/>    -->
+
+          <ti type="file" label="to" x="(file,from-compiled)"/>          
+          <!-- 
+          <tp>copy (prop,name) compiled JAR</tp>
+          <copy file="(file,from-compiled)" tofile="(file,to-compiled)"/>
+          <ti type="file" label="Copied compiled to" x="(file,to-compiled)"/>
+          -->
+        </when>
+           
+        <otherwise>
+          <ti label="CRITICAL:">No obfuriscated-bin available</ti>         
+        </otherwise>
+      </choose>      
+    
+    </when>
+  
+  </loop>
+  
+       
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

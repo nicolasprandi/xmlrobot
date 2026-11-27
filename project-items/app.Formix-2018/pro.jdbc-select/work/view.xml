@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="select-see-all" level="ws" role="hidden" tip="Lists all Selects">
+<try_catch>
+<try>
+<call_job job="event_select_beginn"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: select-view: begin.0">
+<ti> hook_job=event_select_beginn hook=begin page=view station=0 object=select</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="select_loop" xml="(file,selects)" xpath="(prop,selects_offset)select(prop,selects_where)" sort="(prop,selects_sort_attribute)" number="(prop,selects_sort_number)" ignore_case="(prop,selects_sort_ignore_case)" desc="(prop,selects_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,selects_offset_label)),0)">
+<ti label="(prop,selects_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti/>
+<ti x="Technical Id"/>
+<ti/>
+<ti x=" "/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,select_loop,@sql),50)(f,html,bold,close)" job="select-see">
+<prop id="select_key">(loop,select_loop,@row)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+<ti>(f,when,(f,has_flag,(loop,select_loop,@update),0),Just Run(e:s),)(f,when,(f,has_flag,(loop,select_loop,@update),1),Update and Run(e:s),).(f,when,(f,has_flag,(loop,select_loop,@archify),0),No(e:s),)(f,when,(f,has_flag,(loop,select_loop,@archify),1),Archify per Run(e:s),)(f,when,(f,has_flag,(loop,select_loop,@archify),2),Archify per Day(e:s),)</ti>
+<ti test="(f,has,(loop,select_loop,@id))" type="text" x="(loop,select_loop,@id)"/>
+<ti test="(f,not,(f,has,(loop,select_loop,@id)))"/>
+<ti type="call_job" explain="Edit" job="select-edit">
+<prop id="select_key">(loop,select_loop,@row)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+<ti isFromAction="1" label=" " type="call_job" page="view" explain="Run Sql ..." job="event_select_run">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">run</prop>
+<prop page="view" id="select_key">(loop,select_loop,@row)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+<ti isFromAction="1" label=" " type="call_job" page="view" explain="See Result Files..." job="event_select_see">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">see</prop>
+<prop page="view" id="select_key">(loop,select_loop,@row)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Selects found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,selects_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="select-add" explain="[ Add another Select ]" job="select-add">
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,selects)</file>
+<prop id="orga_where">(prop,selects_where)</prop>
+<prop id="orga_view_loop_id">select_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,selects_offset)</prop>
+<prop id="orga_offset_label">(prop,selects_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="orga_segment_plural">selects</prop>
+<prop id="orga_segment_singular">select</prop>
+<prop id="orga_segment_plural_label">Selects</prop>
+<prop id="orga_segment_singular_label">Select</prop>
+<prop id="orga_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,selects_sort_number)</prop>
+<prop id="orga_where">(prop,selects_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,select_loop,@sql),50)()</prop>
+<prop id="orga_desc_expression_loop">()(f,when,(f,has_flag,(loop,select_loop,@update),0),Just Run(e:s),)(f,when,(f,has_flag,(loop,select_loop,@update),1),Update and Run(e:s),).(f,when,(f,has_flag,(loop,select_loop,@archify),0),No(e:s),)(f,when,(f,has_flag,(loop,select_loop,@archify),1),Archify per Run(e:s),)(f,when,(f,has_flag,(loop,select_loop,@archify),2),Archify per Day(e:s),)()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,selects)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,selects_offset)),0)">(prop,selects_offset)</ti>
+</ti>
+</when>
+</job>

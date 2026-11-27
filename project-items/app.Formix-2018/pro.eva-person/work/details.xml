@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="person-see">
+<need>(prop,person_key)</need>
+<call_job job="person-read"/>
+<prop x="print print_only" id="persons_tk_control"/>
+<prop id="label" x="Person: (f,html,bold,open)(prop,person_name_nic)(f,html,bold,close)(f,when,(f,has,(prop,persons_offset_label)), - (prop,persons_offset_label),)"/>
+<call_job job="person-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,expert)">
+<ti type="call_job" explain="[ ? ]" align="right" job="person-see-more">
+<prop id="person_key">(prop,person_key)</prop>
+<file id="persons">(file,persons)</file>
+<prop id="persons_offset">(prop,persons_offset)</prop>
+<prop id="persons_offset_label">(prop,persons_offset_label)</prop>
+<prop id="persons_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="persons_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="persons_sort_number">(prop,persons_sort_number)</prop>
+<prop id="persons_where">(prop,persons_where)</prop>
+<prop id="persons_return_job">(prop,persons_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit" job="person-edit">
+<prop id="person_key">(prop,person_key)</prop>
+<file id="persons">(file,persons)</file>
+<prop id="persons_offset">(prop,persons_offset)</prop>
+<prop id="persons_offset_label">(prop,persons_offset_label)</prop>
+<prop id="persons_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="persons_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="persons_sort_number">(prop,persons_sort_number)</prop>
+<prop id="persons_where">(prop,persons_where)</prop>
+<prop id="persons_return_job">(prop,persons_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,business)" type="call_job" explain="Delete" job="person-del">
+<prop id="person_key">(prop,person_key)</prop>
+<file id="persons">(file,persons)</file>
+<prop id="persons_offset">(prop,persons_offset)</prop>
+<prop id="persons_offset_label">(prop,persons_offset_label)</prop>
+<prop id="persons_offset_new_key">(prop,persons_offset_new_key)</prop>
+<prop id="persons_sort_attribute">(prop,persons_sort_attribute)</prop>
+<prop id="persons_sort_number">(prop,persons_sort_number)</prop>
+<prop id="persons_where">(prop,persons_where)</prop>
+<prop id="persons_return_job">(prop,persons_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-person-details-end</trace>
+<call_job job="hook-person-details-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: person-details: end.0">
+<ti> hook_job=hook-person-details-end hook=end page=details station=0 object=person</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

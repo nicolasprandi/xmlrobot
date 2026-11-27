@@ -1,0 +1,125 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015 Nicolas Prandstaetter. All rights reserved. 
+
+
+
+
+
+
+ -->
+
+<jobs>
+  
+<file id="alarm_data" x="(dir,pro)alarm_data.lsx"/>
+<prop id="alarm_regex" x="alarm_.+"/>
+
+<!-- sample-core, make your changes here -->
+<job id="tk_alarm_core" role="hidden">
+
+  <need default="">(prop,tk_alarm_add_flag)</need>
+
+  <tk label="Parameters: Update Alarm" 
+      flag="(prop,tk_alarm_add_flag)"
+      tip="This should remind you on manual updates you want to do in the generated job"> 
+  
+    <tk id="alarm_search"
+        type="textblock"  
+        label="Search"
+        flag="nono"
+        x="this has to be searched for and replaced"/>  
+        
+    <tk id="alarm_replace"
+        type="textblock"  
+        label="Replace"
+        flag="nono"
+        x="This will be the new value"/>   
+        
+    <tk id="alarm_comment"
+        type="textblock"  
+        label="Comment"
+        flag="nono"
+        x="More info about that search-replace"/>              
+              
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+
+<job id="Update Alarm" tip="Memorize your manual script-updates" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,alarm_data))">
+      <!-- data exists already -->
+      <prop id="tk_alarm_add_flag" x="sum_only print"/>
+      <call_job job="tk_alarm_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <tk type="msg">Alarm does not exist until now,
+Create one now ...</tk>
+      <prop id="tk_alarm_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  
+  <!-- doing input -->
+  <call_job job="tk_alarm_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_alarm_write"/>
+
+</job>
+
+
+
+<job id="tk_alarm_print_values" role="hidden">
+  
+  <call_job job="tk_alarm_read"/>
+  
+  <call_job job="tk_alarm_core">
+    <prop id="tk_alarm_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="Update Alarm?">
+  
+  <call_job job="tk_alarm_read"/>
+  
+  <call_job job="tk_alarm_core">
+    <prop id="tk_alarm_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_alarm_print_help" role="hidden">
+  
+  <call_job job="tk_alarm_core">
+    <prop id="tk_alarm_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_alarm_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,alarm_data)" />
+  </call_job>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_alarm_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,alarm_data)" />
+    <prop id="joe-in-regex" x="(prop,alarm_regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_alarm_clear" role="hidden">
+  <delete file="(file,alarm_data)"/>
+</job>
+
+
+</jobs>

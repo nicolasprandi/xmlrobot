@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="check-login"/>
+<call_job job="prolog" />
+
+<job id="print-header" role="hidden">
+  <ti type="rec" flag="divs">
+    <ti type="call_job" job="??" explain="[Formix-Rezeptblock]" flag="silent">
+
+    </ti>
+    <ti type="call_job" job="Liste der Rezepte" explain="Liste der Rezepte" flag="silent">
+
+    </ti>
+    <ti type="call_job" job="Aktuelles Rezept" explain="Aktuelles Rezept" flag="silent">
+    </ti>
+    <ti type="call_job" job="Aktuelle Komponente" explain="Aktuelle Komponente" flag="silent">
+    </ti>
+  </ti>
+  <ti_hr/>
+</job>
+
+
+</jobs>

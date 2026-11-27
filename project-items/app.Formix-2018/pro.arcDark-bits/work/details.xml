@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bit-see">
+<need>(prop,bit_key)</need>
+<call_job job="bit-read"/>
+<prop x="print print_only" id="bits_tk_control"/>
+<prop id="label" x="Bit: (f,html,bold,open)(prop,bit_bit)(f,html,bold,close)(f,when,(f,has,(prop,bits_offset_label)), - (prop,bits_offset_label),)"/>
+<call_job job="bit-tk"/>
+<ti_space height="3px"/>
+<ti type="rec">
+<ti type="call_job" explain="[ ? ]" align="right" job="bit-see-more">
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+</ti>
+<ti flag="" type="call_job" explain="Edit" job="bit-edit">
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" type="call_job" explain="Del" job="bit-del">
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<call_job job="hook_bit_details_end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: bit-details: 12.0">
+<ti> hook_job=hook_bit_details_end hook=12 page=details station=0 object=bit</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<try_catch>
+<try>
+<call_job job="hook_end_of_bit_details"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: bit-details: end.0">
+<ti> hook_job=hook_end_of_bit_details hook=end page=details station=0 object=bit</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>

@@ -1,0 +1,161 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+<job id="hook-block-view-loop" role="hidden">
+  <try_catch><try>
+  
+  <prop id="summi">Teller: </prop>
+  <loop missing_strategy="empty" id="xx" xml="(file,blocks)" xpath="(prop,blocks_offset)block[@row='(loop,block_loop,@row)']/plate">
+      <prop id="add">(loop,xx,@name)</prop>
+      
+         <prop id="summi">(prop,summi)(prop,add)</prop>
+         
+         <prop id="summi" test="(f,not,(f,eq_num,(loop,xx,#max),(loop,xx,#i)))">(prop,summi); </prop>
+  </loop>
+  <ti type="rec">
+    <ti/>
+
+    <ti flag="wrap">(prop,summi)</ti>
+  </ti>
+  </try><catch/></try_catch>
+ 
+
+</job>
+
+<job id="hook-block-view-begin" role="hidden">
+
+  <ti label="Rezeptbuecher"/>
+
+</job>
+
+<job id="hook-block-details-end" role="hidden">
+  <prop id="plates_offset">block[@row='(prop,block_key)']/</prop>
+   <call_job job="plate-see-all"/>
+
+   <ti_hr/>
+   <ti label=" " type="call_job" job="block-see-all" explain="Alle Rezeptbloecke sehen ..."/>  
+   <!-- 
+   <dir id="homeblock">(dir,pro)block-data/(prop,block_blockid)/</dir>
+   
+   <choose>
+    <when test="(f,guicontroller,general,is-web,)">
+      <prop id="targetapp">Rezepte</prop>
+    </when>
+    <otherwise>
+      <prop id="targetapp">Formix-Rezeptblock</prop>
+    </otherwise>
+   
+   </choose>
+   
+      <call_app     app="(prop,targetapp)" 
+                    job="??" 
+                    pro_dir="(dir,homeblock)" 
+                    pro_id="Your Blocks"
+                    flag="silent">       
+                         
+      </call_app>   
+      
+   <call_service job="include-header"/>   
+   <ti label="Wir sind im Block detail" />
+   <dump_ti_all />
+   
+   <ti_hr/>
+   <ti label=" " type="call_job" job="block-see-all" explain="See all Blocks"/>
+   -->
+</job>
+
+
+
+<job id="hook-block-view-end" role="hidden">
+   
+   <!-- 
+   <ti type="rec" test="(f,role,admin)">
+   <ti/><ti/>
+   <ti label="Ready:" type="call_job" job="hook-gen-block-selector" explain="&gt;&gt; Update block-Selector for Gui"/>
+   </ti>
+   -->
+</job>
+
+<job id="hook-gen-block-selector" role="hidden">
+      
+      <!-- 
+      <file id="appask" x="(dir,pro)psi-ask.xml"/>
+      <ask what="apps" out="(file,appask)" style="natural"/>
+      <ti type="file">(file,appask)</ti>
+      -->
+      <xslt 
+          xml="(file,blocks)" 
+          out="(dir,pro)block-selector-gui.xml">
+                    <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//blocks/block"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="block">
+   <sel>
+    <xsl:attribute name="label">
+      <xsl:value-of select="@titel"/>
+      <xsl:text> - </xsl:text>
+      <xsl:value-of select="@blockid"/>
+    </xsl:attribute>
+   <xsl:value-of select="@blockid"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>       
+      </xslt>
+      <ti type="file" label="did update" x="(dir,pro)block-selector-gui.xml"/>
+      
+      <ti_hr/>
+      <call_job job="??" />
+</job>
+
+
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

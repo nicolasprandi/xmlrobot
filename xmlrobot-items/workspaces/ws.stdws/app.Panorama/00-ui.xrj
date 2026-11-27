@@ -1,0 +1,205 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+
+
+
+<job id="See Report" lang="en" tip="See last file-report"  pri="10" notonline="notonline">
+  <call_job job="do-report-print"/>
+</job>
+
+<job id="Bericht" lang="de" tip="Den letzten Datei-Bericht ansehen"  pri="10" notonline="notonline">
+  <call_job job="do-report-print"/>
+</job>
+
+<job id="Raporto" lang="es" tip="Mostrar el ultimo raporto"  pri="10" notonline="notonline">
+  <call_job job="do-report-print"/>
+</job>
+
+<job id="See Report?" lang="en" notonline="notonline" >
+  <call_job job="?See report?"/>
+</job>
+
+<job id="Bericht?" lang="de" notonline="notonline">
+  <call_job job="?See report?"/>
+</job>
+
+<job id="Raporto?" lang="es"  notonline="notonline">
+  <call_job job="?See report?"/>
+</job>
+
+<job id="Change folder" lang="en" tip="Switch to another folder"  >
+  <call_job job="_scan_dir"/>
+</job>
+
+<job id="Anderes Verzeichnis" lang="de" tip="Auf ein anderes Verzeichnis wechseln">
+  <call_job job="_scan_dir"/>
+</job>
+
+<job id="Otro Directorio" lang="es" tip="Cambia a un otro directoryio" >
+  <call_job job="_scan_dir"/>
+</job>
+
+<job id="Change folder?" lang="en" >
+  <call_job job="?scan-folder?"/>
+</job>
+
+<job id="Anderes Verzeichnis?" lang="de" >
+  <call_job job="?scan-folder?"/>
+</job>
+
+<job id="Otro Directorio?" lang="es" >
+  <call_job job="?scan-folder?"/>
+</job>
+<!--    -->
+<job id="flex-layout-action" role="hidden"  >
+  <choose>
+    <when xtest="1" test="(f,implement,online)">
+    
+      <call_job job="_visual_layouting_new"/>
+    </when>
+    <otherwise>
+      <call_job job="do-report-conf"/>
+    </otherwise>
+  
+  </choose>
+  
+</job>
+<job id="Setup: Layout" lang="en" tip="Define how file-reports look like" pri="10"  >
+  <call_job job="flex-layout-action"/>
+</job>
+
+<job id="Setup: Darstellung" lang="de" tip="Konfigurationen: zb Gruppierung und Summenbildung, Sortierung der Dateien, Anzeige der Dateigr&#246;ssen und bildliche Darstellung von Bild-Dateien" pri="10">
+  <call_job job="flex-layout-action"/>
+</job>
+
+<job id="Setup: Estilo" lang="es" tip="Controle como las listas de fichas mira" pri="10" >
+  <call_job job="flex-layout-action"/>
+</job>
+
+<job id="Setup: Layout?" lang="en" >
+  <call_job job="?SetupLayout?"/>
+</job>
+
+<job id="Setup: Darstellung?" lang="de" >
+  <call_job job="?SetupLayout?"/>
+</job>
+
+<job id="Setup: Estilo?" lang="es" >
+  <call_job job="?SetupLayout?"/>
+</job>
+
+<job id="Setup: Visuals" lang="en" tip="View Pictures when listing files" notonline="notonline" pri="10" >
+  <call_job job="_visuals"/>
+</job>
+
+<job id="Setup: Visuelles" lang="de" tip="Bilder in Panorama anzeigen" notonline="notonline" pri="10" >
+  <call_job job="_visuals"/>
+</job>
+
+<job id="Setup: Vidi" lang="es" tip="Mostrar fotos" notonline="notonline" pri="10" >
+  <call_job job="_visuals"/>
+</job>
+
+<job id="Setup: Visuals?" lang="en" notonline="notonline" >
+  <call_job job="?Visuals?"/>
+</job>
+
+<job id="Setup: Visuelles?" lang="de" notonline="notonline" >
+  <call_job job="?Visuals?"/>
+</job>
+
+<job id="Setup: Vidi?" lang="es" notonline="notonline" >
+  <call_job job="?Visuals?"/>
+</job>
+
+<!--    -->
+<job id="Setup: Categories" lang="en" tip="Defines project-specific categories" pri="10" >
+  <call_job job="do-categories-setup"/>
+</job>
+
+<job id="Setup: Kategorien" lang="de" tip="Projektspezifische Kategorien festlegen" pri="10">
+  <call_job job="do-categories-setup"/>
+</job>
+
+<job id="Setup: Categorios" lang="es" tip="Usa categorias especial para este projecto" pri="10" >
+  <call_job job="do-categories-setup"/>
+</job>
+
+<job id="Setup: Categories?" lang="en" >
+  <call_job job="?SetupCategories?"/>
+</job>
+
+<job id="Setup: Kategorien?" lang="de" >
+  <call_job job="?SetupCategories?"/>
+</job>
+
+<job id="Setup: Categorios?" lang="es" >
+  <call_job job="?SetupCategories?"/>
+</job>
+
+<!--    -->
+<job id="Make a fresh project" lang="en" tip="Builds a new project from scratch" pri="10"  role="expert" >
+  <call_job job="_resh_project"/>
+</job>
+
+<job id="Frisches Projekt" lang="de" tip="Ein neues Projekt von Start weg neu beginnen" pri="10" role="expert" >
+  <call_job job="_resh_project"/>
+</job>
+
+<job id="Projecto fresco" lang="es" tip="Hacer un nuevo projecto totalmente" pri="10"  role="expert" >
+  <call_job job="_resh_project"/>
+</job>
+
+<job id="Make a fresh project?" lang="en" >
+  <call_job job="?freshProject?"/>
+</job>
+
+<job id="Frisches Projekt?" lang="de" >
+  <call_job job="?freshProject?"/>
+</job>
+
+<job id="Projecto fresco?" lang="es" >
+  <call_job job="?freshProject?"/>
+</job>
+
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zsel-write">
+<need>(prop,zsel_key) (prop,isAdd)</need>
+<spirit act="open" id="zsels_spirit_tc" xml="(file,zsels)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,zsels_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,zsels_offset),0,(f,sub,(f,len,(prop,zsels_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,zsels_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="zsels_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;zsel row="(prop,zsel_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zsels_spirit_tc" where="(prop,zsels_offset)zsel[@row='(prop,zsel_key)']" attribute="zblock" value="(f,vob,prop,zsel_zblock)"/>
+<spirit act="close" flag="save pretty" id="zsels_spirit_tc"/>
+</job>

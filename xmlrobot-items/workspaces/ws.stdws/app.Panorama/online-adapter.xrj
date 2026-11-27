@@ -1,0 +1,162 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.
+(f,request,dir,session_home_fs) -->
+<jobs>
+
+<call_job job="prolog"/>
+<interpreter watch="0"/>
+<file id="lpref" x="(dir,pro)cache/little-panorama.txt"/>
+<file id="lpref2" x="(dir,pro)cache/little-compare.txt"/>
+
+<job id="[ Services ]" role="hidden" tip="Kicking of the filebrowser 'Panorama'">
+
+  
+  <choose>
+    <when test="(f,exists_file,(file,lpref2))">
+      <ti type="call_job" job="go-compare" explain="See your Compare"/>
+    </when>
+    <otherwise>
+      <ti type="call_job" job="go-compare" explain="Do a Compare"/>
+    </otherwise>
+  </choose>
+      
+  <ti label="Maybe"/>
+  <ti type="call_job" job="Check-Panorama" explain="You want to make a fresh parorama here "/>
+  <ti_hr/>
+  <choose>
+    <when test="(f,exists_file,(file,lpref))">
+      <call_job job="See-Little-Panorama"/>
+    </when>
+    <when test="1">
+      <call_job job="Check-Panorama" />
+    </when>    
+  </choose>
+  
+  <ti type="call_job" job="See-Little-Panorama" explain="[ Little-Panorama ]" label=" " test="0"/>
+
+</job>
+
+<job id="go-compare" role="hidden">          <!-- neu -->
+
+  <choose>
+    <when test="(f,not,(f,exists_file,(file,lpref2)))">
+    
+        <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+        <create_file out="(file,lpref2)">(dir,pro_temp)</create_file>
+        
+        <mkdir dir="(dir,pro_temp)"/>
+        <ti type="dir" label="Your Compare" x="(dir,pro_temp)" test="0"/>
+      
+        <call_app     app="Compare" 
+                      job="services-connector" 
+                      pro_dir="(dir,pro_temp)" 
+                      pro_id="Your Compare"
+                      flag="silent">       
+                         
+        </call_app>     
+    </when>
+    <otherwise>
+     
+      <dir id="pro_temp" x="(f,file_content,(file,lpref2))"/>
+
+      <ti type="dir" label="LittleCompare" x="(dir,pro_temp)" test="0"/>
+      <call_app     app="Compare" 
+                    job="services-connector" 
+                    pro_dir="(dir,pro_temp)" 
+                    pro_id="Your Compare"
+                    flag="silent">       
+                            
+      </call_app>     
+    </otherwise>
+  </choose>
+    
+
+            
+
+
+      
+</job>
+
+
+<job id="See-Little-Panorama" role="hidden">
+    
+    <throw test="(f,not,(f,exists_file,(file,lpref)))">Little-Panorama does not exist yet.</throw>
+            
+
+      <dir id="pro_temp" x="(f,file_content,(file,lpref))"/>
+
+
+      <call_app     app="Panorama" 
+                    job="do-report-print" 
+                    pro_dir="(dir,pro_temp)" 
+                    pro_id="Your Pano"
+                    flag="silent">       
+                            
+      </call_app> 
+      
+</job>
+
+
+<job id="Check-Panorama" role="hidden">
+  
+      <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question" x="Select a directory"/>
+      </call_service>
+      <global act="get" id="jil-result"/>
+      
+ 
+        <dir id="with" x="(prop,jil-result)"/>
+      
+      
+      <need>(dir,with)</need>
+      <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+
+      
+
+      <create_file out="(file,lpref)">(dir,pro_temp)</create_file>
+      
+      <mkdir dir="(dir,pro_temp)" flag="cascade"/>
+      <ti type="dir" label="LittlePano" x="(dir,pro_temp)" test="0"/>
+    
+      <call_app     app="Panorama" 
+                    job="Api-Panorama" 
+                    pro_dir="(dir,pro_temp)" 
+                    pro_id="Little-Panorama at (f,time)"
+                    flag="silent">       
+        <dir id="with">(dir,with)</dir>                       
+      </call_app>       
+     
+     <dir id="this" x="(prop,jil-result)" />  
+     
+</job>
+
+<job id="[ App Login ]" role="hidden">
+
+    <tk label="Login" xflag="sum print" tip="Your credentials">
+      <tk id="login_user" flag="nono" label="User-Nomen" tip="Type: Gast1"/>
+      <tk id="login_pwd" flag="nono password" label="Password-Secret"  tip="Type: laus"/>
+      <tk id="login_role" flag="nono" type="sel" label="Rolle-Function" tip="blabla" x="admin">
+        <tk >user</tk>
+        <tk >expert</tk>        
+        <tk >admin</tk>
+      </tk>
+    </tk>
+  
+
+
+            
+    <try_catch>
+      <try>
+        <interpreter act="do-login"/>  
+        <ti label="Login done well"/>         
+      </try>
+      <catch>                    
+        <!-- <dump_ti label="login-catched"/> -->
+        <ti label="Problem with login"/>              
+        <throw_again/>
+      </catch>
+    </try_catch>
+ 
+  <ti>Did login into app [(prop,app)] at (f,time)</ti>    
+</job>
+</jobs>

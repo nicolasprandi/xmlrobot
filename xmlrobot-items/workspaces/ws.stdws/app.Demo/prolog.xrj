@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<jobs>
+<!--                        
+Ue &#220;
+ue &#252;
+Oe &#214;
+oe &#246;                                                    
+Ae &#196;
+ae &#228;
+(prop,)
+                 
+-->
+
+
+<job id="prolog" role="hidden">
+
+  <file id="calc-data" x="(dir,pro)calc-data.xrs"/>
+  <prop id="calc-regex" x="calc_.+"/>
+  <prop id="_x_go_up_sys" x="UP"/>
+                       
+  
+
+    <file id="vis">(dir,pro)vis.xml</file>
+    <when test="(f,not,(f,exists_file,(file,vis)))">
+        <create_file out="(file,vis)">&lt;vis/&gt;</create_file>
+        <i>Created: (file,vis)</i>
+    </when>
+    <prop id="vis_offset">./</prop>
+    <prop id="vis_offset_label"/>
+    <prop id="vis_offset_new_key">//</prop>
+    <prop id="vis_sort_attribute"/>
+    <prop id="vis_sort_number"/>
+    <prop id="vis_sort_ignore_case"/>
+    <prop id="vis_sort_desc"/>
+    <prop id="vis_where"/>
+    <prop id="vis_return_job">vi-see-all</prop>
+
+</job>
+
+</jobs>

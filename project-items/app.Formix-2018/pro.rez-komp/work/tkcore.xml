@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="komp-tk">
+<need default="">(prop,komps_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,komps_tk_control) wrap ">
+<tk label="Name" id="komp_bez" x="" test_first="1" tip="Bezeichnung" type="text" flag=" nono "/>
+<tk label="Doku" id="komp_beschreibung" x="" test_first="0" tip="Text" type="textblock" flag=" "/>
+<tk label="Beschreibungen" x="Beschreibungen" test_first="0" type="msg" flag=" "/>
+<tk label="Phasenbeschreibung" id="komp_phasen" x="" test_first="0" tip="Ein paar worte ueber die phasen der kompontent" type="textblock" flag=" "/>
+<tk label="Kalkulationen" id="komp_kalkulationen" x="" test_first="0" tip="Ein paar angaben uber die preise" type="textblock" flag=" "/>
+<tk label="Zeitenangaben" id="komp_zeiten" x="" test_first="0" tip="Ein paar infos uber den zeitlichen ablauf" type="textblock" flag=" "/>
+<tk label="Moda Zutaten" id="komp_moda_zutaten" x="" test_first="0" type="sel" flag=" ">
+<sel label="Ohne Zutaten">0</sel>
+<sel label="Mit Zutaten">1</sel>
+<sel label="Zutaten sind sekondaer">2</sel>
+</tk>
+</tk>
+</job>

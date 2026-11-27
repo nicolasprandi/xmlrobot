@@ -1,0 +1,345 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="Import Ask Overwrite" pri="10" role="hidden">
+    <tk label="Overwrite file '(f,name_of_file,(file,target))' ?" 
+        type="accept" 
+        id="delete-pro-1" 
+        x="A file with that name exists already in the project. &#xA;The file will be overwritten.&#xA;File [ (f,name_of_file,(file,target)) ]"
+        label_accept="Overwrite"
+        label_decline="Forget it"
+        width="300"
+        height="150">
+      <q id="overwrite-ask" label="Yes(e:s) I know that the old file will be gone forever"/>       
+    </tk>
+    
+    <when test="(f,or,(f,not,(prop,overwrite-ask)),(f,not,(prop,delete-pro-1)))">
+      <throw>Import stopped on request.</throw>
+    </when>
+</job>
+<job id="?excel-tip" role="hidden">
+  <ti label="About readable spreadsheet-files">
+  <ti>()Only files stored in the format()</ti> 
+  <ti type="ul">()'Microsoft Excel 2007-2013 XML (.xlsx)' -or-()</ti> 
+  <ti type="ul">()'Microsoft Excel 97-2003 (.xls)'()</ti>          
+  <ti>can be processed.</ti>
+  <ti>You may have to convert them by saving them under this format!</ti>
+  </ti>
+</job>
+
+<job id="?excel-tipxx" role="hidden">
+  <ti label="About readable spreadsheet-files">
+  <ti type="ul">()Only files stored in the format &#xA;'Microsoft Excel 2007-2013 XML (.xlsx)' -or- &#xA;'Microsoft Excel 97-2003 (.xls)' &#xA;can be processed()</ti>      
+  <ti type="ul">You may have to convert them by saving them under this format.</ti>
+  </ti>
+</job>
+<job id="Import Helper" pri="10" role="hidden">
+  <need>(prop,extension) (prop,label) (prop,top-label) (prop,tip)</need>
+  
+  <when test="(f,not,(f,has,dir,import-base))">
+    <dir id="import-base" x="(dir,workspace)"/>
+  </when>
+  <ti type="dir" x="(dir,import-base)" test="0"/>
+  <tk label="(prop,label) to import">
+  <tk type="file" 
+      id="helper-file" 
+      extension="(prop,extension)"
+      label="Select a file (f,when,(f,has,prop,extension),with extension (prop,extension),)" 
+      base="(dir,import-base)"
+      tip="(prop,tip)"/>
+  </tk>
+      
+  <prop id="helper-name" x="(f,name_of_file,(file,helper-file))"/>
+  <tk label="Import of (prop,label)" > 
+  <tk type="text" id="helper-name" flag="nono" label="Filename within project"
+      tip="The file will be copied into the project. There it can have another name. Change it or keep it as it is."
+      rule="filename_with_blanks"/>
+  </tk>
+      
+  <tk flag="sum_only" label="(prop,top-label)">
+    <tk type="file" 
+        id="helper-file" 
+        extension="(prop,extension)" 
+        base="(dir,import-base)"
+        label="(prop,label)"
+        tip="(prop,tip)"
+        flag="nono"/>
+    <tk type="text" id="helper-name" flag="nono" label="Filename within project"
+    tip="The file will be copied into the project. There it can have another name. Change it or keep it as it is." rule="filename_with_blanks"/>
+  </tk>
+  
+  <file id="target" x="(dir,pro)(prop,helper-name)"/>
+  
+  <when test="(f,exists_file,(file,target))">
+    <call_job job="Import Ask Overwrite"/>     
+  </when>
+
+  <tp>Copy (f,name_of_file,(file,helper-file)) to (f,name_of_file,(file,target))</tp>
+  <ti align="right">(f,html,bold,open)Doing copy of file ...(f,html,bold,close)</ti>
+  <copy file="(file,helper-file)" tofile="(file,target)"/>
+  
+  <ti label="Did import (prop,label)">
+    <ti type="file" label="from" x="(file,helper-file)"/>
+    <ti type="file" label="to" x="(file,target)"/>
+  </ti>
+  
+  <ti label="Next" test="(f,not,(f,starts_with,(prop,label),Spreadsheet-File))">
+    <ti type="call_job" job="Run XSL"/>
+  </ti>
+
+  <dir id="import-base" x="(f,dir_of_file,(file,helper-file))" />
+    
+  <need>(file,target) (file,helper-file) (prop,helper-name) (dir,import-base)</need>
+    
+</job>
+
+<job id="Import Spreadsheet?">
+  <ti label="About: Import Spreadsheet">
+    <ti type="ul">()Imports a spreadsheet into the project (=does a copy of the file)()</ti>
+    <ti type="ul">()Dispays its list of sheets()</ti>
+    <ti type="ul">Integrates the copied file in the execution-parameters</ti>
+    <ti type="ul">()If you want to REFERENCE a spreadsheet which locates outside the project, do simply select that file in the execution-parameters()</ti>    
+  </ti>
+  <!--
+  <call_job job="see-import">
+    <prop id="what" x="in-excel"/>
+    <prop id="what-label" x="Excel"/>
+  </call_job>
+  
+  <when test="(f,has,file,in-excel)">
+    <when test="(f,has,prop,in-sheet)">
+      <ti label="Sheet:" >'(prop,in-sheet)' is selected</ti>
+    </when>
+    <ti label=" " type="call_job" job="?sheetlist" explain="See other sheets"/>
+  </when>
+  -->
+  
+  <call_job job="?excel-tip" />  
+    
+  <call_job job="?Import Finalizer" />
+
+</job>
+
+<job id="Import Xml?">
+  <ti label="About: Import Xml">
+    <ti type="ul">()Imports a xml-file into the project (=does a copy of the file)()</ti>
+    <ti type="ul">Integrates the copied file in the execution-parameters</ti>
+    <ti type="ul">()If you want to REFERENCE a xml-file which locates outside the project, do simply select that file in the execution-parameters()</ti>
+  </ti>
+  <!--
+  <call_job job="see-import">
+    <prop id="what" x="in-xml"/>
+    <prop id="what-label" x="Xml"/>
+  </call_job>
+    
+  <call_job job="?Import Finalizer" /> -->
+</job>
+
+<job id="Import Xsl?">
+  <ti label="About: Import Xsl">
+    <ti type="ul">()Imports a xsl-file into the project (=it does a copy of the file)()</ti>
+    <ti type="ul">Integrates the copied file in the execution-parameters</ti>
+    <ti type="ul">()If you want to REFERENCE a xml-file which locates outside the project, do simply select that file in the execution-parameters()</ti>
+  </ti>
+  
+  <call_job job="see-import" test="0">
+    <prop id="what" x="in-xsl"/>
+    <prop id="what-label" x="Xsl"/>
+  </call_job>
+  
+  <call_job job="?Import Finalizer" test="0"/>
+
+</job>
+
+<job id="?Import Finalizer" role="hidden">
+<!-- 
+  <ti label="Action">
+    <ti type="call_job" job="Explain parameters" explain="See all parameters"/>
+    <ti type="call_job" job="Run XSL-Transform" />
+    
+  </ti>-->
+</job>
+
+<job id="see-import" role="hidden">
+<when test="(f,has,prop,pro)">
+  <need default="in-excel">(prop,what)</need>
+  <need default="Excel">(prop,what-label)</need>
+  <call_job job="go-joe-read" >
+    <file id="joe-in-store" x="(file,ic-a)" />
+  </call_job>
+  <when test="(f,has,file,(prop,what))">
+    <ti test="0">the file-variable (prop,what) does exist</ti>
+    <prop id="what2" x="(e:o)file(e:s)(prop,what)(e:c)"/>
+    <echo type="prop" id="what2" label="a"/>
+    <unescape type="prop" id="what2"/>
+    <echo type="prop" id="what2" label="b"/>
+    <translate type="prop" id="what2"/>
+    <echo type="prop" id="what2" label="c"/>
+    <ti label="Current File">
+      <ti type="file" label="(prop,what-label):" x="(prop,what2)"/>
+    </ti>      
+  </when>
+</when>  
+</job>
+
+<job id="Explain parameters" role="hidden">
+<call_job job="go-joe-read" />
+
+  <call_job job="do input">
+    <prop id="view" x="print_only print_with_tips (f,when,(f,exists,prop,pro),,print_tips_only)"/>
+  </call_job>
+
+  <ti label="Next">
+    <ti type="call_job" job="Explain all parameters" />
+  </ti>
+  
+</job>
+
+<job id="Explain all parameters" role="hidden">
+
+    <call_job job="do input">
+      <prop id="view" x="print_only print_with_tips print_tips_only print_all_fields"/>
+    </call_job>
+	
+</job>	
+<job id="Import Xml" pri="10" tip="Imports a xml-file">
+
+  <call_job job="read cached paras" />
+  
+  
+  <call_job job="Import Helper">
+    <prop id="extension" y=".xml" />
+    <prop id="label" x="Xml-File" />
+    <prop id="top-label" x="Import Xml-File" />
+    <prop id="tip" x="The file will be copied into the project. It will serve as data-input for the xsl-transformation." />
+  </call_job>
+  <need>(file,target) (file,helper-file) (prop,helper-name)</need>
+  
+  <file id="in-xml" x="(file,target)"/>
+  <call_job job="write cached paras" />
+  
+  <call_job job="?Import Finalizer"/>
+  
+</job>
+
+<job id="Import Spreadsheet" pri="10" tip="Imports a spreadsheet-file">
+
+  <call_job job="read cached paras" />
+  
+  <call_job job="Import Helper">
+    <prop id="extension" x=".xlsx .xls" />
+    <prop id="label" x="Spreadsheet-File" />
+    <prop id="top-label" x="Import Spreadsheet-File" />
+    <prop id="tip" x="()The spreadsheet will be copied into the project. It will serve as data-input for the xsl-transformation. Make sure it has the format 'Microsoft Excel 2007-2013 XML (.xlsx)' -or- 'Microsoft Excel 97-2003 (.xls)'. Make also sure that it has a 'table-like-layout' (with columns, column-headers and rows).()" />
+  </call_job>
+  <need>(file,target) (file,helper-file) (prop,helper-name) (dir,import-base)</need>
+
+  <file id="in-excel" x="(file,target)"/>
+  
+  <call_job job="write cached paras" />
+  
+  <call_job job="?Import Finalizer"/>
+  
+  <call_job job="create-selector">
+    <file id="cs-by-cs" x="(file,target)" />
+  </call_job>
+  
+  <call_job job="See Sheets of Excel"/>
+  
+</job>
+
+<job id="See Sheets of Excel?" >
+  <ti label="About: See Sheets of Excel">
+    <ti type="ul">Prints the sheets of the input-excel if there is one</ti>
+
+  </ti>
+</job>
+<job id="See Sheets of Excel" pri="10" tip="prints the sheets of the input excel, if there is one" role="dev">
+  <try_catch>
+    <try>
+      <call_job job="?sheetlist"/>
+    </try>
+    <catch>
+		<throw_again/>
+      <ti type="ul">There is no excel as input defined(e:s) so nothing to see here.</ti>
+    </catch>
+  </try_catch>
+</job>
+
+
+<job id="Import Xsl" pri="10" tip="Imports a xsl-file">
+
+  <call_job job="read cached paras" />
+    
+  <call_job job="Import Helper">
+    <prop id="extension" x=".xsl" />
+    <prop id="label" x="Xsl-File" />
+    <prop id="top-label" x="Import Xsl-File" />
+    <prop id="tip" x="The file will be copied into the project. It will perform the transformation." />
+  </call_job>
+  <need>(file,target) (file,helper-file) (prop,helper-name)</need>
+  
+  <file id="in-xsl" x="(file,target)"/>
+  <call_job job="write cached paras" />
+  
+  <call_job job="?Import Finalizer"/>
+</job>
+        
+<job id="Import Auxiliary-Xsl?">
+  <ti label="About: Import Auxiliary-Xsl">  
+    <ti type="ul">()Imports a auxiliary xsl-file into the project (=does a copy of a file)()</ti>
+    <ti type="ul">Sets the xsl-ressource-location to the project.</ti>
+  </ti>
+  <ti label="What is an 'Auxiliary-Xsl' ?">  
+    <ti type="ul">Xsl offers ways to use other xsl-files</ti> 
+    <ti type="ul">()The 'xsl-commands' which do so are:&#xA;1) document()(e:o)(e:c)() &#xA;2) xsl:include &#xA;3) xsl:import()</ti>
+    <ti type="ul">()Whenever the xsl-transformer encounters one of these, it has to look somewhere on the file-system for them()</ti>
+    <ti type="ul">The parameter 'Location of Xsl-Resources' gives the xsl-transforer that directory</ti>
+
+  </ti>
+</job>
+<job id="Import Auxiliary-Xsl" pri="10" tip="Imports an auxiliary-xsl-file">
+
+  <call_job job="read cached paras" />
+    
+  <call_job job="Import Helper">
+    <prop id="extension" x=".xsl" />
+    <prop id="label" x="Auxiliary-Xsl-File" />
+    <prop id="top-label" x="Import Auxiliary-Xsl-File" />
+    <prop id="tip" x="()The file will be copied into the project. The parameter 'Location of Xsl Resources' will be linked to the project.()" />
+  </call_job>
+  <need>(file,target) (file,helper-file) (prop,helper-name)</need>
+  
+  <dir id="in-xsl-home" x="(dir,pro)"/>
+  <call_job job="write cached paras" />
+  
+  <call_job job="?Import Finalizer"/>
+</job>
+
+
+
+<job id="read cached paras" role="hidden">
+  <call_job job="go-joe-read" >
+    <file id="joe-in-store" x="(file,ic-a)" />
+  </call_job>
+  <call_job job="go-joe-read" >
+    <file id="joe-in-store" x="(file,import-history)" />
+  </call_job>  
+</job>
+
+<job id="write cached paras" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-a)" />
+    <prop id="joe-in-regex">in-.+</prop>
+  </call_job>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,import-history)" />
+    <prop id="joe-in-regex">import-.+</prop>
+  </call_job>  
+</job>
+
+</jobs>

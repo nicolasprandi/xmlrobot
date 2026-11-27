@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="block-see-all" level="ws" role="hidden" tip="Lists all Blocks">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-block-view-begin</trace>
+<call_job job="hook-block-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: block-view: begin.0">
+<ti> hook_job=hook-block-view-begin hook=begin page=view station=0 object=block</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="block_loop" xml="(file,blocks)" xpath="(prop,blocks_offset)block(prop,blocks_where)" sort="(prop,blocks_sort_attribute)" number="(prop,blocks_sort_number)" ignore_case="(prop,blocks_sort_ignore_case)" desc="(prop,blocks_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,blocks_offset_label)),0)">
+<ti label="(prop,blocks_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,block_loop,@name)(f,html,bold,close)" job="block-see">
+<prop id="block_key">(loop,block_loop,@row)</prop>
+<file id="blocks">(file,blocks)</file>
+<prop id="blocks_offset">(prop,blocks_offset)</prop>
+<prop id="blocks_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="blocks_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="blocks_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="blocks_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="blocks_where">(prop,blocks_where)</prop>
+<prop id="blocks_return_job">(prop,blocks_return_job)</prop>
+</ti>
+<ti test="(f,role,expert)" type="call_job" explain="Edit" job="block-edit">
+<prop id="block_key">(loop,block_loop,@row)</prop>
+<file id="blocks">(file,blocks)</file>
+<prop id="blocks_offset">(prop,blocks_offset)</prop>
+<prop id="blocks_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="blocks_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="blocks_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="blocks_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="blocks_where">(prop,blocks_where)</prop>
+<prop id="blocks_return_job">(prop,blocks_return_job)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=1 hook=2 hook_job=hook-block-view-loop</trace>
+<call_job job="hook-block-view-loop"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: block-view: 2.1">
+<ti> hook_job=hook-block-view-loop hook=2 page=view station=1 object=block</ti>
+</ti>
+</catch>
+</try_catch>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Blocks found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,blocks_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="block-add" explain="Add a Block" job="block-add">
+<file id="blocks">(file,blocks)</file>
+<prop id="blocks_offset">(prop,blocks_offset)</prop>
+<prop id="blocks_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="blocks_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="blocks_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="blocks_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="blocks_where">(prop,blocks_where)</prop>
+<prop id="blocks_return_job">(prop,blocks_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,blocks)</file>
+<prop id="orga_where">(prop,blocks_where)</prop>
+<prop id="orga_view_loop_id">block_loop</prop>
+<prop id="orga_finished_job">block-see-all</prop>
+<prop id="orga_offset">(prop,blocks_offset)</prop>
+<prop id="orga_offset_label">(prop,blocks_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,blocks_offset_new_key)</prop>
+<prop id="orga_segment_plural">blocks</prop>
+<prop id="orga_segment_singular">block</prop>
+<prop id="orga_segment_plural_label">Blocks</prop>
+<prop id="orga_segment_singular_label">Block</prop>
+<prop id="orga_sort_attribute">(prop,blocks_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,blocks_sort_number)</prop>
+<prop id="orga_where">(prop,blocks_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,block_loop,@name)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,blocks)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,blocks_offset)),0)">(prop,blocks_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-block-view-end</trace>
+<call_job job="hook-block-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: block-view: end.0">
+<ti> hook_job=hook-block-view-end hook=end page=view station=0 object=block</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

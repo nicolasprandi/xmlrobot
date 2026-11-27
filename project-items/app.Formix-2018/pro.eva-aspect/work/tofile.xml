@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="aspect-write">
+<need>(prop,aspect_key) (prop,isAdd)</need>
+<spirit act="open" id="aspects_spirit_tc" xml="(file,aspects)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,aspects_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,aspects_offset),0,(f,sub,(f,len,(prop,aspects_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,aspects_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="aspects_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;aspect row="(prop,aspect_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="aspects_spirit_tc" where="(prop,aspects_offset)aspect[@row='(prop,aspect_key)']" attribute="titel" value="(f,vob,prop,aspect_titel)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="aspects_spirit_tc" where="(prop,aspects_offset)aspect[@row='(prop,aspect_key)']" attribute="explain" value="(f,vob,prop,aspect_explain)"/>
+<spirit act="close" flag="save pretty" id="aspects_spirit_tc"/>
+</job>

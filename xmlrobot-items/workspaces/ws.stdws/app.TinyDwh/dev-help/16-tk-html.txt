@@ -1,0 +1,23 @@
+<?xml version="1.0" ?><steps>
+
+<tk .... 
+
+html_type=""  ... wird zum type des effektiven html input-elements, ohne definition ist das er default"text" 
+
+html_inputmode=""  ... wird zum inputmode des effektiven html input-elements, ohne definition wird das nicht belegt
+
+html_placeholder=""  ... wird zum placeholder des effektiven html input-elements, ohne definition wird das nicht belegt
+zb
+
+numerische eingabe:
+ type ="number" inputmode="numeric"  
+ inputmode="numeric" 
+ inputmode="decimal"
+weiters
+ inputmode="tel"
+ inputmode="search"
+ inputmode="email"
+ inputmode="url"
+
+
+</steps>

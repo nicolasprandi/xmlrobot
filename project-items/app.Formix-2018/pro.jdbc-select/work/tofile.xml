@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="select-write">
+<need>(prop,select_key) (prop,isAdd)</need>
+<spirit act="open" id="selects_spirit_tc" xml="(file,selects)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,selects_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,selects_offset),0,(f,sub,(f,len,(prop,selects_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,selects_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="selects_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;select row="(prop,select_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="selects_spirit_tc" where="(prop,selects_offset)select[@row='(prop,select_key)']" attribute="sql" value="(f,vob,prop,select_sql)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="selects_spirit_tc" where="(prop,selects_offset)select[@row='(prop,select_key)']" attribute="id" value="(f,vob,prop,select_id)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="selects_spirit_tc" where="(prop,selects_offset)select[@row='(prop,select_key)']" attribute="desc" value="(f,vob,prop,select_desc)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="selects_spirit_tc" where="(prop,selects_offset)select[@row='(prop,select_key)']" attribute="update" value="(f,vob,prop,select_update)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="selects_spirit_tc" where="(prop,selects_offset)select[@row='(prop,select_key)']" attribute="archify" value="(f,vob,prop,select_archify)"/>
+<spirit act="close" flag="save pretty" id="selects_spirit_tc"/>
+</job>

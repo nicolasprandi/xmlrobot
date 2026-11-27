@@ -1,0 +1,2 @@
+select * from i_box where 
+box_id between (prop,$boxid1) and (prop,$boxid2);

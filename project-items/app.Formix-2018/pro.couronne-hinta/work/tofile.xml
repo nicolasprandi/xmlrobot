@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="namaste-write">
+<need>(prop,namaste_key) (prop,isAdd)</need>
+<need default="./">(prop,namastes_offset)</need>
+<spirit act="open" id="namastes_spirit_tc" xml="(file,namastes)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,namastes_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,namastes_offset),0,(f,sub,(f,len,(prop,namastes_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,namastes_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="namastes_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;namaste row="(prop,namaste_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="namastes_spirit_tc" where="(prop,namastes_offset)namaste[@row='(prop,namaste_key)']" attribute="attributtyp" value="(f,vob,prop,namaste_attributtyp)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="namastes_spirit_tc" where="(prop,namastes_offset)namaste[@row='(prop,namaste_key)']" attribute="value" value="(f,vob,prop,namaste_value)"/>
+<spirit act="close" flag="save pretty" id="namastes_spirit_tc"/>
+</job>

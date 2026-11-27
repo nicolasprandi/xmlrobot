@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="hook_one_xpath_details" role="hidden">
+  <need>(prop,find_key) (prop,group_key)</need>
+  
+<try_catch> 
+  <try> 
+    <ti_hr/>
+    <ti label="Test-Files"/>
+    <prop id="xmlfs_offset">group[@row=(prop,group_key)]/find[@row=(prop,find_key)]/</prop>
+    <prop id="xmlfs_offset_label">(f,try,()(f,xpath,(file,finds),group[@row=(prop,group_key)]/find[@row=(prop,find_key)],@titel)(),?,?)</prop>  
+
+    <!-- <prop id="xmlfs_offset_label">(f,try,()(f,xpath,(file,finds),//find[@row=(prop,find_key)],@titel)(),?,?) : (f,xpath,(file,finds),//find[@row=(prop,find_key)],@xpath)</prop>    -->
+
+    <call_job job="xmlf-see-all"/> 
+  </try> 
+  <catch> 
+    <dump_ti label="Problem in searching for xmls ..."/> 
+  </catch> 
+</try_catch>  
+  
+  <!--The offset defines a node in the xml-data-file under which all the data is found. use eg 'england' or 'country[id='england']-->
+
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

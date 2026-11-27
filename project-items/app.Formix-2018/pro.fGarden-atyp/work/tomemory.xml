@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="atyp-read">
+<need>(prop,atyp_key)</need>
+<spirit act="open" missing_strategy="empty" id="atyps_spirit_tc" xml="(file,atyps)"/>
+<prop id="atyp_dt_upd">(f,spirit,atyps_spirit_tc,(prop,atyps_offset)atyp[@row=(f,xpath_string,(prop,atyp_key))],@dt_upd)</prop>
+<prop id="atyp_dt_add">(f,spirit,atyps_spirit_tc,(prop,atyps_offset)atyp[@row=(f,xpath_string,(prop,atyp_key))],@dt_add)</prop>
+<prop id="atyp_bez">(f,spirit,atyps_spirit_tc,(prop,atyps_offset)atyp[@row=(f,xpath_string,(prop,atyp_key))],@bez)</prop>
+<prop id="atyp_intervall">(f,spirit,atyps_spirit_tc,(prop,atyps_offset)atyp[@row=(f,xpath_string,(prop,atyp_key))],@intervall)</prop>
+<prop id="atyp_beschreibung">(f,spirit,atyps_spirit_tc,(prop,atyps_offset)atyp[@row=(f,xpath_string,(prop,atyp_key))],@beschreibung)</prop>
+<prop id="atyp_wahrscheinlichkeit">(f,spirit,atyps_spirit_tc,(prop,atyps_offset)atyp[@row=(f,xpath_string,(prop,atyp_key))],@wahrscheinlichkeit)</prop>
+<prop id="atyp_anmerkung">(f,spirit,atyps_spirit_tc,(prop,atyps_offset)atyp[@row=(f,xpath_string,(prop,atyp_key))],@anmerkung)</prop>
+<spirit act="close" id="atyps_spirit_tc"/>
+</job>

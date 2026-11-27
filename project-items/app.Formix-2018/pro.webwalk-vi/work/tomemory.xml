@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="vi-read">
+    <need>(prop,vi_key)</need>
+    <spirit act="open" missing_strategy="empty" id="vis_spirit_tc" xml="(file,vis)"/>
+    <prop id="vi_dt_upd">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@dt_upd)</prop>
+    <prop id="vi_dt_add">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@dt_add)</prop>
+    <prop id="vi_firstname">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@firstname)</prop>
+    <prop id="vi_lastname">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@lastname)</prop>
+    <prop id="vi_area">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@area)</prop>
+    <prop id="vi_phone">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@phone)</prop>
+    <prop id="vi_email">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@email)</prop>
+    <prop id="vi_street">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@street)</prop>
+    <prop id="vi_house">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@house)</prop>
+    <prop id="vi_door">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@door)</prop>
+    <prop id="vi_zip">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@zip)</prop>
+    <prop id="vi_tit1">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@tit1)</prop>
+    <prop id="vi_tit2">(f,spirit,vis_spirit_tc,(prop,vis_offset)vi[@row=(f,xpath_string,(prop,vi_key))],@tit2)</prop>
+    <spirit act="close" id="vis_spirit_tc"/>
+</job>

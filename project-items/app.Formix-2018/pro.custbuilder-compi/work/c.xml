@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="compilation" add_edit="1" label="The Compilation to Run" name_flag="1" tip="kompilation" name_len="50" type="sel" desc_flag="0" desc_len="30" sel_file="(dir,pro)current-compi-compile-selection.xml" /></fields>

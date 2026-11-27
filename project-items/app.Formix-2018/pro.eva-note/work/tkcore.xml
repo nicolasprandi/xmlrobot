@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="note-tk">
+<need default="">(prop,notes_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,notes_tk_control) wrap ">
+<tk label="Aspekt" id="note_aspect" x="" test_first="1" tip="Der benotete Aspekt" type="sel" flag=" " xml="(dir,pro)aspect-selector-gui.xml"/>
+<tk label="Note" id="note_note" x="" test_first="1" tip="Gesamtnote zwischen 1 und 5" type="sel" flag=" ">
+<sel label="1 - Sehr Gut">1</sel>
+<sel label="2 - Gut">2</sel>
+<sel label="3 - Befriedigend">3</sel>
+<sel label="4 - genuegend">4</sel>
+<sel label="5 - nicht genuegend">5</sel>
+</tk>
+<tk label="Verbal" id="note_note_verbal" x="" test_first="0" tip="Verbale Benotung" type="text" flag=" "/>
+<tk label="Urteil" id="note_urteil" x="" test_first="0" tip="Wie schauts aus" type="text" flag=" "/>
+<tk label="Begruendung" id="note_grund" x="" test_first="0" tip="Was war los" type="textblock" flag=" "/>
+</tk>
+</job>

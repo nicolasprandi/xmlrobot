@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo-tk">
+<need default="">(prop,modos_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,modos_tk_control) wrap ">
+<tk label="How" id="modo_how" x="" test_first="1" tip="How to update" type="sel" flag=" nono ">
+<sel label="append">append</sel>
+<sel label="insert_in">insert_in</sel>
+<sel label="insert_in_begin">insert_in_begin</sel>
+<sel label="insert_before">insert_before</sel>
+<sel label="insert_after">insert_after</sel>
+<sel label="remove">remove</sel>
+<sel label="replace">replace</sel>
+<sel label="set_attribute">set_attribute</sel>
+<sel label="remove_attribute">remove_attribute</sel>
+<sel label="set_text">set_text</sel>
+</tk>
+<tk label="Where" id="modo_where" x="()job[@id=(f,xpath_string,follow-spreadsheet)]()" test_first="1" tip="The location specified as xpath." type="textblock" flag="  big "/>
+<tk label="Val-Xml" id="modo_with" x="()(f,spirit,all,xml?,//job[@id=(f,xpath_string,see_main_input_only)])()" test_first="1" tip="Xml to use for update. zb ()(f,spirit,me,xml?,job[@id=(f,xpath_string,see_main_input_only)]) -or- (f,spirit,all,xml?,//job[@id=(f,xpath_string,see_main_input_only)]) ()" type="textblock" flag="  big "/>
+<tk label="WithWhat" id="modo_with_what" x="" test_first="1" tip="Used for Val-Xml. Either it is the root-element or the list of child-elements" type="sel" flag=" ">
+<sel label="root">root</sel>
+<sel label="childs">childs</sel>
+</tk>
+<tk label="Attribute-Name" id="modo_attribute" x="" test_first="0" tip="for set_attribute and remove_attribute" type="text" flag=" "/>
+<tk label="Val-Field" id="modo_value" x="" test_first="0" tip="The value for [set_attribute] and [set_text]" type="text" flag=" "/>
+<tk label="Administratives" x="Administratives" test_first="0" type="msg" flag=" "/>
+<tk label="Flag" id="modo_flag" x="any" test_first="0" tip="many any noupdate remove" type="sel" flag="multi ">
+<sel label="many">many</sel>
+<sel label="any">any</sel>
+<sel label="noupdate">noupdate</sel>
+<sel label="remove">remove</sel>
+<sel label="sys_debug">sys_debug</sel>
+<sel label="sys_debug_content">sys_debug_content</sel>
+</tk>
+<tk label="Off" id="modo_off" x="" test_first="0" tip="Turns this modifier off" type="bool" flag=" "/>
+<tk label="Expected Counts" id="modo_count" x="" test_first="1" tip="Number of Enctountes to be expeced" regex="\d+" type="text" flag=" "/>
+</tk>
+</job>

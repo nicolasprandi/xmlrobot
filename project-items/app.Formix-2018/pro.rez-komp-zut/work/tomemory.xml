@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kompzut-read">
+<need>(prop,kompzut_key)</need>
+<spirit act="open" missing_strategy="empty" id="kompzuts_spirit_tc" xml="(file,kompzuts)"/>
+<prop id="kompzut_dt_upd">(f,spirit,kompzuts_spirit_tc,(prop,kompzuts_offset)kompzut[@row=(f,xpath_string,(prop,kompzut_key))],@dt_upd)</prop>
+<prop id="kompzut_dt_add">(f,spirit,kompzuts_spirit_tc,(prop,kompzuts_offset)kompzut[@row=(f,xpath_string,(prop,kompzut_key))],@dt_add)</prop>
+<prop id="kompzut_zut_key">(f,spirit,kompzuts_spirit_tc,(prop,kompzuts_offset)kompzut[@row=(f,xpath_string,(prop,kompzut_key))],@zut_key)</prop>
+<prop id="kompzut_komp_key">(f,spirit,kompzuts_spirit_tc,(prop,kompzuts_offset)kompzut[@row=(f,xpath_string,(prop,kompzut_key))],@komp_key)</prop>
+<prop id="kompzut_anteil">(f,spirit,kompzuts_spirit_tc,(prop,kompzuts_offset)kompzut[@row=(f,xpath_string,(prop,kompzut_key))],@anteil)</prop>
+<prop id="kompzut_besch">(f,spirit,kompzuts_spirit_tc,(prop,kompzuts_offset)kompzut[@row=(f,xpath_string,(prop,kompzut_key))],@besch)</prop>
+<spirit act="close" id="kompzuts_spirit_tc"/>
+</job>

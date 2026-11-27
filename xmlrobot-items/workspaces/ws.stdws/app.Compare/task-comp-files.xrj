@@ -1,0 +1,185 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">cOMPARE out of service </throw>
+
+<job id="_compare_files" role="hidden">
+ 
+  <file id="c2f-out">(dir,pro)deltas.xml</file>
+  <prop id="tk_flag">sum_only</prop>
+
+  <file id="joe-in-store">(dir,pro)input-cache-c2f.xml</file>
+  <prop id="joe-in-regex">a|b</prop> 
+  <when test="(f,not,(f,file_exists,(file,joe-in-store)))">
+    <prop id="tk_flag">sum</prop>
+  </when>  
+  <call_job job="go-joe-read"/>
+  
+  <call_job job="do-tk-files"/>
+
+  
+  <prop id="joe-in-regex">a|b</prop> 
+  <call_job job="go-joe-write"/>
+    
+  <call_job job="Compare 2 Files-Internal"/>
+</job>
+
+<job id="convert-pdf-to-text" role="hidden">
+  <need>(file,cptt-pdf) (file,cptt-text)</need>
+  <!-- <dump_all flag="ti"/>
+  <ti_flush/>
+  <tk type="msg" x="in conver-pdf-to-text"/>      
+  
+    <file id="jar-pdf-box">(dir,app)pdfbox-xmlrobot.jar</file>
+    <tk type="msg" x="in conver-pdf-to-text 2"/>     
+    
+    <taskdef
+      id="pdf_to_text"
+      class="at.nicolas.x.compare.b">
+      <jar>(file,compare-jar-first)</jar>
+      <jar>(file,compare-jar-third)</jar>
+    </taskdef>  
+                                -->
+    <!-- <ti>starting to convert</ti>
+    <tk type="msg" x="in conver-pdf-to-text 4"/>
+    <tk type="file" id="cptt-pdf"/>
+    <tk type="file" id="cptt-text"/> -->
+    <pdf_to_text in="(file,cptt-pdf)" out="(file,cptt-text)" format="text"/>
+    <ti>pdf-conversion ok</ti>  
+</job>
+
+<job id="Compare 2 Files-Internal" joblevel="app" role="hidden">  
+
+  <need>(file,a)</need>
+  <need>(file,b)</need>
+  <need>(file,c2f-out)</need>
+  <call_job job="tr_c2fi"/>
+
+  <!--
+  <taskdef
+    id="filediff"
+    class="at.nicolas.x.compare.a" >
+      <jar>(file,compare-jar-first)</jar>
+      <jar>(file,compare-jar-third)</jar>
+    </taskdef>    -->
+      
+  <file id="a2">(file,a)</file>
+  <file id="b2">(file,b)</file>
+  
+  <prop id="html_flag"></prop>
+  <when test="(f,and,(f,ends_with,(f,upper,(file,a)),.PDF),(f,ends_with,(f,upper,(file,b)),.PDF))">
+    <!-- pdf files: convert first to text -->
+    <!-- 
+    <taskdef
+      id="pdf_to_text"
+      class="at.nicolas.x.compare.b" >
+      <jar>(file,compare-jar-first)</jar>
+      <jar>(file,compare-jar-third)</jar>
+    </taskdef>     -->
+            
+    <file id="a2">(dir,temp)converted-pdf-left.txt</file>
+    <file id="b2">(dir,temp)converted-pdf-right.txt</file> 
+    
+    <pdf_to_text in="(file,a)" out="(file,a2)" format="text"/>
+    <pdf_to_text in="(file,b)" out="(file,b2)" format="text"/>
+    <prop id="html_flag"></prop>
+  </when>
+  
+  <filediff
+    old="(file,a2)"
+    new="(file,b2)"
+    out="(file,c2f-out)" />
+  
+
+  <!-- 
+  <ti label="Compare Files"/>
+  <ti label="File A" x="(file,a2)" type="file"/>
+  <ti label="File B" x="(file,b2)" type="file"/>      -->
+    
+  <ti label="(prop,_c2fi_comp2files)">
+    <ti label="(prop,_c2fi_leftold):" type="file" len2="40">(file,a)</ti>
+    <ti label=" " type="file" test="(f,and,(f,not,(f,eq,(file,a),(file,a2))),(f,role,admin))" len2="40">(file,a2)</ti>
+    <ti label="(prop,_c2fi_rightnew):" type="file" len2="40">(file,b)</ti>
+    <ti label=" " type="file" test="(f,and,(f,not,(f,eq,(file,b),(file,b2))),(f,role,admin))" len2="40">(file,b2)</ti>
+    <ti label="(prop,_c2fi_delta):" type="file" test="1">(file,c2f-out)</ti>
+    <ti label="(prop,_c2fi_next):" type="call_job" job="Visual Compare" flag="silent" explain="(prop,_c2fi_visual_compare)" test="(f,not,(f,implement,online))">
+      <file id="a">(file,a2)</file>
+      <file id="b">(file,b2)</file>
+    </ti>
+  </ti>  
+  <ti label="(prop,_c2fi_ressum)">
+    <ti label="(prop,_c2fi_changes):">(f,xsl,(file,c2f-out),()count(deltas/delta[@type='C'])())</ti>
+    <ti label="(prop,_c2fi_inserts):">(f,xsl,(file,c2f-out),()count(deltas/delta[@type='I'])())</ti>
+    <ti label="(prop,_c2fi_deletes):">(f,xsl,(file,c2f-out),()count(deltas/delta[@type='D'])())</ti>
+  </ti>
+      
+  <ti_hr/>
+  <ti label="(e:o)#(e:c) (f,html,bold,open)(prop,_c2fi_type)(f,html,bold,close)" 
+      key="(prop,_c2fi_pos_head)">(prop,_c2fi_content)</ti>
+  <ti_hr/>
+
+  <prop id="counter">0</prop>
+  <loop id="rx" xml="(file,c2f-out)" xpath="delta">
+    
+    <choose>
+      <when test="(f,eq,(loop,rx,@type),C)">
+        <ti label="(e:o)(loop,rx,#i)(e:c) (f,html,bold,open)(prop,_c2fi_change)(f,html,bold,close)" 
+            key="(e:o)(loop,rx,old,@line)(e:s)(loop,rx,new,@line)(e:c)"
+            x=" "/>
+        <ti label="(f,html,bold,open)(prop,_c2fi_from):(f,html,bold,close)" 
+            flag="label_right (prop,html_flag)" 
+            x="(loop,rx,old)" />
+        <ti label="(f,html,bold,open)(prop,_c2fi_to):(f,html,bold,close)" 
+            flag="label_right (prop,html_flag)" 
+            x="(loop,rx,new)"/>        
+      </when>
+      <when test="(f,eq,(loop,rx,@type),I)">
+        <ti label="(e:o)(loop,rx,#i)(e:c) (f,html,bold,open)(prop,_c2fi_insert)(f,html,bold,close)" 
+            flag="(prop,html_flag)" 
+            key="(e:o)(loop,rx,old,@line)(e:s)(loop,rx,new,@line)(e:c)" 
+            x="(loop,rx,new)" />      
+      </when>  
+      <when test="(f,eq,(loop,rx,@type),D)">
+        <ti label="(e:o)(loop,rx,#i)(e:c) (f,html,bold,open)(prop,_c2fi_delete)(f,html,bold,close)" 
+            flag="(prop,html_flag)" 
+            key="(e:o)(loop,rx,old,@line)(e:s)(loop,rx,new,@line)(e:c)" 
+            x="(loop,rx,old)"/>        
+      </when>              
+      <otherwise>
+        <ti label="(e:o)(loop,rx,#i)(e:c)">(f,html,bold,open)(prop,_c2fi_unknown)(f,html,bold,close)</ti> 
+      </otherwise>
+    
+    </choose>
+    
+    <prop id="counter">(f,add,1,(prop,counter))</prop>
+    <ti_hr style="2"/>
+  </loop>
+  <ti label="(prop,_c2fi_total): (prop,counter)">  </ti>
+    
+</job>
+
+<job id="Visual Compare" role="hidden">
+  <need>(file,a) (file,b)</need>
+  <!-- 
+  <taskdef
+    id="visualcompare"
+    class="at.nicolas.x.compare.d">
+      <jar>(file,compare-jar-first)</jar>
+      <jar>(file,compare-jar-third)</jar>
+  </taskdef>        -->
+      
+
+  <visualcompare>
+    <inline attribute="files"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <file label="File Changes">
+            <file fn="(x,(file,a))" label="Left/Old"/>
+            <file fn="(x,(file,b))" label="Right/New" />
+          </file>
+        ]]></inline>
+  </visualcompare>
+</job>
+
+</jobs>

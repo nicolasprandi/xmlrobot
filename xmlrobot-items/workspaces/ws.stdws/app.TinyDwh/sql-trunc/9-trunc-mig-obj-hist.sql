@@ -1,0 +1,1 @@
+TRUNCATE int.mig_obj_hist;

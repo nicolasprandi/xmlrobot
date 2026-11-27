@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="computer-read">
+<need>(prop,computer_key)</need>
+<spirit act="open" missing_strategy="empty" id="computers_spirit_tc" xml="(file,computers)"/>
+<prop id="computer_dt_upd">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@dt_upd)</prop>
+<prop id="computer_dt_add">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@dt_add)</prop>
+<prop id="computer_computer">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@computer)</prop>
+<prop id="computer_os">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@os)</prop>
+<prop id="computer_name">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@name)</prop>
+<prop id="computer_adresse">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@adresse)</prop>
+<file id="computer_f1">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@f1)</file>
+<unescape type="file" id="computer_f1"/>
+<translate type="file" id="computer_f1"/>
+<file id="computer_f2">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@f2)</file>
+<unescape type="file" id="computer_f2"/>
+<translate type="file" id="computer_f2"/>
+<dir flag="cool" id="computer_d1">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@d1)</dir>
+<unescape type="dir" id="computer_d1"/>
+<translate type="dir" id="computer_d1"/>
+<dir flag="cool" id="computer_d2">(f,spirit,computers_spirit_tc,(prop,computers_offset)computer[@row=(f,xpath_string,(prop,computer_key))],@d2)</dir>
+<unescape type="dir" id="computer_d2"/>
+<translate type="dir" id="computer_d2"/>
+<spirit act="close" id="computers_spirit_tc"/>
+</job>

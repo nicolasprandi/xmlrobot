@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="find-write">
+    <need>(prop,find_key) (prop,isAdd)</need>
+    <need default="./">(prop,finds_offset)</need>
+    <spirit act="open" id="finds_spirit_tc" xml="(file,finds)"/>
+    <when test="(prop,isAdd)">
+        <choose>
+            <when test="(f,ends_with,(prop,finds_offset),/)">
+                <prop id="offset2" x="(f,substring,(prop,finds_offset),0,(f,sub,(f,len,(prop,finds_offset)),1))"/>
+            </when>
+            <otherwise>
+                <prop id="offset2" x="(prop,finds_offset)"/>
+            </otherwise>
+        </choose>
+        <spirit act="xml_update" how="insert_in_begin" id="finds_spirit_tc" where="(prop,offset2)">
+            <inline attribute="with">&lt;find row="(prop,find_key)" /&gt;</inline>
+        </spirit>
+        <i>Added a new record</i>
+    </when>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="xpath" value="(f,vob,prop,find_xpath)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="titel" value="(f,vob,prop,find_titel)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="desc" value="(f,vob,prop,find_desc)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="style" value="(f,vob,prop,find_style)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="by_link_text" value="(f,vob,prop,find_by_link_text)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="by_partial_link_text" value="(f,vob,prop,find_by_partial_link_text)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="by_class_name" value="(f,vob,prop,find_by_class_name)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="by_css" value="(f,vob,prop,find_by_css)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="by_id" value="(f,vob,prop,find_by_id)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="by_name" value="(f,vob,prop,find_by_name)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="by_tag_name" value="(f,vob,prop,find_by_tag_name)"/>
+    <file id="jack-in" x="(file,find_xsl_file)"/>
+    <prop id="jack-result-prop" x="(f,random_text,5)"/>
+    <prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+    <call_service job="go-jack-do-file" flag="silent">
+        <file id="jack-in" x="(file,jack-in)"/>
+        <prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+        <prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+    </call_service>
+    <global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="xsl_file" value="(prop,jack-result)"/>
+    <spirit act="xml_update" how="set_attribute" flag="remove" id="finds_spirit_tc" where="(prop,finds_offset)find[@row='(prop,find_key)']" attribute="xsl_paras" value="(f,vob,prop,find_xsl_paras)"/>
+    <spirit act="close" flag="save pretty" id="finds_spirit_tc"/>
+</job>

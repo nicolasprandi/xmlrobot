@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rezpic-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Rezept-Pic(prop,rezpics_offset_label)"/>
+<prop x="sum" id="rezpics_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,rezpic_key)</need>
+<prop id="label" x="Rezept-Pic [(f,text,cut_nice,(prop,rezpic_bez),20)](prop,rezpics_offset_label)"/>
+<prop x="sum_only" id="rezpics_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="rezpic-tk"/>
+</job>

@@ -1,0 +1,251 @@
+<?xml version="1.0" ?><!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<!-- <when test="(f,has,prop,pro)"> take 2 things to the prolog --> 
+  <!-- 
+
+  -->
+<!-- </when>       -->
+
+<!-- gui Adapters: to copy in the app  take the edit to your gui.... 
+
+<job id="Edit: aska_">
+  <call_job job="tk_aska_edit"/>
+</job>
+
+<job id="Edit: aska_?">
+  <call_job job="tk_aska_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_aska_clear" explain="Clear this data"/>
+</job>                       -->
+
+
+
+<!-- setting the default-values -->
+<job id="tk_aska_default" role="hidden">
+ 
+  <need default="1">(prop,aska_p1_intro)</need>
+  <need default="1">(prop,aska_p2_intro)</need>
+  <need default="1">(prop,aska_p2_std)</need>
+  <need default="1">(prop,aska_p2_indiv)</need>
+  <need default="1">(prop,aska_p3_intro)</need>
+  <need default="1">(prop,aska_p3_review)</need>
+  <need default="1">(prop,aska_p4_intro)</need>
+  <need default="1">(prop,aska_p4_libs)</need>
+  
+</job>
+
+
+<!-- aska-core, make your changes here -->
+<job id="tk_aska_core" role="hidden" tip="aska_: Tk Internal">
+
+  <need default="1">(prop,do-aska-p1)</need>
+  <need default="1">(prop,do-aska-p2)</need>
+  <need default="1">(prop,do-aska-p3)</need>
+  <need default="1">(prop,do-aska-p4)</need>
+  
+  <need default="">(prop,tk_aska_add_flag)</need>
+
+  <tk label="Asking Questions during Product-Build" 
+      flag="(prop,tk_aska_add_flag)"
+      tip="()x()"> 
+      
+    <tk type="msg"
+        x="Application Builder (e:o)P1(e:c)"
+        test="(prop,do-aska-p1)"
+        test_first="0"/> 
+    <tk id="aska_p1_intro"
+        type="bool"
+        label="Phase Intro"
+        flag="no_is_0"     
+        tip="()Intro für den AppBuilder dieser Arc-CustomerBuilder-App()"
+        test="(prop,do-aska-p1)"
+        test_first="0"/>           
+        
+    <tk type="msg"
+        x="Compile (e:o)P2(e:c)"
+        test="(prop,do-aska-p2)"
+        test_first="0"/>  
+    <tk id="aska_p2_intro"
+        type="bool"
+        label="Phase Intro"
+        flag="no_is_0"     
+        tip="()Intro für den Compiler dieser Arc-CustomerBuilder-App()"
+        test="(prop,do-aska-p2)"
+        test_first="0"/>           
+    <tk id="aska_p2_std"
+        type="bool"
+        label="All Libs (e:o)Download &amp; Extract(e:c)"
+        flag="no_is_0"     
+        tip="()Standard Compile-Parameter: Download Material, Java-Sources, Libs; Extract Libs; Package, Build()"
+        test="(prop,do-aska-p2)"
+        test_first="0"/>     
+        
+    <tk id="aska_p2_indiv"
+        type="bool"
+        label="Individual Java-Source-Updates (e:o)reco-core(e:s)echnaton(e:s)echnaton-web(e:s)echnaton-lib(e:s)echnaton-hibiscus(e:c)"
+        flag="no_is_0"     
+        tip="()()"
+        test="(prop,do-aska-p2)"
+        test_first="0"/>        
+        
+    <tk type="msg"
+        x="Obfuriscate (e:o)P3(e:c)"
+        test="(prop,do-aska-p3)"
+        test_first="0"/>  
+        
+    <tk id="aska_p3_intro"
+        type="bool"
+        label="Phase Intro"
+        flag="no_is_0"     
+        tip="()Intro für den Java-Obfuriscator dieser Arc-CustomerBuilder-App()"
+        test="(prop,do-aska-p3)"
+        test_first="0"/>          
+        
+    <tk id="aska_p3_review"
+        type="bool"
+        label="Review Zelix-Script"
+        flag="no_is_0"     
+        tip="()()"
+        test="(prop,do-aska-p3)"
+        test_first="0"/>          
+        
+    <tk type="msg"
+        x="Finalize (e:o)P4(e:c)"
+        test="(prop,do-aska-p4)"
+        test_first="0"/>  
+        
+    <tk id="aska_p4_intro"
+        type="bool"
+        label="Phase Intro"
+        flag="no_is_0"     
+        tip="()Intro für den Finalizing dieser Arc-CustomerBuilder-App()"
+        test="(prop,do-aska-p4)"
+        test_first="0"/>     
+        
+    <tk id="aska_p4_libs"
+        type="bool"
+        label="Rebuild Libs"
+        flag="no_is_0"     
+        tip="()()"
+        test="(prop,do-aska-p4)"
+        test_first="0"/>                              
+        
+ 
+                          
+  </tk>   
+</job>
+<!-- 
+<job id="See Values: aska_" role="dev">
+  <call_job job="tk_aska_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_aska_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+ <job id="Clear Data: aska_">
+  <tk type="msg" x="Sure to clear data of aska_ ?" msg_type="w"/>
+  <call_job job="tk_aska_clear"/>
+</job>
+
+<job id="Print Values:  aska_">
+  <call_job job="tk_aska_print_values"/>
+</job>
+<job id="Print Help: aska_" role="dev">
+  <call_job job="tk_aska_print_help"/>
+</job>
+
+-->
+<!-- edit data: read, userinput, write -->
+<job id="tk_aska_edit" tip="aska_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <call_job job="aska-get-data" />
+  <choose>
+    <when test="(f,exists_file,(file,aska-data))">
+      <!-- data exists already -->
+      <prop id="tk_aska_add_flag" x="sum_only print"/>
+      <call_job job="tk_aska_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_aska_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_aska_default"/>
+  <!-- doing input -->
+  <call_job job="tk_aska_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_aska_write"/>
+
+</job>
+
+
+
+<job id="tk_aska_print_values" tip="aska_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_aska_read"/>
+  
+  <call_job job="tk_aska_core">
+    <prop id="tk_aska_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_aska_print_values_tips" tip="aska_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_aska_read"/>
+  
+  <call_job job="tk_aska_core">
+    <prop id="tk_aska_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_aska_print_help" tip="aska_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_aska_core">
+    <prop id="tk_aska_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_aska_read" role="hidden">
+<call_job job="aska-get-data" />
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,aska-data)" />
+    <prop id="joe-in-regex" x="(prop,aska-regex)" />    
+  </call_job>
+  <call_job job="tk_aska_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_aska_write" role="hidden">
+  <call_job job="aska-get-data" />
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,aska-data)" />
+    <prop id="joe-in-regex" x="(prop,aska-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_aska_clear"  tip="aska_: Clears the data" role="hidden">
+  <call_job job="aska-get-data" />
+  <delete file="(file,aska-data)"/>
+</job>
+
+<job id="aska-get-data" role="hidden">
+
+<file id="aska-data" x="(dir,pro)aska-data-(prop,custset_product).xrs"/>
+
+</job>
+
+
+</jobs>

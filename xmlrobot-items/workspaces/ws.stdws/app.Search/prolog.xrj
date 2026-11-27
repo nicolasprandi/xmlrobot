@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<jobs>
+
+<job id="prolog" role="hidden">
+
+<!-- <throw test="(f,not,(f,eq_text,(prop,app),Search))">Sorry</throw> --> 
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>
+<interpreter turbo="1"/>
+
+<choose>
+<when test="(f,has,dir,pro)">
+
+  
+  <!-- 
+  <call_service job="include-header" test="(f,implement,echnaton)"/>
+  <dir id="cache" x="(dir,pro)cache"/>
+  <mkdir dir="(dir,cache)"  />
+  
+  <dir id="userinputs" x="(dir,pro)userinputs"/>
+  <mkdir dir="(dir,userinputs)"  /> 
+  <-->
+  
+  <file id="ic-search" x="(dir,pro)ic-search.xml"/>
+  <prop id="regex_search">search_.*</prop>
+  
+  <file id="ic-replace" x="(dir,pro)ic-replace.xml"/>
+  <prop id="regex_replace">replace_.*</prop>
+  
+  <file id="result">(dir,pro)result.xml</file>
+  <file id="scan">(dir,pro)scan.xml</file> 
+  
+  <file id="rex_tester" x="(dir,pro)rex_tester.xml"/>
+  <prop id="regex_rex_tester" x="srl-.*"/>
+
+  <prop id="def_for_label" x="()Search for (Text,Regex)()"/>
+  <prop id="def_for_tip" x="Depending on your search-type enter the TEXT or the REGEX"/>    
+  
+  <prop id="def_for_text_label" x="Text to Search"/>
+  <prop id="def_for_text_tip" x="Just plain text to be searched for; will be converted to a RegEx ..."/>    
+  
+  <prop id="def_for_regex_label" x="Regular Expression"/>
+  <prop id="def_for_regex_tip" x="()use (?i) for case-insensitive; use \ for literals (mac: alt shift 7)()"/>  
+   
+  <prop id="def_ext_label" x="File-Extensions to include"/>
+  <prop id="def_ext_tip" x="like: .html .java .xml"/> 
+  <prop id="def_ext_x" x=".xrj .xrs .xrt .ltx .lsx .ljx .txt .text .java .html .htm .xsl .php .txt .xml .sh .bat .log .sql .csv"/>   
+  
+  <prop id="def_levels_label" x="Directory-Levels"/>
+  <prop id="def_levels_tip" x="Limit the depth of directories to search for"/> 
+  <prop id="def_levels_x" x="1"/>  
+  
+  <prop id="def_encoding_label" x="Encoding"/>
+  <prop id="def_encoding_tip" x="Encoding spezifies the technical file format"/>
+  <prop id="def_encoding_x" x="UTF-8"/>   
+  
+  <prop id="def_len_before_label" x="View-Chars-Before"/>
+  <prop id="def_len_before_tip" x="Number of characters you will see in the displayed findings - BEFORE the encounter"/> 
+  <prop id="def_len_before_x" x="50"/>    
+
+  <prop id="def_len_after_label" x="View-Chars-After"/>
+  <prop id="def_len_after_tip" x="Number of characters you will see in the displayed findings - AFTER the encounter"/> 
+  <prop id="def_len_after_x" x="100"/>  
+
+  <prop id="def_dir_label" x="Directory to search"/>
+  <prop id="def_dir_tip" x="Directory to search"/> 
+  <file id="joe-in-store" x="(dir,pro)input-cache.xml"/>   
+</when> 
+<otherwise>
+  <interpreter jovial="1"/>
+</otherwise>
+</choose>
+
+</job>
+
+</jobs>

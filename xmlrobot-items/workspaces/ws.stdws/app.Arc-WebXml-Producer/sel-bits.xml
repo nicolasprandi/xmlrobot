@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<sel>
+  <sel xlabel="panoramaChoose">panoramaChoose</sel>
+  <sel xlabel="B2">hasSelFileWrite</sel> 
+  <sel xlabel="B3">hasSelFileRead</sel>
+  <sel xlabel="B4">hasSelDirWrite</sel>
+  <sel xlabel="B5">hasSelDirRead</sel> 
+  <sel label="B6">b6</sel>
+  <sel label="B7">b7</sel>
+  <sel label="B8">b8</sel> 
+  <sel label="B9">b9</sel>
+  <sel label="B10">b10</sel>
+  <sel label="B11">b11</sel>
+  <sel label="B12">b12</sel> 
+  <sel label="B13">b13</sel>
+  <sel label="B14">b14</sel>
+  <sel label="B15">b15</sel> 
+  <sel label="B16">b16</sel>
+  <sel label="B17">b17</sel>
+  <sel label="B18">b18</sel> 
+  <sel label="B19">b19</sel>  
+     
+</sel>

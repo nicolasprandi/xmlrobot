@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsa-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<call_job job="idef-dsa-on"/>
+<prop id="dsa_default_label_class" x="+ (prop,_sl_dsa)"/>
+<prop id="dsa_default_label_name" x="(f,when,(f,has,(prop,dsas_offset_label)), | (prop,dsas_offset_label),)"/>
+<prop id="dsas_tk_control" x="sum"/>
+</when>
+<otherwise>
+<need>(prop,dsa_key)</need>
+<prop id="dsa_default_label_class" x="(prop,_sl_dsa)"/>
+<prop id="dsa_default_label_name" x="(f,tk_sel_translate,(prop,dsa_attributtyp),(file,pdi-sel-attr))(f,when,(f,has,(prop,dsas_offset_label)), - (prop,dsas_offset_label),)"/>
+<prop id="dsas_tk_control" x="sum_only"/>
+</otherwise>
+</choose>
+<call_job job="dsa-tk"/>
+</job>

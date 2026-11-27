@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo2-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="modo2_default_label" x="+ Modificator(prop,modos2_offset_label)"/>
+<prop x="sum" id="modos2_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,modo2_key)</need>
+<prop id="modo2_default_label" x="Modificator [(prop,modo2_how)](prop,modos2_offset_label)"/>
+<prop x="sum_only" id="modos2_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="modo2-tk"/>
+<prop id="joe-in-regex" x="(prop,last_blurry-regex)" />
+<file id="joe-in-store" x="(file,last_blurry)" />
+<call_job job="go-joe-write"/>
+</job>

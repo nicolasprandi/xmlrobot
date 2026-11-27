@@ -1,0 +1,311 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="tell rep second" role="hidden">
+  <try_catch>
+  <try>
+  <include file="(file,nrr)" code="nrr"/>
+  </try>
+  <catch>
+  </catch>
+  </try_catch>
+</job>
+
+<job id="tell" role="hidden">
+  <tp>tell is here!</tp>
+  <call_service job="Goto-Panorama" flag="silent">
+    <dir id="with">(dir,pro-backups)</dir>
+  </call_service>
+</job>
+
+<job id="tell sheetlist with file" role="hidden">
+  <need>(file,with)</need>
+  <need default="0">(prop,print-sheets-right)</need>
+  <need default="1">(prop,print-sheets-header)</need>
+  
+  
+  <excel_sheets 
+    out="(dir,work)sl.xml"
+    excel="(file,with)"/>
+  
+  <prop id="f" x="(f,xsl,(dir,work)sl.xml,()count(sheets/sheet)())"/>
+  <when test="(f,gt,(prop,f),0)">
+
+    <ti label="List of sheets in '(f,name_of_file,(file,with))'" test="(prop,print-sheets-header)"/>  
+    <loop id="i" xml="(dir,work)sl.xml" xpath="sheet">
+      <choose>
+        <when test="(prop,print-sheets-right)">
+          <ti label=" " x="(e:o)(loop,i,@index)(e:c) (loop,i,@name)"/>
+        </when>
+        <otherwise>
+          <ti x="(e:o)(loop,i,@index)(e:c) (loop,i,@name)"/>
+        </otherwise>
+      </choose>
+      
+    </loop>
+    <!-- <ti label=" " type="call_job" job="Change Sheet"/> -->
+  </when>
+  
+  <!-- <ti label=" " type="call_job" job="Change Sheet"/> -->
+</job>
+
+<job id="tell sheetlist with file2" role="hidden">
+  <need>(file,with)</need>
+  
+  <excel_sheets 
+    out="(dir,work)sl.xml"
+    excel="(file,with)"/>
+
+  <loop id="i" xml="(dir,work)sl.xml" xpath="sheet">
+    <ti label=" " x="(loop,i,@index). (loop,i,@name)" test="0"/>
+    <ti label="(loop,i,@index). "
+        type="call_job"
+        job="use-file-with-sheet"
+        explain="(loop,i,@name)"
+        flag="label_right">
+      <file id="ufws-file" x="(file,with)"/>
+      <prop id="ufws-sheet" x="(loop,i,@name)"/>
+    </ti>
+  </loop>
+  
+</job>
+
+<job id="use-file-with-sheet" role="hidden">
+  <need>(file,ufws-file) (prop,ufws-sheet)</need>
+
+  <call_job job="go-joe-read">
+     <file id="joe-in-store" x="(dir,pro)userinputs/app-data-gen-switch-template-ic.xrs"/>
+     <prop id="joe-in-regex" x="ufws-ask|ufws-how" />
+  </call_job>  
+    
+  <tk label="Switch to (f,name_of_file,(file,ufws-file))/(prop,ufws-sheet)">
+  <tk type="sel"
+      id="ufws-ask"
+      label="What to do?"
+      flag="nono"
+      tip="Do you want to make a project-backup before you switch to another input-file?">
+      <sel label="Switch to template">switch</sel>
+      <sel label="Switch to template(e:s) make a project-backup before">backup</sel>
+      <sel label="Forget it">cancel</sel>
+  </tk>
+  </tk>
+  <choose>
+    <when test="(f,eq_text,cancel,(prop,ufws-ask))">
+      <throw>Did forget that</throw>
+    </when>
+    <when test="(f,eq_text,backup,(prop,ufws-ask))">
+      <call_service job="Backup: Project" flag="silent"/>
+      <ti_hr/>
+    </when>  
+  </choose>
+  
+  <tk label="Switch to (f,name_of_file,(file,ufws-file))/(prop,ufws-sheet)">
+  <tk type="sel"
+      id="ufws-how"
+      label="Import or Reference?"
+      flag="nono"
+      tip="()Do you want to copy the file into the project (=Import) or just set a link to it (=Reference) ?()">
+      <sel label="Import">import</sel>
+      <sel label="Reference">reference</sel>
+      <sel label="Forget it">cancel</sel>
+  </tk>
+  </tk>  
+
+  <when test="(f,eq_text,cancel,(prop,ufws-how))">
+    <throw>Did forget that</throw>
+  </when>
+      
+  <call_job job="go-joe-write">
+     <file id="joe-in-store" x="(dir,pro)userinputs/app-data-gen-switch-template-ic.xrs"/>
+     <prop id="joe-in-regex" x="ufws-ask|ufws-how" />
+  </call_job>  
+  
+  <choose>
+    <when test="(f,eq_text,reference,(prop,ufws-how))">
+      <file id="excel" x="(file,ufws-file)"/>
+      <prop id="excel-loc" x="ref" />    
+    </when>
+    <when test="(f,eq_text,import,(prop,ufws-how))">
+      <call_job job="get-filename-import">
+        <prop id="gfi-in" x="(f,name_of_file,(file,ufws-file))"/>
+      </call_job>
+
+      <file id="excel" x="(file,gfi-out)"/>
+      <prop id="excel-loc" x="pro"/>
+      
+      <copy file="(file,ufws-file)" tofile="(file,excel)"/>    
+    </when>   
+  </choose>
+
+  <call_job job="go-joe-write">
+     <file id="joe-in-store" x="(file,fileref)"/>
+     <prop id="joe-in-regex" x="(prop,fileref_regex)" />
+  </call_job>  
+                   
+  <!-- read cached input -->  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)" />
+  </call_job>   
+
+  <prop id="sheet" x="(prop,ufws-sheet)"/>
+               
+  <!-- write input caches -->
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-a)"/>
+    <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+  </call_job>
+  
+  <ti label="Switched input">
+    <ti type="file" x="(file,excel)" label="New spreadsheet:"/>
+    <ti  x="(prop,ufws-sheet)" label="New sheet:"/>                 
+  </ti>
+  
+  <tk type="msg" x="Going to continue with running the conversion ..." test="0"/>
+  <ti_hr/>
+  <call_job job="Run" />
+     
+</job>
+
+<job id="tell all sheetlists" role="hidden">
+  <sequence id="t" xml="(dir,filetemp)sequence.xml" act="open" />
+  <tp>Looking in this project</tp>
+  <ti_hr/>
+  <ti label="(e:o)1(e:c) Sheets of (f,html,i,open)this project(f,html,i,close): (prop,pro)" sixze="2"/>
+  <call_job job="excelinfo" />
+  
+  <call_job job="tell sheetlist with file2">
+    <file id="with" x="(file,excel)" />
+  </call_job>
+  <ti type="call_job" job="Change Sheet" label=" "/> 
+  
+  <tp>Looking other projects</tp>
+  
+  <sequence id="t" act="next"/>
+  <file id="t">(dir,work)temporary_(f,sequence,t).xml</file>
+  <ask out="(file,t)" what="apps" style="natural"/>
+  <loop id="mypro" xml="(file,t)" xpath="apps/app[@id=(f,xpath_string,(prop,app))]/pro" >
+    <when test="(f,eq,1,(loop,mypro,#i))">
+      <ti_hr/>
+      <ti label="(e:o)2(e:c) Owning Sheets of (f,html,i,open)other projects(f,html,i,close)" sixze="2"/>
+    </when>    
+    <when test="(f,not,(f,eq,(prop,pro),(loop,mypro,@id)))">
+
+      <call_job job="demand input of project">
+        <dir id="with_pro">(loop,mypro,@dir)</dir>
+      </call_job>
+      <choose>
+        <when test="(f,has,file,result_excel_pro)">
+          <ti label="(f,html,bold,open)(loop,mypro,@id)(f,html,bold,close)" type="file" flag="label_right">(file,result_excel_pro)</ti>
+          <call_job job="tell sheetlist with file2">
+            <file id="with" x="(file,result_excel_pro)" />
+          </call_job>
+        </when>
+        <otherwise>
+          <!-- <ti label="(loop,mypro,@id)" typxe="file" flag="label_right">referencing something</ti> -->
+        </otherwise>
+      </choose>
+    </when>
+
+  </loop>  
+   
+  
+  <tp>Looking templates</tp>
+  <sequence id="t" act="next"/>
+  <file id="t">(dir,work)temporary_(f,sequence,t).xml</file>
+  <scan out="(file,t)" dir="(dir,templates)" level_limit="1" field="fn pre"/>
+  <loop id="mytemplate" xml="(file,t)" xpath="file" >
+    <when test="(f,eq,1,(loop,mytemplate,#i))">
+      <ti_hr/>
+      <ti label="(e:o)3(e:c) Sheets of (f,html,i,open)templates (f,html,i,close)which come with the app" sixze="2"/>
+    </when>    
+
+      <ti type="file" x="(dir,templates)(loop,mytemplate)"
+          label="(f,html,bold,open)(loop,mytemplate,@pre)(f,html,bold,close)"
+          flag="label_right"/>
+      
+      <call_job job="tell sheetlist with file2">
+        <file id="with" x="(dir,templates)(loop,mytemplate)" />
+      </call_job>
+
+  </loop>
+  <ti_hr/>
+  <ti type="call_job" job="Change Spreadsheet"/>
+    
+</job>
+
+<job id="tell sheetlist of templates" role="hidden">
+  <ti label="List of templates">
+    <ti type="ul">The templates serve as examples for the input</ti>
+    <ti type="ul">Under every template(e:s) the contained sheets are listed</ti>
+    <ti type="ul">Click on one of the sheets to use it</ti>
+  </ti>
+  <ti_hr/>
+  <ti label="Templates with sheets"/>
+  <file id="tpx">(dir,filetemp)tell-sheetlist-of-templates.xml</file>
+  <scan out="(file,tpx)" dir="(dir,templates)" level_limit="1" field="fn pre"/>
+  <loop id="mytemplate" xml="(file,tpx)" xpath="file" sort="@pre" ignore_case="@pre" >    
+
+      <ti type="file" x="(dir,templates)(loop,mytemplate)"
+          label="(f,html,bold,open)(loop,mytemplate,@pre)(f,html,bold,close)"
+          flag="label_right"/>
+      
+      <call_job job="tell sheetlist with file2">
+        <file id="with" x="(dir,templates)(loop,mytemplate)" />
+      </call_job>
+
+  </loop>
+</job>
+
+<job id="tell sheetlist" role="hidden">
+
+  <call_job job="tell sheetlist with file">
+    <file id="with" x="(file,excel)" />
+  </call_job>
+  
+  <!-- <ti label=" " type="call_job" job="Change Sheet"/> -->
+</job>
+
+<job id="See All Generator Parameters" role="hidden">
+
+      <call_job job="do model input">
+        <prop id="modelinputflag" x=" print_only print_tips_only print_all_fields"/>
+        <prop id="askquestions" x="0"/>      
+      </call_job>   
+
+</job>
+<!--
+<job id="See All Export Parameters" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+  </call_job>
+  
+  <call_job job="do export input">
+	<prop id="askquestions" x="1" />
+    <prop id="exportinputflag" x="print_only print_with_tips print_all_fields"/>
+  </call_job>
+
+</job>
+-->
+
+<job id="tell sheetlist_with_dir" role="hidden">
+  <scan dir="(dir,pro)" level="1" out="(dir,filetemp)scan.xml"/>
+  
+  <ti_break/>
+  <excel_sheets 
+    out="(dir,work)sl.xml"
+    excel="(file,excel)"/>
+  <ti label="List of sheets in the spreadsheet"/>  
+  <loop id="i" xml="(dir,work)sl.xml" xpath="sheet">
+    <ti label="(e:o)(loop,i,@index)(e:c) (loop,i,@name)" x=" "/>
+  </loop>
+</job>
+
+<job id="tell excel" role="hidden">
+  <call_job job="excelinfo"/>
+</job>
+
+</jobs>

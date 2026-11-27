@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsi-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="dsis_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,dsis_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="dsi-see">
+<prop id="dsi_key">(prop,dsi_key)</prop>
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="dsi-see-all">
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,dsi_key)</need>
+<call_job job="dsi-read"/>
+<prop id="dsi_default_label_class" x="(prop,_sl_dsi)"/>
+<prop id="dsi_default_label_name" x="(f,text,cut_nice,(prop,dsi_name),30)(f,when,(f,has,(prop,dsis_offset_label)), - (prop,dsis_offset_label),)"/>
+<call_job job="dsi-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailDsi" explain="(prop,_x_edit)" job="dsi-edit">
+<prop id="dsi_key">(prop,dsi_key)</prop>
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,dsis_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="dsi-see">
+<prop id="dsi_key">(prop,dsi_key)</prop>
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="dsi-see-all">
+<file id="dsis">(file,dsis)</file>
+<prop id="dsis_offset">(prop,dsis_offset)</prop>
+<prop id="dsis_offset_label">(prop,dsis_offset_label)</prop>
+<prop id="dsis_offset_new_key">(prop,dsis_offset_new_key)</prop>
+<prop id="dsis_sort_attribute">(prop,dsis_sort_attribute)</prop>
+<prop id="dsis_sort_number">(prop,dsis_sort_number)</prop>
+<prop id="dsis_sort_ignore_case">(prop,dsis_sort_ignore_case)</prop>
+<prop id="dsis_sort_desc">(prop,dsis_sort_desc)</prop>
+<prop id="dsis_where">(prop,dsis_where)</prop>
+<prop id="dsis_return_job">(prop,dsis_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

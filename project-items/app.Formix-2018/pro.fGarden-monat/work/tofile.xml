@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="monat-write">
+<need>(prop,monat_key) (prop,isAdd)</need>
+<spirit act="open" id="monate_spirit_tc" xml="(file,monate)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,monate_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,monate_offset),0,(f,sub,(f,len,(prop,monate_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,monate_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="monate_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;monat row="(prop,monat_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="monate_spirit_tc" where="(prop,monate_offset)monat[@row='(prop,monat_key)']" attribute="monat" value="(f,vob,prop,monat_monat)"/>
+<spirit act="close" flag="save pretty" id="monate_spirit_tc"/>
+</job>

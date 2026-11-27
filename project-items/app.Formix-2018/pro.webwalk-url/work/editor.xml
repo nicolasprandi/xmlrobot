@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="url-editor">
+    <need>(prop,isAdd)</need>
+    <choose>
+        <when test="(prop,isAdd)">
+            <prop id="url_default_label_class" x="+ Url"/>
+            <prop id="url_default_label_name" x="(f,when,(f,has,(prop,urls_offset_label)), | (prop,urls_offset_label),)"/>
+            <prop id="urls_tk_control" x="sum"/>
+        </when>
+        <otherwise>
+            <need>(prop,url_key)</need>
+            <prop id="url_default_label_class" x="Url"/>
+            <prop id="url_default_label_name" x="(f,text,cut_nice,(prop,url_url),50)(f,when,(f,has,(prop,urls_offset_label)), - (prop,urls_offset_label),)"/>
+            <prop id="urls_tk_control" x="sum_only"/>
+        </otherwise>
+    </choose>
+    <call_job job="url-tk"/>
+</job>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<is>
+  <imp row="1" point="1" on="1">
+    <ima row="82" cmd="SHOW PROCESSLIST;" type="sel" catch="1" on="1" />
+    <ima row="84" cmd="Select CONNECTION_ID();" type="sel" catch="1" on="1" />
+    <ima row="85" cmd="Select * from information_schema.processlist &#xA;where CONNECTION_ID()&lt;&gt; id;" type="sel" catch="1" on="1" />
+    <ima row="1" cmd="DROP INDEX idx_attr_attr_typ ON attr ;" type="cmd" name="drop idx_attr_attr_typ" on="1" catch="1" />
+    <ima row="2" cmd="DROP INDEX idx_wert_attr_id ON wert ;" type="cmd" name="drop idx_wert_attr_id" on="1" catch="1" />
+    <ima row="79" cmd="DROP INDEX idx_attr_obj_id ON attr ;" type="cmd" name="drop idx_wert_attr_id" on="1" catch="1" />
+    <ima row="5" cmd="DROP INDEX idx_wert_top ON wert ;" type="cmd" on="1" catch="1" desc="das macht dies und jenesdas macht dies und jenesdas macht dies und jenesdas macht dies und&#xA; jenesdas macht dies und jenesdas macht dies und jenes" />
+    <ima row="6" cmd="DROP INDEX idx_attr_top_aktuell ON attr ;" type="cmd" on="1" catch="1" />
+    <ima row="7" cmd="DROP INDEX idx_wert_pronto1 ON wert;" type="cmd" on="1" catch="1" />
+    <ima row="8" cmd="DROP INDEX idx_mig_obj_collect ON mig_obj;" type="cmd" on="1" catch="1" />
+    <ima row="9" cmd="DROP INDEX idx_mig_obj_slaves ON mig_obj;" type="cmd" on="1" catch="1" />
+    <ima row="10" cmd="DROP INDEX idx_bez_obj_a ON bez;" type="cmd" on="1" catch="1" />
+    <ima row="11" cmd="DROP INDEX idx_bez_obj_b ON bez;" type="cmd" on="1" desc="asdf" catch="1" />
+    <ima row="12" type="commit" on="1" catch="1" />
+    <ima row="13" cmd="ANALYZE TABLE i_obj, i_attr, i_bez, i_box,&#xA; i_wert, i_mehr;" type="sel" on="1" catch="1" cond="stat " />
+    <ima row="14" cmd="FLUSH OPTIMIZER_COSTS" type="cmd" catch="1" dbms="mysql " on="1" cond="stat " />
+    <ima row="62" type="commit" catch="1" cond="stat " on="1" />
+    <ima row="3" cmd="DROP INDEX idx_wert_wann ON wert ;" type="cmd" name="drop idx_wert_wann" on="1" catch="1" work="Der sollte beim create rausgenommen werden?" />
+  </imp>
+  <imp row="2" point="2" on="1">
+    <ima row="18" cmd="CREATE INDEX idx_wert_attr_id ON wert (attr_id);" type="cmd" catch="1" on="1" />
+    <ima row="19" cmd="CREATE INDEX idx_attr_top_aktuell ON attr (obj_id, top_aktuell);" type="cmd" catch="0" on="0" />
+    <ima row="80" cmd="CREATE INDEX idx_attr_obj_id ON attr (obj_id);" type="cmd" catch="0" on="0" />
+    <ima row="21" cmd="CREATE INDEX idx_bez_obj_a ON bez (obj_id_a);" type="cmd" catch="1" on="1" />
+    <ima row="22" cmd="CREATE INDEX idx_bez_obj_b ON bez (obj_id_b);" type="cmd" catch="1" on="1" />
+    <ima row="23" type="commit" catch="1" on="1" />
+    <ima row="24" cmd="ANALYZE TABLE obj, attr, wert,bez,mehr;" type="sel" catch="1" cond="stat " on="1" />
+    <ima row="25" cmd="FLUSH OPTIMIZER_COSTS" type="cmd" catch="1" dbms="mysql " on="1" cond="stat " />
+    <ima row="27" type="commit" catch="1" on="1" cond="stat " dbms="maria mysql " />
+    <ima row="26" cmd="FLUSH TABLE_STATISTICS;" type="cmd" catch="1" dbms="maria " on="1" cond="stat " />
+    <ima row="58" type="break" catch="1" on="0" />
+  </imp>
+  <imp row="9" point="9" on="1">
+    <ima row="71" cmd="CREATE INDEX idx_attr_attr_typ ON attr (attr_typ,obj_id);" type="cmd" catch="1" on="1" />
+    <ima row="72" cmd="CREATE INDEX idx_wert_pronto1 ON wert (attr_usg_id, inhalt2(60), obj_id);" type="cmd" catch="1" on="1" />
+    <ima row="87" cmd="ANALYZE TABLE obj, attr, wert;" type="sel" catch="1" cond="stat " on="1" />
+    <ima row="88" type="break" catch="1" on="0" />
+  </imp>
+  <imp row="8" point="10" on="1">
+    <ima row="67" cmd="DROP INDEX idx_wert_pronto1 ON wert ;" type="cmd" catch="1" on="1" />
+    <ima row="73" cmd="DROP INDEX idx_attr_attr_typ ON attr;" type="cmd" catch="1" on="1" />
+  </imp>
+  <imp row="10" point="11" on="1">
+    <ima row="74" cmd="CREATE INDEX idx_attr_attr_typ ON attr (attr_typ, obj_id);" type="cmd" catch="1" on="1" />
+    <ima row="75" cmd="CREATE INDEX idx_wert_pronto1 ON wert (attr_usg_id, inhalt2(60), obj_id);" type="cmd" catch="1" on="1" />
+    <ima row="89" cmd="ANALYZE TABLE obj, attr, wert;" type="sel" catch="1" cond="stat " on="1" />
+  </imp>
+  <imp row="3" point="3" on="1">
+    <ima row="28" cmd="CREATE INDEX idx_mig_obj_collect ON mig_obj (master_obj_id, slave_obj_id);" type="cmd" catch="1" on="1" />
+    <ima row="29" cmd="CREATE INDEX idx_mig_obj_slaves ON mig_obj (slave_obj_id);" type="cmd" catch="1" on="1" />
+    <ima row="30" cmd="ANALYZE TABLE mig_obj;" type="sel" catch="1" cond="stat " on="1" />
+    <ima row="31" cmd="FLUSH OPTIMIZER_COSTS;" type="cmd" catch="1" dbms="mysql " on="1" cond="stat " />
+    <ima row="32" cmd="FLUSH TABLE_STATISTICS;" type="cmd" catch="1" dbms="maria " on="0" cond="stat " />
+    <ima row="33" type="commit" catch="1" cond="stat " on="1" />
+    <ima row="59" type="break" catch="1" on="0" />
+  </imp>
+  <imp row="4" point="4" on="1">
+    <ima row="64" cmd="DROP INDEX idx_attr_attr_typ ON attr;" type="cmd" catch="1" on="1" />
+    <ima row="76" cmd="DROP INDEX idx_wert_pronto1 ON wert ;" type="cmd" catch="1" on="1" />
+    <ima row="34" cmd="CREATE INDEX idx_wert_heal_double_werte ON wert (attr_id, inhalt(60), von, bis);" type="cmd" catch="1" on="1" />
+    <ima row="36" type="commit" catch="1" on="1" />
+    <ima row="37" cmd="ANALYZE TABLE wert;" type="sel" catch="1" cond="stat " on="1" />
+    <ima row="38" type="commit" catch="1" cond="stat " on="1" />
+    <ima row="39" cmd="FLUSH OPTIMIZER_COSTS;" type="cmd" catch="1" cond="stat " dbms="mysql " on="1" />
+    <ima row="40" cmd="FLUSH TABLE_STATISTICS;" type="cmd" catch="1" cond="stat " dbms="maria " on="0" />
+    <ima row="41" type="commit" catch="1" cond="stat " on="1" />
+    <ima row="60" type="break" catch="1" on="0" />
+  </imp>
+  <imp row="13" point="13" on="1">
+    <ima row="96" cmd="DROP INDEX idx_wert_heal_double_werte ON wert ;" type="cmd" name="drop idx_attr_attr_typ" on="1" catch="1" />
+  </imp>
+  <imp row="5" point="5" on="1">
+    <ima row="92" cmd="DROP INDEX idx_attr_attr_typ ON attr ;" type="cmd" name="drop idx_attr_attr_typ" on="1" catch="1" />
+    <ima row="42" cmd="DROP INDEX idx_wert_heal_double_werte ON wert ;" type="cmd" catch="1" on="1" />
+    <ima row="93" cmd="DROP INDEX idx_wert_pronto1 ON wert ;" type="cmd" catch="1" on="1" />
+    <ima row="69" type="cmd" catch="0" on="1" cmd="CREATE INDEX idx_attr_top_aktuell ON attr (top_aktuell);" />
+    <ima row="44" type="commit" catch="1" on="1" />
+    <ima row="45" cmd="ANALYZE TABLE wert, attr;" type="sel" catch="1" cond="stat " on="1" />
+    <ima row="46" type="commit" catch="1" cond="stat " on="1" />
+    <ima row="47" cmd="FLUSH OPTIMIZER_COSTS;" type="cmd" catch="1" cond="stat " dbms="mysql " on="1" />
+    <ima row="48" cmd="FLUSH TABLE_STATISTICS;" type="cmd" catch="1" cond="stat " dbms="maria " on="0" />
+    <ima row="49" type="commit" catch="1" cond="stat " dbms="maria mysql " on="1" />
+    <ima row="61" type="break" catch="1" on="0" />
+  </imp>
+  <imp row="12" point="15" on="1">
+    <ima row="91" type="break" catch="1" on="0" />
+  </imp>
+  <imp row="11" point="14" on="1">
+    <ima row="94" cmd="CREATE INDEX idx_wert_top ON wert (attr_id, wann desc);" type="cmd" catch="1" on="1" />
+    <ima row="90" type="break" catch="1" on="0" />
+  </imp>
+  <imp row="6" point="6" on="1">
+    <ima row="50" cmd="CREATE INDEX idx_attr_attr_typ ON attr (attr_typ, obj_id);" type="cmd" catch="1" on="1" />
+    <ima row="77" type="cmd" catch="0" on="1" cmd="DROP INDEX idx_attr_top_aktuell ON attr ;" />
+    <ima row="78" cmd="DROP INDEX idx_wert_top ON wert ;" type="cmd" on="1" catch="1" desc="das macht dies und jenesdas macht dies und jenesdas macht dies und jenesdas macht dies und&#xA; jenesdas macht dies und jenesdas macht dies und jenes" />
+    <ima row="51" type="commit" catch="1" on="1" />
+    <ima row="52" cmd="ANALYZE TABLE wert, attr;" type="sel" catch="1" cond="stat " on="1" />
+    <ima row="53" type="commit" catch="1" cond="stat " on="1" />
+    <ima row="54" cmd="FLUSH OPTIMIZER_COSTS;" type="cmd" catch="1" cond="stat " dbms="mysql " on="1" />
+    <ima row="55" cmd="FLUSH TABLE_STATISTICS;" type="cmd" catch="1" cond="stat " dbms="maria " on="0" />
+    <ima row="56" type="commit" catch="1" cond="stat " on="1" />
+  </imp>
+  <imp row="7" point="8" on="1">
+    <ima row="98" cmd="DROP INDEX idx_mig_obj_collect ON mig_obj;" type="cmd" on="1" catch="1" />
+    <ima row="99" cmd="DROP INDEX idx_mig_obj_slaves ON mig_obj;" type="cmd" on="1" catch="1" />
+  </imp>
+</is>

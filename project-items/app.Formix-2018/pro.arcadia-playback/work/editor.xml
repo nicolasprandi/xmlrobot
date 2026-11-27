@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="playback-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Playback(prop,playbacks_offset_label)"/>
+<prop x="sum" id="playbacks_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,playback_key)</need>
+<prop id="label" x="Playback [(prop,playback_target)](prop,playbacks_offset_label)"/>
+<prop x="sum_only" id="playbacks_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="playback-tk"/>
+</job>

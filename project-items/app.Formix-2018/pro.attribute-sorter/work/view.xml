@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="attribute-see-all" level="app" role="hidden" tip="Lists all Attributes">
+<prop id="nothing">1</prop>
+<loop id="i" missing_strategy="empty" xml="(file,attributes)" xpath="(prop,attributes_offset)attribute(prop,attributes_where)" sort="(prop,attributes_sort_attribute)" number="(prop,attributes_sort_number)" ignore_case="(prop,attributes_sort_ignore_case)" desc="(prop,attributes_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,attributes_offset_label)),0)">
+<ti label="(prop,attributes_offset_label)"/>
+</when>
+<ti type="rec" label=" ">
+<ti x="Position"/>
+<ti x=" "/>
+<ti x=" "/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec" label="(f,html,bold,open)(loop,i,@name)(f,html,bold,close)">
+<ti test="(f,has,(loop,i,@pos))" type="text" x="(loop,i,@pos)"/>
+<ti test="(f,not,(f,has,(loop,i,@pos)))"/>
+<ti type="call_job" explain="Edit" job="attribute-edit">
+<prop id="attribute_key">(loop,i,@row)</prop>
+<file id="attributes">(file,attributes)</file>
+<prop id="attributes_offset">(prop,attributes_offset)</prop>
+<prop id="attributes_offset_label">(prop,attributes_offset_label)</prop>
+<prop id="attributes_offset_new_key">(prop,attributes_offset_new_key)</prop>
+<prop id="attributes_sort_attribute">(prop,attributes_sort_attribute)</prop>
+<prop id="attributes_sort_number">(prop,attributes_sort_number)</prop>
+<prop id="attributes_where">(prop,attributes_where)</prop>
+<prop id="attributes_return_job">(prop,attributes_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Del" job="attribute-del">
+<prop id="attribute_key">(loop,i,@row)</prop>
+<file id="attributes">(file,attributes)</file>
+<prop id="attributes_offset">(prop,attributes_offset)</prop>
+<prop id="attributes_offset_label">(prop,attributes_offset_label)</prop>
+<prop id="attributes_offset_new_key">(prop,attributes_offset_new_key)</prop>
+<prop id="attributes_sort_attribute">(prop,attributes_sort_attribute)</prop>
+<prop id="attributes_sort_number">(prop,attributes_sort_number)</prop>
+<prop id="attributes_where">(prop,attributes_where)</prop>
+<prop id="attributes_return_job">(prop,attributes_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_job" page="view" explain="Move" job="hook_att_move">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">move</prop>
+<prop page="view" id="attribute_key">(loop,i,@row)</prop>
+<file id="attributes">(file,attributes)</file>
+<prop id="attributes_offset">(prop,attributes_offset)</prop>
+<prop id="attributes_offset_label">(prop,attributes_offset_label)</prop>
+<prop id="attributes_offset_new_key">(prop,attributes_offset_new_key)</prop>
+<prop id="attributes_sort_attribute">(prop,attributes_sort_attribute)</prop>
+<prop id="attributes_sort_number">(prop,attributes_sort_number)</prop>
+<prop id="attributes_where">(prop,attributes_where)</prop>
+<prop id="attributes_return_job">(prop,attributes_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti>No Attributes found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,attributes_offset),node(e:o)(e:c)))">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="attribute-add" explain="Add another attribute" job="attribute-add">
+<file id="attributes">(file,attributes)</file>
+<prop id="attributes_offset">(prop,attributes_offset)</prop>
+<prop id="attributes_offset_label">(prop,attributes_offset_label)</prop>
+<prop id="attributes_offset_new_key">(prop,attributes_offset_new_key)</prop>
+<prop id="attributes_sort_attribute">(prop,attributes_sort_attribute)</prop>
+<prop id="attributes_sort_number">(prop,attributes_sort_number)</prop>
+<prop id="attributes_where">(prop,attributes_where)</prop>
+<prop id="attributes_return_job">(prop,attributes_return_job)</prop>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,attributes)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,attributes_offset)),0)">(prop,attributes_offset)</ti>
+</ti>
+</when>
+</job>

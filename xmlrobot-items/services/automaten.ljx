@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<!-- 
+<job id="&gt;&gt; Hibis-Java 4 EchnatonDskTop" joblevel="ws">
+</job>
+<job id="&gt;&gt; Hibis-Java 4 EchnatonDskTop-p1" joblevel="ws" role="hidden">
+
+  <call_app
+        app="Jar-Composer"
+        pro_id="Echnaton-Hibiscus"
+        pro_dir="(f,ask,pro_dir,Jar-Composer,Echnaton-Hibiscus)"
+        job="Reflect to GH-Repo">
+
+  </call_app>
+  
+</job>   -->
+<job id="&gt;&gt; Echnaton Eclipse Build" joblevel="ws" role="test">
+
+  <call_app
+        app="Arc-CustomerBuilder"
+        pro_id="first"
+        pro_dir="(f,ask,pro_dir,Arc-CustomerBuilder,first)"
+        job="action_custset_build">
+    <prop id="custset_key">24</prop>
+  </call_app>
+  
+  <call_app
+        app="Arc-WebXml-Producer"
+        pro_id="main"
+        pro_dir="(f,ask,pro_dir,Arc-WebXml-Producer,main)"
+        job="Edit &amp; Run">
+  </call_app>
+    
+
+</job>
+
+<job id="!! Echnaton Eclipse BuiFAST" joblevel="ws" role="test">
+
+  <call_app
+        app="Arc-CustomerBuilder"
+        pro_id="first"
+        pro_dir="(f,ask,pro_dir,Arc-CustomerBuilder,first)"
+        job="action_custset_build">
+    <prop id="custset_key">24</prop>
+  </call_app>
+  
+  <call_app
+        app="Arc-WebXml-Producer"
+        pro_id="main"
+        pro_dir="(f,ask,pro_dir,Arc-WebXml-Producer,main)"
+        job="Run Only">
+  </call_app>
+    
+
+</job>
+
+<job id="&gt;&gt; Echnaton Produce ONly" joblevel="ws" role="test">
+
+  
+  <call_app
+        app="Arc-WebXml-Producer"
+        pro_id="main"
+        pro_dir="(f,ask,pro_dir,Arc-WebXml-Producer,main)"
+        job="Run Only">
+  </call_app>
+    
+
+</job>
+
+
+  
+ 
+</jobs>

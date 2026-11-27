@@ -1,0 +1,384 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="event_dbci_beginn" role="hidden">
+
+  <prop id="book-name">(f,name_of_dir,(f,dir_of_file,(file,dbcis)))</prop>
+  
+  <create_file out="(dir,ghome)last-books/dbcis_last.txt">(prop,book-name)</create_file>
+
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec"  >
+  
+    <ti flag="block wrap_word" x="(f,html,b,o)(prop,book-name)(f,html,b,c) (e:o)(prop,_sl_dbci)-(prop,_sl_buch)(e:c)"/>
+  
+    <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="mm-tester-dbcis"/>  
+  </ti>   
+  <ti_hr_break/>
+  <call_job job="dbci-encryption-topic" />
+  <ti_hr_break/>
+</job>
+
+<job id="event_dbci_loop_end" role="hidden">
+  
+  
+
+  <ti_hr_break/>
+      <ti type="call_job" job="event_dbci_do_all" explain="Start All">
+        <prop id="dowhat">open</prop>
+        <file id="dbcis">(file,dbcis)</file>
+      </ti>       
+      <ti type="call_job" job="event_dbci_do_all" explain="Stop All">
+        <prop id="dowhat">close</prop>
+        <file id="dbcis">(file,dbcis)</file>
+      </ti>    
+  <ti_hr/>
+  <ti type="call_job" 
+      job="-db-close-on-purpose-returner-" 
+      
+      explain="(prop,_closedb)" >
+  </ti>    
+  
+    <ti type="call_job" job="event_dbci_do_all" explain="Test All">
+      <prop id="dowhat">test</prop>
+      <file id="dbcis">(file,dbcis)</file>
+    </ti>   
+   <!--
+   <ti_hr_break/> 
+  <ti label="Aktionen fuer alle"/>
+  <ti type="rec">
+    <ti type="call_job" job="event_dbci_do_all" explain="Start All">
+      <prop id="dowhat">open</prop>
+      <file id="dbcis">(file,dbcis)</file>
+    </ti>  
+    <ti type="call_job" job="event_dbci_do_all" explain="Exists All ?">
+      <prop id="dowhat">check</prop>
+      <file id="dbcis">(file,dbcis)</file>
+    </ti>    
+  
+  </ti>
+  
+  <ti type="rec">
+    <ti type="call_job" job="event_dbci_do_all" explain="Stop All">
+      <prop id="dowhat">close</prop>
+      <file id="dbcis">(file,dbcis)</file>
+    </ti>     
+     
+  </ti>
+      
+   -->
+
+ 
+
+
+ 
+</job>
+<job id="event_dbci_details_end" role="hidden">
+  <ti_hr_break/>
+  <call_job job="dbci-encryption-topic" />
+</job>
+<job id="event_dbci_edit" role="hidden">
+  <call_job job="dbci-edit" />
+</job>
+
+<job id="dbci-encryption-topic" role="hidden">
+
+ <prop id="hascic">(f,exists,coop2,_cry,(prop,cic_id))</prop>
+
+  <choose>
+    <when test="(prop,hascic)">
+      <ti type="rec" label="Encryption is ON">
+      <ti type="menu" >
+      <ti type="call_job" job="dbci-encryption-off" explain="Turn it Off"
+       class="fb fbEdit"  flag="button">
+        <file id="dbcis">(file,dbcis)</file>
+      </ti>
+      <ti type="call_job" job="event_dbci_do_all" explain="Start All" class="fb fbEdit"  flag="button">
+        <prop id="dowhat">open</prop>
+        <file id="dbcis">(file,dbcis)</file>
+      </ti>        
+      
+      </ti>
+      </ti>
+    </when>
+    <otherwise>
+      <ti type="rec"  label="(f,html,b,o)Encryption is OFF(f,html,b,c)">
+      <ti type="menu" >
+      <ti type="call_job" job="dbci-encryption-on" explain="Turn it On"  class="fb fbEdit"  flag="button">
+        <file id="dbcis">(file,dbcis)</file>
+      </ti>
+      <ti type="call_job" job="event_dbci_do_all" explain="Start All" class="fb fbEdit"  flag="button">
+        <prop id="dowhat">open</prop>
+        <file id="dbcis">(file,dbcis)</file>
+      </ti>  
+       
+      </ti>
+        
+      </ti>
+    </otherwise>
+  </choose>
+</job>
+<job id="dbci-encryption-on" role="hidden">
+
+  <tk label="Turn Encryptor on" flag="sum">
+  
+    <tk id="pw1" label="Pwd" flag="nono password(prop,pk)" cols="30" tip="This is the secret key with which the given text is encrypted/decrypted"/>
+    <tk id="pw2" label="Pwd-Again" flag="nono password(prop,pk)"  cols="30" tip="This is the secret key with which the given text is encrypted/decrypted once again"/>
+  </tk>
+  <throw test="(f,not,(f,eq_text,(prop,pw1),(prop,pw2)))">Passwords differs</throw>  
+  <crypto id="(prop,cic_id)" act="open" type="(prop,pw1)"/>
+  <ti>turned encryptor on</ti>
+  <call_job job="event_dbci_postmortem"/>
+</job>
+<job id="dbci-encryption-off" role="hidden">
+  <crypto id="(prop,cic_id)" act="close" />
+  <ti>turned encryptor off</ti>
+  <call_job job="event_dbci_postmortem"/>
+</job>
+<job id="event_dbci_do_all" role="hidden">
+  <need>(prop,dowhat)</need> <!-- open, check, close, test -->
+  <ti label="Doing All: (prop,dowhat)"/>
+  <tk type="msg" msg="Really (prop,dowhat)-All" test="(f,or,(f,eq_text,open,(prop,dowhat)),(f,eq_text,close,(prop,dowhat)))"/>
+  <!--  <ti label="What to do" x="(prop,dowhat)"/>
+  <ti label="on file" x="(file,dbcis)" type="file"/>  -->
+  <prop id="do-not-trailer">1</prop>
+  <loop id="all" xml="(file,dbcis)" xpath="dbci">
+  <ti_hr />
+    <choose>
+      <when test="(loop,all,@off)">
+        <ti label="Off">(loop,all,@id) is turned off</ti>
+      </when>
+      <otherwise>
+        <try_catch>
+        <try>
+          <prop id="dbci_key">(loop,all,@row)</prop>      
+          <prop id="dbcis_offset">./</prop>
+          <call_job job="event_dbci_(prop,dowhat)"/>
+        </try>
+        <catch>
+          <ti label="ERROR:">(f,html,b,o)(prop,catched_msg)(f,html,b,o)</ti>
+          <ti label=" ">Regards: (f,html,b,o)(loop,all,@id)(f,html,b,c) - (loop,all,@titel)</ti>
+        
+        </catch>
+        </try_catch>
+      
+      </otherwise>
+    </choose>
+ 
+  
+  </loop>
+  <ti_hr/>
+  
+    <ti_hr_break/>
+    <call_job job="dbci-see-all" />  
+
+
+</job>
+
+<job id="event_dbci_open" role="hidden">
+
+  <call_job job="dbci-clear"/>
+  <call_job job="dbci-read"/>
+  <call_job job="event_dbci_open_core"/>
+
+</job>
+
+<job id="event_dbci_open_core" role="hidden">
+
+  <prop id="crypto"></prop>
+  <prop id="crypto" test="(f,exists,coop2,_cry,(prop,cic_id))">(prop,cic_id)</prop>
+  <when test="(f,ends_with,(prop,dbci_id),a__)">
+  <when test="(f,not,(f,has,prop,dbci_app))">
+    <prop id="dbci_app">Hibiscus</prop>
+    <ti>Assumed &apos;Hibiscus&apos; as default for dbci called &apos;(prop,dbci_id)&apos;</ti>
+  </when>
+  </when>
+  <dbci id="(prop,dbci_id)"
+        url="(prop,dbci_url)"
+        db="(prop,dbci_db)"
+        user="(prop,dbci_user)"
+        password="(prop,dbci_password)"
+        autocommit="(f,vob,prop,dbci_autocommit)"
+        id_app="(f,vob,prop,dbci_app)" 
+        act="open" 
+        flag="(f,when,(prop,dbci_request),test,)"
+        crypto="(prop,crypto)"/>
+   <ti>Did start dbci '(prop,dbci_id)' (f,when,(prop,dbci_request),with connection test,WITHOUT connection test) autocommit=[(prop,dbci_autocommit)] (e:o)encryption of pwd is (f,when,(f,exists,coop2,_cry,(prop,cic_id)),on,off)(e:c)</ti>
+   <call_job job="event_dbci_postmortem"/>
+</job>
+
+<job id="event_dbci_test" role="hidden">
+
+  <call_job job="dbci-clear"/>
+  <call_job job="dbci-read"/>
+  <call_job job="event_dbci_test_core"/>
+
+</job>
+
+<job id="event_dbci_test_core" role="hidden">
+  <try_catch>
+    <try>
+  <when test="(f,ends_with,(prop,dbci_id),a__)">
+  <when test="(f,not,(f,has,prop,dbci_app))">
+    <prop id="dbci_app">Hibiscus</prop>
+    <ti>Assumed &apos;Hibiscus&apos; as default for dbci called &apos;(prop,dbci_id)&apos;</ti>
+  </when>
+  </when>
+      
+        <ti label="(prop,dbci_id)" />
+        <dbc id="dbci-test"
+          how="dbci"
+          dbci="(prop,dbci_id)"
+          id_app="(f,vob,prop,dbci_app)"           
+          act="open"/>    
+        <ti>Could OPEN connection successfully</ti>
+        <try_catch>
+          <try>
+              <dbc id="dbci-test"          
+                act="close"/>    
+              <ti>Could CLOSE connection successfully</ti>
+          </try>
+          <catch>
+            <ti label="Problem when closing connection" />
+            <ti>(prop,catched_msg)</ti>
+          </catch>
+        </try_catch>        
+        
+    </try>
+    <catch>
+      <ti label="Problem when opening connection" />
+      <ti>(prop,catched_msg)</ti>
+    </catch>
+  </try_catch>
+  <call_job job="event_dbci_postmortem"/>
+</job>
+
+<job id="event_dbci_postmortem" role="hidden">
+  <prop id="do-trailer">1</prop>
+  <when test="(f,has,prop,do-not-trailer)">
+    <when test="(prop,do-not-trailer)">
+      <prop id="do-trailer">0</prop>
+    </when>
+  </when>
+  <when test="(prop,do-trailer)">
+    <ti_hr_break/>
+    <call_job job="dbci-see-all" />  
+  </when>
+</job>
+
+<job id="event_dbci_check" role="hidden">
+
+  <call_job job="dbci-clear"/>
+  <call_job job="dbci-read"/>
+  <call_job job="event_dbci_check_core"/>
+
+</job>
+
+<job id="event_dbci_check_core" role="hidden">
+  <when test="(f,ends_with,(prop,dbci_id),a__)">
+  <when test="(f,not,(f,has,prop,dbci_app))">
+    <prop id="dbci_app">Hibiscus</prop>
+    <ti>Assumed &apos;Hibiscus&apos; as default for dbci called &apos;(prop,dbci_id)&apos;</ti>
+  </when>
+  </when>
+<ti label="(prop,dbci_id) exists:">(f,exists,coop2,_dbi,(prop,dbci_id),(f,vob,prop,dbci_app))</ti>
+<call_job job="event_dbci_postmortem"/>
+</job>
+
+<job id="event_dbci_close" role="hidden">
+
+  <call_job job="dbci-clear"/>
+  <call_job job="dbci-read"/>
+  <call_job job="event_dbci_close_core"/>
+
+</job>
+
+<job id="event_dbci_close_core" role="hidden">
+  <when test="(f,ends_with,(prop,dbci_id),a__)">
+  <when test="(f,not,(f,has,prop,dbci_app))">
+    <prop id="dbci_app">Hibiscus</prop>
+    <ti>Assumed &apos;Hibiscus&apos; as default for dbci called &apos;(prop,dbci_id)&apos;</ti>
+  </when>
+  </when>
+  
+  <dbci id="(prop,dbci_id)" 
+        id_app="(prop,dbci_app)"        
+        act="close" />
+ 
+  <ti>Did stop dbci '(prop,dbci_id)'</ti>
+<call_job job="event_dbci_postmortem"/>
+</job>
+
+<job id="dbci-clear" role="hidden">
+
+  <remove type="prop" id="dbci_off" flag="catch" />
+  <remove type="prop" id="dbci_password" flag="catch" />
+  <remove type="prop" id="dbci_url" flag="catch" />
+  <remove type="prop" id="dbci_user" flag="catch" />
+  <remove type="prop" id="dbci_db" flag="catch" />
+  <remove type="prop" id="dbci_autocommit" flag="catch" />
+  <remove type="prop" id="dbci_app" flag="catch" />
+  
+</job>
+
+<job id="event_post_insert_dbci" role="hidden">
+
+  <call_job job="dbci-see"/>
+
+</job>
+
+<job id="event_post_update_dbci" role="hidden">
+
+  <call_job job="dbci-see"/>
+
+</job>
+
+<job id="dbci-orga-finished" role="hidden">
+
+      <prop id="mm-what">all</prop>
+      <file id="mm-liste">(file,orga)</file>
+    <call_job job="mm-op-dbcis"/>
+
+</job>
+
+
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

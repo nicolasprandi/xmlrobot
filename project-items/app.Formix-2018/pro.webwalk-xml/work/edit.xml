@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="xmlf-edit">
+    <need>(prop,xmlf_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="xmlf-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="xmlf-editor"/>
+    <call_job job="xmlf-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- Test-File '(f,text,cut_nice,(prop,xmlf_name),20)'"/>
+    </ti>
+    <call_job job="xmlf-see-all"/>
+</job>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zut-see-more">
+<need>(prop,zut_key)</need>
+<call_job job="zut-read"/>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=1 hook_job=hook_zutdetails1</trace>
+<call_job job="hook_zutdetails1"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zut-details: 1.0">
+<ti> hook_job=hook_zutdetails1 hook=1 page=details station=0 object=zut</ti>
+</ti>
+</catch>
+</try_catch>
+<prop x="print_only print_with_tips print_all_fields" id="zuts_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,zut_bez),20)(f,html,bold,close)(f,when,(f,has,(prop,zuts_offset_label)), - (prop,zuts_offset_label),)"/>
+<call_job job="zut-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="[ Editiere Zutat ]" job="zut-edit">
+<prop id="zut_key">(prop,zut_key)</prop>
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+</job>

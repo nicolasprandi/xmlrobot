@@ -1,0 +1,1 @@
+select * from import.tip where sys_verarbeitet is null  order by wann desc;

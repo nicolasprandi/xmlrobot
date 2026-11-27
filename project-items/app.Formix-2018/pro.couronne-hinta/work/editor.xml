@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="namaste-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="namaste_default_label_class" x="+ (prop,_sl_namaste)"/>
+<prop id="namaste_default_label_name" x="(f,when,(f,has,(prop,namastes_offset_label)), | (prop,namastes_offset_label),)"/>
+<prop id="namastes_tk_control" x="sum"/>
+</when>
+<otherwise>
+<need>(prop,namaste_key)</need>
+<prop id="namaste_default_label_class" x="(prop,_sl_namaste)"/>
+<prop id="namaste_default_label_name" x="(f,tk_sel_translate,(prop,namaste_attributtyp),(file,pdi-sel-attr))(f,when,(f,has,(prop,namastes_offset_label)), - (prop,namastes_offset_label),)"/>
+<prop id="namastes_tk_control" x="sum_only"/>
+</otherwise>
+</choose>
+<call_job job="namaste-tk"/>
+</job>

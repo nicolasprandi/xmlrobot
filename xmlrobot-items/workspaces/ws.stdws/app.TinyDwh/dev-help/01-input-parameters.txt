@@ -1,0 +1,37 @@
+<!-- read cached inputs  -->
+<call_job job="go-joe-read">
+  <file id="joe-in-store" x="(file,query-paras)" />
+  <file id="joe-in-store" x="(file,sqli-paras)" />
+  <file id="joe-in-store" x="(file,script-paras)" />
+  <file id="joe-in-store" x="(file,bscript-paras)" />
+  <prop id="joe-in-regex" x="\$boxid1|\$boxid2" />    
+</call_job>
+
+<!-- do user-inputs -->
+<tk label="Range of Box-Ids" flag="sum print">
+  <tk id="$boxid1" 
+      label="Box-Id-From" 
+      x="1"
+      cols="10"
+      flag="nono"
+      tip="Lower Box-Id" />
+
+  <tk id="$boxid2" 
+    label="Box-Id-To" 
+    x="10"
+    cols="10"
+    flag="nono"
+    tip="Upper Box-Id" />
+</tk>
+
+<!-- save inputs to cache -->
+<call_job job="go-joe-write">
+  <file id="joe-in-store" x="(file,query-paras)" />
+  <file id="joe-in-store" x="(file,sqli-paras)" />
+  <file id="joe-in-store" x="(file,script-paras)" />
+  <file id="joe-in-store" x="(file,bscript-paras)" />
+  <prop id="joe-in-regex" x="\$boxid1|\$boxid2" />  
+</call_job>
+
+<!-- print a line -->
+<ti_hr />

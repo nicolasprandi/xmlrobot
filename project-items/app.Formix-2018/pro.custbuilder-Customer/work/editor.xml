@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="custset-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="custset_default_label_class" x="+ Customer"/>
+<prop id="custset_default_label_name" x="(f,when,(f,has,(prop,custsets_offset_label)), | (prop,custsets_offset_label),)"/>
+<prop id="custsets_tk_control" x="sum"/>
+</when>
+<otherwise>
+<need>(prop,custset_key)</need>
+<prop id="custset_default_label_class" x="Customer"/>
+<prop id="custset_default_label_name" x="(f,text,cut_nice,(prop,custset_name),30)(f,when,(f,has,(prop,custsets_offset_label)), - (prop,custsets_offset_label),)"/>
+<prop id="custsets_tk_control" x="sum_only"/>
+</otherwise>
+</choose>
+<call_job job="custset-tk"/>
+</job>

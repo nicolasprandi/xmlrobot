@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="read-ic-search" role="hidden">
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store">(file,ic-search)</file>
+    <prop id="joe-in-regex">(prop,regex_search)</prop>
+  </call_job>
+  
+  <!--FRAGE-->
+  <when test="(f,exists,dir,search_dir)">
+    <translate type="dir" id="search_dir"/>
+  </when>
+
+</job>
+
+<job id="write-ic-search" role="hidden">
+
+  <call_job job="go-joe-write">
+    <file id="joe-in-store">(file,ic-search)</file>
+    <prop id="joe-in-regex">(prop,regex_search)</prop>
+  </call_job>
+  
+  <ti type="file" label="Written ic-search:" test="(f,role,dev)">(file,joe-in-store)</ti>
+
+</job>
+
+<job id="read-ic-replace" role="hidden">
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store">(file,ic-replace)</file>
+    <prop id="joe-in-regex">(prop,regex_replace)</prop>
+  </call_job>  
+
+</job>
+
+<job id="write-ic-replace" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store">(file,ic-replace)</file>
+    <prop id="joe-in-regex">(prop,regex_replace)</prop>
+  </call_job> 
+
+</job>
+
+
+</jobs>

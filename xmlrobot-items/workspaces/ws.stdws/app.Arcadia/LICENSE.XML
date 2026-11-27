@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<steps>
+
+  <ti label="License: Arcadia"/>
+  <ti type="ul">Copyright &#xA9; 2018 Nicolas Prandstaetter. All rights reserved.</ti> 
+  <ti type="ul">()Arcadia is in version 0.6()</ti>
+  <ti type="ul">Arcadia is under test.</ti>
+<ti label="Notic regarding included 3rd-party-software"/>
+<ti>()===================================================================================
+(1) NOTICE OF INCLUDED SOFTWARE CALLED 'github-api-1.93'
+    # Jackson JSON processor
+          
+          Jackson is a high-performance, Free/Open Source JSON processing library.
+          It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+          been in development since 2007.
+          It is currently developed by a community of developers, as well as supported
+          commercially by FasterXML.com.
+          
+          ## Licensing
+          
+          Jackson core and extension components may be licensed under different licenses.
+          To find the details that apply to this artifact see the accompanying LICENSE file.
+          For more information, including possible other licensing options, contact
+          FasterXML.com (http://fasterxml.com).
+          
+          ## Credits
+          
+          A list of contributors may be found from CREDITS file, which is included
+          in some artifacts (usually source distributions); but is always available
+          from the source code management (SCM) system project uses.
+
+===================================================================================
+(3) NOTICE OF INCLUDED SOFTWARE CALLED 'jackson-core-2.9.2'
+    # Jackson JSON processor
+          
+          Jackson is a high-performance, Free/Open Source JSON processing library.
+          It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+          been in development since 2007.
+          It is currently developed by a community of developers, as well as supported
+          commercially by FasterXML.com.
+          
+          ## Licensing
+          
+          Jackson core and extension components may licensed under different licenses.
+          To find the details that apply to this artifact see the accompanying LICENSE file.
+          For more information, including possible other licensing options, contact
+          FasterXML.com (http://fasterxml.com).
+          
+          ## Credits
+          
+          A list of contributors may be found from CREDITS file, which is included
+          in some artifacts (usually source distributions); but is always available
+          from the source code management (SCM) system project uses.
+
+===================================================================================
+(4) NOTICE OF INCLUDED SOFTWARE CALLED 'jackson-databind-2.9.2'
+    # Jackson JSON processor
+          
+          Jackson is a high-performance, Free/Open Source JSON processing library.
+          It was originally written by Tatu Saloranta (tatu.saloranta@iki.fi), and has
+          been in development since 2007.
+          It is currently developed by a community of developers, as well as supported
+          commercially by FasterXML.com.
+          
+          ## Licensing
+          
+          Jackson core and extension components may be licensed under different licenses.
+          To find the details that apply to this artifact see the accompanying LICENSE file.
+          For more information, including possible other licensing options, contact
+          FasterXML.com (http://fasterxml.com).
+          
+          ## Credits
+          
+          A list of contributors may be found from CREDITS file, which is included
+          in some artifacts (usually source distributions); but is always available
+          from the source code management (SCM) system project uses.
+
+()</ti>
+
+</steps>

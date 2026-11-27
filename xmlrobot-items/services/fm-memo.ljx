@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+    
+  <job id="sel_open_file_memo_in" tip="inits memo-operations for file-selector" role="hidden">
+  
+   	<file id="memo">(dir,status)fileopen-memo.xml</file>
+
+    <prop id="file_upper">(f,upper,(file,with))</prop>
+    
+    <choose>
+      <when test="(f,or,(f,starts_with,(prop,file_upper),HTTPS:),(f,starts_with,(prop,file_upper),HTTP:),(f,starts_with,(prop,file_upper),FTP:))">
+        <prop id="dp">(f,index_of,(file,with),:)</prop>
+        <prop id="e">(f,substring,(file,with),0,(f,add,0,(prop,dp)))</prop>
+      </when>      
+      <otherwise>
+       	<prop id="with2">(f,name_of_file,(file,with))</prop>
+        <prop id="l">(f,index_of,(prop,with2),.)</prop>     
+        <when test="(f,gt,(prop,l),-1)">
+          <prop id="e">(f,substring,(prop,with2),(f,add,1,(prop,l)))</prop>
+        </when>         
+      </otherwise>
+    </choose>
+    <ti test="0">hallo l=(prop,l) dp=(prop,dp) in prop (prop,with2) file (file,with)</ti>
+    <warn test="0">file-memory, e=[(prop,e)] file=[(file,with)]</warn>
+    <when test="(f,exists,prop,e)">
+      
+            
+      <when test="(f,not,(f,file_exists,(file,memo)))">
+        <create_file out="(file,memo)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+        <memo></memo>
+        ]]>
+        </create_file>
+      </when>
+      
+      <try_catch>
+        <try>
+          <prop id="pgm">(f,xpath,(file,memo),pgm[@ext=(f,xpath_string,(prop,e))],@pgm)</prop>
+          <prop id="sel">(prop,pgm)</prop>
+        </try>
+        <catch>
+          <remove type="prop" id="pgm" flag="catch"/>
+        </catch>
+      </try_catch>
+      
+    </when>  
+  </job>  
+
+  <job id="sel_open_file_memo_out" role="hidden">
+    <file id="memo">(dir,status)fileopen-memo.xml</file>
+    <ti test="0">OUT: e=(prop,e) pgm=(prop,pgm) sel=(prop,sel)</ti>
+    <when test="(f,and,(f,has,prop,e),(f,has,prop,sel))">
+    
+      <choose>
+        <when test="(f,has,prop,pgm)">
+          
+          <xml_update 
+            what="(file,memo)" 
+            where="pgm[@ext=(f,xpath_string,(prop,e))]" 
+            how="set_attribute" 
+            attribute="pgm" 
+            value="(prop,sel)" />
+
+        </when>
+        <otherwise>      
+          <xml_update how="append" what="(file,memo)">
+                <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+                  <pgm ext="(prop,e)" pgm="(prop,sel)" />
+                ]]></inline>
+          </xml_update>        
+        </otherwise>
+      </choose>
+
+
+    </when>
+
+  </job>  
+  
+</jobs>

@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+
+<steps>
+<include file="(dir,services)static-project-prolog.xrs"/>
+<when test="(f,has,prop,pro)">  
+  <file id="split-data" x="(dir,pro)split-data.xrs"/>
+  <prop id="split-regex" x="split_.+"/>
+  <call_service job="include-header" flag="silent"/>
+</when>
+
+
+
+
+
+
+</steps>

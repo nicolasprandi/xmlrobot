@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><jobs>
+<!--Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved.-->
+<job role="hidden" id="Panorama-File-Activity">
+<need>(file,with)</need>
+<call_service job="see_file_actions"/>
+</job>
+<job role="hidden" id="Panorama-File-Activityx">
+<need>(file,with)</need>
+
+<try_catch>
+<try>
+<file id="joe-in-store">(dir,status)pano-file-ic.lsx</file>
+<call_service job="go-joe-read"/>
+<tk label="Operation Selection">
+<tk id="selected_activity" type="sel" flag="nono" label="(file,with)">
+<sel>()Copy File()</sel>
+<sel>()Duplicate File()</sel>
+<sel>()Treat File as Directory()</sel>
+<sel>()See VFS Infos()</sel>
+<sel>()Panorama-File-Activity-EDIT()</sel>
+<sel>()see_file_actions()</sel>
+<sel>()Move File()</sel>
+<sel>()Rename File()</sel>
+<sel>()Trash File()</sel>
+<sel>()Delete File()</sel>
+<sel>()Extract a ZIP file()</sel>
+<sel>()Calculate Checksums (md5, sha1)()</sel>
+<sel>()Continue with Directory-Operation ...()</sel>
+</tk>
+</tk>
+<prop id="joe-in-regex">selected_activity</prop>
+<call_service job="go-joe-write-srv"/>
+<choose>
+<when test="(f,eq,(prop,selected_activity),()Copy File())">
+<ti label="(f,html,bold,open)()Copy File()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-COPY()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Duplicate File())">
+<ti label="(f,html,bold,open)()Duplicate File()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-DUPLICATE()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Treat File as Directory())">
+<ti label="(f,html,bold,open)()Treat File as Directory()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-TREAT()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()See VFS Infos())">
+<ti label="(f,html,bold,open)()See VFS Infos()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-VFS()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Panorama-File-Activity-EDIT())">
+<ti label="(f,html,bold,open)()Panorama-File-Activity-EDIT()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-EDIT()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()see_file_actions())">
+<ti label="(f,html,bold,open)()see_file_actions()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()see_file_actions()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Move File())">
+<ti label="(f,html,bold,open)()Move File()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-MOVE()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Rename File())">
+<ti label="(f,html,bold,open)()Rename File()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-RENAME()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Trash File())">
+<ti label="(f,html,bold,open)()Trash File()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-TRASH()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Delete File())">
+<ti label="(f,html,bold,open)()Delete File()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-DELETE()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Extract a ZIP file())">
+<ti label="(f,html,bold,open)()Extract a ZIP file()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-EXTRACTZIP()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Calculate Checksums (md5, sha1)())">
+<ti label="(f,html,bold,open)()Calculate Checksums (md5, sha1)()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-CHECKSUM()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Continue with Directory-Operation ...())">
+<ti label="(f,html,bold,open)()Continue with Directory-Operation ...()(f,html,bold,close):" type="file">(file,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-File-Activity-DIRACTIVITY()"/>
+</when>
+<otherwise>
+<ti>You decided to do nothing. Your wish is our command!</ti>
+</otherwise>
+</choose>
+</try>
+<catch>
+<ti label="Error occured"/>
+<ti label="Activity:" x="(prop,selected_activity)" test="(f,exists,prop,selected_activity)"/>
+<ti label="Message:" x="(prop,catched_msg)" test="(f,exists,prop,catched_msg)"/>
+<ti label="Class:" x="(prop,catched_class)" test="(f,exists,prop,catched_class)"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>
+</jobs>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+  <job id="Test-Joe-Jack-Srv" joblevel="ws" role="hidden">
+    <dump_ti_all label="Dump bei beginn von Test-Joe-Jack-Srv"/>
+    <ti_hr/>
+    <file id="tst-store" x="(dir,status)teststore.xrs"/>
+    <ti type="file" x="(file,tst-store)" label="Store"/>
+    <ti_flush/>
+    <call_service job="go-joe-read"> 
+      <file id="joe-in-store" x="(file,tst-store)" />  
+    </call_service>
+   
+    <tk label="Do-Test-Jack-Joe" flag="sum">
+      <tk type="sel" id="tst-save-job" label="Joe-Save-Job" flag="nono"
+          tip="Damit wird gesichert">
+        <sel>go-joe-write</sel>
+        <sel>go-joe-write-srv</sel>
+      </tk>
+      
+      <tk id="tst-dir"  
+          type="dir" />  
+
+      
+      <tk id="tst-file"  
+          type="file" />  
+          
+      <tk id="tst-dir2"  
+          type="dir" 
+          test_first="0"/>                 
+      <tk id="tst-file2"  
+          type="file"
+          test_first="0" />                   
+    </tk>
+  
+  
+    <call_service job="(prop,tst-save-job)">                                                   
+        <prop id="joe-in-regex">tst-.*</prop>  
+        <file id="joe-in-store" x="(file,tst-store)" />   
+    </call_service> 
+ 
+</job>
+
+ 
+</jobs>

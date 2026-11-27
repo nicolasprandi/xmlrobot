@@ -1,0 +1,226 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+
+   
+<job id="do model input" joblevel="pro" role="hidden">
+  
+  
+  <choose>
+    <when test="(f,has,prop,testdata)">
+      <ti test="0">testdata=(prop,testdata)</ti>
+      <prop id="dmi-h1">(f,when,(prop,testdata),(prop,pn1b),(prop,pn2b))</prop>
+      <prop id="dmi-h2">(f,when,(prop,testdata),The TEST-GENERATOR produces test-data based on an spreadsheet,The SHEET-CONVERTER converts the spreadsheet to desired export-formats)</prop>
+    </when>
+    <otherwise>
+      <prop id="dmi-h1">Generator</prop>
+      <prop id="dmi-h2">The GENERATOR produces testdata or just converts a spreadsheet to some file-format</prop>
+      <need default="1">(prop,testdata)</need>
+    </otherwise>
+  </choose>
+  
+  <!-- 
+  <prop id="testdata" 
+        test="(f,not,(f,is_bool,(f,vob,prop,testdata)))"
+        x="1"/>        -->
+  <need default="">(prop,modelinputflag)</need>
+  <need default="">(prop,view)</need>
+  <prop id="see-this-only" x="0"/>
+  <when test="(f,has_flag,(prop,view) (prop,modelinputflag),print_only)">
+    <prop id="see-this-only" x="1"/>
+  </when>
+  <!-- 
+  <ti label="modelinputflag" x="(prop,modelinputflag)"/>  
+  <ti label="view" x="(prop,view)"/> 
+  -->
+  <ti_flush/>
+    <!-- do preselction in case 
+      <when test="(f,has_flag,(prop,view) (prop,modelinputflag),sum_only)">
+        <when test="(f,not,(f,has_flag,(f,file_content,(dir,filetemp)sel3.txt),(f,vob,prop,sheet)))">
+            <tk id="sheet" 
+                type="sel" 
+                xml="(file,sheet-selector)" 
+                label="Sheet of '(f,name_of_file2,(file,excel))' to process " 
+                flag="nono" 
+                tip="Select a sheet from the spreadsheet to process"/>
+
+        </when>
+      </when>  -->
+      <prop id="excel-tk" x=""/>
+      <!-- 
+      <choose>
+        <when test="(f,exists,file,excel)">
+        <when test="(f,exists_file,(file,excel))">
+          <prop id="excel-tk" x="  &lt; (f,name_of_file,(file,excel)) &gt;"/>
+        </when>
+        </when>
+        <otherwise>
+          <prop id="excel-tk" x=""/>
+        </otherwise>
+      </choose>
+      -->
+      <when test="(f,has,prop,pro)">
+      <choose>
+        <when test="(f,has,file,excel)">
+          <call_job job="create-sheet-selector">
+            <file id="css-by-spreadsheet" x="(file,excel)" />
+          </call_job>
+        </when>
+        <otherwise>
+          <copy file="(file,empty-selection)" tofile="(file,sheet-selector)"/>
+        </otherwise>
+      </choose>
+      </when>
+        
+      <!-- -->
+      <when test="(f,and,(f,not,(prop,testdata)),(f,not,(f,has,prop,do_export)))">
+        <prop id="do_export" x="1"/>
+      </when>
+      <prop id="ppx" x=""/>
+
+      <when test="(f,not,(f,eq,Generator,(prop,dmi-h1)))">
+        <prop id="ppx" x="(f,when,(f,has_flag,(prop,view) (prop,modelinputflag),print_only),Type: ,)"/>
+        <prop id="ppx" x=""/>
+      </when>
+      <ti test="0">()(prop,see-this-only)()=(prop,see-this-only)</ti> 
+      <!-- outter tk-group (prop,pro-tk)(prop,excel-tk)-->
+      
+      <tk xlabel="Parameters for (f,upper,(prop,dmi-h1))"
+          label="(prop,ppx)(prop,dmi-h1)" 
+          flag="(prop,view) (prop,modelinputflag)"
+          tip="(prop,dmi-h2)">
+            
+        <tk 
+            type="file"
+            label="Spreadsheet"
+            id="excel"
+            tip="The spreadsheet with the data to use. Must be in the format 'Microsoft Excel 2007-2013 XML (e:o).xlsx(e:c)' -or- 'Microsoft Excel 97-2003 (e:o).xls(e:c)'"
+            follow_job="follow-spreadsheet"
+            flag="nono xdownload"/>  
+              
+        <tk id="sheet" 
+            type="sel" 
+            xml="(file,sheet-selector)" 
+            label="Sheet" 
+            flag="nono fresh_xml" 
+            tip="A sheetname. This sheet of the spreadsheet will be the base for the transformation."/>
+            
+        <tk id="wish" 
+            x="30" 
+            label="Requested Nrb of Records" 
+            flxag="nono" 
+            test_first="0" 
+            test="(prop,testdata)"
+            regex="\d+"
+            regex_msg="Only numbers allowed!"
+            tip="The number of records to produce. Only for Test-Data-Generation."/>           
+
+        <tk type="msg" 
+            x="Add personal columns" 
+            test_first="0" 
+            test="(f,role,expert)"
+            tip="()'Personal Columns' are columns you want to add individually to the resulting dataset. They are programatically created after the transformation on base of an xsl-file or an xmlrobot-script. These scripts will run after the transformation (testdata-generation or sheet conversion). Both are possible: Xsl runs first, then runs XmlRobot. The scripts can also be used to remove or add records. Role: Expert()"/>
+        
+        <tk id="ext_columns" 
+            label="List of personal columns" 
+            type="text"
+            test_first="0" 
+            test="(f,role,expert)" 
+            tip="()The list of personal (additional) columns. Use space to separate columns, eg [ starter size ]. To create these extra colums you can specify an xsl, a xmlrobot-script or both.()"/>
+        
+        <tk id="ext_xsl" 
+            label="(f,when,(f,role,admin),(e:o)1(e:c),) Xsl-Script" 
+            test_first="0" 
+            type="file" extension=".xsl" 
+            flag="save force_extension"
+            base="(f,try,()(dir,pro)Xsl(),)"
+            test="(f,role,expert)"
+            tip="()Xsl File for the creation of the additional colums. If the specified file doesn't exist, a template will be created.()" />
+             
+        <tk id="ext_params" 
+            label="Xsl-Params" 
+            test_first="0"  
+            type="textblock"
+            test="(f,role,expert)"
+            tip="Parameters for the Xsl(e:s) eg [ starter=&apos;10&apos; size=&apos;5&apos;]. Use two ' if you have one of these as parameter."/>
+            
+        <tk id="ext_loxo" 
+            label="(e:o)2(e:c) XmlRobot-Script" 
+            test_first="0" 
+            type="file" extension=".xrs" 
+            flag="force_extension save xdownload"
+            base="(dir,loxo)"
+            test="(f,role,admin)"
+            tip="()XmlRobot Script-File for the creation of the additional colums. If the file specified file doesn't exist, a template will be created.()" />
+             
+        <tk id="ext_loxo_params" 
+            label="XmlRobot-Params" 
+            test_first="0"  
+            type="textblock"
+            test="(f,role,admin)"
+            tip="Parameters for the XmlRobot-Script(e:s) eg [ starter=&apos;10&apos; size=&apos;5&apos;]. Use two ' if you have one of these as parameter."/>            
+         
+        <tk type="msg" 
+            x="Spreadsheet Options" 
+            test_first="0"
+            tip="Some Parameters for the Spreadsheet"/>
+                
+        <tk id="first_row" 
+            label="Header in row" 
+            test_first="0"
+            rows="10"
+            regex="\d+"
+            regex_msg="Only numbers allowed!"
+            tip="Specifies the header-row in the spreadsheet. This header-row contains the fieldnames. It is followed by the data-rows. Default assumtion is '1'(e:s) the first row of the sheet."/>
+            
+        <tk id="last_row" 
+            label="Limitation of input rows" 
+            flag="nxono" 
+            test_first="0" 
+            regex="\d+"
+            regex_msg="Only numbers allowed!"          
+            tip="Specifies how many records of the spreadsheet will be read. If not specified(e:s) all rows will be imported."/>                    
+        <!--
+        <tk type="msg" 
+            x="Exporter Options" 
+            test_first="0"/>
+        
+        <tk id="do_export" 
+            label="Do Export" 
+            flag="no_is_0" 
+            test_first="0"
+            test="(prop,testdata)" 
+            x="1" 
+            type="bool"
+            tip="Controls whether the EXPORTER will be invoked directly after data generation/sheet conversion."/>
+            
+        <tk id="do_export_silent" 
+            label="Do Export Silent" 
+            flag="no_is_0" 
+            test_first="0"
+            x="0" 
+            type="bool"
+            tip="Tells EXPORTER not to ask questions."/>
+        -->
+        <tk type="msg" 
+            x="Technical Options" 
+            test_first="0"
+            test="(f,and,(f,role,admin),(prop,testdata))"/>
+                              
+        <tk id="main_extra" 
+            label="Special Operations"
+            test_first="0"
+            type="sel" 
+            test="(f,and,(f,role,admin),(prop,testdata))"
+            tip="'Skip First Part' assumes that data is already generated. Use this if previous generation did fail in second part of the built-phase. Role: Admin">
+            <sel label="Skip First Part">skip_first_part</sel> 
+        </tk>  
+      </tk>
+      
+</job>
+
+
+</jobs>

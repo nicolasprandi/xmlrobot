@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions sheet_name="actions" sheet_index="5"><action id="Edit" label="(prop,_x_edit)" classAddView="fbEnter" hook_job="namaste-edit" view="1" /></actions>

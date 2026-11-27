@@ -1,0 +1,156 @@
+<?xml version="1.0" ?><!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<!-- <when test="(f,has,prop,pro)"> take 2 things to the prolog --> 
+  <!-- 
+
+  -->
+<!-- </when>       -->
+
+<!-- gui Adapters: to copy in the app  take the edit to your gui.... -->
+
+<job id="Select Excel-Input">
+  <call_job job="tk_input_edit"/>
+</job>
+
+<job id="Select Excel-Input?">
+  <call_job job="tk_input_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_input_clear" explain="Clear this data"/>
+</job>
+
+
+
+<!-- setting the default-values -->
+<job id="tk_input_default" role="hidden">
+  <!--
+  <need default="regex">(prop,input_type)</need>
+  <need default="(dir,filetemp)">(dir,input_dir)</need>
+  -->
+</job>
+
+
+<!-- input-core, make your changes here -->
+<job id="tk_input_core" role="hidden" tip="input_: Tk Internal">
+
+  <need default="">(prop,tk_input_add_flag)</need>
+
+  <tk label="Parameters: input_" 
+      flag="(prop,tk_input_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+        
+    <tk id="input_excel"
+        type="file"  
+      	label="Excel-Def" 
+        xflag="nono"          
+        tip="()This file will be read()"
+        test_first="0"/>         
+
+                          
+  </tk>   
+</job>
+<!-- 
+<job id="See Values: input_" role="dev">
+  <call_job job="tk_input_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_input_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+ <job id="Clear Data: input_">
+  <tk type="msg" x="Sure to clear data of input_ ?" msg_type="w"/>
+  <call_job job="tk_input_clear"/>
+</job>
+
+<job id="Print Values:  input_">
+  <call_job job="tk_input_print_values"/>
+</job>
+<job id="Print Help: input_" role="dev">
+  <call_job job="tk_input_print_help"/>
+</job>
+
+-->
+<!-- edit data: read, userinput, write -->
+<job id="tk_input_edit" tip="input_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,input-data))">
+      <!-- data exists already -->
+      <prop id="tk_input_add_flag" x="sum_only print"/>
+      <call_job job="tk_input_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_input_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_input_default"/>
+  <!-- doing input -->
+  <call_job job="tk_input_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_input_write"/>
+
+</job>
+
+
+
+<job id="tk_input_print_values" tip="input_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_input_read"/>
+  
+  <call_job job="tk_input_core">
+    <prop id="tk_input_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_input_print_values_tips" tip="input_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_input_read"/>
+  
+  <call_job job="tk_input_core">
+    <prop id="tk_input_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_input_print_help" tip="input_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_input_core">
+    <prop id="tk_input_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_input_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,input-data)" />
+    <prop id="joe-in-regex" x="(prop,input-regex)" />    
+  </call_job>
+  <call_job job="tk_input_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_input_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,input-data)" />
+    <prop id="joe-in-regex" x="(prop,input-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_input_clear"  tip="input_: Clears the data" role="hidden">
+  <delete file="(file,input-data)"/>
+</job>
+
+
+</jobs>

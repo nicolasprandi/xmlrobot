@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="appconf-see-more">
+<need>(prop,appconf_key)</need>
+<call_job job="appconf-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="appconfs_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,appconf_displayname)(f,html,bold,close)(f,when,(f,has,(prop,appconfs_offset_label)), - (prop,appconfs_offset_label),)"/>
+<call_job job="appconf-tk"/>
+<ti_hr/>
+<ti type="rec">
+<ti type="call_job" explain="Edit Principal Configuration" job="appconf-edit">
+<prop id="appconf_key">(prop,appconf_key)</prop>
+<file id="appconfs">(file,appconfs)</file>
+<prop id="appconfs_offset">(prop,appconfs_offset)</prop>
+<prop id="appconfs_offset_label">(prop,appconfs_offset_label)</prop>
+<prop id="appconfs_offset_new_key">(prop,appconfs_offset_new_key)</prop>
+<prop id="appconfs_sort_attribute">(prop,appconfs_sort_attribute)</prop>
+<prop id="appconfs_sort_number">(prop,appconfs_sort_number)</prop>
+<prop id="appconfs_where">(prop,appconfs_where)</prop>
+<prop id="appconfs_return_job">(prop,appconfs_return_job)</prop>
+</ti>
+</ti>
+</job>

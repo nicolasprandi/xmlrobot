@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="folder-write">
+<need>(prop,folder_key) (prop,isAdd)</need>
+<spirit act="open" id="folders_spirit_tc" xml="(file,folders)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,folders_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,folders_offset),0,(f,sub,(f,len,(prop,folders_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,folders_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="folders_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;folder row="(prop,folder_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<dir id="jack-in" x="(dir,folder_from)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-dir" flag="silent">
+<dir id="jack-in" x="(dir,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="folders_spirit_tc" where="(prop,folders_offset)folder[@row=(f,xpath_string,(prop,folder_key))]" attribute="from" value="(prop,jack-result)"/>
+<dir id="jack-in" x="(dir,folder_to)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-dir" flag="silent">
+<dir id="jack-in" x="(dir,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="folders_spirit_tc" where="(prop,folders_offset)folder[@row=(f,xpath_string,(prop,folder_key))]" attribute="to" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="folders_spirit_tc" where="(prop,folders_offset)folder[@row='(prop,folder_key)']" attribute="name" value="(f,vob,prop,folder_name)"/>
+<spirit act="close" flag="save pretty" id="folders_spirit_tc"/>
+</job>

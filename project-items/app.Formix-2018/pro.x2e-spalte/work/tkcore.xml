@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="spalte-tk">
+<need default="">(prop,spalten_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,spalten_tk_control) wrap ">
+<tk label="Name" id="spalte_name" x="" test_first="1" tip="Technischer Name" type="text" flag=" "/>
+<tk label="Ausdruck" id="spalte_expr" x="" test_first="1" tip="()Ein Ausdruck aus der loop in, zb: (loop,in,..,@id) - (loop,in,@id) - (loop,in)()" type="textblock" flag=" "/>
+<tk label="Beschreibung" id="spalte_desc" x="" test_first="0" type="textblock" flag=" "/>
+</tk>
+</job>

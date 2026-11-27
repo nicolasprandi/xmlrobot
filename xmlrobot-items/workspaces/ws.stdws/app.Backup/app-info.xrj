@@ -1,0 +1,191 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>                                                            
+<job id="?">
+  
+  <ti label="When to use Application (f,html,i,open)Backup(f,html,i,close) :">
+    <ti type="ul">You want to secure and backup written documents</ti>
+  </ti>
+
+  
+  <ti label="Features">
+    <ti type="ul">Save backups on a usb-stick</ti>
+    <ti type="ul">Collect backups of different computers on the usb-stick</ti>
+    <ti type="ul">See differences between backups</ti>
+    <ti type="ul">See change-history of files</ti>
+    <ti type="ul">See insert/update/delete history of files</ti>
+    <ti type="ul">Analyze differences of pdf-files</ti>
+  </ti>
+  
+
+  <ti label="Limitations">
+    <ti type="ul">()Backups are performed as socalled 'full backup'. That is the opposite of the socalled 'incremental backup'. It means, that everytime you make a backup, a complete copy of your data will be stored. This means also that you shouldn't use this backup-tool for files like movies or pictures. This would cost a lot of space on your stick and it will be soon full.()</ti>    
+  </ti>
+  
+  
+  
+  <ti_hr/>
+  
+  <ti label="Making a Backup the first time">
+    <ti type="ul">Create a new project by hitting the + Button on top of the Applications // Projects - List</ti>
+    <ti type="ul">Select: New 'Backup-Manger' Project ...</ti>
+    <ti type="ul">()Enter a project-name, which should say something about the content you store in that backup-project. The system proposes a name which constists of the current date and the current computer-name()</ti>
+    <ti type="ul">The system is restarting and you will see the new project in the list</ti>
+    <ti type="ul">Hit the job-button 'Make Backup' or 'Define Backup'</ti>
+    <ti type="ul">Hit the link 'Add another Source' in the browser</ti>    
+    <ti type="ul">In a sequence you will be asked for the following inputs:</ti>
+   </ti>
+   
+   <ti label="Sequence of inputs:">
+    <ti type="ul">(f,html,i,open)Folder-To-Backup(f,html,i,close) 
+()This is the location of your original data, its a folder-selection dialog()</ti>    
+    <ti type="ul">(f,html,i,open)Name-of-Backup-Specification(f,html,i,close) 
+()This is the name of the folder, in most cases you can just leave this like it is ()</ti>
+    <ti type="ul">(f,html,i,open)File-Filter(f,html,i,close) 
+()Here you can define a filter which selects the files you want to backup in this folder. 
+- You can choose to copy all files in all subdirectories (**/*.*) or 
+- you can specify to copy only specific file-extensions (eg **/*.pdf for pdf-files only) or
+- you can define that all files with a certain text in the filename will be copied (eg **/*Test* for saving all files with 'Test' its name.()</ti>
+    <ti type="ul">(f,html,i,open)File-Filter-Negative(f,html,i,close) 
+()This is the counterpart to 'File-Filter' and it makes only sense to define ONE of them. Exclude means that the system copies all files except for those which you specified by this Exclude-Parameter. The syntax is the same like for Include.() </ti>
+    <ti type="text">(f,html,i,open)Final Review(f,html,i,close) 
+()Check your input here and confirm it by pressing OK. With the buttons on the left you can edit just one value. By pressing 'Edit All' you can edit all values. After pressing 'OK' you see in the browser your specified folder:()</ti>
+   </ti>
+   
+   <ti label="List of Folders:">
+    <ti type="ul">You see the list of all folders defined until now</ti>
+    <ti type="ul">Hit the link 'Add another Source' to define another folder</ti>
+    <ti type="ul">Use the link 'Edit' for modification </ti>
+    <ti type="ul">Use the link 'Del' for removing a folder-specification </ti>
+    <ti type="ul">Use the link 'See' for seeing the details</ti>     
+    <ti type="ul">()Use the link 'Test' to try out, what the backup-process would do for that specific folder()</ti>
+    <ti type="ul" >()When you specified all your folders, you are done()</ti>   
+    <ti type="ul" >Press the job-button 'Make Backup'</ti>   
+  </ti>
+
+  <ti label="Making a regular backup">
+    <ti type="ul">Hit the job-button 'Make Backup'</ti>
+    <ti type="ul">Enter a title for this backup or leave it empty</ti>
+    <ti type="ul">()Once the backup is performed, you will see a list of your recent backups()</ti> 
+  </ti>
+  
+  <ti label="List of recent backups">
+    <ti type="ul">Hit the job-button 'List All Backups' to see th list</ti>
+    <ti type="ul">You can also use the project-info button; a blue button with the project-name</ti>
+    <ti type="ul">You will see a list of your recent backups</ti> 
+    <ti type="ul">Use the link 'View' to see the data of a specific backup</ti>
+    <ti type="ul">Use the link 'Compare' to check the differences between 2 backups ...</ti>
+  </ti>  
+  
+  <ti label="Comparing Backups">
+    <ti type="ul">In the list of backups press one 'Compare'-Link</ti>
+    <ti type="ul">The screen will change and now you can press one '... with'-link in order to specify the other backup</ti>
+    <ti type="ul">The result of this comparison delivers you 4 categories:</ti> 
+  </ti>    
+
+  <ti label="Categories of Backup-Comparison:">
+    <ti type="ul">(f,html,i,open)Only Old/Left(f,html,i,close) 
+These files exist only in the Old/Left directore</ti>    
+    <ti type="ul">(f,html,i,open)Only New/Right(f,html,i,close) 
+These files exist only in the New/Right directory</ti>
+    <ti type="ul">(f,html,i,open)In Both: Changes(f,html,i,close) 
+These files exist in both directories but their content is different</ti>    
+    <ti type="ul">(f,html,i,open)In Both: Equal(f,html,i,close) 
+These files exist in both directories and they are the same</ti>
+    <ti type="text">Within all these categories and listed files we have a number of links:</ti> 
+  </ti>    
+
+  <ti label="Links in Backup-Comparison:">
+    <ti type="ul">(f,html,i,open)xy bytes(f,html,i,close) 
+()That's the difference measured in bytes of two files. If its a text- or pdf-file you can click on it and you will receive a list of the differences: Inserts, Updates and Deletes()</ti>    
+    <ti type="ul">(f,html,i,open)Trace(f,html,i,close) 
+()By tracing a file, you can check the complete history of it throughout all the backups. You will see only those backups where something happend with that file.()</ti>
+    <ti type="ul">(f,html,i,open)See files(f,html,i,close) 
+Here you get just 2 links to the files in question.</ti>    
+  </ti>
+  
+  <ti label="Terminology">
+    <ti label="Backup:">A duplicate of data filed at a specific moment</ti>    
+    <ti label="Backup Defintion:">A collection of source-folders</ti>
+    <ti label="Source Folder:">A folder as part of a backup-definition</ti>
+    <ti label="Tracing:">Detecting the changes of a file in its life-cycle</ti>              
+  </ti>    
+
+</job>
+
+
+
+<job id="List All Backups?">
+
+  <ti label="About: List All Backups">
+    <ti type="ul">Lists the performed backups(e:s) last ones first</ti>
+    <ti type="ul">Lets you compare 2 backups and see the files that changed (e:o)using 4 categories: Changes(e:s) Only Left(e:s) Only Right(e:s) Same(e:c)</ti>
+    <ti type="ul">Lets you trace a specific file and see its history throughout all backups</ti>
+  </ti>
+
+  <ti label="Additional functions for comparing two files">
+    <ti type="ul">This applies only if its a text-file or pdf:</ti>
+    <ti type="ul">See what exactly changed (e:o)Inserts(e:s) Updates and Deletes(e:c)</ti>
+    <ti type="ul">See both files in a window and compare them 'manually'</ti>
+  </ti>
+   
+  
+</job>
+
+<job id="Make Backup?">
+  <ti label="About: Make Backup">
+    <ti type="ul">Makes a backup</ti>
+    <ti type="ul">Lets you enter a backup-name</ti>
+  </ti>
+ 
+</job>
+
+<job id="Tell Input Info" role="hidden">
+  <ti label="Specifications for one source-folder">
+    <ti label="(e:o)1(e:c) Folder">the folder itself(e:s) select the folder and press ok</ti>
+    <ti label="(e:o)2(e:c) Folder Name">A name for the folder(e:s)
+The backuped data of each source-folder will be stored in a separate folder within your backup. This folder will have a name. Thats what you define here. By default this folder will have the same name as the original-data-folder. But you can specify here an individual name(e:s) which you may need if your source-folders consist of folder with the same name.</ti>
+    <ti label="(e:o)3(e:c) Positive Filter">Define a 'positive/include' filter which will specify the files you want to make a backup of</ti>
+    <ti label="(e:o)4(e:c) Negative Filter">Define a 'negative/exclude' filter which will specify the files you DON'T want to make a backup of</ti>      
+
+    <ti type="ul" label=" ">()Specify the filters in ant-syntax, eg: **/*.txt()</ti>
+    <ti type="ul" label=" ">()Test the definitions and check out if they work()</ti>  
+  </ti>  
+</job>
+
+<job id="Define Backup?">
+  <ti label="About: Define Backup">
+    <ti type="ul">Lets you define the backup-sources</ti>
+    <ti type="ul">A list of sources is printed</ti>
+    <ti type="ul">()Add new sources, edit and delete them()</ti>
+    <ti type="ul">Test them an see if your definitions work</ti>
+  </ti>
+
+  <call_job job="Tell Input Info"/>
+  
+</job>
+
+
+<job id="Trace a File?">
+  <ti label="About: Trace a File">
+    <ti type="ul">Lets you identify the changes a specific file had throughout it's lifecyle</ti>
+    <ti type="ul">A the beginning a compare of the first and last backup is done</ti>
+    <ti type="ul">Then you can select a specific file for tracing</ti>
+  </ti>
+
+</job>
+
+<job id="Configurate Project?">
+<ti>(f,html,bold,open)Lets you define the number of backups presented in the job 'List Backups'(f,html,bold,close)</ti>
+</job>
+
+<job id="See Sources?">
+
+<ti>(f,html,bold,open)View Project-Confuration here(f,html,bold,close)</ti>
+<ti type="ul">See folders to backup</ti>
+<ti type="ul">See and change limitation of files in the backup-list</ti>
+<ti></ti>
+
+</job>
+</jobs>

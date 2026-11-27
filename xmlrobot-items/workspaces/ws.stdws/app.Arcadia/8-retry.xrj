@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>   
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+
+<job id="print-retry" role="hidden">
+
+  <choose>
+    <when test="(f,xrghub,xr,has_retry)">
+      <xrghub 
+         
+        act="get_retry" 
+        out="(dir,temp)retry.xml"/> 
+      <loop id="r" xml="(dir,temp)retry.xml" xpath="retry" >
+        <ti label="(loop,r,@key)" type="rec">
+          <ti type="file" x="(loop,r,@tofile)"/>        
+          <ti  x="(loop,r,@path)"/>
+
+          <ti  x="(loop,r,@exception)"/>
+        </ti>
+      </loop>    
+      <ti_break/>
+      <ti_hr/>
+    </when>
+    <otherwise>
+      <ti>NO RETRIES pending</ti>
+    </otherwise>
+  </choose>
+      
+</job>
+
+<job id="do-retry" role="hidden">
+<when test="(f,xrghub,xr,has_retry)">
+  <tp>Do Retry for (f,xrghub,xr,count_retry) file(f,plural,(f,xrghub,xr,count_retry),s) ...</tp>
+  <ti label="Retry this"/>
+  <call_job job="print-retry"/>
+  
+  <xrghub 
+     
+    act="retry_hard" 
+    wait_ms="3000"
+    attempts="6"
+    shaky_prob="5"/>   
+     
+  <choose>
+    <when test="(f,xrghub,xr,has_retry)">
+    
+      <ti label="Unsuccessfull retries"/>
+      <call_job job="print-retry"/>
+      
+      <xrghub 
+         
+        act="clear_retry" /> 
+      <throw id="retryproblem">Could not download all retries from github</throw>
+         
+    </when>
+    <otherwise>
+      <ti>All retries performed</ti>
+    </otherwise>
+  </choose>
+      
+   
+</when>    
+</job>
+</jobs>

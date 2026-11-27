@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="aspect-see-all" level="ws" role="hidden" tip="Lists all Aspects">
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=begin hook_job=hook-aspect-view-begin</trace>
+<call_job job="hook-aspect-view-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: aspect-view: begin.0">
+<ti> hook_job=hook-aspect-view-begin hook=begin page=view station=0 object=aspect</ti>
+</ti>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="aspect_loop" xml="(file,aspects)" xpath="(prop,aspects_offset)aspect(prop,aspects_where)" sort="(prop,aspects_sort_attribute)" number="(prop,aspects_sort_number)" ignore_case="(prop,aspects_sort_ignore_case)" desc="(prop,aspects_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,aspects_offset_label)),0)">
+<ti label="(prop,aspects_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,aspect_loop,@titel)(f,html,bold,close)" job="aspect-see">
+<prop id="aspect_key">(loop,aspect_loop,@row)</prop>
+<file id="aspects">(file,aspects)</file>
+<prop id="aspects_offset">(prop,aspects_offset)</prop>
+<prop id="aspects_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="aspects_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="aspects_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="aspects_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="aspects_where">(prop,aspects_where)</prop>
+<prop id="aspects_return_job">(prop,aspects_return_job)</prop>
+</ti>
+<ti test="(f,role,business)" type="call_job" explain="Edit" job="aspect-edit">
+<prop id="aspect_key">(loop,aspect_loop,@row)</prop>
+<file id="aspects">(file,aspects)</file>
+<prop id="aspects_offset">(prop,aspects_offset)</prop>
+<prop id="aspects_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="aspects_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="aspects_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="aspects_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="aspects_where">(prop,aspects_where)</prop>
+<prop id="aspects_return_job">(prop,aspects_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Aspects found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,aspects_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="aspect-add" explain="Add an Aspect" job="aspect-add">
+<file id="aspects">(file,aspects)</file>
+<prop id="aspects_offset">(prop,aspects_offset)</prop>
+<prop id="aspects_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="aspects_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="aspects_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="aspects_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="aspects_where">(prop,aspects_where)</prop>
+<prop id="aspects_return_job">(prop,aspects_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,aspects)</file>
+<prop id="orga_where">(prop,aspects_where)</prop>
+<prop id="orga_view_loop_id">aspect_loop</prop>
+<prop id="orga_finished_job">aspect-see-all</prop>
+<prop id="orga_offset">(prop,aspects_offset)</prop>
+<prop id="orga_offset_label">(prop,aspects_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,aspects_offset_new_key)</prop>
+<prop id="orga_segment_plural">aspects</prop>
+<prop id="orga_segment_singular">aspect</prop>
+<prop id="orga_segment_plural_label">Aspects</prop>
+<prop id="orga_segment_singular_label">Aspect</prop>
+<prop id="orga_sort_attribute">(prop,aspects_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,aspects_sort_number)</prop>
+<prop id="orga_where">(prop,aspects_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,aspect_loop,@titel)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,aspects)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,aspects_offset)),0)">(prop,aspects_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=end hook_job=hook-aspect-view-end</trace>
+<call_job job="hook-aspect-view-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: aspect-view: end.0">
+<ti> hook_job=hook-aspect-view-end hook=end page=view station=0 object=aspect</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

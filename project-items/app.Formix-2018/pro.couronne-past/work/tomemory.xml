@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="past-read">
+    <need>(prop,past_key)</need>
+    <spirit act="open" missing_strategy="empty" id="pasts_spirit_tc" xml="(file,pasts)"/>
+    <prop id="past_dt_upd">(f,spirit,pasts_spirit_tc,(prop,pasts_offset)past[@row=(f,xpath_string,(prop,past_key))],@dt_upd)</prop>
+    <prop id="past_dt_add">(f,spirit,pasts_spirit_tc,(prop,pasts_offset)past[@row=(f,xpath_string,(prop,past_key))],@dt_add)</prop>
+    <prop id="past_for">(f,spirit,pasts_spirit_tc,(prop,pasts_offset)past[@row=(f,xpath_string,(prop,past_key))],@for)</prop>
+    <prop id="past_type">(f,spirit,pasts_spirit_tc,(prop,pasts_offset)past[@row=(f,xpath_string,(prop,past_key))],@type)</prop>
+    <prop id="past_obj_tech_name">(f,spirit,pasts_spirit_tc,(prop,pasts_offset)past[@row=(f,xpath_string,(prop,past_key))],@obj_tech_name)</prop>
+    <prop id="past_attr_tech_name">(f,spirit,pasts_spirit_tc,(prop,pasts_offset)past[@row=(f,xpath_string,(prop,past_key))],@attr_tech_name)</prop>
+    <spirit act="close" id="pasts_spirit_tc"/>
+</job>

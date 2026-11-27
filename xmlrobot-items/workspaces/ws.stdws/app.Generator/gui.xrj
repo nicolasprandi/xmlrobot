@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jobs>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<call_job job="prolog"/>
+
+<job id="Run" tip="Asks for user-input and transforms" role="public">
+   <call_job job="demand input" />
+   <when test="(f,has,file,excel)"> 
+     <call_job job="run-internal">
+      <prop id="askquestions" x="1" />
+     </call_job>
+   </when>
+
+
+</job>
+
+<job id="Run &amp; don't ask" tip="Transforms without user-input" role="expert">
+    <call_job job="demand input" />
+   <when test="(f,has,file,excel)">  
+   <call_job job="run-internal">
+    <prop id="askquestions" x="0" />
+   </call_job>
+   </when>
+
+</job>
+
+<job id="Run EXPORTER" tip="Exports to Xml, Csv, Html, Angular, Excel, Sql ..." role="public">
+    <call_job job="demand input" />
+    <need>(file,excel)</need>
+    
+  <prop id="askquestions" x="1" />
+  <call_job job="internal: export" />
+  <!-- <call_job job="tell rep second"/> -->
+</job>
+
+<job id="main-gui" role="hidden">
+  <call_job job="Run GENERATOR" />
+</job>
+
+
+<job id="small-backup-pi" role="hidden">
+
+        <ti label=" " job="Backup: Project" type="call_service" explain="Make a backup of project '(prop,pro)'" />            
+
+</job>
+
+<job id="See Spreadsheet Info" pri="10" role="hidden" tip="Edit the spreadsheet or change it">
+
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,ic-a)" />
+        <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+      </call_job>  
+      
+      <call_job job="excelinfo2">
+        <prop id="excelinfo:left" x="1" />
+      </call_job>
+          
+      <ti label="Use another" />
+        <ti type="call_job" label="Sheet:" job="Change Sheet" explain="Use another sheet of '(f,name_of_file,(file,excel))'" />  
+        <ti type="call_job" label=" " job="tell sheetlist" explain="List sheets of '(f,name_of_file,(file,excel))'">
+        <prop id="print-sheets-right" x="1" />
+        <prop id="print-sheets-header" x="0" />             
+        </ti>
+        <!--              
+      <call_job job="tell sheetlist">
+        <prop id="print-sheets-right" x="1" />
+        <prop id="print-sheets-header" x="0" />      
+      </call_job>      -->            
+        <ti label="Spreadsheet:" type="call_job" job="Change Spreadsheet" explain="Use another Spreadsheet" /> 
+    
+    <ti label="Features" />  
+    <ti type="call_job" job="tell all sheetlists" explain="See all sheets of all known spreadsheets" />
+    <ti type="call_service" job="Goto-Panorama" explain="See Spreadsheet-Templates">
+      <dir id="with">(dir,templates)</dir>
+    </ti>  
+</job>
+
+<job id="See Parameters" role="hidden" pri="10" tip="Displays transformation and export parameters">
+  <call_job job="pt-get" />
+  <call_job job="See parameters of transformation" />
+	<ti_space height="3px" />
+	<call_job job="see_export_input_only" />
+
+  <ti type="call_job" job="Explain Parameters" label=" " explain="Explain this information" />
+	
+</job>
+
+
+<job id="Find Spreadsheet?">
+	<ti label="About: Find Spreadsheet">
+		<ti type="ul">Lets you select or import a spreadsheet</ti>
+    <ti type="ul">Lets you access the templates. They which come as examples with the application.</ti>
+	</ti>
+	<ti label="Options:" />
+    <ti label="Import a template:" type="ul">Select a template and copy it into the project</ti>
+    <ti label="Import any spreadsheet:" type="ul">Copy any spreadsheet into the project</ti> 
+		<ti label="Reference a template:" type="ul">Select one of the templates</ti>
+    <ti label=" " type="ul">The template stays where it is and is just referenced</ti>
+		<ti label="Reference any spreadsheet:" type="ul">Select any spreadsheet and use that</ti>
+    <ti label=" " type="ul">The spreadsheet stays where it is and is just referenced</ti>		
+    <ti label="See templates:" type="ul">Lists all templates in the browser</ti>
+    <ti label=" " type="ul">Lists also the sheets they have</ti>
+    <ti label="Stop &amp; Forget that:" type="ul">Cancels this operation</ti>
+    <ti label=" " type="ul">The same as you would close the window</ti>                  
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="Find Spreadsheet" explain="Go" />
+    </ti>
+  </when>   	
+</job>
+
+<job id="See parameters of transformation" role="hidden">
+
+	<call_job job="see_main_input_only" />
+
+  <ti type="call_job" job="Explain transformation parameters" explain="Explain this" label=" " test="0" />
+	<ti type="call_job" job="main_input_only" explain="Edit this" label=" " test="0" xtest="(f,role,admin)" />
+	<ti type="call_job" job="Change Spreadsheet" exxplain="Edit this" label=" " test="0" />
+  
+</job>
+
+<job id="See Parameters?">
+
+	<ti label="About: See Parameters ...">
+		<ti type="ul">Displays parameters for transformation</ti>
+    <ti type="ul">Displays parameters for export</ti>
+	</ti>
+  
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="See Parameters" explain="Go" />
+    </ti>
+  </when>   
+
+</job>
+
+
+<job id="run-internal" role="hidden">
+  <need>(prop,askquestions)</need>
+  
+  <choose>
+  
+    <when test="(f,exists_file,(file,eb))">      
+      <choose>
+        <when test="(f,exists_file,(file,ic-a))">
+          <call_job job="create testdata internal">
+            <prop id="view">sum_only</prop>      
+          </call_job>
+        </when>
+        <otherwise>
+          <call_job job="create testdata internal">
+            <prop id="askquestions">1</prop>
+            <prop id="view">sum</prop>  
+          </call_job>         
+        </otherwise>
+      </choose>
+    </when>
+    
+    <otherwise>       
+      <call_job job="sys_project_setup" />
+    </otherwise>
+  
+  </choose>
+    
+</job>
+
+
+
+
+<job id="sys_project_setup" role="hidden">
+
+    <!-- demand input, -->
+    <call_job job="demand input" />
+    <choose>
+      <when test="(f,has,file,excel)">
+        <call_job job="create testdata internal">
+          <prop id="askquestions">1</prop>
+          <prop id="view"> sum_only </prop> 
+          <prop id="modelinputflag"> </prop>
+          <prop id="from-projectsetup" x="1" />  
+        </call_job>      
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+    
+
+</job>
+
+<job id="Run?">
+  <interpreter jovial="1" />
+  
+  <call_job job="See parameters of transformation" test="(f,has,prop,pro)" />
+  
+  <ti_hr test="(f,has,prop,pro)" />  
+  <ti label="About: Run">
+    <ti type="ul">Runs the complete process of transforming the spreadsheet and creating the exports</ti>
+    <ti type="ul">Asks for user-input before starting programms</ti>    
+  </ti>
+
+
+  <ti label="Overview" />
+  
+  <ti type="img" x="(dir,app)run-smaller.png" />
+  
+  <call_job job="Explain all transformation parameters" /> 
+  
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="Run" explain="Go" />
+    </ti>
+  </when>    
+</job>
+
+<job id="Run &amp; don't ask?">
+
+  <call_job job="See parameters of transformation" test="(f,has,prop,pro)" />
+  
+  <ti_hr test="(f,has,prop,pro)" />  
+  
+  <interpreter jovial="1" />
+  <ti label="About: Run &amp; don't ask">
+    <ti type="ul">Runs the complete process of transforming the spreadsheet and creating the exports</ti>
+    <ti type="ul">Doesn't ask for user input at all</ti>    
+  </ti>
+   <ti label="Overview" />
+  
+  <ti type="img" x="(dir,app)run-smaller.png" />
+  
+  <call_job job="Explain all transformation parameters" /> 
+
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="Run &amp; don't ask" explain="Go" />
+    </ti>
+  </when>    
+</job>
+
+
+<job id="Memory Dump" role="hidden">
+  <call_job job="dump all" />
+</job>
+<job id="dump all" role="hidden">
+  <call_job job="read-every-input" />
+  <dump_all flag="ti" label="Memory Dump" />
+  
+</job>
+
+
+
+<job id="read-every-input" role="hidden">
+   
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,ic-a)" />
+        <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+      </call_job>  
+
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,ic-b)" />
+        <prop id="joe-in-regex" x=".*"/>
+      </call_job>
+      
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,ic-c)" />
+        <prop id="joe-in-regex" x="(prop,export_regex)"/>
+      </call_job>          
+        
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,ic-conf)" />
+        <prop id="joe-in-regex" x="(prop,conf_regex)"/>
+      </call_job>  
+     
+</job>
+
+<job id="read-input-in-case" role="hidden">
+    <when test="(f,exists,file(file,ic-a))">    
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(file,ic-a)" />
+        <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+      </call_job>  
+    </when>
+</job>
+
+<job id="do-see-header" role="hidden">
+    <when test="(f,has,file,excel)">
+      <ti type="rec" label=" ">
+       <ti type="call_job" job="tell sheetlist" explain="See sheets" flag="arrow" />
+      <ti type="call_job" job="Change Sheet" flag="arrow" />
+      
+      <ti type="call_job" job="Change Spreadsheet" explain="Change File" flag="arrow" />
+          
+      <ti type="call_job" job="tell all sheetlists" flag="arrow" explain="See all sheets" />
+      </ti>
+      <ti> </ti>
+    </when>
+</job>
+
+<job id="Change Sheet" role="hidden">
+  <prop id="askquestions">1</prop>
+  <prop id="view">sum</prop>
+  
+  <call_job job="create testdata internal" />
+</job>
+
+<job id="Change sheet or paramter ...?">
+
+<call_job job="tell sheetlist" />
+
+</job>
+
+<job id="Change Spreadsheet" pri="10" role="hidden">
+  <call_job job="intenal: select excel input" />
+  <!-- 
+  <tk id="throw" type="bool" />
+  <throw test="(prop,throw)">trwosdf</throw>
+  <call_job job="tell excel" test="0"/>
+  -->
+  <call_job job="Run" test="(prop,goon)" />
+</job>
+
+
+
+<job id="dummy" role="hidden">
+</job> 
+
+<job id="See Results?">
+  <interpreter jovial="1" />
+  <ti label="About: See Results">
+    <ti type="ul">Lists a sample of the created data</ti>
+  </ti>
+  <ti label="Limitation">
+    <ti type="ul">The list is by default limited to 10 records</ti>
+    <ti type="ul">()To modify this limit, use the 'Project Configuration' and edit there the parameter 'Nbr Sample Records'()</ti>
+    <ti type="ul">After updating the configuration things have to be transformed again!</ti>    
+  </ti>
+  <!--
+  <when test="(f,has,prop,pro)">
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(file,ic-a)"/>
+      <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+    </call_job>
+    <when test="(f,or,(f,has,file,ext_xsl),(f,has,file,ext_loxo))">
+	<ti label="Original Data">
+      <ti type="call_job"
+          job="dummy"
+          explain="See Data before Xsl/XmlRobot-Script-Execution">
+          <include file="(file,rep_second)"/>
+      </ti>
+	</ti>
+    </when>
+  </when> 
+  -->  
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="See Results" explain="Go" />
+    </ti>
+  </when> 
+</job>
+
+<job id="See Export Folder" joblevel="pro" tip="Lists the export folder and offers zipping" pri="10" role="test">
+  <call_service job="Goto-Panorama" flag="silent">
+    <dir id="with" x="(dir,edir)" />
+  </call_service>
+       
+      <ti label="Zip">  
+        <ti type="call_service" job="Panorama-Dir-Activity-ZIP" explain="Zip the folder [ Exports ] including AngularJS">
+            <dir id="with" x="(dir,edir)" />
+            <prop id="with-filename-zip" x="(prop,pro).zip" />
+        </ti>
+        <ti type="call_service" job="Panorama-Dir-Activity-ZIP" explain="Zip the folder [ AngularJS ] only">
+            <dir id="with" x="(dir,angulardir)" />
+            <prop id="with-filename-zip" x="(prop,pro)-AngularJS.zip" />
+        </ti>        
+      </ti>    
+</job>
+
+<job id="See Results" joblevel="pro" tip="Displays generated data" pri="10">
+
+    
+      
+  <include file="(file,nrr)" test="(f,file_exists,(file,nrr))"  code="nrr"/>
+  <when test="(f,has,prop,pro)">
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(file,ic-a)" />
+      <prop id="joe-in-regex" x="(prop,sheet_regex)"/>
+    </call_job>
+    <when test="(f,or,(f,has,file,ext_xsl),(f,has,file,ext_loxo))">
+    	<ti label="Original Data">
+          <ti type="call_job" job="dummy" explain="See Data before Xsl/XmlRobot-Script-Execution">
+              <include file="(file,rep_second)"  code="rep_second"/>
+          </ti>
+    	</ti>
+    </when>
+  </when>    
+  
+  <call_job job="pt-get">
+    <prop id="pt-ask" x="0" />
+  </call_job>
+  
+  <ti label="(f,when,(prop,mustfastlane),Conversion Result,Generated Testdata)" padding_top="10px" test="(f,exists_file,(file,eb))">
+    <ti label="Results:" type="file">(file,eb)</ti>
+    
+  </ti>
+  
+  <ti test="(f,not,(f,exists_file,(file,eb)))">Not much to see here ...</ti>
+  
+
+
+  <!-- <include file="(file,rep_stat)" flag="catch"/> -->
+</job>
+
+
+<job id="See Unique Values of Columns" pri="10" role="user" tip="Column analysis: Values per column">
+
+      <include file="(file,rep_unique)" test="(f,exists_file,(file,rep_unique))"  code="rep_unique"/>
+      <ti x="Not much to see here" test="(f,not,(f,exists_file,(file,rep_unique)))" />
+
+</job>
+
+<job id="See Unique Values of Columns?">
+  <interpreter jovial="1" />
+  
+  <ti label="About: See Unique Values of Columns">
+    <ti type="ul">()Lists for every column/field the unique values()</ti>
+	<ti type="ul">()Includes only the values found in the spreadsheet, values added with a script (xsl or xmlrobot) are not included()</ti>
+    <ti type="ul">Sorts these values by their frequency</ti>
+  </ti>
+  <ti label="Limitation: Nbr Unique Values">
+    <ti type="ul">The list of unique values is limited by default to (f,html,bold,open)16 items(f,html,bold,close)</ti>
+	<ti type="ul">()If more unique items are available but not listed due to that limition, 3 dots (...) are displayed for indication()</ti>
+    <ti type="ul">()To modify this limit, use the 'Project Configuration' and edit there the parameter 'Nbr Unique Values'()</ti>
+    <ti type="ul">()After updating the configuration, programm has to be executed again()</ti>
+  </ti>
+  <ti label="Limitation: Nbr Records for sheet-conversion-algorigthm">
+    <ti type="ul">When doing SHEET-CONVERSION not all data-records are used for this statistic</ti>
+	<ti type="ul">()This is done for performance reasons()</ti>
+    <ti type="ul">()By default, only the first() (f,html,bold,open)20 records(f,html,bold,close) are used</ti>
+    <ti type="ul">()To modify this limit, use the 'Project Configuration' and edit there the parameter 'Nbr Records for sheet-conversion-algorigthm'()</ti>    
+    <ti type="ul">()After updating the configuration, programm has to be executed again()</ti>
+  </ti>  
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="See Unique Values of Columns" explain="Go" />
+    </ti>
+  </when>     
+</job>
+
+
+<job id="See Export Folder?">
+  <interpreter jovial="1" />
+  
+  <ti label="About: See Export Folder">
+    <ti type="ul">()Lists files of the export-folder in the panorama-browser()</ti>
+    <ti type="ul">()Lets you zip the Export- and the AngularJS-folder()</ti>
+  </ti>
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="See Export Folder" explain="Go" />
+    </ti>
+  </when>  
+</job>
+<!-- 
+<job id="See Unique Values of Spreadsheet" role="hidden">
+      <include file="(file,rep_unique)"/>
+</job>
+-->
+
+
+<job id="Run EXPORTER?">
+<interpreter jovial="1" />
+
+  <call_job job="see_export_input_only" test="(f,has,prop,pro)" />
+  
+  <ti_hr test="(f,has,prop,pro)" />  
+  
+  <ti label="About: EXPORTER">
+    <ti type="ul">Saves the generated data-xml in files of different formats (e:o)eg. csv(e:s) excel(e:s) sql-insert(e:s) ...(e:c)</ti>          
+  </ti>  
+  <ti label="Overview" />
+      <ti type="img" x="(dir,app)exporter-smaller.png" /> 
+      <call_job job="Explain all export parameters" />
+
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="Run EXPORTER" explain="Go" />
+    </ti>
+  </when>   
+  
+</job>
+
+<job id="Export &amp; don't ask" pri="10" role="hidden" tip="Exports the testset, but without asking for parameters">
+  <prop id="askquestions" x="0" />
+  <prop id="view">sum_only</prop>
+  <call_job job="internal: export" />
+</job>
+
+<job id="Modify Project Configuration" pri="10" tip="Declares some optional numbers and definitions" role="hidden">
+  <call_job job="internal: conf" />
+
+  <call_job job="tell conf short" />
+</job>
+
+<job id="Find Spreadsheet" pri="10" tip="Imports spreadsheets, offers predefined templates">
+
+  <call_job job="Change Spreadsheet" />
+
+</job>
+
+<job id="Configuration">
+  <call_job job="change-project-type-b"/>
+  <ti type="call_job" job="Change Project Type" explain="Edit Project-Type" test="0"/>  
+  <ti_hr/>
+  <!-- 
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="Change Project Type" explain="Go" />
+    </ti>
+  </when> --> 
+  <call_job job="Project Configuration"/>
+</job>
+
+<job id="Configuration?">
+  <call_job job="change-project-type?" />
+</job>
+<job id="Project Configuration" role="hidden">
+
+		
+
+  <interpreter jovial="1" />
+  <!-- 
+  <ti label="About: Project Configuration">
+    <ti type="ul">Lets you configure some general parameters for the project</ti>
+    <ti type="ul">Lets you specify a project description</ti>
+  </ti>
+  -->
+
+  <call_job job="tell conf" test="(f,has,prop,pro)" />
+  <call_job job="tell conf tips" test="(f,not,(f,has,prop,pro))" />
+  
+	<when test="(f,has,prop,pro)">
+    
+
+    <ti type="call_job" job="Modify Project Configuration" explain="Edit Configuration-Parameters" />
+
+  </when>   
+</job>
+
+<job id="Change Project Type" pri="10"  role="hidden" tip="Changes test-data-generation -vs- sheet-conversion">
+    <call_job job="demand input" />
+
+  <call_job job="change-project-type-c" />
+</job>
+<job id="Change Project Type?" pri="10">
+  <call_job job="change-project-type?" />
+  
+	<when test="(f,has,prop,pro)">
+    <ti_hr />
+    <ti label="Next">
+    <ti type="call_job" job="Change Project Type" explain="Go" />
+    </ti>
+  </when>   
+</job>  
+
+<job id="Do Backup" tip="Makes a project backup" pri="10" role="hidden">
+  <call_service job="Backup: Project" flag="silent" />
+</job>
+
+<job id="Do Backup?">
+  <ti label="About: Do Backup">
+    <ti type="ul">Makes a project backup</ti>
+    <ti type="ul">That includes a backup of the spreadsheet(e:s) even if it locates outside the project and is just referenced</ti>
+  </ti>
+    <ti label="Next" test="(f,has,prop,pro)">
+      <ti job="See Project Backups" type="call_service" />
+    </ti>  
+</job>
+</jobs>

@@ -1,0 +1,213 @@
+-- Copyright © 2018-2021 Nicolas Prandstaetter. All rights reserved.
+-- drop views
+DROP VIEW IF EXISTS #kopf;
+
+-- box
+DROP TABLE IF EXISTS #box;
+CREATE TABLE #box (
+                box_id INTEGER NOT NULL AUTO_INCREMENT,
+                zeit_import TIMESTAMP,
+                zeit_qk TIMESTAMP,
+                zeit_export TIMESTAMP,
+                qualitaet smallint,
+                uri VARCHAR(500),
+                beschreibung VARCHAR(500),
+                PRIMARY KEY (box_id)
+);
+
+-- attr
+DROP TABLE IF EXISTS #attr CASCADE;
+CREATE TABLE #attr (
+                attr_id INTEGER NOT NULL AUTO_INCREMENT,
+                obj_id INTEGER NOT NULL,
+                attr_typ smallint NOT NULL,
+                box_id INTEGER NOT NULL,               
+                PRIMARY KEY (attr_id)
+);
+
+
+-- wert
+DROP TABLE IF EXISTS #wert CASCADE;
+CREATE TABLE #wert (
+                wert_id INTEGER NOT NULL AUTO_INCREMENT,
+                attr_id INTEGER NOT NULL,
+                syntax_art smallint,
+                inhalt CHAR(60) NOT NULL,
+                inhalt2 CHAR(60),
+                von TIMESTAMP,
+                bis TIMESTAMP,
+                wann TIMESTAMP DEFAULT now() NOT NULL,
+                ist_top smallint DEFAULT 0 NOT NULL,
+                hat_mehr smallint DEFAULT 0 NOT NULL,
+                box_id INTEGER NOT NULL,                   
+                PRIMARY KEY (wert_id)
+);
+
+-- schlecht
+DROP TABLE IF EXISTS #schlecht CASCADE;
+CREATE TABLE #schlecht (
+                schlecht_id INTEGER NOT NULL AUTO_INCREMENT,
+                wert_id INTEGER NOT NULL,
+                datum TIMESTAMP DEFAULT now() NOT NULL,
+                grund varchar(200),
+                box_id INTEGER NOT NULL,                   
+                PRIMARY KEY (schlecht_id)
+);
+
+-- mehr
+DROP TABLE IF EXISTS #mehr CASCADE;
+CREATE TABLE #mehr (
+                wert_id INTEGER NOT NULL,
+                inhalt VARCHAR(5000),
+                box_id INTEGER NOT NULL,                  
+                PRIMARY KEY (wert_id)
+);
+
+-- obj
+DROP TABLE IF EXISTS #obj CASCADE;
+CREATE TABLE #obj (
+                obj_id INTEGER NOT NULL AUTO_INCREMENT,
+                obj_typ smallint NOT NULL,
+                pub_ist_aktuell smallint DEFAULT 0,                
+                box_id INTEGER NOT NULL,               
+                PRIMARY KEY (obj_id)
+);
+
+
+-- bez
+DROP TABLE IF EXISTS #bez CASCADE;
+CREATE TABLE #bez (
+                bez_id INTEGER NOT NULL AUTO_INCREMENT,
+                bez_typ smallint NOT NULL,
+                obj_id_a INTEGER NOT NULL,
+                obj_id_b INTEGER NOT NULL,
+                box_id INTEGER NOT NULL,                
+                PRIMARY KEY (bez_id)
+);
+
+-- qk-attr-wert
+DROP TABLE IF EXISTS #qk_attr_wert CASCADE;
+CREATE TABLE #qk_attr_wert (
+                id INTEGER NOT NULL AUTO_INCREMENT,
+                attr_typ smallint NOT NULL,
+                syntax_art smallint,                
+                inhalt VARCHAR(5000),
+                von TIMESTAMP,
+                bis TIMESTAMP,
+                wann TIMESTAMP NOT NULL DEFAULT now(),
+                box_id INTEGER NOT NULL, 
+                obj_id INTEGER NOT NULL,                                                               
+                attr_id INTEGER,
+                wert_id INTEGER,
+                done smallint NOT NULL DEFAULT 0,                 
+                PRIMARY KEY (id)
+);
+
+-- frisch
+DROP TABLE IF EXISTS #frisch CASCADE;
+CREATE TABLE #frisch (
+                id INTEGER NOT NULL AUTO_INCREMENT,
+                obj_id INTEGER NOT NULL,
+                box_id INTEGER NOT NULL,                           
+                PRIMARY KEY (id)
+);
+
+-- mig_obj
+DROP TABLE IF EXISTS #mig_obj;
+CREATE TABLE #mig_obj (               
+                mig_obj_id INTEGER NOT NULL AUTO_INCREMENT,
+                datum TIMESTAMP NOT NULL DEFAULT now(),
+                uk VARCHAR(5000) NOT NULL,
+                uk_attr_usg_id INTEGER NOT NULL,
+                uk_inhalt VARCHAR(5000) NOT NULL,
+                master_obj_id INTEGER NOT NULL,
+                slave_obj_id INTEGER NOT NULL,
+                PRIMARY KEY (mig_obj_id)
+);
+
+-- mig_obj_hist
+DROP TABLE IF EXISTS #mig_obj_hist;
+CREATE TABLE #mig_obj_hist (               
+                mig_obj_id INTEGER,
+                datum TIMESTAMP,
+                uk VARCHAR(5000) NOT NULL,
+                uk_attr_usg_id INTEGER NOT NULL,
+                uk_inhalt VARCHAR(5000) NOT NULL,
+                master_obj_id INTEGER NOT NULL,
+                slave_obj_id INTEGER NOT NULL,
+                PRIMARY KEY (mig_obj_id)
+);
+
+-- attr
+-- DROP INDEX #idx_attr_obj_id ON #attr;
+CREATE INDEX #idx_attr_obj_id ON #attr (obj_id);
+
+-- DROP INDEX #idx_attr_attr_typ ON #attr;
+CREATE INDEX #idx_attr_attr_typ ON #attr (attr_typ);
+
+-- wert
+-- DROP INDEX #idx_wert_attr_id ON #wert;
+CREATE INDEX #idx_wert_attr_id ON #wert (attr_id);
+
+-- DROP INDEX #idx_wert_wann ON #wert;
+CREATE INDEX #idx_wert_wann ON #wert (wann);
+
+-- DROP INDEX #idx_wert_heal_double_werte ON #wert;
+CREATE INDEX #idx_wert_heal_double_werte ON #wert (attr_id, inhalt, von, bis);
+
+-- DROP INDEX #idx_wert_top ON #wert;
+CREATE INDEX #idx_wert_top ON #wert (attr_id, wann desc);
+
+-- obj
+-- DROP INDEX #idx_obj_pub_ist_aktuell ON #obj;
+CREATE INDEX #idx_obj_pub_ist_aktuell ON #obj (pub_ist_aktuell);
+
+-- qk_attr_wert
+-- DROP INDEX IF EXISTS #idx_qk_attr_wert_done;
+-- CREATE INDEX  #idx_qk_attr_wert_done ON  #qk_attr_wert (done);
+                                                         
+-- DROP INDEX IF EXISTS #idx_qk_attr_wert_sort ON #qk_attr_wert;
+CREATE INDEX  #idx_qk_attr_wert_sort ON #qk_attr_wert (done,obj_id, attr_typ);
+
+-- index auf box_id
+-- box: obj
+-- DROP INDEX #idx_obj_box_id ON #obj;
+CREATE INDEX #idx_obj_box_id ON #obj (box_id);
+
+-- box: bez
+-- DROP INDEX #idx_bez_box_id ON #bez;
+CREATE INDEX #idx_bez_box_id ON #bez (box_id);
+
+-- box: attr
+-- DROP INDEX #idx_attr_box_id ON #attr;
+CREATE INDEX #idx_attr_box_id ON #attr (box_id);
+
+-- box: wert
+-- DROP INDEX #idx_wert_box_id ON #wert;
+CREATE INDEX #idx_wert_box_id ON #wert (box_id);
+
+-- box: mehr
+-- DROP INDEX #idx_mehr_box_id ON #mehr;
+CREATE INDEX #idx_mehr_box_id ON #mehr (box_id);
+
+-- box: frisch
+-- DROP INDEX #idx_frisch_box_id ON #frisch;
+CREATE INDEX #idx_frisch_box_id ON #frisch (box_id);
+
+CREATE VIEW #kopf AS
+ SELECT n1.obj_id,
+    n1.obj_typ,
+    n2.kopf
+   FROM ( SELECT obj.obj_id,
+            obj.obj_typ,
+            ot.kopf_attr_typ
+           FROM #obj obj,
+            t_o ot
+          WHERE obj.obj_typ = ot.obj_typ) n1
+     LEFT JOIN ( SELECT attr.obj_id,
+            attr.attr_typ,
+            wert.inhalt AS kopf
+           FROM #attr attr,
+            #wert wert
+          WHERE attr.attr_id = wert.attr_id AND wert.ist_top = 1) n2 ON n1.obj_id = n2.obj_id AND n1.kopf_attr_typ = n2.attr_typ;
+

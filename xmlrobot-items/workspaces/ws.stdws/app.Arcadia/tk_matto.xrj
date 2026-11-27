@@ -1,0 +1,288 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+
+-->
+<call_job job="prolog" />
+
+
+
+<!-- gui Adapters: to copy in the app .... 
+
+<job id="See Values: matto_" role="dev">
+  <call_job job="tk_matto_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_matto_clear" explain="Clear this data"/>  
+</job>
+
+<job id="Edit: matto_">
+  <call_job job="tk_matto_edit"/>
+</job>
+
+<job id="Edit: matto_?">
+  <call_job job="tk_matto_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_matto_clear" explain="Clear this data"/>
+</job>            -->
+
+<!-- 
+ <job id="Clear Data: matto_">
+  <tk type="msg" x="Sure to clear data of matto_ ?" msg_type="w"/>
+  <call_job job="tk_matto_clear"/>
+</job>
+
+<job id="Print Values:  matto_">
+  <call_job job="tk_matto_print_values"/>
+</job>
+<job id="Print Help: matto_" role="dev">
+  <call_job job="tk_matto_print_help"/>
+</job>
+
+-->
+
+<!-- setting the default-values 
+  <need default="regex">(prop,matto_type)</need>
+  <need default="(dir,temp)">(dir,matto_dir)</need>
+-->
+<job id="tk_matto_default" role="hidden">
+   <need default="xmlrobot-items">(prop,matto_origin)</need>
+</job>
+
+
+<!-- matto-core, make your changes here -->
+<job id="tk_matto_core" role="hidden" tip="matto_: Tk Internal">
+
+  <need default="">(prop,tk_matto_add_flag)</need>
+
+  <tk label="Parameters: Base of Services and Serviceapps" 
+      flag="(prop,tk_matto_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+    <tk id="matto_origin" 
+        type="sel" 
+        label="()The Origin()"
+        test_first="1"                  
+        tip="Where to take service-apps and services to take from"
+        flag="nono"
+        xml="(file,scj-selector)"/>
+    <!--     
+    <tk id="matto_dir" 
+        type="dir" 
+        label="Indiviual Dir"         
+        test_dyn="()(f,eq_text,-,(prop,matto_origin))()"        
+        tip="()Very individual folder with xmlrobot-items()"/>
+       
+    <tk id="matto_file_read"
+        type="file"  
+      	label="File to read" 
+        flag="nono"          
+        tip="()This file will be read()"/> 
+        
+    <tk id="matto_file_write"
+        type="file"  
+      	label="File to write" 
+        flag="save force_extension"
+        extension=".xml"
+        test_first="0"        
+        tip="()This file will be written()"/> 
+
+    <tk type="msg"
+        x="Text and Bool"
+        test_first="0"/>   
+        
+    <tk id="matto_type"
+        type="sel"  
+        label="Selection 1" 
+        x="text"
+        test_first="0"        
+        tip="()text versus regular expression; text will search for exaclty that defined search text, regex will apply the regular-expression syntax to search for a piece of text in the files()">
+        <sel label="Text">text</sel>
+        <sel label="Regular Expression">regex</sel>    
+    </tk>            
+         
+    <tk id="matto_for" 
+        label="Text"
+        x="text default"
+        test_first="0" />
+         
+    <tk id="matto_textblock"
+        type="textblock"
+        label="Textblock"               
+      	test_first="0"/> 
+        
+    <tk id="matto_bool"
+        type="bool"
+        label="Boolean"       
+      	test_first="0"
+        x="0"/> 
+         
+    <tk type="msg"
+        x="Selections" 
+        msg_type="i" 
+        test_first="0" 
+        tip="()Some Selections() "/>         
+            
+    <tk id="matto_levels" 
+        type="sel" 
+        label="()Selection (2)()"
+        test_first="0"         
+        x="1"         
+        tip="the number of directory levels included in the file-search">
+        <sel label="One">1</sel>
+        <sel label="Two" test="(f,role,expert)">2</sel>
+        <sel label="Three" test="(f,role,admin)">3</sel>
+        <sel label="Four">4</sel>
+        <sel label="Five">5</sel>
+        <sel label="Six">6</sel>
+        <sel label="Seven">7</sel>
+        <sel label="Eight">8</sel>
+        <sel label="Nine">9</sel>
+        <sel label="Unlimited">999</sel>    
+    </tk>
+
+    <tk id="matto_days" 
+        type="sel" 
+        label="()Days (Sel)()"
+        test_first="0"                  
+        tip="Days of the week"
+        flag="multi" 
+        xml="(file,matto-sel2)"/>
+        
+    <tk 
+      id="matto_ext"
+      label="Extension" 
+      test_first="0"       
+      x="extension" 
+      flag="nono"
+      tip="Tip for Extension"/>
+
+    <tk type="msg" x="Options" msg_type="i"  test_first="0"/>
+  
+    <tk id="matto_encoding"
+        label="Encoding" 
+        test_first="0" 
+        x="UTF-8" 
+        tip="()Encoding defines the way data is stored()"/>
+    
+    <tk type="msg" 
+        x="Reporting Display" 
+        msg_type="i"/>
+        
+    <tk id="matto_len_before"
+        label="Len Before" 
+        test_first="0" 
+        x="20"         
+        tip="()does define the lenght before ...()"/>
+        
+    <tk id="matto_len_after" 
+        label="Len After"
+        test_first="0" 
+        x="60"          
+        flag="nono" 
+        tip="()does define the lenght after ..()"/>      
+        
+    <tk type="msg" x="Regular Expressions" msg_type="i" />   
+     
+    <tk id="matto_xms"
+        type="text"
+      	label="Minimum Heap Size"      	
+      	regex="()(\d+[g|G|m|M|k|K])()"
+      	regex_msg="()A Number and Unit (g,G,m,M,k,K) &#xA;eg 1G or 512m()"
+      	test_first="0"
+	      x="512m"
+        tip="Tip for minimum heap size"/>
+
+    <tk id="matto_xmx"
+        type="text"      	
+      	label="Maximal Heap Size"      	
+      	regex="()(\d+[g|G|m|M|k|K])()"
+      	regex_msg="()A Number and Unit (g,G,m,M,k,K) &#xA;eg 1G or 1024m()"
+      	test_first="0"
+	      x="1024m"
+        tip="Tip for maximal heap size"/>
+      -->   
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_matto_edit" tip="matto_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,matto-data))">
+      <!-- data exists already -->
+      <prop id="tk_matto_add_flag" x="sum_only print"/>
+      <call_job job="tk_matto_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_matto_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_matto_default"/>
+  <!-- doing input -->
+  <call_job job="tk_matto_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_matto_write"/>
+
+</job>
+
+
+
+<job id="tk_matto_print_values" tip="matto_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_matto_read"/>
+  
+  <call_job job="tk_matto_core">
+    <prop id="tk_matto_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_matto_print_values_tips" tip="matto_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_matto_read"/>
+  
+  <call_job job="tk_matto_core">
+    <prop id="tk_matto_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_matto_print_help" tip="matto_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_matto_core">
+    <prop id="tk_matto_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_matto_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,matto-data)" />
+  </call_job>
+  <call_job job="tk_matto_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_matto_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,matto-data)" />
+    <prop id="joe-in-regex" x="(prop,matto-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_matto_clear"  tip="matto_: Clears the data" role="hidden">
+  <delete file="(file,matto-data)"/>
+</job>
+
+
+</jobs>

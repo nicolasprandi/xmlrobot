@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rezs>
+  <rez row="1" bez="Omlett a la Thai" logo="(dir,libro)thai/thai1/2b.jpg" logo_max_y="70">
+    <komp row="1" bez="Omlett a la Thai">
+      <ephase row="1" zut_key="3 5 " besch="Anbraten" phase="40" />
+      <ephase row="2" zut_key="1 " besch="Omlett machen" phase="40" />
+      <ephase row="3" zut_key="2 4 " besch="Drüberstreuen" phase="40" />
+    </komp>
+    <rezpic row="1" pic="(dir,libro)thai/thai1/3b.jpg" bez="Buffet" alt="Buffet" max_y_px="100" />
+    <rezpic row="2" pic="(dir,libro)thai/thai1/5b.jpg" bez="x" max_y_px="210" />
+    <rezpic row="3" pic="(dir,libro)thai/thai1/6b.jpg" bez="c" max_y_px="100" />
+    <zut row="1" bez="Eier" menge="2" einheit="st" />
+    <kompzut row="1" zut_key="1" komp_key="1" />
+    <zut row="2" bez="Sojabohnen" />
+    <kompzut row="2" zut_key="2" komp_key="1" />
+    <zut row="3" bez="Hackfleisch" />
+    <kompzut row="3" zut_key="3" komp_key="1" />
+    <zut row="4" bez="Kräuter" />
+    <kompzut row="4" zut_key="4" komp_key="1" />
+    <zut row="5" bez="Chilli-Schoten" />
+    <kompzut row="5" zut_key="5" komp_key="1" />
+  </rez>
+  <rez row="2" bez="Glassnoodle Sea Salad" character="Hearty" logo="(dir,libro)thai/thai2/9b.jpg" logo_max_y="70">
+    <komp row="2" bez="Glassnoodle Sea Salad" />
+    <rezpic row="4" pic="(dir,libro)thai/thai2/10b.jpg" bez="x" max_x_px="100" />
+    <rezpic row="5" pic="(dir,libro)thai/thai2/11b.jpg" bez="z" max_y_px="40" />
+    <rezpic row="6" pic="(dir,libro)thai/thai2/8b.jpg" bez="k" max_x_px="200" />
+  </rez>
+  <rez row="3" bez="Sweet Steamed Rice Cake" logo="(dir,libro)thai/thai4/13b.jpg" logo_max_y="70">
+    <komp row="3" bez="Sweet Steamed Rice Cake" />
+    <rezpic row="7" pic="(dir,libro)thai/thai4/14b.jpg" bez="f" max_y_px="200" />
+    <rezpic row="10" pic="(dir,libro)thai/thai7/11b.jpg" bez="Yellow" max_y_px="140" />
+  </rez>
+  <rez row="4" bez="Thai Classic Always Ultra" logo="(dir,libro)thai/thai7/7b.jpg" logo_max_y="70">
+    <komp row="4" bez="Thai Classic Always Ultra" />
+    <rezpic row="8" pic="(dir,libro)thai/thai7/6b.jpg" bez="r" max_x_px="140" />
+    <rezpic row="9" pic="(dir,libro)thai/thai7/5b.jpg" bez="x" max_y_px="200" />
+  </rez>
+  <rez row="5" bez="Frutes" logo="(dir,libro)thai/thai5/28b1.jpg" logo_max_y="70">
+    <komp row="5" bez="Frutes" />
+    <rezpic row="11" pic="(dir,libro)thai/thai5/5b.jpg" bez="a" max_x_px="170" />
+    <rezpic row="12" pic="(dir,libro)thai/thai5/6b.jpg" bez="b" max_y_px="90" />
+    <rezpic row="13" pic="(dir,libro)thai/thai5/10b.jpg" bez="dasf" max_y_px="80" />
+    <rezpic row="14" pic="(dir,libro)thai/thai5/15b.jpg" bez="l" max_y_px="70" />
+  </rez>
+  <rez row="6" bez="Sweet Soups" logo="(dir,libro)thai/thai1/13b.jpg" logo_max_y="70">
+    <komp row="6" bez="Sweet Soups" />
+    <rezpic row="15" pic="(dir,libro)thai/thai1/12b.jpg" bez="dsf" max_y_px="90" />
+    <rezpic row="16" pic="(dir,libro)thai/thai2/6b.jpg" bez="sdf" max_y_px="130" />
+    <rezpic row="17" pic="(dir,libro)thai/thai2/7b.jpg" bez="afs" max_y_px="90" />
+    <rezpic row="18" pic="(dir,libro)thai/thai3/6b.jpg" bez="432" max_x_px="200" />
+    <rezpic row="19" pic="(dir,libro)thai/thai3/7b.jpg" bez="asdf" max_y_px="50" />
+  </rez>
+  <rez row="7" bez="Grilled Fish" logo="(dir,libro)thai/thai2/3b.jpg" logo_max_y="70">
+    <komp row="7" bez="Grilled Fish" />
+    <rezpic row="20" pic="(dir,libro)thai/thai2/1b.jpg" bez="asdf" max_y_px="200" />
+  </rez>
+  <rez row="8" bez="Fried Pans" logo="(dir,libro)thai/thai1/10b.jpg" logo_max_y="70">
+    <komp row="8" bez="Fried Pans" />
+  </rez>
+</rezs>

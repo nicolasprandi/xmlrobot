@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kjob-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="kjobs_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,kjobs_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="kjob-see">
+<prop id="kjob_key">(prop,kjob_key)</prop>
+<file id="kjobs">(file,kjobs)</file>
+<prop id="kjobs_offset">(prop,kjobs_offset)</prop>
+<prop id="kjobs_offset_label">(prop,kjobs_offset_label)</prop>
+<prop id="kjobs_offset_new_key">(prop,kjobs_offset_new_key)</prop>
+<prop id="kjobs_sort_attribute">(prop,kjobs_sort_attribute)</prop>
+<prop id="kjobs_sort_number">(prop,kjobs_sort_number)</prop>
+<prop id="kjobs_sort_ignore_case">(prop,kjobs_sort_ignore_case)</prop>
+<prop id="kjobs_sort_desc">(prop,kjobs_sort_desc)</prop>
+<prop id="kjobs_where">(prop,kjobs_where)</prop>
+<prop id="kjobs_return_job">(prop,kjobs_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="kjob-see-all">
+<file id="kjobs">(file,kjobs)</file>
+<prop id="kjobs_offset">(prop,kjobs_offset)</prop>
+<prop id="kjobs_offset_label">(prop,kjobs_offset_label)</prop>
+<prop id="kjobs_offset_new_key">(prop,kjobs_offset_new_key)</prop>
+<prop id="kjobs_sort_attribute">(prop,kjobs_sort_attribute)</prop>
+<prop id="kjobs_sort_number">(prop,kjobs_sort_number)</prop>
+<prop id="kjobs_sort_ignore_case">(prop,kjobs_sort_ignore_case)</prop>
+<prop id="kjobs_sort_desc">(prop,kjobs_sort_desc)</prop>
+<prop id="kjobs_where">(prop,kjobs_where)</prop>
+<prop id="kjobs_return_job">(prop,kjobs_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,kjob_key)</need>
+<call_job job="kjob-read"/>
+<prop id="kjob_default_label_class" x="(prop,_sl_kjob)"/>
+<prop id="kjob_default_label_name" x="(f,text,cut_nice,(prop,kjob_id),30)(f,when,(f,has,(prop,kjobs_offset_label)), - (prop,kjobs_offset_label),)"/>
+<call_job job="kjob-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailKjob" explain="(prop,_x_edit)" job="kjob-edit">
+<prop id="kjob_key">(prop,kjob_key)</prop>
+<file id="kjobs">(file,kjobs)</file>
+<prop id="kjobs_offset">(prop,kjobs_offset)</prop>
+<prop id="kjobs_offset_label">(prop,kjobs_offset_label)</prop>
+<prop id="kjobs_offset_new_key">(prop,kjobs_offset_new_key)</prop>
+<prop id="kjobs_sort_attribute">(prop,kjobs_sort_attribute)</prop>
+<prop id="kjobs_sort_number">(prop,kjobs_sort_number)</prop>
+<prop id="kjobs_sort_ignore_case">(prop,kjobs_sort_ignore_case)</prop>
+<prop id="kjobs_sort_desc">(prop,kjobs_sort_desc)</prop>
+<prop id="kjobs_where">(prop,kjobs_where)</prop>
+<prop id="kjobs_return_job">(prop,kjobs_return_job)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,kjobs_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="kjob-see">
+<prop id="kjob_key">(prop,kjob_key)</prop>
+<file id="kjobs">(file,kjobs)</file>
+<prop id="kjobs_offset">(prop,kjobs_offset)</prop>
+<prop id="kjobs_offset_label">(prop,kjobs_offset_label)</prop>
+<prop id="kjobs_offset_new_key">(prop,kjobs_offset_new_key)</prop>
+<prop id="kjobs_sort_attribute">(prop,kjobs_sort_attribute)</prop>
+<prop id="kjobs_sort_number">(prop,kjobs_sort_number)</prop>
+<prop id="kjobs_sort_ignore_case">(prop,kjobs_sort_ignore_case)</prop>
+<prop id="kjobs_sort_desc">(prop,kjobs_sort_desc)</prop>
+<prop id="kjobs_where">(prop,kjobs_where)</prop>
+<prop id="kjobs_return_job">(prop,kjobs_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="kjob-see-all">
+<file id="kjobs">(file,kjobs)</file>
+<prop id="kjobs_offset">(prop,kjobs_offset)</prop>
+<prop id="kjobs_offset_label">(prop,kjobs_offset_label)</prop>
+<prop id="kjobs_offset_new_key">(prop,kjobs_offset_new_key)</prop>
+<prop id="kjobs_sort_attribute">(prop,kjobs_sort_attribute)</prop>
+<prop id="kjobs_sort_number">(prop,kjobs_sort_number)</prop>
+<prop id="kjobs_sort_ignore_case">(prop,kjobs_sort_ignore_case)</prop>
+<prop id="kjobs_sort_desc">(prop,kjobs_sort_desc)</prop>
+<prop id="kjobs_where">(prop,kjobs_where)</prop>
+<prop id="kjobs_return_job">(prop,kjobs_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exti-read">
+<need>(prop,exti_key)</need>
+<spirit act="open" missing_strategy="empty" id="extis_spirit_tc" xml="(file,extis)"/>
+<prop id="exti_dt_upd">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@dt_upd)</prop>
+<prop id="exti_dt_add">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@dt_add)</prop>
+<prop id="exti_ons">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@ons)</prop>
+<prop id="exti_pro_check_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@pro_check_string)</prop>
+<prop id="exti_pro_load_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@pro_load_string)</prop>
+<prop id="exti_password_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@password_string)</prop>
+<prop id="exti_passwords">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@passwords)</prop>
+<prop id="exti_mediathek_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@mediathek_string)</prop>
+<prop id="exti_runtime_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@runtime_string)</prop>
+<prop id="exti_ext_embedjs_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@ext_embedjs_string)</prop>
+<prop id="exti_mydata_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@mydata_string)</prop>
+<prop id="exti_guiprivs">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@guiprivs)</prop>
+<prop id="exti_file_load_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@file_load_string)</prop>
+<prop id="exti_tk_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@tk_string)</prop>
+<prop id="exti_interpreter_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@interpreter_string)</prop>
+<prop id="exti_ws_string">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@ws_string)</prop>
+<prop id="exti_ebits">(f,spirit,extis_spirit_tc,(prop,extis_offset)exti[@row=(f,xpath_string,(prop,exti_key))],@ebits)</prop>
+<spirit act="close" id="extis_spirit_tc"/>
+</job>

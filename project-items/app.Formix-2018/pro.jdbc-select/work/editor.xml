@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="select-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Select(prop,selects_offset_label)"/>
+<prop x="sum" id="selects_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,select_key)</need>
+<prop id="label" x="Select [(f,text,cut_nice,(prop,select_sql),50)](prop,selects_offset_label)"/>
+<prop x="sum_only" id="selects_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="select-tk"/>
+</job>

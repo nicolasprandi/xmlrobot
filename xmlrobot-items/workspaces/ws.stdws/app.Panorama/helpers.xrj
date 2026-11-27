@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="prepare_offset" joblevel="app" role="hidden">
+  <need default="">(prop,et_offset_ipath)</need>
+  <!-- <need>(file,scan)</need> -->
+  <need default="1">(prop,et_report_ti_dir_level)</need>
+  <!-- <echo id="et_report_ti_dir_level" type="prop" label="hi nic!"/> -->
+
+  <choose>
+    <when test="(f,eq,(prop,et_offset_ipath),)">
+      <prop id="offset_ipath2"></prop>  
+      <prop id="offset_ipath2_dirs"></prop>  
+      <prop id="offset_ipath2_dirs_b">.//</prop>
+      <prop id="offset_is_at_level">1</prop>
+    </when>
+    <otherwise>
+      <prop id="offset_ipath2">//dir[@ipath=(f,xpath_string,(prop,et_offset_ipath))]</prop>
+      <prop id="offset_ipath2_dirs">//dir[@ipath=(f,xpath_string,(prop,et_offset_ipath))]/</prop>
+      <prop id="offset_ipath2_dirs_b">//dir[@ipath=(f,xpath_string,(prop,et_offset_ipath))]//</prop>
+      <!-- <prop id="offset_is_at_level">99</prop> -->
+      <try_catch><try>
+      <prop id="offset_is_at_level">(f,xpath,(file,scan),//dir[@ipath=(f,xpath_string,(prop,et_offset_ipath))],@level)</prop>
+      </try><catch>
+        <ti label="Known Issue:xxx">(f,html,bold,open)Operating-System hides data from directory: (prop,et_offset_ipath)(f,html,bold,close)</ti>
+        <prop id="offset_is_at_level">(prop,unlimited)</prop>
+      </catch></try_catch>
+    </otherwise>
+  </choose>  
+    
+  <prop id="max_dir_level">(f,add,-1,(prop,offset_is_at_level),(prop,et_report_ti_dir_level))</prop>
+  
+  <choose>
+    <when test="(f,eq,(prop,et_offset_ipath),)">
+      <prop id="offset_ipath3"></prop>  
+    </when>
+    <otherwise>
+      <prop id="offset_ipath3">//dir[@ipath=(f,xpath_string,(prop,et_offset_ipath)) and @level&lt;=(prop,max_dir_level)]/</prop>
+    </otherwise>
+  </choose> 
+  <when test="0">
+    <echo type="prop" id="offset_is_at_level" />
+    <echo type="prop" id="max_dir_level"/>
+    <echo type="prop" id="offset_ipath2"/>  
+    <echo type="prop" id="offset_ipath2_dirs"/>  
+    <echo type="prop" id="offset_ipath2_dirs_b"/>
+    <echo type="prop" id="offset_is_at_level"/>    
+    <echo type="prop" id="offset_ipath3"/>  
+  </when>  
+</job>
+
+<job id="get-scan8" role="hidden">  
+
+  <file id="scan8">(file,scan4)</file>
+  <need>(prop,et_offset_ipath) (prop,max_dir_level)</need>
+
+  <choose>
+    <when test="(f,and,(f,eq,(prop,et_scan_policy),image),(prop,do_snapshot))">
+    
+      <prop id="buffered">(f,xpathx,sorry,(file,snaps),snap[@ipath=(f,xpath_string,(prop,et_offset_ipath)) and @max_dir_level='(prop,max_dir_level)'],@file)</prop>
+   
+      <choose>
+        <when test="(f,eq,(prop,buffered),sorry)">
+          <sequence id="snaps" act="next" />
+          <prop id="next_file">snap_(f,sequence,snaps).xml</prop>
+          <file id="scan8">(dir,snaps)(prop,next_file)</file>
+          <xslt xsl="(dir,app)snapshot.xsl"
+                xml="(file,scan4)" 
+                out="(file,scan8)">
+              <params>ipath='(f,xslp,(prop,et_offset_ipath))' max_dir_level='(f,xslp,(prop,max_dir_level))'</params>  
+          </xslt>
+          <ti test="(prop,do_debug)" type="file" label="(f,html,bold,open)Created Snapshot:(f,html,bold,close)">(file,scan8)</ti>
+          
+          <xml_update how="append" what="(file,snaps)">
+                <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+                  <snap ipath="(x,(prop,et_offset_ipath))" max_dir_level="(prop,max_dir_level)" file="(prop,next_file)" />
+                ]]></inline>
+          </xml_update>
+                         
+        </when>
+        
+        <otherwise>          
+          <file id="scan8">(dir,snaps)(prop,buffered)</file>
+          <ti test="(prop,do_debug)" type="file" label="(f,html,bold,open)Recycled Snapshot:(f,html,bold,close)">(file,scan8)</ti>
+        </otherwise>
+      </choose>      
+    </when> 
+    <otherwise>
+      <!-- no snapshot logic -->
+      <file id="scan8">(file,scan4)</file>
+    </otherwise>
+   </choose> 
+  
+</job>
+
+
+</jobs>

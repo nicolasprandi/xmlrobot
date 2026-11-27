@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="users">(dir,pro)users.xml</file>
+<when test="(f,not,(f,exists_file,(file,users)))">
+<create_file out="(file,users)">&lt;users/&gt;</create_file>
+<i>Created: (file,users)</i>
+</when>
+<prop id="users_offset">./</prop>
+<prop id="users_offset_label"/>
+<prop id="users_offset_new_key">//</prop>
+<prop id="users_sort_attribute"/>
+<prop id="users_sort_number"/>
+<prop id="users_sort_ignore_case"/>
+<prop id="users_sort_desc"/>
+<prop id="users_where"/>
+<prop id="users_return_job">user-see-all</prop>
+</prolog>

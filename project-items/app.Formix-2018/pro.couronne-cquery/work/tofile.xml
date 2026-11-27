@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="squery-write">
+<need>(prop,squery_key) (prop,isAdd)</need>
+<need default="./">(prop,squerys_offset)</need>
+<spirit act="open" id="squerys_spirit_tc" xml="(file,squerys)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,squerys_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,squerys_offset),0,(f,sub,(f,len,(prop,squerys_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,squerys_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in_begin" id="squerys_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;squery row="(prop,squery_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="sql" value="(f,vob,prop,squery_sql)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="id" value="(f,vob,prop,squery_id)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="class1" value="(f,vob,prop,squery_class1)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="desc" value="(f,vob,prop,squery_desc)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="limit_typ" value="(f,vob,prop,squery_limit_typ)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="limit_indiv" value="(f,vob,prop,squery_limit_indiv)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="prolog" value="(f,vob,prop,squery_prolog)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="translate" value="(f,vob,prop,squery_translate)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="archify" value="(f,vob,prop,squery_archify)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="squerys_spirit_tc" where="(prop,squerys_offset)squery[@row='(prop,squery_key)']" attribute="trim" value="(f,vob,prop,squery_trim)"/>
+<spirit act="close" flag="save pretty" id="squerys_spirit_tc"/>
+</job>

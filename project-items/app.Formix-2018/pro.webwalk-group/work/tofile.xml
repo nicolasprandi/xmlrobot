@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="group-write">
+<need>(prop,group_key) (prop,isAdd)</need>
+<need default="./">(prop,groups_offset)</need>
+<spirit act="open" id="groups_spirit_tc" xml="(file,groups)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,groups_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,groups_offset),0,(f,sub,(f,len,(prop,groups_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,groups_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="groups_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;group row="(prop,group_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="groups_spirit_tc" where="(prop,groups_offset)group[@row='(prop,group_key)']" attribute="titel" value="(f,vob,prop,group_titel)"/>
+<spirit act="close" flag="save pretty" id="groups_spirit_tc"/>
+</job>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="rez-see-all" level="ws" role="hidden" tip="Lists all Rezepte">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="rez_loop" xml="(file,rezs)" xpath="(prop,rezs_offset)rez(prop,rezs_where)" sort="(prop,rezs_sort_attribute)" number="(prop,rezs_sort_number)" ignore_case="(prop,rezs_sort_ignore_case)" desc="(prop,rezs_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,rezs_offset_label)),0)">
+<ti label="(prop,rezs_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<try_catch>
+<try>
+<trace>Hook Station page=view station=0 hook=2 hook_job=hook-every-rezept-list</trace>
+<call_job job="hook-every-rezept-list"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: rez-view: 2.0">
+<ti> hook_job=hook-every-rezept-list hook=2 page=view station=0 object=rez</ti>
+</ti>
+</catch>
+</try_catch>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,rez_loop,@bez)(f,html,bold,close)" job="rez-see">
+<prop id="rez_key">(loop,rez_loop,@row)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+</ti>
+</ti>
+<ti type="rec" label="  " test="(f,or,(f,has,(loop,rez_loop,@character)),(f,has,(loop,rez_loop,@beschreibung)),(f,has,(loop,rez_loop,@bewertung)))">
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,rez_loop,@character),30).(f,text,cut_nice,(loop,rez_loop,@beschreibung),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Vorspeise),Vorspeise(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Nachspeise),Nachspeise(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Vegetarisch),Vegetarisch(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Vegan),Vegan(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Antihistamin),Antihistamin(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Fleischlos),Fleischlos(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Fischgericht),Fischgericht(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),billig),billig(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),teuer),teuer(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),SchnelleZubereitung),SchnelleZubereitung(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),geheimtipp),geheimtipp(e:s),),50)</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine (prop,myclassPl) gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,rezs_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="rez-add" explain="[ + Neues (prop,myclass) ]" job="rez-add">
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,rezs)</file>
+<prop id="orga_where">(prop,rezs_where)</prop>
+<prop id="orga_view_loop_id">rez_loop</prop>
+<prop id="orga_finished_job">rez-see-all</prop>
+<prop id="orga_offset">(prop,rezs_offset)</prop>
+<prop id="orga_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="orga_segment_plural">rezs</prop>
+<prop id="orga_segment_singular">rez</prop>
+<prop id="orga_segment_plural_label">(prop,myclassPl)</prop>
+<prop id="orga_segment_singular_label">(prop,myclass)</prop>
+<prop id="orga_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="orga_where">(prop,rezs_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,rez_loop,@bez)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,rez_loop,@character),30).(f,text,cut_nice,(loop,rez_loop,@beschreibung),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Vorspeise),Vorspeise(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Nachspeise),Nachspeise(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Vegetarisch),Vegetarisch(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Vegan),Vegan(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Antihistamin),Antihistamin(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Fleischlos),Fleischlos(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),Fischgericht),Fischgericht(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),billig),billig(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),teuer),teuer(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),SchnelleZubereitung),SchnelleZubereitung(e:s),)(f,when,(f,has_flag,(loop,rez_loop,@bewertung),geheimtipp),geheimtipp(e:s),),50)()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,rezs)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,rezs_offset)),0)">(prop,rezs_offset)</ti>
+</ti>
+</when>
+</job>

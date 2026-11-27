@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ass-see">
+<need>(prop,ass_key)</need>
+<call_job job="ass-read"/>
+<ti key="#(prop,ass_key)"/>
+<prop x="print print_only" id="asss_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,ass_bez)(f,html,bold,close)(prop,asss_offset_label)"/>
+<ti test="(f,role,admin)" type="call_job" explain="[ Editiere Beschreibung ]" job="ass-edit">
+<prop id="ass_key">(prop,ass_key)</prop>
+<file id="asss">(file,asss)</file>
+<prop id="asss_offset">(prop,asss_offset)</prop>
+<prop id="asss_offset_label">(prop,asss_offset_label)</prop>
+<prop id="asss_offset_new_key">(prop,asss_offset_new_key)</prop>
+<prop id="asss_sort_attribute">(prop,asss_sort_attribute)</prop>
+<prop id="asss_sort_number">(prop,asss_sort_number)</prop>
+<prop id="asss_where">(prop,asss_where)</prop>
+<prop id="asss_return_job">(prop,asss_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<call_job job="ass-tk"/>
+<ti_space height="3px"/>
+</job>

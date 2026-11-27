@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="xmlf-read">
+    <need>(prop,xmlf_key)</need>
+    <spirit act="open" missing_strategy="empty" id="xmlfs_spirit_tc" xml="(file,xmlfs)"/>
+    <prop id="xmlf_dt_upd">(f,spirit,xmlfs_spirit_tc,(prop,xmlfs_offset)xmlf[@row=(f,xpath_string,(prop,xmlf_key))],@dt_upd)</prop>
+    <prop id="xmlf_dt_add">(f,spirit,xmlfs_spirit_tc,(prop,xmlfs_offset)xmlf[@row=(f,xpath_string,(prop,xmlf_key))],@dt_add)</prop>
+    <prop id="xmlf_name">(f,spirit,xmlfs_spirit_tc,(prop,xmlfs_offset)xmlf[@row=(f,xpath_string,(prop,xmlf_key))],@name)</prop>
+    <file flag="cool" id="xmlf_file">(f,spirit,xmlfs_spirit_tc,(prop,xmlfs_offset)xmlf[@row=(f,xpath_string,(prop,xmlf_key))],@file)</file>
+    <unescape type="file" id="xmlf_file"/>
+    <translate type="file" id="xmlf_file"/>
+    <file flag="cool" id="xmlf_xsl_result">(f,spirit,xmlfs_spirit_tc,(prop,xmlfs_offset)xmlf[@row=(f,xpath_string,(prop,xmlf_key))],@xsl_result)</file>
+    <unescape type="file" id="xmlf_xsl_result"/>
+    <translate type="file" id="xmlf_xsl_result"/>
+    <prop id="xmlf_xsl_paras">(f,spirit,xmlfs_spirit_tc,(prop,xmlfs_offset)xmlf[@row=(f,xpath_string,(prop,xmlf_key))],@xsl_paras)</prop>
+    <prop id="xmlf_desc">(f,spirit,xmlfs_spirit_tc,(prop,xmlfs_offset)xmlf[@row=(f,xpath_string,(prop,xmlf_key))],@desc)</prop>
+    <spirit act="close" id="xmlfs_spirit_tc"/>
+</job>

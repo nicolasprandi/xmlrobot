@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+    <!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+    <file id="pgos">(dir,pro)pgos.xml</file>
+    <when test="(f,not,(f,exists_file,(file,pgos)))">
+        <create_file out="(file,pgos)">&lt;pgos/&gt;</create_file>
+        <i>Created: (file,pgos)</i>
+    </when>
+    <prop id="pgos_offset">./</prop>
+    <prop id="pgos_offset_label"/>
+    <prop id="pgos_offset_new_key">//</prop>
+    <prop id="pgos_sort_attribute"/>
+    <prop id="pgos_sort_number"/>
+    <prop id="pgos_sort_ignore_case"/>
+    <prop id="pgos_sort_desc"/>
+    <prop id="pgos_where"/>
+    <prop id="pgos_return_job">pgo-see-all</prop>
+</prolog>

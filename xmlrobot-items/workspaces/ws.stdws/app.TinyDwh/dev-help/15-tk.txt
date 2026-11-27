@@ -1,0 +1,6 @@
+<!-- selection -->
+<tk type="sel" id="$do" label="Do please select" flag="nono" x="see">  
+  <sel label="See">see</sel>
+  <sel label="Stop">stop</sel>
+  <sel label="Update">update</sel>
+</tk>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<groups>
+<group id="5" dt_add="20131207_085137" dt_upd="20140227_091809" title="EchnatonCcc Jobs------RR--------" active="1" sort="0">
+<extension id="9" dt_add="20131207_085232" dt_upd="20131207_094412" extension="jobs.xml" active="1"/>
+</group>
+<group id="6" dt_add="20131207_085311" dt_upd="20131207_085311" title="EchnatonCcc Steps" active="1" sort="10">
+<extension id="10" dt_add="20131207_085322" dt_upd="20131207_085322" extension="steps.xml" active="1"/>
+</group>
+<group id="18" dt_add="20140227_095333" dt_upd="20140227_095333" title="EchnatonCcc Takeoff" active="1" sort="12">
+<extension id="56" dt_add="20140227_095342" dt_upd="20140227_095342" extension="loxo.xml" active="1"/>
+</group>
+<group id="10" dt_add="20131207_090110" dt_upd="20131207_094226" title="Xsl" active="1" sort="15">
+<extension id="19" dt_add="20131207_090120" dt_upd="20140227_082344" extension="xsl" active="1"/>
+</group>
+<group id="4" dt_add="20131206_180612" dt_upd="20131207_085348" title="Java" active="1" sort="20">
+<extension id="5" dt_add="20131206_181333" dt_upd="20140227_082359" extension="jar" active="1"/>
+<extension id="6" dt_add="20131206_181338" dt_upd="20140227_082408" extension="java" active="1"/>
+<extension id="7" dt_add="20131206_181342" dt_upd="20140227_082416" extension="war" active="1"/>
+<extension id="8" dt_add="20131206_181350" dt_upd="20140227_082427" extension="class" active="1"/>
+<extension id="40" dt_add="20131208_142240" dt_upd="20140227_082450" extension="mf" active="1"/>
+</group>
+<group id="7" dt_add="20131207_085423" dt_upd="20131207_085423" title="Windows-Executable" active="1" sort="30">
+<extension id="11" dt_add="20131207_085432" dt_upd="20140227_082533" extension="exe" active="1"/>
+<extension id="12" dt_add="20131207_085442" dt_upd="20140227_082547" extension="bat" active="1"/>
+</group>
+<group id="8" dt_add="20131207_085704" dt_upd="20131207_085704" title="Xml" active="1" sort="40">
+<extension id="13" dt_add="20131207_085805" dt_upd="20140227_083102" extension="xml" active="1"/>
+<extension id="20" dt_add="20131207_090134" dt_upd="20140227_083108" extension="dtd" active="1"/>
+</group>
+<group id="9" dt_add="20131207_085833" dt_upd="20131207_085843" title="Html Css Php Js" active="1" sort="50">
+<extension id="14" dt_add="20131207_085905" dt_upd="20140227_083217" extension="html" active="1"/>
+<extension id="15" dt_add="20131207_085911" dt_upd="20140227_083225" extension="htm" active="1"/>
+<extension id="16" dt_add="20131207_085917" dt_upd="20140227_083231" extension="css" active="1"/>
+<extension id="17" dt_add="20131207_085924" dt_upd="20140227_083237" extension="php" active="1"/>
+<extension id="18" dt_add="20131207_085929" dt_upd="20140227_083242" extension="js" active="1"/>
+</group>
+<group id="11" dt_add="20131207_090238" dt_upd="20131207_090238" title="Excel" active="1" sort="60">
+<extension id="21" dt_add="20131207_090252" dt_upd="20140227_084005" extension="xls" active="1"/>
+</group>
+<group id="17" dt_add="20131209_141521" dt_upd="20131209_142816" title="Text, Pdf" active="1" sort="66">
+<extension id="44" dt_add="20131209_141536" dt_upd="20140227_084130" extension="txt" active="1"/>
+<extension id="48" dt_add="20131209_142800" dt_upd="20140227_084137" extension="pdf" active="1"/>
+<extension id="52" dt_add="20131209_143713" dt_upd="20140227_084143" extension="rtf" active="1"/>
+</group>
+<group id="12" dt_add="20131207_090512" dt_upd="20131209_142434" title="Layoutet Documents" active="1" sort="70">
+<extension id="22" dt_add="20131207_090534" dt_upd="20140227_084158" extension="doc" active="1"/>
+<extension id="23" dt_add="20131207_090540" dt_upd="20140227_084203" extension="docx" active="1"/>
+<extension id="25" dt_add="20131207_090558" dt_upd="20140227_084208" extension="odt" active="1"/>
+<extension id="47" dt_add="20131209_142524" dt_upd="20140227_084214" extension="ai" active="1"/>
+<extension id="49" dt_add="20131209_142839" dt_upd="20140227_084219" extension="psd" active="1"/>
+<extension id="50" dt_add="20131209_142938" dt_upd="20140227_084224" extension="dia" active="1"/>
+<extension id="51" dt_add="20131209_142943" dt_upd="20140227_084230" extension="ppt" active="1"/>
+</group>
+<group id="16" dt_add="20131209_141254" dt_upd="20140228_071315" title="Media Movies" active="1" sort="90">
+<extension id="43" dt_add="20131209_141334" dt_upd="20140227_084243" extension="mov" active="1"/>
+<extension id="45" dt_add="20131209_141750" dt_upd="20140227_084251" extension="avi" active="1"/>
+<extension id="53" dt_add="20131209_143803" dt_upd="20140227_084256" extension="flv" active="1"/>
+</group>
+<group id="19" dt_add="20140228_071343" dt_upd="20140228_071343" title="Media Audio" active="1" sort="95">
+<extension id="57" dt_add="20140228_071422" dt_upd="20140228_071422" extension="mp3" active="1"/>
+</group>
+<group id="3" dt_add="20131206_175502" dt_upd="20131209_142047" title="Media Pictures" active="1" sort="110">
+<extension id="1" dt_add="20131206_181108" dt_upd="20140227_085132" extension="mpg" active="1"/>
+<extension id="30" dt_add="20131207_091927" dt_upd="20140227_085138" extension="jpg" active="1"/>
+<extension id="32" dt_add="20131207_091954" dt_upd="20140227_085144" extension="swf" active="1"/>
+<extension id="37" dt_add="20131208_124426" dt_upd="20140227_085149" extension="png" active="1"/>
+<extension id="39" dt_add="20131208_142143" dt_upd="20140227_085156" extension="bmp" active="1"/>
+<extension id="46" dt_add="20131209_142013" dt_upd="20140227_085200" extension="gif" active="1"/>
+</group>
+<group id="14" dt_add="20131207_100228" dt_upd="20131207_100228" title="Archives" active="1" sort="300">
+<extension id="33" dt_add="20131207_100238" dt_upd="20140227_085240" extension="zip" active="1"/>
+<extension id="42" dt_add="20131208_142517" dt_upd="20140227_085246" extension="t3x" active="1"/>
+<extension id="54" dt_add="20131209_144015" dt_upd="20140227_085253" extension="iso" active="1"/>
+<extension id="55" dt_add="20140227_085300" dt_upd="20140227_085300" extension="rar" active="1"/>
+</group>
+<group id="15" dt_add="20131207_100338" dt_upd="20131207_100338" title="Links" active="1" sort="400">
+<extension id="34" dt_add="20131207_100359" dt_upd="20140227_085314" extension="lnk" active="1"/>
+<extension id="41" dt_add="20131208_142318" dt_upd="20140227_085319" extension="url" active="1"/>
+</group>
+</groups>

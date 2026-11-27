@@ -1,0 +1,338 @@
+<?xml version="1.0" ?><!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<!-- <when test="(f,has,prop,pro)"> take 2 things to the prolog --> 
+  <!-- 
+
+  -->
+<!-- </when>       -->
+
+<!-- gui Adapters: to copy in the app  take the edit to your gui....   
+
+<job id="Edit: gpref_">
+  <call_job job="tk_gpref_edit"/>
+</job>
+
+<job id="Edit: gpref_?">
+  <call_job job="tk_gpref_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_gpref_clear" explain="Clear this data"/>
+</job>           -->
+
+<job id="idef-dsa-on" role="hidden">
+  <!-- <dump_ti label="idef-dsa-on" />  -->
+  <when test="(f,not,(f,has,prop,dsa_attributtyp))">
+    <when test="(f,exists_file,(dir,pro)gui/idef-dsa_attributtyp-(prop,dsa-parent-objekttyp))">
+      <prop id="dsa_attributtyp">(f,file_content,(dir,pro)gui/idef-dsa_attributtyp-(prop,dsa-parent-objekttyp))</prop>
+    </when>  
+  </when>
+  
+  <prop id="dsa_attributtyp_valin">(f,vob,prop,dsa_attributtyp)</prop>
+
+</job>     
+         
+<job id="idef-dsa_attributtyp-off" role="hidden">
+
+  <when test="(f,has,prop,dsa_attributtyp)">
+
+    <when test="(f,not,(f,eq_text,(f,vob,prop,dsa_attributtyp_valin),(f,vob,prop,dsa_attributtyp)))">
+
+      <create_file file="(dir,pro)gui/idef-dsa_attributtyp-(prop,dsa-parent-objekttyp)">(prop,dsa_attributtyp)</create_file>
+    </when> 
+  </when>
+  <remove type="prop" id="dsa_attributtyp_valin" flag="catch" />
+</job>               
+
+<!-- next -->     
+
+<job id="idef-dso-on" role="hidden">
+
+  <when test="(f,not,(f,has,prop,dso_objekttyp))">
+    <when test="(f,exists_file,(dir,pro)gui/idef-dso_objekttyp)">
+      <prop id="dso_objekttyp">(f,file_content,(dir,pro)gui/idef-dso_objekttyp)</prop>   
+    </when>  
+  </when>
+  
+  <prop id="dso_objekttyp_valin">(f,vob,prop,dso_objekttyp)</prop>
+
+</job>     
+
+<job id="hook_dso_follow_otyp" role="hidden">
+  <!-- es wurde der otype beim objekt gesetzt-->
+  <when test="(f,not,(f,has,prop,dso_name))">
+    <prop id="dso_name">(f,xpath,(dir,repo)osel-(prop,tip-term-class).xml,sel[text(e:o)(e:c)=(f,xpath_string,(prop,dso_objekttyp))],@label)</prop>
+  </when>
+  <call_job job="idef-dso_objekttyp-off"/>
+</job>
+
+<job id="idef-dso_objekttyp-off" role="hidden">
+
+  <when test="(f,has,prop,dso_objekttyp)">
+    <when test="(f,not,(f,eq_text,(f,vob,prop,dso_objekttyp_valin),(f,vob,prop,dso_objekttyp)))">
+      <create_file file="(dir,pro)gui/idef-dso_objekttyp">(prop,dso_objekttyp)</create_file>
+    </when> 
+  </when>
+  <remove type="prop" id="dso_objekttyp_valin" flag="catch" />        
+</job>                           
+
+<job id="tk_gpref_show_button" role="hidden">
+  <need>(prop,what_gpref)</need>
+  <need>(prop,ready_job)</need>
+  <need default="0">(prop,with_hr)</need>
+  <need default="1">(prop,do_break)</need>
+  <need default="">(prop,do_align)</need>
+  <need default="0">(prop,do_block)</need>
+  <need default="fx justgui justview justswitch">(prop,gpref_button_class)</need>
+  
+  <call_job job="tr_gpref"/>
+  
+  <choose>
+    <when test="(prop,with_hr)">
+      <ti_hr_break class_table="(f,when,(f,eq_text,right,(prop,do_align)),tabNavigator,)" xclass_table="tabNavigator"/>
+    </when>
+    <otherwise>
+      <ti_break class_table="(f,when,(f,eq_text,right,(prop,do_align)),tabNavigator,)" xclass_table="tabNavigator"/>
+    </otherwise>
+  
+  </choose>
+  
+    
+  
+  <prop id="the-gpref-message1">()(f,vob,prop,gpref_(prop,what_gpref))()</prop>
+  <!-- <ti label="the-gpref-message1-vorher">(prop,the-gpref-message1)</ti>    -->
+  <unescape id="the-gpref-message1" type="prop"/>
+  <translate id="the-gpref-message1" type="prop"/>
+  <!-- <ti label="the-gpref-message1-nachher">(prop,the-gpref-message1)</ti>   -->
+  <prop id="target_value">(f,not,(prop,the-gpref-message1))</prop>
+  
+  <prop id="the-gpref-message2">()_gpref_chg_(prop,what_gpref)_(prop,target_value)()</prop>
+  <unescape id="the-gpref-message2" type="prop"/>
+  <translate id="the-gpref-message2" type="prop"/>
+  <!-- <ti label="the-gpref-message2">(prop,the-gpref-message2)</ti> -->
+  <!-- (prop,_gpref_anpassen):  -->
+  <ti type="rec" >                          
+    <ti type="call_job" explain="(f,vob,prop,(prop,the-gpref-message2))" 
+    flag="button (f,when,(prop,do_block),block,)" 
+    align="(prop,do_align)" 
+    class="(prop,gpref_button_class)" 
+    job="tk_gpref_exe_button">
+      <prop id="what_gpref">(prop,what_gpref)</prop> 
+      <prop id="ready_job">(prop,ready_job)</prop> 
+      <prop id="target_value">(prop,target_value)</prop>
+    </ti>
+  </ti>  
+  
+  <ti_break test="(prop,do_break)"/>
+    
+</job>
+
+<job id="tk_gpref_exe_button" role="hidden">
+  <need>(prop,what_gpref)</need>
+  <need>(prop,ready_job)</need>
+  <need>(prop,target_value)</need>
+  
+  <call_job job="tk_gpref_read"/>
+  <prop id="gpref_(prop,what_gpref)">(prop,target_value)</prop>
+  <call_job job="tk_gpref_write"/>
+  <call_job job="(prop,ready_job)"/>
+  
+</job>
+
+<!-- setting the default-values -->
+<job id="tk_gpref_default" role="hidden">
+  <need default="0">(prop,gpref_ifacestyle)</need>
+  <need default="0">(prop,gpref_teststyle)</need>
+  <need default="0">(prop,gpref_testformat)</need>
+  <need default="0">(prop,gpref_bulkstyle)</need>
+  <need default="0">(prop,gpref_querystyle)</need>
+  <need default="0">(prop,gpref_pastrem)</need>
+  <need default="0">(prop,gpref_dwhclear)</need>
+  <need default="1">(prop,gpref_askaction)</need>
+  <need default="0">(prop,gpref_isstyle)</need>
+  <need default="0">(prop,gpref_countless)</need>
+  <!--
+  
+  
+  -->
+</job>
+
+
+<!-- gpref-core, make your changes here -->
+<job id="tk_gpref_core" role="hidden" tip="gpref_: Tk Internal">
+
+  <call_job job="tr_gpref"/>
+
+  <need default="">(prop,tk_gpref_add_flag)</need>
+  <need default="teststyle testformat bulkstyle querystyle pastrem">(prop,what_gpref)</need>
+
+  <tk label="(prop,_gpref_tk_l)" 
+      flag="(prop,tk_gpref_add_flag)"
+      tip="(prop,_gpref_tk_t)"> 
+
+    <tk id="gpref_countless"
+        type="sel"  
+        label="(prop,_gpref_l_countless)" 
+        test_first="0"   
+        flag="nono"     
+        tip="(prop,_gpref_t_countless)">
+        <sel label="(prop,_gpref_s_countless_0)">0</sel>
+        <sel label="(prop,_gpref_s_countless_1)">1</sel>    
+    </tk>
+          
+    <tk id="gpref_teststyle"
+        type="sel"  
+        label="(prop,_gpref_l_teststyle)" 
+        test_first="0"   
+        flag="nono"     
+        tip="(prop,_gpref_t_teststyle)">
+        <sel label="(prop,_gpref_s_teststyle_0)">0</sel>
+        <sel label="(prop,_gpref_s_teststyle_1)">1</sel>    
+    </tk>
+    
+    <tk id="gpref_testformat"
+        type="sel"  
+        label="(prop,_gpref_l_testformat)" 
+        test_first="0"   
+        flag="nono"     
+        tip="(prop,_gpref_t_testformat)">
+        <sel label="(prop,_gpref_s_testformat_0)">0</sel>
+        <sel label="(prop,_gpref_s_testformat_1)">1</sel>    
+    </tk>    
+    
+    <tk id="gpref_bulkstyle"
+        type="sel"  
+        label="(prop,_gpref_l_bulkstyle)" 
+        test_first="0"   
+        flag="nono"     
+        tip="(prop,_gpref_t_bulkstyle)">
+        <sel label="(prop,_gpref_s_bulkstyle_0)">0</sel>
+        <sel label="(prop,_gpref_s_bulkstyle_1)">1</sel>    
+    </tk>    
+ 
+    <tk id="gpref_querystyle"
+        type="sel"  
+        label="(prop,_gpref_l_querystyle)" 
+        test_first="0"   
+        flag="nono"     
+        tip="(prop,_gpref_t_querystyle)">
+        <sel label="(prop,_gpref_s_querystyle_0)">0</sel>
+        <sel label="(prop,_gpref_s_querystyle_1)">1</sel>    
+    </tk>    
+    <!-- 
+    <tk id="gpref_pastrem"
+        type="sel"  
+        label="(prop,_gpref_l_pastrem)" 
+        test_first="0"   
+        flag="nono"     
+        tip="(prop,_gpref_t_pastrem)">
+        <sel label="(prop,_gpref_s_pastrem_0)">0</sel>
+        <sel label="(prop,_gpref_s_pastrem_1)">1</sel>    
+    </tk>  -->                            
+  </tk>   
+</job>
+<!-- 
+<job id="See Values: gpref_" role="dev">
+  <call_job job="tk_gpref_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_gpref_clear" explain="Clear this data"/>  
+</job>
+
+
+
+
+ <job id="Clear Data: gpref_">
+  <tk type="msg" x="Sure to clear data of gpref_ ?" msg_type="w"/>
+  <call_job job="tk_gpref_clear"/>
+</job>
+
+<job id="Print Values:  gpref_">
+  <call_job job="tk_gpref_print_values"/>
+</job>
+<job id="Print Help: gpref_" role="dev">
+  <call_job job="tk_gpref_print_help"/>
+</job>
+
+-->
+<!-- edit data: read, userinput, write -->
+<job id="tk_gpref_edit" tip="gpref_: Edit the Data" role="hidden">
+  <need default="teststyle testformat bulkstyle querystyle pastrem countless">(prop,what_gpref)</need>
+
+  
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,gpref-data))">
+      <!-- data exists already -->
+      <prop id="tk_gpref_add_flag" x="(f,when,(f,contains,(prop,what_gpref), ),sum_only,) print"/>
+      <call_job job="tk_gpref_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_gpref_add_flag" x="(f,when,(f,contains,(prop,what_gpref), ),sum,) print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_gpref_default"/>
+  <!-- doing input -->
+  <call_job job="tk_gpref_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_gpref_write"/>
+
+</job>
+
+
+
+<job id="tk_gpref_print_values" tip="gpref_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_gpref_read"/>
+  
+  <call_job job="tk_gpref_core">
+    <prop id="tk_gpref_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_gpref_print_values_tips" tip="gpref_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_gpref_read"/>
+  
+  <call_job job="tk_gpref_core">
+    <prop id="tk_gpref_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_gpref_print_help" tip="gpref_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_gpref_core">
+    <prop id="tk_gpref_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_gpref_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,gpref-data)" />
+    <prop id="joe-in-regex" x="(prop,gpref-regex)" />    
+  </call_job>
+  <call_job job="tk_gpref_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_gpref_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,gpref-data)" />
+    <prop id="joe-in-regex" x="(prop,gpref-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_gpref_clear"  tip="gpref_: Clears the data" role="hidden">
+  <delete file="(file,gpref-data)"/>
+</job>
+
+
+</jobs>

@@ -1,0 +1,354 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+
+
+
+<job id="Up" xrole="hidden" pri="10">
+
+   <call_job job="scroll-bit-up"/>
+
+
+                               
+</job>
+<job id="Down" xrole="hidden" pri="10">
+
+  <call_job job="scroll-bit-down"/>
+ </job>
+ 
+
+
+<job id="Frames &amp; Tabs">    
+
+  <when test="(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid))">
+  
+    <call_job job="frame-navigation"/>
+    <ti_hr_break/>
+    <ti label="Current Tab-Situation"/>
+    <ti label="Url" x="(f,wdriver,?,get_url)"/>
+    <ti label="Title" x="(f,wdriver,?,get_title)"/>
+    <ti label="Tab Id" x="(f,wdriver,?,get_tab_id)"/>
+    <ti label="Tab Count" x="(f,wdriver,?,get_tab_count)"/>
+    
+    <wdriver act="get_windows" to_file="(dir,pro)tabs.xml"/>
+    
+    <call_job job="tab-navigation" />
+              
+    
+    
+    
+  </when>
+
+</job>
+
+<job id="Save &amp; Shoot">
+  <ti label="Save File as HTML or XML"/>
+  <call_job job="SaveDocument"/>
+  <ti_hr/>
+  <ti label="Picture the entire Screen"/>
+  <ti type="call_job" job="screenshot" explain="Make a screenshot"/> 
+</job>
+
+<job id="SaveDocument" role="hidden">
+  <ti label=" " type="rec">
+    <ti>(f,html,i,o)by pagesource(f,html,i,c)</ti>
+    <ti>(f,html,i,o)by javascript(f,html,i,c)</ti>
+  </ti>
+  
+  <ti label="(f,html,i,o)to html(f,html,i,c)" type="rec" flag="label_right">
+    <ti type="call_job" job="save-as-file" explain="pagesource &gt; html">
+      <prop id="saf-action">get_html</prop>
+      <prop id="saf-how">pagesource</prop>      
+    </ti>
+    <ti type="call_job" job="save-as-file" explain="javascript &gt; html">
+      <prop id="saf-action">get_html</prop>
+      <prop id="saf-how">javascript</prop>      
+    </ti>    
+  </ti>
+  
+  <ti label="(f,html,i,o)to xml(f,html,i,c)" type="rec" flag="label_right">
+    <ti type="call_job" job="save-as-file" explain="pagesource &gt; xml">
+      <prop id="saf-action">get_xml</prop>
+      <prop id="saf-how">pagesource</prop>      
+    </ti>
+    <ti type="call_job" job="save-as-file" explain="javascript &gt; xml">
+      <prop id="saf-action">get_xml</prop>
+      <prop id="saf-how">javascript</prop>      
+    </ti>    
+  </ti>  
+</job>
+<!-- 
+<job id="Save HTML">
+  <call_job job="get-html-dom"/>
+</job>
+
+<job id="Save XML">
+  <prop id="style" x="get_xml"/>
+  <call_job job="get-html-dom"/>
+</job>
+<job id="Screenshot">
+  <call_job job="screenshot"/>  
+                               
+</job>
+-->
+
+
+<job id="| ? | Scroll" role="hidden" pri="10">
+  <call_job job="scroll"/>
+
+</job>
+
+
+
+
+<job id="navigation" role="hidden">
+  
+  
+  <ti type="rec">
+    <ti >(f,html,b,o)Scrolling(f,html,b,c)</ti>
+    <ti >(f,html,b,o)Paging(f,html,b,c)</ti>
+  
+  </ti>
+  
+  <ti type="rec">
+    <ti type="call_job" job="scroll-bit-up" prefix=" &#8593; " explain="Up" />
+    
+    <ti type="call_job" job="go-back" explain="Back" prefix=" &#8617; " />
+  
+  </ti>  
+
+  <ti type="rec">
+    <ti type="call_job" job="scroll-bit-down" prefix=" &#8595; " explain="Down" />
+     <ti type="call_job" job="go-forward" explain="Forward" prefix=" &#8618; "/>
+  
+  </ti>  
+  
+
+  <ti type="rec">
+    <ti  type="call_job" job="scroll" prefix=" &#8690; " explain="Parameters" />
+    
+    <ti type="call_job" job="go-refresh" prefix=" &#8635; " explain="Refresh" />
+  
+  </ti>    
+  
+   <ti type="rec">
+    <ti  type="call_job" job="scroll-to-begin" prefix=" &#8607; " explain="Begin"/>
+    <ti > </ti>
+  
+  </ti> 
+  
+   <ti type="rec">
+    <ti  type="call_job" job="scroll-to-end" prefix=" &#8609; " explain="End"/>
+    <ti > </ti>
+  
+  </ti>   
+  <ti_hr/>
+  
+  <ti type="rec">
+    <ti >(f,html,b,o)Frames(f,html,b,c)</ti>
+    <ti >(f,html,b,o)Tabs(f,html,b,c)</ti>
+  
+  </ti>  
+  
+
+                                                                 
+  <ti type="rec">
+    
+    <ti type="call_job" job="do-iframes-parent" explain="Go to Parent Frame" prefix=" &#8593; "/>
+     <ti type="call_job" job="tab-navigation" explain="See Tab-Naviation"/>
+  </ti> 
+        
+  
+  <ti type="rec">
+ 
+    <ti type="call_job" job="do-iframes-select" explain="See all frames" prefix=" &#8595; "/> 
+  
+  </ti>    
+  <ti_hr/>  
+
+  
+  <ti type="rec">
+  <ti type="call_job" job="navigation-classic" explain="See complete Navigation-Panel" span="2"/>  
+  </ti> 
+       
+
+</job>
+
+<job id="navigation-classic" role="hidden">
+  <ti label="Scrolling"/>
+  
+
+  
+  <ti type="call_job" job="scroll-bit-up" explain="| ^ | Up"/>
+  <ti type="call_job" job="scroll-bit-down" explain="| v | Down"/>
+  <ti type="call_job" job="scroll" explain="| ? | Scroll - per Parameters"/>
+  <ti type="call_job" job="scroll-to-end" explain="Scroll to End"/>
+  
+  <ti label="Paging"/>
+  <ti type="call_job" job="go-refresh" explain="Refresh"/>
+  <ti type="call_job" job="go-back" explain="Go Back"/>
+  <call_job job="frame-navigation"/> 
+    <call_job job="tab-navigation" />
+              
+    
+    
+    
+       
+
+</job>
+
+
+<job id="Memory-Classic" role="hidden">
+  <ti label="Memory Operations"/>
+  <ti type="rec">
+  <ti type="call_job" job="See Memory All" explain="List all"/> 
+  <ti type="call_job" job="Clear Memory All"  explain="Delete all"/> 
+   
+  </ti>
+  
+  <ti type="rec">
+    <ti type="call_job" job="See Memory" explain="List between x &amp; y"/> 
+   
+  <ti type="call_job" job="Clear Memory" explain="Delete between x &amp; y"/>
+  
+  </ti>  
+  <when test="(f,not,(f,has,prop,memory-no-help))">
+  <ti_hr/>
+  <ti label="Explaining Memory"/>
+  <ti type="ul">()Whenever the search of 'Selektors' is applied, a number of Web-Elements is returned as result()</ti>
+  <ti type="ul">()These Web-Elements are basically tags in the current website()</ti>
+  <ti type="ul">()Further operations (like clicks) may be applied on these found Web-Elements()</ti>
+  <ti type="ul">()Web-Elements are technically represented as java-objects of the silenium-webdriver()</ti>
+  <ti type="ul">()To make them available in the scripting-environment, another type of objekt (the scripting-object) has to be created.()</ti>
+  <ti type="ul">()In order to save memory, the scripting-objekts are just keept in the form of a list()</ti>
+  <ti type="ul">()The are transfered to the effective memory (which means that socalled scripting-objekts are initiated), just if further operations are requested()</ti>
+  <ti type="ul">()Thats the moment when a 'Keep-Objekt' is created()</ti>
+  <ti type="ul">()The 'k__' keyword comes out of the scripting-environment and means that the object lives longer than just the current job-execution()</ti>  
+  <ti type="ul">()()</ti>
+  <ti type="ul">()()</ti>   
+    
+  </when>
+    
+</job>
+
+<job id="See Memory" role="hidden">
+  <call_job job="clear-memory">
+    <prop id="really" x="0"/>
+  </call_job>
+</job>
+
+<job id="Clear Memory" role="hidden">
+  
+  <call_job job="clear-memory">
+    <prop id="really" x="1"/>
+  </call_job>
+</job>
+<job id="Memory" >
+  <try_catch>
+    <try>
+      <call_job job="See Memory All"/>
+    </try>
+    <catch>
+      <ti label="Memory-State seems to have changed"/>
+      <ti>(prop,catched_msg)</ti>
+      <ti_hr_break/>
+      <call_job job="See Memory"/>
+    </catch>
+  </try_catch>
+</job>
+<job id="See Memory All" role="hidden">
+  <call_job job="clear-memory">
+    <prop id="really" x="0"/>
+    <prop id="memory-all">1</prop>
+  </call_job>
+</job>
+
+<job id="Clear Memory All" role="hidden">
+  
+  <call_job job="clear-memory">
+    <prop id="really" x="1"/>
+    <prop id="memory-all">1</prop>
+  </call_job>
+</job>
+ 
+<job id="Record">
+  <call_job job="rec-get-is-started"/>
+  <!-- <ti x="Recorder is (f,html,b,o)(f,when,(prop,ret-is-started),ON,OFF)(f,html,b,c)"/> -->
+
+    <ti>Recorder is (f,html,b,o)(f,when,(prop,ret-is-started),ON,OFF)(f,html,b,c)</ti>
+    <ti type="call_job" job="Start Recorder" test="(f,not,(prop,ret-is-started))" label="Action"/>
+    <ti type="call_job" job="Stop Recorder" test="(prop,ret-is-started)"  label="Action"/>
+    <call_job job="tk_reco_read"/>
+    <when test="(f,exists_file,(f,vob,file,reco_file))">
+    <ti type="rec" label="Recording to">
+      <ti type="file"  x="(file,reco_file)"  
+       />
+
+    </ti>
+      <ti type="call_service" job="File-Copy" explain="Do copy the file" label=" ">
+        <file id="with">(file,reco_file)</file>
+      </ti>
+         
+    
+ 
+    </when>
+    
+    <ti_hr/>
+    
+  <call_job job="tk_reco_print_values"/>
+  <ti_hr style="2" />
+    <ti type="menu" first_cell="2">
+      <ti type="call_job" job="tk_reco_edit" explain="Edit"/>
+      <ti type="call_job" job="tk_reco_print_values_tips" explain="??" />
+
+    </ti>
+    <!-- 
+    <ti type="call_job" job="tk_reco_edit" explain="Edit Recorder-Configuration" label=" "/>  
+    <ti type="call_job" job="tk_reco_print_values_tips" explain="Explain Recorder-Configuration" label=" "/>
+    -->
+  
+</job>
+<!-- 
+<job id="Flush Recorder">
+  <print id="(prop,recid)" act="flush"/>
+</job>
+
+<job id="Edit: reco_?">
+  <call_job job="tk_reco_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_reco_clear" explain="Clear this data"/>
+</job>
+    -->
+    
+<job id="Test Xpath">
+  
+  
+  <choose>
+    <when test="(f,exists_file,(file,ipx-data))"> 
+      <call_job job="tk_ipx_print_values"/>
+      <ti_hr style="2"/>
+      <ti type="call_job" job="ipx_run" explain="Run" label=" ">
+        <prop id="ipx_run_print" x="1" />
+      
+      </ti>
+      <ti type="call_job" job="ixp_edit_run" explain="Edit &amp; Run" label=" "/>
+      <!-- <ti type="call_job" job="tk_ipx_edit" explain="Edit" label=" "/>  -->
+      
+    </when>
+    <otherwise>
+      <call_job job="ixp_edit_run"/>
+    </otherwise>
+  </choose>
+  
+</job>
+<job id="ixp_edit_run" role="hidden">
+  <call_job job="tk_ipx_edit"/>
+  <call_job job="ipx_run"/>
+  
+
+</job>
+
+
+</jobs>

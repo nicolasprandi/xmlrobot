@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+  <job id="sys_db_double_click" role="hidden" joblevel="ws">
+  <!-- 
+        <dir id="with">(dir,pro_home)</dir>
+        <call_service job="open_dir" />         -->
+        
+     <choose>
+      <!-- 1 project -->
+      <when test="(f,exists,prop,pro)">        
+        <call_service job="open_dir">
+          <dir id="with">(f,ask,pro_data_dir,(prop,app),(prop,pro))</dir>
+        </call_service>
+      </when>
+      
+      <when test="(f,exists,dir,pro_home)">
+        <choose>
+          <when test="(f,ask,app_has_static_pro,(prop,app))"  >
+            <dir id="with">(dir,pro_home)pro_standard</dir>
+            <dir id="with">(f,ask,pro_data_dir,(prop,app),Standard-Project)</dir>
+          </when>     
+          <otherwise>
+            <dir id="with">(dir,pro_home)</dir>
+          </otherwise>
+         </choose>   
+        <call_service job="open_dir" />
+      </when>
+
+      <otherwise>
+        <dir id="with">(dir,workspace)</dir>
+        <call_service job="open_dir" />
+      </otherwise>
+      <otherwise>
+        <info>no recognition of folderlevel</info>      
+      </otherwise>
+    </choose>        
+  
+  </job>    
+  
+  <job id="get_lowest_dir" role="hidden" joblevel="ws">
+ 	  	   
+     <choose>
+      <when test="(f,and,(f,exists,prop,app),(f,exists,prop,pro))">
+        <dir id="with">(dir,inst)</dir>
+        <prop id="type">Project</prop>
+        <prop id="name">(prop,pro) - (prop,app)</prop>
+      </when> 
+      <when test="(f,exists,prop,app)">
+        <dir id="with">(dir,app)</dir>
+        <prop id="type">Application</prop>
+        <prop id="name">(prop,app)</prop>
+      </when>
+      <otherwise>
+        <dir id="with">(dir,workspace)</dir>
+        <prop id="type">Workspace</prop>
+        <prop id="name">(prop,workspace)</prop>
+      </otherwise>
+      <otherwise>
+        <info>no recognition of folderlevel</info>      
+      </otherwise>
+    </choose>
+      
+  </job>  
+  <!--   
+  <job id="open_lowest_dir" role="hidden" joblevel="ws">
+ 	 
+ 	   <ti>Welcome to job: open_lowest_dir</ti>
+ 	   <ti_flush/>
+ 	   
+     <choose>
+
+      <when test="(f,and,(f,exists,prop,app),(f,exists,prop,inst))" >
+        <dir id="with">(dir,inst)</dir>
+        <call_service job="open_dir" />
+      </when>
+      <when test="(f,exists,prop,app)" >
+        <dir id="with">(dir,app)</dir>
+        <call_service job="open_dir" />
+      </when>
+      <otherwise>
+        <dir id="with">(dir,workspace)</dir>
+        <call_service job="open_dir" />
+      </otherwise>
+      <otherwise>
+        <info>no recognition of folderlevel</info>      
+      </otherwise>
+    </choose>
+      
+  </job>  
+  -->
+  
+</jobs>

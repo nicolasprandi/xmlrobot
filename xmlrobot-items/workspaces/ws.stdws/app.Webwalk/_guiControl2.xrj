@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+<prop id="helloconfig">1</prop>
+<call_job job="prolog"/>
+
+<job id="Config">
+  <ti label="Current state of WebDriver"/>
+
+  <choose>
+    <when test="(f,exists,coop2,at.nicolas.webwalk.wd,(prop,wdid))">
+      <ti >Driver is currently running</ti>
+      <ti type="call_job" job="do-driver-stop" explain="Stop Driver" />
+    </when>
+    <otherwise>
+      <ti >Driver is currently not running</ti>
+      <ti type="call_job" job="do-driver-start" explain="Start Driver" />
+    </otherwise>
+  </choose>    
+  <ti_hr/>
+  <call_job job="tk_conf_print_values"/>
+  <ti type="rec" label=" ">
+    <ti type="call_job" job="tk_conf_edit" explain="Edit" label=" "/>
+    <ti type="call_job" job="tk_conf_print_values_tips_all" explain="See Tips" label=" "/>
+  </ti>
+  
+
+  <!-- 
+  
+  <ti_hr/>
+  <ti label="Extending Jobs for this project"/>
+  <call_job job="extjob-see-all"/>         -->
+</job>
+</jobs>

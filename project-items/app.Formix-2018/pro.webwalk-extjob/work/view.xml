@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="extjob-see-all" level="ws" role="hidden">
+<need default="">(prop,extjobs_sort_attribute)</need>
+<need default="">(prop,extjobs_sort_number)</need>
+<need default="">(prop,extjobs_sort_ignore_case)</need>
+<need default="">(prop,extjobs_sort_desc)</need>
+<need default="">(prop,extjobs_where)</need>
+<need default="">(prop,extjobs_offset_label)</need>
+<need default="./">(prop,extjobs_offset)</need>
+<need default="">(prop,extjobs_return_job)</need>
+<need default="//">(prop,extjobs_offset_new_key)</need>
+<need default="0">(prop,extjobs_no_header)</need>
+<prop id="nothing">(f,not,(prop,extjobs_no_header))</prop>
+<loop missing_strategy="empty" id="extjob_loop" xml="(file,extjobs)" xpath="(prop,extjobs_offset)extjob(prop,extjobs_where)" sort="(prop,extjobs_sort_attribute)" number="(prop,extjobs_sort_number)" ignore_case="(prop,extjobs_sort_ignore_case)" desc="(prop,extjobs_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,extjobs_offset_label)),0)">
+<ti label="(prop,extjobs_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti flag="" type="call_job" prefix="  " explain="(f,html,bold,open)(loop,extjob_loop,@jobid)(f,html,bold,close)" job="extjob-see">
+<prop id="extjob_key">(loop,extjob_loop,@row)</prop>
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,extjob_loop,@desc),40)</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti type="rec">
+<ti flag="wrap_word">No Jobs found</ti>
+</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,extjobs_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti type="menu" span="10">
+<ti label=" " type="call_job" explain_nix="extjob-add" flag="button " class="fb fbAdd fbAddExtjob" explain="[ + neuer Job ]" job="extjob-add">
+<file id="extjobs">(file,extjobs)</file>
+<prop id="extjobs_offset">(prop,extjobs_offset)</prop>
+<prop id="extjobs_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="extjobs_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="extjobs_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="extjobs_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="extjobs_sort_ignore_case">(prop,extjobs_sort_ignore_case)</prop>
+<prop id="extjobs_sort_desc">(prop,extjobs_sort_desc)</prop>
+<prop id="extjobs_where">(prop,extjobs_where)</prop>
+<prop id="extjobs_return_job">(prop,extjobs_return_job)</prop>
+</ti>
+<ti test="(f,not,(prop,nothing))" label=" " type="call_job" flag="button" class="fb fbOrg fbOrgExtjob" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,extjobs)</file>
+<prop id="orga_where">(prop,extjobs_where)</prop>
+<prop id="orga_view_loop_id">extjob_loop</prop>
+<prop id="orga_finished_job">Configuration</prop>
+<prop id="orga_offset">(prop,extjobs_offset)</prop>
+<prop id="orga_offset_label">(prop,extjobs_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,extjobs_offset_new_key)</prop>
+<prop id="orga_segment_plural">extjobs</prop>
+<prop id="orga_segment_singular">extjob</prop>
+<prop id="orga_segment_plural_label">Jobs</prop>
+<prop id="orga_segment_singular_label">Job</prop>
+<prop id="orga_sort_attribute">(prop,extjobs_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,extjobs_sort_number)</prop>
+<prop id="orga_where">(prop,extjobs_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,extjob_loop,@jobid)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,extjob_loop,@desc),40)()</prop>
+</ti>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,extjobs)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,extjobs_offset)),0)">(prop,extjobs_offset)</ti>
+</ti>
+</when>
+</job>

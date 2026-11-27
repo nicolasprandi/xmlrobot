@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="source-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Source(prop,sources_offset_label)"/>
+<prop x="sum" id="sources_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,source_key)</need>
+<prop id="label" x="Source [(f,text,cut_nice,(prop,source_name),20)](prop,sources_offset_label)"/>
+<prop x="sum_only" id="sources_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="source-tk"/>
+</job>

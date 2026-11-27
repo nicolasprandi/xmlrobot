@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+
+<job id="hook-task-view-begin" role="hidden">
+
+  <ti label="Aufgaben"/>
+
+</job>
+
+<job id="hook-task-details-end" role="hidden">
+
+   <ti_hr/>
+   <ti label=" " type="call_job" job="task-see-all" explain="See all tasks"/>
+   
+</job>
+
+
+
+<job id="hook-task-view-end" role="hidden">
+   
+  
+   
+
+         
+</job>
+
+<job id="hook-gen-task-selector" role="hidden">
+
+      <xslt 
+          xml="(file,tasks)" 
+          out="(dir,pro)task-selector-gui.xml">
+                    <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//tasks/task"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="task">
+   <sel>
+    <xsl:attribute name="label">
+      <xsl:value-of select="@name"/>
+    </xsl:attribute>
+   <xsl:value-of select="@row"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>       
+      </xslt>
+      <ti type="file" label="did update" x="(dir,pro)task-selector-gui.xml"/>
+      
+      <ti_hr/>
+      <call_job job="??" />
+</job>
+
+<job id="hook-gen-user-selector" role="hidden">
+
+      
+      <!--  <dump_ti_all />
+      <throw/>        <dump_ti/>
+      <file id="appask" x="(dir,pro)psi-ask.xml"/>
+      <ask what="apps" out="(file,appask)" style="natural"/>
+      <ti type="file">(file,appask)</ti>
+      -->
+      <ti type="file">(dir,pro)myCheckApp/users.xml</ti>
+      <xslt 
+          xml="(dir,pro)myCheckApp/users.xml" 
+          out="(dir,pro)user-selector-gui.xml">
+                    <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//users/user"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="user">
+   <sel>
+    <xsl:attribute name="label">
+      <xsl:value-of select="@userid"/>
+    </xsl:attribute>
+   <xsl:value-of select="@row"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>       
+      </xslt>
+      <ti type="file" label="did update" x="(dir,pro)user-selector-gui.xml"/>
+      
+      <ti_hr/>
+      <call_job job="??" />
+</job>
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

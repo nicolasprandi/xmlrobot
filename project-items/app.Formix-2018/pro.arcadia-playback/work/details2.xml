@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="playback-see-more">
+<need>(prop,playback_key)</need>
+<call_job job="playback-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="playbacks_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,playback_target)(f,html,bold,close)(f,when,(f,has,(prop,playbacks_offset_label)), - (prop,playbacks_offset_label),)"/>
+<call_job job="playback-tk"/>
+<ti_hr/>
+<ti type="rec">
+<ti type="call_job" explain="Edit" job="playback-edit">
+<prop id="playback_key">(prop,playback_key)</prop>
+<file id="playbacks">(file,playbacks)</file>
+<prop id="playbacks_offset">(prop,playbacks_offset)</prop>
+<prop id="playbacks_offset_label">(prop,playbacks_offset_label)</prop>
+<prop id="playbacks_offset_new_key">(prop,playbacks_offset_new_key)</prop>
+<prop id="playbacks_sort_attribute">(prop,playbacks_sort_attribute)</prop>
+<prop id="playbacks_sort_number">(prop,playbacks_sort_number)</prop>
+<prop id="playbacks_where">(prop,playbacks_where)</prop>
+<prop id="playbacks_return_job">(prop,playbacks_return_job)</prop>
+</ti>
+</ti>
+</job>

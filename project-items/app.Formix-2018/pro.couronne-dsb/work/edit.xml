@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsb-edit">
+<need>(prop,dsb_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="dsb-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="dsb-editor"/>
+<call_job job="dsb-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_dsb) '(f,text,cut_nice,(prop,dsb_name),50)'"/>
+</ti>
+<call_job job="dsb_did_edit"/>
+</job>

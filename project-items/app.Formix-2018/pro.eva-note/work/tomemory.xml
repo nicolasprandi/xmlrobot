@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="note-read">
+<need>(prop,note_key)</need>
+<spirit act="open" missing_strategy="empty" id="notes_spirit_tc" xml="(file,notes)"/>
+<prop id="note_dt_upd">(f,spirit,notes_spirit_tc,(prop,notes_offset)note[@row=(f,xpath_string,(prop,note_key))],@dt_upd)</prop>
+<prop id="note_dt_add">(f,spirit,notes_spirit_tc,(prop,notes_offset)note[@row=(f,xpath_string,(prop,note_key))],@dt_add)</prop>
+<prop id="note_aspect">(f,spirit,notes_spirit_tc,(prop,notes_offset)note[@row=(f,xpath_string,(prop,note_key))],@aspect)</prop>
+<prop id="note_note">(f,spirit,notes_spirit_tc,(prop,notes_offset)note[@row=(f,xpath_string,(prop,note_key))],@note)</prop>
+<prop id="note_note_verbal">(f,spirit,notes_spirit_tc,(prop,notes_offset)note[@row=(f,xpath_string,(prop,note_key))],@note_verbal)</prop>
+<prop id="note_urteil">(f,spirit,notes_spirit_tc,(prop,notes_offset)note[@row=(f,xpath_string,(prop,note_key))],@urteil)</prop>
+<prop id="note_grund">(f,spirit,notes_spirit_tc,(prop,notes_offset)note[@row=(f,xpath_string,(prop,note_key))],@grund)</prop>
+<spirit act="close" id="notes_spirit_tc"/>
+</job>

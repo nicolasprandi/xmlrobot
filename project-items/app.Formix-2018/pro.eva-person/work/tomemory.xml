@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="person-read">
+<need>(prop,person_key)</need>
+<spirit act="open" missing_strategy="empty" id="persons_spirit_tc" xml="(file,persons)"/>
+<prop id="person_dt_upd">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@dt_upd)</prop>
+<prop id="person_dt_add">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@dt_add)</prop>
+<prop id="person_name_full">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@name_full)</prop>
+<prop id="person_name_nic">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@name_nic)</prop>
+<prop id="person_name_add">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@name_add)</prop>
+<prop id="person_type">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@type)</prop>
+<prop id="person_cat">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@cat)</prop>
+<prop id="person_privs">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@privs)</prop>
+<prop id="person_country">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@country)</prop>
+<prop id="person_city">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@city)</prop>
+<prop id="person_province">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@province)</prop>
+<prop id="person_street">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@street)</prop>
+<prop id="person_zip">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@zip)</prop>
+<prop id="person_email">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@email)</prop>
+<prop id="person_phone">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@phone)</prop>
+<prop id="person_web">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@web)</prop>
+<prop id="person_elec">(f,spirit,persons_spirit_tc,(prop,persons_offset)person[@row=(f,xpath_string,(prop,person_key))],@elec)</prop>
+<spirit act="close" id="persons_spirit_tc"/>
+</job>

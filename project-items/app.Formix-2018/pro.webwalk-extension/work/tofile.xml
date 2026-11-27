@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extension-write">
+<need>(prop,extension_key) (prop,isAdd)</need>
+<spirit act="open" id="extensions_spirit_tc" xml="(file,extensions)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,extensions_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,extensions_offset),0,(f,sub,(f,len,(prop,extensions_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,extensions_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="extensions_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;extension row="(prop,extension_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extensions_spirit_tc" where="(prop,extensions_offset)extension[@row='(prop,extension_key)']" attribute="titel" value="(f,vob,prop,extension_titel)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extensions_spirit_tc" where="(prop,extensions_offset)extension[@row='(prop,extension_key)']" attribute="pk" value="(f,vob,prop,extension_pk)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="extensions_spirit_tc" where="(prop,extensions_offset)extension[@row='(prop,extension_key)']" attribute="desc" value="(f,vob,prop,extension_desc)"/>
+<spirit act="close" flag="save pretty" id="extensions_spirit_tc"/>
+</job>

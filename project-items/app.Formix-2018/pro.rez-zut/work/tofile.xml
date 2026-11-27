@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zut-write">
+<need>(prop,zut_key) (prop,isAdd)</need>
+<spirit act="open" id="zuts_spirit_tc" xml="(file,zuts)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,zuts_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,zuts_offset),0,(f,sub,(f,len,(prop,zuts_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,zuts_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="zuts_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;zut row="(prop,zut_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="bez" value="(f,vob,prop,zut_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="menge" value="(f,vob,prop,zut_menge)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="einheit" value="(f,vob,prop,zut_einheit)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="kat1" value="(f,vob,prop,zut_kat1)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="beschreibung" value="(f,vob,prop,zut_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="preis" value="(f,vob,prop,zut_preis)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="kalkulation" value="(f,vob,prop,zut_kalkulation)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="komp_key" value="(f,vob,prop,zut_komp_key)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="inttxt" value="(f,vob,prop,zut_inttxt)"/>
+<when test="(f,exists,file,zut_logo)">
+<file id="jack-in" x="(file,zut_logo)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="logo" value="(prop,jack-result)"/>
+</when>
+<when test="(f,exists,prop,zut_logo_max_x)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="logo_max_x" value="(f,vob,prop,zut_logo_max_x)"/>
+</when>
+<when test="(f,exists,prop,zut_logo_max_y)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="logo_max_y" value="(f,vob,prop,zut_logo_max_y)"/>
+</when>
+<when test="(f,exists,prop,zut_logo_max_x_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="logo_max_x_main" value="(f,vob,prop,zut_logo_max_x_main)"/>
+</when>
+<when test="(f,exists,prop,zut_logo_max_y_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="zuts_spirit_tc" where="(prop,zuts_offset)zut[@row='(prop,zut_key)']" attribute="logo_max_y_main" value="(f,vob,prop,zut_logo_max_y_main)"/>
+</when>
+<spirit act="close" flag="save pretty" id="zuts_spirit_tc"/>
+</job>

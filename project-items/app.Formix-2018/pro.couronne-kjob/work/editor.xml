@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kjob-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="kjob_default_label_class" x="+ (prop,_sl_kjob)"/>
+<prop id="kjob_default_label_name" x="(f,when,(f,has,(prop,kjobs_offset_label)), - (prop,kjobs_offset_label),)"/>
+<prop id="kjobs_tk_control" x="sum"/>
+</when>
+<otherwise>
+<need>(prop,kjob_key)</need>
+<prop id="kjob_default_label_class" x="(prop,_sl_kjob)"/>
+<prop id="kjob_default_label_name" x="(f,text,cut_nice,(prop,kjob_id),30)(f,when,(f,has,(prop,kjobs_offset_label)), - (prop,kjobs_offset_label),)"/>
+<prop id="kjobs_tk_control" x="sum_only"/>
+</otherwise>
+</choose>
+<call_job job="kjob-tk"/>
+</job>

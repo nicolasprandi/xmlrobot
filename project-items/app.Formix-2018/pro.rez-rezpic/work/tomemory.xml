@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rezpic-read">
+<need>(prop,rezpic_key)</need>
+<spirit act="open" missing_strategy="empty" id="rezpics_spirit_tc" xml="(file,rezpics)"/>
+<prop id="rezpic_dt_upd">(f,spirit,rezpics_spirit_tc,(prop,rezpics_offset)rezpic[@row=(f,xpath_string,(prop,rezpic_key))],@dt_upd)</prop>
+<prop id="rezpic_dt_add">(f,spirit,rezpics_spirit_tc,(prop,rezpics_offset)rezpic[@row=(f,xpath_string,(prop,rezpic_key))],@dt_add)</prop>
+<file flag="cool" id="rezpic_pic">(f,spirit,rezpics_spirit_tc,(prop,rezpics_offset)rezpic[@row=(f,xpath_string,(prop,rezpic_key))],@pic)</file>
+<unescape type="file" id="rezpic_pic"/>
+<translate type="file" id="rezpic_pic"/>
+<prop id="rezpic_bez">(f,spirit,rezpics_spirit_tc,(prop,rezpics_offset)rezpic[@row=(f,xpath_string,(prop,rezpic_key))],@bez)</prop>
+<prop id="rezpic_max_x_px">(f,spirit,rezpics_spirit_tc,(prop,rezpics_offset)rezpic[@row=(f,xpath_string,(prop,rezpic_key))],@max_x_px)</prop>
+<prop id="rezpic_max_y_px">(f,spirit,rezpics_spirit_tc,(prop,rezpics_offset)rezpic[@row=(f,xpath_string,(prop,rezpic_key))],@max_y_px)</prop>
+<spirit act="close" id="rezpics_spirit_tc"/>
+</job>

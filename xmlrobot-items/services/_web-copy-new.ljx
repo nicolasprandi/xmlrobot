@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2018-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+
+
+<job id="sam-create-dif" role="hidden">
+  <need>(dir,sam-source-dir) (prop,sam-source-selector)</need>
+  <need>(dir,sam-target-dir) (prop,sam-target-selector)</need>
+  <need>(file,source-scan) (file,target-scan)</need>
+  <need>(file,source-pgm) (file,target-pgm)</need>
+  
+  <!-- scan source -->
+  <create_file out="(file,source-pgm)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+  <quick_scan dir="(dir,sam-source-dir)" field="md5 kb fn" out="(file,source-scan)">
+    (prop,sam-source-selector)
+  </quick_scan>
+</steps>
+]]></create_file>
+  <ti label="running source:" test="0">(f,file_content,(file,source-pgm))</ti>
+  <include file="(file,source-pgm)"/>  <!-- ok -->
+  <ti label="result source:" xtype="file" test="0">(f,file_content,(file,source-scan))</ti>
+  
+  
+  <!-- scan target -->
+  <create_file out="(file,target-pgm)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+  <quick_scan dir="(dir,sam-target-dir)" field="md5 kb fn" out="(file,target-scan)">
+    (prop,sam-target-selector)
+  </quick_scan>
+</steps>
+]]></create_file>
+  <ti label="running target:" test="0">(f,file_content,(file,target-pgm))</ti>
+  <include file="(file,target-pgm)"/> <!-- ok -->
+  <ti label="result target:" xtype="file" test="0">(f,file_content,(file,target-scan))</ti>
+  
+  <!-- analyiing difference -->
+  <dir id="cache_sys" x="(f,request,dir,sys_cache)"/>
+  <ti test="0">(f,vob,dir,status) - (f,vob,dir,service_status) (f,vob,dir,system) (dir,cache_sys)</ti>
+
+  <file id="dif" x="(dir,filetemp)difference-hans-mueller.xml"/>
+  <create_file out="(file,dif)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><diff></diff>]]></create_file>
+  <spirit id="dif" act="open" xml="(file,dif)"/>
+  <spirit id="source" act="open" xml="(file,source-scan)"/>  
+  <spirit id="target" act="open" xml="(file,target-scan)"/> 
+  
+  <prop id="cnt-equal" x="0"/>
+  <prop id="cnt-update" x="0"/>
+  <prop id="cnt-new" x="0"/>
+  <prop id="cnt-delete" x="0"/>
+  
+
+   
+  
+  
+  <!-- rotate over source -->
+  <loop_xml 
+    act="open" 
+    id="source" 
+    spirit="source" 
+    xpath="//file"/>
+ 
+  <loop 
+    id="source-while" 
+    while="()(f,loop_xml,source,has_next?)()">
+    <loop_xml act="next" id="source" />
+    <!-- 
+    suche nach //dir[@ipath=(f,xpath_string,(f,loop_xml,cn-copy,..,@ipath))]/file[text(e:o)(e:c)=(f,xpath_string,(f,loop_xml,cn-copy))]
+    -->
+    <prop id="exists">(f,spirit,target,exists?,//dir[@ipath=(f,xpath_string,(f,loop_xml,source,..,@ipath))]/file[text(e:o)(e:c)=(f,xpath_string,(f,loop_xml,source))])</prop>
+    <ti test="0" type="file" x="(f,loop_xml,source,@fn)"/>
+    <ti test="0">exists=(prop,exists)</ti>
+    <choose>
+      <when test="(prop,exists)">
+        <choose>
+          <when test="(f,eq_text,(f,loop_xml,source,@md5),(f,spirit,target,//dir[@ipath=(f,xpath_string,(f,loop_xml,source,..,@ipath))]/file[text(e:o)(e:c)=(f,xpath_string,(f,loop_xml,source))],@md5))">
+          
+            <spirit id="dif" act="xml_update" how="append">
+              <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><dif type="equal" 
+              ipath="(f,loop_xml,source,..,@ipath)"
+              base="(f,loop_xml,source)"/>]]></inline>
+            </spirit>
+            <prop id="cnt-equal" x="(f,add,1,(prop,cnt-equal))"/>          
+            
+          </when>
+          <otherwise> 
+            <spirit id="dif" act="xml_update" how="append">
+              <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><dif type="update" 
+              ipath="(f,loop_xml,source,..,@ipath)"
+              base="(f,loop_xml,source)"
+              kb_source="(f,loop_xml,source,@kb)"
+              kb_target="(f,spirit,target,//dir[@ipath=(f,xpath_string,(f,loop_xml,source,..,@ipath))]/file[text(e:o)(e:c)=(f,xpath_string,(f,loop_xml,source))],@kb)"             
+              />]]></inline>
+              <!--
+                            uri_source="(f,loop_xml,source,@fn)"
+                                          uri_target="(f,spirit,target,//dir[@ipath=(f,xpath_string,(f,loop_xml,source,..,@ipath))]/file[text(e:o)(e:c)=(f,xpath_string,(f,loop_xml,source))],@fn)"
+              -->
+            </spirit>
+            <prop id="cnt-update" x="(f,add,1,(prop,cnt-update))"/>              
+          </otherwise>
+        </choose>  
+        
+      </when>
+      <otherwise>
+        <spirit id="dif" act="xml_update" how="append">
+          <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><dif type="new" 
+          ipath="(f,loop_xml,source,..,@ipath)"
+          base="(f,loop_xml,source)"
+          kb_source="(f,loop_xml,source,@kb)"
+          />]]></inline>
+        </spirit>
+        <prop id="cnt-new" x="(f,add,1,(prop,cnt-new))"/>
+      </otherwise>
+    </choose>
+    <!-- 
+    <ti><![CDATA[
+(f,spirit,target,exists?,//dir[@ipath=(f,xpath_string,(f,loop_xml,cn-copy,..,@ipath))]/file[text(e:o)(e:c)=(f,xpath_string,(f,loop_xml,cn-copy))])    
+]]></ti>  -->
+  </loop> <!-- end of source-while-loop -->  
+  
+  <loop_xml 
+    act="close" 
+    id="source"/>  <!-- end of source-xml-loop-loop -->
+  
+  
+  <!-- rotatte over source end -->
+  
+  <!-- target source asd  -->
+  <!-- rotate target source -->
+  <loop_xml 
+    act="open" 
+    id="target" 
+    spirit="target" 
+    xpath="//file"/>
+ 
+  <loop 
+    id="target-while" 
+    while="()(f,loop_xml,target,has_next?)()">
+    <loop_xml act="next" id="target" />
+
+    <prop id="exists">(f,spirit,source,exists?,//dir[@ipath=(f,xpath_string,(f,loop_xml,target,..,@ipath))]/file[text(e:o)(e:c)=(f,xpath_string,(f,loop_xml,target))])</prop>
+    <ti test="0" type="file" x="(f,loop_xml,target,@fn)" label="target"/>
+    <ti test="0">exists=(prop,exists)</ti>
+    <choose>
+      <when test="(f,not,(prop,exists))">
+        <spirit id="dif" act="xml_update" how="append">
+          <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><dif type="delete" 
+          ipath="(f,loop_xml,target,..,@ipath)"
+          base="(f,loop_xml,target)"/>]]></inline>
+        </spirit>
+        <prop id="cnt-delete" x="(f,add,1,(prop,cnt-delete))"/> 
+      </when>
+    </choose>   
+  
+  </loop> <!-- end of target-while-loop -->  
+  
+  <loop_xml 
+    act="close" 
+    id="target"/>  <!-- end of source-xml-loop-loop -->
+  
+  
+  <!-- rotatte over target end 
+
+  -->  
+  <spirit id="dif" act="save" />
+  <prop id="dif-md5">(f,file_info,hash,md5,(file,dif))</prop>
+  <ti test="0">dif-md5=(prop,dif-md5)</ti>  
+</job>  
+ 
+  
+<job id="sam" role="hidden">
+  <interpreter act="check-login"/>
+  <interpreter watch="0"/>
+  <interpreter flag="turbo"/>
+  <call_service job="tr_sam"/>
+
+  <need>(dir,sam-source-dir) (prop,sam-source-selector)</need>
+  <need>(dir,sam-target-dir) (prop,sam-target-selector)</need>
+  <need>(prop,sam-request)</need>
+  <need default="">(dir,sam-backup-dir)</need>
+  <need test="(f,eq_text,COPY-BUT-VERIFY,(prop,sam-request))">(prop,sam-verificator)</need>
+  
+  <file id="source-scan" x="(dir,filetemp)source-scan-hans-mueller.xml"/>
+  <file id="target-scan" x="(dir,filetemp)target-scan-hans-mueller.xml"/>
+  
+  <file id="source-pgm" x="(dir,filetemp)A(f,random_text,5)"/>
+  <file id="target-pgm" x="(dir,filetemp)(f,random_text,5)A"/> 
+  
+  <call_service job="sam-create-dif" /> 
+  
+  <choose>
+    <when test="(f,eq_text,ASK-USER,(prop,sam-request))">
+      <call_service job="sam-ask-user"/>
+    </when>
+    <otherwise>
+      <throw>unknow request [(prop,sam-request)]</throw>
+    </otherwise>
+  </choose>      
+     
+  <spirit id="dif" act="close" flag="save" />
+  <spirit id="source" act="close" />  
+  <spirit id="target" act="close" />  
+  
+</job>
+
+<job id="sam-perform-changes" role="hidden">  
+<interpreter act="check-login"/>
+  <need>(dir,sam-source-dir)</need>
+  <need>(dir,sam-target-dir)</need>
+  <need default="">(dir,sam-backup-dir)</need>
+  <call_service job="tr_sam"/>
+  
+  <need>(file,dif)</need>
+  <prop id="do-the-updates" x="1"/>
+  <when test="(f,has,dir,sam-backup-dir)">
+    <when test="(f,not,(f,exists_dir,(dir,sam-backup-dir)))">
+      <mkdir dir="(dir,sam-backup-dir)"/>
+      <ti label="(prop,_sam_created_backup)" />
+      <ti type="dir" x="(dir,sam-backup-dir)"/>
+    </when>
+  </when>
+  <when test="(f,has,prop,dif-md5)">
+
+    <need>(prop,sam-source-selector) (prop,sam-target-selector)</need>   
+    
+    <file id="source-scan" x="(dir,filetemp)bsource-scan-hans-mueller.xml"/>
+    <file id="target-scan" x="(dir,filetemp)btarget-scan-hans-mueller.xml"/>
+    
+    <file id="source-pgm" x="(dir,filetemp)B(f,random_text,5)"/>
+    <file id="target-pgm" x="(dir,filetemp)(f,random_text,5)B"/> 
+    <prop id="dif-md5-old" x="(prop,dif-md5)"/>
+    
+    <call_service job="sam-create-dif" /> 
+    <spirit id="dif" act="close" flag="catch"/>
+    <spirit id="source" act="close" flag="catch"/>
+    <spirit id="target" act="close" flag="catch"/>
+    <when test="(f,not,(f,eq_text,(prop,dif-md5),(prop,dif-md5-old)))">
+      <!-- es gibt differenzen -->
+      <tk type="msg" msg_type="w">(prop,_sam_ups_veraenderungen)</tk>
+      <tk type="sel" id="do" label="(prop,_sam_ups_what)" flag="nono" x="see">
+        
+        <sel label="(prop,_sam_ups_see)">see</sel>
+        <sel label="(prop,_sam_ups_stop)">stop</sel>
+        <sel label="(prop,_sam_ups_update)">update</sel>
+      </tk>
+      <choose>
+        <when test="(f,eq,(prop,do),see)">
+            <ti label="(prop,_sam_compare)"/>
+             <prop id="do-the-updates" x="0"/>
+             <call_service job="sam">
+              <prop id="sam-request" x="ASK-USER"/>
+             </call_service>
+        </when>
+        <when test="(f,eq,(prop,do),stop)">
+             <prop id="do-the-updates" x="0"/>
+             <ti label="(prop,_sam_stopped)"/>
+        </when>        
+        
+        <when test="(f,eq,(prop,do),update)">
+             <prop id="do-the-updates" x="1"/>
+             <tk type="msg" msg_type="w" x="(prop,_sam_upd_sure)"/>
+             <ti label="(prop,_sam_upd_doing)"/>
+        </when>        
+      
+      </choose>
+    </when>
+    <dump_ti test="0"/>
+    
+  </when>
+  
+  <when test="(prop,do-the-updates)">
+
+    <when test="(f,has,dir,sam-backup-dir)">
+
+      <copy touri="(dir,sam-backup-dir)" 
+            uri="(dir,sam-target-dir)"/>        
+    </when>       
+    <prop id="cnt-equal" x="0"/>
+    <prop id="cnt-update" x="0"/>
+    <prop id="cnt-new" x="0"/>
+    <prop id="cnt-delete" x="0"/>  
+    
+    <loop id="dif" xml="(file,dif)" xpath="dif">
+      <prop id="theid" x="cnt-(loop,dif,@type)"/>
+      <ti test="0">(prop,theid)</ti>
+      <prop id="(prop,theid)" x="(f,add,1,(f,vob,prop,(prop,theid)))" />                            
+    </loop>
+    
+    <prop id="cnt-change" x="(f,add,(prop,cnt-update),(prop,cnt-delete),(prop,cnt-new))"/>
+    <ti>(prop,cnt-change) (prop,_sam_r_chg)(f,plural,(prop,cnt-change),(prop,_sam_r_chg_pl)) = (prop,cnt-update) (prop,_sam_r_repl)(f,plural,(prop,cnt-update),(prop,_sam_r_repl_pl)) + (prop,cnt-delete) (prop,_sam_r_del)(f,plural,(prop,cnt-delete),(prop,_sam_r_del_pl)) + (prop,cnt-new) (prop,_sam_r_new)(f,plural,(prop,cnt-new),(prop,_sam_r_new_pl)) / (prop,cnt-equal) (prop,_sam_r_equ)(f,plural,(prop,cnt-equal),(prop,_sam_r_equ_pl)) </ti>  
+    
+    <when test="(f,gt_num,(prop,cnt-update),0)">
+      <ti label="(prop,_sam_r_did_perform) (prop,cnt-update) (prop,_sam_r_repl)(f,plural,(prop,cnt-update),(prop,_sam_r_repl_pl))"/>
+      <loop id="dif" xml="(file,dif)" xpath="dif[@type='update']">              
+        <ti label="(prop,_sam_r_did_replace)" xkey="(prop,_sam_r_did_replacek)" type="rec">
+          <ti>(loop,dif,@base)</ti>
+          <ti> </ti>
+          <ti> </ti>
+          <!-- 
+          <ti type="file" x="(dir,sam-source-dir)(loop,dif,@ipath)(loop,dif,@base)" />
+          <ti type="file" x="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)" />
+          <ti type="call_service" job="Goto-Compare-Files" explain="[ Compare ]">
+            <file id="old" x="(dir,sam-source-dir)(loop,dif,@ipath)(loop,dif,@base)"/>
+            <file id="new" x="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)"/>
+          </ti>     
+          -->
+          <ti>(loop,dif,@ipath)</ti>   
+        </ti>
+        <!-- 
+        <when test="(f,has,dir,sam-backup-dir)">
+          <copy tofile="(dir,sam-backup-dir)(loop,dif,@ipath)(loop,dif,@base)" 
+                file="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)"/>        
+        </when>   
+        -->                             
+        <copy file="(dir,sam-source-dir)(loop,dif,@ipath)(loop,dif,@base)" 
+              tofile="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)"/>
+    
+      </loop>
+    </when>  
+    
+    <when test="(f,gt_num,(prop,cnt-delete),0)">
+      <ti label="(prop,_sam_r_did_perform) (prop,cnt-delete) (prop,_sam_r_del)(f,plural,(prop,cnt-delete),(prop,_sam_r_del_pl))"/>
+      <loop id="dif" xml="(file,dif)" xpath="dif[@type='delete']">              
+        <ti label="(prop,_sam_r_did_delete)" xkey="(prop,_sam_r_did_deletek)" type="rec">
+          <ti>(loop,dif,@base)</ti>
+          <ti> </ti>
+          <ti> </ti>
+          <ti>(loop,dif,@ipath)</ti>  
+        </ti>  
+        <when test="(f,has,dir,sam-backup-dir)">
+          <copy tofile="(dir,sam-backup-dir)(loop,dif,@ipath)(loop,dif,@base)" 
+                file="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)"/>        
+        </when>            
+        <delete  
+              file="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)"/>                  
+      </loop>
+    </when>  
+    
+    <when test="(f,gt_num,(prop,cnt-new),0)">
+      <ti label="(prop,_sam_r_did_perform) (prop,cnt-new) (prop,_sam_r_new)(f,plural,(prop,cnt-new),(prop,_sam_r_new_pl))"/>
+      <loop id="dif" xml="(file,dif)" xpath="dif[@type='new']">              
+        <ti label="(prop,_sam_r_did_create)" xkey="(prop,_sam_r_did_createk)" type="rec">
+          
+          <ti>(loop,dif,@base)</ti>
+          <ti> </ti>
+          <ti> </ti>
+          <ti>(loop,dif,@ipath)</ti> 
+        </ti>     
+      
+        <copy file="(dir,sam-source-dir)(loop,dif,@ipath)(loop,dif,@base)" 
+              tofile="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)"/>               
+      </loop>
+    </when>     
+
+   </when> <!-- end do the updateds --> 
+      
+</job>
+<job id="sam-ask-user" role="hidden">  
+  <need>(dir,sam-source-dir)</need>
+  <need>(dir,sam-target-dir)</need>
+  <need>(file,dif)</need>
+  <prop id="cnt-change" x="(f,add,(prop,cnt-update),(prop,cnt-delete),(prop,cnt-new))"/>
+  <ti_hr_break/>
+  <ti  test="(f,gt,(prop,cnt-change),0)" label="(prop,_sam_a_confirm)"/>
+  <ti  test="(f,not,(f,gt,(prop,cnt-change),0))" label="(prop,_sam_a_notmuch)"/>
+  <!-- 
+  <ti>(prop,cnt-change) change(f,plural,(prop,cnt-change)) - (prop,cnt-update) replacement(f,plural,(prop,cnt-update))  (prop,cnt-delete) delete(f,plural,(prop,cnt-delete))  (prop,cnt-new) new(f,plural,(prop,cnt-new))(e:s) (prop,cnt-equal) qual(f,plural,(prop,cnt-equal)) </ti>  -->
+  
+    <ti>(prop,cnt-change) (prop,_sam_r_chg)(f,plural,(prop,cnt-change),(prop,_sam_r_chg_pl)) = (prop,cnt-update) (prop,_sam_r_repl)(f,plural,(prop,cnt-update),(prop,_sam_r_repl_pl)) + (prop,cnt-delete) (prop,_sam_r_del)(f,plural,(prop,cnt-delete),(prop,_sam_r_del_pl)) + (prop,cnt-new) (prop,_sam_r_new)(f,plural,(prop,cnt-new),(prop,_sam_r_new_pl)) / (prop,cnt-equal) (prop,_sam_r_equ)(f,plural,(prop,cnt-equal),(prop,_sam_r_equ_pl)) </ti>  
+  <prop id="label1" x="(prop,_sam_a_performall)" />
+  
+  <prop id="label2" x="(prop,cnt-update) (prop,_sam_r_repl)(f,plural,(prop,cnt-update),(prop,_sam_r_repl_pl))  &#xA;(prop,cnt-delete) (prop,_sam_r_del)(f,plural,(prop,cnt-delete),(prop,_sam_r_del_pl))  &#xA;(prop,cnt-new) (prop,_sam_r_new)(f,plural,(prop,cnt-new),(prop,_sam_r_new_pl))"/>
+  <!-- 
+  <ti type="rec" test="(f,gt,(prop,cnt-change),0)">
+    <ti type="call_service" job="sam-perform-changes" explain="&gt;&gt; (prop,label1)" >
+      <dir id="sam-source-dir">(dir,sam-source-dir)</dir>
+      <dir id="sam-target-dir">(dir,sam-target-dir)</dir>
+      <file id="dif">(file,dif)</file> 
+      <prop id="dif-md5">(prop,dif-md5)</prop>   
+      <prop id="sam-source-selector">(prop,sam-source-selector)</prop>
+      <prop id="sam-target-selector">(prop,sam-target-selector)</prop> 
+    </ti>
+      <ti span="4"> </ti>
+      <ti>= (prop,label2) </ti>
+  </ti>
+  -->
+  
+  <call_service job="sam-ask-user-finally">
+    <prop id="sam-ask-user-finally-end">0</prop>
+  </call_service>
+    
+  <ti test="(f,not,(f,gt,(prop,cnt-change),0))">(prop,_sam_a_nochanges)</ti>
+  
+  <when test="(f,gt_num,(prop,cnt-update),0)">
+    
+    <ti label="(prop,cnt-update) (prop,_sam_r_repl)(f,plural,(prop,cnt-update),(prop,_sam_r_repl_pl))"/>
+    <loop id="dif" spirit="dif" xpath="dif[@type='update']">              
+      <ti label="(prop,_sam_a_copy)" xkey="(prop,_sam_r_did_replacek2)" type="rec">
+        <ti type="file" x="(dir,sam-source-dir)(loop,dif,@ipath)(loop,dif,@base)" />
+        <ti type="file" x="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)" />
+        <ti type="call_service" job="Goto-Compare-Files" explain="[ (prop,_sam_compare) ]" flag="button xbutton" class="samCompare">
+          <file id="new" x="(dir,sam-source-dir)(loop,dif,@ipath)(loop,dif,@base)"/>
+          <file id="old" x="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)"/>
+        </ti>
+        <ti>(loop,dif,@ipath)</ti>
+      </ti>              
+    </loop>
+  </when>
+  
+  <when test="(f,gt_num,(prop,cnt-delete),0)">
+    
+    <ti label="(prop,cnt-delete) (prop,_sam_r_del)(f,plural,(prop,cnt-delete),(prop,_sam_r_del_pl)) "/>
+    <loop id="dif" spirit="dif" xpath="dif[@type='delete']">              
+      <ti label="(prop,_sam_a_delete)" xkey="(prop,_sam_r_did_deletek2)" type="rec">
+        <ti> </ti>
+        <ti type="file" x="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)" colspan="2"/>
+        <!-- <ti> </ti> -->
+        <ti flag="wrap">(loop,dif,@ipath)</ti>         
+      </ti>              
+    </loop>
+  </when>  
+  
+  <when test="(f,gt_num,(prop,cnt-new),0)">
+    
+    <ti label=" (prop,_sam_r_new)(f,plural,(prop,cnt-new),(prop,_sam_r_new_pl))"/>
+    <loop id="dif" spirit="dif" xpath="dif[@type='new']">              
+      <ti label="(prop,_sam_a_new)" xkey="(prop,_sam_r_did_createk2)" type="rec">
+        
+        <ti type="file" x="(dir,sam-source-dir)(loop,dif,@ipath)(loop,dif,@base)" colspan="2"/>
+        <!-- <ti> </ti> -->
+        <ti flag="wrap">(loop,dif,@ipath)</ti> 
+      </ti>              
+    </loop>
+  </when>  
+
+  <!--   
+  <ti type="call_service" job="sam-perform-changes" explain="(prop,label1)" key="= (prop,label2)">
+    <dir id="sam-source-dir">(dir,sam-source-dir)</dir>
+    <dir id="sam-target-dir">(dir,sam-target-dir)</dir>
+    <file id="dif">(file,dif)</file>
+  </ti>     <ti test="(f,not,(f,gt,(prop,cnt-change),0))">Keine Veraenderungen gefunden</ti>
+  -->
+  <when test="(f,gt_num,(prop,cnt-equal),0)">
+    
+    <!-- <ti label="(prop,cnt-equal) Equal(f,plural,(prop,cnt-equal))"/>     -->
+    <when test="1" xtest="(f,gt,(prop,cnt-change),0)">
+    <prop id="total"></prop>
+    <loop id="dif" spirit="dif" xpath="dif[@type='equal']">
+      <prop id="total">(prop,total)(loop,dif,@base) </prop> 
+      <!--              
+      <ti label="Same" key="(loop,dif,@type)" type="rec">
+        
+        <ti type="file" x="(dir,sam-target-dir)(loop,dif,@ipath)(loop,dif,@base)" />
+
+        <ti></ti>
+        <ti></ti>
+        <ti flag="wrap">(loop,dif,@ipath)</ti>       
+      </ti>       
+      -->       
+    </loop>
+    <ti label="(f,html,b,o)(prop,cnt-equal) (prop,_sam_r_equ)(f,plural,(prop,cnt-equal),(prop,_sam_r_equ_pl))(f,html,b,c)" x="(prop,total)"/>
+    </when>
+  </when>  
+  
+  <call_service job="sam-ask-user-finally">
+    <prop id="sam-ask-user-finally-end">1</prop>
+  </call_service>
+     
+</job>
+
+
+<job id="sam-ask-user-finally" role="test">
+  <need>(prop,sam-ask-user-finally-end)</need>
+
+ <when test="(f,gt,(prop,cnt-change),0)">
+    
+    <choose>
+    
+      <when test="(f,implement,online)">
+        <ti_break class_table="tabNavigator"/>
+        <ti type="call_service" job="sam-perform-changes" explain="(prop,label1)&#xA;(prop,label2)" label="(f,when,(prop,sam-ask-user-finally-end), ,)" flag="button" class="samPerform">
+          <dir id="sam-source-dir">(dir,sam-source-dir)</dir>
+          <dir id="sam-target-dir">(dir,sam-target-dir)</dir>
+          <dir id="sam-backup-dir">(dir,sam-backup-dir)</dir>
+          <file id="dif">(file,dif)</file> 
+          <prop id="dif-md5">(prop,dif-md5)</prop>   
+          <prop id="sam-source-selector">(prop,sam-source-selector)</prop>
+          <prop id="sam-target-selector">(prop,sam-target-selector)</prop> 
+        </ti>        
+        <ti_break/>
+      </when>
+      <otherwise>
+        <ti_hr test="(prop,sam-ask-user-finally-end)"/>
+        <ti type="call_service" job="sam-perform-changes" explain="&gt;&gt; (prop,label1)" label=" " >
+          <tk type="msg">(prop,_sam_a_really)</tk>
+          <dir id="sam-source-dir">(dir,sam-source-dir)</dir>
+          <dir id="sam-target-dir">(dir,sam-target-dir)</dir>
+          <dir id="sam-backup-dir">(dir,sam-backup-dir)</dir>
+          <file id="dif">(file,dif)</file> 
+          <prop id="dif-md5">(prop,dif-md5)</prop>   
+          <prop id="sam-source-selector">(prop,sam-source-selector)</prop>
+          <prop id="sam-target-selector">(prop,sam-target-selector)</prop> 
+        </ti>
+        <ti type="call_service" job="sam-perform-changes" explain="&gt;&gt; (prop,label2)" label=" ">
+          <dir id="sam-source-dir">(dir,sam-source-dir)</dir>
+          <dir id="sam-target-dir">(dir,sam-target-dir)</dir>
+          <dir id="sam-backup-dir">(dir,sam-backup-dir)</dir>
+          <file id="dif">(file,dif)</file> 
+          <prop id="dif-md5">(prop,dif-md5)</prop>   
+          <prop id="sam-source-selector">(prop,sam-source-selector)</prop>
+          <prop id="sam-target-selector">(prop,sam-target-selector)</prop> 
+        </ti> 
+   
+        <ti_hr/>      
+      </otherwise>      
+    </choose>
+  </when>  
+</job> 
+</jobs>

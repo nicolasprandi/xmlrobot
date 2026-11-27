@@ -1,0 +1,105 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="core-obfuriscation" role="hidden">
+     <call_job job="tk_para_read"/>
+     <ti label="Run it manual"/>
+     <ti type="dir" x="(dir,para_zelix_output)" label="... and produce:"/>
+      <ti type="call_service" job="Goto-Panorama" label=" ">
+        <dir id="with" x="(dir,para_zelix_output)"/>
+      </ti>
+      
+  <interpreter watch="0"/>
+  <ti>in job: core-operation-integrate-zelix-outputs</ti>
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_para_print_values_tips"/>
+  
+
+  
+
+  
+  <ti label="operations"/>
+  <ti type="rec" label="1. zelix inputs">
+    <ti type="dir" x="(dir,para_zelix_input)"/>
+    <ti type="call_service" job="Dir-Delete" explain="delete zelix-input" label=" ">
+      <dir id="with">(dir,para_zelix_input)</dir>
+    </ti>    
+  </ti>
+
+    <ti test="(f,has,dir,para_zelix_scripts)" type="call_service" job="Goto-Panorama" explain="-&gt; SEE the content of the SCRIPT-folder" label=" ">   
+      <dir id="with">(dir,para_zelix_scripts)</dir>
+    </ti>
+    
+    <ti test="(f,has,dir,para_zelix_scripts)" type="call_service" job="Panorama-Dir-Activity-TERMINAL" explain="-&gt; OPEN TERMIAL" label=" ">
+      <dir id="with">(dir,para_zelix_scripts)</dir>
+    </ti>  
+      
+  <ti type="rec" label="2. zelix outputs">
+    <ti type="dir" x="(dir,para_zelix_output)"/>
+    <ti type="call_service" job="Dir-Delete" explain="delete zelix-output" label=" ">
+      <dir id="with">(dir,para_zelix_output)</dir>
+    </ti>    
+  </ti>  
+  
+  <ti type="call_job" job="copy-zelix-output-to-input" label="after zelix">
+    <dir id="cz-to">(dir,para_zelix_input)</dir>
+    <dir id="cz-from">(dir,para_zelix_output)</dir>
+  </ti>
+  <ti>
+  
+  
+  
+  
+  </ti>
+  
+  
+  
+</job>
+<job id="copy-zelix-output-to-input" role="hidden">
+  <need>(dir,cz-from) (dir,cz-to)</need>
+  <tk type="msg">copy output to input
+  from (dir,cz-from) 
+  to   (dir,cz-to)</tk>
+  <copy uri="(dir,cz-from)" touri="(dir,cz-to)"/>
+  <ti>did the copy from (dir,cz-from) to (dir,cz-to)</ti>
+  
+</job>
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

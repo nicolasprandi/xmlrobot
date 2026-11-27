@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="??-fast-neu" joblevel="pro" role="hidden">
+  <ti>project content ---</ti>
+  <ti_hr/>
+  <try_catch><try>
+  <tk test="0" type="msg" msg="Going into report for panorama project '(prop,pro)'"/>
+  <call_job job="do-report-print" />
+  <ti_hr/>
+
+  </try><catch>
+     <ti>ok</ti>
+  
+  </catch></try_catch>
+
+</job>
+
+<job id="???" >
+ 
+  <choose>
+    <when test="(f,exists_file,(file,et))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <ti label="Welcome to Panorama">
+        <ti type="call_job" job="sys_project_setup" explain="Go &amp; browse a directory ..."/>
+      </ti>
+      <ti_hr/>
+      <call_job job="?"/>
+    </otherwise>
+  </choose>
+</job>
+<job id="??" joblevel="pro" role="hidden"> 
+    <choose>
+      <when tevst="1" test="(f,guicontroller,general,is-web,)" >
+        <call_job job="??refresh"/>
+      </when>
+      <otherwise>
+        <call_job job="??-desktop"/>
+      </otherwise>
+    </choose>
+</job>
+<job id="??-desktop" joblevel="pro" role="hidden">   
+      
+  <choose>
+    <when test="(f,not,(f,exists,prop,pro))">
+      <call_job job="?"/>
+    </when>
+    <when test="(f,file_exists,(file,et))">
+      <call_job job="Read Definitions"/>
+      <ti label="See"/>
+      <ti type="call_job" label="(f,html,bold,open)See(f,html,bold,close) current |" job="do-report-print" explain="(f,html,bold,open)(prop,pro)(f,html,bold,close)" flag="label_right no_arrow"/>
+      <ti type="call_job" label="(f,html,bold,open)report(f,html,bold,close) of |" job="do-report-print" explain="(f,html,bold,open)(prop,pro)(f,html,bold,close)" flag="label_right no_arrow"/>
+      <ti type="call_job" label="project |" job="do-report-print" explain="(f,html,bold,open)(prop,pro)(f,html,bold,close)" flag="label_right no_arrow"/>
+      <ti_hr sxtyle="2"/>   
+      <ti label="Paramters" padding_top="6px">
+        <ti label="Directory to scan:" type="dir" test="(f,exists_dir,(dir,et_scan_dir))">(dir,et_scan_dir)</ti>
+      
+        <ti label="(f,when,(f,exists_dir,(dir,et_scan_dir)), ,Directory:)">(dir,et_scan_dir)</ti>   
+        <ti label="Location:" 
+            test="(f,and,(f,has,prop,et_scan_computer),(f,not,(f,eq,(prop,computer),(prop,et_scan_computer))))"
+            x="on ANOTHER Computer: (prop,et_scan_computer)" /> 
+        
+        <ti label="Location:" test="(f,eq,(prop,et_scan_computer),)">on an unspecified computer</ti>   
+      </ti>     
+      
+      <ti label="Scan strategy:">(prop,et_scan_policy)</ti>   
+      <ti label="Directory levels:">(f,when,(f,eq,(prop,et_scan_level_limit),(prop,unlimited)),Unlimited,(prop,et_scan_level_limit))</ti>
+        
+      
+      <ti label="Details"  padding_top="6px">
+        <ti label="Categories:" 
+            test="(f,eq,(prop,et_org_type),project)" 
+            x="The project uses individual categories"/>      
+        <ti label="Last project visit:">(f,file_info,last_mod,(file,et))</ti> 
+      
+      </ti>         
+     
+    </when>
+    <otherwise>
+      <ti label="No Setup found" padding_top="6px">
+        <!-- <ti type="call_job" job="Fresh Project"/> -->
+        <ti type="call_job" job="sys_project_setup" explain="Build a new project from scratch"  prefix="&gt;&gt;  "/>
+      </ti>
+    </otherwise>
+   </choose> 
+   
+  <ti label="Menu"/>
+  <ti type="call_job" job="[ Services ]" />
+  <ti type="call_job" job="[ App Login ]" />   
+  <!-- 
+  <call_service job="project-info-final" flag="silent">
+    <prop id="from-app">(prop,app)</prop>
+    <prop id="from-pro">(prop,pro)</prop>
+    <dir id="from-pro" x="(dir,pro)"/>      
+  </call_service>  
+  -->
+</job>
+
+
+
+<job id="_scan_dir" role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(file,et))" >
+      <prop id="with-sum-flag">sum</prop>
+      <call_job job="do-scan-conf"/>
+    </when>
+    <otherwise>
+      <call_job job="sys_project_setup" />
+    </otherwise>
+  </choose>
+
+  
+  
+</job>
+
+
+
+
+
+
+
+
+<job id="_resh_project" joblevel="pro" pri="10" role="hidden">
+  <!-- 
+  <tk label="Making a fresh project: (prop,pro)">
+  <tk type="msg" 
+      x="All Project-Data will be removed!"
+      msg_type="w"/>
+  </tk>
+  -->
+  <when test="(f,not,(f,guicontroller,general,is-web,))">
+    <tk label="Make a fresh project ?"
+        type="accept"
+        id="delete-this-1"
+        x="Your project '(prop,pro)' will be cleared.&#xA;Do you want to continue?"
+        label_accept="Clear &amp; make it fresh"
+        label_decline="Forget it"
+        width="300" height="90">
+        <q id="delete-this-2" label="()Yes, I know that the existing project-data will be gone forever()"/>
+    </tk>
+    <when test="(f,not,(f,and,(prop,delete-this-1),(prop,delete-this-2)))">
+        <throw>Operation terminated on request.</throw>
+    </when>
+  </when>
+  
+  <call_job job="sys_project_setup" />
+
+</job>
+
+
+
+</jobs>

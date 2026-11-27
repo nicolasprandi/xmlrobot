@@ -1,0 +1,206 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+
+-->
+<call_job job="prolog"/>
+
+
+<!-- gui Adapters: to copy in the app .... -->
+
+
+<!-- 
+<job id="Edit: Competence Center">
+  <call_job job="tk_cc_edit"/>
+</job>
+
+<job id="Edit: cc_?">
+  <call_job job="tk_cc_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_cc_clear" explain="Clear this data"/>
+</job>
+
+
+ <job id="Clear Data: cc_">
+  <tk type="msg" x="Sure to clear data of cc_ ?" msg_type="w"/>
+  <call_job job="tk_cc_clear"/>
+</job>
+
+<job id="Print Values:  cc_">
+  <call_job job="tk_cc_print_values"/>
+</job>
+<job id="Print Help: cc_" role="dev">
+  <call_job job="tk_cc_print_help"/>
+</job>
+
+-->
+
+<!-- setting the default-values -->
+<job id="tk_cc_default" role="hidden">
+  <need default="0">(prop,cc_db)</need>
+  <need default="0">(prop,cc_repo)</need>
+  <need default="0">(prop,cc_dev)</need>
+  <need default="0">(prop,cc_rebuild)</need>
+</job>
+
+
+<!-- cc-core, make your changes here -->
+<job id="tk_cc_core" role="hidden" tip="cc_: Tk Internal">
+
+  <need default="">(prop,tk_cc_add_flag)</need>
+  
+  <call_job job="tr_cc"/>
+
+  <tk label="(prop,_cc_tk_l)" 
+      flag="(prop,tk_cc_add_flag)"
+      tip="(prop,_cc_tk_t)"
+      tk_id="2"> 
+
+    <tk id="cc_db"
+        type="bool"
+        label="(prop,_cc_l_db)"       
+      	test_first="0"
+        flag="no_is_0"
+        test="(f,right,db)"
+        tip="(prop,_cc_t_db)"/>
+        
+    <tk id="cc_repo"
+        type="bool"
+        label="(prop,_cc_l_repo)"       
+      	test_first="0"
+        flag="no_is_0"
+        test="(f,right,repo)"
+        tip="(prop,_cc_t_repo)"/>  
+        
+    <tk id="cc_dev"
+        type="bool"
+        label="(prop,_cc_l_dev)"       
+      	test_first="0"
+        flag="no_is_0"
+        test="(f,right,dev)"
+        tip="(prop,_cc_t_dev)"/>   
+               
+    <tk id="cc_ref"
+        type="dir"
+        label="(prop,_cc_l_ref)"
+      	test_first="0"
+        flag="no_is_0"
+        test="(f,right,ref)"
+        tip="(prop,_cc_t_ref)"/>   
+    <!--           
+    <tk id="cc_rebuild"
+        type="bool"  
+        label="(prop,_cc_l_rebuild)"   
+      	test_first="0"
+        flag="no_is_0"
+        test="(f,right,ipr)"
+        tip="(prop,_cc_t_rebuild)"/>   --> 
+        
+    <tk id="cc_rebuild"
+        type="sel"  
+        label="(prop,_cc_l_rebuild)"   
+      	test_first="0"
+        flag="nono"
+        test="(f,right,ipr)"
+        tip="(prop,_cc_t_rebuild)">
+        <sel label="(prop,_cc_l_rebuild_fast)">0</sel>
+        <sel label="(prop,_cc_l_rebuild_full)">1</sel>
+    </tk>                  
+ 
+                           
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_cc_edit" tip="cc_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,cc-data))">
+      <!-- data exists already -->
+      <prop id="tk_cc_add_flag" x="sum_only print"/>
+      <call_job job="tk_cc_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_cc_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_cc_default"/>
+  <!-- doing input -->
+  <call_job job="tk_cc_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_cc_write"/>
+
+</job>
+
+
+
+<job id="tk_cc_print_values" tip="cc_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_cc_read"/>
+  
+  <call_job job="tk_cc_core">
+    <prop id="tk_cc_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_cc_print_values_tips" tip="cc_: Prints values and tips" role="hidden">
+  <need default="0">(prop,print-cc-all-fields)</need>
+  <call_job job="tk_cc_read"/>
+  
+  <call_job job="tk_cc_core">
+    <prop id="tk_cc_add_flag" x="print_only (f,when,(prop,print-cc-all-fields),print_with_tips print_all_tested_fields,)"/>
+  </call_job>
+  
+    <ti_hr/>  
+    <ti type="menu" first_cell="2"> 
+      <ti type="call_job" job="Competence Center Conf" explain="(prop,_x_edit)" flag="button" class="fx fxEdit fxEditDetail fxEditDetailConf"/>
+      <ti type="call_job" job="tk_cc_print_values_tips" 
+          flag="button xbutton" class="fb fbAskAsk" explain="(prop,_label_askask)"
+          test="(f,not,(prop,print-cc-all-fields))">
+          <prop id="print-cc-all-fields">1</prop>
+      </ti> 
+
+    </ti>    
+  
+</job>
+
+<job id="tk_cc_print_help" tip="cc_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_cc_core">
+    <prop id="tk_cc_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_cc_read" role="hidden">
+
+  <file id="joe-in-store" x="(file,cc-data)" />
+  <prop id="joe-in-regex" x="(prop,cc-regex)" />
+    
+  <call_job job="go-joe-read"/>
+  <call_job job="tk_cc_default"/>
+
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_cc_write" role="hidden">
+  <file id="joe-in-store" x="(file,cc-data)" />
+  <prop id="joe-in-regex" x="(prop,cc-regex)" />
+  <call_job job="go-joe-write"/>
+</job>
+
+<!-- cleares data -->
+<job id="tk_cc_clear"  tip="cc_: Clears the data" role="hidden">
+  <delete file="(file,cc-data)"/>
+</job>
+
+
+</jobs>

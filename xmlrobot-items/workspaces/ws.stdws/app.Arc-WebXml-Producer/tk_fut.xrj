@@ -1,0 +1,429 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+
+-->
+<call_job job="prolog" />
+
+
+<!-- gui Adapters: to copy in the app .... -->
+ <!--
+<job id="See Values: fut_" role="dev">
+  <call_job job="tk_fut_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_fut_clear" explain="Clear this data"/>  
+</job>
+
+<job id="Edit: fut_">
+  <call_job job="tk_fut_edit"/>
+</job>
+
+<job id="Edit: fut_?">
+  <call_job job="tk_fut_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_fut_clear" explain="Clear this data"/>
+</job>
+
+ 
+ <job id="Clear Data: fut_">
+  <tk type="msg" x="Sure to clear data of fut_ ?" msg_type="w"/>
+  <call_job job="tk_fut_clear"/>
+</job>
+
+<job id="Print Values:  fut_">
+  <call_job job="tk_fut_print_values"/>
+</job>
+<job id="Print Help: fut_" role="dev">
+  <call_job job="tk_fut_print_help"/>
+</job>
+
+-->
+
+<!-- setting the default-values -->
+<job id="tk_fut_default" role="hidden">
+  <need default="regex">(prop,fut_type)</need>
+  <need default="(dir,temp)">(dir,fut_dir)</need>
+</job>
+
+
+<!-- fut-core, make your changes here -->
+<job id="tk_fut_core" role="hidden" tip="fut_: Tk Internal">
+
+  <need default="">(prop,tk_fut_add_flag)</need>
+
+  <tk label="Default Parameters/Future" 
+      flag="(prop,tk_fut_add_flag)"
+      tip="()Search Parameters is a list of values which will control the search-routine.()"> 
+
+
+        
+   <tk id="fut_futures"
+        type="sel"  
+        label="Future" 
+        test_first="1"        
+        tip="()()"
+        flag="multi dynamo">
+        <sel xlabel="">p1</sel>
+        <sel xlabel="">p2</sel>
+        <sel xlabel="">p3</sel>
+        <sel xlabel="">p4</sel>
+        <sel xlabel="">p5</sel>
+        <sel xlabel="">p6</sel>
+        <sel xlabel="">p7</sel>
+        <sel xlabel="">p8</sel>
+        <sel xlabel="">p9</sel>
+        <sel xlabel="">p10</sel>
+        <sel xlabel="">p11</sel>
+        <sel xlabel="">p12</sel>
+        <sel xlabel="">p13</sel>
+        <sel xlabel="">p14</sel>
+        <sel xlabel="">p15</sel>
+        <sel xlabel="">p16</sel>
+        <sel xlabel="">p17</sel>
+        <sel xlabel="">p18</sel>
+        <sel xlabel="">p19</sel>
+                  
+    </tk>            
+        
+    <tk id="fut_p1"
+        type="textblock"
+        xlabel="P1"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p1)()"/> 
+        
+    <tk id="fut_p2"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p2)()"/>  
+        
+    <tk id="fut_p3"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p3)()"/>
+    <tk id="fut_p4"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p4)()"/>
+    <tk id="fut_p5"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p5)()"/>
+        
+    <tk id="fut_p6"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p6)()"/>
+    <tk id="fut_p7"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p7)()"/>
+    <tk id="fut_p8"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p8)()"/>
+    <tk id="fut_p9"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p9)()"/>
+        
+    <tk id="fut_p10"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p10)()"/>
+                                                                              
+        
+    
+    <tk id="fut_p11"
+        type="textblock"
+        xlabel="P1"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p11)()"/> 
+        
+    <tk id="fut_p12"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p12)()"/>  
+        
+    <tk id="fut_p13"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p13)()"/>
+    <tk id="fut_p14"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p14)()"/>
+    <tk id="fut_p15"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p15)()"/>
+        
+    <tk id="fut_p16"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p16)()"/>
+    <tk id="fut_p17"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p17)()"/>
+    <tk id="fut_p18"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p18)()"/>
+    <tk id="fut_p19"
+        type="textblock"
+        xlabel="P"
+        xtip=" "               
+      	test_first="0"
+        test_dyn="()(f,has_flag,(f,vob,prop,fut_futures),p19)()"/>
+        
+   
+    <!--
+    <tk id="fut_file_read"
+        type="file"  
+      	label="File to read" 
+        flag="nono"          
+        tip="()This file will be read()"/> 
+        
+    <tk id="fut_file_write"
+        type="file"  
+      	label="File to write" 
+        flag="save force_extension"
+        extension=".xml"
+        test_first="0"        
+        tip="()This file will be written()"/> 
+
+    <tk type="msg"
+        x="Text and Bool"
+        test_first="0"/>   
+        
+    <tk id="fut_type"
+        type="sel"  
+        label="Selection 1" 
+        x="text"
+        test_first="0"        
+        tip="()text versus regular expression; text will search for exaclty that defined search text, regex will apply the regular-expression syntax to search for a piece of text in the files()">
+        <sel label="Text">text</sel>
+        <sel label="Regular Expression">regex</sel>    
+    </tk>            
+         
+    <tk id="fut_for" 
+        label="Text"
+        x="text default"
+        test_first="0" />
+         
+    <tk id="fut_textblock"
+        type="textblock"
+        label="Textblock"               
+      	test_first="0"/> 
+        
+    <tk id="fut_bool"
+        type="bool"
+        label="Boolean"       
+      	test_first="0"
+        x="0"/> 
+         
+    <tk type="msg"
+        x="Selections" 
+        msg_type="i" 
+        test_first="0" 
+        tip="()Some Selections() "/>         
+            
+    <tk id="fut_levels" 
+        type="sel" 
+        label="()Selection (2)()"
+        test_first="0"         
+        x="1"         
+        tip="the number of directory levels included in the file-search">
+        <sel label="One">1</sel>
+        <sel label="Two" test="(f,role,expert)">2</sel>
+        <sel label="Three" test="(f,role,admin)">3</sel>
+        <sel label="Four">4</sel>
+        <sel label="Five">5</sel>
+        <sel label="Six">6</sel>
+        <sel label="Seven">7</sel>
+        <sel label="Eight">8</sel>
+        <sel label="Nine">9</sel>
+        <sel label="Unlimited">999</sel>    
+    </tk>
+
+    <tk id="fut_days" 
+        type="sel" 
+        label="()Days (Sel)()"
+        test_first="0"                  
+        tip="Days of the week"
+        flag="multi" 
+        xml="(file,fut-sel2)"/>
+        
+    <tk 
+      id="fut_ext"
+      label="Extension" 
+      test_first="0"       
+      x="extension" 
+      flag="nono"
+      tip="Tip for Extension"/>
+
+    <tk type="msg" x="Options" msg_type="i"  test_first="0"/>
+  
+    <tk id="fut_encoding"
+        label="Encoding" 
+        test_first="0" 
+        x="UTF-8" 
+        tip="()Encoding defines the way data is stored()"/>
+    
+    <tk type="msg" 
+        x="Reporting Display" 
+        msg_type="i"/>
+        
+    <tk id="fut_len_before"
+        label="Len Before" 
+        test_first="0" 
+        x="20"         
+        tip="()does define the lenght before ...()"/>
+        
+    <tk id="fut_len_after" 
+        label="Len After"
+        test_first="0" 
+        x="60"          
+        flag="nono" 
+        tip="()does define the lenght after ..()"/>      
+        
+    <tk type="msg" x="Regular Expressions" msg_type="i" />   
+     
+    <tk id="fut_xms"
+        type="text"
+      	label="Minimum Heap Size"      	
+      	regex="()(\d+[g|G|m|M|k|K])()"
+      	regex_msg="()A Number and Unit (g,G,m,M,k,K) &#xA;eg 1G or 512m()"
+      	test_first="0"
+	      x="512m"
+        tip="Tip for minimum heap size"/>
+
+    <tk id="fut_xmx"
+        type="text"      	
+      	label="Maximal Heap Size"      	
+      	regex="()(\d+[g|G|m|M|k|K])()"
+      	regex_msg="()A Number and Unit (g,G,m,M,k,K) &#xA;eg 1G or 1024m()"
+      	test_first="0"
+	      x="1024m"
+        tip="Tip for maximal heap size"/>
+      -->   
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_fut_edit" tip="fut_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,fut-data))">
+      <!-- data exists already -->
+      <prop id="tk_fut_add_flag" x="sum_only print"/>
+      <call_job job="tk_fut_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_fut_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_fut_default"/>
+  <!-- doing input -->
+  <call_job job="tk_fut_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_fut_write"/>
+
+</job>
+
+
+
+<job id="tk_fut_print_values" tip="fut_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_fut_read"/>
+  
+  <call_job job="tk_fut_core">
+    <prop id="tk_fut_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_fut_print_values_tips" tip="fut_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_fut_read"/>
+  
+  <call_job job="tk_fut_core">
+    <prop id="tk_fut_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_fut_print_help" tip="fut_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_fut_core">
+    <prop id="tk_fut_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_fut_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,fut-data)" />
+    <prop id="joe-in-regex" x="(prop,fut-regex)" />
+  </call_job>
+  <call_job job="tk_fut_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_fut_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,fut-data)" />
+    <prop id="joe-in-regex" x="(prop,fut-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_fut_clear"  tip="fut_: Clears the data" role="hidden">
+  <delete file="(file,fut-data)"/>
+</job>
+
+
+</jobs>

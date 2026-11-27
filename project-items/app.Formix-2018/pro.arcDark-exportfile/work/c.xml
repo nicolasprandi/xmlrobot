@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="file" add_edit="1" label="Zip-File" tip="The zip-File to be exporte" view_flag="1" type="file" tk_flag="save" /><field id="desc" add_edit="0" label="Description" name_flag="1" tip="Description" type="text" nono="0" default_value="xxx" position="1" /></fields>

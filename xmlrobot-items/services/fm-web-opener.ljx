@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+  
+  
+  <job id="open_web" role="hidden">
+    <choose>
+      <when test="(f,not,(f,role,expert))">
+        <file id="with">(prop,with)</file>
+        <prop id="from_open_web" x="1"/>
+        <call_service job="sel_open_file_typical"/>      
+      </when>
+      <otherwise>
+        <prop id="from_open_web" x="1"/>
+        <file id="with">(prop,with)</file>
+        <call_service job="sel_open_file"/>      
+      </otherwise>
+    </choose>
+
+    <!-- 
+    <i>going to open (prop,with)</i>       
+    <exe>
+      <arg>explorer.exe</arg>
+      <arg>(prop,with)</arg>
+    </exe>
+    -->
+  </job>     
+ 
+
+</jobs>

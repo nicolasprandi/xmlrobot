@@ -1,0 +1,11 @@
+<!-- init 0 -->
+<prop id="$count-iobj" x="0" />
+
+<!-- increment by a value -->
+<prop id="$count-iobj" x="(f,add,(prop,$count-iobj),(prop,$count-iobj-this))" />
+
+<!-- increment by 1 -->
+<prop id="$count-iobj" x="(f,add,(prop,$count-iobj),1)" />
+
+<!-- remove variable -->
+<remove type="prop" id="$count-iobj" />

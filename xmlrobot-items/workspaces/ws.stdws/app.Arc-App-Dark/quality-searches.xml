@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<searches>
+  <search row="3" search="&lt;include" type="text" desc="Alle Includes sollten mit code verschluesselt sein" techname="include" before="100" after="100" />
+  <search row="1" search="code=" type="text" desc="Das code-attribut wird bei der verschluesselung von include-files verwendet. der code-value sollte nie constant sein, sondern immer mit random vergeben werden.&#xA;zb&#xA;&lt;prop id=&quot;code&quot;&gt;(f,random_text,16)&lt;/prop&gt;&#xA;...&#xA;code=&quot;(prop,code)&quot;" techname="code" before="250" after="500" />
+  <search row="2" search="&lt;ant" type="text" techname="ant" before="100" after="300" desc="Ant sollte nicht verwendet werden, da es unsicher ist.&#xA;Auf jeden fall sollten die files und dirs im ant mittels 'classic' funktionen verschluesselt werden, sodass die app auch im echnaton funktioniert." />
+  <search row="4" search="&quot;(f,gt_num,(f,time,yyyyMMdd),30000101)&quot;" type="text" desc="Ablaufdatum muss zumindest im prolog codiert sein" techname="ablaufdatum" before="100" after="100" />
+  <search row="5" search="call_service" type="text" desc="Service Calls mal durchsehen" techname="call_service" before="100" after="300" />
+  <search row="6" search="&lt;dump/&gt;" type="text" desc="&lt;dump/&gt; war mal im tk-template drinnen und muss raus" techname="dump" before="100" after="100" />
+  <search row="7" search="&lt;throw test=&quot;(f,not,(f,eq_text,(prop,app)," type="text" desc="force appid" techname="force app-id" before="100" after="100" />
+  <search row="8" search="role=&quot;" type="text" desc="Rollendefinition in Jobs" techname="rolle-job" before="40" after="40" />
+  <search row="9" search="(f,role," type="text" desc="rolle-function" techname="rolle-function" before="40" after="40" />
+  <search row="10" search="pro_standard" type="text" desc="pro_standard gibts nichtmehr in den apps; automatisch gemacht" techname="pro_standard" before="100" after="300" />
+  <search row="11" search="Standard-Project" type="text" desc="Standard-Project gibts nicht mehr" techname="Standard-Project" before="100" after="300" />
+  <search row="12" search="&lt;xsl:include" type="text" techname="&lt;xsl:include" before="100" after="300" />
+  <search row="13" search="&lt;xsl:import" type="text" techname="&lt;xsl:import" before="100" after="300" />
+  <search row="14" search="&lt;throw test=&quot;(f,not,(f,eq_text,(prop,app)," type="text" desc="Kontrollieren ob der app-name erhalten bleibt, sodass DIESE app zumindest nicht unter einem falschem namen installiert werden kann." techname="original-app-id" before="100" after="300" />
+  <search row="15" search="(dir,temp)" type="text" desc="(dir,temp) sollte nicht verwendet werden, da dies im echnaton zu mem:/// wird.&#xA;Es sollte immer (dir,filetemp) verwendet werden" techname="no (dir,temp)" before="100" after="300" />
+  <search row="16" search="prodconf=" type="text" desc="Product-Configurations" techname="prodconf" before="100" after="300" />
+</searches>

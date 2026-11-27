@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Abfragen?" lang="de">
+
+  <ti label="Job &apos;Abfragen&apos;"/>
+<ti type="rec"><ti flag="wrap">Erm&#246;glicht das Hinterlegen und Ausf&#252;hren von Abfragen</ti></ti>  
+
+
+  <call_job job="?queries-para-help"/>
+</job>
+
+<job id="Queries?" lang="en">
+
+  <ti label="Job &apos;Queries&apos;"/>
+  <ti type="ul">Write your own sql-queries and</ti>
+  <ti type="ul">run them</ti>
+
+
+  <call_job job="?queries-para-help"/>
+
+</job>
+
+<job id="?queries-para-help" role="hidden">
+  <prop id="squery_default_label_class" x="(prop,_sl_squery)" /> 
+  <prop id="squery_default_label_name" x=" " />
+  <prop id="squerys_tk_control">print_only print_with_tips print_tips_only print_all_fields</prop>
+  <call_job job="squery-tk"/>                        
+  <!-- 
+prop x="" id=""/><prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,squery_id),50)(f,html,bold,close)(f,when,(f,has,(prop,squerys_offset_label)), - (prop,squerys_offset_label),)"/>     -->
+</job>
+</jobs>

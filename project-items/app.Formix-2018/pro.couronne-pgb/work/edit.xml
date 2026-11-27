@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgb-edit">
+<need>(prop,pgb_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="pgb-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="pgb-editor"/>
+<call_job job="pgb-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_pgb) '(f,tk_sel_translate,(prop,pgb_beztyp),(file,pdi-sel-bez))'"/>
+</ti>
+<call_job job="pgb-done-some"/>
+</job>

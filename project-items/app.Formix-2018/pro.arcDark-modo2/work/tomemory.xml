@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo2-read">
+<need>(prop,modo2_key)</need>
+<spirit act="open" missing_strategy="empty" id="modos2_spirit_tc" xml="(file,modos2)"/>
+<prop id="modo2_dt_upd">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@dt_upd)</prop>
+<prop id="modo2_dt_add">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@dt_add)</prop>
+<prop id="modo2_prob">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@prob)</prop>
+<prop id="modo2_how">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@how)</prop>
+<prop id="modo2_where">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@where)</prop>
+<prop id="modo2_attribute">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@attribute)</prop>
+<prop id="modo2_with">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@with)</prop>
+<prop id="modo2_with_what">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@with_what)</prop>
+<prop id="modo2_value">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@value)</prop>
+<prop id="modo2_flag">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@flag)</prop>
+<prop id="modo2_count">(f,spirit,modos2_spirit_tc,(prop,modos2_offset)modo2[@row=(f,xpath_string,(prop,modo2_key))],@count)</prop>
+<spirit act="close" id="modos2_spirit_tc"/>
+</job>

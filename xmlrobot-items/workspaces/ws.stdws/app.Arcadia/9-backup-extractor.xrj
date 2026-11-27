@@ -1,0 +1,137 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+    <file id="bue-data" x="(dir,pro)bu-extractor-data.xrs"/>
+    <prop id="bue-regex" x="save"/>
+
+<job id="Extract 4 Backup?">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,bue-data)" />
+    <prop id="joe-in-regex" x="(prop,bue-regex)" />
+  </call_job>
+  
+  <prop id="is-not-new">0</prop>
+  
+  <when test="(f,exists_file,(file,bue-data))">
+  <when test="(f,has,dir,save)">
+    <prop id="is-not-new">1</prop>
+  </when>
+  </when>
+  
+  <choose>
+    <when test="(prop,is-not-new)">
+      <ti type="dir" label="Last Backup">(dir,save)</ti>
+    </when>
+    <otherwise>
+      <ti>There is no history of backup</ti>
+    </otherwise>
+   </choose>  
+</job>
+
+<job id="Extract 4 Backup">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,bue-data)" />
+    <prop id="joe-in-regex" x="(prop,bue-regex)" />
+  </call_job>
+  
+  <prop id="is-not-new">0</prop>
+  
+  <when test="(f,exists_file,(file,bue-data))">
+  <when test="(f,has,dir,save)">
+    <prop id="is-not-new">1</prop>
+  </when>
+  </when>
+  
+  <tk label="Select the Project-Backup-Target" flag="(f,when,(prop,is-not-new),sum_only,sum)">
+  <tk id="save" type="dir" label="Target Dir?" flag="nono" tip="Project= (prop,pro)"/>
+  </tk>
+  <mkdir dir="(dir,save)"/>
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,bue-data)" />
+    <prop id="joe-in-regex" x="(prop,bue-regex)" />
+  </call_job>
+  
+  
+  <file id="scan" x="(dir,filetemp)e4b.xml"/>
+  <scan dir="(dir,pro)" level_limit="1" out="(file,scan)" field="fn"/>
+  <loop id="files" xml="(file,scan)" xpath="file">  
+    <tp>file copy: (loop,files)</tp>
+    <prop id="oki">1</prop>
+    <when test="(f,starts_with,(loop,files),ChangeLog)">
+      <prop id="oki">0</prop>
+    </when>
+    <when test="(f,starts_with,(loop,files),ZKM_log)">
+      <prop id="oki">0</prop>
+    </when>    
+    
+    <when test="(prop,oki)">
+      <copy file="(loop,files,@fn)" intodir="(dir,save)"/>
+    </when>    
+    
+  </loop>  
+  <loop id="dirs" xml="(file,scan)" xpath="dir"> 
+    <choose>
+      <when test="(f,starts_with,(loop,dirs,@rpath),-store-)">
+        <tp>dir copy: (loop,dirs,@rpath)</tp>
+        <copy uri="(dir,pro)(loop,dirs,@ipath)" touri="(dir,save)(loop,dirs,@ipath)">
+          <except>
+            <file name_equals="reco" ext_equals="xrs" level_eq="1"/>  
+            <file name_equals="echnaton-core" ext_equals="xrs" level_eq="1"/> 
+            <file name_equals="echnaton-web" ext_equals="xrs" level_eq="1"/>           
+          </except>
+        </copy>    
+      </when> 
+      <when test="(f,starts_with,(loop,dirs,@rpath),compile-)">
+        <tp>dir mk: (loop,dirs,@rpath)</tp>
+        <mkdir dir="(dir,save)(loop,dirs,@ipath)"/>    
+      </when>   
+      <!--   
+      <when test="(f,eq_text,(loop,dirs,@rpath),material-final-xr-build)">
+        <tp>dir copy: (loop,dirs,@rpath)</tp>
+        <copy uri="(dir,pro)(loop,dirs,@ipath)" touri="(dir,save)(loop,dirs,@ipath)"/>    
+      </when>   
+      -->
+     </choose>     
+    
+  </loop>
+  <ti type="dir" label="Written">(dir,save)</ti>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

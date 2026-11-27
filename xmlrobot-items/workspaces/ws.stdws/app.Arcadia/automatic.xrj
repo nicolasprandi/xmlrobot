@@ -1,0 +1,484 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+
+
+
+<job id="do-work-on-zelix-script" role="hidden">
+  <call_job job="zsel-see-all"/>
+  <ti_break/>
+  <ti_hr/>
+  <call_job job="zblock-see-all"/>
+
+</job>
+
+<job id="hook_zsel_view_begin" role="hidden">
+  <ti label="1(e:c) My Zelix-Script"/>
+  <ti xlabel="Get Script" type="call_job" job="do-edit-my-zelix-script" explain="Edit My Zelix-Script"/>
+
+  <ti type="call_job" job="do-run-zelix-script" explain="()Run the script()"/> 
+  <ti type="file" label=" " >(file,my-zelix-script)</ti>   
+  <ti_break/>
+  <ti_hr/>
+  <ti label="2(e:c) My selected Zelix-Blocks"/>
+
+</job>
+
+<job id="hook_zsel_view_end" role="hidden">
+  <ti xlabel="Get Script" type="call_job" job="do-generate-zelix-advice" explain="Generate the Zelix-Script based on this selections"/>
+
+
+</job>
+
+<job id="do-generate-zelix-advice" role="hidden">
+  
+  <file id="zblock-temp">(dir,filetemp)zblock-temp.xml</file>
+  <create_file out="(file,zblock-temp)">&lt;data/&gt;</create_file>
+  <xml_update
+    what="(file,zblock-temp)"
+    how="append"
+    with="(file,zblocks)"/>
+    
+  <xml_update
+    what="(file,zblock-temp)"
+    how="append"
+    with="(file,zsels)"/>
+    
+    
+   <xslt 
+          xml="(file,zblock-temp)" 
+          out="(file,zelix-script-advice)">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="text"/>
+
+<xsl:template match="/">
+  
+   <xsl:apply-templates select="//zsel"/>
+  
+</xsl:template>
+
+<xsl:template match="zsel">
+  <xsl:call-template name="zsel2"> 
+    <xsl:with-param name="blockid" select="@zblock"/>
+  </xsl:call-template>
+   
+</xsl:template>
+
+<xsl:template name="zsel2">
+  <xsl:param name="blockid"/>
+   <xsl:apply-templates select="//zblock[@row=$blockid]"/>
+</xsl:template>
+
+<xsl:template match="zblock">
+   <xsl:value-of select="@content"/><xsl:text>
+</xsl:text>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+      <ti label="Created" type="file">(file,zelix-script-advice)</ti>  
+      
+      <prop id="the-created-zelix-script">(f,file_content,(file,zelix-script-advice))</prop>
+      <tk id="the-created-zelix-script" type="textblock" flag="big" label="Your Script"
+      tip="This script was created for you; Copy that now in your clipboard; "/> 
+      
+      <tk type="msg">Continue with [ Edit My Zelix-Script ] ?</tk>
+      <call_job job="do-edit-my-zelix-script"/> 
+        
+
+</job>
+
+<job id="hook_zblock_view_begin" role="hidden">
+  <ti label="3(e:c) Predefined Zelix-Blocks (e:o)in app(e:c)"/>
+
+</job>
+
+
+
+
+
+<job id="auto-obfuriscate"  role="hidden">
+  <call_job job="do-create-zelix-script"/>
+  <call_job job="do-run-zelix-script"/>
+  <call_job job="do-perform-replay"/>
+  
+</job>
+
+<job id="auto-compile" role="hidden">
+  <!-- possible parameters
+      ac-customer-name
+      ac-customer-notice
+      ac-final-date
+      ac-secret-jobs
+      ac-secret-xsl 
+      <prop id=""></prop> 
+  <prop id="ac-customer-name">Test Customername3</prop>
+  <prop id="ac-customer-notice">Test CustomerNotice3</prop> 
+  <prop id="ac-final-date">11110103</prop>
+  <prop id="ac-secret-job">111111111113</prop>  
+  <prop id="ac-secret-xsl">222222222223</prop> 
+  <prop id="ac-password">222222222223</prop>
+   <interpreter watch="1"/>
+  <tk type="msg">pass = (f,vob,prop,ac-password)</tk>
+  <dump_ti/>   
+  -->
+  <call_job job="tk_jvcp_read" />
+  <need>(prop,jvcp_auto_class)</need>
+  <need default="">(prop,ac-password)</need>
+  <echo id="ac-secret-job" type="prop" />
+  <echo id="ac-secret-xsl" type="prop" />
+ 
+  <file id="x" x="(dir,filetemp)x.xml"/>
+  <scan dir="(dir,pro)" level_limit="1" out="(file,x)"/>
+  <loop id="dirs" xml="(file,x)" xpath="dir">
+    <when test="(f,starts_with,(loop,dirs,@rpath),compile-)">
+      <dir id="the-compile-dir">(loop,dirs,..,@dir)(loop,dirs,@ipath)</dir>
+      <dir id="the-store-dir">(loop,dirs,..,@dir)-store-(f,substring_after,(loop,dirs,@ipath),compile-)</dir>
+      <prop id="the-lib-name">(f,substring_after,(loop,dirs,@ipath),compile-)</prop>
+      <file id="compile-auto">(dir,the-store-dir)auto.xml</file>
+      <prop id="do-auto-compile">(f,xpath,(file,compile-auto),p[@id='auto_compile'])</prop>
+      <ti>do-auto-compile for  [(loop,dirs,@rpath)] is (prop,do-auto-compile)</ti>
+      <when test="(prop,do-auto-compile)">
+        <choose>
+          <when test="(f,eq_num,1,(prop,jvcp_auto_class))">
+            <!-- reco desktop -->
+            
+            <file id="special-reco" x="(dir,the-store-dir)reco.xrs"/>
+           
+            <!-- reco.xrs -->
+            <when test="(f,exists_file,(file,special-reco))">
+              <spirit id="reco-update" act="open" xml="(file,special-reco)"/>
+              <ti label="Replacing parameters: [ (prop,the-lib-name) ]"/>
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-customer-name" />
+                <prop id="ar-property" x="reco_customer" />
+              </call_job>
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-customer-notice" />
+                <prop id="ar-property" x="reco_customer_notice" />
+              </call_job>   
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-final-date" />
+                <prop id="ar-property" x="reco_ablaufdatum" />
+              </call_job>  
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-secret-job" />
+                <prop id="ar-property" x="reco_decrypt" />
+              </call_job>    
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-secret-xsl" />
+                <prop id="ar-property" x="reco_decrypt_xsl" />
+              </call_job>    
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-password" />
+                <prop id="ar-property" x="reco_password" />
+              </call_job>                                
+                          
+                       
+              <!-- ac-customer-name 
+              <when test="(f,has,prop,ac-customer-name)">
+                <choose>
+                  <when test="(f,spirit,reco-update,exists?,p[@id=(f,xpath_string,reco_customer)])">
+                    <ti type="rec">
+                      <ti flag="block">reco_customer</ti>
+                      <ti>(f,spirit,reco-update,p[@id=(f,xpath_string,reco_customer)])</ti>
+                      <ti>==&gt;</ti>
+                      <ti>(prop,ac-customer-name)</ti>
+                    </ti>
+                    <spirit id="reco-update" act="xml_update"
+                      how="set_text"
+                      where="p[@id=(f,xpath_string,reco_customer)]"
+                      value="(prop,ac-customer-name)"/>
+                  </when>              
+                </choose>
+              </when>    -->
+              
+               
+              <spirit id="reco-update" act="close" flag="save write"/>
+              <ti_flush/>
+            
+            </when>
+            
+           
+          
+          </when>
+          
+          <when test="(f,or,(f,eq_num,2,(prop,jvcp_auto_class)),(f,eq_num,3,(prop,jvcp_auto_class)))">
+ 
+            <file id="special-echnaton-lib" x="(dir,the-store-dir)echlib.xrs"/>
+
+            <!-- echlib.xrs --> 
+            <when test="(f,exists_file,(file,special-echnaton-lib))">
+              <spirit id="reco-update" act="open" xml="(file,special-echnaton-lib)"/>
+              <ti label="Replacing parameters: [ (prop,the-lib-name) ]"/>
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-customer-name" />
+                <prop id="ar-property" x="echlib_customer" />
+              </call_job>
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-customer-notice" />
+                <prop id="ar-property" x="echlib_customer_notice" />
+              </call_job>   
+              <call_job job="auto-replace">
+                <prop id="ar-source" x="ac-final-date" />
+                <prop id="ar-property" x="echlib_ablaufdatum" />
+              </call_job>  
+                             
+              <spirit id="reco-update" act="close" flag="save write"/>
+              <ti_flush/>
+            
+            </when>
+                   
+            <!-- echnaton desktop -->
+            <prop id="inject-echnaton">0</prop>
+            <choose>
+              <when test="(f,exists_file,(dir,the-store-dir)echnaton-core.xrs)">
+                <file id="special-reco" x="(dir,the-store-dir)echnaton-core.xrs"/>
+                <prop id="inject-echnaton">1</prop>
+              </when>
+              <when test="(f,exists_file,(dir,the-store-dir)echnaton-web.xrs)">
+                <file id="special-reco" x="(dir,the-store-dir)echnaton-web.xrs"/>
+                <prop id="inject-echnaton">1</prop>
+              </when>              
+            </choose>
+            
+            
+            <choose>
+              <when test="(prop,inject-echnaton)">
+                <spirit id="reco-update" act="open" xml="(file,special-reco)"/>
+                <ti label="Replacing parameters: [ (prop,the-lib-name) ]"/>
+                <call_job job="auto-replace">
+                  <prop id="ar-source" x="ac-customer-name" />
+                  <prop id="ar-property" x="ole_customer" />
+                </call_job>
+                <call_job job="auto-replace">
+                  <prop id="ar-source" x="ac-customer-notice" />
+                  <prop id="ar-property" x="ole_customer_notice" />
+                </call_job>   
+                <call_job job="auto-replace">
+                  <prop id="ar-source" x="ac-final-date" />
+                  <prop id="ar-property" x="ole_ablaufdatum" />
+                </call_job>  
+                <call_job job="auto-replace">
+                  <prop id="ar-source" x="ac-secret-job" />
+                  <prop id="ar-property" x="ole_app_encryptor" />
+                </call_job>    
+                <!-- 
+                <call_job job="auto-replace">
+                  <prop id="ar-source" x="ac-secret-xsl" />
+                  <prop id="ar-property" x="reco_decrypt_xsl" />
+                </call_job>    
+                <call_job job="auto-replace">
+                  <prop id="ar-source" x="ac-password" />
+                  <prop id="ar-property" x="reco_password" />
+                </call_job>                                
+                -->            
+                         
+                <!-- ac-customer-name 
+                <when test="(f,has,prop,ac-customer-name)">
+                  <choose>
+                    <when test="(f,spirit,reco-update,exists?,p[@id=(f,xpath_string,reco_customer)])">
+                      <ti type="rec">
+                        <ti flag="block">reco_customer</ti>
+                        <ti>(f,spirit,reco-update,p[@id=(f,xpath_string,reco_customer)])</ti>
+                        <ti>==&gt;</ti>
+                        <ti>(prop,ac-customer-name)</ti>
+                      </ti>
+                      <spirit id="reco-update" act="xml_update"
+                        how="set_text"
+                        where="p[@id=(f,xpath_string,reco_customer)]"
+                        value="(prop,ac-customer-name)"/>
+                    </when>              
+                  </choose>
+                </when>    -->
+                
+                 
+                <spirit id="reco-update" act="close" flag="save write"/>
+                <ti_flush/>
+              
+              </when>
+            
+            </choose>          
+          </when> 
+          <otherwise>
+            <throw>Es wurde die Auto-Classe nicht im Arcadia-projekt definiert. Im Arcadia-Projetk [(prop,pro)] in der Configuration ist die Auto-Classe zu spezifizieren</throw>
+          </otherwise>         
+        
+        </choose>
+
+      
+        <call_job
+          job="browse-java-item-compile">
+          <prop id="path" x=""/>
+          <prop id="name" x="(f,substring_after,(loop,dirs,@rpath),compile-)"/>
+        </call_job>      
+      </when>
+    </when>
+  </loop>
+
+
+
+</job>
+<job id="auto-replace" role="hidden">
+  <need>(prop,ar-property)</need>
+  <need>(prop,ar-source)</need>
+
+  <when test="(f,has,prop,(prop,ar-source))">
+    <choose>
+      <when test="(f,spirit,reco-update,exists?,p[@id=(f,xpath_string,(prop,ar-property))])">
+        <ti type="rec">
+          <ti flag="block">(prop,ar-source)</ti>
+          <ti>(f,spirit,reco-update,p[@id=(f,xpath_string,(prop,ar-property))])</ti>
+          <ti>==&gt;</ti>
+          <ti>(f,vob,prop,(prop,ar-source))</ti>
+        </ti>
+        <spirit id="reco-update" act="xml_update"
+          how="set_text"
+          where="p[@id=(f,xpath_string,(prop,ar-property))]"
+          value="(f,escape,(f,vob,prop,(prop,ar-source)))"/>
+      </when>              
+    </choose>
+  </when>
+</job>
+
+<job id="auto-replace-dir" role="hidden">
+  <need>(prop,ar-property)</need>
+  <need>(prop,ar-source)</need>
+
+  <when test="(f,has,dir,(prop,ar-source))">
+    <choose>
+      <when test="(f,spirit,reco-update,exists?,d[@id=(f,xpath_string,(prop,ar-property))])">
+        <ti type="rec">
+          <ti flag="block">(prop,ar-source)</ti>
+          <ti>(f,spirit,reco-update,d[@id=(f,xpath_string,(prop,ar-property))])</ti>
+          <ti>==&gt;</ti>
+          <ti>(f,vob,dir,(prop,ar-source))</ti>
+        </ti>
+        <spirit id="reco-update" act="xml_update"
+          how="set_text"
+          where="d[@id=(f,xpath_string,(prop,ar-property))]"
+          value="(f,escape,(f,vob,dir,(prop,ar-source)))"/>
+      </when>              
+    </choose>
+  </when>
+</job>
+
+<job id="auto-finalize" role="hidden">
+  <throw test="(f,not,(f,has,dir,ac-delivery))">Arcadia.auto-finalize needs dir-ac-delivery</throw>
+  
+  <call_job job="tk_jvcp_read" />
+  
+  <choose>
+    <when test="(f,eq_num,3,(prop,jvcp_auto_class))">
+      <!-- echnaton web -->
+      <dir id="deli">(dir,ac-delivery)java-software</dir>
+      <dir id="deli-first">(dir,deli)first-party/</dir>
+      <dir id="deli-third">(dir,deli)third-party/</dir>
+      
+      <ti type="dir" label="first-party">(dir,deli-first)</ti>
+      <ti type="dir" label="third-party">(dir,deli-third)</ti>
+      
+      <mkdir dir="(dir,deli-first)"/>
+      
+      <tp>deleting first-party/</tp> 
+      <delete content_of_dir="(dir,deli-first)"/>
+      
+      <choose>
+        <when test="(f,exists_dir,(dir,deli-third))">
+          <tk type="bool" id="keep_first" label="Keep 3rd-party-folder as it is?" flag="nono" x="1"
+          tip="Keeping it will leave it untouched. NOT Keeping it will erase it and renew to complete content. Costly!"/>
+        </when>
+        <otherwise>
+          <prop id="keep_first">1</prop>
+        </otherwise>
+      </choose>
+      
+      <mkdir dir="(dir,deli-third)"/>
+      <when test="(f,not,(prop,keep_first))">
+        <tp>deleting third-party/</tp> 
+        <delete content_of_dir="(dir,deli-third)"/>      
+      </when>
+      
+      <call_job job="do-build-compileinfo"/>
+      <need>(file,compileinfo)</need>
+      <loop id="compile" xml="(file,compileinfo)" xpath="dir">
+        <!-- 3rd party -->
+        <ti label="(loop,compile,@libname)"/>
+        <when test="(f,not,(prop,keep_first))">
+          <when test="(f,exists_dir,(dir,pro)(loop,compile,@ipath)bin_download)">
+            <ti label=" ">Did copy 3rd-party libs</ti>
+            <copy uri="(dir,pro)(loop,compile,@ipath)bin_download" touri="(dir,deli-third)"/>
+          </when>
+        </when>
+        <!-- 1st party -->
+          <when test="(f,exists_file,(dir,pro)(loop,compile,@ipath)compiled-bin.jar)">
+            <ti label=" ">Did copy obfuriscation/compilation</ti>
+            <copy file="(dir,pro)(loop,compile,@ipath)compiled-bin.jar" 
+                  tofile="(dir,deli-first)(f,replace,(loop,compile,@libname),.,_).jar"/>
+          </when>        
+      
+      </loop>
+      <ti>Done.</ti>
+      
+      
+      
+    </when>
+    <otherwise>
+      <!-- desktop -->
+      <spirit id="reco-update" act="open" xml="(file,finish-data)"/>  
+            
+      <call_job job="auto-replace-dir">
+        <prop id="ar-source" x="ac-delivery" />
+        <prop id="ar-property" x="finish_delivery_customer" />
+      </call_job>       
+    
+      <spirit id="reco-update" act="close" flag="save write"/>
+      <ti_flush/>  
+    
+      <call_job job="Finish XmlRobot"/>      
+    </otherwise>
+  </choose>
+  
+    
+</job>
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="custset-write">
+<need>(prop,custset_key) (prop,isAdd)</need>
+<need default="./">(prop,custsets_offset)</need>
+<spirit act="open" id="custsets_spirit_tc" xml="(file,custsets)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,custsets_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,custsets_offset),0,(f,sub,(f,len,(prop,custsets_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,custsets_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in_begin" id="custsets_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;custset row="(prop,custset_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="name" value="(f,vob,prop,custset_name)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="remarks" value="(f,vob,prop,custset_remarks)"/>
+<dir id="jack-in" x="(dir,custset_result)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-dir" flag="silent">
+<dir id="jack-in" x="(dir,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row=(f,xpath_string,(prop,custset_key))]" attribute="result" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="randomize" value="(f,vob,prop,custset_randomize)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="randomize_len" value="(f,vob,prop,custset_randomize_len)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="product" value="(f,vob,prop,custset_product)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="password" value="(f,vob,prop,custset_password)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="ablaufdatum" value="(f,vob,prop,custset_ablaufdatum)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="encryptor" value="(f,vob,prop,custset_encryptor)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="encryptor_xsl" value="(f,vob,prop,custset_encryptor_xsl)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="serial" value="(f,vob,prop,custset_serial)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="prodconf" value="(f,vob,prop,custset_prodconf)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="firma" value="(f,vob,prop,custset_firma)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="tel" value="(f,vob,prop,custset_tel)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="email" value="(f,vob,prop,custset_email)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="web" value="(f,vob,prop,custset_web)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="custsets_spirit_tc" where="(prop,custsets_offset)custset[@row='(prop,custset_key)']" attribute="notiz" value="(f,vob,prop,custset_notiz)"/>
+<spirit act="close" flag="save pretty" id="custsets_spirit_tc"/>
+</job>

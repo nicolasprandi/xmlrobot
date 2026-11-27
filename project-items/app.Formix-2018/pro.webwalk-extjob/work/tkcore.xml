@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extjob-tk">
+<need default="">(prop,extjobs_tk_control)</need>
+<when test="(f,has_flag,(prop,extjobs_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,extjobs_tk_control),print_all_fields)">
+<ti label="(prop,extjob_default_label_class) (prop,extjob_default_label_name)"/>
+</when>
+<otherwise>
+<ti flag="label_right" label="(prop,extjob_default_label_class)" x="(f,html,b,o)(prop,extjob_default_label_name)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,extjobs_tk_control),print_only),,(prop,extjob_default_label_class)(f,when,(f,has,prop,extjob_default_label_name), (prop,extjob_default_label_name),))" flag="(prop,extjobs_tk_control) wrap ">
+<tk label="JobId" id="extjob_jobid" x="" test_first="1" tip="Das ist die Job-Id die aufgerufen werden soll" type="text" flag=" nono "/>
+<tk label="Beschreibung" id="extjob_desc" x="" test_first="1" tip="Was macht der Job" type="textblock" flag=" "/>
+</tk>
+</job>

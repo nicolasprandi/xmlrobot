@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="update-see-all" level="ws" role="hidden" tip="Lists all Updated">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="update_loop" xml="(file,updates)" xpath="(prop,updates_offset)update(prop,updates_where)" sort="(prop,updates_sort_attribute)" number="(prop,updates_sort_number)" ignore_case="(prop,updates_sort_ignore_case)" desc="(prop,updates_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,updates_offset_label)),0)">
+<ti label="(prop,updates_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti/>
+<ti x="Off"/>
+<ti x="File Class"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,update_loop,@titel),20)(f,html,bold,close)" job="update-see">
+<prop id="update_key">(loop,update_loop,@row)</prop>
+<file id="updates">(file,updates)</file>
+<prop id="updates_offset">(prop,updates_offset)</prop>
+<prop id="updates_offset_label">(prop,updates_offset_label)</prop>
+<prop id="updates_offset_new_key">(prop,updates_offset_new_key)</prop>
+<prop id="updates_sort_attribute">(prop,updates_sort_attribute)</prop>
+<prop id="updates_sort_number">(prop,updates_sort_number)</prop>
+<prop id="updates_where">(prop,updates_where)</prop>
+<prop id="updates_return_job">(prop,updates_return_job)</prop>
+</ti>
+<ti>(f,text,cut_nice,(loop,update_loop,@desc),40)</ti>
+<ti test="(f,has,(loop,update_loop,@off))" type="text" x="(loop,update_loop,@off)"/>
+<ti test="(f,not,(f,has,(loop,update_loop,@off)))"/>
+<ti test="(f,has,(loop,update_loop,@file_class))" type="text" x="(f,when,(f,has_flag,(loop,update_loop,@file_class),prolog-include),prolog-include(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),tkcore),tkcore(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),view),view(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),tomemory),tomemory(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),details),details(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),details2),details2(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),edit),edit(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),delete),delete(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),editor),editor(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),add),add(e:s),)(f,when,(f,has_flag,(loop,update_loop,@file_class),tofile),tofile(e:s),)"/>
+<ti test="(f,not,(f,has,(loop,update_loop,@file_class)))"/>
+<ti type="call_job" explain="Edit" job="update-edit">
+<prop id="update_key">(loop,update_loop,@row)</prop>
+<file id="updates">(file,updates)</file>
+<prop id="updates_offset">(prop,updates_offset)</prop>
+<prop id="updates_offset_label">(prop,updates_offset_label)</prop>
+<prop id="updates_offset_new_key">(prop,updates_offset_new_key)</prop>
+<prop id="updates_sort_attribute">(prop,updates_sort_attribute)</prop>
+<prop id="updates_sort_number">(prop,updates_sort_number)</prop>
+<prop id="updates_where">(prop,updates_where)</prop>
+<prop id="updates_return_job">(prop,updates_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Updated found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,updates_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="update-add" explain="[ + neues Update ]" job="update-add">
+<file id="updates">(file,updates)</file>
+<prop id="updates_offset">(prop,updates_offset)</prop>
+<prop id="updates_offset_label">(prop,updates_offset_label)</prop>
+<prop id="updates_offset_new_key">(prop,updates_offset_new_key)</prop>
+<prop id="updates_sort_attribute">(prop,updates_sort_attribute)</prop>
+<prop id="updates_sort_number">(prop,updates_sort_number)</prop>
+<prop id="updates_where">(prop,updates_where)</prop>
+<prop id="updates_return_job">(prop,updates_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,updates)</file>
+<prop id="orga_where">(prop,updates_where)</prop>
+<prop id="orga_view_loop_id">update_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,updates_offset)</prop>
+<prop id="orga_offset_label">(prop,updates_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,updates_offset_new_key)</prop>
+<prop id="orga_segment_plural">updates</prop>
+<prop id="orga_segment_singular">update</prop>
+<prop id="orga_segment_plural_label">Updated</prop>
+<prop id="orga_segment_singular_label">Update</prop>
+<prop id="orga_sort_attribute">(prop,updates_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,updates_sort_number)</prop>
+<prop id="orga_where">(prop,updates_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,update_loop,@titel),20)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,update_loop,@desc),40)()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,updates)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,updates_offset)),0)">(prop,updates_offset)</ti>
+</ti>
+</when>
+</job>

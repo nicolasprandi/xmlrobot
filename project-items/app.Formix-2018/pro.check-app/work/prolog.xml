@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="apps">(dir,pro)apps.xml</file>
+<when test="(f,not,(f,exists_file,(file,apps)))">
+<create_file out="(file,apps)">&lt;apps/&gt;</create_file>
+<i>Created: (file,apps)</i>
+</when>
+<prop id="apps_offset">./</prop>
+<prop id="apps_offset_label"/>
+<prop id="apps_offset_new_key">//</prop>
+<prop id="apps_sort_attribute"/>
+<prop id="apps_sort_number"/>
+<prop id="apps_sort_ignore_case"/>
+<prop id="apps_sort_desc"/>
+<prop id="apps_where"/>
+<prop id="apps_return_job">app-see-all</prop>
+</prolog>

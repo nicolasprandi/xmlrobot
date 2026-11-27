@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="update-write">
+<need>(prop,update_key) (prop,isAdd)</need>
+<spirit act="open" id="updates_spirit_tc" xml="(file,updates)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,updates_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,updates_offset),0,(f,sub,(f,len,(prop,updates_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,updates_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="updates_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;update row="(prop,update_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="titel" value="(f,vob,prop,update_titel)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="file_class" value="(f,vob,prop,update_file_class)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="desc" value="(f,vob,prop,update_desc)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="search" value="(f,vob,prop,update_search)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="search_type" value="(f,vob,prop,update_search_type)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="expectation" value="(f,vob,prop,update_expectation)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="replace" value="(f,vob,prop,update_replace)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="updates_spirit_tc" where="(prop,updates_offset)update[@row='(prop,update_key)']" attribute="off" value="(f,vob,prop,update_off)"/>
+<spirit act="close" flag="save pretty" id="updates_spirit_tc"/>
+</job>

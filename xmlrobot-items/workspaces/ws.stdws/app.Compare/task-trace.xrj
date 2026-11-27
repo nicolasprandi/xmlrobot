@@ -1,0 +1,351 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+
+<job id="trace-file-start" role="hidden">
+  <need>(file,a) (prop,use_left)</need>
+  <file id="b">(f,can_file,(file,a))</file>
+  <call_job job="trace-load-paras"/>
+  <when test="(prop,dm)">
+    <ti label="1, home_dir">(dir,home_dir)</ti>
+    <ti label="2, home_left">(prop,home_left)</ti>  
+    <ti label="3, home_right">(prop,home_right)</ti> 
+    <ti label="file-a">(file,a)</ti>
+    <ti label="file-b">(file,b)</ti>
+  </when>
+  
+  <delete file="(file,cd-dirlist-2)"/>
+  <delete file="(file,cd-dirlist-3)"/>
+  
+  <choose>
+    <when test="(prop,use_left)">
+      <prop id="rel_file">(f,substring_after,(file,b),(dir,home_dir)(prop,home_left))</prop>
+    </when>
+    <otherwise>
+      <prop id="rel_file">(f,substring_after,(file,b),(dir,home_dir)(prop,home_right))</prop>
+    </otherwise>    
+  </choose>
+  
+  <when test="(prop,dm)">
+    <ti label="4, rel_file" test="(prop,dm)">(prop,rel_file)</ti>
+    <ti label="5, dirlist-a" type="file" test="(prop,dm)">(file,cd-dirlist)</ti>  
+  </when>
+    
+  <spirit id="dirlist" act="open" xml="(file,cd-dirlist)"
+    flag="nuevo"/>
+  
+  <spirit id="dirlist" act="xml_update" where="."
+          how="set_attribute" 
+          attribute="rel_file"
+          value="(prop,rel_file)" />  
+  
+  <loop_xml act="open" id="dirlist" spirit="dirlist" xpath="dir" />
+  <loop id="while" while="()(f,loop_xml,dirlist,has_next?)()" >
+    <loop_xml id="dirlist" act="next"/>
+    <ti test="(prop,dm)">(f,loop_xml,dirlist,.,@ipath)</ti>
+    <file id="target">(dir,home_dir)(f,loop_xml,dirlist,.,@ipath)(prop,rel_file)</file>
+    <ti test="0" type="file" label="Check Existence:" x="(file,target)"/>
+    <choose>
+      <when test="(f,file_exists,(file,target))">
+        <spirit id="dirlist" act="xml_update" where_is_loop_xml="dirlist"
+                how="set_attribute" 
+                attribute="exists"
+                value="1" />
+              
+        <spirit id="dirlist" act="xml_update" where_is_loop_xml="dirlist"
+                how="insert_in" >
+          <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <file fn="(x,(file,target))" lm="(f,file_info,last_mod,(file,target),yyyyMMdd-HHmmss)" hash="(f,file_info,hash,md5,(file,target))"  bytes="(f,file_info,size,(file,target),bytes)"/>
+        ]]></inline>                
+        </spirit>   
+        
+        <!--
+         lm="(f,file_info,last_mod,(file,target),yyyyMMddHHmmss)">x</something>
+        -->
+           
+      </when>
+      <otherwise>
+        <spirit id="dirlist" act="xml_update" where_is_loop_xml="dirlist"
+                how="set_attribute" 
+                attribute="exists"
+                value="0" />      
+      </otherwise>
+    
+    </choose>
+  </loop>
+  
+  <loop_xml act="close" id="dirlist" />
+  
+  <spirit id="dirlist" act="close" out="(file,cd-dirlist-2)" flag="save"/>
+  <ti label="6, dirlist-b" type="file" test="(prop,dm)">(file,cd-dirlist-2)</ti> 
+  <xslt xml="(file,cd-dirlist-2)"
+        xsl="(dir,app)dirlist3.xsl"
+        out="(file,cd-dirlist-3)"/>
+                               
+  <ti label="7, dirlist-c" type="file" test="(prop,dm)">(file,cd-dirlist-3)</ti>
+  
+  <call_job job="trace-file-print"/>
+  
+</job>
+
+<job id="trace-load-paras" role="hidden">
+  <ti test="(prop,dm)" type="file" label="Trace-Paras:" x="(file,cd-paras)"/>
+  <spirit id="paras" act="open" xml="(file,cd-paras)" 
+    flag="nuevo"/>
+    <dir id="home_dir">(f,spirit,paras,@home_dir)</dir>
+    <prop id="home_left">(f,spirit,paras,@home_left)</prop>
+    <prop id="home_right">(f,spirit,paras,@home_right)</prop>
+  <spirit id="paras" act="close" />
+</job>
+
+
+
+<job id="trace-file-print" role="hidden">
+  <call_job job="tr_trace"/>
+  <choose>
+    <when test="(f,exists,file,compare-trace-1)">
+      <prop id="do_compare" x="1"/>
+    </when>
+    <otherwise>
+      <prop id="do_compare" x="0"/>
+    </otherwise>
+  </choose>
+
+  <call_job job="trace-load-paras-style"/>
+  <prop id="filter">[@exists=1]</prop>
+  <when test="(prop,see_no_file)">
+    <prop id="filter"></prop>
+  </when>
+  
+  <ti label="(prop,_trace_tracing): (f,html,bold,open)(f,xpath,(file,cd-dirlist-3),.,@rel_file)(f,html,bold,close)"/>
+
+  <ti_break/>
+  <ti_hr/>
+  
+  <choose>
+    <when test="(prop,see_no_file)">
+      <prop id="xpath" x="dir" />
+    </when>
+    <otherwise>
+      <prop id="xpath" x="dir[@exists='1']" />
+    </otherwise>
+  </choose>
+  
+  
+  <loop id="trace" xml="(file,cd-dirlist-3)" xpath="(prop,xpath)" flag="back"
+        missing_strategy="empty">
+  
+    <choose>
+      <when test="(f,eq,0,(loop,trace,@exists))">
+        <when test="(prop,see_no_file)">
+          <ti type="rec" label="(e:o)(loop,trace,#i)(e:c) (loop,trace,@rpath)">
+            <ti align="right">(prop,_trace_doesnt_exist)</ti>
+            <ti> </ti>
+            
+          </ti>           
+        </when>
+      </when>
+      <otherwise>
+        <!-- <ti type="file" len="5" len2="20" x="(loop,trace,file,@fn)" /> -->
+        <prop id="link">0</prop>
+        <when test="(prop,do_compare)">
+          <choose>
+            <when test="(f,eq,(file,compare-trace-1),(loop,trace,file,@fn))">
+              <prop id="say">(prop,_trace_compare) ...</prop>
+            </when>
+            <otherwise>
+              <prop id="say">... (prop,_trace_with)</prop>
+              <prop id="link">1</prop>
+            </otherwise>
+          </choose>
+        </when>
+        
+         
+        <prop id="next_hash">(loop,trace,next/file,@hash)</prop>
+        
+        <choose>
+          <when test="(f,eq,(prop,next_hash),(loop,trace,file,@hash))">
+            <when test="(prop,see_same_file)">
+              <call_job job="trace-print-file"/>
+              <ti type="rec" label=" ">
+                <ti align="right">(prop,_trace_same)</ti>
+                <ti> </ti>                
+              </ti>   
+            </when>            
+          </when>
+          <otherwise>
+            <call_job job="trace-print-file"/>
+            <when test="(f,lt,(loop,trace,#i),(loop,trace,#max))">
+              <!-- last one has never a next-one, so this would fail always -->
+              
+              <try_catch>
+                <try>
+                  <prop id="differenz">(f,mul,-1,(f,sub,(loop,trace,next/file,@bytes),(loop,trace,file,@bytes)))</prop>
+                  <prop id="plus">(f,when,(f,gt,(prop,differenz),0),+,)</prop>
+          
+                  <ti type="rec" label=" ">
+                    <ti type="call_job" 
+                              explain="(f,html,bold,open)(prop,plus)(f,format,(prop,differenz),(e:s)###(e:s)###)(f,html,bold,close) bytes"
+                              job="compare-files-trace"
+                              align="right">
+                        <file id="b">(loop,trace,file,@fn)</file>
+                        <file id="a">(loop,trace,next/file,@fn)</file>
+                    </ti>
+                    <ti></ti>
+                  </ti>   
+                 </try>
+                 <catch>
+                  <ti type="rec" label=" ">
+                    <ti align="right">(prop,_trace_one_nexist)</ti>
+                    <ti> </ti>                
+                  </ti>  
+                 </catch>  
+              </try_catch>  
+            </when>   
+          </otherwise>
+        </choose>
+        
+     
+      </otherwise>
+    </choose>
+    
+    
+  
+  </loop>
+  <ti_hr/>
+  <ti_break/>
+
+  
+      <ti type="rec" label=" ">
+        <ti align="center" span="2">(f,html,big,open)(prop,_trace_change_visi):(f,html,big,close)</ti>
+        <ti></ti>
+      </ti>   
+      <!--  
+      <ti type="rec" label=" ">
+        <ti align="center" span="2">See</ti>
+        <ti></ti>
+      </ti>  
+      
+      <ti type="rec" label=" ">
+        <ti align="center">(f,html,bold,open)Same files(f,html,bold,close)</ti>
+        <ti align="center">(f,html,bold,open)Non-Existing files(f,html,bold,close)</ti>
+        <ti></ti>
+      </ti>
+      -->
+      
+      <ti type="rec" label="(prop,_trace_curr_rep)">
+        <ti align="center">(prop,_trace_same_files): (f,html,bold,open)(f,when,(prop,see_same_file),yes,no)(f,html,bold,close)</ti>
+        <ti align="center">(prop,_trace_non_ex_files): (f,html,bold,open)(f,when,(prop,see_no_file),yes,no)(f,html,bold,close)</ti>
+        <ti></ti>
+      </ti>
+
+      <ti type="rec" label=" ">
+        <ti align="center">&#8595;</ti>                 
+        <ti align="center">&#8595;</ti> 
+        <ti></ti>
+      </ti>   
+           
+      <ti type="rec" label="(prop,_trace_change_to) ...">
+        <ti type="call_job"
+            explain="(prop,_trace_same_files): (f,html,bold,open)(f,when,(f,not,(prop,see_same_file)),yes,no)(f,html,bold,close)" 
+            align="center"
+            job="trace-update-config">
+          <prop id="see_no_file">(prop,see_no_file)</prop>
+          <prop id="see_same_file">(f,not,(prop,see_same_file))</prop>
+        </ti>           
+        <ti type="call_job"
+            explain="(prop,_trace_non_ex_files): (f,html,bold,open)(f,when,(f,not,(prop,see_no_file)),yes,no)(f,html,bold,close)" 
+            align="center"
+            job="trace-update-config">
+          <prop id="see_no_file">(f,not,(prop,see_no_file))</prop>
+          <prop id="see_same_file">(prop,see_same_file)</prop>
+        </ti>        
+
+        <ti></ti>
+      </ti>      
+      
+
+</job>
+
+<job id="trace-print-file" role="hidden">
+
+        <ti type="rec" label="(e:o)(loop,trace,#i)(e:c) (loop,trace,@rpath)">
+          <ti></ti>
+
+          <ti type="call_job" job="trace-file-print" explain="(prop,_trace_compare) ..."
+              test="(f,not,(prop,do_compare))">
+              <file id="compare-trace-1">(loop,trace,file,@fn)</file>
+          </ti>
+          <ti type="call_job" 
+              job="compare-trace-files" 
+              explain="(f,html,bold,open)(f,vob,prop,say)(f,html,bold,close)"
+              test="(f,and,(prop,do_compare),(prop,link))">
+              <file id="compare-trace-2">(f,vob,file,compare-trace-1)</file>
+              <file id="compare-trace-1">(loop,trace,file,@fn)</file>
+          </ti>  
+          
+          <ti type="text"  
+              x="(f,html,bold,open)(f,vob,prop,say)(f,html,bold,close)"
+              test="(f,and,(prop,do_compare),(f,not,(prop,link)))">
+          </ti>
+          
+          <ti type="call_service" job="Goto-Panorama-File"
+              explain="(prop,_trace_see_file)">
+            <file id="with">(loop,trace,file,@fn)</file>
+          </ti>          
+        </ti> 
+</job>
+
+<job id="trace-update-config" role="hidden">
+  <need>(prop,see_no_file) (prop,see_same_file)</need>
+  <spirit id="paras" act="open" xml="(file,gui)" 
+    flag="nuevo"/>
+    <spirit id="paras" act="xml_update"
+          how="set_attribute"
+          where="."
+          attribute="see_no_file"
+          value="(prop,see_no_file)"/>
+    <spirit id="paras" act="xml_update"
+          how="set_attribute"
+          where="."
+          attribute="see_same_file"
+          value="(prop,see_same_file)"/>          
+
+  <spirit id="paras" act="close" flag="save"/>
+  <call_job job="trace-file-print"/>
+</job>
+
+<job id="trace-load-paras-style" role="hidden">
+  <when test="(f,not,(f,file_exists,(file,gui)))">
+    <create_file out="(file,gui)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+          <gui/>]]></create_file>
+  </when>
+  
+  <spirit id="paras" act="open" xml="(file,gui)" 
+    flag="nuevo"/>
+    <prop id="see_no_file">0</prop>
+    <prop id="see_same_file">0</prop>
+        
+    <prop id="see_no_file" test="(f,spirit,paras,exists?,@see_no_file)">(f,spirit,paras,@see_no_file)</prop>
+    <prop id="see_same_file" test="(f,spirit,paras,exists?,@see_same_file)">(f,spirit,paras,@see_same_file)</prop>
+  <spirit id="paras" act="close" />
+</job>
+
+<job id="compare-files-trace" role="hidden">
+  <need>(file,a) (file,b)</need>
+  <file id="c2f-out">(dir,pro)deltas.xml</file>
+  <call_job job="Compare 2 Files-Internal"/>
+</job>
+
+<job id="compare-trace-files" role="hidden">
+  <need>(file,compare-trace-1) (file,compare-trace-2)</need>
+  <file id="c2f-out">(dir,pro)deltas.xml</file>
+  <file id="a">(file,compare-trace-1)</file>
+  <file id="b">(file,compare-trace-2)</file>
+  <call_job job="Compare 2 Files-Internal"/>
+</job>
+</jobs>

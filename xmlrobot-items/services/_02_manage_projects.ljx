@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="Project Management" joblevel="ws" tip="Do things with projects: create, backup or manage ..." role="hidden">
+
+  <!-- current project -->
+  <prop id="next" x="1"/>
+  
+  <when test="(f,exists,prop,pro)">
+    <call_service job="Project">
+      <prop id="pro-details" x="0"/> 
+      <prop id="pro-header" x="(f,html,i,open)Current Project(f,html,i,close): (prop,pro)" y="Project '(f,html,i,open)(prop,pro)(f,html,i,close)' of App '(f,html,i,open)(prop,app)(f,html,i,close)'"/>
+    </call_service>
+    <ti label="Folder:" type="call_service" job="Goto-Panorama" test="(f,role,admin)" explain="See Project Data">
+      <dir id="with" x="(dir,pro)"/>
+    </ti>
+    <prop id="next" x="(f,add,1,(prop,next))"/>
+    <ti_hr/>
+    
+  </when>
+  
+  <call_service job="Manage Projects of all Applications" />
+
+</job>
+
+<!-- 
+<job id="Add Elemement Project" role="hidden" docu="its the plus">
+  <when test="(f,exists,prop,app)">
+    <ti label="Create a new Project of (prop,app)"/>
+    <ti_break/>
+      <ti label=" " type="call_service" job="item-add-pro-empty" explain="Create just an emtpy project"/>
+    
+  </when>    
+</job>
+-->
+<job id="make-static-project" role="hidden">
+
+  <when test="(f,not,(f,exists,prop,pro))"  >
+    <choose>
+      <when test="(f,ask,app_has_static_pro,(prop,app))"  >
+        <prop id="pro" x="Standard-Project" />
+        <dir id="pro" x="(dir,pro_home)pro_standard" />
+        <mkdir dir="(dir,pro)" />
+      </when>
+      <otherwise>
+        <i>kein standard-project</i>
+      </otherwise>
+    </choose>
+  </when>
+</job>
+  
+<job id="Project" joblevel="app" role="hidden" docu="This job is called by the [[pdname]]-System. Its the 'Pro Cmds'.">
+  <call_service job="make-static-project"/>
+  <need default="1">(prop,pro-details)</need>
+  <need default="1">(prop,pro-backup-things)</need>
+  <need default="Project Management: (f,html,i,open)(prop,pro)(f,html,i,close)">(prop,pro-header)</need>
+    <choose>
+      <when test="(f,exists,prop,app)">
+      
+        
+        <when test="(prop,pro-backup-things)">
+        <ti label="(prop,pro-header)">        
+            <ti type="call_service" label="Backup:" job="Backup: Project" explain="Make a Backup of (f,upper,(prop,pro))"/>               
+            <ti type="call_service" label=" " job="See Project Backups" explain="See Backups"/>                                
+        </ti>
+        </when>
+        
+        <ti type="call_service" label=" " job="Reflect Project" explain="Reflect Project to local GH-Repo">
+          <prop id="reflect-pro">(prop,pro)</prop>
+          <prop id="reflect-app">(prop,app)</prop>
+          <dir id="reflect-pro">(dir,pro)</dir>
+        </ti>    
+        
+        <ti type="call_service" label="Actions:" job="Duplicate Project" explain="Duplicate Project">
+          <prop id="inst_id_to_duplicate">(prop,pro)</prop>
+          <dir id="inst_dir_to_duplicate">(dir,pro)</dir>
+        </ti> 
+        
+         
+            
+        <ti type="call_service" label=" " job="Rename Project" explain="Rename Project">
+          <prop id="inst_id_to_rename">(prop,pro)</prop>
+          <dir id="inst_dir_to_rename">(dir,pro)</dir>
+        </ti>
+        <ti type="call_service" label=" " job="Delete Project" explain="Delete Project">
+          <prop id="inst_id_to_delete">(prop,pro)</prop>
+          <dir id="inst_dir_to_delete">(dir,pro)</dir>
+        </ti>
+        
+        <ti type="call_service" label=" " job="Clear Project" explain="Clear Project">
+          <prop id="inst_id_to_delete">(prop,pro)</prop>
+          <dir id="inst_dir_to_delete">(dir,pro)</dir>
+        </ti>        
+        
+        <choose>
+          <when test="(prop,pro-details)">
+            <ti_break/>
+            
+            <!-- <ti_hr/> <ti label="Project-Folder" />  -->
+            
+            <dir id="with">(dir,pro)</dir>
+            <call_service job="Goto-Panorama"/>           
+          </when>
+          <otherwise>
+          </otherwise>
+        </choose>  
+       
+            
+      </when>
+      <otherwise>
+        <ti>No Application available</ti>
+      </otherwise>
+    </choose>
+        
+</job>
+<job id="Reflect Project"  role="hidden"  >
+    <need>(prop,reflect-app)</need>
+    <need>(prop,reflect-pro)</need>
+    <need>(dir,reflect-pro)</need>
+    
+    
+  <call_service job="go-joe-read">
+    <prop id="joe-in-regex" x="ref_repo"/>
+    <file id="joe-in-store" x="(dir,status)reflect-pro-store234.xrs"/>
+  </call_service>
+         
+  <tk label="Reflect pro '(prop,reflect-pro)' of app '(prop,reflect-app)'" flag="sum">
+    <tk type="dir" id="ref_repo" label="Local GH-Repo" 
+    test_first="(f,not,(f,has,dir,ref_repo))"/>
+  </tk>
+  <call_service job="go-joe-write">
+    <file id="joe-in-store" x="(dir,status)reflect-pro-store234.xrs"/>
+    <prop id="joe-in-regex" x="ref_repo"/>
+  </call_service>
+  
+  <!-- <interpreter watch="1"/> -->
+  <file id="wss" x="(dir,filetemp)workspaces.xml"/>
+  <dir id="myworkspaces" x="(dir,ref_repo)project-items(prop,fs)workspaces"/>
+  <choose>
+    <when test="(f,exists_dir,(dir,myworkspaces))"  >
+      <scan dir="(dir,myworkspaces)" level_limit="1" out="(file,wss)"/>
+    </when>
+    <otherwise>
+      <create_file out="(file,wss)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <dir dir="(x,(dir,myworkspaces))" />]]></create_file>
+    </otherwise>
+  </choose>
+  
+  <file id="selector" x="(dir,filetemp)selector.xml"/>
+  <xslt 
+    xml="(file,wss)" 
+    out="(file,selector)">
+    <inline attribute="xsl" flag="log"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <sel label="[ default location ]">0</sel>
+   <xsl:apply-templates select="dir/dir"/>
+   <sel label="+ new workspace ..">1</sel>
+  </sels>
+</xsl:template>
+
+<xsl:template match="dir">
+   <sel><xsl:value-of select="@rpath"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>  
+
+  <call_service job="go-joe-read">
+    <file id="joe-in-store" x="(dir,status)reflect-pro-store777.xrs"/>
+    <prop id="joe-in-regex" x="where_to"/>
+  </call_service>
+    
+  
+  <tk type="sel" 
+      id="where_to" 
+      label="Location to save to" xml="(file,selector)" flag="nono" tip="Store here it ..."/>
+
+  <call_service job="go-joe-write">
+    <file id="joe-in-store" x="(dir,status)reflect-pro-store777.xrs"/>
+    <prop id="joe-in-regex" x="where_to"/>
+  </call_service>
+
+  <choose>
+    <when test="(f,eq_text,0,(prop,where_to))">
+      <prop id="refl_target" x="project-items(prop,fs)app.(prop,reflect-app)(prop,fs)pro.(prop,reflect-pro)"/>
+    </when>
+    <when test="(f,eq_text,1,(prop,where_to))">
+      <tk label="Create new project-items-workspace" flag="sum">
+        <tk id="newname" label="Workspacename" tip="without ws." flag="nono"/>
+      </tk>
+      <dir id="newname" x="(dir,ref_repo)project-items(prop,fs)workspaces(prop,fs)ws.(prop,newname)"/>
+      <throw test="(f,exists_dir,(dir,newname))">A workspaces called ws.(prop,newname) exists already</throw>
+      <mkdir dir="(dir,newname)"/>
+      <prop id="refl_target" x="project-items(prop,fs)workspaces(prop,fs)ws.(prop,newname)(prop,fs)app.(prop,reflect-app)(prop,fs)pro.(prop,reflect-pro)"/>
+    </when>
+        
+    <otherwise>
+      <prop id="refl_target" x="project-items(prop,fs)workspaces(prop,fs)(prop,where_to)(prop,fs)app.(prop,reflect-app)(prop,fs)pro.(prop,reflect-pro)"/>
+
+    </otherwise>
+  </choose>
+  
+  <!--         
+  <ti type="dir" x="(dir,ref_repo)(prop,refl_target)"/>
+  <ti_break/>     -->
+  
+  <call_service job="copy-new">  
+    <dir id="cn-target" x="(dir,ref_repo)(prop,refl_target)"/>
+    <dir id="cn-from-dir" x="(dir,reflect-pro)"/>
+    <prop id="cn-report" x="1"/>
+  </call_service>  
+      
+</job>
+ 
+  
+<job id="Rename Project"  role="hidden" joblevel="app" >
+  <tk type="msg" msg="If it is a big project to rename we advise to rename just the project directory direcly in you operating system "/>
+  
+  <prop id="not-ok" x="1"/>
+  
+  <loop id="not-ok" while="()(prop,not-ok)()">
+    <tk label="Rename Project">
+      <tk id="new_name" 
+          label="Enter NEW NAME of Project" 
+          x="(prop,inst_id_to_rename)" 
+          flag="nono"
+          rule="filename_with_blanks"
+          tip="Old project-name was '(prop,inst_id_to_rename)'"/>
+    </tk> 
+    <throw test="(f,eq_text,Standard-Project,(prop,new_name))">Cannot use Standard-Project as project-id</throw>
+    <dir id="s">(f,dir_of_dir,(dir,inst_dir_to_rename))pro.(prop,new_name)</dir>
+    <choose>
+      <when test="(f,dir_exists,(dir,s))">
+        <tk label="Rename Project">
+          <tk type="msg" 
+              msg_type="e">A Project with the name '(prop,new_name)' exists already!</tk>
+        </tk>
+      </when>
+      <otherwise>
+        <prop id="not-ok" x="0"/>
+      </otherwise>
+    </choose>
+  </loop>
+  <copy uri="(dir,inst_dir_to_rename)" touri="(dir,s)"/>
+  <delete dir="(dir,inst_dir_to_rename)"/>  
+  <tk label="Rename Project">
+    <tk type="msg" 
+        msg_type="i">Rename performed(e:s) going to restart now ...</tk>
+  </tk>
+  <restart app="(prop,app)" pro="(prop,new_name)"/>
+   
+</job>
+ 
+<job id="Duplicate Project"  role="hidden">
+  <need>(prop,inst_id_to_duplicate)</need>
+  <prop id="inst_id_to_rename" x="(prop,inst_id_to_duplicate)"/>
+  <prop id="not-ok" x="1"/>
+  
+  <loop id="not-ok" while="()(prop,not-ok)()">
+    <tk label="Duplicate Project">
+      <tk id="new_name" 
+          label="Enter NEW NAME for Project-duplicate" 
+          x="(prop,inst_id_to_rename)" 
+          flag="nono"
+          rule="filename_with_blanks"
+          tip="Base project-name is '(prop,inst_id_to_rename)'"/>
+    </tk> 
+    <throw test="(f,eq_text,Standard-Project,(prop,new_name))">Cannot use Standard-Project as project-id</throw>
+    <dir id="s">(f,dir_of_dir,(dir,inst_dir_to_duplicate))pro.(prop,new_name)</dir>
+    <choose>
+      <when test="(f,dir_exists,(dir,s))">
+        <tk label="Duplicate Project">
+          <tk type="msg" 
+              msg_type="e">A Project with the name '(prop,new_name)' exists already!</tk>
+        </tk>
+      </when>
+      <otherwise>
+        <prop id="not-ok" x="0"/>
+      </otherwise>
+    </choose>
+  </loop>
+
+
+    <copy touri="(dir,s)" uri="(dir,inst_dir_to_duplicate)"/>
+ 
+  <tk label="Duplicate Project">
+    <tk type="msg" 
+        msg_type="i">Duplicate performed(e:s) going to restart now ...</tk>
+  </tk>
+  <restart app="(prop,app)" pro="(prop,new_name)"/>
+   
+</job> 
+ 
+<job id="Clear Project"  role="hidden">
+
+    <tk label="Clear project '(prop,inst_id_to_delete)' ?" 
+        type="accept" 
+        id="delete-pro-1" 
+        x="All project-data from the following folder will be erased:&#xA;&#xA;(dir,inst_dir_to_delete)&#xA;&#xA;Make sure you did a backup of your project before ..."
+        label_accept="Clear"
+        label_decline="Forget it"
+        width="700"
+        height="200">
+      <q id="delete-pro-2" label="()Yes, I know that project-data will be gone forever()"/>       
+    </tk>
+      
+  <choose>
+    <when test="(f,and,(prop,delete-pro-1),(prop,delete-pro-2))">
+      <delete content_of_dir="(dir,inst_dir_to_delete)"/>   
+      <ti label="Done(e:s) clear was performed">
+      <ti type="dir" x="(dir,inst_dir_to_delete)"/>  
+      </ti> 
+    </when> 
+    <otherwise>
+      <ti>Clear not performed</ti>
+    </otherwise>
+  </choose>
+        
+ </job>
+ 
+<job id="clear-dir"  role="hidden">
+  <!-- <tk type="msg">clear-dir out of support</tk> -->
+  <need>(dir,clear-dir-with)</need>
+  <need default="0">(prop,clear-dir-ant)</need>
+  
+  <when test="(f,not,(prop,clear-dir-ant))">
+    <delete content_of_dir="(dir,clear-dir-with)"/>
+  </when>
+  
+  <when test="(prop,clear-dir-ant)">
+    <ant level="debug" log_level="debug">
+      <delete>
+        <fileset dir="(f,dir,classic,(dir,clear-dir-with))" includes="**/*.*"/>
+      </delete>
+    
+    </ant>
+  </when>  
+          
+</job>
+ 
+  
+<job id="Delete Project"  role="hidden">
+
+    <tk label="Delete project '(prop,inst_id_to_delete)' ?" 
+        type="accept" 
+        id="delete-pro-1" 
+        x="All project-data will disappear.&#xA;This project-folder will be deleted:&#xA;(dir,inst_dir_to_delete)"
+        label_accept="Delete"
+        label_decline="Forget it"
+        width="300"
+        height="150">
+      <q id="delete-pro-2" label="()Yes, I know that project-data will be gone forever()"/>       
+    </tk>
+      
+  <choose>
+    <when test="(f,and,(prop,delete-pro-1),(prop,delete-pro-2))">
+    
+   
+        <delete dir="(dir,inst_dir_to_delete)"/>
+     
+      <tp>Delete Done</tp>
+      <restart/>      
+    </when> 
+    <otherwise>
+      <ti>Delete not performed</ti>
+    </otherwise>
+  </choose>
+        
+ </job>
+ 
+
+
+
+<job id="info_current_pro" joblevel="ws" role="hidden">
+  <call_app test="(f,ask,exists_job,(prop,app),??)"
+            app="(prop,app)"
+            pro_id="(prop,pro)"
+            pro_dir="(dir,pro)"
+            job="??"/>  
+  
+</job>
+
+<job id="info_current_apppro" joblevel="ws" role="hidden">
+  <try_catch>
+    <try>
+      <prop id="icap-has-standard-pro" x="1"/>
+      <prop id="sadfasdf" x="(f,ask,pro_data_dir,(prop,app),Standard-Project)"/>
+
+    </try>
+    <catch>
+      <prop id="icap-has-standard-pro" x="0"/>
+
+    </catch>
+  </try_catch>
+  <choose>
+    <when test="(f,and,(f,ask,exists_job,(prop,app),???),(prop,icap-has-standard-pro))">
+
+      <call_job app="(prop,app)"
+                pro="Standard-Project"
+                job="???"/>      
+    </when>
+    <otherwise>
+      <call_service job="info_current_app"/>
+    </otherwise>
+  </choose>
+</job>
+
+
+<!-- 
+<job id="Get Current Project Info" role="hidden">
+  
+  <call_job
+    job="??"
+    app="(prop,app)"
+    pro="(prop,pro)"
+    flxag="silent"/>
+  
+</job>
+-->
+
+<job id="Make Project" joblevel="pro" role="hidden">
+  <need>(dir,from-pro-home)</need>
+  <need>(dir,from-pro)</need>
+  <need>(prop,from-app)</need>
+  <tk label="Make Project">
+    <tk type="msg" x="Going to ask you now for project-name ..."/>
+  </tk>
+  <prop id="not_ok" x="1"/>
+  <loop id="not_ok" while="()(prop,not_ok)()">
+    <tk label="Make Project">
+      <tk type="text" 
+          id="new_project_id" 
+          rule="filename" 
+          flag="nono"
+          label="Name of new project" 
+          tip="Under this name the project can be found in the database"/>    
+    </tk>
+    
+
+    <dir id="new_project_dir" x="(dir,from-pro-home)pro.(prop,new_project_id)"/>
+    <choose>
+      <when test="(f,eq_text,Standard-Project,(prop,new_project_id))">
+        <tk label="Project name not allowed">
+          <tk type="msg" msg_type="e" x="project '(prop,new_project_id)' with this name [Standard-Project]not allowed&#xA;Enter another project-name ..."/>
+        </tk>
+      </when>    
+      <when test="(f,dir_exists,(dir,new_project_dir))">
+        <tk label="Project name not unique">
+          <tk type="msg" msg_type="e" x="project '(prop,new_project_id)' &#xA;with directory '(dir,new_project_dir)' &#xA;exists already.&#xA;Enter another project-name ..."/>
+        </tk>
+      </when>
+      <otherwise>
+        <prop id="not_ok" x="0"/>
+      </otherwise>
+    </choose>
+  </loop>
+
+  <mkdir dir="(dir,new_project_dir)" />
+
+    <copy touri="(dir,new_project_dir)" uri="(dir,from-pro)"/>
+ 
+  <tk label="Make Project">
+    <tk type="msg" msg="Switching now to new project '(prop,new_project_id)'"/>
+  </tk>
+  
+  <restart app="(prop,from-app)" pro="(prop,new_project_id)"/>    
+  
+</job>
+  
+</jobs>

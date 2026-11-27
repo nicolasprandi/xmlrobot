@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="event_post_update_url" role="hidden">
+    <call_job job="url-see-all"/>
+</job>
+
+<job id="event_url_go" role="hidden">
+  <call_job job="url-read"/>
+
+  <prop id="go-url"
+        x="(prop,url_url)"/>                         
+
+  <call_job job="go-somewhere"/>  
+</job>
+
+<job id="event_url_begin" role="hidden">
+  <ti label="My Urls"/>
+
+</job>
+
+<job id="event_url_ende" role="hidden">
+
+</job>
+
+</jobs>                                  

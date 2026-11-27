@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zirami-write">
+<need>(prop,zirami_key) (prop,isAdd)</need>
+<spirit act="open" id="ziramis_spirit_tc" xml="(file,ziramis)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,ziramis_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,ziramis_offset),0,(f,sub,(f,len,(prop,ziramis_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,ziramis_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="ziramis_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;zirami row="(prop,zirami_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="bez" value="(f,vob,prop,zirami_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="character" value="(f,vob,prop,zirami_character)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="beschreibung" value="(f,vob,prop,zirami_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="portionen" value="(f,vob,prop,zirami_portionen)"/>
+<file id="jack-in" x="(file,zirami_bild_read)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="bild_read" value="(prop,jack-result)"/>
+<file id="jack-in" x="(file,zirami_bild_write)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="bild_write" value="(prop,jack-result)"/>
+<dir id="jack-in" x="(dir,zirami_folders_read)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-dir" flag="silent">
+<dir id="jack-in" x="(dir,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))]" attribute="folders_read" value="(prop,jack-result)"/>
+<dir id="jack-in" x="(dir,zirami_folders_write)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-dir" flag="silent">
+<dir id="jack-in" x="(dir,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row=(f,xpath_string,(prop,zirami_key))]" attribute="folders_write" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="logo_max_x" value="(f,vob,prop,zirami_logo_max_x)"/>
+<when test="(f,exists,prop,zirami_logo_max_y)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="logo_max_y" value="(f,vob,prop,zirami_logo_max_y)"/>
+</when>
+<when test="(f,exists,prop,zirami_logo_max_x_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="logo_max_x_main" value="(f,vob,prop,zirami_logo_max_x_main)"/>
+</when>
+<when test="(f,exists,prop,zirami_logo_max_y_main)">
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="logo_max_y_main" value="(f,vob,prop,zirami_logo_max_y_main)"/>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="rezeptstatus" value="(f,vob,prop,zirami_rezeptstatus)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="bewertung" value="(f,vob,prop,zirami_bewertung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="ziramis_spirit_tc" where="(prop,ziramis_offset)zirami[@row='(prop,zirami_key)']" attribute="detail" value="(f,vob,prop,zirami_detail)"/>
+<spirit act="close" flag="save pretty" id="ziramis_spirit_tc"/>
+</job>

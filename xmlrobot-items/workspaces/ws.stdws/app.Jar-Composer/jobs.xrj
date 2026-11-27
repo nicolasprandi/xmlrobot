@@ -1,0 +1,457 @@
+<?xml version="1.0" ?>
+
+<jobs>
+ <call_job job="prolog" />
+ 
+ 
+<job id="?">
+    
+  <ti label="When to use Application (f,html,i,open)Simple-Java-Composer(f,html,i,close):">
+    <ti type="ul">(f,html,bold,open)You want to mere java-class-files and java-libraries(f,html,bold,close)</ti>
+
+
+  </ti>
+
+
+     
+</job> 
+
+<job id="??">
+
+
+  <choose>
+    <when test="(f,exists_file,(file,conf-data))">
+      <call_job job="tk_conf_print_values_tips"/>  
+      <ti label="Details"/>
+
+      <when test="(f,exists_dir,(f,vob,dir,imported_jars))">
+        <ti label="Imported jars:" type="dir" x="(dir,imported_jars)"/>
+        <ti label=" " type="call_job" job="do-clear-imported-jars" explain="Clear these imported jars ..." test="0"/>
+      </when>          
+      <when test="(f,exists_dir,(f,vob,dir,mt))">
+        <ti label="Result:" type="dir" x="(dir,mt)"/>
+      </when>          
+   
+    </when>
+    <otherwise>
+      <ti label="No configuration found">
+        <ti label="Next:" job="tk_conf_edit" explain="Edit Configuration" type="call_job"/>
+      </ti>
+    </otherwise>
+  </choose>
+  
+
+
+   
+  <!-- 
+  <ti label="Ready for export"/>
+  <ti type="dir" x="(dir,mt)"/>
+  <ti type="file" x="(file,conf_result)"/>
+  -->  
+</job>
+
+<job id="Edit Configuation" tip="Edit the parameters">
+  <call_job job="tk_conf_edit"/>
+
+</job>
+<job id="Edit Configuation?">
+  <call_job job="tk_conf_print_values_tips"/>
+
+</job>
+
+<job id="clear-imported-jars" role="hidden">
+
+  <call_service job="clear-dir" flag="silent">
+    <dir id="clear-dir-with" x="(dir,imported_jars)"/>   
+        <prop id="clear-dir-ant" x="(prop,ant)"/>
+  </call_service>
+</job>
+
+<job id="do-clear-imported-jars" role="hidden">
+  <tk type="msg" x="Do clear imported jars ?"/>
+  
+  <call_job job="clear-imported-jars" />
+  <ti label="Cleared">
+    <ti type="dir" x="(dir,imported_jars)"/>
+  </ti>
+</job>
+
+<job id="Import Jars" tip="Reads jars and extracts them">
+
+  <choose>
+    <when test="(f,exists_file,(file,conf-data))">
+      <call_job job="tk_conf_read"/>
+      
+      <choose>
+        <when test="(f,has,dir,conf_jars)">
+          <tp>Removing old data ...</tp>
+          <call_service job="clear-dir" flag="silent">
+            <dir id="clear-dir-with" x="(dir,imported_jars)"/>
+            <prop id="clear-dir-ant" x="(prop,ant)"/>
+          </call_service>
+         
+          <tp>Importing and extracting jars(e:s) ant=(prop,ant) ...</tp>
+          <when test="(f,not,(prop,ant))">
+            <unzip dir="(dir,conf_jars)" todir="(dir,imported_jars)">
+                <select>
+                  <file ext_equals="jar"/>
+                  <file ext_equals="zip"/>
+                </select>
+            </unzip>          
+          </when>
+          <when test="(prop,ant)">
+            <ant level="debug" >
+              <unzip dest="(f,dir,classic,(dir,imported_jars))">
+                <fileset dir="(f,dir,classic,(dir,conf_jars))">
+                    <include name="*.jar"/>
+                    <include name="*.zip"/>
+                </fileset>
+              </unzip>    
+            </ant>          
+          </when>  
+
+          <ti label="Did imported jars"/>
+          <ti type="dir" x="(dir,imported_jars)" label="To folder"/>           
+        </when>
+        <otherwise>
+        
+          <ti label="No jar-source in configuration found">
+            <ti label="Next:" job="tk_conf_edit" explain="Edit Configuration" type="call_job"/>
+          </ti>        
+          
+        </otherwise>
+      </choose>
+        
+ 
+    
+    </when>
+    <otherwise>
+      <ti label="No configuration found">
+        <ti label="Next:" job="tk_conf_edit" explain="Edit Configuration" type="call_job"/>
+      </ti>
+    </otherwise>
+  </choose>
+  
+
+
+</job>
+
+<job id="Import Jars?">
+      <ti label="Imported Jars"/>
+      <ti type="dir" x="(dir,imported_jars)" label="Extracted:"/>  
+      <ti type="call_service" job="Goto-Panorama" explain="See with panorama .." label="Actions:">
+        <dir id="with" x="(dir,imported_jars)"/>
+      </ti>
+<ti label=" " type="call_job" job="do-clear-imported-jars" explain="Clear these imported jars ..."/>      
+</job>
+
+<job id="Build?">
+  <call_job job="tk_conf_print_values_tips"/>
+  <when test="(f,exists_dir,(f,vob,dir,mt))">
+    <ti label="Content of jar:" type="dir" x="(dir,mt)"/>
+  </when>
+</job>
+
+<job id="Build" tip="Combines all ressources and builds the jar-file">
+ 
+
+  <choose>
+    <when test="(f,exists_file,(file,conf-data))">
+      <call_job job="tk_conf_read"/>  
+     
+      <tp>Removing old data...</tp>
+      <call_service job="clear-dir" flag="silent">
+        <dir id="clear-dir-with" x="(dir,mt)"/>
+        <prop id="clear-dir-ant" x="(prop,ant)"/>
+      </call_service>
+      
+
+      <tp>Copy jar-content(e:s) ant=(prop,ant) ...</tp>
+      <when test="(f,not,(prop,ant))">
+        <copy uri="(dir,imported_jars)" touri="(dir,mt)"/>
+      </when>
+      <when test="(prop,ant)">
+        <ant level="debug" >        
+          <copy todir="(f,dir,classic,(dir,mt))">
+            <fileset dir="(f,dir,classic,(dir,imported_jars))">
+                <include name="**/*.*"/>
+                <include name="**/*"/>
+            </fileset>
+          </copy>           
+        </ant>      
+      </when>                
+      
+        
+      <when test="(f,has,dir,conf_classes)">
+        <tp>Copy classes(e:s) ant=(prop,ant) ...</tp>
+        
+        <when test="(f,not,(prop,ant))">
+          <copy uri="(dir,conf_classes)" touri="(dir,mt)">
+            <select>
+              <file ext_equals="class"/>
+            </select>
+          </copy>        
+        </when>
+        <when test="(prop,ant)">
+          <ant level="debug" >        
+            <copy todir="(f,dir,classic,(dir,mt))">
+              <fileset dir="(f,dir,classic,(dir,conf_classes))">
+                  <include name="**/*.class"/>
+              </fileset>
+            </copy>    
+          </ant>         
+        </when>            
+      </when> <!-- ende: classes --> 
+      
+      <when test="(f,has,dir,conf_sources)">
+        <tp>Copy sources(e:s) ant=(prop,ant) ...</tp>
+        <when test="(f,not,(prop,ant))">
+          <copy uri="(dir,conf_sources)" touri="(dir,mt)">
+            <select>
+              <file ext_equals="java"/>
+            </select>
+          </copy>          
+        </when>
+        <when test="(prop,ant)">
+          <ant level="debug" >        
+            <copy todir="(f,dir,classic,(dir,mt))">
+              <fileset dir="(f,dir,classic,(dir,conf_sources))">
+                  <include name="**/*.java"/>
+              </fileset>
+            </copy>       
+          </ant>          
+        </when>          
+     
+      </when>  <!-- ende:  sources -->     
+                                                            
+      <when test="(f,has,dir,conf_overlay)">
+        <tp>Copy overlay(e:s) ant=(prop,ant) ...</tp>
+        <when test="(f,not,(prop,ant))">
+          <copy uri="(dir,conf_overlay)" touri="(dir,mt)"/>
+        </when>
+        <when test="(prop,ant)">
+          <ant level="debug" >        
+            <copy todir="(f,dir,classic,(dir,mt))">
+              <fileset dir="(f,dir,classic,(dir,conf_overlay))">
+                  <include name="**/*.*"/>
+                  <include name="**/*"/>
+              </fileset>
+            </copy>       
+          </ant>         
+        </when>          
+
+      </when>  <!-- ende: overlay -->  
+      
+      <when test="(f,has,file,conf_sep_3rd)">
+
+        <tp>Composing 3rd-party separated(e:s) ant=(prop,ant)  ...</tp>
+        <when test="(f,not,(prop,ant))">
+          <zip 
+            destfile="(file,conf_sep_3rd)"
+            basedir="(dir,imported_jars)"/>        
+        </when>
+        <when test="(prop,ant)">
+          <ant level="debug" >          
+            <zip 
+              destfile="(f,file,classic,(file,conf_sep_3rd))"
+              basedir="(f,dir,classic,(dir,imported_jars))"
+              defaultexcludes="no"/>                      
+          </ant>         
+        
+        </when>        
+ 
+        <ti label="Created"/>
+        <ti type="file" x="(file,conf_sep_3rd)" label="3rd-party-sepa"/> 
+                            
+      </when>  <!-- ende:  3rd separated -->           
+      
+      <when test="(f,has,file,conf_sep_my)">
+        <ti>Composing my-party separated  ...</ti>
+        <tp>Composing my-party separated  ...</tp>
+        <when test="(f,not,(prop,ant))">
+          <zip 
+            destfile="(file,conf_sep_my)"
+            basedir="(dir,conf_classes)"/>         
+        </when>
+        <when test="(prop,ant)">
+          <ant level="debug" >        
+            <zip 
+              destfile="(f,file,classic,(file,conf_sep_my))"
+              basedir="(f,dir,classic,(dir,conf_classes))"
+              defaultexcludes="no"/>      
+          </ant>        
+        </when>             
+
+        <ti label="Created"/>
+        <ti type="file" x="(file,conf_sep_my)" label="my-sepa"/> 
+                             
+      </when>   <!-- ende:  -->       
+      
+      <choose>
+        <when test="(f,has,file,conf_result)">
+          <tp>Composing jar ...</tp>
+          <when test="(f,not,(prop,ant))">
+            <zip 
+              destfile="(file,conf_result)"
+              basedir="(dir,mt)"/>           
+          </when>
+          <when test="(prop,ant)">
+            <ant level="debug" >        
+              <zip 
+                destfile="(f,file,classic,(file,conf_result))"
+                basedir="(f,dir,classic,(dir,mt))"
+                defaultexcludes="no"/>        
+            </ant>            
+          </when>               
+
+          <ti label="Created"/>
+          <ti type="file" x="(file,conf_result)"/> 
+          
+        </when>
+                                       
+        <when test="(f,has,dir,conf_result)">
+          <tp>Copy jar content to dir ...</tp>
+          
+          <call_service job="clear-dir" flag="silent">
+            <dir id="clear-dir-with" x="(dir,conf_result)"/>
+            <prop id="clear-dir-ant" x="(prop,ant)"/>
+          </call_service>
+                
+          <when test="(f,not,(prop,ant))">
+            <copy 
+              touri="(dir,conf_result)"
+              uri="(dir,mt)"/>           
+          </when>
+          <when test="(prop,ant)">
+            <ant level="debug" >        
+              <copy todir="(f,dir,classic,(dir,conf_result))">
+                <fileset dir="(f,dir,classic,(dir,mt))">
+                    <include name="**/*.*"/>
+                    <include name="**/*"/>
+                </fileset>
+              </copy>        
+            </ant>               
+          </when>     
+                  
+
+          <ti label="Created"/>
+          <ti type="dir" x="(dir,conf_result)"/> 
+                            
+        </when>        
+        <otherwise>
+          <ti label="This would be the output"/>
+          <ti type="dir" x="(dir,mt)"/>  
+          <ti>Define an output-file in your configuration </ti> 
+        </otherwise>
+      
+      </choose>  <!-- ende:  --> 
+      
+
+
+  
+    </when>   <!-- ende: hat conf-data --> 
+    <otherwise>
+      <ti label="No configuration found">
+        <ti label="Next:" job="tk_conf_edit" explain="Edit Configuration" type="call_job"/>
+      </ti>    
+    </otherwise>
+  </choose>   <!-- ende:  alles --> 
+ 
+
+  
+</job> 
+
+<job id="Reflect to GH-Repo" pri="10">
+  <call_job job="tk_refl_edit"/>
+  <call_job job="tk_conf_read"/>
+  <ti_hr/>
+  <ti label="Source-Files"/>
+  <choose>
+    <when test="(f,has,dir,conf_sources)">
+      
+      <call_service job="copy-new" flag="silent">  
+        <dir id="cn-target" x="(dir,refl_dir)src"/>
+        <dir id="cn-from-dir" x="(dir,conf_sources)"/>
+        <prop id="cn-report" x="1"/>
+      </call_service>    
+    </when>
+
+    <otherwise>
+      <ti>No sources specified(e:s) so they couldn't be reflected</ti>
+    </otherwise>
+  </choose>
+  
+  <when test="(prop,refl_also_jars)">
+    <ti_hr/>
+    <ti label="Jar-Files"/>
+    <choose>
+      <when test="(f,has,dir,conf_jars)">
+        
+        <call_service job="copy-new" flag="silent">  
+          <dir id="cn-target" x="(dir,refl_dir)3rd-party-libs/bins"/>
+          <dir id="cn-from-dir" x="(dir,conf_jars)"/>
+          <prop id="cn-report" x="1"/>
+        </call_service>    
+      </when>
+  
+      <otherwise>
+        <ti>No jars specified(e:s) so they couldn't be reflected</ti>
+      </otherwise>
+    </choose>  
+  </when>
+  
+  
+  <!--   
+  
+   <throw>ok</throw>
+  <call_service job="copy-new">  
+    <dir id="cn-target" x="(dir,refl_dir)"/>
+    <file id="cn-from-scan" x="(file,appscan)"/>
+    <prop id="cn-report" x="1"/>
+  </call_service>
+  -->
+</job>
+
+<job id="Reflect to GH-Repo?">
+  <call_job job="tk_refl_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_refl_clear" explain="Clear this data"/>
+</job>
+
+
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

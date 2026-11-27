@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+<rights>
+
+<r id="mymenu">
+  <de>myhome mymenu mysystem.xml</de>
+  <en>myhome mymenu mysystem.xml</en>
+</r>
+<r id="spi">
+  <de>selelection update input</de>
+  <en>selelection update input</en>
+</r>
+
+<r id="spr">
+  <de>selection update usage on integration</de>
+  <en>selection update usage on integration</en>
+</r>
+
+<r id="ipr">
+  <de>index point usage on integration</de>
+  <en>index point usage on integration</en>
+</r>
+
+<r id="ipi">
+  <de>index point input</de>
+  <en>index point input</en>
+</r>
+
+<r id="cust">
+  <de>index point custom conditions</de>
+  <en>index point custom conditions</en>
+</r>
+
+<r id="ref">
+  <de>reference scriptlocation anywhere</de>
+  <en>reference scriptlocation anywhere</en>
+</r>
+
+<r id="pdi">
+  <de>pdi-fragement -generator</de>
+  <en>pdi-fragement -generator</en>
+</r>
+
+<r id="db">
+  <de>individuelle db and db-credentials</de>
+  <en>individuelle db and db-credentials</en>
+</r>
+
+<r id="repo">
+  <de>individuelles repository</de>
+  <en>individuelles repository</en>
+</r>
+
+<r id="int">
+  <de>integration ausführen</de>
+  <en>integration ausführen</en>
+</r>
+
+<r id="install">
+  <de>db setup</de>
+  <en>db setup</en>
+</r>
+
+<r id="load">
+  <de>pdi-etl-jobs ausführen</de>
+  <en>pdi-etl-jobs ausführen</en>
+</r>
+
+<r id="stat">
+  <de>db-statistiken ausführen</de>
+  <en>db-statistiken ausführen</en>
+</r>
+
+<r id="details">
+  <de>??? wert-details, schaut überholt aus</de>
+  <en>??? wert-details, schaut überholt aus</en>
+</r>
+
+
+<r id="clear">
+  <de>tabellen leeren</de>
+  <en>tabellen leeren</en>
+</r>
+
+<r id="convert">
+  <de>csv to xml konvertieren</de>
+  <en>csv to xml konvertieren</en>
+</r>
+
+<r id="mv">
+  <de>MVs definieren</de>
+  <en>MVs definieren</en>
+</r>
+
+<r id="import">
+  <de>daten in den import-bereich importieren</de>
+  <en>daten in den import-bereich importieren</en>
+</r>
+
+<r id="explain">
+  <de>explain-bericht und mehr</de>
+  <en>explain-bericht und mehr</en>
+</r>
+
+<r id="sqli">
+  <de>iFaces und Stewards sehen</de>
+  <en>iFaces und Stewards sehen</en>
+</r>
+
+<r id="xls">
+  <de>query-export to xls</de>
+  <en>query-export to xls</en>
+</r>
+
+<r id="xlsx">
+  <de>query-export to xlsx</de>
+  <en>query-export to xlsx</en>
+</r>
+
+<r id="dev">
+  <de>scripte entwickeln</de>
+  <en>scripte entwickeln</en>
+</r>
+
+<r id="source">
+  <de>generierte iface-scripts ansehen</de>
+  <en>generierte iface-scripts ansehen</en>
+</r>
+
+<r id="index">
+  <de>full integration mit index-rebuild</de>
+  <en>full integration mit index-rebuild</en>
+</r>
+
+<r id="fork">
+  <de>erlaubt background bei Run Script</de>
+  <en>erlaubt background bei Run Script</en>
+</r>
+<r id="kill">
+  <de>erlaubt das loeschen von prozessen anderer benutzer</de>
+  <en>erlaubt das loeschen von prozessen anderer benutzer</en>
+</r>
+
+
+<r id="agent">
+  <de>coops im sky anlegen und loeschen</de>
+  <en>i>coops im sky anlegen und loeschen</en>
+</r>
+     
+<r id="intmydb">
+  <de>integration mit eigenen de-credentials ausfuehren</de>
+  <en>integration mit eigenen de-credentials ausfuehren</en>
+</r>      
+
+</rights>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dso-read">
+<need>(prop,dso_key)</need>
+<spirit act="open" missing_strategy="empty" id="dsos_spirit_tc" xml="(file,dsos)"/>
+<prop id="dso_dt_upd">(f,spirit,dsos_spirit_tc,(prop,dsos_offset)dso[@row=(f,xpath_string,(prop,dso_key))],@dt_upd)</prop>
+<prop id="dso_dt_add">(f,spirit,dsos_spirit_tc,(prop,dsos_offset)dso[@row=(f,xpath_string,(prop,dso_key))],@dt_add)</prop>
+<prop id="dso_objekttyp">(f,spirit,dsos_spirit_tc,(prop,dsos_offset)dso[@row=(f,xpath_string,(prop,dso_key))],@objekttyp)</prop>
+<prop id="dso_name">(f,spirit,dsos_spirit_tc,(prop,dsos_offset)dso[@row=(f,xpath_string,(prop,dso_key))],@name)</prop>
+<spirit act="close" id="dsos_spirit_tc"/>
+</job>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="tag-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Tag(prop,tage_offset_label)"/>
+<prop x="sum" id="tage_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,tag_key)</need>
+<prop id="label" x="Tag [(f,text,cut_nice,(prop,tag_bez),30)](prop,tage_offset_label)"/>
+<prop x="sum_only" id="tage_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="tag-tk"/>
+</job>

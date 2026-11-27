@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+  <job id="open-prolog" role="hidden">
+    <dir id="status" x="(dir,filetemp)status" test="0"/>
+  </job>
+  
+  <job id="open_dir" os="win">
+    <call_service job="open-prolog" />
+    <!-- <tk type="msg">open_dir with (dir,with)</tk>  -->
+    <need>(dir,with)</need>
+    <exe>
+      <arg>explorer.exe</arg>
+      <arg>&quot;(dir,with)&quot;</arg>
+    </exe>
+  </job>   
+  
+  <job id="open_file" os="win">
+  <call_service job="open-prolog" />
+    <need>(file,with)</need>
+
+    <exe>
+      <arg>explorer.exe</arg>
+      <arg>(file,with)</arg>
+    </exe>
+  </job>  
+  
+  <job id="sel_open_file_typical" os="win">
+  <call_service job="open-prolog" />
+    <call_service job="sel_open_file_memo_in"/>
+    <call_service job="sel_open_file_exe" />
+  </job>
+  
+  <job id="sel_open_file" os="win">
+  <call_service job="open-prolog" />
+    <need>(file,with)</need>
+    <need default="0">(prop,from_open_web)</need>
+    <call_service job="sel_open_file_memo_in"/>
+    <tk label="Open: (f,name_of_file,(file,with))">
+      <tk type="sel" id="sel" label="Select a Programm" default="default">
+        <option label="System Default Programm">default</option>
+        <option label="Notepad">editor</option>
+	     <option label="Open Dir ...">openfolder</option>
+
+      </tk>
+    </tk>
+    <call_service job="sel_open_file_memo_out"/>
+    
+    <call_service job="sel_open_file_exe" />
+    
+    
+  </job>   
+  
+<job id="sel_open_file_exe" os="win">
+<call_service job="open-prolog" />
+    <need default="nothing">(prop,sel)</need>
+    <choose>
+       <when test="(f,eq,(prop,sel),openfolder)">
+        <exe>
+          <arg>explorer.exe</arg>
+          <arg>&quot;(f,dir_of_file,(file,with))&quot;</arg>
+        </exe>
+      </when>
+      <when test="(f,eq,(prop,sel),editor)">
+        <exe>
+          <arg>notepad.exe</arg>
+          <arg>(file,with)</arg>
+        </exe>
+      </when> 
+       
+      <otherwise>
+			<!-- default os -->
+        <exe>
+          <arg>explorer.exe</arg>
+          <arg>(file,with)</arg>
+        </exe>
+      </otherwise>
+    </choose>      
+</job>
+</jobs>

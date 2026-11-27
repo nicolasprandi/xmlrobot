@@ -1,0 +1,323 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+<job id="Backups" role="expert" class_menu="menuSetup">
+  <ti_break/>
+  <ti type="rec" >
+  <ti>(f,html,b,o)Backup(f,html,b,c)</ti>
+  
+  <ti type="call_job" job="mybackup-do-remove-cache" explain="Clear Cache"/> 
+  </ti>  
+
+  <ti type="rec">
+  <ti type="call_job" job="mybackup-do-edit-loc" explain="Speicherort" label=" " flag="block button"/>  
+  <ti type="call_job" job="mybackup-do-see" explain="See Backups" label=" "/>
+  </ti>
+  
+  <ti type="rec">
+  <ti></ti>  
+ <ti type="call_job" job="mybackup-do-backup" explain="Make a Backup" label=" "/>
+  </ti>  
+
+                                                                                                             
+  <call_job job="tk_mback_print_values"/>
+ 
+  
+  
+
+  
+
+</job>
+<job id="mybackup-do-edit-loc" role="hidden">
+
+<call_job job="tk_mback_edit"/>
+
+  <ti_hr_break/>
+  <call_job job="Backups" />
+</job>
+
+<job id="mybackup-do-remove-cache" role="hidden">
+  <ti label="Delete Request" type="dir">(dir,pro)cache/</ti>
+  <throw test="(f,not,(f,exists_dir,(dir,pro)cache/))">Es existiert kein Cache</throw>
+  <tk type="msg">Really want to clear the cache
+(dir,pro)cache/ </tk>
+
+  <delete dir="(dir,pro)cache/"/>
+  <ti label="Done"/>
+  <ti>Cleard the cache</ti>
+  <ti_hr_break/>
+  <call_job job="Backups" />
+
+</job>
+
+<job id="mybackup-do-see" role="hidden">
+  <call_job job="tk_mback_read"/>
+
+  <dir id="with">(dir,mback_dir)</dir>
+  <prop id="backup_label">Project (prop,app)</prop>
+  <prop id="pro_temp">Project (prop,app)</prop>
+  
+  <!-- immerwieder die selbe backup-pro-location verwenden -->
+  <file id="little">(dir,pro)cache/little-Backup.txt</file>
+  <dir id="pro_temp"></dir>
+
+  <when test="(f,exists_file,(file,little))">
+    <dir id="pro_temp" x="(f,file_content,(file,little))"/>
+    <when test="(f,not,(f,starts_with,(dir,pro_temp),(f,request,dir,session_home_fs)))">
+      <dir id="pro_temp"></dir>
+    </when>
+  </when>
+  
+  <when test="(f,not,(f,has,dir,pro_temp))">
+      <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+      <mkdir dir="(dir,pro_temp)"/>
+      <create_file out="(file,little)">(dir,pro_temp)</create_file>   
+  </when>
+ 
+  <!-- einschleifen ins projekt -->
+  <dir id="api">(dir,pro_temp)Api</dir> 
+  <mkdir dir="(dir,api)"/> 
+  <choose>
+    <when test="(f,not,(f,dir_exists,(dir,with)))">
+      <ti>No Backups found</ti>
+    </when>
+    <otherwise>
+      <scan
+        dir="(dir,with)"
+        out="(dir,api)api-dirs.xml"
+        level_limit="1" 
+        field="fn pre post"/>  
+        
+      <print id="o1" out="(dir,api)api-paras.xml" act="open"/>
+      <print id="o1" act="print">&lt;paras limit="20" label="(x,(prop,backup_label))" /&gt;</print>
+      <print id="o1" act="close"/>    
+      
+      <call_app
+        job="List Backups"
+        app="Backup"
+        pro_dir="(dir,pro_temp)"
+        pro_id="(prop,pro_temp)"
+        flag="silent"/>     
+    </otherwise>
+  </choose>
+  
+  <ti_hr_break/>
+  <call_job job="Backups" />  
+
+</job>
+
+<job id="mybackup-do-backup" role="hidden">
+
+  <call_job job="tk_mback_read"/>
+  <throw test="(f,not,(f,has,dir,mback_dir))">Edit the Backup-Paras and specify the backup location</throw>
+  
+  <prop id="tit_add"></prop>
+  <tk label="Make Project Backup">
+    <tk id="tit" 
+        label="project (f,upper,(prop,pro))(e:s) give the backup a name!" 
+        x="" 
+        tip="()Give this backup a name, if you want!()"
+        rule="filename_with_blanks"/>
+  </tk>
+  
+  <when test="(f,has,prop,tit)"> 
+    <prop id="tit_add">_(prop,tit)</prop> 
+  </when>  
+  
+  <prop id="backup_moment">(f,time,yyyy-MM-dd,job)_(f,time,HH-mm,job)</prop>
+  
+  <dir id="my-backup-space">(dir,mback_dir)(prop,backup_moment)(prop,tit_add)</dir>  
+  <ti>Going into copy</ti>
+  <copy uri="(dir,pro)" touri="(dir,my-backup-space)"/>
+  <ti>Did the copy.</ti>
+ 
+  <when test="(f,ask,exists_job,(prop,app),sys_project_backup)">
+    <call_job job="sys_project_backup" />
+    <ti>Did app-specific backup requirements.</ti>
+  </when>
+  
+  <ti label="Did Backup"/>
+  <ti label="To:" type="dir" x="(dir,my-backup-space)"/>
+  
+  <ti_hr_break/>
+  <call_job job="Backups" />  
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+<!-- gui Adapters: to copy in the app .... 
+
+<job id="See Values: mback_" role="dev">
+  <call_job job="tk_mback_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_mback_clear" explain="Clear this data"/>  
+</job>
+
+<job id="Edit: mback_">
+  <call_job job="tk_mback_edit"/>
+</job>
+
+<job id="Edit: mback_?">
+  <call_job job="tk_mback_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_mback_clear" explain="Clear this data"/>
+</job>             -->
+
+<!-- 
+ <job id="Clear Data: mback_">
+  <tk type="msg" x="Sure to clear data of mback_ ?" msg_type="w"/>
+  <call_job job="tk_mback_clear"/>
+</job>
+
+<job id="Print Values:  mback_">
+  <call_job job="tk_mback_print_values"/>
+</job>
+<job id="Print Help: mback_" role="dev">
+  <call_job job="tk_mback_print_help"/>
+</job>
+
+-->
+
+<!-- setting the default-values -->
+<job id="tk_mback_default" role="hidden">
+
+</job>
+
+
+<!-- mback-core, make your changes here -->
+<job id="tk_mback_core" role="hidden" tip="mback_: Tk Internal">
+
+  <need default="">(prop,tk_mback_add_flag)</need>
+
+  <tk label="Parameters: Backup" 
+      flag="(prop,tk_mback_add_flag)"
+      tip="()Directory which will contain the Project-Backups.()"> 
+
+    <tk id="mback_dir" 
+        type="dir" 
+        label="Target-Directory"  
+        flag="nono"                 
+        tipx="()Directory which will contain the Project-Backups.()"/>
+  
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_mback_edit" tip="mback_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <file id="mback-data" x="(dir,pro)mback-data.xrs"/>
+  <prop id="mback-regex" x="mback_.+"/>
+    
+  <choose>
+    <when test="(f,exists_file,(file,mback-data))">
+      <!-- data exists already -->
+      <prop id="tk_mback_add_flag" x="sum_only print"/>
+      <call_job job="tk_mback_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_mback_add_flag" x="sum print"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_mback_default"/>
+  <!-- doing input -->
+  <call_job job="tk_mback_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_mback_write"/>
+
+</job>
+
+
+
+<job id="tk_mback_print_values" tip="mback_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_mback_read"/>
+  
+  <call_job job="tk_mback_core">
+    <prop id="tk_mback_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_mback_print_values_tips" tip="mback_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_mback_read"/>
+  
+  <call_job job="tk_mback_core">
+    <prop id="tk_mback_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_mback_print_help" tip="mback_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_mback_core">
+    <prop id="tk_mback_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_mback_read" role="hidden">
+  <file id="mback-data" x="(dir,pro)mback-data.xrs"/>
+  <prop id="mback-regex" x="mback_.+"/>
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,mback-data)" />
+    <prop id="joe-in-regex" x="(prop,mback-regex)" /> 
+  </call_job>
+  <call_job job="tk_mback_default"/>
+  
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_mback_write" role="hidden">
+  <file id="mback-data" x="(dir,pro)mback-data.xrs"/>
+  <prop id="mback-regex" x="mback_.+"/>
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,mback-data)" />
+    <prop id="joe-in-regex" x="(prop,mback-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_mback_clear"  tip="mback_: Clears the data" role="hidden">
+  <delete file="(file,mback-data)"/>
+</job>
+</jobs>

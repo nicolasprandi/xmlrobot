@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgo-tk">
+    <call_job job="tr_pgo"/>
+    <need default="">(prop,pgos_tk_control)</need>
+    <when test="(f,has_flag,(prop,pgos_tk_control),print_only)">
+        <choose>
+            <when test="(f,has_flag,(prop,pgos_tk_control),print_all_fields)">
+                <ti label="(prop,pgo_default_label_class) (prop,pgo_default_label_name)"/>
+            </when>
+            <otherwise>
+                <ti label=" " x="(f,html,b,o)(prop,pgo_default_label_class)(f,html,b,c)"/>
+            </otherwise>
+        </choose>
+    </when>
+    <tk label="(f,when,(f,has_flag,(prop,pgos_tk_control),print_only),,(prop,pgo_default_label_class)(f,when,(f,has,prop,pgo_default_label_name), (prop,pgo_default_label_name),))" tip="(prop,_pgo_t)" tk_id="20" flag="(prop,pgos_tk_control) wrap ">
+        <tk label="(prop,_pgo_otyp_l)" id="pgo_objekttyp" x="" test_first="1" tip="(prop,_pgo_otyp_t)" type="sel" flag=" nono " xml="(dir,repo)osel-(prop,tip-term-class).xml"/>
+        <tk label="(prop,_pgo_docu_l)" id="pgo_detail" x="" test_first="0" tip="(prop,_pgo_docu_t)" type="textblock" flag=" "/>
+    </tk>
+</job>

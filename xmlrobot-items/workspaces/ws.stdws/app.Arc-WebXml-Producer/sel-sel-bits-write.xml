@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<sel>
+  <sel xlabel="B1">enterAllManually</sel>
+  <sel xlabel="B1">enterConfirmOnly</sel>  
+  <sel xlabel="B2">chooseTk</sel> 
+  <sel xlabel="B2">hasProProv</sel>
+
+  
+  <!-- <sel label="B3">b3</sel>
+  <sel xlabel="B2">projectIsProjectProvision</sel>
+    <sel xlabel="B2">chooseProvisions</sel>
+  <sel label="B4">b4</sel>
+  <sel label="B5">b5</sel> 
+  <sel label="B6">b6</sel>
+  <sel label="B7">b7</sel>
+  <sel label="B8">b8</sel> 
+  <sel label="B9">b9</sel>
+  <sel label="B10">b10</sel>
+  <sel label="B11">b11</sel>
+  <sel label="B12">b12</sel> 
+  <sel label="B13">b13</sel>
+  <sel label="B14">b14</sel>
+  <sel label="B15">b15</sel> 
+  <sel label="B16">b16</sel>
+  <sel label="B17">b17</sel>
+  <sel label="B18">b18</sel> 
+  <sel label="B19">b19</sel>     -->
+     
+</sel>

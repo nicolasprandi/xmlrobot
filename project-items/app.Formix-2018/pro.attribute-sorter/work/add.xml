@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="attribute-add" level="app" role="hidden">
+<prop id="isAdd">1</prop>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="attribute-editor"/>
+<prop id="attribute_key">1</prop>
+<when test="(f,not,(f,exists,prop,attributes_offset_new_key))">
+<prop id="attributes_offset_new_key">//</prop>
+</when>
+<loop id="max" limit="1" flag="back" xml="(file,attributes)" sort="@row" number="@row" xpath="(prop,attributes_offset_new_key)attribute">
+<trace>max key=(loop,max,@row)</trace>
+<trace>i=(loop,max,#i)</trace>
+<prop id="attribute_key">(f,add,(loop,max,@row),1)</prop>
+</loop>
+<i>Generated Key for new Attribute: #(prop,attribute_key)</i>
+<call_job job="attribute-write"/>
+<ti label="Did add Attribute:" x="(f,html,bold,open)(prop,attribute_name)(f,html,bold,close)"/>
+<ti_hr/>
+<when test="(prop,do_return_job)">
+<call_job job="(prop,attributes_return_job)"/>
+</when>
+</job>

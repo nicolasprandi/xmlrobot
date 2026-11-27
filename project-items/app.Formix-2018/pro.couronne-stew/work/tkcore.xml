@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="stew-tk">
+<call_job job="tr_stew"/>
+<need default="">(prop,stews_tk_control)</need>
+<when test="(f,has_flag,(prop,stews_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,stews_tk_control),print_all_fields)">
+<ti label="(prop,stew_default_label_class): (prop,stew_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,stew_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,stews_tk_control),print_only),,(prop,stew_default_label_class)(f,when,(f,has,prop,stew_default_label_name),: (prop,stew_default_label_name),))" tip="(prop,_stew_tip)" tk_id="27" flag="(prop,stews_tk_control) wrap ">
+<tk label="(prop,_stew_l_type)" id="stew_type" x="" test_first="1" tip="(prop,_stew_t_type)" type="sel" flag=" nono ">
+<sel label="(prop,_stew_s_1_top)">top</sel>
+<sel label="(prop,_stew_s_1_intro)">intro</sel>
+<sel label="(prop,_stew_s_1_main)">main</sel>
+<sel label="(prop,_stew_s_1_extro)">extro</sel>
+<sel label="(prop,_stew_s_1_fin)">fin</sel>
+</tk>
+<tk label="(prop,_stew_l_hd_msg)" x="(prop,_stew_l_hd_msg)" test_first="0" tip="(prop,_stew_t_hd_msg)" type="msg" flag=" "/>
+<tk label="(prop,_stew_l_hd_usage)" id="stew_hd_usage" x="no" test_first="0" tip="(prop,_stew_t_hd_usage)" type="sel" flag=" nono ">
+<sel label="(prop,_stew_s_3_no)">no</sel>
+<sel label="(prop,_stew_s_3_sc)">sc</sel>
+<sel label="(prop,_stew_s_3_fr)">fr</sel>
+</tk>
+<tk label="(prop,_stew_l_hd_script)" id="stew_hd_script" x="" test_first="0" tip="(prop,_stew_t_hd_script)(prop,_scripthelper)" type="textblock" flag="  big bigbig wide "/>
+<tk label="(prop,_stew_l_hd_file)" id="stew_hd_file" x="" test_first="0" tip="(prop,_stew_t_hd_file)" type="file" flag=" "/>
+<tk label="(prop,_stew_l_ow_msg)" x="(prop,_stew_l_ow_msg)" test_first="0" tip="(prop,_stew_t_ow_msg)" type="msg" flag=" "/>
+<tk label="(prop,_stew_l_ow_usage)" id="stew_ow_usage" x="no" test_first="0" tip="(prop,_stew_t_ow_usage)" type="sel" flag=" nono ">
+<sel label="(prop,_stew_s_5_no)">no</sel>
+<sel label="(prop,_stew_s_5_sc)">sc</sel>
+<sel label="(prop,_stew_s_5_fr)">fr</sel>
+</tk>
+<tk label="(prop,_stew_l_ow_script)" id="stew_ow_script" x="" test_first="0" tip="(prop,_stew_t_ow_script)(prop,_scripthelper)" type="textblock" flag="  big bigbig wide "/>
+<tk label="(prop,_stew_l_ow_file)" id="stew_ow_file" x="" test_first="0" tip="(prop,_stew_t_ow_file)" type="file" flag=" "/>
+<tk label="(prop,_stew_l_ft_msg)" x="(prop,_stew_l_ft_msg)" test_first="0" tip="(prop,_stew_t_ft_msg)" type="msg" flag=" "/>
+<tk label="(prop,_stew_l_ft_usage)" id="stew_ft_usage" x="no" test_first="0" tip="(prop,_stew_t_ft_usage)" type="sel" flag=" nono ">
+<sel label="(prop,_stew_s_3_no)">no</sel>
+<sel label="(prop,_stew_s_3_sc)">sc</sel>
+<sel label="(prop,_stew_s_3_fr)">fr</sel>
+</tk>
+<tk label="(prop,_stew_l_ft_script)" id="stew_ft_script" x="" test_first="0" tip="(prop,_stew_t_ft_script)(prop,_scripthelper)" type="textblock" flag="  big bigbig wide "/>
+<tk label="(prop,_stew_l_ft_file)" id="stew_ft_file" x="" test_first="0" tip="(prop,_stew_t_ft_file)" type="file" flag=" "/>
+<tk label="(prop,_stew_l_ex_msg)" x="(prop,_stew_l_ex_msg)" test_first="0" tip="(prop,_stew_t_ex_msg)" type="msg" flag=" "/>
+<tk label="(prop,_stew_l_ex_usage)" id="stew_ex_usage" x="no" test_first="0" tip="(prop,_stew_t_ft_usage)" type="sel" flag=" nono ">
+<sel label="(prop,_stew_s_4_no)">no</sel>
+<sel label="(prop,_stew_s_4_sc)">sc</sel>
+<sel label="(prop,_stew_s_4_fr)">fr</sel>
+</tk>
+<tk label="(prop,_stew_l_ex_script)" id="stew_ex_script" x="" test_first="0" tip="(prop,_stew_t_ft_script)(prop,_scripthelper)" type="textblock" flag="  big bigbig wide "/>
+<tk label="(prop,_stew_l_ex_file)" id="stew_ex_file" x="" test_first="0" tip="(prop,_stew_t_ft_file)" type="file" flag=" "/>
+<tk label="(prop,_stew_l_admin)" x="(prop,_stew_l_admin)" test_first="0" type="msg" flag=" "/>
+<tk label="(prop,_stew_l_off)" id="stew_off" x="" test_first="0" tip="(prop,_stew_t_off)" type="bool" flag="  no_is_0 "/>
+<tk label="(prop,_stew_l_docu)" id="stew_docu" x="" test_first="0" tip="(prop,_stew_t_docu)" type="textblock" flag="  big "/>
+</tk>
+</job>

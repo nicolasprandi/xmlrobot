@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kompzut-see">
+<need>(prop,kompzut_key)</need>
+<call_job job="kompzut-read"/>
+<prop x="print print_only" id="kompzuts_tk_control"/>
+<prop id="label" x="(f,vob,prop,mcZutatenverwendung): (f,html,bold,open)(f,text,cut_nice,(f,tk_sel_translate,(prop,kompzut_zut_key),(file,akt-zutatenliste)),20)(f,html,bold,close)(f,when,(f,has,(prop,kompzuts_offset_label)), - (prop,kompzuts_offset_label),)"/>
+<call_job job="kompzut-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="[ ? ]" align="right" job="kompzut-see-more">
+<prop id="kompzut_key">(prop,kompzut_key)</prop>
+<file id="kompzuts">(file,kompzuts)</file>
+<prop id="kompzuts_offset">(prop,kompzuts_offset)</prop>
+<prop id="kompzuts_offset_label">(prop,kompzuts_offset_label)</prop>
+<prop id="kompzuts_offset_new_key">(prop,kompzuts_offset_new_key)</prop>
+<prop id="kompzuts_sort_attribute">(prop,kompzuts_sort_attribute)</prop>
+<prop id="kompzuts_sort_number">(prop,kompzuts_sort_number)</prop>
+<prop id="kompzuts_where">(prop,kompzuts_where)</prop>
+<prop id="kompzuts_return_job">(prop,kompzuts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag=" block" type="call_job" explain="[ Editiere Zutaten-Verwendung ]" job="kompzut-edit">
+<prop id="kompzut_key">(prop,kompzut_key)</prop>
+<file id="kompzuts">(file,kompzuts)</file>
+<prop id="kompzuts_offset">(prop,kompzuts_offset)</prop>
+<prop id="kompzuts_offset_label">(prop,kompzuts_offset_label)</prop>
+<prop id="kompzuts_offset_new_key">(prop,kompzuts_offset_new_key)</prop>
+<prop id="kompzuts_sort_attribute">(prop,kompzuts_sort_attribute)</prop>
+<prop id="kompzuts_sort_number">(prop,kompzuts_sort_number)</prop>
+<prop id="kompzuts_where">(prop,kompzuts_where)</prop>
+<prop id="kompzuts_return_job">(prop,kompzuts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+<ti type="rec">
+<ti/>
+<ti flag="no_arrow" test="(f,role,business)" type="call_job" explain="[ Loesche Zutatenverwendung ]" job="kompzut-del">
+<prop id="kompzut_key">(prop,kompzut_key)</prop>
+<file id="kompzuts">(file,kompzuts)</file>
+<prop id="kompzuts_offset">(prop,kompzuts_offset)</prop>
+<prop id="kompzuts_offset_label">(prop,kompzuts_offset_label)</prop>
+<prop id="kompzuts_offset_new_key">(prop,kompzuts_offset_new_key)</prop>
+<prop id="kompzuts_sort_attribute">(prop,kompzuts_sort_attribute)</prop>
+<prop id="kompzuts_sort_number">(prop,kompzuts_sort_number)</prop>
+<prop id="kompzuts_where">(prop,kompzuts_where)</prop>
+<prop id="kompzuts_return_job">(prop,kompzuts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti/>
+</ti>
+<try_catch>
+<try>
+<call_job job="zutatenverwendung-detail-ende"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: kompzut-details: end.0">
+<ti> hook_job=zutatenverwendung-detail-ende hook=end page=details station=0 object=kompzut</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>

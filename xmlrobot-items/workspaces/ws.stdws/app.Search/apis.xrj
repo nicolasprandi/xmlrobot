@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="api3" role="hidden" tip="called from services">
+   <need>(prop,search_for)</need> <!-- Der suchbegriff, kann text oder regex sein -->
+   <need default="text">(prop,search_type)</need> <!--  kann sein text oder regex -->
+   <need>(dir,search_dir)</need> <!-- Das directory in dem gesucht werden soll -->
+   <need default="1">(prop,search_levels)</need> <!-- Anzahl der directory levels -->
+   <need default=".xrj .xrs .xrt .ltx .lsx .ljx .txt .text .java .html .htm .xsl .php .txt .xml .sh .bat .log .sql .csv">(prop,search_ext)</need> <!-- liste der extensions der files die durchsucht werden sollen mit punkt am anfang-->
+   <need default="UTF-8">(prop,search_encoding)</need> <!--  -->
+   <need default="100">(prop,search_len_before)</need> <!-- Die anzahl der zeichen vor dem gefundenen anzeigen -->
+   <need default="300">(prop,search_len_after)</need> <!--  -->      
+ 
+  <call_job job="perform-search"/>
+  <call_job job="report-internal"/>  
+
+</job>
+
+<job id="api2" role="hidden" tip="called from services">
+
+ 
+  <call_job job="search-internal"/>
+
+</job>
+<job id="api1" role="hidden" tip="called from Activity">
+  <interpreter watch="0"/>
+  <file id="api1" x="(dir,pro)api1-para.xml"/>
+  <when test="(f,not,(f,file_exists,(file,api1)))">
+    <throw>Search-App: The Parameter-File api1-para.xml is not defined.
+Looking for (file,api1)</throw>
+  </when>
+  
+  <dir id="search_dir">(f,xpath,(file,api1),.,@dir)</dir>
+  <echo type="dir" id="search_dir"/>
+  <unescape type="dir" id="search_dir"/> 
+  <echo type="dir" id="search_dir"/>
+ 
+  <call_job job="search-internal"/>
+
+</job>
+</jobs>

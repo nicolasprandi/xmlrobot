@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgb-tk">
+<call_job job="tr_pgb"/>
+<need default="">(prop,pgbs_tk_control)</need>
+<when test="(f,has_flag,(prop,pgbs_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,pgbs_tk_control),print_all_fields)">
+<ti label="(prop,pgb_default_label_class): (prop,pgb_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,pgb_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,pgbs_tk_control),print_only),,(prop,pgb_default_label_class)(f,when,(f,has,prop,pgb_default_label_name),: (prop,pgb_default_label_name),))" tip="(prop,_pgb_t)" tk_id="19" flag="(prop,pgbs_tk_control) wrap ">
+<tk label="(prop,_pgb_btyp_l)" id="pgb_beztyp" x="" test_first="1" tip="(prop,_pgb_btyp_t)" type="sel" flag=" " xml="(file,pdi-sel-bez)"/>
+<tk label="(prop,_pgb_docu_l)" id="pgb_detail" x="" test_first="0" tip="(prop,_pgb_docu_t)" type="textblock" flag=" "/>
+</tk>
+</job>

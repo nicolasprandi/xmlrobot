@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="attribute-write">
+<need>(prop,attribute_key) (prop,isAdd)</need>
+<spirit act="open" id="attributes_spirit_tc" xml="(file,attributes)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,attributes_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,attributes_offset),0,(f,sub,(f,len,(prop,attributes_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,attributes_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="attributes_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;attribute row="(prop,attribute_key)" /&gt;</inline>
+</spirit>
+<spirit act="xml_update" how="set_attribute" attribute="dt_add" id="attributes_spirit_tc" where="(prop,attributes_offset)attribute[@row=(f,xpath_string,(prop,attribute_key))]" value="(f,time)"/>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" attribute="dt_upd" id="attributes_spirit_tc" where="(prop,attributes_offset)attribute[@row=(f,xpath_string,(prop,attribute_key))]" value="(f,time)"/>
+<spirit act="xml_update" how="set_attribute" id="attributes_spirit_tc" where="(prop,attributes_offset)attribute[@row='(prop,attribute_key)']" attribute="name" value="(prop,attribute_name)"/>
+<spirit act="xml_update" how="set_attribute" id="attributes_spirit_tc" where="(prop,attributes_offset)attribute[@row='(prop,attribute_key)']" attribute="pos" value="(prop,attribute_pos)"/>
+<spirit act="close" flag="save" id="attributes_spirit_tc"/>
+</job>

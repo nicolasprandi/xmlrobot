@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="find-read">
+    <need>(prop,find_key)</need>
+    <spirit act="open" missing_strategy="empty" id="finds_spirit_tc" xml="(file,finds)"/>
+    <prop id="find_dt_upd">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@dt_upd)</prop>
+    <prop id="find_dt_add">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@dt_add)</prop>
+    <prop id="find_xpath">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@xpath)</prop>
+    <prop id="find_titel">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@titel)</prop>
+    <prop id="find_desc">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@desc)</prop>
+    <prop id="find_style">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@style)</prop>
+    <prop id="find_by_link_text">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@by_link_text)</prop>
+    <prop id="find_by_partial_link_text">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@by_partial_link_text)</prop>
+    <prop id="find_by_class_name">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@by_class_name)</prop>
+    <prop id="find_by_css">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@by_css)</prop>
+    <prop id="find_by_id">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@by_id)</prop>
+    <prop id="find_by_name">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@by_name)</prop>
+    <prop id="find_by_tag_name">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@by_tag_name)</prop>
+    <file flag="cool" id="find_xsl_file">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@xsl_file)</file>
+    <unescape type="file" id="find_xsl_file"/>
+    <translate type="file" id="find_xsl_file"/>
+    <prop id="find_xsl_paras">(f,spirit,finds_spirit_tc,(prop,finds_offset)find[@row=(f,xpath_string,(prop,find_key))],@xsl_paras)</prop>
+    <spirit act="close" id="finds_spirit_tc"/>
+</job>

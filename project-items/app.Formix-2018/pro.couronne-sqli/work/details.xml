@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="sqli-see">
+    <need>(prop,sqli_key)</need>
+    <need default="">(prop,sqlis_sort_attribute)</need>
+    <need default="">(prop,sqlis_sort_number)</need>
+    <need default="">(prop,sqlis_sort_ignore_case)</need>
+    <need default="">(prop,sqlis_sort_desc)</need>
+    <need default="">(prop,sqlis_where)</need>
+    <need default="">(prop,sqlis_offset_label)</need>
+    <need default="">(prop,sqlis_offset)</need>
+    <need default="">(prop,sqlis_return_job)</need>
+    <need default="//">(prop,sqlis_offset_new_key)</need>
+    <need default="">(prop,squerys_sort_attribute)</need>
+    <need default="">(prop,squerys_sort_number)</need>
+    <need default="">(prop,squerys_sort_ignore_case)</need>
+    <need default="">(prop,squerys_sort_desc)</need>
+    <need default="">(prop,squerys_where)</need>
+    <need default="">(prop,squerys_offset_label)</need>
+    <need default="">(prop,squerys_offset)</need>
+    <need default="">(prop,squerys_return_job)</need>
+    <need default="//">(prop,squerys_offset_new_key)</need>
+    <need default="(file,sqlis)">(file,squerys)</need>
+    <call_job job="tr_sqli"/>
+    <prop x="print print_only" id="sqlis_tk_control"/>
+    <call_job job="event_squery_detail_back_button"/>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,sqlis_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="sqli-see">
+                    <prop id="sqli_key">(prop,sqli_key)</prop>
+                    <file id="sqlis">(file,sqlis)</file>
+                    <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+                    <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+                    <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+                    <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+                    <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+                    <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+                    <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+                    <prop id="sqlis_where">(prop,sqlis_where)</prop>
+                    <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+                    <file id="squerys">(file,squerys)</file>
+                    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+                    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+                    <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+                    <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+                    <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+                    <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+                    <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+                    <prop id="squerys_where">(prop,squerys_where)</prop>
+                    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+                    <prop id="squery_key">(prop,squery_key)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="squery-see">
+                    <file id="sqlis">(file,sqlis)</file>
+                    <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+                    <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+                    <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+                    <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+                    <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+                    <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+                    <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+                    <prop id="sqlis_where">(prop,sqlis_where)</prop>
+                    <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+                    <file id="squerys">(file,squerys)</file>
+                    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+                    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+                    <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+                    <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+                    <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+                    <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+                    <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+                    <prop id="squerys_where">(prop,squerys_where)</prop>
+                    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+                    <prop id="squery_key">(prop,squery_key)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+    <call_job job="sqli-read"/>
+    <call_job job="sqli_event_details_top"/>
+    <prop id="sqli_default_label_class" x="(prop,_sl_sqli)"/>
+    <prop id="sqli_default_label_name" x="(prop,sqli_name)(f,when,(f,has,(prop,sqlis_offset_label)), - (prop,sqlis_offset_label),)"/>
+    <ti type="menu" info="an-edit-button-details" first_cell="2" test="(f,or,(f,eq_text,top,(prop,sqli-detail-loc)),(prop,sqli-detail-private))">
+        <ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailSqli" explain="(prop,_x_edit)" job="sqli-edit">
+            <prop id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+        <ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskSqli" explain="(prop,_label_askask)" job="sqli-see-more">
+            <prop id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+    </ti>
+    <ti type="rec" test="(f,or,(f,eq_text,bot,(prop,sqli-detail-loc)),(prop,sqli-detail-private))" label=" ">
+        <ti type="call_job" page="details" flag="button" class="fx fxAction fxActionSqliRun" explain="(prop,_sqli_act_run)" job="sqli_event_run">
+            <prop id="greetings_from_page">details</prop>
+            <prop id="greetings_from_action">Run</prop>
+            <prop page="details" id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+        <ti/>
+    </ti>
+    <ti type="rec" test="(f,or,(f,eq_text,bot,(prop,sqli-detail-loc)),(prop,sqli-detail-private))" label=" ">
+        <ti type="call_job" page="details" flag="button" class="fx fxAction fxActionSqliEditrun" explain="(prop,_sqli_act_editnrun)" job="sqli_event_editrun">
+            <prop id="greetings_from_page">details</prop>
+            <prop id="greetings_from_action">Editrun</prop>
+            <prop page="details" id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+        <ti/>
+    </ti>
+    <call_job job="sqli-tk"/>
+    <call_job job="sqli_event_post_detail_data"/>
+    <ti_space height="3px"/>
+    <ti type="menu" info="an-edit-button-details" first_cell="2" test="(f,or,(f,eq_text,top,(prop,sqli-detail-loc)),(prop,sqli-detail-private))">
+        <ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailSqli" explain="(prop,_x_edit)" job="sqli-edit">
+            <prop id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+        <ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskSqli" explain="(prop,_label_askask)" job="sqli-see-more">
+            <prop id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+    </ti>
+    <ti type="rec" test="(f,or,(f,eq_text,bot,(prop,sqli-detail-loc)),(prop,sqli-detail-private))" label=" ">
+        <ti type="call_job" page="details" flag="button" class="fx fxAction fxActionSqliRun" explain="(prop,_sqli_act_run)" job="sqli_event_run">
+            <prop id="greetings_from_page">details</prop>
+            <prop id="greetings_from_action">Run</prop>
+            <prop page="details" id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+        <ti/>
+    </ti>
+    <ti type="rec" test="(f,or,(f,eq_text,bot,(prop,sqli-detail-loc)),(prop,sqli-detail-private))" label=" ">
+        <ti type="call_job" page="details" flag="button" class="fx fxAction fxActionSqliEditrun" explain="(prop,_sqli_act_editnrun)" job="sqli_event_editrun">
+            <prop id="greetings_from_page">details</prop>
+            <prop id="greetings_from_action">Editrun</prop>
+            <prop page="details" id="sqli_key">(prop,sqli_key)</prop>
+            <file id="sqlis">(file,sqlis)</file>
+            <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+            <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+            <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+            <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+            <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+            <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+            <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+            <prop id="sqlis_where">(prop,sqlis_where)</prop>
+            <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+            <file id="squerys">(file,squerys)</file>
+            <prop id="squerys_offset">(prop,squerys_offset)</prop>
+            <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+            <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+            <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+            <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+            <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+            <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+            <prop id="squerys_where">(prop,squerys_where)</prop>
+            <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+            <prop id="squery_key">(prop,squery_key)</prop>
+        </ti>
+        <ti/>
+    </ti>
+    <call_job job="sqli_event_details_end"/>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,sqlis_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="sqli-see">
+                    <prop id="sqli_key">(prop,sqli_key)</prop>
+                    <file id="sqlis">(file,sqlis)</file>
+                    <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+                    <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+                    <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+                    <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+                    <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+                    <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+                    <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+                    <prop id="sqlis_where">(prop,sqlis_where)</prop>
+                    <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+                    <file id="squerys">(file,squerys)</file>
+                    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+                    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+                    <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+                    <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+                    <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+                    <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+                    <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+                    <prop id="squerys_where">(prop,squerys_where)</prop>
+                    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+                    <prop id="squery_key">(prop,squery_key)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="squery-see">
+                    <file id="sqlis">(file,sqlis)</file>
+                    <prop id="sqlis_offset">(prop,sqlis_offset)</prop>
+                    <prop id="sqlis_offset_label">(prop,sqlis_offset_label)</prop>
+                    <prop id="sqlis_offset_new_key">(prop,sqlis_offset_new_key)</prop>
+                    <prop id="sqlis_sort_attribute">(prop,sqlis_sort_attribute)</prop>
+                    <prop id="sqlis_sort_number">(prop,sqlis_sort_number)</prop>
+                    <prop id="sqlis_sort_ignore_case">(prop,sqlis_sort_ignore_case)</prop>
+                    <prop id="sqlis_sort_desc">(prop,sqlis_sort_desc)</prop>
+                    <prop id="sqlis_where">(prop,sqlis_where)</prop>
+                    <prop id="sqlis_return_job">(prop,sqlis_return_job)</prop>
+                    <file id="squerys">(file,squerys)</file>
+                    <prop id="squerys_offset">(prop,squerys_offset)</prop>
+                    <prop id="squerys_offset_label">(prop,squerys_offset_label)</prop>
+                    <prop id="squerys_offset_new_key">(prop,squerys_offset_new_key)</prop>
+                    <prop id="squerys_sort_attribute">(prop,squerys_sort_attribute)</prop>
+                    <prop id="squerys_sort_number">(prop,squerys_sort_number)</prop>
+                    <prop id="squerys_sort_ignore_case">(prop,squerys_sort_ignore_case)</prop>
+                    <prop id="squerys_sort_desc">(prop,squerys_sort_desc)</prop>
+                    <prop id="squerys_where">(prop,squerys_where)</prop>
+                    <prop id="squerys_return_job">(prop,squerys_return_job)</prop>
+                    <prop id="squery_key">(prop,squery_key)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+</job>

@@ -1,0 +1,506 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="mox1" role="hidden">                                                               
+
+
+  <need>(prop,tox1-obj)</need>    <!-- = die objekt-id -->
+  <need>(prop,tox1-obj-type)</need>
+  <need>(prop,tox1-obj-name)</need>
+  <prop id="mox-pfad">(prop,tox1-obj-name)</prop>
+  <call_job job="tr_mox"/>
+  <call_job job="tr_tomo"/>
+
+  <dir id="mox1-home">(dir,goTestdata)</dir>
+  <prop id="mox1-fn">testdata-list.xml</prop>
+  <prop id="mox1-rn">testdata</prop>
+  <prop id="mox1-name">(prop,_pl_dsi)</prop>
+
+  <call_job job="go-joe-read">
+    <prop id="joe-in-regex" x="moxi-.*" />
+    <file id="joe-in-store" x="(dir,pro)moxi-cached-input.xrs" />
+  </call_job>   
+
+  <!-- scan vorbereiten -->                    
+  <file id="tox1-scan">(dir,pro)cache/tox1-scan.xml</file>
+  <file id="tox1-sel">(dir,pro)cache/tox1-sel.xml</file>
+
+  <mkdir dir="(dir,mox1-home)"/>
+  <quick_scan dir="(dir,mox1-home)" out="(file,tox1-scan)" flag="sel" level_limit="2" limit_level="2"/>
+
+  <xslt 
+    xml="(file,tox1-scan)" 
+    xsl="(dir,app)tox1-scan-to-sel.xsl"
+    out="(file,tox1-sel)">
+    <params>new='&lt; (prop,_mox_neue_sammlung) &gt;'  back='- zurueck' end='' </params>
+  </xslt>
+      
+  <tk label="(prop,mox-pfad)">  
+    <tk type="sel" id="moxi-buch" label="(prop,_mox_booksel2)"
+      flag="nono"
+      xml="(file,tox1-sel)"/>
+  </tk>
+        
+  <!-- gegebenenfalls neues buch anlegen -->
+  <when test="(f,eq_text,%new,(prop,moxi-buch))">
+    <call_job job="mox1-create-book"/>
+    <ti_break class_table="tabNavigator" />
+    <ti type="rec">
+    <ti align="right" x="+ Buch Testdaten '(prop,mox1-dirname)'" />
+    </ti>
+    
+    <prop id="moxi-buch">(prop,mox1-dirname)</prop>
+    <prop id="moxi-record">%new</prop>
+  </when>   
+  <create_file file="(dir,ghome)last-books/testdata_last.txt">(prop,moxi-buch)</create_file>    
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex" x="moxi-.*" />
+    <file id="joe-in-store" x="(dir,pro)moxi-cached-input.xrs" />
+  </call_job>  
+    
+  <prop id="tox1-what">(prop,moxi-buch)</prop>
+
+  <dir id="tox2-dir">(dir,mox1-home)(prop,tox1-what)</dir>
+  <file id="tox2-liste">(dir,mox1-home)(prop,tox1-what)/(prop,mox1-fn)</file>
+  <file id="tox2-sel">(dir,pro)cache/mox2-sel.xml</file>
+
+  <!-- mox2 buch gegeben, jetzt datensatz auswählen -->
+  <need>(dir,tox2-dir) (file,tox2-liste) (prop,mox1-name)</need>
+  
+  <prop id="mox-pfad">(prop,mox-pfad) &gt;&gt; (prop,moxi-buch)</prop>
+   
+  <xslt              
+    xml="(file,tox2-liste)" 
+    xsl="(dir,app)mox-record-sel.xsl"
+    out="(file,tox2-sel)">
+    <params>new='&lt; (prop,_mox_neuer_satz) &gt;'</params>
+  </xslt>
+      
+  <ti label="Daten" test="0" >(f,file_content,(file,tox2-liste))</ti>
+  <ti label="Auswahl" test="0" >(f,file_content,(file,tox2-sel))</ti>
+
+  <tk label="(prop,mox-pfad)">  
+  <tk type="sel" id="moxi-record" label="(prop,_mox_waehlen)"
+    tipx="_tox_select_a_t"      flag="nono"
+    xml="(file,tox2-sel)"/>
+  </tk>
+        
+  <!-- gegebenenfalls neuen datensatz anlegen -->
+  <choose>
+    <when test="(f,eq_text,%new,(prop,moxi-record))">
+      <file id="dsis">(file,tox2-liste)</file>
+      <prop id="hack-mox">1</prop>           
+      <prop id="dsi_name">(prop,tox1-obj-name)</prop>
+      <call_job job="dsi-add" />
+      <remove id="hack-mox" type="prop"/>
+
+      <!-- <prop id="moxi-record">(prop,dsi_key)</prop> -->
+      
+      <prop id="tox2-what">(prop,dsi_key)</prop>
+      <prop id="moxi-object">%new</prop>
+      
+    </when>       
+    <otherwise>
+      <prop id="dsi_name">(f,xpath,(file,tox2-liste),//dsi[@row=(prop,moxi-record)],@name)</prop>
+      <prop id="tox2-what">(prop,moxi-record)</prop> 
+    </otherwise>
+  </choose>
+  
+  <!-- der record ist nun gegeben, diesen speichern und merken-->
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex" x="moxi-.*" />
+    <file id="joe-in-store" x="(dir,pro)moxi-cached-input.xrs" />
+  </call_job>  
+    
+  <!-- <prop id="tox2-what">(prop,moxi-record)</prop>  -->
+  
+  <prop id="mox-pfad">(prop,mox-pfad) | (prop,dsi_name)</prop>
+  
+  <!-- nun das objekt -->
+
+  <file id="tox3-sel">(dir,pro)cache/mox3-sel.xml</file>
+  <xslt              
+    xml="(file,tox2-liste)" 
+    xsl="(dir,app)mox-object-sel.xsl"
+    out="(file,tox3-sel)">
+    <params>dsi_key=&apos;(prop,tox2-what)&apos; new=&apos;&lt; (prop,_mox_neues_objekt) &gt;&apos;</params>
+  </xslt>
+  
+  <ti label="Daten" test="0" >(f,file_content,(file,tox2-liste))</ti>
+  <ti label="Auswahl" test="0" >(f,file_content,(file,tox3-sel))</ti>
+
+  <tk label="(prop,mox-pfad)">  
+  <tk type="sel" id="moxi-object" label="(prop,_mox_waehlen2)"
+    tipx="_tox_select_a_t"         flag="nono"
+    xml="(file,tox3-sel)"/>
+  </tk>
+  <choose>
+    <when test="(f,eq_text,%new,(prop,moxi-object))">
+      <file id="dsos">(file,tox2-liste)</file>
+      
+      <prop id="dsi_key">(prop,tox2-what)</prop>
+      <prop id="dsos_offset">dsi[@row='(prop,dsi_key)']/</prop>
+      <prop id="hack-mox">1</prop>       
+      
+      <prop id="dso_objekttyp">(prop,tox1-obj-type)</prop>    
+      <prop id="dso_name">(prop,tox1-obj-name)</prop>
+      <call_job job="dso-add" />
+      <remove id="hack-mox" type="prop"/>
+
+      <prop id="moxi-object">(prop,dso_key)</prop>
+                
+    </when>   
+    <otherwise>
+      <prop id="dso_name">(f,xpath,(file,tox2-liste),//dso[@row=(prop,moxi-object)],@name)</prop>
+      <!-- <prop id="tox2-what">(prop,moxi-object)</prop>       -->
+    </otherwise>
+  </choose>
+      
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex" x="moxi-.*" />
+    <file id="joe-in-store" x="(dir,pro)moxi-cached-input.xrs" />
+  </call_job>  
+  
+  <prop id="mox-pfad">(prop,mox-pfad) | (prop,dso_name)</prop>
+
+  <prop id="ha-hint-key">(prop,moxi-object)</prop> 
+
+  <file id="hg-explore-result">(dir,filetemp)explore-result.xml</file> 
+  <file id="hg-ident-selector">(dir,filetemp)hg-ident-selector.xml</file> 
+  <file id="hg-printer">(dir,filetemp)hint-xml-printer.txt</file>
+
+  <call_job job="-db-open-"/>
+  
+  <dbc id="(prop,mydbc)"
+    out="(file,hg-explore-result)"
+    style="a"
+    act="select"
+    root_name="attrs"
+    row_name="attr"    
+    flag="trim">()select 
+obj.obj_id,
+obj.obj_typ,
+attr.attr_typ,
+wert.inhalt,
+wert.wert_id,
+ta.final_typ,
+attr_usg.ident as ident
+from
+obj as obj,
+attr as attr,                                             
+wert as wert,
+t_u as attr_usg,
+t_a as ta
+where
+obj.obj_id = ()(prop,tox1-obj)()
+and
+attr.obj_id = obj.obj_id and
+wert.attr_id = attr.attr_id and
+attr_usg.attr_typ = attr.attr_typ and
+attr_usg.obj_typ = obj.obj_typ and
+ta.attr_typ = attr.attr_typ
+;()</dbc>  
+    <ti label="result" test="0" >(f,file_content,(file,hg-explore-result))</ti>
+    <ti type="file" label="tip-attr-sel" test="0">(file,tip-attr-sel)</ti>
+    <xslt 
+        xml="(file,hg-explore-result)" 
+        xsl="(dir,app)hint-ident-selector.xsl" 
+        out="(file,hg-ident-selector)"
+        home="(dir,repo)">
+        <params>sel='(f,name_of_file,(file,tip-attr-sel))' </params>
+    </xslt>  
+    
+    <ti label="sel" test="0" >(f,file_content,(file,hg-ident-selector))</ti>
+  <!--     
+  <ti type="file" label="Attribute-selector"´>(f,file_content,(file,hg-ident-selector))</ti>    
+  -->       
+  <prop id="hg-ident-by" flag="catch">(f,xpath,(file,hg-ident-selector),//sel[position(e:o)(e:c)=1])</prop>
+  
+
+    
+    <tk label="(prop,_mox_go)" flag="sum">
+      <tk id="hg-ident-by" 
+          type="sel"
+          label="(prop,_mox_datenuebernahme)" 
+          xtip="(prop,_mox_go)" 
+          flag="nono multi" xml="(file,hg-ident-selector)"/>
+                
+    </tk>
+
+    <file id="ha-file">(file,tox2-liste)</file>
+    
+    <spirit act="open" id="hgh" xml="(file,ha-file)" />
+    
+
+    
+    <prop id="new_dsa_key">1</prop>
+    <loop id="max" limit="1" flag="back" spirit="hgh" sort="@row" number="@row" xpath="//dsa">
+      <prop id="new_dsa_key">(f,add,(loop,max,@row),1)</prop>
+    </loop>
+    <ti test="0" >new_dsa_key = (prop,new_dsa_key)</ti>    
+                                                     
+                                                         
+
+                                                           
+  
+  <print id="hgh" out="(file,hg-printer)" act="open"/>  
+  <print act="println" id="hgh">&lt;new-attributes&gt;</print>
+    <ti label="results" test="0">(f,file_content,(file,hg-explore-result))</ti>
+    <loop id="allatts" xml="(file,hg-explore-result)"  xpath="attr">
+      
+
+      <when test="(f,has_flag,(prop,hg-ident-by),(loop,allatts,@wert_id))">
+      
+        <prop id="der-wert-inhalt">(loop,allatts,@inhalt)</prop>
+        <!-- wie kommen wir vom attribut-typ zum variablen-typ -->
+        <prop id="the_final_typ">(f,xpath,(dir,repo)at-(loop,allatts,@attr_typ).xml,//at,@final_typ)</prop>
+        <!-- <ti label="the_final_typ">(prop,the_final_typ)</ti>    -->  
+        <when test="(f,or,(f,eq_num,3,(prop,the_final_typ)),(f,eq_num,4,(prop,the_final_typ)))">
+           <!-- zahl -->
+           <try_catch>
+            <try> 
+                              
+               <prop id="der-wert-inhalt">(f,add,0,(prop,der-wert-inhalt))</prop>
+              
+               <choose>
+                <when test="(f,ends_with,(prop,der-wert-inhalt),.0000)">
+                  <prop id="der-wert-inhalt">(f,substring_before,(prop,der-wert-inhalt),.0000)</prop>
+                </when>
+               
+               </choose>
+           
+            </try>
+            <catch>
+              <prop id="der-wert-inhalt">(loop,allatts,@inhalt)</prop>
+            </catch>
+          </try_catch>
+        
+        </when>      
+      
+          <print act="println" id="hgh">&lt;dsa wert=&quot;(x,(prop,der-wert-inhalt))&quot; attributtyp=&quot;(x,(loop,allatts,@attr_typ))&quot; row=&quot;(x,(prop,new_dsa_key))&quot; /&gt;</print>
+          <prop id="new_dsa_key">(f,add,(prop,new_dsa_key),1)</prop>
+      </when>
+      
+    </loop>  
+ 
+  <print act="println" id="hgh">&lt;/new-attributes&gt;</print>
+  
+  <print id="hgh" act="close"/>   
+  <!-- <ti label="(prop,_mox_appendto)"/>
+  <ti xlabel="printed">(f,file_content,(file,hg-printer))</ti> -->
+    
+  <spirit act="xml_update" how="insert_in" id="hgh" where="//dso[@row=(f,xpath_string,(prop,ha-hint-key))] " with="(file,hg-printer)" with_what="childs"/>
+        
+  <spirit act="close" id="hgh" flag="save" />
+  <!-- <ti x="(prop,_mox_didinsert)"/>
+  <ti_hr_break/> -->
+  <ti_break/>
+
+
+        <file id="dsis">(file,ha-file)</file>
+      <prop id="dsi_key">(prop,tox2-what)</prop>
+      
+        <file id="dsos">(file,ha-file)</file>
+      <prop id="dso_key">(prop,moxi-object)</prop>      
+      
+  <call_job job="blatt_get"/>
+  <choose>
+    <when test="(prop,blatt)">
+
+
+      <prop id="testdata-see-record-with-links">0</prop>
+      <call_job job="testdata-see-record"/>
+
+      
+    </when>
+    <otherwise>
+
+  
+      <call_job job="dso-see"/>
+    </otherwise>    
+  </choose>
+
+  <call_job job="mox4"/>
+
+
+
+
+
+</job>
+
+<job id="mox1-create-book" role="hidden">
+
+
+  <prop id="mox1-create-finished">1</prop>
+  <prop id="mox1-finaldirname"></prop>
+  
+  <loop id="dw" while="()(prop,mox1-create-finished)()">
+    <tk label="(prop,mox-pfad)">
+    <tk id="mox1-dirname" rule="filename" label="(prop,_tomo_newbook)" cols="30"/>
+    </tk>
+    <choose>
+      <when test="(f,has,prop,mox1-dirname)">
+      
+        <dir id="mox1-newdir">(dir,mox1-home)(prop,mox1-dirname)</dir>
+        <choose>
+          <when test="(f,exists_dir,(dir,mox1-newdir))">
+            <tk type="msg">(prop,_mox_ein_buch) &apos;(prop,mox1-dirname)&apos; (prop,_mox_existiert)</tk>
+          </when>
+          <otherwise>
+            <mkdir dir="(dir,mox1-newdir)"/>
+            <create_file file="(dir,mox1-newdir)official-book">ok</create_file>
+            <create_file out="(dir,mox1-newdir)(prop,mox1-fn)">&lt;(prop,mox1-rn)/&gt;</create_file>       
+            <prop id="mox1-finaldirname">(prop,mox1-dirname)</prop>
+            <prop id="mox1-create-finished">0</prop>
+            
+          </otherwise>
+        </choose>      
+      </when>
+      
+      <otherwise>
+        <prop id="mox1-create-finished">1</prop>
+      
+      </otherwise>
+    
+    </choose>
+    
+  </loop>
+
+
+  
+</job>  
+
+<job id="mox4" role="hidden">
+
+<call_job job="tk_search_read"/>
+<prop id="mox4-search-alt-for"></prop>
+<when test="(f,has,prop,search_for)">
+  <prop id="mox4-search-alt-for">(prop,search_for)</prop>
+</when>
+     
+<call_job job="go-joe-read">
+  <prop id="joe-in-regex" x="mox4-what" />
+  <file id="joe-in-store" x="(dir,pro)mox4-cached-input.xrs" />
+</call_job>   
+                            
+<prop id="mox3-obj-typ-plural">(f,xpath,(dir,repo)objects.xml,//ot[@tp=(prop,tox1-obj-type)],@np)</prop>
+
+<call_job job="tk_search_read"/>
+<prop id="search_for_propose">(prop,tox1-obj-name)</prop>
+      
+<tk label="(prop,_mox_erledigt)">  
+  <tk type="sel" id="mox4-what" label="(prop,_tomo_weiter):"     x="otyp-liste-ab"
+     >
+    <sel label="(prop,_tomo_lider) (prop,mox3-obj-typ-plural) (prop,_tomo_ab) '(prop,tox1-obj-name)'">otyp-liste-ab</sel> 
+    <sel label="(prop,_tomo_lial) (prop,mox3-obj-typ-plural)">otyp-liste</sel>
+     
+    <sel label="(prop,_tomo_alt_such): (prop,mox4-search-alt-for)"
+        test="(f,has,prop,mox4-search-alt-for)">alte-suche</sel>
+    
+    <sel label="(prop,_tomo_neu_such) (prop,search_for_propose)">neue-suche</sel>
+    
+     <sel label="(prop,_mox_next_this): (prop,dsi_name)">nix</sel>  
+    <sel label="(prop,_tomo_buch): (prop,moxi-buch)">buch</sel>       
+
+  </tk>
+</tk>
+
+<when test="(f,has,prop,mox4-what)">
+  
+<call_job job="go-joe-write">
+  <prop id="joe-in-regex" x="mox4-what" />
+  <file id="joe-in-store" x="(dir,pro)mox4-cached-input.xrs" />
+</call_job> 
+  
+  <choose>
+    <when test="(f,eq_text,alte-suche,(prop,mox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_alt_such): (prop,mox4-search-alt-for)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <prop id="hack-tox4-search-alt">1</prop>
+      <call_job job="_search" />
+      <remove type="prop" id="hack-tox4-search-alt" />
+    </when>
+    
+    <when test="(f,eq_text,neue-suche,(prop,mox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_neu_such) (prop,search_for_propose)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <prop id="search_for">(prop,search_for_propose)</prop>
+     
+      <prop id="search_type">-contains-</prop>
+      <prop id="search_obj_tech_name">(prop,tox1-obj-type)</prop>
+      <prop id="search_attr_tech_name"></prop>
+      <call_job job="tk_search_write"/>
+      <call_job job="_search" />
+      
+    </when> 
+       
+    <when test="(f,eq_text,otyp-liste,(prop,mox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_lial) (prop,mox3-obj-typ-plural)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <call_job job="Type-Of-Object">
+        <prop id="on-obj-typ">(prop,tox1-obj-type)</prop>
+        <prop id="on-obj-name-plural">(prop,mox3-obj-typ-plural)</prop>
+      
+      </call_job>
+    </when> 
+    
+    <when test="(f,eq_text,otyp-liste-ab,(prop,mox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_lider) (prop,mox3-obj-typ-plural) (prop,_tomo_ab) '(prop,tox1-obj-name)'(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <call_job job="Type-Of-Object">
+        <prop id="on-obj-typ">(prop,tox1-obj-type)</prop>
+        <prop id="on-obj-name-plural">(prop,mox3-obj-typ-plural)</prop>
+        <prop id="on-obj-start-id">(prop,tox1-obj)</prop>      
+        <prop id="on-obj-see-ja">1</prop>
+        <prop id="on-obj-tox-mox-direct">1</prop>      
+      </call_job>
+    </when>     
+    <when test="(f,eq_text,buch,(prop,mox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_buch): (prop,moxi-buch)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+       <call_job job="_testdata"/>    
+    </when>      
+    
+    <when test="(f,eq_text,nix,(prop,mox4-what))">
+    
+        <ti_hr_break class_table="tabNavigator" />
+        <ti type="rec">
+        <ti type="call_job" job="Type-Of-Object"   
+            explain="(prop,_tomo_lider) (prop,mox3-obj-typ-plural) (prop,_tomo_ab) '(prop,tox1-obj-name)'" 
+            xflag="button" xclass="fx fxAction" align="right">
+          <prop id="on-obj-typ">(prop,tox1-obj-type)</prop>
+          <prop id="on-obj-name-plural">(prop,mox3-obj-typ-plural)</prop>
+          <prop id="on-obj-start-id">(prop,tox1-obj)</prop>
+          <prop id="on-obj-see-ja">1</prop> 
+          <prop id="on-obj-tox-mox-direct">1</prop> 
+               
+        </ti>
+        </ti>    
+    </when>
+    
+    <otherwise>
+      <throw>problem 34yer</throw>
+    
+    </otherwise>  
+  </choose>
+
+</when>
+         
+</job>
+</jobs>

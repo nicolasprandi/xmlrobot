@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="hint-read">
+<need>(prop,hint_key)</need>
+<spirit act="open" missing_strategy="empty" id="hints_spirit_tc" xml="(file,hints)"/>
+<prop id="hint_dt_upd">(f,spirit,hints_spirit_tc,(prop,hints_offset)hint[@row=(f,xpath_string,(prop,hint_key))],@dt_upd)</prop>
+<prop id="hint_dt_add">(f,spirit,hints_spirit_tc,(prop,hints_offset)hint[@row=(f,xpath_string,(prop,hint_key))],@dt_add)</prop>
+<prop id="hint_objekt_typ">(f,spirit,hints_spirit_tc,(prop,hints_offset)hint[@row=(f,xpath_string,(prop,hint_key))],@objekt_typ)</prop>
+<prop id="hint_name">(f,spirit,hints_spirit_tc,(prop,hints_offset)hint[@row=(f,xpath_string,(prop,hint_key))],@name)</prop>
+<prop id="hint_doku">(f,spirit,hints_spirit_tc,(prop,hints_offset)hint[@row=(f,xpath_string,(prop,hint_key))],@doku)</prop>
+<spirit act="close" id="hints_spirit_tc"/>
+</job>

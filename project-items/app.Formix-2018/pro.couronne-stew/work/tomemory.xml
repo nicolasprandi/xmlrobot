@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="stew-read">
+<need>(prop,stew_key)</need>
+<spirit act="open" missing_strategy="empty" id="stews_spirit_tc" xml="(file,stews)"/>
+<prop id="stew_dt_upd">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@dt_upd)</prop>
+<prop id="stew_dt_add">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@dt_add)</prop>
+<prop id="stew_type">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@type)</prop>
+<prop id="stew_hd_usage">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@hd_usage)</prop>
+<prop id="stew_hd_script">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@hd_script)</prop>
+<file flag="cool" id="stew_hd_file">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@hd_file)</file>
+<unescape type="file" id="stew_hd_file"/>
+<translate type="file" id="stew_hd_file"/>
+<prop id="stew_ow_usage">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ow_usage)</prop>
+<prop id="stew_ow_script">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ow_script)</prop>
+<file flag="cool" id="stew_ow_file">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ow_file)</file>
+<unescape type="file" id="stew_ow_file"/>
+<translate type="file" id="stew_ow_file"/>
+<prop id="stew_ft_usage">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ft_usage)</prop>
+<prop id="stew_ft_script">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ft_script)</prop>
+<file flag="cool" id="stew_ft_file">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ft_file)</file>
+<unescape type="file" id="stew_ft_file"/>
+<translate type="file" id="stew_ft_file"/>
+<prop id="stew_ex_usage">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ex_usage)</prop>
+<prop id="stew_ex_script">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ex_script)</prop>
+<file flag="cool" id="stew_ex_file">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@ex_file)</file>
+<unescape type="file" id="stew_ex_file"/>
+<translate type="file" id="stew_ex_file"/>
+<prop id="stew_off">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@off)</prop>
+<prop id="stew_docu">(f,spirit,stews_spirit_tc,(prop,stews_offset)stew[@row=(f,xpath_string,(prop,stew_key))],@docu)</prop>
+<spirit act="close" id="stews_spirit_tc"/>
+</job>

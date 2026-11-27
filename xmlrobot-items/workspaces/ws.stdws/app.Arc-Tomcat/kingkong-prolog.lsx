@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><steps>
+<dir id="bin" x="(dir,loc)bin"/>
+<ti type="dir" label="Bin" test="0">(dir,bin)</ti>
+<dir id="catalina-admin" x="(dir,loc)conf(prop,fs)Catalina(prop,fs)localhost"/>
+<ti type="dir" label="Admin and Manager" test="0">(dir,catalina-admin)</ti>
+<dir id="common" x="(dir,loc)common"/>
+<ti type="dir" label="common" test="0">(dir,common)</ti>
+<dir id="conf" x="(dir,loc)conf"/>
+<ti type="dir" label="conf" test="0">(dir,conf)</ti>
+<dir id="tomcat-logs" x="(dir,loc)logs"/>
+<ti type="dir" label="logs" test="0">(dir,tomcat-logs)</ti>
+<dir id="server" x="(dir,loc)server"/>
+<ti type="dir" label="server" test="0">(dir,server)</ti>
+<dir id="shared" x="(dir,loc)shared"/>
+<ti type="dir" label="shared" test="0">(dir,shared)</ti>
+<dir id="tomcat-temp" x="(dir,loc)temp"/>
+<ti type="dir" label="temp" test="0">(dir,tomcat-temp)</ti>
+<dir id="webapps" x="(dir,loc)webapps"/>
+<ti type="dir" label="Web Apps" test="0">(dir,webapps)</ti>
+<dir id="work" x="(dir,loc)work"/>
+<ti type="dir" label="work" test="0">(dir,work)</ti>
+<file id="bat_startup" x="(dir,bin)startup.bat"/>
+<file id="bat_shutdown" x="(dir,bin)shutdown.bat"/>
+<file id="sh_startup" x="(dir,bin)startup.sh"/>
+<file id="sh_shutdown" x="(dir,bin)shutdown.sh"/>
+<prop id="srv_catalina" x="catalina"/>
+<prop id="srv_startup" x="startup"/>
+<prop id="srv_shutdown" x="shutdown"/>
+<prop id="srv_digest" x="digest"/>
+<file id="webxml" x="(dir,loc)conf(prop,fs)web.xml"/>
+<file id="indexjsp" x="(dir,loc)webapps(prop,fs)ROOT(prop,fs)index.jsp"/>
+<prop id="servicios" x="digest startup catalina"/>
+<file id="usersxml" x="(dir,loc)conf(prop,fs)tomcat-users.xml"/>
+<file id="contextxml" x="(dir,loc)conf(prop,fs)context.xml"/>
+<file id="serverxml" x="(dir,loc)conf(prop,fs)server.xml"/>
+<file id="catalinapolicy" x="(dir,loc)conf(prop,fs)catalina.policy"/>
+<file id="loggingprops" x="(dir,loc)conf(prop,fs)logging.properties"/>
+<file id="catalinaprops" x="(dir,loc)conf(prop,fs)catalina.properties"/>
+</steps>

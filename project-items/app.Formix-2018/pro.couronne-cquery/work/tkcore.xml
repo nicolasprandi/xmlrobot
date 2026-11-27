@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="squery-tk">
+<call_job job="tr_squery"/>
+<need default="">(prop,squerys_tk_control)</need>
+<call_job job="event_squery_editor"/>
+<when test="(f,has_flag,(prop,squerys_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,squerys_tk_control),print_all_fields)">
+<ti label="(prop,squery_default_label_class) (prop,squery_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,squery_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,squerys_tk_control),print_only),,(prop,squery_default_label_class)(f,when,(f,has,prop,squery_default_label_name), (prop,squery_default_label_name),))" tip="(prop,_squery_tip)" tk_id="26" flag="(prop,squerys_tk_control) wrap ">
+<tk label="(prop,_squery_sql_l)" id="squery_sql" x="(f,when,(prop,new-and-first-query),(prop,_squery_sql_d),select * from    ;)" test_first="1" tip="(prop,_squery_sql_t)" type="textblock" flag="  big bigbig wrap wide "/>
+<tk label="(prop,_squery_id_l)" id="squery_id" x="(f,when,(prop,new-and-first-query),(prop,_squery_id_d),(f,time))" test_first="1" tip="(prop,_squery_id_t)" type="text" cols="30" flag=" nono "/>
+<tk label="(prop,_squery_class1_l)" id="squery_class1" x="select" test_first="1" tip="(prop,_squery_class1_t)" type="sel" flag=" nono ">
+<sel label="(prop,_squery_class_select)">select</sel>
+<sel label="(prop,_squery_class_update)">update</sel>
+</tk>
+<tk label="(prop,_squery_desc_l)" id="squery_desc" x="" test_first="0" tip="(prop,_squery_desc_t)" type="textblock" flag="  big "/>
+<tk label="(prop,_squery_limit_msg_l)" x="(prop,_squery_limit_msg_l)" test_first="0" tip="(prop,_squery_limit_msg_t)" type="msg" flag=" "/>
+<tk label="(prop,_squery_limit_typ_l)" id="squery_limit_typ" x="conf" test_first="0" tip="(prop,_squery_limit_typ_t)" type="sel" flag=" nono ">
+<sel label="(prop,_squery_limittyp_conf)">conf</sel>
+<sel label="(prop,_squery_limittyp_no)">no</sel>
+<sel label="(prop,_squery_limittyp_indiv)">indiv</sel>
+</tk>
+<tk label="(prop,_squery_limit_indiv_l)" id="squery_limit_indiv" x="" test_first="0" tip="(prop,_squery_limit_indiv_t)" regex="\d+" regex_msg="Zahl/Number" type="text" cols="5" flag=" "/>
+<tk label="(prop,_squery_dyn_msg)" x="(prop,_squery_dyn_msg)" test_first="0" type="msg" flag=" "/>
+<tk label="(prop,_squery_prolo_l)" id="squery_prolog" x="" test_first="0" tip="(prop,_squery_prolo_t)(prop,_scripthelper)" type="textblock" flag="  big bigbig wide "/>
+<tk label="(prop,_squery_trans_l)" id="squery_translate" x="0" test_first="0" tip="(prop,_squery_trans_t)" type="bool" flag=" nono "/>
+<tk label="(prop,_squery_msg_optionen_l)" x="(prop,_squery_msg_optionen_l)" test_first="0" type="msg" flag=" "/>
+<tk label="(prop,_squery_archify_l)" id="squery_archify" x="0" test_first="0" tip="(prop,_squery_archify_t)" type="sel" flag=" nono  no_is_0 ">
+<sel label="(prop,_squery_archive_no)">0</sel>
+<sel label="(prop,_squery_archive_sim)">3</sel>
+<sel label="(prop,_squery_archive_exc)">1</sel>
+<sel label="(prop,_squery_archive_day)">2</sel>
+</tk>
+<tk label="(prop,_squery_trim_l)" id="squery_trim" x="1" test_first="0" tip="(prop,_squery_trim_t)" type="bool" flag=" nono  no_is_0 "/>
+</tk>
+</job>

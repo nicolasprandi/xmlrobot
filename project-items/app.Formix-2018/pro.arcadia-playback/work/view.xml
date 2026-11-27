@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="playback-see-all" level="ws" role="hidden" tip="Lists all Playbacks">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="playback_loop" xml="(file,playbacks)" xpath="(prop,playbacks_offset)playback(prop,playbacks_where)" sort="(prop,playbacks_sort_attribute)" number="(prop,playbacks_sort_number)" ignore_case="(prop,playbacks_sort_ignore_case)" desc="(prop,playbacks_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,playbacks_offset_label)),0)">
+<ti label="(prop,playbacks_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Beschreibung"/>
+<ti/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,playback_loop,@target)(f,html,bold,close)" job="playback-see">
+<prop id="playback_key">(loop,playback_loop,@row)</prop>
+<file id="playbacks">(file,playbacks)</file>
+<prop id="playbacks_offset">(prop,playbacks_offset)</prop>
+<prop id="playbacks_offset_label">(prop,playbacks_offset_label)</prop>
+<prop id="playbacks_offset_new_key">(prop,playbacks_offset_new_key)</prop>
+<prop id="playbacks_sort_attribute">(prop,playbacks_sort_attribute)</prop>
+<prop id="playbacks_sort_number">(prop,playbacks_sort_number)</prop>
+<prop id="playbacks_where">(prop,playbacks_where)</prop>
+<prop id="playbacks_return_job">(prop,playbacks_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,playback_loop,@desc))" type="text" x="(loop,playback_loop,@desc)"/>
+<ti test="(f,not,(f,has,(loop,playback_loop,@desc)))"/>
+<ti type="call_job" explain="Edit" job="playback-edit">
+<prop id="playback_key">(loop,playback_loop,@row)</prop>
+<file id="playbacks">(file,playbacks)</file>
+<prop id="playbacks_offset">(prop,playbacks_offset)</prop>
+<prop id="playbacks_offset_label">(prop,playbacks_offset_label)</prop>
+<prop id="playbacks_offset_new_key">(prop,playbacks_offset_new_key)</prop>
+<prop id="playbacks_sort_attribute">(prop,playbacks_sort_attribute)</prop>
+<prop id="playbacks_sort_number">(prop,playbacks_sort_number)</prop>
+<prop id="playbacks_where">(prop,playbacks_where)</prop>
+<prop id="playbacks_return_job">(prop,playbacks_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Del" job="playback-del">
+<prop id="playback_key">(loop,playback_loop,@row)</prop>
+<file id="playbacks">(file,playbacks)</file>
+<prop id="playbacks_offset">(prop,playbacks_offset)</prop>
+<prop id="playbacks_offset_label">(prop,playbacks_offset_label)</prop>
+<prop id="playbacks_offset_new_key">(prop,playbacks_offset_new_key)</prop>
+<prop id="playbacks_sort_attribute">(prop,playbacks_sort_attribute)</prop>
+<prop id="playbacks_sort_number">(prop,playbacks_sort_number)</prop>
+<prop id="playbacks_where">(prop,playbacks_where)</prop>
+<prop id="playbacks_return_job">(prop,playbacks_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Playbacks found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,playbacks_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="playback-add" explain="Add another Playback" job="playback-add">
+<file id="playbacks">(file,playbacks)</file>
+<prop id="playbacks_offset">(prop,playbacks_offset)</prop>
+<prop id="playbacks_offset_label">(prop,playbacks_offset_label)</prop>
+<prop id="playbacks_offset_new_key">(prop,playbacks_offset_new_key)</prop>
+<prop id="playbacks_sort_attribute">(prop,playbacks_sort_attribute)</prop>
+<prop id="playbacks_sort_number">(prop,playbacks_sort_number)</prop>
+<prop id="playbacks_where">(prop,playbacks_where)</prop>
+<prop id="playbacks_return_job">(prop,playbacks_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,playbacks)</file>
+<prop id="orga_where">(prop,playbacks_where)</prop>
+<prop id="orga_view_loop_id">playback_loop</prop>
+<prop id="orga_finished_job">hook_playback_orga_finished</prop>
+<prop id="orga_offset">(prop,playbacks_offset)</prop>
+<prop id="orga_offset_label">(prop,playbacks_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,playbacks_offset_new_key)</prop>
+<prop id="orga_segment_plural">playbacks</prop>
+<prop id="orga_segment_singular">playback</prop>
+<prop id="orga_segment_plural_label">Playbacks</prop>
+<prop id="orga_segment_singular_label">Playback</prop>
+<prop id="orga_sort_attribute">(prop,playbacks_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,playbacks_sort_number)</prop>
+<prop id="orga_where">(prop,playbacks_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,playback_loop,@target)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,playbacks)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,playbacks_offset)),0)">(prop,playbacks_offset)</ti>
+</ti>
+</when>
+</job>

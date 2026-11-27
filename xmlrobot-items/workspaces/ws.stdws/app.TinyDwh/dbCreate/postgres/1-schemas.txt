@@ -1,0 +1,12 @@
+-- Copyright © 2018-2021 Nicolas Prandstaetter. All rights reserved.
+CREATE SCHEMA import
+  AUTHORIZATION postgres;
+  
+CREATE SCHEMA int
+  AUTHORIZATION postgres;
+  
+CREATE SCHEMA vok
+  AUTHORIZATION postgres;    
+  
+CREATE SCHEMA stat
+  AUTHORIZATION postgres;

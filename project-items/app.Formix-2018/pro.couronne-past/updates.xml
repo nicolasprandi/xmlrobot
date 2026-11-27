@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="view nach rechts" file_class="view" search="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti flag=&quot;block&quot;" search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot;&gt;&lt;ti&gt; &lt;/ti&gt;&#xA;&lt;ti flag=&quot;block&quot;" off="1" />
+  <update row="2" titel="add nach links" file_class="view" search="&lt;ti type=&quot;rec&quot; label=&quot; &quot;&gt;" search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot; &gt;" off="1" />
+  <update row="3" titel="translator-tk" file_class="tkcore" search="id=&quot;pgo-tk&quot;&gt;" search_type="text" expectation="1" replace="id=&quot;pgo-tk&quot;&gt;&#xA;&lt;call_job job=&quot;tr_pgo&quot; /&gt;" off="1" />
+  <update row="4" titel="translator-view" file_class="view" search="role=&quot;hidden&quot;&gt;" search_type="text" expectation="1" replace="role=&quot;hidden&quot;&gt;&#xA;&lt;call_job job=&quot;tr_pgo&quot; /&gt;" off="1" />
+  <update row="5" titel="view nach rechts" file_class="view" search="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti flag=&quot;block&quot; " search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot;&gt;&lt;ti/&gt;&#xA;&lt;ti " off="1" />
+  <update row="6" titel="verschub" file_class="view" search="&lt;/prop&gt;&#xA;&lt;/ti&gt;&#xA;&lt;/ti&gt;&#xA;&lt;/when&gt;" search_type="text" expectation="1" replace="&lt;/prop&gt;&#xA;&lt;/ti&gt;&#xA;&lt;ti&gt; &lt;/ti&gt;&lt;ti&gt; &lt;/ti&gt;&lt;ti&gt; &lt;/ti&gt;&#xA;&lt;/ti&gt;&#xA;&lt;/when&gt;" off="1" />
+  <update row="7" titel="add links" file_class="view" search="&lt;ti type=&quot;rec&quot; label=&quot; &quot;&gt;&#xA;&lt;ti type=&quot;menu&quot; span=&quot;10&quot;&gt;" search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti type=&quot;menu&quot; span=&quot;10&quot;&gt;" off="0" />
+  <update row="8" titel="block" file_class="view" search="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti flag=&quot;&quot; type=&quot;call_job&quot; prefix=&quot;  &quot;" search_type="text" expectation="1" replace="&lt;ti type=&quot;rec&quot;&gt;&#xA;&lt;ti flag=&quot;block&quot; type=&quot;call_job&quot; prefix=&quot;  &quot;" />
+  <update row="9" titel="hr-view" file_class="view" search="desc=&quot;(prop,pasts_sort_desc)&quot;&gt;" search_type="text" expectation="1" replace="desc=&quot;(prop,pasts_sort_desc)&quot;&gt;&#xA;&lt;ti_hr xtest=&quot;(f,not,(f,eq_num,1,(loop,past_loop,#i)))&quot; /&gt;" />
+  <update row="10" titel="hr-loop-end" file_class="view" search="&lt;/loop&gt;" search_type="text" expectation="1" replace="&lt;/loop&gt;&#xA;&lt;ti_hr/&gt;" />
+</updates>

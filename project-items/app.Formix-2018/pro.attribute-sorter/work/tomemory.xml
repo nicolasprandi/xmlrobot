@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="attribute-read">
+<need>(prop,attribute_key)</need>
+<spirit act="open" missing_strategy="empty" id="attributes_spirit_tc" xml="(file,attributes)"/>
+<prop id="attribute_dt_upd">(f,spirit,attributes_spirit_tc,(prop,attributes_offset)attribute[@row=(f,xpath_string,(prop,attribute_key))],@dt_upd)</prop>
+<prop id="attribute_dt_add">(f,spirit,attributes_spirit_tc,(prop,attributes_offset)attribute[@row=(f,xpath_string,(prop,attribute_key))],@dt_add)</prop>
+<prop id="attribute_name">(f,spirit,attributes_spirit_tc,(prop,attributes_offset)attribute[@row=(f,xpath_string,(prop,attribute_key))],@name)</prop>
+<prop id="attribute_pos">(f,spirit,attributes_spirit_tc,(prop,attributes_offset)attribute[@row=(f,xpath_string,(prop,attribute_key))],@pos)</prop>
+<spirit act="close" id="attributes_spirit_tc"/>
+</job>

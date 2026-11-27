@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="taste-read">
+<need>(prop,taste_key)</need>
+<spirit act="open" missing_strategy="empty" id="tastes_spirit_tc" xml="(file,tastes)"/>
+<prop id="taste_dt_upd">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@dt_upd)</prop>
+<prop id="taste_dt_add">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@dt_add)</prop>
+<prop id="taste_was">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@was)</prop>
+<prop id="taste_getestetes_lokal">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@getestetes_lokal)</prop>
+<prop id="taste_wer_testet">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@wer_testet)</prop>
+<prop id="taste_getesteter_koch">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@getesteter_koch)</prop>
+<prop id="taste_todo">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@todo)</prop>
+<prop id="taste_notiz">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@notiz)</prop>
+<prop id="taste_note">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@note)</prop>
+<prop id="taste_status">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@status)</prop>
+<prop id="taste_date_active">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@date_active)</prop>
+<prop id="taste_date_build">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@date_build)</prop>
+<prop id="taste_date_closed">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@date_closed)</prop>
+<prop id="taste_types">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@types)</prop>
+<prop id="taste_sum">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@sum)</prop>
+<prop id="taste_details">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@details)</prop>
+<prop id="taste_name">(f,spirit,tastes_spirit_tc,(prop,tastes_offset)taste[@row=(f,xpath_string,(prop,taste_key))],@name)</prop>
+<spirit act="close" id="tastes_spirit_tc"/>
+</job>

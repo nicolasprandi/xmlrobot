@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="atyp-see">
+<need>(prop,atyp_key)</need>
+<call_job job="atyp-read"/>
+<prop x="print print_only" id="atyps_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(prop,atyp_bez),45)(f,html,bold,close)(prop,atyps_offset_label)"/>
+<ti test="(f,role,user)" type="call_job" explain="Bearbeite Aktions-Typ" job="atyp-edit">
+<prop id="atyp_key">(prop,atyp_key)</prop>
+<file id="atyps">(file,atyps)</file>
+<prop id="atyps_offset">(prop,atyps_offset)</prop>
+<prop id="atyps_offset_label">(prop,atyps_offset_label)</prop>
+<prop id="atyps_offset_new_key">(prop,atyps_offset_new_key)</prop>
+<prop id="atyps_sort_attribute">(prop,atyps_sort_attribute)</prop>
+<prop id="atyps_sort_number">(prop,atyps_sort_number)</prop>
+<prop id="atyps_where">(prop,atyps_where)</prop>
+<prop id="atyps_return_job">(prop,atyps_return_job)</prop>
+</ti>
+<call_job job="atyp-tk"/>
+<ti_space height="3px"/>
+</job>

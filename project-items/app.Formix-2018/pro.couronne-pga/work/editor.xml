@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pga-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="pga_default_label_class" x="+ (prop,_sl_pga)"/>
+<prop id="pga_default_label_name" x="(f,when,(f,has,(prop,pgas_offset_label)), - (prop,pgas_offset_label),)"/>
+<prop id="pgas_tk_control" x="sum"/>
+</when>
+<otherwise>
+<need>(prop,pga_key)</need>
+<prop id="pga_default_label_class" x="(prop,_sl_pga)"/>
+<prop id="pga_default_label_name" x="(f,tk_sel_translate,(prop,pga_attributtyp),(file,pdi-sel-attr))(f,when,(f,has,(prop,pgas_offset_label)), - (prop,pgas_offset_label),)"/>
+<prop id="pgas_tk_control" x="sum_only"/>
+</otherwise>
+</choose>
+<call_job job="pga-tk"/>
+</job>

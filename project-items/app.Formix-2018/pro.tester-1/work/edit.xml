@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="computer-edit">
+<need>(prop,computer_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="computer-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="computer-editor"/>
+<call_job job="computer-write"/>
+<ti label="Did update Computer:" x="(f,html,bold,open)(prop,computer_computer)(f,html,bold,close)"/>
+<ti_break/>
+<ti_hr/>
+<call_job job="computer-see"/>
+</job>

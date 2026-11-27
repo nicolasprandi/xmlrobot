@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="modo2-see">
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=begin hook_job=hook_begin_of_modo2_details</trace>
+<call_job job="hook_begin_of_modo2_details"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: modo2-details: begin.0">
+<ti> hook_job=hook_begin_of_modo2_details hook=begin page=details station=0 object=modo2</ti>
+</ti>
+</catch>
+</try_catch>
+<need>(prop,modo2_key)</need>
+<call_job job="modo2-read"/>
+<prop x="print print_only" id="modos2_tk_control"/>
+<prop id="modo2_default_label" x="Modificator: (f,html,bold,open)(prop,modo2_how)(f,html,bold,close)(f,when,(f,has,(prop,modos2_offset_label)), - (prop,modos2_offset_label),)"/>
+<call_job job="modo2-tk"/>
+<ti_space height="3px"/>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook_end_of_modo2_details</trace>
+<call_job job="hook_end_of_modo2_details"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: modo2-details: end.0">
+<ti> hook_job=hook_end_of_modo2_details hook=end page=details station=0 object=modo2</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

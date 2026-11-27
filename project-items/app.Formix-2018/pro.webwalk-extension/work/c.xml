@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="titel" label="Titel" tip="GruppenTitel" position="1" type="text" add_edit="1" name_flag="1" view_flag="0" nono="1" sel_multi_flag="0" /><field id="pk" label="Key" tip="Extension Key: wird zur refernzierung verwendet; sollte nur einmalig vergeben werden und konstant bleiben" type="text" add_edit="1" view_flag="0" nono="1" /><field id="desc" label="Anmerkungen" type="textblock" add_edit="0" desc_flag="1" desc_len="40" /></fields>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="opt-tk">
+<need default="">(prop,opts_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,opts_tk_control) wrap ">
+<tk label="Titel" id="opt_bez" x="" test_first="1" type="text" flag=" nono "/>
+<tk label="Beschreibung" id="opt_besch" x="" test_first="0" type="textblock" flag=" "/>
+<tk label="Klassifikation" id="opt_klasse" x="" test_first="0" type="sel" flag="multi ">
+<sel label="Sojaflocken">1</sel>
+<sel label="Kürbiskerne">2</sel>
+<sel label="Soja-Block">3</sel>
+<sel label="Tofu">4</sel>
+<sel label="Saiblinger">5</sel>
+<sel label="Honig">6</sel>
+<sel label="Sonnenblumenkerne">7</sel>
+<sel label="Erdnüsse">8</sel>
+<sel label="Polenta">9</sel>
+<sel label="Cottage Cheese">10</sel>
+<sel label="Jogurt">11</sel>
+<sel label="Dosentunfisch">12</sel>
+<sel label="Rindfleisch">13</sel>
+<sel label="Hafer">14</sel>
+<sel label="Nuesse">15</sel>
+<sel label="Fermentiertes Erdnusslaibchen">16</sel>
+<sel label="Gemischtes Kornlaibchen">17</sel>
+<sel label="Unersetzbar weil ESSENTiELL">18</sel>
+<sel label="Tomatenmark">19</sel>
+<sel label="Rosinen">20</sel>
+</tk>
+</tk>
+</job>

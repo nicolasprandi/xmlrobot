@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="select-edit">
+<need>(prop,select_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="select-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="select-editor"/>
+<call_job job="select-write"/>
+<ti align="right" x="Did update Select '(f,text,cut_nice,(prop,select_sql),50)'"/>
+<call_job job="event_post_update_select"/>
+</job>

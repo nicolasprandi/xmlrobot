@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="aspect-read">
+<need>(prop,aspect_key)</need>
+<spirit act="open" missing_strategy="empty" id="aspects_spirit_tc" xml="(file,aspects)"/>
+<prop id="aspect_dt_upd">(f,spirit,aspects_spirit_tc,(prop,aspects_offset)aspect[@row=(f,xpath_string,(prop,aspect_key))],@dt_upd)</prop>
+<prop id="aspect_dt_add">(f,spirit,aspects_spirit_tc,(prop,aspects_offset)aspect[@row=(f,xpath_string,(prop,aspect_key))],@dt_add)</prop>
+<prop id="aspect_titel">(f,spirit,aspects_spirit_tc,(prop,aspects_offset)aspect[@row=(f,xpath_string,(prop,aspect_key))],@titel)</prop>
+<prop id="aspect_explain">(f,spirit,aspects_spirit_tc,(prop,aspects_offset)aspect[@row=(f,xpath_string,(prop,aspect_key))],@explain)</prop>
+<spirit act="close" id="aspects_spirit_tc"/>
+</job>

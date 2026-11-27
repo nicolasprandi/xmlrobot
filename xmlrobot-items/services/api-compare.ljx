@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="get-olix-project-folder" joblevel="ws" role="hidden">
+  <need>(prop,requestedApp)</need>
+  
+  <choose>
+    <when test="(f,has,(f,request,dir,master_project))">
+        <file id="possible-proloc" x="(f,request,dir,master_project)cache/little-(prop,requestedApp).txt"/>
+        <choose>
+          <when test="(f,exists_file,(file,possible-proloc))">
+            <dir id="pro_temp" x="(f,file_content,(file,possible-proloc))"/>
+          </when>
+          <otherwise>
+            <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+            <create_file out="(file,possible-proloc)">(dir,pro_temp)</create_file>  
+            <mkdir dir="(dir,pro_temp)"/>          
+          </otherwise>
+        </choose>
+        <prop id="pro_temp">(prop,requestedApp)</prop>
+        
+    </when>
+    <otherwise>
+      <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+      <prop id="pro_temp">(prop,requestedApp)-(f,time)</prop>    
+    </otherwise>  
+  </choose>
+  
+  
+  <!-- <ti label="Pro-4-(prop,requestedApp)" type="dir">(dir,pro_temp)</ti> -->
+                                                     
+</job>      
+
+<job id="Goto-Compare-Files" joblevel="ws" role="hidden">
+  <need>(file,old)</need>
+  <need>(file,new)</need>
+  <call_service job="get-olix-project-folder">
+    <prop id="requestedApp">Compare</prop>
+  </call_service>
+    
+  <call_app     app="Compare" 
+                job="api-compare-files-life" 
+                pro_dir="(dir,pro_temp)" 
+                pro_id="(prop,pro_temp)"
+                flag="silent">       
+    <file id="old">(file,old)</file> 
+    <file id="new">(file,new)</file>                       
+  </call_app> 
+  
+</job>
+
+<job id="Goto-Compare-Dirs" joblevel="ws" role="hidden">
+  <need>(dir,old)</need>
+  <need>(dir,new)</need>
+  
+  <call_service job="get-olix-project-folder">
+    <prop id="requestedApp">Compare</prop>
+  </call_service>
+  
+  <call_app     app="Compare" 
+                job="api-compare-dirs-life" 
+                pro_dir="(dir,pro_temp)" 
+                pro_id="(prop,pro_temp)"
+                flag="silent">       
+    <dir id="old">(dir,old)</dir> 
+    <dir id="new">(dir,new)</dir>                       
+  </call_app> 
+  
+</job>
+
+
+</jobs>

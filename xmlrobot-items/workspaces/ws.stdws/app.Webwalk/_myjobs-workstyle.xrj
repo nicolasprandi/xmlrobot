@@ -1,0 +1,647 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<!-- <call_job job="prolog" />     -->
+<!-- presence presence_all visibility visibility_all clickable-->
+<job id="vi-UP">
+    
+  <wdriver  act="find_element"
+            by_xpath="()(//a[text( )='UP'])[1]()"
+            return_prop_element_id="upid"
+            error_id="01"/>    
+  
+  <welement id="(prop,upid)"
+            act="click"/>   
+               
+</job>
+
+
+<job id="vi-field-selektor">
+    
+  <wdriver act="find_elements"
+           by_xpath="//table[@class='tkReviewFieldsTable']//a"
+           new_spirit_id="found"      
+           return_prop_count="nbr-found-elements"
+           error_id="02"/>
+  
+  <!-- save spirit -->      
+  <file id="found" x="(dir,pro)found.xml"/>
+  <spirit id="found" act="save" out="(file,found)"/>
+  <ti type="file" label="Found:" x="(file,found)" />
+  
+  <!-- open print for selection result sr -->
+  <file id="sr" x="(dir,pro)list-sr.xml"/>
+  <print id="sr" out="(file,sr)" act="open"/>
+  <print id="sr" act="print">&lt;sel&gt;</print>  
+   
+  <!-- open print for selection gui --> 
+  <file id="gui" x="(dir,pro)list-gui.xml"/>
+  <print id="gui" out="(file,gui)" act="open"/>
+  <print id="gui" act="print">&lt;sel&gt;</print>
+  
+  <loop_xml 
+    act="open" 
+    id="sx" 
+    spirit="found" 
+    xpath="//we"/>
+ 
+  <loop 
+    id="sx-while" 
+    while="()(f,loop_xml,sx,has_next?)()">
+    <loop_xml act="next" id="sx" />  
+              
+    <prop id="take">1</prop>
+    
+    <when test="(f,eq_text,(f,loop_xml,sx,@text),Alles Bearbeiten)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(f,loop_xml,sx,@text),  ??  )">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(f,loop_xml,sx,@text),Abbruch)">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(f,loop_xml,sx,@text),Schrittweise Bearbeiten)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(f,loop_xml,sx,@text),  ?  )">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(f,loop_xml,sx,@text),Sort &amp; Delete)">
+      <prop id="take">0</prop>
+    </when>          
+        
+    <!-- -->
+    <when test="(prop,take)">
+      <print id="gui" act="print">&lt;sel label=&quot;(f,loop_xml,sx,@text)&quot;&gt;(f,spirit,found,//we[(f,loop_xml,sx,#i)],@id)&lt;/sel&gt;</print>
+      <print id="sr" act="print">(f,spirit,found,xml?,//we[(f,loop_xml,sx,#i)])</print>
+    </when>              
+             
+  </loop>    
+  
+  <loop_xml 
+    act="close" 
+    id="sx"/>
+  
+  <print id="sr" act="print">&lt;/sel&gt;</print> 
+  <print id="sr" act="close"/>   
+  <ti type="file" label="Selected Results:" x="(file,sr)" />    
+   
+  <print id="gui" act="print">&lt;/sel&gt;</print> 
+  <print id="gui" act="close"/>   
+  <ti type="file" label="Gui-Selektor:" x="(file,gui)" />  
+  
+  <spirit id="found" act="close"/>
+  
+  <tk type="sel" id="row" xml="(file,gui)" flag="nono"/>
+  
+  <wdriver  act="build_element"
+            element_id="(prop,row)"/>    
+    
+  <welement id="(prop,row)"
+            act="click" />    
+     
+</job>
+
+<job id="vi-list-selektor">
+    
+  <wdriver act="find_elements"
+           by_xpath="//table[@class='tiTable1']//a"
+           new_spirit_id="found"      
+           return_prop_count="nbr-found-elements"
+           error_id="03"/>
+        
+  <file id="found" x="(dir,pro)found.xml"/>
+  <spirit id="found" act="save" out="(file,found)"/>     
+  <ti type="file" label="Found:" x="(file,found)" />
+  
+  <!-- open print for selection result sr -->
+  <file id="sr" x="(dir,pro)list-sr.xml"/>
+  <print id="sr" out="(file,sr)" act="open"/>
+  <print id="sr" act="print">&lt;sel&gt;</print>  
+ 
+  <file id="selektor" x="(dir,pro)list-gui.xml"/>
+  <print id="s" out="(file,selektor)" act="open"/>
+  <print id="s" act="print">&lt;sel&gt;</print>
+          
+  <loop id="sx" xml="(file,found)" xpath="//we">
+    
+    <prop id="take">1</prop>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Export)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(loop,sx,@text),Import)">
+      <prop id="take">0</prop>
+    </when>
+
+    <when test="(f,eq_text,(loop,sx,@text),  + Vi  )">
+      <prop id="take">0</prop>
+    </when>
+    
+    <when test="(f,eq_text,(loop,sx,@text),Sort &amp; Delete)">
+      <prop id="take">0</prop>
+    </when>
+    
+    <!-- -->
+    <when test="(prop,take)">
+      <print id="s" act="print">&lt;sel label=&quot;(loop,sx,@text)&quot;&gt;(f,spirit,found,//we[(loop,sx,#i)],@id)&lt;/sel&gt;
+      </print>
+      <print id="sr" act="print">(f,spirit,found,xml?,//we[(loop,sx,#i)])</print>
+    </when>              
+             
+  </loop>      
+  
+  <print id="sr" act="print">&lt;/sel&gt;</print> 
+  <print id="sr" act="close"/>   
+  <ti type="file" label="Selected Results:" x="(file,sr)" />   
+
+  <print id="s" act="print">&lt;/sel&gt;</print> 
+  <print id="s" act="close"/>   
+  <ti type="file" label="Gui Selektor:" x="(file,selektor)" />  
+  
+  <tk type="sel" id="row" xml="(file,selektor)"/>
+  
+  <!-- <tk type="msg">selected element_id = (prop,row)</tk> -->
+  
+  <wdriver  act="build_element"
+            element_id="(prop,row)"/>    
+    
+  <welement id="(prop,row)"
+            act="click" />    
+
+  <spirit id="found" act="close"/> 
+</job>
+
+
+<job id="vi-add">
+    
+  <wdriver act="find_elements"
+           by_xpath="()//table[@class='tiTable1']//a[contains(text( ),'+&#160;Vi') or contains(text( ),'Add&#160;another&#160;Vi')]()"
+           new_spirit_id="found"
+           return_prop_count="count-found"
+           error_id="04"/>
+           
+  <throw test="(f,eq_num,0,(prop,count-found))">add-vi didn't find an add-button</throw>
+                                                                
+  <prop     id="goid">(f,spirit,found,//we[1],@id)</prop>
+    
+  <wdriver  act="build_element"
+            element_id="(prop,goid)"/>    
+    
+  <welement id="(prop,goid)"
+            act="click" />    
+            
+  <spirit   id="found" act="close"/>
+ 
+</job>
+
+<job id="test-calculate-matrix">
+
+  <file id="testdata-excel">(dir,app)invisible/testdata.xls</file>
+  <tk type="file" id="testdata-excel" label="Excel to import" flag="nono" test="0"/>
+  <file id="testdata-xml">(dir,pro)testdata.xml</file>
+  
+  <ti label="testdata-excel" type="file">(file,testdata-excel)</ti>
+  
+  <excel_table 
+    excel="(file,testdata-excel)" 
+    sheet="calc" 
+    out="(file,testdata-xml)" 
+    style="short" 
+    root_name="rows" 
+    row_name="row"  />
+  
+  <prop id="auto">1</prop>  
+  <prop id="proto">Protocol&#xA;</prop>      
+  
+  <file id="notes" x="(dir,pro)notes.xml"/>
+  <print id="notes" out="(file,notes)" act="open"/>
+  <print id="notes" act="println"><![CDATA[<steps>]]></print> 
+          
+  <loop id="case" xml="(file,testdata-xml)" xpath="row">
+    <ti_hr/>
+    <ti label="testcase #(loop,case,#i)">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>
+    <try_catch>
+      <try>
+        <ti label="goint into:" x="fresh_project ..."/>
+        <call_job job="fresh-project" />
+        
+        <ti label="goint into:" x="topmenu-auto ..."/>
+        <call_job job="topmenu">
+          <prop id="auto-menu">c</prop>
+        </call_job>   
+        
+        <ti label="goint into:" x="enter-single-field x ..."/>
+        <call_job job="enter-single-field">
+          <prop id="auto-value">(loop,case,@x)</prop>
+        </call_job> 
+         
+        <ti label="goint into:" x="enter-single-field y ..."/>
+        <call_job job="enter-single-field">
+          <prop id="auto-value">(loop,case,@y)</prop>
+        </call_job> 
+      
+        <ti label="goint into:" x="enter-single-field z ..."/>
+        <call_job job="enter-single-field">
+          <prop id="auto-value">(loop,case,@z)</prop>
+        </call_job>     
+      
+        <ti label="goint into:" x="commit-review ..."/>
+        <call_job job="commit-review"/>
+        
+        <ti label="goint into:" x="get-calc-result ..."/>
+        <call_job job="get-calc-result"/>
+        
+        <ti label="goint into:" x="compare expectation ..."/>
+        <choose>
+          <when test="(f,eq_num,(loop,case,@v),(prop,calc-result))">
+          
+                 <!-- terminal now -->
+                 <ti label="Testresult OK"/>
+                 <ti label="testcase">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>
+                 <ti label=" ">as expected ok.</ti>
+                 
+                 <!-- terminal progress -->
+                 <tp>testcase #(loop,case,#i) OK: (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</tp>
+                 
+                 <!-- proto -->
+                 <prop id="proto">(prop,proto) Testcase #(loop,case,#i) - OK - (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)&#xA;</prop>
+                 
+                 <!-- notes -->
+                 <print id="notes" act="println"><![CDATA[<ti label="#(loop,case,#i)" type="rec">]]></print>
+                 <print id="notes" act="println"><![CDATA[<ti>Ok</ti>]]></print>
+                 <print id="notes" act="println"><![CDATA[<ti>(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>]]></print>
+                 <print id="notes" act="println"><![CDATA[</ti>]]></print>
+          </when>
+          
+          <otherwise>
+            <!-- terminal now -->
+            <ti label="testcase failed">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v) not equals (prop,calc-result)</ti>
+            
+            <!-- terminal progress -->
+            <tp>testcase #(loop,case,#i) FAILED: (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</tp>
+            <!-- <throw>Test Failed: This is not (loop,case,@v): (prop,calc-result)</throw> -->
+            
+            <!-- proto -->
+            <prop id="proto">(prop,proto) Testcase #(loop,case,#i) - ERROR - Calculated=(prop,calc-result) by parameters (loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)&#xA;</prop>
+
+             <!-- notes -->
+             <print id="notes" act="println"><![CDATA[<ti label="#(loop,case,#i)" type="rec">]]></print>
+             <print id="notes" act="println"><![CDATA[<ti>Fail</ti>]]></print>
+             <print id="notes" act="println"><![CDATA[<ti>(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>]]></print>
+             <print id="notes" act="println"><![CDATA[<ti>Expected (prop,calc-result)</ti>]]></print>
+             <print id="notes" act="println"><![CDATA[</ti>]]></print>
+                           
+          </otherwise>
+        </choose>
+       </try>
+       <catch>
+        <!-- terminal now -->
+        <ti label="Exception"/>
+        <ti label="Testcase">(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>
+        <when test="(f,has,prop,catched_id)">
+          <ti label="error_id">(prop,catched_id)</ti>
+        </when>
+        <ti label="message">(prop,catched_msg)</ti>
+        
+        <!-- terminal progress -->
+        <tp>testcase #(loop,case,#i) SYSTEMEXCEPTION : (prop,catched_msg) :(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</tp>
+
+        <!-- proto -->
+        <prop id="proto">(prop,proto) Testcase #(loop,case,#i) - SYSTEMEXCEPTION&#xA;(prop,catched_msg)&#xA;&#xA;</prop>    
+        
+        <!-- notes  -->
+        <prop id="error-to-print" x="" />
+        <when test="(f,has,prop,catched_id)">
+          <prop id="error-to-print" x="(prop,catched_id)" />
+        </when>        
+
+        <prop id="m">(prop,catched_msg)</prop>
+        <escape type="prop" id="m"/>
+                
+       <print id="notes" act="println"><![CDATA[<ti label="#(loop,case,#i)" type="rec">]]></print>
+       <print id="notes" act="println"><![CDATA[<ti>Ex (x,(prop,error-to-print))</ti>]]></print>
+       <print id="notes" act="println"><![CDATA[<ti>(loop,case,@x) (loop,case,@y) (loop,case,@z) : (loop,case,@v)</ti>]]></print>
+       <print id="notes" act="print"><![CDATA[<ti>(x,(prop,m))]]></print>
+       
+       <when test="(f,eq_text,05b,(prop,error-to-print))">
+       
+        <prop id="m2">(f,spirit,found,xml?)</prop>     
+        <escape type="prop" id="m2"/>       
+        <print id="notes" act="println"></print>
+        <print id="notes" act="print"><![CDATA[(x,(prop,m2))]]></print>
+       </when>
+       <print id="notes" act="println"><![CDATA[</ti>]]></print>
+       <print id="notes" act="println"><![CDATA[</ti>]]></print>        
+                       
+        <spirit id="found" act="close" flag="catch" /> 
+       </catch>
+      </try_catch>   
+      <ti>LOOP FINISHED.</ti>   
+  </loop>
+  
+
+  <ti_hr/>
+  <ti label="Protocol"/>
+  <ti>(prop,proto)</ti>
+  
+  <print id="notes" act="print"><![CDATA[</steps>]]></print> 
+  <print id="notes" act="close"/>
+  <ti_break/>
+  <ti label="Notes"/>
+  <include file="(file,notes)"/>
+
+  
+   
+</job>
+<job id="test-calculate-onecase" xrole="test">
+
+  <prop id="auto">1</prop>
+
+  <call_job job="topmenu">
+    <prop id="auto-menu">c</prop>
+  </call_job>   
+  
+  <call_job job="enter-single-field">
+    <prop id="auto-value">1</prop>
+  </call_job> 
+   
+  <call_job job="enter-single-field">
+    <prop id="auto-value">2</prop>
+  </call_job> 
+
+  <call_job job="enter-single-field">
+    <prop id="auto-value">3</prop>
+  </call_job>     
+
+  <call_job job="commit-review"/>
+  
+  <call_job job="get-calc-result"/>
+  
+  <choose>
+    <when test="(f,eq_num,6,(prop,calc-result))">
+           <ti label="Testresult OK"/>
+           <ti>as expected ok.</ti>
+    </when>    
+    <otherwise>
+      <throw>Test Failed: This is not 6: (prop,calc-result)</throw>    
+    </otherwise>    
+  </choose>  
+
+</job>
+
+<job id="get-calc-result">
+
+  <wdriver act="find_elements"
+           by_xpath="//td[@class='tiDataLabeled' and @colspan='11' and @width='100%']"
+           new_spirit_id="found"      
+           expect="1"
+           error_id="05"/>
+           
+  <prop id="calc-result"
+           error_id="05b">(f,spirit,found,//we[1],@text)</prop>  
+  <ti label="calc-result=">(prop,calc-result)</ti> 
+                     
+  <spirit id="found" act="close"/>    
+
+</job>
+
+<job id="fresh-project">
+  <wdriver  act="find_element"
+            by_xpath="()//a[text( )='Beenden']()"
+            return_prop_element_id="goid"
+            error_id="06"/>    
+  
+  <welement id="(prop,goid)"
+            act="click"/>    
+
+  <wdriver  act="find_element"
+            by_xpath="()(//a)[1]()"
+            return_prop_element_id="goid"
+            error_id="07"/>    
+  
+  <welement id="(prop,goid)"
+            act="click"/> 
+
+  <wdriver  act="find_element"
+            by_xpath="()(//a)[1]()"
+            return_prop_element_id="goid"
+            error_id="08"/>    
+  
+  <welement id="(prop,goid)"
+            act="click"/> 
+</job>
+
+<job id="test-calculate-steps" xrole="test">
+
+  <prop id="auto">1</prop>
+
+  <call_job job="topmenu">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+
+  <tk type="msg">position #1</tk>
+  
+  <call_job job="enter-single-field">
+    <prop id="auto-value">1</prop>
+  </call_job> 
+
+   <tk type="msg">position #2</tk>
+   
+  <call_job job="enter-single-field">
+    <prop id="auto-value">2</prop>
+  </call_job> 
+
+  <tk type="msg">position #3</tk>
+  
+  <call_job job="enter-single-field">
+    <prop id="auto-value">3</prop>
+  </call_job>     
+
+  <tk type="msg">position #4</tk>
+  
+  <call_job job="commit-review"/>
+      
+</job>
+
+<!-- job 'enter-single-field' switched von version:gui auf version:auto -->
+
+<job id="topmenu-auto-test-v2" xrole="test">
+  <prop id="auto">x</prop>
+  
+  <!-- 1 -->
+  <call_job job="topmenu">
+    <prop id="auto-menu">l</prop>
+  </call_job>
+  
+  <call_job job="topmenu">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+  
+  <call_job job="stop-button"/>
+  
+  <!-- 2 -->
+  <call_job job="topmenu">
+    <prop id="auto-menu">l</prop>
+  </call_job>
+  
+  <call_job job="topmenu">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+  
+  <call_job job="stop-button"/>  
+
+</job>
+
+<job id="demo-menu">
+    
+  <wdriver  act="find_element"
+            by_xpath="()//a[text( )='Demo'][1]()"
+            return_prop_element_id="goid"
+            error_id="09"/>    
+  
+  <welement id="(prop,goid)"
+            act="click"/>    
+                              
+</job>
+
+<job id="stop-button">
+    
+  <wdriver  act="find_element"
+            by_xpath="()//a[text( )='Stop'][1]()"
+            return_prop_element_id="goid"
+            error_id="10"/>    
+  
+  <welement id="(prop,goid)"
+            act="click"/>        
+                              
+</job>
+
+
+<job id="topmenu-auto-test" xrole="test">
+  <prop id="auto">x</prop>
+  
+  <call_job job="topmenu">
+    <prop id="auto-menu">l</prop>
+  </call_job>
+  
+  <tk type="msg">wait</tk>
+  
+  <call_job job="topmenu">
+    <prop id="auto-menu">c</prop>
+  </call_job>  
+
+</job>
+
+<!-- job 'topmenu' switched von version:gui auf version:auto -->
+
+
+
+<job id="commit-review">
+
+  <wdriver  act="find_element"
+            by_xpath="()(//input)[1]()"
+            return_prop_element_id="goid"
+            error_id="11"/>    
+  
+  <welement id="(prop,goid)"
+            act="click"/>     
+    
+</job>
+
+<job id="enter-single-field">
+  <!-- version:gui 
+  <tk id="yourinput"/>     -->
+  
+  <!-- version:auto -->
+  <choose>
+    <when test="(f,has,prop,auto)">                                               
+      <prop id="yourinput">(prop,auto-value)</prop>  
+    </when>
+    <otherwise>
+      <tk id="yourinput"/>
+    </otherwise>
+  </choose>
+  
+  <wdriver  act="find_element"
+            by_xpath="()(//input)[2]()"
+            return_prop_element_id="fieldid"
+            error_id="12"/>  
+            
+  <welement act="clear"
+            id="(prop,fieldid)"/>
+                                           
+  <welement act="send_keys"
+            id="(prop,fieldid)"
+            keys="(prop,yourinput)"/>              
+           
+  <wdriver  act="find_element"
+            by_xpath="()(//input)[3]()"
+            return_prop_element_id="okid"
+            error_id="13"/>               
+ 
+  <welement act="click"
+            id="(prop,okid)" />      
+              
+</job>
+
+<job id="topmenu">
+  <!-- version:gui 
+  <tk type="sel" id="menusel">
+    <sel>calculate</sel> 
+    <sel>list</sel>
+  </tk>       -->
+  
+  <!-- version:auto -->
+  <choose>
+    <when test="(f,has,prop,auto)">
+      <choose>
+        <when test="(f,eq_text,(prop,auto-menu),c)">
+          <prop id="menusel" x="calculate"/>
+        </when>
+        <when test="(f,eq_text,(prop,auto-menu),l)">
+          <prop id="menusel" x="list"/>
+        </when>        
+        <otherwise>
+          <throw>Property 'auto-menu' has an unexpected value of '(f,vob,prop,auto-menu)' or does not exist at all. if auto is on then the property auto-menu must have the value 'c' or 'l'</throw>
+        </otherwise>
+      </choose>      
+    </when>
+    <otherwise>
+      <tk type="sel" id="menusel">
+        <sel>calculate</sel> 
+        <sel>list</sel>
+      </tk>
+    </otherwise>
+  </choose>  
+  
+  
+  <choose>
+    <when test="(f,eq_text,(prop,menusel),calculate)">
+      <prop id="xp">()//div[contains(@class,'tiButtonMenu')]//a[text( )='Calculate']()</prop>
+    </when>
+    <when test="(f,eq_text,(prop,menusel),list)">
+      <prop id="xp">()//div[contains(@class,'tiButtonMenu')]//a[text( )='List']()</prop>
+    </when>    
+  </choose>
+
+  <wdriver act="find_element"
+           by_xpath="(prop,xp)"
+           return_prop_element_id="goid"
+           error_id="14"/>
+                                          
+  <welement act="click"
+            id="(prop,goid)" /> 
+  
+</job>
+
+
+
+</jobs>

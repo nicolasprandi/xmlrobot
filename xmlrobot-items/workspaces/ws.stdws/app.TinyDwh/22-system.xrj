@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="sys_project_setup" role="hidden">
+
+  <call_job job="tr_first" />
+  
+  <call_job job="ps-welcome" />
+  
+  <!-- 
+  <call_job job="tk_lingua_read"/>
+  <prop id="lingua_lang" x="(prop,ling)" />
+  <call_job job="tk_lingua_write"/>
+  -->   
+  <call_job job="tr_setup" />
+  
+  <call_job job="ps-install" />
+  <call_job job="ps-sprachen" />
+  <!-- <call_job job="ps-privilegien" />  -->
+
+</job>
+
+
+
+<job id="ps-sprachen" role="hidden">
+       
+      
+      <ti label="(prop,_first_settings)"/>   
+      
+      <prop id="sprach-postfix">(prop,_first_current): (f,interpreter,lang_desc_international)</prop>
+         <ti type="rec" label="(prop,_first_current):">
+           <ti>(f,interpreter,lang_desc_international)</ti>
+        </ti>         
+      <when test="(f,not,(f,eq_text,de,(prop,ling)))">  
+          <ti type="rec" label=" ">      
+
+            <ti type="call_job" job="change-to-this-lang" flag="button " 
+                class="fx fxEdit fbConf" explain="W&#228;hlen Sie: German-Deutsch"
+                xpostfix=" (prop,sprach-postfix)">  
+            
+                <prop id="ctl-lang">de</prop>
+              </ti>           
+      
+          </ti>
+      </when>
+      
+      <when test="(f,not,(f,eq_text,en,(prop,ling)))">
+          <ti type="rec" label=" ">   
+
+            <ti type="call_job" job="change-to-this-lang" flag="button " 
+                class="fx fxEdit fbConf" explain="Choose: English"
+                xpostfix=" (prop,sprach-postfix)">  
+            
+                <prop id="ctl-lang">en</prop>
+              </ti>           
+          </ti>       
+                    
+      </when>
+
+        
+</job>
+
+<job id="ps-install" role="hidden">
+  <when test="(f,or,(f,right,install),(prop,bpRepo),(prop,bpDb))">
+    <ti_hr/>
+      <ti label="(prop,_ex_setups)"/>
+
+      <ti type="rec" test="(f,or,(prop,bpRepo),(prop,bpDb))">    
+        <ti type="call_job" job="guided-setup-simple" explain="(prop,_ex_setup_connect)" flag="block"
+            />  
+         <ti flag="wrap_word">(prop,_ex_setup_connect_explain)</ti>
+      </ti>  
+        
+      <ti type="rec" test="(f,right,install)">
+        <ti type="call_job" job="guided-setup" explain="(prop,_ex_setup_new_db)" flag="block"
+            />  
+         <ti flag="wrap_word">(prop,_ex_setup_new_db_explain)</ti>    
+      </ti>
+      <ti_hr/>
+  </when>
+</job>
+
+<job id="ps-welcome" role="hidden">
+      <!-- <ti label="(prop,_first_welcome)"></ti>   -->
+      <ti type="rec" label="(prop,_first_welcome)">  
+      <ti type="call_job" job="vorstufe-apphelp" explain="(prop,_first_more_infos)" />
+      </ti>
+</job>
+
+<job id="vorstufe-apphelp" role="hidden">
+
+<call_job job="?"/>
+
+
+  
+  <when test="(f,implement,online)">
+    <file id="m2">(f,request,dir,session_home_fs)headers(prop,fs)(prop,app)(prop,fs)m2.xml</file>
+    
+    <when test="(f,file_exists,(file,m2))">
+      <ti_hr/>
+      <include file="(file,m2)" flag="catch"/> 
+    </when>
+    
+  </when>
+    
+</job>
+
+<job id="sys_project_backupxx" role="hidden">
+  <need>(dir,my-backup-space)</need>
+  
+  <i>hello data generator sys_project_backup to (dir,my-backup-space)</i>
+  <call_job job="tk_para_read"/>
+  <when test="(f,has,file,para_file_vok)">
+    <copy file="(file,para_file_vok)" intodir="(dir,my-backup-space)"/>
+  </when>
+  <delete dir="(dir,my-backup-space)cache/" flag="catch"/>
+</job>
+
+<job id="sys_copyright" role="hidden">
+
+<ti type="rec">
+<ti flag="block" span="10">Copyright 2023 Red-Shark-Formation. All rights reserved.</ti>
+
+</ti>
+</job>
+
+<job id="sys_version" role="hidden">
+<ti label="Edition:" prodconf="edition">x</ti>
+<ti label="Generation:">Antigone</ti>
+
+
+<!--
+<ti type="rec"><ti flag="block">Edition:</ti><ti>x</ti><ti> </ti></ti>
+<ti type="rec"><ti flag="block">Generation:</ti><ti>Antigone</ti><ti> </ti></ti>
+<ti label="Hibiscus - Version Info" />
+
+<ti_hr/>
+<ti label="List of Updates"/>
+<ti label="2020 Decemter 1st" type="ul">December-Version finished</ti>
+<ti label=" " type="ul">Hilfetexte bei Navigations-Konfiguration</ti>
+<ti label=" " type="ul">Erweiterung der Nav-Conf um Art des Attribut-Names</ti>
+<ti label="2020 November 20th" type="ul">Umbenennungen in der projekt-info wenn keine Db existiert</ti>
+<ti label=" " type="ul">Simple Guided Setup</ti>
+<ti label=" " type="ul">Adaptierung der Configuration und Einbauen des Simple Guided Setup</ti>
+<ti label="2020 November 21th" type="ul">Navi: only latest values</ti>
+<ti label=" " type="ul">Help for Search</ti>
+<ti label=" " type="ul">Display of link to search-result-xml only when specified in navi</ti>
+<ti label=" " type="ul">Dictionary extension - Country Attribute Names</ti>
+<ti label="2020 November 22th" type="ul">Umbau aller Konfigurationen(e:s) neues Layout: Edit &amp; Explain &amp; Edit im Explain</ti>
+<ti label=" " type="ul">Neues Layout fuer Praesentation der Guided-Setups</ti>
+<ti label=" " type="ul">Ausdeutschen der Such-Methoden in der Hilfe</ti>
+<ti label=" " type="ul">Bei der Suche auch mehrere Attribute ermoeglichen</ti>
+<ti label=" " type="ul">Bei der Such auch auf NavConfig-Name vs. techn.Feldname ruecksicht nehmen</ti>
+<ti label=" " type="ul">Copyrights bei xsls </ti>
+<ti label=" " type="ul">Diverse Hilfetexte</ti>             -->
+
+<!-- 
+<ti label="2020 November 19th" type="ul"></ti>
+<ti label=" " type="ul"></ti>
+<ti label=" " type="ul"></ti>
+<ti label=" " type="ul"></ti>
+-->
+<ti_break/>
+</job>
+
+<job id="change-to-this-lang" role="hidden">
+  <!-- <file id="mylanguage">(dir,pro)my-language.txt</file>  
+  das ist die schnellwahl mit dem button im config-->
+  <file id="lingua-data" x="(dir,pro)lingua-data.xrs"/>
+  <prop id="lingua-regex" x="nav_naming_attribute|lingua_lang"/>   
+  <need>(prop,ctl-lang)</need>
+  
+    <call_job job="tk_lingua_read"/>
+    <prop id="lingua_lang" x="(prop,ctl-lang)" />
+    <call_job job="tk_lingua_write"/>
+    <!-- <create_file out="(file,mylanguage)">(prop,ctl-lang)</create_file>  -->
+    
+    <prop id="ling">(prop,ctl-lang)</prop>
+
+</job>
+
+
+<job id="set-sys-lang" role="hidden">
+
+  <need>(prop,ling)</need>
+  <when test="(f,not,(f,eq_text,(prop,ling),(f,interpreter,lang)))">
+    <prop id="alte-lingua">(f,interpreter,lang_desc_international)</prop>
+    <call_job job="tr_basic_terms"/>
+    <call_job job="tr_langcg"/>
+    <prop id="lang-changed-bisher">(prop,_langcg_changes)</prop>
+    
+    <interpreter language="(prop,ling)"/>
+    
+    <call_job job="tr_langcg"/>
+    <prop id="lang-changed-neu">(prop,_langcg_changes)</prop>
+        
+    <prop id="neue-lingua">(f,interpreter,lang_desc_international)</prop>
+    <prop id="message_label">(prop,lang-changed-bisher) / (prop,lang-changed-neu)</prop>
+    <remove type="prop" id="lang-changed-bisher"/>
+    <remove type="prop" id="lang-changed-neu"/>
+    
+    <prop id="message">(prop,alte-lingua) (prop,_x_arr_right) (prop,neue-lingua)</prop>                                                                     
+      <ti label="(prop,message_label)" test="(f,has,prop,message_label)"/>
+      <ti x="(prop,message)"/>
+      <ti_break/>
+    <call_job job="sys_freshup"/>
+  </when>
+
+</job>
+
+<job id="tr_langcg" role="hidden">
+<!--
+
+(prop,)
+-->
+
+ <choose>
+    <when test="(f,eq_text,(f,interpreter,lang),de)">
+      <!-- d=deutsch -->
+      <prop id="_langcg_changes">Sprache ge&#228;ndert</prop>                        
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(prop,ling),es)">
+      <prop id="_pl_a">A</prop>
+      <prop id="_sl_a">A</prop>  
+      <prop id="_ex_b">B</prop>      
+    </when>  -->  
+    <otherwise>
+      <!-- e=englisch -->
+      <prop id="_langcg_changes">Language changed</prop>
+    </otherwise>
+  </choose>
+
+</job>
+
+</jobs>

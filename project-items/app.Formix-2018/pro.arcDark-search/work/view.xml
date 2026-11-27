@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="search-see-all" level="ws" role="hidden" tip="Lists all Searches">
+<try_catch>
+<try>
+<call_job job="hook_search_view_begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: search-view: begin.0">
+<ti> hook_job=hook_search_view_begin hook=begin page=view station=0 object=search</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="search_loop" xml="(file,searches)" xpath="(prop,searches_offset)search(prop,searches_where)" sort="(prop,searches_sort_attribute)" number="(prop,searches_sort_number)" ignore_case="(prop,searches_sort_ignore_case)" desc="(prop,searches_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,searches_offset_label)),0)">
+<ti label="(prop,searches_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti/>
+<ti x="Suchbegriff"/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(loop,search_loop,@techname)(f,html,bold,close)" job="search-see">
+<prop id="search_key">(loop,search_loop,@row)</prop>
+<file id="searches">(file,searches)</file>
+<prop id="searches_offset">(prop,searches_offset)</prop>
+<prop id="searches_offset_label">(prop,searches_offset_label)</prop>
+<prop id="searches_offset_new_key">(prop,searches_offset_new_key)</prop>
+<prop id="searches_sort_attribute">(prop,searches_sort_attribute)</prop>
+<prop id="searches_sort_number">(prop,searches_sort_number)</prop>
+<prop id="searches_where">(prop,searches_where)</prop>
+<prop id="searches_return_job">(prop,searches_return_job)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,search_loop,@desc),50)</ti>
+<ti test="(f,has,(loop,search_loop,@search))" type="textblock" x="(loop,search_loop,@search)" flag=""/>
+<ti test="(f,not,(f,has,(loop,search_loop,@search)))"/>
+<ti isFromAction="1" type="call_job" page="view" explain="Search" job="hook_search_action_test">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">test</prop>
+<prop page="view" id="search_key">(loop,search_loop,@row)</prop>
+<file id="searches">(file,searches)</file>
+<prop id="searches_offset">(prop,searches_offset)</prop>
+<prop id="searches_offset_label">(prop,searches_offset_label)</prop>
+<prop id="searches_offset_new_key">(prop,searches_offset_new_key)</prop>
+<prop id="searches_sort_attribute">(prop,searches_sort_attribute)</prop>
+<prop id="searches_sort_number">(prop,searches_sort_number)</prop>
+<prop id="searches_where">(prop,searches_where)</prop>
+<prop id="searches_return_job">(prop,searches_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Searches found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,searches_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain_nix="search-add" explain="Add" job="search-add">
+<file id="searches">(file,searches)</file>
+<prop id="searches_offset">(prop,searches_offset)</prop>
+<prop id="searches_offset_label">(prop,searches_offset_label)</prop>
+<prop id="searches_offset_new_key">(prop,searches_offset_new_key)</prop>
+<prop id="searches_sort_attribute">(prop,searches_sort_attribute)</prop>
+<prop id="searches_sort_number">(prop,searches_sort_number)</prop>
+<prop id="searches_where">(prop,searches_where)</prop>
+<prop id="searches_return_job">(prop,searches_return_job)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,admin)" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,searches)</file>
+<prop id="orga_where">(prop,searches_where)</prop>
+<prop id="orga_view_loop_id">search_loop</prop>
+<prop id="orga_finished_job">search-see-all</prop>
+<prop id="orga_offset">(prop,searches_offset)</prop>
+<prop id="orga_offset_label">(prop,searches_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,searches_offset_new_key)</prop>
+<prop id="orga_segment_plural">searches</prop>
+<prop id="orga_segment_singular">search</prop>
+<prop id="orga_segment_plural_label">Searches</prop>
+<prop id="orga_segment_singular_label">Search</prop>
+<prop id="orga_sort_attribute">(prop,searches_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,searches_sort_number)</prop>
+<prop id="orga_where">(prop,searches_where)</prop>
+<prop id="orga_name_expression_loop">()(loop,search_loop,@techname)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,search_loop,@desc),50)()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,searches)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,searches_offset)),0)">(prop,searches_offset)</ti>
+</ti>
+</when>
+</job>

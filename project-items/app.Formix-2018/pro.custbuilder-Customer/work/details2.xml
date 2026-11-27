@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="custset-see-more">
+<prop x="print_only print_with_tips print_all_fields" id="custsets_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,custsets_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="custset-see">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="custset-see-all">
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<need>(prop,custset_key)</need>
+<call_job job="custset-read"/>
+<prop id="custset_default_label_class" x="Customer"/>
+<prop id="custset_default_label_name" x="(f,text,cut_nice,(prop,custset_name),30)(f,when,(f,has,(prop,custsets_offset_label)), - (prop,custsets_offset_label),)"/>
+<call_job job="custset-tk"/>
+<ti_hr/>
+<ti type="rec" info="an-edit-button-just" label=" ">
+<ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailCustset" explain="[ Edit ]" job="custset-edit">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,custsets_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="custset-see">
+<prop id="custset_key">(prop,custset_key)</prop>
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="custset-see-all">
+<file id="custsets">(file,custsets)</file>
+<prop id="custsets_offset">(prop,custsets_offset)</prop>
+<prop id="custsets_offset_label">(prop,custsets_offset_label)</prop>
+<prop id="custsets_offset_new_key">(prop,custsets_offset_new_key)</prop>
+<prop id="custsets_sort_attribute">(prop,custsets_sort_attribute)</prop>
+<prop id="custsets_sort_number">(prop,custsets_sort_number)</prop>
+<prop id="custsets_sort_ignore_case">(prop,custsets_sort_ignore_case)</prop>
+<prop id="custsets_sort_desc">(prop,custsets_sort_desc)</prop>
+<prop id="custsets_where">(prop,custsets_where)</prop>
+<prop id="custsets_return_job">(prop,custsets_return_job)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

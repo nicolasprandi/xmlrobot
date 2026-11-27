@@ -1,0 +1,26 @@
+<!-- when -->
+<when test="(f,eq_text,-objid-,(prop,search_type))">
+  <ti_hr_break/>
+  <prop id="on-id" x="(prop,search_for)"/>
+  <call_job job="Object"/>
+</when>
+
+<!-- choose -->
+<choose>
+  <when test="(f,eq_text,-objid-,(prop,search_type))">
+    <ti_hr_break/>
+    <prop id="on-id" x="(prop,search_for)"/>
+    <call_job job="Object"/>
+  </when>
+  <otherwise>
+  </otherwise>
+</choose>
+
+<choose>
+  <when test="(f,eq_num,1,(prop,squery_archify))">
+      <dir id="root">(dir,root)(f,time,YYYY-MM-dd)-(f,time,HH-mm-ss)</dir>
+  </when>
+  <when test="(f,eq_num,2,(prop,squery_archify))">
+      <dir id="root">(dir,root)(f,time,YYYY-MM-dd)(prop,fs)(f,time,HH-mm-ss)</dir>
+  </when>
+</choose>

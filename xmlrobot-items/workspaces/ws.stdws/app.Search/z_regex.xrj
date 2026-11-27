@@ -1,0 +1,198 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+  <call_job job="prolog"/>
+  
+  <!-- 
+  <job id="Regex: List of Matches?">
+    <ti label="Lets you do some tests regarding regular expressions" />
+    <ti label="Inputs">
+      <ti type="ul">Input a regular expression(e:s) a text and maybe some regex-flags</ti>
+    </ti>
+    <ti label="Results">      
+      <ti type="ul">As a result(e:s) a list of occurences is delivered</ti>
+      <ti type="ul">For each occurence the regex-groups are displayed</ti>
+    </ti>
+  </job>
+  -->
+
+  <job id="Regex Tester??" role="hidden" tip="This is a helper which lets you exlore regular expressions">
+    
+    <when test="(f,exists_file,(file,rex_tester))">
+        <ti label="Found a Regex-Tester"/>
+        <ti label="regex-tester">(f,file_content,(file,rex_tester))</ti>
+        <ti label=" " type="file">(file,rex_tester)</ti>
+        <ti_hr/>
+        <ti label=" " type="call_job" job="Regex Tester" explain="Run the Regex Tester ..."/>
+    </when>
+  
+  </job>
+  <job id="Regex Tester" joblevel="app" role="expert" tip="This is a helper which lets you exlore regular expressions">
+    
+    <prop id="flag-adder">sum</prop>
+    <prop id="flag-adder" test="(f,exists_file,(file,rex_tester))">sum_only</prop>
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(file,rex_tester)"/>
+      <prop id="joe-in-regex" x="(prop,regex_rex_tester)"/>
+    </call_job>
+    
+    <tk label="Regular Expression: Get List of Matches" 
+        flag="(prop,flag-adder) print">
+
+      <tk id="srl-regex" 
+          label="Regular Epression" 
+          test_first="1" 
+          flag="nono"
+          tip="The regular expression to be applied for example(e:o)?i(e:c)bla"
+          type="textblock"/>
+                  
+      <tk id="srl-text" 
+          label="Text to Validate" 
+          test_first="1" 
+          flag="nono big"
+          tip="The text which should be validated against the regular expression"
+          type="textblock"/>
+                  
+      <tk id="srl-flags" 
+          label="Flags" 
+          type="sel" 
+          flag="multi" 
+          test_first="1"
+          tip="Regular expression flags to use along with the regular expression">              
+        <sel>CASE_INSENSITIVE</sel>
+        <sel>MULTILINE</sel>
+        <sel>DOTALL</sel>
+        <sel>UNICODE_CASE</sel>
+        <sel>CANON_EQ</sel>
+        <sel>UNIX_LINES</sel>
+        <sel>LITERAL</sel>
+        <sel>UNICODE_CASE</sel>
+        <sel>COMMENTS</sel>
+      </tk>
+      <tk type="msg" msg="Bla Bla"/>
+      <tk id="srl-zomment" 
+          label="Kommentar" 
+          test_first="0" 
+          flag="big"
+          tip="ein kommentar fuer die doku"
+          type="textblock"/>      
+    </tk>  
+    
+    <call_job job="go-joe-write">
+      <file id="joe-in-store" x="(file,rex_tester)"/>
+      <prop id="joe-in-regex" x="(prop,regex_rex_tester)"/>
+    </call_job> 
+    <ti_hr/>       
+    <interpreter watch="0"/>
+    <file id="xx">(dir,filetemp)your-input.txt</file>
+    <create_file out="(file,xx)">(prop,srl-text)</create_file>
+    <prop id="count-founds" x="0"/>
+    <prop id="max">(f,file_info,len,(file,xx))</prop>
+    <prop id="contemp"></prop>
+    <prop id="lastend">0</prop>
+
+    <loop id="lp" regex="(prop,srl-regex)" xflag="(prop,srl-flags)" file="(file,xx)">
+       <prop id="contemp">(prop,contemp)(loop,lp,$before)[(loop,lp)]</prop>
+       <prop id="count-founds" x="(f,add,1,(prop,count-founds))"/>
+      <prop id="beg-size">10</prop>
+      <prop id="end-size">10</prop>
+        <prop id="start2">(f,max,(f,sub,(loop,lp,#start),(prop,beg-size)),0)</prop>
+        <prop id="end2">(f,min,(f,add,(loop,lp,#end),(prop,end-size)),(prop,max))</prop>
+        <prop id="lastend">(loop,lp,#end)</prop>
+        <prop id="cb" x="(f,substring,(prop,srl-text),(prop,start2),(loop,lp,#start))" />
+        <prop id="ca" x="(f,substring,(prop,srl-text),(loop,lp,#end),(prop,end2))" />
+       
+      <ti test="1" label="Found #(loop,lp,#i)" x="(prop,cb) | (f,html,b,o)(loop,lp)(f,html,b,c) | (prop,ca)"/>
+      <ti type="rec" label="Found #(loop,lp,#i) ">
+        <ti flag="xwrap" align="right">(prop,cb)</ti>
+        <ti>(f,html,b,o)(loop,lp)(f,html,b,c)</ti>
+        <ti flag="wrap">(prop,ca)</ti>
+      </ti>
+      
+      <ti label="at position" flag="label_right" x="(loop,lp,#start)-(loop,lp,#end)"/>
+      <ti label="nbr groups" flag="label_right" x="(loop,lp,#groups)"/>
+      <prop id="g" x="0"/>
+      <loop id="w" while="()(f,lt,(prop,g),(loop,lp,#groups))()">
+        <ti label="Found Groups" test="(f,eq_num,0,(prop,g))"/>
+        <prop id="g" x="(f,add,1,(prop,g))"/>
+        <ti label="(e:o)(prop,g)(e:c)" flag="label_right">(loop,lp,(prop,g))</ti>
+      </loop>
+      
+    </loop>
+    <ti_hr/>
+    <ti label="Searched For Regex">(prop,srl-regex)</ti>
+    <ti label="Total Found">(prop,count-founds)</ti>
+    <ti label="Searched In" type="file">(file,xx)</ti>
+    <ti label="Total length" >(prop,max)</ti>
+    <prop id="contemp">(prop,contemp)(f,substring,(prop,srl-text),(prop,lastend))</prop>
+    <ti label="Contemp" flag="wrap" >(prop,contemp)</ti>
+    <ti type="call_job" job="Regex Tester"/>
+    
+
+  </job>
+  <!-- 
+  <job id="Regex: Check for Match?">
+    <ti label="Lets you do some tests regarding regular expressions" />
+
+    <ti label="Inputs">
+      <ti type="ul">Input a regular expression(e:s) a text and maybe some regex-flags</ti>
+    </ti>
+    <ti label="Results">      
+      <ti type="ul">It is evaluated if the text matches the regular-expression</ti>
+    </ti>
+  </job>
+  
+  <job id="Regex: Check for Matchcc" joblevel="app" role="hidden" tip="This is a helper which lets you exlore regular expressions">
+  
+    <call_job job="go-joe-read">
+      <file id="joe-in-store" x="(dir,status)ic-snip-regex-rs2.lsx"/>
+    </call_job>
+    
+    <tk label="Regular Expression: Check for Match" 
+        flag="(f,when,(f,exists_file,(dir,status)ic-snip-regex-rs2.lsx),sum_only,sum) print">
+      <tk id="srl-regex" 
+          label="Regular Epression" 
+          test_first="1" 
+          flag="nono"
+          tip="The regular expression to be applied"
+          type="textblock"/>
+      <tk id="srl-text" 
+          label="Text to Validate" 
+          test_first="1" 
+          flag="nono"
+          tip="The text which should be validated against the regular expression"
+          type="textblock"/>
+      <tk id="srl-flags" 
+          label="Flags" 
+          type="sel" 
+          flag="multi" 
+          test_first="0"
+          tip="Regular expression flags to use along with the regular expression">              
+        <sel>CASE_INSENSITIVE</sel>
+        <sel>MULTILINE</sel>
+        <sel>DOTALL</sel>
+        <sel>UNICODE_CASE</sel>
+        <sel>CANON_EQ</sel>
+        <sel>UNIX_LINES</sel>
+        <sel>LITERAL</sel>
+        <sel>UNICODE_CASE</sel>
+        <sel>COMMENTS</sel>
+      </tk>
+    </tk>  
+    
+    <call_job job="go-joe-write">
+      <file id="joe-in-store" x="(dir,status)ic-snip-regex-rs2.lsx"/>
+      <prop id="joe-in-regex" x="srl-.*"/>
+    </call_job> 
+    <ti_hr/>     
+    <prop id="matches" x="(f,matches_regex,(prop,srl-text),(prop,srl-regex),(prop,srl-flags))"/>  
+    
+    <ti label="Result:" x="YES(e:s) it matches" test="(prop,matches)" flag="label_right"/>
+    <ti label="Result:" x="NO(e:s) it does not match" test="(f,not,(prop,matches))" flag="label_right"/>
+  
+  </job>
+  -->
+  
+</jobs>

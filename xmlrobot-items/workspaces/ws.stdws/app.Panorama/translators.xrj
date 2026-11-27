@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs>
+  <!--
+Ue &#220;
+ue &#252;
+Oe &#214;
+oe &#246;
+Ae &#196;
+ae &#228; -->
+
+<job id="tr_pcat" role="hidden">
+ <!--
+ (prop,) (prop,_pcat_) (prop,_pcat__) 
+ <call_job job="tr_pcat"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_pcat_do_you_want">Wollen Sie projektspezifische Kategorien verwenden?</prop>
+      <prop id="_pcat_you_could">Sie k&#246;nnen die Kategorien in den Services modifizieren!</prop>      
+      <prop id="_pcat_there_exists">Es existiert eine &#228;ltere Version der Kategorien in diesem Projekt</prop>
+      <prop id="_pcat_use_this">Verwende diese &#228;ltere Version erneut</prop>
+      <prop id="_pcat_forget_the">Vergiss die Vergangenheit und definiere neue Kategorien</prop>
+      <prop id="_pcat_proj_cats">Projektspezifische Kategorien:</prop>      
+      <prop id="_pcat_use_std">Verwende wieder die standardm&#228;ssigen Kategorien</prop>
+           
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_pcat_do_you_want">Do you want to use project-specific categories?</prop>
+      <prop id="_pcat_you_could">You could change the Categories in the Services!</prop>      
+      <prop id="_pcat_there_exists">There exists an older version of categories in the project</prop>
+      <prop id="_pcat_use_this">Use this older version again</prop>
+      <prop id="_pcat_forget_the">Forget the past and make new categories</prop>
+      <prop id="_pcat_proj_cats">Project Specific Categories:</prop>      
+      <prop id="_pcat_use_std">Use standard-categories again</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_rep" role="hidden">
+ <!--
+ (prop,_rep_) (prop,_rep__) 
+ <call_service job="tr_rep"/>     -->
+
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch  -->
+      <choose>
+        <when test="(f,implement,online)">
+          <prop id="_rep_upperdir">  &#8593;&#8593;   RAUF   &#8593;&#8593;  </prop>
+          <prop id="_rep_dirinfo">&#402;</prop>
+          <prop id="_rep_adddir"> + </prop>
+          <prop id="_rep_"></prop>
+        </when>
+        <otherwise>      
+          <prop id="_rep_upperdir">  &#8593;&#8593;   RAUF   &#8593;&#8593;  </prop>
+          <prop id="_rep_dirinfo">  &#402;  </prop>
+          <prop id="_rep_adddir"> + </prop>
+          <prop id="_rep_"></prop>
+         
+        </otherwise>
+      </choose>    <!--    -->
+    <!--   
+    <ti>Rauf=&#8593; Runter= &#8595; auge= &#10773; r=&#9650; u=&#9660;  links=&#8592;  rechts=&#8594; fidel=&#402;</ti>     -->
+ 
+      <prop id="_rep_select_dir">W&#228;hle:</prop>
+      <prop id="_rep_select_file">W&#228;hle</prop>
+      <prop id="_rep_files">Dateien</prop>      
+      <prop id="_rep_Others">Andere</prop>
+      <prop id="_rep_features">Panorama Steuerung ...</prop>
+
+      <prop id="_rep_nofiles">Keine Dateien gefunden</prop>
+      <prop id="_rep_choose_file">W&#228;hlen Sie die Datei</prop>      
+      <prop id="_rep_towrite">zum Schreiben</prop>
+      <prop id="_rep_cancel">Abbrechen</prop>
+      <prop id="_rep_cancelKeep">Abbrechen &amp; Erhalten:</prop>
+      <prop id="_rep_spec_newfile">+ Neue Datei</prop>      
+      <prop id="_rep_choose_dir">W&#228;hlen Sie das Verzeichnis</prop>
+      <prop id="_rep_other_loc">Weitere Verzeichnisse auflisten ...</prop>
+      
+      <prop id="_rep_nodirs">Kein Verzeichnis gefunden</prop> 
+      <prop id="_rep_complete">Komplett</prop>
+      <prop id="_rep_total">Gesamt</prop>
+      <prop id="_rep_nototals">()Keine Gesamt-Summen vorhanden, Aggregationen wurden nicht ausgef&#252;hrt.()</prop>   
+      <prop id="_rep_totalbefcat">Gesamt vor Kategorien-Filter</prop> 
+      <prop id="_rep_sums">Summen</prop>                    
+      <prop id="_rep_percat">je Kategorie:</prop>   
+      <prop id="_rep_seprator">------------------</prop> 
+      <prop id="_rep_perext">je Erweiterung:</prop> 
+      <prop id="_rep_dirheader"> [ Verzeichnisse ]</prop>                    
+      <prop id="_rep_forscope">F&#252;r Bereich</prop>   
+      <prop id="_rep_nextdirshead"> [ N&#228;chste Verzeichnisse ]</prop> 
+      <prop id="_rep_limitof">Grenze von</prop>    
+      <prop id="_rep_reached">erreicht ...</prop>   
+      <prop id="_rep_alldirshead"> [ Alle Verzeichnisse ]</prop> 
+      <prop id="_rep_biggestdirshead"> [ Gr&#246;sste Verzeichnisse ]</prop> 
+      <prop id="_rep_sortedavg">sortiert nach durchschnittlicher Datei-Gr&#246;sse</prop>   
+      <prop id="_rep_session">Sitzung</prop> 
+      <prop id="_rep_sessionMemo">SitzungHauptspeicher</prop> 
+ 
+  
+      <prop id="_rep_in">&#8834;</prop> 
+      <prop id="_rep_the">=</prop>       
+
+      <prop id="_rep_project">Projekt</prop>
+      <prop id="_rep_libro">Libro-Bilder</prop>
+      <prop id="_rep_libro2">Libro-Daten</prop>
+      <prop id="_rep_db">PdB</prop>
+      <prop id="_rep_app">App</prop>  
+      <prop id="_rep_system">System</prop>
+ 
+      <!--        &#8834;
+      <prop id="_rep_in">... im</prop> 
+      <prop id="_rep_the">... das</prop>      
+      <prop id="_rep_"></prop>
+      <prop id="_rep_"></prop>
+      <prop id="_rep_"></prop>
+      <prop id="_rep_"></prop>
+      <prop id="_rep_"></prop>
+      <prop id="_rep_"></prop>       -->
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      
+      <choose>
+        <when test="(f,implement,online)">
+          <prop id="_rep_upperdir">  &#8593;&#8593;   UP   &#8593;&#8593;  </prop>
+          <prop id="_rep_dirinfo">&#402;</prop>
+          <prop id="_rep_adddir"> + </prop>
+          <prop id="_rep_"></prop>
+        </when>
+        <otherwise>
+          <prop id="_rep_upperdir">  &#8593;&#8593;   UP   &#8593;&#8593;  </prop>
+          <prop id="_rep_dirinfo">  &#402;  </prop>
+          <prop id="_rep_adddir"> + </prop>
+          <prop id="_rep_"></prop>
+        </otherwise>
+      </choose>
+
+      <prop id="_rep_select_dir">Choose:</prop>
+      <prop id="_rep_select_file">Choose</prop>
+      <prop id="_rep_files">files</prop>      
+      <prop id="_rep_Others">Others</prop>
+      <prop id="_rep_features">Panorama report features ...</prop>
+
+      <prop id="_rep_nofiles">No Files found</prop>
+      
+      <prop id="_rep_choose_file">Choose the file</prop>      
+      <prop id="_rep_towrite">to write</prop>
+      <prop id="_rep_cancel">Cancel</prop>
+      <prop id="_rep_cancelKeep">Cancel &amp; Keep:</prop>
+      <prop id="_rep_spec_newfile">+ New file</prop>      
+      <prop id="_rep_choose_dir">Choose the folder </prop>
+      <prop id="_rep_other_loc">See more location ...</prop> 
+      
+      <prop id="_rep_nodirs">No Dirs found</prop> 
+      <prop id="_rep_complete">Complete</prop>
+      <prop id="_rep_total">Total</prop>
+      <prop id="_rep_nototals">()No Total-Values to display, aggregation for this directory not performed.()</prop>   
+      <prop id="_rep_totalbefcat">Total before Category-Filter</prop> 
+      <prop id="_rep_sums">Sums</prop>                    
+      <prop id="_rep_percat">per Category:</prop>   
+      <prop id="_rep_seprator">------------------</prop> 
+      <prop id="_rep_perext">per Extension:</prop> 
+      <prop id="_rep_dirheader"> [ Directories ]</prop>                    
+      <prop id="_rep_forscope">For Scope</prop>   
+      <prop id="_rep_nextdirshead"> [ Next Directories ]</prop> 
+      <prop id="_rep_limitof">limit of</prop>    
+      <prop id="_rep_reached">reached ...</prop>   
+      <prop id="_rep_alldirshead"> [ All Dirs ]</prop> 
+      <prop id="_rep_biggestdirshead"> [ Biggest Dirs ]</prop> 
+      <prop id="_rep_sortedavg">sorted by average file-size</prop>   
+      <prop id="_rep_session">Session</prop> 
+      <prop id="_rep_sessionMemo">SessionMemo</prop>   
+      <prop id="_rep_in">&#8834;</prop> 
+      <prop id="_rep_the">=</prop>  
+
+      <prop id="_rep_project">Project</prop>
+      <prop id="_rep_libro">Libro-Pics</prop>
+      <prop id="_rep_libro2">Libro-Data</prop>
+      <prop id="_rep_db">PdB</prop>
+      <prop id="_rep_app">App</prop>  
+      <prop id="_rep_system">System</prop>
+
+
+    </when>
+  </choose>
+</job>
+
+<job id="tr_basics" role="hidden">
+
+ <prop id="_label_askask">??</prop>
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_x_edit">Bearbeiten</prop>               
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_x_edit">Edit</prop>
+
+    </when>
+  </choose>
+</job>
+
+<job id="tr_fadd" role="hidden">
+ <!--
+ (prop,) (prop,_fadd_) (prop,_fadd__) 
+ <call_job job="tr_fadd"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_fadd_create_file_in">Erzeuge Datei im Verzeichnis</prop>
+      <prop id="_fadd_fn_l">Name der Datei</prop>      
+      <prop id="_fadd_fn_t">Diese Datei wird 'virtuell' erzeugt. Sie m&#252;ssen die Datei in weiterer Folge noch ausw&#228;hlen ...</prop>
+      <prop id="_fadd_conti">Weiter mit dem Ausw&#228;hlen der Datei</prop>
+      <prop id="_fadd_choose">Aus&#228;hlen:</prop>
+      <prop id="_fadd_cancel">Erzeugung einer Ausgabe-Datei abgebrochen</prop>     
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_fadd_create_file_in">Create file in folder</prop>
+      <prop id="_fadd_fn_l">Name of file to create</prop>      
+      <prop id="_fadd_fn_t">To this file will be written. You will have to select it to make it the file of your choice ...</prop>
+      <prop id="_fadd_conti">Continue with choosing the new file</prop>
+      <prop id="_fadd_choose">Choose:</prop>
+      <prop id="_fadd_cancel">Canceled File-Creation</prop> 
+    </when>
+  </choose>
+</job>
+
+
+
+<job id="tr_dadd" role="hidden">
+ <!--
+ (prop,) (prop,_dadd_) (prop,_dadd__) 
+ <call_job job="tr_dadd"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_dadd_newdir">Neues Verzeichnis</prop>
+      <prop id="_dadd_name_of_dir">Verzeichnisname</prop>      
+      <prop id="_dadd_create">Erzeuge ein neues Verzeichnis in</prop>
+      <prop id="_dadd_created">Erzeugt:</prop>
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_dadd_newdir">New Directory</prop>
+      <prop id="_dadd_name_of_dir">Name of Dir</prop>      
+      <prop id="_dadd_create">Create a new folder in</prop>
+      <prop id="_dadd_created">Created:</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_lysp" role="hidden">
+ <!-- (prop,)
+ (prop,_lysp_) (prop,_lysp__) 
+ <call_job job="tr_lysp"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+   
+      <!-- 
+      <prop id="_lysp__l"></prop>
+      <prop id="_lysp__t"></prop>
+      
+      <prop id="_lysp__l"></prop>
+      <prop id="_lysp__t"></prop>   
+      -->
+      <prop id="_lysp_l">Berichts-Layout</prop>
+      <prop id="_lysp_mscope_l">Strukturierung</prop>
+      
+      <prop id="_lysp_cats_l">Auflisten je Kategorie</prop>
+      <prop id="_lysp_cats_t">Dateien werden gruppiert je Kategorie</prop>
+
+      <prop id="_lysp_msums_l">Summen</prop>
+      <prop id="_lysp_msums_t">Regeln f&#252;r die Darstellung von Summen</prop>
+
+      <prop id="_lysp_ptot_l">Gesamt-Summe</prop>
+      <prop id="_lysp_ptot_t">Zeigt Summen wie zb. Anzahl und Kb. W&#228;hlen Sie wo diese angezeigt werden sollen.</prop>
+      <prop id="_lysp_ptot_beg">Am Seitenbeginn</prop>
+      <prop id="_lysp_ptot_end">Am Seitenende</prop>      
+
+      <prop id="_lysp_sumcat_l">Summe je Kategorie</prop>
+      <prop id="_lysp_sumcat_t">Zeigt Summen je Kategorie</prop>
+      
+      <prop id="_lysp_sumext_l">Summe je Erweiterung</prop>
+      <prop id="_lysp_sumext_t">Zeigt Summen je Datei-Erweiterung</prop>    
+
+      <prop id="_lysp_sumsort_l">Sortierung der Summen</prop>
+      
+      <prop id="_lysp_sumsort_t">Sortierreihenfolge der Summen.</prop>
+
+      <prop id="_lysp_sumsort_big">Gr&#246;sste zuerst</prop>
+      <prop id="_lysp_sumsort_small">Kleinste zuerst</prop>
+      <prop id="_lysp_sumsort_fequ">Haufigste zuerst</prop>
+      <prop id="_lysp_sumsort_less">Seltenste zuerst</prop>
+
+      <prop id="_lysp_mfdet_l">Datei-Infos</prop>
+      <prop id="_lysp_mdfet_t">Betreffend Detailsinfos je Datei</prop>
+      
+      <prop id="_lysp_sefi_l">Ansicht Dateiname</prop>
+      <prop id="_lysp_sefi_t">Steuert ob Dateien grunds&#228;tzlich(e:s) und wenn ja WIE diese angezeigt werden sollen.</prop>
+      
+      <prop id="_lysp_sefi_no">Nein</prop>
+      <prop id="_lysp_sefi_yes">Ja</prop>
+      <prop id="_lysp_sefi_yesb">()Ja (Fett)()</prop>
+      <prop id="_lysp_sefi_yesbc">()Ja (Fett-Spalig)()</prop>       
+      <prop id="_lysp_sesi_l">Dateigr&#246;sse</prop>
+      <prop id="_lysp_sesi_t">Zeigt die Dateigr&#246;sse in KB an</prop>
+      
+      <prop id="_lysp_sofi_l">Datei-Sortierung</prop>
+      <prop id="_lysp_sofi_t">Spezifiziert wie die Dateien sortiert werden sollen.</prop> 
+      <prop id="_lysp_sofi_name">Name</prop> 
+      <prop id="_lysp_sofi_ext">Erweiterung</prop> 
+      <prop id="_lysp_sofi_big">Gr&#246;sse(e:s) Gr&#246;sste zuerst</prop> 
+      <prop id="_lysp_sofi_small">Gr&#246;sse(e:s) Kleinste zuerst</prop> 
+
+      <prop id="_lysp_limitf_l">Limitierung</prop>
+      <prop id="_lysp_limitf_t">Maximale Anzahl von Dateien je Kategorie</prop>
+
+      <prop id="_lysp_mdirs_l">Verzeichnisse</prop>
+      <prop id="_lysp_mdirs_t">Regeln f&#252;r das Anzeigen der Verzeichnisse</prop>
+      
+      <prop id="_lysp_dirtyp_l">Verzeichnis-Typen</prop>
+      <prop id="_lysp_dirtyp_t">Spezifiziert(e:s) wie Verzeichnisse angezeigt werden sollen</prop>  
+      
+      <prop id="_lysp_ldirs_l">Verzeichnis-Limits</prop>
+      <prop id="_lysp_ldirs_t">Begrenzt die Anzahl der dargestellten Verzeichnisse f&#252;r den gegebenen Verzeichnistyp </prop> 
+              
+      <prop id="_lysp_dirtyp_direct">Direkte Kinder</prop>   
+      <prop id="_lysp_dirtyp_next">N&#228;chste Kinder</prop> 
+      <prop id="_lysp_dirtyp_all">Alle Verzeichnisse</prop> 
+      <prop id="_lysp_dirtyp_big">Gr&#246;sste Verzeichnisse</prop>
+      <prop id="_lysp_dirtyp_big_av">Gr&#246;sste Verzeichnisse (e:o)Durchschnittliche Gr&#246;sse(e:c)</prop>  
+            
+      <prop id="_lysp_dirsiz_l">Verzeichnisgrosse</prop>
+      <prop id="_lysp_dirsiz_t">Zeigt den Speicherplatzbedarf von Verzeichnissen an</prop>
+      
+      <prop id="_lysp_limitbig_l">(prop,_lysp_dirtyp_big)</prop>
+      <prop id="_lysp_limitbig_t">Maximale Anzahl von angezeigten Verzeichnissen bei '(prop,_lysp_dirtyp_big)'</prop> 
+
+      <prop id="_lysp_maxnext_l">(prop,_lysp_dirtyp_next)</prop>
+      <prop id="_lysp_maxnext_t">Maximale Anzahl von angezeigten Verzeichnissen bei '(prop,_lysp_dirtyp_next)'</prop>
+
+      <prop id="_lysp_mfilpc_l">Kategorien-Filter</prop>
+      <prop id="_lysp_mfilpc_t">Filtert spezifische Kategorien aus</prop>
+      
+      <prop id="_lysp_typfilt_l">Filter-Typ</prop>
+      <prop id="_lysp_typfilt_t">Art und Weise des Filters: Positive oder Negative Formulierung</prop>    
+      <prop id="_lysp_typfilt_want">Positiver Filter = Was Sie WOLLEN</prop>
+      <prop id="_lysp_typfilt_wantnot">Negativer Filter = What Sie NICHT WOLLEN</prop>
+
+      <prop id="_lysp_catsel_l">Gew&#228;hlte Kategorien</prop>
+      <prop id="_lysp_catsel_t">Allgemeine Kategorien f&#252;r den Filter</prop> 
+      <prop id="_lysp_catselpriv_t">Private Kategorien f&#252;r den Filter</prop>       
+      
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+     
+   <prop id="_lysp_l">Setup: Layout</prop>
+      <prop id="_lysp_mscope_l">Structure</prop>
+      
+      <prop id="_lysp_cats_l">Structure by Categories</prop>
+      <prop id="_lysp_cats_t">Triggers to File-Categories in report</prop>
+
+      <prop id="_lysp_msums_l">Sums</prop>
+      <prop id="_lysp_msums_t">Treatment of sums</prop>
+
+      <prop id="_lysp_ptot_l">Page Totals</prop>
+      <prop id="_lysp_ptot_t">Triggers to see total values like count and kb. If you want to see them (e:s) specify where to see them(e:s) at the beginning of the page or at the end</prop>
+      <prop id="_lysp_ptot_beg">At the beginning</prop>
+      <prop id="_lysp_ptot_end">At the end</prop>      
+
+      <prop id="_lysp_sumcat_l">Sums per Category</prop>
+      <prop id="_lysp_sumcat_t">See sums per category</prop>
+      
+      <prop id="_lysp_sumext_l">Sums per Extension</prop>
+      <prop id="_lysp_sumext_t">See sums per extension</prop>    
+
+      <prop id="_lysp_sumsort_l">Sort of Sums</prop>
+      <prop id="_lysp_sumsort_t">How to sort the sums: Biggest ones first(e:s) Smallest ones first(e:s) Frequent ones first(e:s) Less ones first</prop>
+
+      <prop id="_lysp_sumsort_big">Biggest ones first</prop>
+      <prop id="_lysp_sumsort_small">Smallest ones first</prop>
+      <prop id="_lysp_sumsort_fequ">Frequent ones first</prop>
+      <prop id="_lysp_sumsort_less">Less ones first</prop>
+
+      <prop id="_lysp_mfdet_l">File Details</prop>
+      <prop id="_lysp_mdfet_t">Treatment of file-details</prop>
+      
+      <prop id="_lysp_sefi_l">See Filenames</prop>
+      <prop id="_lysp_sefi_t">Trigges wheter to see each file (e:s) and if where ...</prop>
+      
+      <prop id="_lysp_sefi_no">No</prop>
+      <prop id="_lysp_sefi_yes">Yes</prop>
+      <prop id="_lysp_sefi_yesb">()Yes (Bold)()</prop>
+      <prop id="_lysp_sefi_yesbc">()Yes (Bold-Column)()</prop>       
+      <prop id="_lysp_sesi_l">See Size</prop>
+      <prop id="_lysp_sesi_t">Prints filesize of files in KB</prop>
+      
+      <prop id="_lysp_sofi_l">Sort of Files</prop>
+      <prop id="_lysp_sofi_t">Specifies the sorting of listed files: Name(e:s) Extension(e:s)Size Big ones first(e:s) Size Small ones first</prop> 
+      <prop id="_lysp_sofi_name">Name</prop> 
+      <prop id="_lysp_sofi_ext">Extension</prop> 
+      <prop id="_lysp_sofi_big">Size(e:s) Big ones first</prop> 
+      <prop id="_lysp_sofi_small">Size(e:s) Small ones first</prop> 
+
+      <prop id="_lysp_limitf_l">Limit Files</prop>
+      <prop id="_lysp_limitf_t">Maximal number of files to print per category</prop>
+
+      <prop id="_lysp_mdirs_l">Directories</prop>
+      <prop id="_lysp_mdirs_t">Treatment of directories</prop>
+      
+      <prop id="_lysp_ldirs_l">Limits Directories</prop>
+      <prop id="_lysp_ldirs_t">Sets a limit to the number of displayed directories for the given type of directory</prop>       
+      
+      <prop id="_lysp_dirtyp_l">Directories Types</prop>
+      <prop id="_lysp_dirtyp_t">Specifies how to report directories: Direct Childs(e:s) Next Childs(e:s) All Dirs(e:s) Biggest Dirs(e:s) Biggest Dirs with Average Size</prop>    
+      <prop id="_lysp_dirtyp_direct">Direct Childs</prop>   
+      <prop id="_lysp_dirtyp_next">Next Childs</prop> 
+      <prop id="_lysp_dirtyp_all">All Dirs</prop> 
+      <prop id="_lysp_dirtyp_big">Biggest Dirs</prop>
+      <prop id="_lysp_dirtyp_big_av">Biggest Dirs (e:o)Average Size(e:c)</prop>  
+            
+      <prop id="_lysp_dirsiz_l">See Dir Size</prop>
+      <prop id="_lysp_dirsiz_t">Prints size of dirs</prop>
+      
+      <prop id="_lysp_limitbig_l">(prop,_lysp_dirtyp_big)</prop>
+      <prop id="_lysp_limitbig_t">Maximal number of Biggest-Dirs to see</prop> 
+
+      <prop id="_lysp_maxnext_l">(prop,_lysp_dirtyp_next)</prop>
+      <prop id="_lysp_maxnext_t">Maximal number of Next-Childs to see</prop>
+
+      <prop id="_lysp_mfilpc_l">Filter Page per Category</prop>
+      <prop id="_lysp_mfilpc_t">Lets you filter the report for categories</prop>
+      
+      <prop id="_lysp_typfilt_l">Type of Filter</prop>
+      <prop id="_lysp_typfilt_t">Positive or negative filter</prop>    
+      <prop id="_lysp_typfilt_want">Positive Filter = What you WANT</prop>
+      <prop id="_lysp_typfilt_wantnot">Negative Filter = What you DON'T WANT</prop>
+
+      <prop id="_lysp_catsel_l">Selected Categories</prop>
+      <prop id="_lysp_catsel_t">Commons Categories for filter</prop> 
+      <prop id="_lysp_catselpriv_t">Private Categories for filter</prop>
+    </when>
+  </choose>
+</job>
+
+<job id="tr_dscan" role="hidden">
+ <!--
+ (prop,_dscan_) (prop,_dscan__) 
+ <call_job job="tr_dscan"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_dscan_dir_l">Verzeichnis</prop>
+      <prop id="_dscan_dir_t">Verzeichnis zur Ansicht</prop>
+      
+      <prop id="_dscan_l">Verzeichnisauswahl</prop>    
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+
+      <prop id="_dscan_dir_l">Directory</prop>
+      <prop id="_dscan_dir_l">Directory to view</prop>
+      
+      <prop id="_dscan_l">Selection of Folder</prop> 
+
+    </when>
+  </choose>
+</job>
+
+<job id="tr_visuals_core" role="hidden">
+ <!--
+ (prop,_visi_) (prop,_visi__) 
+ <call_job job="tr_visi"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_visi_label">Panorama Visuals</prop>
+      <prop id="_visi_tip">()Definition der Darstellung von Bildern.()</prop>
+      
+      <prop id="_visi_onoff">Bilder darstellen</prop>
+      <prop id="_visi_onoff_t">Definiert ob Bilder bei der Auflistung von Dateien in Panorama als Bilder darstellt werden sollen</prop>
+      <prop id="_visi_maxx">Maximale Breite/x</prop>
+      
+      <prop id="_visi_maxy">Maximale H&#246;he/y</prop>   
+      <prop id="_visi_maxx_t">Limitiert die Breite bei der Darstellung eines Bildes in Pixeln</prop>
+      <prop id="_visi_maxy_t">Limitiert die H&#246;he bei der Darstellung eines Bildes in Pixeln</prop> 
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+      <prop id="_visi_label">Panorama Visuals</prop>
+      <prop id="_visi_tip">()Define the size of pictures.()</prop>
+      
+      <prop id="_visi_onoff">See pictures</prop>
+      <prop id="_visi_onoff_t">Specifies if pictures should be displayed as pictures when listing files with Panorama</prop>
+      <prop id="_visi_maxx">Max Width/x</prop>
+      <prop id="_visi_maxy">Max Height/y</prop> 
+      
+      <prop id="_visi_maxx_t">Limits the width of the displayed pictures in pixels</prop>
+      <prop id="_visi_maxy_t">Limits the height of the displayed pictures in pixels</prop>       
+    </when>
+  </choose>
+</job>
+
+
+
+<job id="tr_kjob" role="hidden">
+ <!--
+ (prop,) (prop,_kjob_) (prop,_kjob__) 
+ <call_job job="tr_kjob"/> -->
+ <choose>           
+    <when test="(f,eq_text,(f,interpreter,lang),de)" lang="de">
+      <!-- d=deutsch -->
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+      
+      <prop id="_kjob_"></prop>
+      <prop id="_kjob_"></prop>
+
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>
+      
+      <prop id="_kjob__l"></prop>
+      <prop id="_kjob__t"></prop>                  
+            
+      <prop id="_kjob_xx_l"></prop>
+      <prop id="_kjob_xx_t"></prop>      
+            
+    </when>
+    <!-- s=spanish 
+    <when test="(f,eq_text,(f,interpreter,lang),es)" lang="es">
+    
+    </when>  -->  
+    <when test="1" lang="en">   
+      <!-- e=englisch -->
+
+    </when>
+  </choose>
+</job>
+
+
+
+
+</jobs>

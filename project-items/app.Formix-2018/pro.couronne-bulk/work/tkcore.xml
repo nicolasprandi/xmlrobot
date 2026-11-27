@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bulk-tk-plain">
+<call_job job="tr_bulk"/>
+<need default="">(prop,bulks_tk_control)</need>
+<call_job job="bulk_event_tk_core"/>
+<when test="(f,has_flag,(prop,bulks_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,bulks_tk_control),print_all_fields)">
+<ti label="(prop,bulk_default_label_class) (prop,bulk_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,bulk_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,bulks_tk_control),print_only),,(prop,bulk_default_label_class)(f,when,(f,has,prop,bulk_default_label_name), (prop,bulk_default_label_name),))" tip="(prop,_bulk_tip)" tk_id="28" flag="(prop,bulks_tk_control) wrap critical">
+<tk label="(prop,_bulk_l_type)" id="bulk_type" x="" test_first="1" tip="(prop,_bulk_t_type)" type="sel" follow_job="bulk_follow_type" flag=" nono  dynamo ">
+<sel label="(prop,_bulk_s_typ_qu_sqli)">qu_sqli</sel>
+<sel label="(prop,_bulk_s_typ_qu)">qu</sel>
+<sel label="(prop,_bulk_s_typ_sqli)">sqli</sel>
+<sel label="Script">script</sel>
+</tk>
+<tk label="(prop,_bulk_l_name)" id="bulk_name" x="(f,time)" test_first="1" tip="(prop,_bulk_t_name)(f,when,(f,right,spi), Selection-Update-Keywords &#10;sn=1:PubBox &#10;sn=2:PubObj &#10;sn=3:PubAttr &#10;sn=4:PubWert &#10;sn=5:PubMehr &#10;sn=6:PubBez &#10;sn=7:MigProduceMigs &#10;sn=8:MigOptiEquals &#10;sn=9:MigOptiCyles &#10;sn=10:MigOptiDouble &#10;sn=11:MigSmart &#10;sn=12:MigDoValueMigs &#10;sn=13:MigDoBezBMigs &#10;sn=14:MigDoBezAMigs &#10;sn=15:MigUntop &#10;sn=16:MigRemoveObjects &#10;sn=17:HealRelations  &#10;sn=18:HealAttributes  &#10;sn=19:HealWert &#10;sn=20:TopSolo &#10;sn=21:TopWerte &#10;Sn=22:Mig2FrischJdbc &#10;sn=23:Mig2FrischDssDelete&#10;sn=24:KopfGrouped&#10;sn=25:KopfPlain,) " type="textblock" cols="35" flag=" nono "/>
+<tk label="(prop,_bulk_l_doku)" id="bulk_doku" x="" test_first="0" tip="(prop,_bulk_t_doku)" type="textblock" cols="30" flag=" "/>
+<tk label="(prop,_bulk_l_bscript)" id="bulk_bscript" x="" test_first="0" tip="(prop,_bulk_t_bscript)&#10;(prop,_scripthelper)" type="textblock" cols="50" flag="  big bigbig wide "/>
+<tk label="Flags" id="bulk_flags" x="" test_first="0" tip="Require input of limit-update since the limit is important in this bulk" type="sel" flag=" ">
+<sel label="AskForLimit">limit</sel>
+</tk>
+<tk label="(prop,_bulk_l_qu)" x="(prop,_bulk_l_qu)" test_first="0" tip="(prop,_bulk_t_qu)" test_dyn="()(f,starts_with,(prop,bulk_type),qu)()" type="msg" flag=" "/>
+<tk label="(prop,_bulk_l_qu_file)" id="bulk_qu_file" x="" test_first="1" tip="(prop,_bulk_t_qu_file)" test_dyn="()(f,starts_with,(prop,bulk_type),qu)()" type="sel" follow_job="bulk_follow_query" flag="  fresh_xml dynamo " xml="(file,bulksel_query_file)"/>
+<tk label="(prop,_bulk_l_qu_row)" id="bulk_qu_row" x="" test_first="1" tip="(prop,_bulk_t_qu_row)" test_dyn="()(f,starts_with,(prop,bulk_type),qu)()" type="sel" flag="  fresh_xml " xml="(file,bulksel_query_id)"/>
+<tk label="(prop,_bulk_l_sqli)" x="(prop,_bulk_l_sqli)" test_first="1" tip="(prop,_bulk_t_sqli)" test_dyn="()(f,ends_with,(prop,bulk_type),sqli)()" type="msg" flag=" "/>
+<tk label="(prop,_bulk_l_sqli_file)" id="bulk_sqli_file" x="" test_first="1" tip="(prop,_bulk_t_sqli_file)" test_dyn="()(f,ends_with,(prop,bulk_type),sqli)()" type="sel" follow_job="bulk_follow_sqli" flag="  fresh_xml dynamo " xml="(file,bulksel_query_file)"/>
+<tk label="(prop,_bulk_l_sqli_row)" id="bulk_sqli_row" x="" test_first="1" tip="(prop,_bulk_t_sqli_row)" test_dyn="()(f,ends_with,(prop,bulk_type),sqli)()" regex="\d+" type="sel" flag="  fresh_xml " xml="(file,bulksel_sqli_id)"/>
+<tk label="Script" x="Script" test_first="0" test_dyn="()(f,starts_with,(prop,bulk_type),script)()" type="msg" flag=" "/>
+<tk label="(prop,_bulk_l_script)" id="bulk_script" x="" test_first="1" tip="(prop,_scripthelper)" test_dyn="()(f,starts_with,(prop,bulk_type),script)()" type="textblock" cols="50" flag="  big bigbig wide "/>
+</tk>
+</job>

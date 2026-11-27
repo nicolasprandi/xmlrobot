@@ -1,0 +1,4 @@
+<when test="(f,has,prop,catched_msg)" >
+  <ti label="Exception">(prop,catched_msg)</ti>
+  <dump_ti label="Storage on Exception" />
+</when>

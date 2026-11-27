@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="modo-see-all" level="ws" role="hidden" tip="Lists all Modificators">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="modo_loop" xml="(file,modos)" xpath="(prop,modos_offset)modo(prop,modos_where)" sort="(prop,modos_sort_attribute)" number="(prop,modos_sort_number)" ignore_case="(prop,modos_sort_ignore_case)" desc="(prop,modos_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,modos_offset_label)),0)">
+<ti label="(prop,modos_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Where"/>
+<ti x="Val-Xml"/>
+<ti x="Val-Field"/>
+<ti x="Off"/>
+<ti x="Counts"/>
+<ti/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,when,(f,has_flag,(loop,modo_loop,@how),append),append(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_in),insert_in(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_in_begin),insert_in_begin(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_before),insert_before(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_after),insert_after(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),remove),remove(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),replace),replace(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),set_attribute),set_attribute(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),remove_attribute),remove_attribute(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),set_text),set_text(e:s),)(f,html,bold,close)" job="modo-see">
+<prop id="modo_key">(loop,modo_loop,@row)</prop>
+<file id="modos">(file,modos)</file>
+<prop id="modos_offset">(prop,modos_offset)</prop>
+<prop id="modos_offset_label">(prop,modos_offset_label)</prop>
+<prop id="modos_offset_new_key">(prop,modos_offset_new_key)</prop>
+<prop id="modos_sort_attribute">(prop,modos_sort_attribute)</prop>
+<prop id="modos_sort_number">(prop,modos_sort_number)</prop>
+<prop id="modos_where">(prop,modos_where)</prop>
+<prop id="modos_return_job">(prop,modos_return_job)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="files">(file,files)</file>
+<prop id="files_offset">(prop,files_offset)</prop>
+<prop id="files_offset_label">(prop,files_offset_label)</prop>
+<prop id="files_offset_new_key">(prop,files_offset_new_key)</prop>
+<prop id="files_sort_attribute">(prop,files_sort_attribute)</prop>
+<prop id="files_sort_number">(prop,files_sort_number)</prop>
+<prop id="files_where">(prop,files_where)</prop>
+<prop id="files_return_job">(prop,files_return_job)</prop>
+<prop id="file_key">(prop,file_key)</prop>
+</ti>
+<ti test="(f,has,(loop,modo_loop,@where))" type="textblock" x="(f,text,cut_nice,(loop,modo_loop,@where),200)" flag="wrap"/>
+<ti test="(f,not,(f,has,(loop,modo_loop,@where)))"/>
+<ti test="(f,has,(loop,modo_loop,@with))" type="textblock" x="(f,text,cut_nice,(loop,modo_loop,@with),200)" flag="wrap"/>
+<ti test="(f,not,(f,has,(loop,modo_loop,@with)))"/>
+<ti test="(f,has,(loop,modo_loop,@value))" type="text" x="(loop,modo_loop,@value)" flag=""/>
+<ti test="(f,not,(f,has,(loop,modo_loop,@value)))"/>
+<ti test="(f,has,(loop,modo_loop,@off))" type="text" x="(loop,modo_loop,@off)" flag=""/>
+<ti test="(f,not,(f,has,(loop,modo_loop,@off)))"/>
+<ti test="(f,has,(loop,modo_loop,@count))" type="text" x="(loop,modo_loop,@count)" flag=""/>
+<ti test="(f,not,(f,has,(loop,modo_loop,@count)))"/>
+<ti type="call_job" explain="Edit" job="modo-edit">
+<prop id="modo_key">(loop,modo_loop,@row)</prop>
+<file id="modos">(file,modos)</file>
+<prop id="modos_offset">(prop,modos_offset)</prop>
+<prop id="modos_offset_label">(prop,modos_offset_label)</prop>
+<prop id="modos_offset_new_key">(prop,modos_offset_new_key)</prop>
+<prop id="modos_sort_attribute">(prop,modos_sort_attribute)</prop>
+<prop id="modos_sort_number">(prop,modos_sort_number)</prop>
+<prop id="modos_where">(prop,modos_where)</prop>
+<prop id="modos_return_job">(prop,modos_return_job)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="files">(file,files)</file>
+<prop id="files_offset">(prop,files_offset)</prop>
+<prop id="files_offset_label">(prop,files_offset_label)</prop>
+<prop id="files_offset_new_key">(prop,files_offset_new_key)</prop>
+<prop id="files_sort_attribute">(prop,files_sort_attribute)</prop>
+<prop id="files_sort_number">(prop,files_sort_number)</prop>
+<prop id="files_where">(prop,files_where)</prop>
+<prop id="files_return_job">(prop,files_return_job)</prop>
+<prop id="file_key">(prop,file_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Modificators found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,modos_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="modo-add" explain="Add another Modificator" job="modo-add">
+<file id="modos">(file,modos)</file>
+<prop id="modos_offset">(prop,modos_offset)</prop>
+<prop id="modos_offset_label">(prop,modos_offset_label)</prop>
+<prop id="modos_offset_new_key">(prop,modos_offset_new_key)</prop>
+<prop id="modos_sort_attribute">(prop,modos_sort_attribute)</prop>
+<prop id="modos_sort_number">(prop,modos_sort_number)</prop>
+<prop id="modos_where">(prop,modos_where)</prop>
+<prop id="modos_return_job">(prop,modos_return_job)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="files">(file,files)</file>
+<prop id="files_offset">(prop,files_offset)</prop>
+<prop id="files_offset_label">(prop,files_offset_label)</prop>
+<prop id="files_offset_new_key">(prop,files_offset_new_key)</prop>
+<prop id="files_sort_attribute">(prop,files_sort_attribute)</prop>
+<prop id="files_sort_number">(prop,files_sort_number)</prop>
+<prop id="files_where">(prop,files_where)</prop>
+<prop id="files_return_job">(prop,files_return_job)</prop>
+<prop id="file_key">(prop,file_key)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,modos)</file>
+<prop id="orga_where">(prop,modos_where)</prop>
+<prop id="orga_view_loop_id">modo_loop</prop>
+<prop id="orga_finished_job">see-full-list</prop>
+<prop id="orga_offset">(prop,modos_offset)</prop>
+<prop id="orga_offset_label">(prop,modos_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,modos_offset_new_key)</prop>
+<prop id="orga_segment_plural">modos</prop>
+<prop id="orga_segment_singular">modo</prop>
+<prop id="orga_segment_plural_label">Modificators</prop>
+<prop id="orga_segment_singular_label">Modificator</prop>
+<prop id="orga_sort_attribute">(prop,modos_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,modos_sort_number)</prop>
+<prop id="orga_where">(prop,modos_where)</prop>
+<prop id="orga_name_expression_loop">()(f,when,(f,has_flag,(loop,modo_loop,@how),append),append(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_in),insert_in(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_in_begin),insert_in_begin(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_before),insert_before(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),insert_after),insert_after(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),remove),remove(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),replace),replace(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),set_attribute),set_attribute(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),remove_attribute),remove_attribute(e:s),)(f,when,(f,has_flag,(loop,modo_loop,@how),set_text),set_text(e:s),)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+<prop id="bit_key">(prop,bit_key)</prop>
+<file id="files">(file,files)</file>
+<prop id="files_offset">(prop,files_offset)</prop>
+<prop id="files_offset_label">(prop,files_offset_label)</prop>
+<prop id="files_offset_new_key">(prop,files_offset_new_key)</prop>
+<prop id="files_sort_attribute">(prop,files_sort_attribute)</prop>
+<prop id="files_sort_number">(prop,files_sort_number)</prop>
+<prop id="files_where">(prop,files_where)</prop>
+<prop id="files_return_job">(prop,files_return_job)</prop>
+<prop id="file_key">(prop,file_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,modos)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,modos_offset)),0)">(prop,modos_offset)</ti>
+</ti>
+</when>
+</job>

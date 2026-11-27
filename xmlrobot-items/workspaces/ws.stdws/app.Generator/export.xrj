@@ -1,0 +1,707 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+
+<job id="xtg" role="hidden">
+  <need>(file,xsl-to-generate) (prop,type-xsl-to-generate)</need>
+  <need default="">(prop,numerics)</need>
+  
+  <ti label="type-xsl-to-generate" x="(prop,type-xsl-to-generate)" test="0"/>
+  <file id="xtg-xsl" x=""/>
+  <choose>  
+    <when test="(f,eq,xml,(prop,type-xsl-to-generate))">
+      <file id="xtg-xsl" x="(dir,app)cs2gen-xsl-xml.xsl"/>
+    </when> 
+    <when test="(f,eq,xmla,(prop,type-xsl-to-generate))">
+      <file id="xtg-xsl" x="(dir,app)cs2gen-xsl-xml-attributes.xsl"/>
+    </when>     
+    <when test="(f,eq,sql,(prop,type-xsl-to-generate))">
+      <file id="xtg-xsl" x="(dir,app)cs2gen-xsl-sql-2.xsl"/>     
+    </when>      
+    <when test="(f,eq,csv,(prop,type-xsl-to-generate))">
+      <file id="xtg-xsl" x="(dir,app)cs2gen-xsl-csv-2.xsl"/>
+    </when>    
+    <when test="(f,eq,excel,(prop,type-xsl-to-generate))">
+      <file id="xtg-xsl" x="(dir,app)cs2gen-xsl-excel.xsl"/>
+    </when> 
+    <when test="(f,eq,json,(prop,type-xsl-to-generate))">
+      <file id="xtg-xsl" x="(dir,app)cs2gen-xsl-json.xsl"/>
+    </when>                 
+        
+    <when test="(f,eq,html,(prop,type-xsl-to-generate))">
+      <file id="xtg-xsl" x="(dir,app)cs2gen-xsl-html.xsl"/>  
+    </when>  
+    
+    <otherwise>
+      <throw>xtg Not supported Fileformat '(prop,type-xsl-to-generate)' for (file,xsl-to-generate)</throw>
+    </otherwise>  
+   </choose>
+   
+    <xslt
+      xml="(file,cse)"
+      xsl="(file,xtg-xsl)"
+      out="(file,xsl-to-generate)"
+      home="(f,dir_of_file,(file,xtg-xsl))"/>   
+      
+</job>
+
+<job id="generate-xsl-indiv" role="hidden">
+  <need>(file,xsl-to-generate) (file,xsl-to-generate-output) (prop,xsl-info)</need>
+  <ti test="0">in generate-xsl-indiv ...</ti>
+  <when test="(f,not,(f,has,file,xsl-to-generate))">
+    <throw>You need to define the xsl-file. current value[(file,xsl-to-generate)]</throw>
+  </when>
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-e)"/>
+    <prop id="joe-in-regex" x="what-to-generate"/>
+  </call_job>
+  
+  <when test="(f,not,(f,has,prop,what-to-generate))">
+    <prop id="what-to-generate"  x="(f,lower,(f,substring_after,(f,name_of_file,(file,xsl-to-generate-output)),.))"/>
+  </when>
+  <tk label="Provision of Xsl-Template"
+      test="(f,and,(prop,askquestions),(f,role,expert))">
+    <tk 
+      id="what-to-generate" 
+      type="sel" 
+      tip="We are going to provide you with a template for the xsl-file of your individual export. What template do you want?" 
+      label="Select the type of Xsl-Template" flag="nono">      
+      <sel label="xml-elements">xml</sel>
+      <sel label="xml-attributes">xmla</sel>
+      <sel>sql</sel>
+      <sel>csv</sel>
+      <sel>html</sel>
+      <sel>json</sel>
+      <sel label="Select individual template ...">further-selection</sel>
+    </tk>      
+  </tk>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-e)"/>
+    <prop id="joe-in-regex" x="what-to-generate"/>
+  </call_job>
+  
+  <choose>
+  
+    <when test="(f,eq,further-selection,(prop,what-to-generate))">
+      <ti type="file"
+          label="Cse File:"
+          x="(file,cse)"/>
+      <tk id="further-selected-xsl" 
+          label="Your Xsl File"
+          type="file"
+          extension=".xsl"
+          flag="force_extension"
+          base="(dir,sexs)"
+          tip="A Xsl file which will generate on base of a 'Cs File' an xsl-file. This xsl-file will transform a generator-output to the individual export-format."/>
+          
+      <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(file,ic-e)"/>
+        <prop id="joe-in-regex" x="what-to-generate|further-selected-xsl"/>
+      </call_job>      
+         
+      <xslt
+        xml="(file,cse)"
+        xsl="(file,further-selected-xsl)"
+        out="(file,xsl-to-generate)"
+	      home="(f,dir_of_file,(file,further-selected-xsl))"/> 
+    </when>  
+    <otherwise>
+      
+      <call_job job="xtg">
+        <prop id="type-xsl-to-generate" x="(prop,what-to-generate)"/>
+      </call_job>
+    
+    </otherwise>
+    
+  </choose>
+  
+  <ti label="Created Xsl:" x="(file,xsl-to-generate)" type="file" test="(f,and,(f,role,expert),(prop,xsl-info))"
+  flag="xdownload"/>     
+
+
+</job>
+
+<job id="see export parameters" role="hidden">
+
+  
+  <prop id="askquestions" x="1" />
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>
+  </call_job>
+   
+  <call_job job="do export input">
+    <prop id="exportinputflag" x="print_only print_tips"/>
+  </call_job>
+  
+
+</job>
+
+
+<job id="internal: export" role="hidden">
+
+  <need>(prop,askquestions)</need>
+  <tp>Doing exports ...</tp>
+  
+  <when test="(f,not,(f,exists_file,(file,cs)))">
+    <throw>No data to convert found. Run Transformation!</throw>
+  </when>  
+  <when test="(f,not,(f,exists_file,(file,eb)))">
+    <throw>No data to convert found. Run Transformation!</throw>
+  </when>  
+  
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>
+  </call_job>
+   
+  <call_job job="do export input"/>
+  <prop id="stats-p2-begin-alltime" x="(f,alltime)"/>
+  <prop id="stats-p2-begin-date" x="(f,time,yyyy-MM-dd E HH:mm,job)"/>
+    
+      <file id="export-tips" x="(dir,filetemp)export-tips.xml"/>
+      <create_file file="(file,export-tips)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><tips><numeric></numeric><summable></summable><bool></bool></tips>]]></create_file>
+      <when test="(f,has,prop,export-numeric)">
+        <file id="numerics-tips" x="(dir,filetemp)export-tips-numeric.xml"/>
+        <split
+          text="(prop,export-numeric)"
+          out="(file,numerics-tips)" />
+           
+        <xml_update 
+          how="insert_in" 
+          with_what="childs" 
+          where="numeric"
+          what="(file,export-tips)" 
+          with="(file,numerics-tips)"/>       
+      </when>
+
+      <when test="(f,has,prop,export-summable)">
+        <file id="summable-tips" x="(dir,filetemp)export-tips-summable.xml"/>
+        <split
+          text="(prop,export-summable)"
+          out="(file,summable-tips)" />
+           
+        <xml_update 
+          how="insert_in" 
+          with_what="childs" 
+          where="summable"
+          what="(file,export-tips)" 
+          with="(file,summable-tips)"/>       
+      </when>    
+            
+      <when test="(f,has,prop,export-bool)">
+        <file id="bool-tips" x="(dir,filetemp)export-tips-bool.xml"/>
+        <split
+          text="(prop,export-bool)"
+          out="(file,bool-tips)" />
+           
+        <xml_update 
+          how="insert_in" 
+          with_what="childs" 
+          where="bool"
+          what="(file,export-tips)" 
+          with="(file,bool-tips)"/>  
+       
+        <xml_update 
+          how="set_attribute" 
+          where="bool"
+          what="(file,export-tips)" 
+          attribute="sql_strategy"
+          value="(prop,conf-bool-sql-strat)"/> 
+                         
+      </when>           
+
+      <spirit id="cse" act="open" xml="(file,cs)"/>
+      <spirit id="cse" act="xml_update"
+              how="append" 
+              with_what="root" 
+              with="(file,export-tips)"/>
+              
+      <when test="(f,has,prop,export-remove)">
+        <file id="remove-tips" x="(dir,filetemp)export-tips-remove.xml"/>
+        <split
+          text="(prop,export-remove)"
+          out="(file,remove-tips)"/>
+  
+        <loop id="remove" xml="(file,remove-tips)" xpath="split">
+          <try_catch>
+          <try>
+            <spirit id="cse" 
+                    act="xml_update"
+                    how="remove" 
+                    where="coltype[@name=(f,xpath_string,(loop,remove,@x))]"/>  
+          </try>
+          <catch>
+            <ti>Could not find column '(loop,remove,@x)' which was specified NOT to export</ti>
+          </catch>
+          </try_catch>      
+        </loop>       
+      </when>  
+      <!-- 
+      <spirit id="cse" 
+              act="xml_update"
+              how="remove" 
+              flag="multi"
+              where="//coltype/values"/>  
+              
+      <spirit id="cse" 
+              act="xml_update"
+              how="remove" 
+              where="dims"/> 
+
+      <spirit id="cse" 
+              act="xml_update"
+              how="remove" 
+              where="unique_rows"/>   
+              -->            
+                             
+                                      
+      <spirit id="cse" act="close" out="(file,cse)" flag="save"/>   
+
+
+  <ti type="file" x="(file,cse)" test="0" label="CSE"/>
+    
+  <when test="(f,and,(f,has,file,export-indiv-1),(f,not,(f,has,file,export-indiv-1-xsl)))">
+
+    <prop id="ief-fn" x="(f,name_of_file,(file,export-indiv-1))"/>
+    <choose>
+      <when test="(f,contains,(prop,ief-fn),.)">
+        <prop id="ief-ext" x="(f,substring_after,(prop,ief-fn),.)"/>        
+      </when>
+      <otherwise>
+        <prop id="ief-ext" x="xxx"/>
+      </otherwise>
+    </choose>
+
+    <call_job job="get-filename-import">
+      <prop id="gfi-in" x="indiv-(prop,ief-ext).xsl"/>
+    </call_job>
+    <file id="export-indiv-1-xsl" x="(file,gfi-out)"/>  
+      
+    <tk label="Regarding Individual Export">
+      <tk type="msg" x="You specified an individual-export-file (e:o)(f,name_of_file,(file,export-indiv-1))(e:c)&#xA;but NO XSL-file to generate it!
+&#xA;We will do that for you:&#xA;We will generate a file and put that in the project."/>
+    </tk>
+  </when>
+    
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>
+  </call_job>
+
+  <when test="(f,not,(f,exists,prop,export-indiv-1-xsl-gen))">
+    <prop id="export-indiv-1-xsl-gen" x="0"/>
+  </when>
+    
+  <prop id="xsl-info" x="0"/>
+     
+  <ti x="(f,html,bold,open)Performing Exports ...(f,html,bold,close)" align="right" test="0"/>
+  <ti align="right">Started (f,html,bold,open)Exporter(f,html,bold,close) ...</ti>
+  <ti_flush/>
+    
+  <!-- cache aksquestions -->  
+  <prop id="old-askquestions" x="(prop,askquestions)"/>
+  <prop id="askquestions" x="0"/>
+  
+  <!-- Visual Files -->
+  <ti label="Exported Visual Files" test="(f,or,(f,has,file,export-html),(f,has,dir,export-angular))"/>
+
+  <!-- Html -->
+  <when test="(f,has,file,export-html)">
+
+    <tp>Exporting Html ...</tp>
+    
+    <call_job job="xtg">
+      <file id="xsl-to-generate" x="(dir,filetemp)xsl-html-temp.xsl"/>
+      <prop id="type-xsl-to-generate" x="html"/>     
+    </call_job>
+        
+    <xslt
+      xml="(file,eb)"
+      xsl="(file,xsl-to-generate)"
+      out="(file,export-html)"/>      
+      
+    <ti type="file" label="Html:" x="(file,export-html)"/>
+    <file id="stats-p2-html" x="(file,export-html)"/>
+      
+  </when>  
+    
+  <!-- Angular -->
+  <when test="(f,has,dir,export-angular)">
+    <tp>Exporting AngularJS ...</tp>
+    
+        <copy 
+            uri="(dir,app)angular-pattern/" 
+            touri="(dir,export-angular)"/>
+    
+    <call_job job="xtg">
+      <file id="xsl-to-generate" x="(dir,filetemp)xsl-json-temp-2.xsl"/>
+      <prop id="type-xsl-to-generate" x="json"/>
+    </call_job>
+
+        
+    <xslt
+      xml="(file,eb)"
+      xsl="(file,xsl-to-generate)"
+      out="(dir,filetemp)data.json"
+      home="(dir,app)"/>     
+
+    <file id="ai" x="(dir,app)angular-index-V3.xsl"/>
+    <xslt
+      xml="(file,cse)"
+      xsl="(file,ai)"
+      out="(dir,export-angular)index1.html"
+      home="(dir,app)">
+      <params>supersort='0' pro_id='(f,xslp,(prop,pro))'</params>
+    </xslt>    
+    
+    <xslt
+      xml="(file,cse)"
+      xsl="(file,ai)"
+      out="(dir,export-angular)index2.html"
+      home="(dir,app)">
+      <params>supersort='1' pro_id='(f,xslp,(prop,pro))'</params>
+    </xslt>      
+ 
+     <xslt
+      xml="(file,cse)"
+      xsl="(file,ai)"
+      out="(dir,export-angular)index3.html"
+      home="(dir,app)">
+      <params>supersort='2' pro_id='(f,xslp,(prop,pro))'</params>
+    </xslt>        
+    
+    <prop id="aij-json">(f,file_content,(dir,filetemp)data.json)</prop>
+    
+    <prop id="aij">(f,replace,(f,file_content,(dir,export-angular)index1.html),|||###JSON###|||,(prop,aij-json))</prop>
+    <create_file out="(dir,export-angular)index1.html">(prop,aij)</create_file>
+    
+    <prop id="aij">(f,replace,(f,file_content,(dir,export-angular)index2.html),|||###JSON###|||,(prop,aij-json))</prop>
+    <create_file out="(dir,export-angular)index2.html">(prop,aij)</create_file>   
+    
+    <prop id="aij">(f,replace,(f,file_content,(dir,export-angular)index3.html),|||###JSON###|||,(prop,aij-json))</prop>
+    <create_file out="(dir,export-angular)index3.html">(prop,aij)</create_file>     
+    
+    <remove id="aij-json" type="prop"/>
+    <remove id="aij" type="prop"/>
+    
+ 
+     <xslt
+      xml="(file,cse)"
+      xsl="(dir,app)angular-menu-index.xsl"
+      out="(dir,export-angular)menu.html"
+      home="(dir,app)">
+      <params>supersort='2' pro_id='(f,xslp,(prop,pro))'</params>
+    </xslt>  
+     
+     <xslt
+      xml="(file,cse)"
+      xsl="(dir,app)angular-main-index.xsl"
+      out="(dir,export-angular)index.html"
+      home="(dir,app)">
+      <params>supersort='2' pro_id='(f,xslp,(prop,pro))'</params>
+    </xslt>  
+    
+      
+    <ti type="file" label="AngularJS Html:" x="(dir,export-angular)index.html"/>
+    <file id="stats-p2-angular" x="(dir,export-angular)index.html"/>
+  </when> 
+    
+  <!-- Data Files -->
+  <ti label="Exported Data Files" test="(f,or,(f,has,file,export-xml),(f,has,file,export-xml-elements),(f,has,file,export-excel),(f,has,file,export-csv),(f,has,file,export-json),(f,has,file,export-xml-gen),(f,has,file,export-xml-tr))"/>
+  
+  <!-- Xml -->
+  <when test="(f,has,file,export-xml)">
+  
+    <tp>Exporting Xml to (f,name_of_file,(file,export-xml))</tp>
+      
+    <choose>
+      <when test="(f,has,prop,export-remove)">         
+        <call_job job="xtg">
+          <file id="xsl-to-generate" x="(dir,filetemp)xsl-xmla-temp.xsl"/>
+          <prop id="type-xsl-to-generate" x="xmla"/>
+        </call_job>
+            
+        <xslt
+          xml="(file,eb)"
+          xsl="(file,xsl-to-generate)"
+          out="(file,export-xml)"/>    
+      </when>
+      <otherwise>
+        <!-- xml will just be copied -->    
+        <copy file="(file,eb)" tofile="(file,export-xml)"/>      
+      </otherwise>
+    </choose>
+             
+    <ti type="file" label="Xml:" x="(file,export-xml)"/>
+    <file id="stats-p2-xml" x="(file,export-xml)"/>
+  </when>
+  
+  <!-- Xml elements -->                          
+  <when test="(f,has,file,export-xml-elements)">   
+    <call_job job="xtg">
+      <file id="xsl-to-generate" x="(dir,filetemp)xsl-xmle-temp.xsl"/>
+      <prop id="type-xsl-to-generate" x="xml"/>
+    </call_job>
+        
+    <xslt
+      xml="(file,eb)"
+      xsl="(file,xsl-to-generate)"
+      out="(file,export-xml-elements)"/>  
+        
+    <ti type="file" label="Xml Elements:" x="(file,export-xml-elements)"/>
+    <file id="stats-p2-xml-elements" x="(file,export-xml-elements)"/>
+  </when>  
+     
+  <!-- Excel -->  
+  <when test="(f,has,file,export-excel)">
+    
+    <tp>Exporting Excel ...</tp> 
+    
+    <call_job job="xtg">
+      <file id="xsl-to-generate" x="(dir,filetemp)xsl-sql-excel.xsl"/>
+      <prop id="type-xsl-to-generate" x="excel"/>
+    </call_job>
+    
+    <file id="tmp4">(dir,work)tmp4.xml</file>
+    <xslt
+      xml="(file,eb)"
+      xsl="(file,xsl-to-generate)"
+      out="(file,tmp4)"/>
+
+    <excel_update
+      what="(f,when,(f,ends_with,(file,export-excel),x),(file,emptyx),(file,empty))"
+      out="(file,export-excel)"
+      how="add"
+      with="(file,tmp4)"
+      sheet_name="(f,xsl,(file,eb),root/@sheet_name)"
+      remove_sheet="empty"/>        
+            
+    <ti type="file" label="Excel:" x="(file,export-excel)"/>
+    <file id="stats-p2-excel" x="(file,export-excel)"/>
+      
+  </when>  
+     
+  <!-- Csv -->
+  <when test="(f,has,file,export-csv)">
+
+
+    <tp>Exporting Csv to ...</tp>
+
+    <call_job job="xtg">
+      <file id="xsl-to-generate" x="(dir,filetemp)xsl-csv-temp.xsl"/>
+      <prop id="type-xsl-to-generate" x="csv"/>
+    </call_job>
+        
+    <xslt
+      xml="(file,eb)"
+      xsl="(file,xsl-to-generate)"
+      out="(file,export-csv)"/>       
+      
+    <ti type="file" label="Csv:" x="(file,export-csv)"/>
+    <file id="stats-p2-csv" x="(file,export-csv)"/>
+      
+  </when>   
+    
+  <!-- Json --> 
+  <when test="(f,has,file,export-json)">
+
+
+    <tp>Exporting Json to (f,name_of_file,(file,export-json))</tp>
+
+    <call_job job="xtg">
+      <file id="xsl-to-generate" x="(dir,filetemp)xsl-json-temp.xsl"/>
+      <prop id="type-xsl-to-generate" x="json"/>
+    </call_job>
+        
+    <xslt
+      xml="(file,eb)"
+      xsl="(file,xsl-to-generate)"
+      out="(file,export-json)"
+      home="(dir,app)"/>        
+      
+    <ti type="file" label="Json:" x="(file,export-json)"/>
+    
+    <file id="stats-p2-json" x="(file,export-json)"/>
+
+  </when>
+
+  <!-- Script Files -->       
+  
+  <ti label="Exported Script Files" test="(f,has,file,export-sql)"/>
+   
+  <when test="(f,has,file,export-sql)">
+    <tp>Exporting Sql ...</tp>
+    
+
+
+    <call_job job="xtg">
+      <file id="xsl-to-generate" x="(dir,filetemp)xsl-sql-temp.xsl"/>
+      <prop id="type-xsl-to-generate" x="sql"/>
+    </call_job>
+    
+    <xslt
+      xml="(file,eb)"
+      xsl="(file,xsl-to-generate)"
+      out="(file,export-sql)"
+      home="(dir,app)"/>        
+      
+    <ti type="file" label="Sql:" x="(file,export-sql)"/>
+    <file id="stats-p2-sql" x="(file,export-sql)"/>
+   
+  </when>    
+
+  <!-- restore askquestions -->
+  <prop id="askquestions" x="(prop,old-askquestions)"/>
+  
+  <when test="(f,has,file,export-indiv-1)">
+    <ti label="Exported Individual File(e:s) Private Xsl "/>
+    <prop id="xsl-info" x="1"/>
+    
+    <when test="(f,not,(f,has,prop,export-indiv-1-xsl-gen))">
+      <prop id="export-indiv-1-xsl-gen" x="0"/>
+    </when>
+    
+    <!-- Generate the xsl if it doesn't exist or if it should be always produced -->
+    <when test="(f,or,(prop,export-indiv-1-xsl-gen),(f,not,(f,exists_file,(file,export-indiv-1-xsl))))">
+    <tk label="Overwriting individulal-xsl '(f,name_of_file,(file,export-indiv-1-xsl))'">
+	  <tk type="msg" 
+          test="(f,exists_file,(file,export-indiv-1-xsl))" 
+          x="You requested to GENERATE the xsl-file for the individual file-export.&#xA;This is going to happen now. We are going to overwrite: &#xA;(f,name_of_file,(file,export-indiv-1-xsl))&#xA;Press the [ Stop ] button if your are not sure about that &#xA;Press the [ Ok ] button to continue with overwriting ..."
+          msg_type="w"/>
+    </tk>
+      <tp>Generating Xsl (f,name_of_file,(file,export-indiv-1))</tp>
+      <call_job job="generate-xsl-indiv">
+        <file id="xsl-to-generate">(file,export-indiv-1-xsl)</file>
+        <file id="xsl-to-generate-output">(file,export-indiv-1)</file>      
+      </call_job>
+      <ti type="file" label="update" x="(file,ic-c)" test="0"/>
+      <xml_update
+        what="(file,ic-c)"
+        how="replace"
+        where="prop[@id='export-indiv-1-xsl-gen']"
+        flag="catch">
+        <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<prop id="export-indiv-1-xsl-gen">0</prop>
+]]></inline>
+      </xml_update>
+      <!-- 
+        <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ic-c)"/>
+    <prop id="joe-in-regex" x="export-.+"/>
+  </call_job>
+      -->
+    </when>
+    
+    <!-- <ti type="file" label="shuffle3b" x="(file,shuffle3b)"/> -->
+    <try_catch>
+      <try>      
+        <xslt
+          xml="(file,eb)"
+          xsl="(file,export-indiv-1-xsl)"
+          out="(file,export-indiv-1)"
+          home="(dir,export-indiv-1-xsl-home)">
+          <params>(prop,export-indiv-1-xsl-params)</params>
+        </xslt>
+        <ti type="file" label="Individual:" x="(file,export-indiv-1)"/>
+        <file id="stats-p2-indiv" x="(file,export-indiv-1)"/>
+      </try>
+      <catch>
+        <ti label="Export Failed">
+          <ti label="Wanted to Write:" type="file">(file,export-indiv-1)</ti>
+          <ti label="Message:" test="(f,role,expert)">(prop,catched_msg)</ti>          
+        </ti>
+        <file id="next">(f,dir_of_file,(file,export-indiv-1))(f,time)_(f,name_of_file,(file,export-indiv-1))</file>
+  
+        <ti label="Solution(e:s) Trying this:" type="file">(file,next)</ti>
+        
+        <xslt
+          xml="(file,eb)"
+          xsl="(file,export-indiv-1-xsl)"
+          out="(file,next)"
+          home="(dir,export-indiv-1-xsl-home)">
+          <params>(prop,export-indiv-1-xsl-params)</params>
+        </xslt>
+        <ti type="file" label="Individual:" x="(file,next)"/>
+       
+      </catch>
+    </try_catch>
+    
+  </when>
+  
+  <prop id="stats-p2-end-alltime" x="(f,alltime)"/>
+  <prop id="stats-p2-end-date" x="(f,time,yyyy-MM-dd E HH:mm,job)"/>
+  <prop id="stats-p2-duration-alltime" 
+        x="(f,sub,(prop,stats-p2-end-alltime),(prop,stats-p2-begin-alltime))"/>
+  <prop id="stats-p2-duration-seconds" 
+        x="(f,div,(prop,stats-p2-duration-alltime),1000)"/>      
+  <!-- writing phase 1 stats -->
+  <call_job job ="write-stats-p2"/>       
+  <tp>Exporting done.</tp>
+</job>
+
+<job id="generate-xsl-indiv-1" role="hidden">
+
+
+  <call_job job="go-joe-read">
+    <file id="ic-export" x="(file,ic-c)"/>
+    <file id="joe-in-store" x="(file,ic-export)"/>
+    <prop id="joe-in-regex" x="(prop,export_regex)"/>  
+  </call_job>  
+
+  <prop id="askquestions" x="1"/>
+
+  <call_job job="generate-xsl-indiv">
+    <file id="xsl-to-generate">(file,export-indiv-1-xsl)</file>
+    <file id="xsl-to-generate-output">(file,export-indiv-1)</file>  
+  </call_job>
+  
+</job>
+
+
+
+<job id="backup: export" role="hidden">
+  <need>(file,backup-export)</need>
+  
+  <when test="(f,file_exists,(file,backup-export))">
+      <tp>Making Backup of (f,name_of_file,(file,backup-export))</tp>
+      <sequence id="eb" act="next"/>
+      <file id="target" x="(dir,pro-backups)(f,sequence,eb)-exp-(f,name_of_file,(file,backup-export))"/>
+      <copy file="(file,backup-export)" tofile="(file,target)"/>
+  </when>  
+  
+
+</job>
+
+<job id="backup: xsl" role="hidden">
+  <need>(file,backup-xsl)</need>
+  
+  <when test="(f,file_exists,(file,backup-xsl))">
+      <ti>Making Backup of (f,name_of_file,(file,backup-xsl))</ti>
+      <sequence id="eb" act="next"/>
+      <file id="target" x="(dir,pro-backups)(f,sequence,eb)-xsl-(f,name_of_file,(file,backup-xsl))"/>
+      <copy file="(file,backup-xsl)" tofile="(file,target)"/>
+  </when>  
+  
+
+</job>
+
+<job id="internal: Apply Extender Xsl" role="hidden">
+
+
+  <!-- 
+
+  -->
+  
+
+                
+</job>
+
+
+</jobs>

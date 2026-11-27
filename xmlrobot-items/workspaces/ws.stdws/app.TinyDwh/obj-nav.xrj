@@ -1,0 +1,1263 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="on-objekte" role="hidden">
+   
+  <call_job job="tk_limit_read"/>
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />
+  
+  <!-- header --> 
+  <call_job job="-db-open-"/>
+  
+  <loop id="typ" xml="(dir,repo)objects.xml" xpath="ot"  >                                                         
+    <ti type="call_job" job="Type-Of-Object" explain="(loop,typ,@np)" key="(loop,typ,@tp)" >
+      
+      <prop id="on-obj-typ" x="(loop,typ,@tp)"/>
+      <prop id="on-obj-name-plural" x="(loop,typ,@np)"/>
+    </ti>
+  </loop>   
+  
+  <call_job job="-db-close-"/>   
+</job>
+<!-- 
+<job id="Laender" >   
+  <prop id="on-obj-typ">1</prop>
+  <prop id="on-obj-name-plural">Laender</prop>
+  <call_job job="Type-Of-Object" />
+</job>    -->
+
+<job id="Type-Of-Object" role="hidden">                 
+  <need>(prop,on-obj-typ) (prop,on-obj-name-plural)</need>
+  <need default="1">(prop,on-obj-use-limits)</need>
+  <need default="0">(prop,on-obj-see-ja)</need>
+  <need default="0">(prop,on-obj-tox-mox-direct)</need>
+  <prop id="on-obj-see-yes">(prop,on-obj-see-ja)</prop>
+  <!-- <prop id="on-obj-see-yes">(f,has,prop,on-obj-start-id)</prop> -->
+  <!-- <ti>on-obj-start-id= (f,vob,prop,on-obj-start-id)</ti> -->
+  <prop id="on-obj-see-yes" test="(f,exists_file,(dir,pro)gui/allja.txt)">1</prop>
+  
+  <prop id="on-obj-see-yes" x="(f,and,(f,role,user),(prop,on-obj-see-yes))"/>
+  
+  <!--                                               
+  <ti_break class_table="buttoned_object_list" test="(prop,on-obj-see-yes)"/>
+   -->
+  
+  <ti_break class_table="tabNavigator" />
+
+  
+  <call_job job="tk_limit_read"/>
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />
+  
+  <call_job job="tr_too" />
+    
+  <choose>
+    <when test="(prop,nav_keys)">  
+      <ti type="rec" label="(prop,on-obj-name-plural)" key="type=(prop,on-obj-typ)">
+        <ti> </ti>
+        <ti> </ti> 
+      </ti>
+    </when>  
+    <otherwise>
+      <ti label="(prop,on-obj-name-plural)"/>
+    </otherwise>
+  </choose>       
+  
+  <!-- header nic -->  
+  <call_job job="-db-open-"/>
+  
+  <choose>
+    <when test="(prop,on-obj-use-limits)">
+      <prop id="navi_limiti_obj" x="(f,add,1,(prop,sql_limit_obj))"/>  
+    </when>
+    <otherwise>
+      <prop id="navi_limiti_obj" x="99999999"/>  
+    </otherwise>    
+  </choose>
+  <!--
+  <choose>
+    <when test="(f,has,prop,on-obj-start-id)">
+      <prop id="on_obj_start_id_where" x="obj.obj_id &gt; (prop,on-obj-start-id) and "/>  
+    </when>
+    <otherwise>
+      <prop id="on_obj_start_id_where" x=" "/>  
+    </otherwise>    
+  </choose>  
+  (prop,on_obj_start_id_where)
+  <remove id="on_obj_start_id_where" type="prop" />
+  -->
+   
+  <prop id="select-objects">()select *
+from 
+obj as obj
+where() 
+obj.obj_typ=(prop,on-obj-typ)
+ORDER BY kopf LIMIT 10000;</prop>
+<!-- <ti>(prop,select-objects)</ti>-->
+
+    
+
+  
+  
+  <ti_break class_table="(f,when,(prop,on-obj-see-yes),tabVerticalMiddle,tabLinklistSmall)" />
+  <prop id="internal-limit-on">(f,not,(f,has,prop,on-obj-start-id))</prop>
+  <prop id="internal-limit-count">0</prop>
+  <try_catch><try>
+  <loop id="obj" select="(prop,select-objects)" flag="trim" missing_strategy="empty" 
+    dbc="(prop,mydbc)"
+    limitxx="(prop,navi_limiti_obj)">
+    
+    <prop id="overread-this">0</prop>
+    <prop id="on-print-adder"></prop>
+    <when test="(f,and,(f,has,prop,on-obj-start-id),(f,has,prop,on-obj-see-ja))">
+      <choose>
+        <when test="(f,eq_num,(prop,on-obj-start-id),(loop,obj,@obj_id))">
+            <remove id="on-obj-start-id" type="prop"/>
+            <prop id="on-print-adder" test="(prop,on-obj-tox-mox-direct)"> = (prop,_too_done)</prop>
+            <prop id="internal-limit-on">1</prop>
+        </when>
+        <otherwise>
+          <prop id="overread-this">1</prop>
+        </otherwise>
+      </choose>
+    
+    </when>
+    <ti test="0">overread = (prop,overread-this)</ti>
+    <when test="(f,not,(prop,overread-this))">
+      <prop id="ueberschuessig">0</prop>
+      
+      <when test="(prop,on-obj-use-limits)">
+      <when test="(f,gte_num,(prop,internal-limit-count),(prop,sql_limit_obj))">
+         <prop id="ueberschuessig">1</prop>
+  
+         <ti_break_hr/>
+         <ti>(f,html,bold,open)(prop,_sl_limit_reached1) (prop,sql_limit_obj) (prop,_sl_limit_reached2) (f,html,bold,close)</ti>
+         <ti type="menu">
+           <ti type="call_job" job="Type-Of-Object"
+            explain="(prop,_too_next) (prop,sql_limit_obj)" flag="block button"
+            class="fb fbEdit">
+            <prop id="on-obj-typ">(prop,on-obj-typ)</prop>
+            <prop id="on-obj-name-plural">(prop,on-obj-name-plural)</prop>
+            <prop id="on-obj-start-id">(loop,obj,@obj_id)</prop>
+            <prop id="on-obj-see-ja">(prop,on-obj-see-ja)</prop>
+           </ti>
+                    
+           <ti type="call_job" job="Type-Of-Object"
+            explain="(prop,_sl_limit_see_all) &apos;(prop,on-obj-name-plural)&apos;" flag="block button"
+            class="fb fbEdit">
+            <prop id="on-obj-typ">(prop,on-obj-typ)</prop>
+            <prop id="on-obj-name-plural">(prop,on-obj-name-plural)</prop>
+            <prop id="on-obj-use-limits">0</prop>
+           </ti>
+
+           <ti type="call_job" job="change-limit-of-objects-ngo" 
+           explain="(prop,_sl_change_limit)" flag="button " 
+            class="fb fbAction justlimit2" >
+            <prop id="on-obj-typ">(prop,on-obj-typ)</prop>
+            <prop id="on-obj-name-plural">(prop,on-obj-name-plural)</prop>
+           </ti>
+        </ti>
+        
+      </when>                   
+      </when>
+      <when test="(f,not,(prop,ueberschuessig))">
+        <prop id="koepfchen">(f,when,(f,eq_text,,(loop,obj,@kopf)),(prop,unbekannt),(loop,obj,@kopf))</prop>
+        <prop id="on-obj-latest-obj-id" x="(loop,obj,@obj_id)" />
+        <choose>
+          <when test="(prop,on-obj-see-yes)">
+            <ti type="rec">   
+              <ti type="call_job" job="tox1_mox1" explain="(prop,_x_use)"  
+                  flag="button block" class="fb fbAdd" >
+                  <prop id="tox1-obj">(loop,obj,@obj_id)</prop>
+                  <prop id="tox1-obj-type">(loop,obj,@obj_typ)</prop>          
+                  <prop id="tox1-obj-name">(prop,koepfchen)</prop>
+                  <prop id="tox1-style">c</prop>                     
+              </ti>               
+              <ti type="call_job" job="Object" explain="(prop,koepfchen)" postfix="(prop,on-print-adder)" flag="no_arrow" span="8">
+                <prop id="on-id" x="(loop,obj,@obj_id)"/>
+              </ti>    
+              <ti align="right">#(loop,obj,@obj_id)</ti>
+            </ti>          
+          
+          </when>
+          <otherwise>
+            <ti type="rec">  
+              <ti type="call_job" job="Object" explain="(prop,koepfchen)" key="#(loop,obj,@obj_id)" flag="no_arrow">
+                <prop id="on-id" x="(loop,obj,@obj_id)" span="9"/>
+              </ti>   
+              <ti align="right">#(loop,obj,@obj_id)</ti>
+            </ti>                       
+               
+          </otherwise>
+        
+        </choose>
+
+      </when>    
+    </when>
+
+    <when test="(prop,internal-limit-on)">
+    	<prop id="internal-limit-count">(f,add,1,(prop,internal-limit-count))</prop>
+    	<when test="(f,gte_num,(prop,internal-limit-count),(prop,navi_limiti_obj))">
+    		<throw id="11">simple-loop-ending (prop,internal-limit-on) (prop,internal-limit-count) (prop,navi_limiti_obj)</throw>
+    	</when>
+    </when>
+    
+  </loop>   
+  </try>
+  <catch id="11"></catch>
+  </try_catch>
+  <remove type="prop" id="on-obj-see-yes" />
+  <call_job job="-db-close-"/> 
+</job>
+
+<job id="Object" role="hidden">
+  <need>(prop,on-id)</need>
+  <!-- <tx_style ti_border="1" />  -->
+  <call_job job="tk_limit_read"/>       
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />  
+
+    
+  <prop id="surf_id" x="(prop,on-id)"/>
+ 
+  <call_job job="tk_surf_write"/>
+      
+  <!-- header -->
+
+  <file id="on-3" x="(dir,filetemp)on-3h.xml"/>
+  
+  <call_job job="-db-open-"/>
+    
+  <dbc id="(prop,mydbc)"
+    out="(file,on-3)"
+    style="a"
+    act="select"
+    root_name="werte"
+    row_name="wert"    
+    flag="trim">()select obj.obj_id, obj.obj_typ, obj.kopf 
+from obj as obj
+where obj.obj_id=()(prop,on-id)() ;()</dbc> 
+   
+  <try_catch>
+    <try>
+       <prop id="test_id_again" x="(f,xpath,(file,on-3),wert[1],@obj_id)"/>
+    </try>
+    <catch>
+      <call_job job="tr_fail"/>
+      <throw>(prop,_fail_idnotfound_a) = (prop,on-id) (prop,_fail_idnotfound_b)</throw>
+    </catch>
+  </try_catch>
+  
+  <ti type="file" x="(file,on-3)" test="0" label="ss"/>
+  <prop id="kopf" x="(f,try,()(f,xpath,(file,on-3),wert[1],@kopf)(),(prop,unbekannt),(prop,unbekannt))"/>
+  <prop id="brain_obj_kopf" x="(prop,kopf)"/> 
+  <prop id="brain_obj_id" x="(prop,on-id)"/>
+  <prop id="brain_obj_typ" x="(f,xpath,(file,on-3),wert[1],@obj_typ)"/>
+  
+    <call_job job="tr_obv"/>
+  <ti_break class_table="tabNavigator" />
+  <!-- <ti_break test="(f,implement,online)"/>  -->
+  <when test="(f,role,user)">
+
+    <ti type="rec">
+    
+        <ti type="call_job" job="tox1_mox1" explain="(prop,_x_use)"  
+            align="right" flag="button" class="fb fbAdd"   
+            >
+            <prop id="tox1-obj">(prop,on-id)</prop>
+            <prop id="tox1-obj-type">(prop,brain_obj_typ)</prop>          
+            <prop id="tox1-obj-name">(prop,kopf)</prop>
+            <prop id="tox1-style">c</prop>                     
+        </ti>    
+    </ti>  
+
+  </when>
+    
+  
+  <!-- <ti_break class_table="Objectdisplay"/> -->  
+  <choose>
+    <when test="(prop,nav_link_wert)">      
+      <ti_break class_table="tabLinklistSmall"/> 
+    </when>
+    <otherwise>
+     <ti_break class_table="Objectdisplay"/> 
+    </otherwise>
+  </choose>  
+    
+  <when test="(f,exists,prop,on-label)">
+    <ti x="(prop,on-label) (f,html,i,open)(f,trim,(prop,kopf))(f,html,i,close)" xalign="center" flag="wrap"/>
+    <ti_break_hr/>
+  </when>        
+  <!-- ueberschrift objek          (prop,nav_link_wert)
+  <when test="(f,or,(prop,nav_vonbis),(prop,nav_top),(prop,nav_keys),(prop,nav_wann))">
+   -->
+  
+  <!-- <ti type="file" test="0">(dir,repo)ot-(prop,brain_obj_typ)-nm.xml</ti> 
+
+  
+  -->
+  <choose>
+    <when test="(prop,nav_naming_attribute)">      
+      <spirit act="open" id="objectr" xml="(dir,repo)ot-(prop,brain_obj_typ)-nm.xml" missing_strategy="empty"/>
+    </when>
+    <otherwise>
+      <!--  <file id="objectrxxx">(dir,repo)ot-(prop,brain_obj_typ)-tc.xml</file>   -->
+      <spirit act="open" id="objectr" xml="(dir,repo)ot-(prop,brain_obj_typ)-tc.xml" missing_strategy="empty"/>
+    </otherwise>
+  </choose>  
+           
+  <ti label="(f,html,i,o)(f,spirit,objectr,.,@x):(f,html,i,c)" flag="label_right" type="rec">
+    <ti span="9">(f,html,bold,open)(prop,kopf)(f,html,bold,close)</ti>
+      
+    <ti align="right">(f,try,()#(prop,on-id)(),null,null)</ti>
+  </ti> 
+                                           
+  <choose>
+    <when test="(prop,nav_only_latest_values)">
+      <prop id="sql-filter-lastest-values">() and wert.ist_top=1 ()</prop>
+    </when>
+    <otherwise>
+      <prop id="sql-filter-lastest-values"></prop>
+    </otherwise> 
+  </choose>
+  
+  <ti_hr style="2" />
+  <!--   
+  <prop id="additional-cols">0</prop>
+  <prop id="additional-cols" test="(prop,nav_vonbis)">(f,add,2,(prop,additional-cols))</prop>
+  <prop id="additional-cols" test="(prop,nav_wann)">(f,add,1,(prop,additional-cols))</prop>    
+  <prop id="additional-cols" test="(f,gt_num,(prop,nav_top),0)">(f,add,1,(prop,additional-cols))</prop>
+  <prop id="additional-cols" test="(prop,nav_keys)">(f,add,1,(prop,additional-cols))</prop>
+  
+  <prop id="filler-cols">(f,sub,8,(prop,additional-cols))</prop>
+  <prop id="filler-unit">(f,add,1,(prop,filler-cols))</prop>
+  <prop id="has-filler-cols">(f,gt_num,(prop,filler-cols),0)</prop>   -->
+  
+  
+  <when test="(f,or,(prop,nav_vonbis),(prop,nav_top),(prop,nav_keys),(prop,nav_wann))">     <!--  -->
+    <ti type="rec" label=" " flag="label_right">
+      <ti span="4"> </ti> 
+      <ti test="(prop,nav_top)" align="center">(prop,_obv_top)</ti>   
+      <ti test="(prop,nav_vonbis)">(prop,_obv_von)</ti>
+      <ti test="(prop,nav_vonbis)">(prop,_obv_bis)</ti>
+          
+      <ti test="(prop,nav_wann)">(prop,_obv_wann)</ti>      
+       <!--
+      <ti test="(prop,has-filler-cols)" span="(prop,filler-cols)"> </ti>      -->
+      <ti test="(prop,nav_keys)" align="right">(prop,_obv_ids)</ti>  
+    </ti> 
+  </when>
+  
+  <prop id="last_attr_typ"></prop>
+  <ti label="(prop,kopf) hat" test="0"/>  
+  <call_job job="tk_db_read_dbms"/>
+
+  <prop id="select-werte">()SELECT
+     obj.obj_id,
+     attr.attr_id,
+     -- regexp_replace(wert.inhalt, '\r|\n', '','g') as inhalt,
+     wert.inhalt as inhalt,
+     wert.inhalt2,
+     wert.hat_mehr,
+     wert.ist_top,
+     wert.von,
+     wert.bis,
+     wert.wann,
+     wert.wert_id,
+     obj.obj_typ,
+     attr.attr_typ
+FROM
+     obj as obj,
+     attr as attr,
+     wert as wert,
+     t_u as t_u       
+WHERE
+     obj.obj_id = ()(prop,on-id)() and
+     obj.obj_id = attr.obj_id and
+     t_u.obj_typ = obj.obj_typ and
+     t_u.attr_typ = attr.attr_typ and
+     wert.attr_id = attr.attr_id
+     ()(prop,sql-filter-lastest-values)()
+ORDER BY
+     t_u.attr_usg_id;()</prop>    
+
+    <prop id="vkExpr">()(f,format,(f,substring,(loop,wert,@inhalt),0,16),(e:s)##0,()(prop,nav_vk1)(e:c)</prop>
+    <choose>
+      <when test="(f,eq_text,0,(prop,nav_nk1))">
+        <prop id="hasNk">0</prop>
+        <prop id="nkExpr"></prop>
+      </when>
+      <otherwise>                                                                                     
+        <prop id="hasNk">1</prop>
+        <prop id="nkExpr">(f,when,(f,eq_text,us,(prop,nav_vk1)),.,(e:o)e:s(e:c))()(f,substring,(loop,wert,@inhalt),17,()(f,add,17,(prop,nav_nk1))(e:c)</prop>
+      </otherwise>
+    </choose>
+    
+    <!-- modisch <interpreter watch="0"/> -->
+    <prop id="lastHeadline"></prop>
+    <loop id="wert" select="(prop,select-werte)" dbc="(prop,mydbc)" missing_strategy="empty" flag="trim">
+                
+      <prop id="attr_nomen" x="(f,spirit,objectr,at[@tp=(f,xpath_string,(loop,wert,@attr_typ))],@x)"/>
+      <prop id="attr_vt" x="(f,spirit,objectr,at[@tp=(f,xpath_string,(loop,wert,@attr_typ))],@vt)"/>
+      <prop id="attr_u" x="(f,spirit,objectr,at[@tp=(f,xpath_string,(loop,wert,@attr_typ))],@u)"/>
+      <prop id="attr_gt" x="(f,spirit,objectr,at[@tp=(f,xpath_string,(loop,wert,@attr_typ))],@gt)"/>
+      <prop id="headToPrint">(f,when,(f,eq_text,(prop,lastHeadline),(prop,attr_nomen)), ,(prop,attr_nomen):)</prop>
+      <prop id="lastHeadline" x="(prop,attr_nomen)"/> 
+       <prop id="hasUnit" x="(f,has,prop,attr_u)"/>        
+                                      
+      <choose>                                                                
+                               
+        <when test="(f,or,(f,eq_text,4,(prop,attr_vt)),(f,and,(f,eq_text,3,(prop,attr_vt)),(prop,nav_int_wie_num)))">
+          <!-- 4=number +000000034700000.0000-->
+          <prop id="vk">(prop,vkExpr)</prop>
+          <unescape id="vk" type="prop"/>
+          <translate id="vk" type="prop"/> 
+           
+          <prop id="nk">(prop,nkExpr)</prop>
+          <unescape id="nk" type="prop"/>
+          <translate id="nk" type="prop"/>
+            
+          <ti type="rec" label="(prop,headToPrint)" flag="label_right">
+            <!-- version ohne link -->
+            <ti test="(f,not,(prop,nav_link_wert))" 
+                align="right" flag="nopadr">(f,html,bold,o)(prop,vk)(f,html,bold,c)</ti>
+            <ti test="(f,not,(prop,nav_link_wert))" 
+                margin_left="-12px">(f,html,bold,o)(prop,nk)(f,html,bold,c)</ti>  
+            <!-- version mit link -->                
+            <ti test="(prop,nav_link_wert)" 
+                type="call_job" job="see-wert-details" 
+                explain="(f,html,bold,o)(prop,vk)(f,html,bold,c)"
+                align="right"  flag="nopadr">
+              <prop id="on-id" x="(prop,on-id)" />
+              <prop id="requested-wert-id">(loop,wert,@wert_id)</prop>
+            </ti>             
+            <ti test="(prop,nav_link_wert)" 
+                type="call_job" job="see-wert-details" 
+                explain="(f,html,bold,o)(prop,nk)(f,html,bold,c)"
+                margin_left="-12px">
+              <prop id="on-id" x="(prop,on-id)" />  
+              <prop id="requested-wert-id">(loop,wert,@wert_id)</prop>
+            </ti> 
+            <ti> </ti>
+            <!-- unit -->
+            <ti >(prop,attr_u)</ti>
+            <ti test="(prop,nav_top)" align="center">(loop,wert,@ist_top)</ti>
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@von)),(f,substring,(loop,wert,@von),0,10),)</ti>
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@bis)),(f,substring,(loop,wert,@bis),0,10),)</ti>
+                
+            <ti test="(prop,nav_wann)">(f,substring,(loop,wert,@wann),0,19)</ti> 
+            <!-- 
+            <ti test="(prop,has-filler-cols)" span="(prop,filler-cols)"> </ti>     -->
+            <ti test="(prop,nav_keys)" align="right">(prop,_obv_aId):(loop,wert,@attr_id) (prop,_obv_wId):(loop,wert,@wert_id)</ti>
+                                                             
+          </ti>                            
+        </when>         
+        
+        <when test="(f,eq_text,3,(prop,attr_vt))">
+          <!-- 3=integer -->
+          <prop id="vk">(prop,vkExpr)</prop>
+          <unescape id="vk" type="prop"/>
+          <translate id="vk" type="prop"/> 
+            
+          <ti type="rec" label="(prop,headToPrint)" flag="label_right">
+            <!-- version ohne link -->
+            <ti test="(f,not,(prop,nav_link_wert))" 
+                align="right" flag="nopadr">(f,html,bold,o)(prop,vk)(f,html,bold,c)</ti>
+            <ti test="(f,not,(prop,nav_link_wert))"> </ti>  
+            <!-- version mit link -->            
+            <ti test="(prop,nav_link_wert)" 
+                type="call_job" job="see-wert-details" 
+                explain="(f,html,bold,o)(prop,vk)(f,html,bold,c)"
+                align="right"  flag="nopadr">
+              <prop id="on-id" x="(prop,on-id)" />  
+              <prop id="requested-wert-id">(loop,wert,@wert_id)</prop>
+            </ti>             
+            <ti test="(prop,nav_link_wert)"> </ti> 
+            <ti> </ti>
+            <ti>(prop,attr_u)</ti>
+            <ti test="(prop,nav_top)" align="center">(loop,wert,@ist_top)</ti> 
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@von)),(f,substring,(loop,wert,@von),0,10),)</ti>
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@bis)),(f,substring,(loop,wert,@bis),0,10),)</ti>
+               
+            <ti test="(prop,nav_wann)">(f,substring,(loop,wert,@wann),0,19)</ti> 
+            <!-- 
+            <ti test="(prop,has-filler-cols)" span="(prop,filler-cols)"> </ti> -->
+            <ti test="(prop,nav_keys)" align="right">(prop,_obv_aId):(loop,wert,@attr_id) (prop,_obv_wId):(loop,wert,@wert_id)</ti>
+                                                              
+          </ti>                            
+        </when>       
+        
+        <when test="(f,eq_text,5,(prop,attr_vt))">
+          <!-- 5=bool -->
+          <prop id="i" x="(loop,wert,@inhalt)"/>
+          <choose>
+            <when test="(f,eq_text,1,(prop,i))">
+              <prop id="ij">(prop,_obv_ja)</prop>
+            </when> 
+            <when test="(f,eq_text,0,(prop,i))">
+              <prop id="ij">(prop,_obv_nein)</prop>
+            </when>             
+            <otherwise>
+              <prop id="ij">(prop,i)(prop,_obv_unb)</prop>
+            </otherwise>
+           </choose>
+            
+           <ti type="rec" label="(prop,headToPrint)" flag="label_right">
+            <ti test="(f,not,(prop,nav_link_wert))" span="4">(f,html,bold,o)(prop,ij)(f,html,bold,c)</ti>   
+            <ti  type="call_job" job="see-wert-details" explain="(f,html,bold,o)(prop,ij)(f,html,bold,c)"
+              test="(prop,nav_link_wert)" span="4">
+              <prop id="on-id" x="(prop,on-id)" />
+              <prop id="requested-wert-id">(loop,wert,@wert_id)</prop>
+            </ti>    
+            <ti test="(prop,nav_top)" align="center">(loop,wert,@ist_top)</ti>   
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@von)),(f,substring,(loop,wert,@von),0,10),)</ti>
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@bis)),(f,substring,(loop,wert,@bis),0,10),)</ti>
+              
+            <ti test="(prop,nav_wann)">(f,substring,(loop,wert,@wann),0,19)</ti> 
+            <!-- 
+            <ti test="(prop,has-filler-cols)" span="(prop,filler-cols)"> </ti>   -->
+            <ti test="(prop,nav_keys)" align="right">(prop,_obv_aId):(loop,wert,@attr_id) (prop,_obv_wId):(loop,wert,@wert_id)</ti>
+          </ti>                            
+        </when>          
+
+                                           
+        <otherwise>   
+           <prop id="i" x="(loop,wert,@inhalt)"/>
+           <prop id="vSpan">(f,when,(prop,hasUnit),3,4)</prop>
+           <prop id="my-wrap"></prop>                    
+           <prop id="my-wrap" test="(f,gt_num,(f,len,(prop,i)),23)">wrap_word</prop>
+           <prop id="my-type">(f,when,(f,eq_text,1,(prop,attr_gt)),web,text)</prop>
+           <ti type="rec" label="(prop,headToPrint)" flag="label_right">
+            <ti test="(f,and,(f,not,(prop,nav_link_wert)),(f,not,(f,eq_text,1,(prop,attr_gt))))" span="(prop,vSpan)" flag="(prop,my-wrap)"
+                 >(f,html,bold,o)(prop,i)(f,html,bold,c)</ti> 
+            <ti test="(f,and,(f,not,(prop,nav_link_wert)),(f,eq_text,1,(prop,attr_gt)))" span="(prop,vSpan)" flag="(prop,my-wrap)"
+                 type="(prop,my-type)">(prop,i)</ti>                
+                     
+            <ti  type="call_job" job="see-wert-details" explain="(f,html,bold,o)(prop,i)(f,html,bold,c)"
+              flag="(prop,my-wrap)"
+              test="(prop,nav_link_wert)" span="(prop,vSpan)">
+              <prop id="on-id" x="(prop,on-id)" />
+              <prop id="requested-wert-id">(loop,wert,@wert_id)</prop>
+            </ti>     
+            <ti test="(prop,hasUnit)">(prop,attr_u)</ti>
+            <ti test="(prop,nav_top)" align="center">(loop,wert,@ist_top)</ti> 
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@von)),(f,substring,(loop,wert,@von),0,10),)</ti>
+            <ti test="(prop,nav_vonbis)">(f,when,(f,has,(loop,wert,@bis)),(f,substring,(loop,wert,@bis),0,10),)</ti>
+               
+            <ti test="(prop,nav_wann)">(f,substring,(loop,wert,@wann),0,19)</ti>
+            <!-- 
+            <ti test="(prop,has-filler-cols)" span="(prop,filler-cols)"> </ti>  -->
+            <ti test="(prop,nav_keys)" align="right">(prop,_obv_aId):(loop,wert,@attr_id) (prop,_obv_wId):(loop,wert,@wert_id)</ti>
+          </ti>           
+        </otherwise>
+      </choose>
+ 
+    <when test="(loop,wert,@hat_mehr)">
+      <ti label=" " type="call_job" job="Mehr Inhalt" explain="(prop,_sl_mehr)">
+        <prop id="wert_id" x="(loop,wert,@wert_id)" />
+        <prop id="on-id" x="(prop,on-id)" />
+        <prop id="on-typ" x="(f,spirit,objectr,.,@x)" />
+        <prop id="on-name" x="(prop,kopf)" /> 
+        <prop id="on-attr-nomen" x="(prop,attr_nomen)" /> 
+        
+      </ti>
+    </when>
+    
+  </loop>   
+  <remove id="select-werte" type="prop"/>
+
+  <spirit act="close" id="objectr" />
+  <ti_hr style="2"/>
+  
+  <call_job job="obj-teil-2"/>
+  <ti_hr style="2"/>
+    <ti type="menu" first_cell="2" last_cell="10">
+      <ti type="call_job" job="tox1_mox1" explain="(prop,_x_use)"  
+          align="right" flag="button" class="fb fbAdd"   
+          test="(f,role,user)">
+          <prop id="tox1-obj">(prop,on-id)</prop>
+          <prop id="tox1-obj-type">(prop,brain_obj_typ)</prop>          
+          <prop id="tox1-obj-name">(prop,kopf)</prop>
+          <prop id="tox1-style">c</prop>                     
+      </ti>     
+      <ti type="call_job" job="conf-navi-quick" explain="(prop,_sl_conf_ui)"  flag="button" class="fb fbEdit">
+        <prop id="on-id">(prop,on-id)</prop>
+      </ti>
+      
+      
+      
+  
+            
+   
+    </ti>
+    
+
+
+    <call_job job="-db-close-"/>
+       
+  
+</job>
+
+<job id="bez-core" role="hidden">
+  <!-- <ti label="current">(f,spirit,bezr,xml?,bts/bt[@tp=(loop,bez,@bez_typ)])</ti>     -->
+  <prop id="c23-textx">(f,spirit,bezr,bts/bt[@tp=(loop,bez,@bez_typ)],@satz_(loop,bez,@satz))</prop>
+  
+  <prop id="headToPrintB">(f,when,(f,eq_text,(prop,lastHeadlineB),(prop,c23-textx)), ,(prop,c23-textx):)</prop>
+  <!-- 
+  <prop id="keyToPrintB">(f,when,(f,eq_text,(prop,lastHeadlineB),(prop,c23-textx)),,(f,spirit,bezr,bts/bt[@tp=(loop,bez,@bez_typ)],@tp))</prop>             -->
+  <prop id="lastHeadlineB" x="(prop,c23-textx)"/>   
+  
+  <prop id="c23-kopf">(f,try,()(loop,bez,@kopf)(),(prop,unbekannt))</prop> 
+  <prop id="c23-obj">(f,spirit,bezr,ots/ot[@tp=(loop,bez,@obj_typ)],@x)</prop>  
+
+  <when test="(f,gt_num,(f,len,(prop,headToPrintB)),25)">
+      <ti type="rec"   flag="label_right" >
+        <ti flag="block">(prop,headToPrintB)</ti>
+      </ti>
+      <prop id="headToPrintB"> </prop>
+      <prop id="keyToPrintB"> </prop>
+      
+  </when>
+    
+  
+  <choose>
+    <when test="(prop,nav_keys)">
+                                                     
+      <ti type="rec" label="(prop,headToPrintB)"  flag="label_right" >
+       
+        <ti  span="4" type="call_job" job="Object" explain="(f,html,bold,o)(f,when,(f,eq_text,,(prop,c23-kopf)),(prop,unbekannt),(prop,c23-kopf))(f,html,bold,c)" >
+          <prop id="on-id" x="(loop,bez,@obj_id_x)"/>
+          <prop id="on-label" x="(f,html,i,open)(prop,kopf)(f,html,i,close) (prop,c23-textx)"/>
+        </ti>    
+    
+        <ti align="right" >(prop,c23-obj):#(loop,bez,@obj_id_x) (prop,_obv_btId):(loop,bez,@bez_typ)/(loop,bez,@richtung) (prop,_obv_bId):(loop,bez,@bez_id)</ti>
+       
+      </ti>    
+          
+    </when>
+    
+    <otherwise>
+
+      <ti type="rec" label="(prop,headToPrintB)"  flag="label_right" >
+       
+        <ti   type="call_job" job="Object" explain="(f,html,bold,o)(f,when,(f,eq_text,,(prop,c23-kopf)),(prop,unbekannt),(prop,c23-kopf))(f,html,bold,c)" >
+          <prop id="on-id" x="(loop,bez,@obj_id_x)"/>
+          <prop id="on-label" x="(f,html,i,open)(prop,kopf)(f,html,i,close) (prop,c23-textx)"/>
+        </ti>    
+      
+      </ti>    
+    
+    </otherwise>
+  
+  </choose>
+    
+
+  
+
+</job>
+
+                       
+<job id="Mehr Inhalt" role="hidden">
+  <need>(prop,wert_id) (prop,on-id) (prop,on-typ) (prop,on-name) (prop,on-attr-nomen)</need>
+  
+  <call_job job="tk_limit_read"/>
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />  
+    
+  <file id="on-3" x="(dir,filetemp)mehr.xml"/>
+  
+  <call_job job="-db-open-"/>
+  
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec">
+    <ti type="call_job" job="Object" explain="(prop,_x_go_back_sys)" flag="button justback" align="right">
+      <prop id="on-id">(prop,on-id)</prop>    
+    </ti> 
+  </ti>  
+    
+  <dbc id="(prop,mydbc)"
+    out="(file,on-3)"
+    style="a"
+    root_name="root"
+    row_name="detail"    
+    act="select"
+    flag="trim">()select * from mehr as mehr where mehr.wert_id = ()(prop,wert_id)();()</dbc> 
+  
+
+  <call_job job="tr_more"/>    
+  <ti label="(prop,on-attr-nomen)"/>
+  <ti x="(f,try,()(f,xpath,(file,on-3),detail,@inhalt)(),?,?)"/>
+  
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec">
+    <ti type="call_job" job="Object" explain="(prop,_x_go_back_sys)" flag="button justback" align="right">
+      <prop id="on-id">(prop,on-id)</prop>    
+    </ti> 
+  </ti>      
+  <call_job job="-db-close-"/>
+  
+</job>
+
+<job id="obj-teil-2" role="hidden">
+  <!-- beziehungen  
+
+  <ti_space height="3px" /> -->
+  <ti type="rec" xkey="typ">
+  <ti x="(f,html,b,o)(prop,_obv_bezs)(f,html,b,c)" align="right"/>
+  <ti/>
+  </ti>
+  <ti test="0" x="(prop,kopf)" 
+      keyx="(f,try,()(prop,on-id)(),null,null)"/>   
+  <prop id="hat_bez" x="0"/>    
+  <prop id="navi_limit_bez" x="(f,add,1,(prop,sql_limit_bez))"/>
+  
+  <prop id="at-least-one-bez-limit-reached">0</prop>
+     
+
+<prop id="select-beziehungen">()select
+'a' as richtung,
+'ab' as satz,
+bez.obj_id_b as obj_id_x,
+bez.bez_typ as bez_typ,
+bez.bez_id as bez_id,
+obj.kopf,
+obj.obj_typ
+from
+bez as bez,
+obj as obj
+where 
+bez.obj_id_a = ()(prop,on-id)() and
+obj.obj_id = bez.obj_id_b
+union
+select
+'b' as richtung,
+'ba' as satz,
+bez.obj_id_a as obj_id_x,
+bez.bez_typ as bez_typ,
+bez.bez_id as bez_id,
+obj.kopf,
+obj.obj_typ
+from
+bez as bez,
+obj as obj
+where 
+bez.obj_id_b = ()(prop,on-id)() and
+obj.obj_id = bez.obj_id_a
+order by bez_typ, richtung;()</prop>  
+
+
+  <choose>
+    <when test="(prop,nav_naming_attribute)">
+      <spirit act="open" id="bezr" xml="(dir,repo)bez-nm.xml"/>
+    </when>
+    <otherwise>
+      <spirit act="open" id="bezr" xml="(dir,repo)bez-tc.xml"/>
+    </otherwise>
+  </choose>
+  <prop id="lastHeadlineB"></prop>
+  <loop id="bez" select="(prop,select-beziehungen)" flag="trim" dbc="(prop,mydbc)"
+        xlimit="(f,add,1,(prop,navi_limit_bez))">
+    
+    <prop id="bk" x="(loop,bez,@bez_typ).(loop,bez,@richtung)"/>
+    <prop id="bki" x="bk[(prop,bk)]"/>
+    
+    <choose>
+      <when test="(f,exists,prop,(prop,bki))">
+        <prop id="ccnt" x="(f,add,1,(f,vob,prop,(prop,bki)))"/>        
+      </when>
+      <otherwise>
+        <prop id="ccnt" x="1"/>
+      </otherwise>
+    </choose>
+    <prop id="(prop,bki)" x="(prop,ccnt)"/>
+    
+    <choose>
+      <when test="(f,lt_num,(prop,ccnt),(prop,navi_limit_bez))">
+        <call_job job="bez-core"/>      
+      </when>
+      <when test="(f,eq_num,(prop,ccnt),(prop,navi_limit_bez))">
+        <prop id="at-least-one-bez-limit-reached">1</prop>
+        <!-- eingespart /(loop,bez,@richtung) nic123-->
+        <ti_hr style="2" />
+        <ti label=" ">(prop,_sl_limit_reached1) (prop,sql_limit_bez) (prop,_sl_limit_reached2)</ti> 
+        <ti type="call_job" job="bez-more" 
+          explain="(prop,_sl_limit_see_all_rels) &apos;(f,spirit,bezr,bts/bt[@tp=(loop,bez,@bez_typ)],@satz_(loop,bez,@satz))&apos;" label=" "
+          flag="button" class="fx fxEdit">
+          <prop id="mbez-bez_typ" x="(loop,bez,@bez_typ)"/>
+          <prop id="mbez-richtung" x="(loop,bez,@richtung)"/>
+         <prop id="mbez-kopf" x="(prop,kopf)"/>
+         <prop id="mbez-obj-id">(prop,on-id)</prop>
+
+        </ti>
+                                                 
+        <ti type="call_job" job="change-limit-of-bez-ngo" explain="(prop,_sl_change_limit) (e:o)(prop,sql_limit_bez)(e:c)" label=" " 
+            flag="button" class="fx fxAction justlimit">
+            <prop id="on-id">(prop,on-id)</prop>
+            
+        </ti>        
+
+      </when>
+      <otherwise>
+      </otherwise>
+    </choose>
+    
+    <prop id="hat_bez" x="1"/>
+
+  </loop>
+  <remove type="prop" id="select-beziehungen"/>
+  
+
+  <spirit act="close" id="bezr"/>         
+
+  <ti test="(f,not,(prop,hat_bez))" x="(prop,_sl_no_object_relations)" label=" "/>
+
+  <!-- <dump_ti/> -->
+</job>
+
+     
+
+
+
+<job id="bez-more" role="hidden">
+  <need>(prop,mbez-kopf) (prop,mbez-bez_typ) (prop,mbez-richtung) (prop,mbez-obj-id)</need>
+  <!-- <ti>mbez-bet_typ=(prop,mbez-bez_typ) richtung=(prop,mbez-richtung) </ti>  -->
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />
+  <call_job job="tr_obv"/>
+  <prop id="kopf">(prop,mbez-kopf)</prop>
+
+  <ti label="(prop,mbez-kopf)"/> 
+  <call_job job="-db-open-"/>
+  <choose>
+    <when test="(f,eq_text,a,(prop,mbez-richtung))">
+<prop id="select-beziehungen">()select
+'a' as richtung,
+'ab' as satz,
+bez.obj_id_b+0 as obj_id_x,
+bez.bez_typ as bez_typ,
+bez.bez_id as bez_id,
+kopf.kopf,
+kopf.obj_typ
+from
+bez as bez,
+kopf as kopf
+where 
+bez.obj_id_a = ()(prop,mbez-obj-id)() and
+kopf.obj_id = bez.obj_id_b and
+bez.bez_typ =  ()(prop,mbez-bez_typ)() ;()</prop>
+    
+    </when>
+    <when test="(f,eq_text,b,(prop,mbez-richtung))">
+    
+<prop id="select-beziehungen">()select
+'b' as richtung,
+'ba' as satz,
+bez.obj_id_a+0 as obj_id_x,
+bez.bez_typ as bez_typ,
+bez.bez_id as bez_id,
+kopf.kopf,
+kopf.obj_typ
+from
+bez as bez,
+kopf as kopf
+where 
+bez.obj_id_b = ()(prop,mbez-obj-id)() and
+kopf.obj_id = bez.obj_id_a and
+bez.bez_typ =  ()(prop,mbez-bez_typ)() ;()</prop>
+    
+    </when>  
+  </choose>
+  <!-- <ti label="select">(prop,select-beziehungen)</ti> -->
+<!--   
+<prop id="select-beziehungen">()select
+'a' as richtung,
+'ab' as satz,
+bez.obj_id_b as obj_id_x,
+bez.bez_typ as bez_typ,
+bez.bez_id as bez_id,
+kopf.kopf,
+kopf.obj_typ
+from
+bez as bez,
+kopf as kopf
+where 
+bez.obj_id_a = ()(prop,mbez-obj-id)() and
+kopf.obj_id = bez.obj_id_b
+union
+select
+'b' as richtung,
+'ba' as satz,
+bez.obj_id_a as obj_id_x,
+bez.bez_typ as bez_typ,
+bez.bez_id as bez_id,
+kopf.kopf,
+kopf.obj_typ
+from
+bez as bez,
+kopf as kopf
+where 
+bez.obj_id_b = ()(prop,mbez-obj-id)() and
+kopf.obj_id = bez.obj_id_a and
+bez.bez_typ =  ()(prop,mbez-bez_typ)() and
+bez.richtung = '()(prop,mbez-richtung)()'
+order by bez_typ, richtung;()</prop>    -->
+
+  <choose>
+    <when test="(prop,nav_naming_attribute)">
+      <spirit act="open" id="bezr" xml="(dir,repo)bez-nm.xml"/>
+    </when>
+    <otherwise>
+      <spirit act="open" id="bezr" xml="(dir,repo)bez-tc.xml"/>
+    </otherwise>
+  </choose>
+  <prop id="lastHeadlineB"></prop>
+  <!-- <tk type="msg">(prop,select-beziehungen)</tk>  -->
+  <loop id="bez" select="(prop,select-beziehungen)" flag="trim" dbc="(prop,mydbc)">
+
+      <call_job job="bez-core"/>      
+
+  </loop>
+  <spirit act="close" id="bezr"/>   
+  
+</job>
+<job id="see-wert-details" role="hidden">
+  <need>(prop,requested-wert-id) (prop,on-id)</need>        
+  
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec">
+    <ti type="call_job" job="Object" explain="(prop,_x_go_back_sys)" flag="button justback" align="right">
+      <prop id="on-id">(prop,on-id)</prop>    
+    </ti> 
+  </ti> 
+  <ti_break/>      
+
+  <call_job job="tk_limit_read"/>
+  <call_job job="tk_nav_read" test="0" />
+  <call_job job="tk_lingua_read" test="0" />  
+  
+  <dir id="cache">(dir,pro)cache</dir>    
+  <file id="det" xx="(dir,cache)det.xml" x="(dir,filetemp)det.xml"/>
+
+  
+  <call_job job="-db-open-"/>
+    
+  <dbc id="(prop,mydbc)"
+    out="(file,det)"
+    style="a"
+    root_name="root"
+    row_name="detail"    
+    act="select"
+    flag="trim">()select
+attr.obj_id as obj_id,
+attr.box_id+0 as attr_box_id,
+obj.obj_typ as obj_typ,
+obj.box_id+0 as obj_box_id,
+wert.wert_id as wert_id,
+wert.attr_id as attr_id,
+wert.inhalt as inhalt,
+wert.inhalt2 as inhalt2,
+wert.von as von,
+wert.bis as bis,
+wert.wann as wann,
+wert.ist_top as ist_top,
+wert.hat_mehr as hat_mehr,
+wert.box_id +0  as wert_box_id,
+attr.attr_typ as attr_typ,
+t_u.ident as ident
+from 
+wert as wert,
+box as box,
+attr as attr,
+obj as obj,
+t_u as t_u
+where 
+wert.wert_id = ()(prop,requested-wert-id)() and
+box.box_id = wert.box_id and
+attr.attr_id = wert.attr_id and
+obj.obj_id = attr.obj_id and
+t_u.obj_typ = obj.obj_typ and
+t_u.attr_typ = attr.attr_typ;()</dbc> 
+        
+  <spirit id="det" act="open" xml="(file,det)" missing_strategy="empty"/>
+  
+  <file id="detWert" xx="(dir,cache)detWert.xml" x="(dir,filetemp)detWert.xml"/>
+  <file id="detAttr" xx="(dir,cache)detAttr.xml" x="(dir,filetemp)detAttr.xml"/>
+  <file id="detObj" xx="(dir,cache)detObj.xml" x="(dir,filetemp)detObj.xml"/>
+  <!-- 
+  <interpreter watch="0"/>
+  <ti label="det" type="file">(file,det)</ti>
+  <ti label="detWert" type="file">(file,detWert)</ti>
+  <ti label="detAttr" type="file">(file,detAttr)</ti>
+  <ti label="detObj" type="file">(file,detObj)</ti>              -->
+    
+  <dbc id="(prop,mydbc)"
+    out="(file,detWert)"
+    style="a"
+    root_name="root"
+    row_name="detail"    
+    act="select"
+    flag="trim">select * from i_box where  box_id= (f,spirit,det,detail,@wert_box_id);</dbc>   
+    
+  <dbc id="(prop,mydbc)"
+    out="(file,detAttr)"
+    style="a"
+    root_name="root"
+    row_name="detail"    
+    act="select"
+    flag="trim">select * from i_box where  box_id= (f,spirit,det,detail,@attr_box_id);</dbc>   
+    
+  <dbc id="(prop,mydbc)"
+    out="(file,detObj)"
+    style="a"
+    root_name="root"
+    row_name="detail"    
+    act="select"
+    flag="trim">select * from i_box where  box_id= (f,spirit,det,detail,@obj_box_id);</dbc>         
+  
+  <spirit act="open" id="attrr" xml="(dir,repo)at-(f,spirit,det,detail,@attr_typ).xml" missing_strategy="empty"/>
+  
+  <spirit act="open" id="detWert" xml="(file,detWert)" missing_strategy="empty"/>
+  <spirit act="open" id="detAttr" xml="(file,detAttr)" missing_strategy="empty"/>
+  <spirit act="open" id="detObj" xml="(file,detObj)" missing_strategy="empty"/>
+
+  <call_job job="tr_dbdet"/>
+  
+  <prop id="a" x="left"/>
+  <prop id="i" x="(f,spirit,det,detail,@inhalt)"/>
+                    
+  <ti_space height="3px" />
+  <ti label="(prop,_dbdet_details)" />  
+  
+  <choose>
+    <when test="(f,spirit,det,detail,@hat_mehr)">
+      <try_catch>
+      <try>
+        <file id="mehrat" x="(dir,filetemp)mehrat.xml"/>
+                
+        <dbc id="(prop,mydbc)"
+          out="(file,mehrat)"
+          style="a"
+          root_name="root"
+          row_name="detail"    
+          act="select"
+          flag="trim">()select * from mehr as mehr where mehr.wert_id = ()(prop,requested-wert-id)();()</dbc>       
+        <ti label="(prop,_dbdet_inhalt):" flag="wrap" x="(f,html,i,o)(f,xpath,(file,mehrat),detail,@inhalt)(f,html,i,c)"/>
+      </try>
+      <catch>
+        <ti label="(prop,_dbdet_inhalt):">(f,html,i,o)(prop,i)(f,html,i,c) </ti>
+      </catch>
+      </try_catch>
+      
+    </when>
+    <otherwise>
+      <ti label="(prop,_dbdet_inhalt):">(f,html,i,o)(prop,i)(f,html,i,c) </ti>
+    </otherwise>
+   </choose>   
+  
+  <ti label="(prop,_dbdet_attr_doku):" >(f,spirit,attrr,@doku) </ti>   
+  <ti label="(prop,_dbdet_attr_name):" >(f,spirit,attrr,@name) </ti>   
+  <ti label="(prop,_dbdet_attr_tech_name):" >(f,spirit,attrr,@tech_name) </ti>    
+
+  <ti label="(prop,_dbdet_unit):" test="(f,spirit,attrr,exists?,@unit)">(f,spirit,attrr,@unit) </ti>  
+  <ti label="(prop,_dbdet_vartype):" >(f,spirit,attrr,@vartype) </ti>
+  <ti label="(prop,_dbdet_len):" test="(f,spirit,attrr,exists?,@len)">(f,spirit,attrr,@len) </ti>
+
+  <ti label="(prop,_dbdet_ident):">(f,when,(f,spirit,det,detail,@ident),(prop,_dbdet_ident_yes),(prop,_dbdet_ident_no)) </ti>
+ <ti label="Wann-Datum:" >(f,spirit,det,detail,@wann) </ti>  
+  <ti label="(prop,_dbdet_zeitr)"/>
+  <ti label="(prop,_dbdet_von):">(f,spirit,det,detail,@von) </ti>
+  <ti label="(prop,_dbdet_bis):" >(f,spirit,det,detail,@bis) </ti>  
+   <ti label="(prop,_dbdet_ist_top):" >(f,spirit,det,detail,@ist_top) </ti>  
+  
+    <ti label="(prop,_dbdet_hat_mehr):">(f,spirit,det,detail,@hat_mehr) </ti>
+      
+  <!-- <ti label="(prop,_dbdet_ids)"/>    -->
+  <ti type="rec">
+    <ti xflag="block">(f,html,b,o)(prop,_dbdet_ids)(f,html,b,c)</ti>
+    <ti> </ti>
+    <ti>(f,html,b,o)i_box(f,html,b,c)</ti>
+  </ti>
+  <!-- <ti label="(prop,_dbdet_box_id):"  test="(f,right,details)">(f,html,b,o)(f,spirit,det,detail,@box_id)(f,html,b,c) </ti>  -->
+  <ti label="(prop,_dbdet_obj_id):" type="rec">
+    <ti>#(f,spirit,det,detail,@obj_id) </ti>                    /
+    
+    <ti type="call_job" job="see-boxinfo" explain="(f,spirit,detObj,detail,@box_id)=(f,spirit,detObj,detail,@titel)">
+      <prop id="sbi-box-id">(f,spirit,detObj,detail,@box_id)</prop>
+    </ti>
+  </ti>
+  
+  <ti label="(prop,_dbdet_attr_id):" type="rec">
+    <ti>(f,spirit,det,detail,@attr_id) </ti>                    /
+    
+    <ti type="call_job" job="see-boxinfo" explain="(f,spirit,detAttr,detail,@box_id)=(f,spirit,detAttr,detail,@titel)">
+      <prop id="sbi-box-id">(f,spirit,detAttr,detail,@box_id)</prop>
+    </ti>
+  </ti>  
+  
+  <ti label="(prop,_dbdet_wert_id):" type="rec">
+    <ti>(f,spirit,det,detail,@wert_id) </ti>                    /
+    
+    <ti type="call_job" job="see-boxinfo" explain="(f,spirit,detWert,detail,@box_id)=(f,spirit,detWert,detail,@titel)">
+      <prop id="sbi-box-id">(f,spirit,detWert,detail,@box_id)</prop>
+    </ti>
+  </ti>  
+  
+ 
+      
+    <ti_space height="3px" />      
+    <ti label="(prop,_dbdet_typen)"/>
+    <ti label="(prop,_dbdet_obj_typ):">(f,spirit,det,detail,@obj_typ) </ti>    
+    <ti label="(prop,_dbdet_attr_typ):" 
+        xtest="(f,right,details)">(f,spirit,det,detail,@attr_typ) </ti>  
+
+
+  
+
+    
+    <!--    <when test="(f,right,details)">    <ti_space height="3px" />
+
+    <ti label="(prop,_dbdet_box)" /> 
+    
+    <ti label="(prop,_dbdet_box_uri):" >(f,spirit,det,detail,@box_uri) </ti>
+    <ti label="(prop,_dbdet_box_beschreibung):">(f,spirit,det,detail,@box_beschreibung) </ti>
+   
+    
+    <ti label="(prop,_dbdet_box_zeit_import):" >(f,spirit,det,detail,@box_zeit_import) </ti>
+    <ti label="(prop,_dbdet_box_zeit_qk):"  >(f,spirit,det,detail,@box_zeit_qk) </ti>
+     -
+    <ti label="(prop,_dbdet_box_zeit_export):"  >(f,spirit,det,detail,@box_zeit_export) </ti>
+    </when>
+    -->
+
+             
+  
+  
+  
+    
+  <spirit id="det" act="close"/>
+  <spirit act="close" id="detWert"/>
+  <spirit act="close" id="detAttr" />
+  <spirit act="close" id="detObj" />
+  
+  <spirit act="close" id="attrr"/>
+  <call_job job="-db-close-"/>
+  
+  <ti_break class_table="tabNavigator"/>
+  <ti type="rec">
+    <ti type="call_job" job="Object" explain="(prop,_x_go_back_sys)" flag="button justback" align="right">
+      <prop id="on-id">(prop,on-id)</prop>    
+    </ti> 
+  </ti> 
+    
+</job>
+
+<job id="conf-navi-quick" role="hidden">
+  <need>(prop,on-id)</need>
+  <call_job job="conf-navi-and-ngo"/>
+</job>
+
+<job id="conf-navi-quick-OUTDATED" role="hidden">
+  <need>(prop,on-id)</need>
+  
+  <call_job job="tr_conf"/>
+  
+  <call_job job="go-joe-read">
+    <prop id="joe-in-regex" x="quick" />
+    <file id="joe-in-store" x="(dir,pro)store-quick.xrs" />
+  </call_job>   
+  
+  <tk label="(prop,_sl_conf_ui)">
+  <tk type="sel" id="quick" label="(prop,_sl_conf_controle_ask)"
+    tip="(prop,_sl_conf_controle_is)" flag="nono">
+    <sel label="(prop,_sl_conf_conf_navi)">cv</sel>     
+       
+    <sel label="(prop,_sl_conf_sprache_begriffe)">cs</sel>
+    <sel label="(prop,_sl_conf_conf_limits)">cl</sel>
+  </tk>
+  </tk>
+  
+
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex" x="quick" />
+    <file id="joe-in-store" x="(dir,pro)store-quick.xrs" />
+  </call_job>     
+  
+  <choose>
+    <when test="(f,eq_text,cv,(prop,quick))">
+      <call_job job="conf-navi-and-ngo"/>
+    </when>
+    <when test="(f,eq_text,cs,(prop,quick))">
+      <call_job job="conf-lang-and-ngo"/>
+    </when>   
+    <when test="(f,eq_text,cl,(prop,quick))">
+      <call_job job="change-limit-of-bez-ngo"/>
+    </when>     
+    
+    <when test="(f,eq_text,ac,(prop,quick))">
+      <call_job job="tox1">
+        <prop id="tox1-obj">(prop,on-id)</prop>
+        <prop id="tox1-style">c</prop>
+      </call_job>
+    </when>       
+    
+    <when test="(f,eq_text,at,(prop,quick))">
+      <call_job job="tox1">
+        <prop id="tox1-obj">(prop,on-id)</prop>
+        <prop id="tox1-style">t</prop>
+      </call_job>
+    </when>      
+    
+
+  
+  </choose>
+</job>    
+
+<job id="conf-lang-and-ngo" role="hidden">
+  <call_job job="tk_lingua_edit">
+    <prop id="edit-lingua-and-print">0</prop>
+  </call_job>
+
+  <call_job job="prolog"/>
+  <call_job job="Object"/>
+  
+
+</job>
+
+<job id="conf-navi-and-ngo" role="hidden">
+  <call_job job="tk_nav_edit">
+    <prop id="edit-navi-and-print">0</prop>
+  </call_job>
+
+
+  <call_job job="Object"/>
+  
+
+</job>
+
+<job id="change-limit-of-bez-ngo" role="hidden">
+  <call_job job="tk_limit_edit">
+    <prop id="edit-limit-and-print">0</prop>
+  </call_job>
+
+  <call_job job="Object"/>
+  
+
+</job> 
+<job id="change-limit-of-objects-ngo" role="hidden">
+  <call_job job="tk_limit_edit">
+    <prop id="edit-limit-and-print">0</prop>
+  </call_job>
+
+
+ <call_job job="Type-Of-Object"/>
+  
+</job>
+<!-- 
+<job id="on-einfaedler" role="hidden">
+  <call_job job="tk_surf_edit"/>
+  <prop id="on-id" x="(prop,surf_id)"/>
+  <call_job job="Object"/>
+</job>  -->
+</jobs>

@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+
+
+
+<job id="List of customers">
+
+<call_job job="custset-see-all"/>
+</job>
+
+<job id="Products">
+
+  <call_job job="product-see-all"/>
+</job>
+
+<job id="Configuration" pri="10">
+  <call_job job="tk_base_edit"/>
+</job>
+
+<job id="Configuration?">
+  <call_job job="tk_base_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_base_clear" explain="Clear this data"/>
+</job>
+
+<job id="Generiere Selektoren" pri="10">
+<ti label="To Do Manually"/>
+<ti type="call_job" job="generate-selector-product" explain="Generiere Product-Selektoren"/>
+<ti_hr/>
+<ti label="Doing automatically ..."/>
+
+<call_job job="generate-pro-selector-appdark" />
+<call_job job="generate-pro-selector-arcadia-projects"   />
+<ti x="... did them with success"/>
+</job>
+
+<job id="Generiere Selektoren?">
+<ti>()Generiert die Auswahl der 
+1. Liste der deployable Apps and Services (=Scripts)
+2. Liste der Arcadia-Projekte welche fuer das compilieren zustaendig sind.
+()</ti>
+</job>
+
+
+
+
+<job id="Hilfe bei Problemen" pri="10">
+  <ti label="1. Der Klassiker"/>
+  <ti>()39: ERROR:  #2 Expression after translation not valid: found ')' at position '1' message='no corresponding opening bracket' [ in ] 0) [ ...... at .... ] )()</ti>
+  <ti>Hier muss im app-dark das nicht verwendete zeug wirklich auf empty gesetzt werden</ti>
+  <ti>1. Press: Build file-Selectors</ti>
+  <ti>2. Press: Signation-Liste</ti>
+  <ti>3. Press: Blurry-Liste </ti>
+  <ti>4. Press: Not encrypted-xsl-files; hier nichts auswaehlen und bestaetigen</ti>
+  <ti>5. Press: Dirs to ignore; hier nichts auswaehlen und bestaetigen</ti>
+  <ti>6. Press: Files to ignore; hier nichts auswaehlen und bestaetigen</ti>
+</job>
+
+<!--
+
+   <job id="3. Delcare Services?">
+  <call_job job="tk_dcl_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_dcl_clear" explain="Clear this data"/>
+</job>
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

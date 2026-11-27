@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="user-write">
+<need>(prop,user_key) (prop,isAdd)</need>
+<spirit act="open" id="users_spirit_tc" xml="(file,users)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,users_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,users_offset),0,(f,sub,(f,len,(prop,users_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,users_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="users_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;user row="(prop,user_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="userid" value="(f,vob,prop,user_userid)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="db" value="(f,vob,prop,user_db)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="apps" value="(f,vob,prop,user_apps)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="role" value="(f,vob,prop,user_role)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="db_size" value="(f,vob,prop,user_db_size)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="right_privsRoles" value="(f,vob,prop,user_right_privsRoles)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="right_appPrivsRoles" value="(f,vob,prop,user_right_appPrivsRoles)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="right_privParasRoles" value="(f,vob,prop,user_right_privParasRoles)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="right_privs" value="(f,vob,prop,user_right_privs)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="right_appPrivs" value="(f,vob,prop,user_right_appPrivs)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="right_privParas" value="(f,vob,prop,user_right_privParas)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="name" value="(f,vob,prop,user_name)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="email" value="(f,vob,prop,user_email)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="phone" value="(f,vob,prop,user_phone)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="users_spirit_tc" where="(prop,users_offset)user[@row='(prop,user_key)']" attribute="address" value="(f,vob,prop,user_address)"/>
+<spirit act="close" flag="save pretty" id="users_spirit_tc"/>
+</job>

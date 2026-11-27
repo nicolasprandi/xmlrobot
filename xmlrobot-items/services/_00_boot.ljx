@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. TEST
+dobre den -->
+
+<jobs>
+
+<prop id="backup_moment">(f,time,yyyyMMdd_HHmm,job)</prop>
+
+
+<job id="sys_startup" joblevel="ws" role="hidden">
+
+  <file id="knows" x="(dir,status)knows.txt"/>
+  
+  <choose>
+    <when test="(f,file_exists,(file,knows))">
+      <file id="easc" x="(dir,status)execute-after-startup.lsx" />
+
+      <choose>
+        <when test="(f,file_exists,(file,easc))">
+    
+          <try_catch>
+            <try>
+              <ti_hr/>
+              <ti align="right">(f,html,bold,open)Running Startup Action ...(f,html,bold,close)</ti>
+              <include file="(file,easc)"/>
+            </try>
+            <catch>
+              <ti label="Problem in Startup Action">
+        	      <ti label="Message:" x="(prop,catched_msg)" />
+        	      <ti label="Error Class:" x="(prop,catched_class)" />
+        	      <ti label="Programm:" x="(f,file_content,(file,easc))" />	      
+        	    </ti>	    
+            </catch>
+          </try_catch>      
+          <delete file="(file,easc)"/>        
+        </when>
+                     
+        <when test="(f,and,(f,has,prop,pro),(f,has,prop,app))">
+          <ti type="text" job="info_current_pro" test="(f,not,(f,and,(f,exists,prop,pro),(f,exists,prop,app)))" label=" " />
+          <ti_break/>
+          <call_service job="info_current_pro" />      
+        </when> 
+                
+        <when test="(f,has,prop,app)">
+          <choose>
+            <when test="(f,ask,app_has_static_pro,(prop,app))">
+    
+              <ti_break/>
+              <call_service job="info_current_apppro" />      
+            </when>           
+            <otherwise>
+              <ti_break/>
+              <call_service job="info_current_app" />              
+            </otherwise>
+          </choose>   
+        </when>            
+      </choose>    
+    
+      <ti_hr/>
+      <ti_space height="3px" />
+      <ti_break/>
+      <call_service job="print-splash-screen"/>      
+      <ti_space height="5px" />
+        
+      <try_catch><try>
+        <call_service job="Computer Check"/>
+      </try><catch>
+        <when test="(f,role,dev)">
+          <ti label="Problem during Computer Check on Startup"/>
+          <ti label="Message:" x="(prop,catched_msg)"/>
+          <ti label="ErrorClass:" x="(prop,catched_class)"/>   
+        </when>     
+      </catch></try_catch>    
+    </when>
+    <otherwise>
+      <!-- new to xmlrobot, first call-->
+      
+      <ti label="Welcome"/>
+      <!-- 
+      <ti>It seems to be the first time that you are here :-(e:c)
+So we give you some license information(e:s) here it is:</ti>
+      
+      <ti_hr/> -->
+      <call_service job="License"/>
+      <create_file out="(file,knows)">yes</create_file>
+      <!-- 
+      <ti_hr/>
+      <ti>Now the more interesting things ...
+      
+      </ti>
+
+      <ti_break/>
+       <call_service job="print-splash-screen"/> 
+       <ti_space height="5px" />       
+       -->
+    </otherwise>
+  
+  </choose>
+   
+
+
+</job>
+
+<job id="sys_shut_down" joblevel="ws" role="hidden" docu="is called when terminal terminates">
+
+
+</job>
+
+
+<job id="restarter" role="hidden" joblevel="ws">
+  <need>(file,with-lsx)</need>
+  <copy file="(file,with-lsx)" tofile="(dir,status)execute-after-startup.lsx" />
+  
+</job>
+
+<job id="print-splash-screen" role="hidden">
+<!--
+  <ti type="img" x="(dir,services)splash.png" />
+      
+      <ti label="Next"/>
+      <ti type="web" x="https://www.nicolas.at/ccc/help" label="See more help online:"/> 
+      <when test="(f,role,expert)">
+        <ti_space height="2px" />
+        <ti label="See developer help:" type="web" x="https://www.nicolas.at/ccc/quick.html"/>  
+      </when>            
+      
+      -->
+      <when test="(f,has,prop,app)">
+        <ti_space height="2px" />
+        <ti type="call_service" 
+          label="New project:"
+          job="item-add-pro-empty"
+          explain="Create a (f,upper,(prop,app))  project now ..."   
+          flag="xno_arrow">
+          <prop id="empty-app" x="(prop,app)"/>
+        </ti> 
+        <ti label=" " type="ul">Enter a project-name and</ti>
+        <ti label=" " type="ul">continue with the project-setup ...</ti> 
+            
+      </when>        
+
+   
+ 
+</job>
+
+
+
+<job id="Restart" role="hidden" joblevel="ws">
+  <restart app="(f,vob,prop,app)" pro="(f,vob,prop,pro)"/>
+</job>
+
+ <job id="dump_all"  joblevel="ws" role="hidden">
+          <dump_all flag="ti"/>
+  </job>
+    
+  <job id="debug"  joblevel="ws" role="hidden">
+
+  	<dump_all label="DUMP_ALL from Systemcall DEBUG"/>
+
+  	<ti label="Current Application" test="(f,exists,prop,app)">
+  	 <ti label="Application Id">(prop,app)</ti>
+  	 <ti label="Application Dir" type="dir">(dir,app)</ti>  	
+    </ti>
+    <ti label="No Application selected" test="(f,not,(f,exists,prop,app))"/> 
+    <ti label="Current Project" test="(f,exists,prop,pro)">
+  	 <ti label="Project Id">(prop,pro)</ti>
+  	 <ti label="Project Dir" type="dir">(dir,pro)</ti>  	 
+  	</ti>
+  	<ti label="No Project selected" test="(f,not,(f,exists,prop,pro))"/>
+
+  </job>
+
+  <job id="See More Configurations" joblevel="ws" role="hidden">
+    
+    <ti label="More ..." padding_top="6px">
+      <ti label=" " type="call_service" job="add-debug-flag"/>
+      <ti label=" " type="call_service" job="Select Directory"/>
+      <ti label=" " type="call_service" job="Developer Snippets"/>
+      <ti label=" " type="call_service" job="Restart"/>
+    
+    </ti>       
+    
+  </job>
+  <job id="System Info?" joblevel="ws">
+
+    <ti label="About: System Info">
+      <ti>(f,html,bold,open)Thats the main-entry-point for all system information(f,html,bold,close)</ti>
+      <ti type="ul">Ccdld Version</ti>
+      <ti type="ul">System Directories</ti>
+      <ti type="ul">Environment and System Context</ti>
+
+    </ti>
+  </job>
+  
+
+ 
+
+  
+
+  <job id="System Info" joblevel="ws" tip="Information about the installed sofware">   
+
+       
+    <ti label="Folders">
+  
+      <ti label="Services:"
+          type="call_service" job="Services" 
+          explain="Manage Services"/>   
+      <ti label="Workspace '(prop,workspace)':"
+          type="call_service"
+          job="Goto-Panorama"
+          explain="See Workspace folder"> 
+        <dir id="with">(dir,workspace)</dir>
+        <ti>The current Worspace-Folder '(prop,workspace)' ()contains the 
+(a) Applications of the workspace: app.* 
+(b) Projects within the application-folder: app.*/pro.*()</ti>
+        <!-- <ti_hr/>  -->   
+      </ti>      
+     
+      <ti label="System:"
+          type="call_service" job="Goto-Panorama" 
+          explain="See System folder">
+        <dir id="with">(dir,system)</dir>
+        <ti>The 'System-Folder'() contains the 
+(a) additional java libraries: libs 
+(b) the service applications: service_apps 
+(c) The backuped data from applications and projects: backups 
+(d) The current status of the system: status
+(e) Legal Information: 3-rd-party-licenses 
+(f) Add Ons: material()</ti>
+
+      </ti>      
+         
+      <ti label="Museum:"
+          type="call_service" job="Goto-Panorama" 
+          explain="See Museum folder">
+        <dir id="with">(dir,museum)</dir>
+        <ti>()The Museum stores the 
+(a) execution-logs (log4j): log 
+(b) the temporary files of jobexecution: temp, systemp()</ti>
+ 
+      </ti>     
+      <!-- 
+      <ti label="App-Stories:"
+          type="call_service" job="Goto-Panorama" 
+          explain="See App-Stories folder">
+        <dir id="with">(dir,museum)appstories/</dir>
+        <ti>()The App-Stories stores the 
+(a) the jars for the applications()</ti>
+ 
+      </ti>  
+      -->      
+                         
+    </ti>
+
+    <when test="(f,role,admin)">
+      <ti label="()Folders (Text)()">
+        <ti label="Workspace:" test="(f,role,admin)">(dir,workspace)</ti>
+        <ti label="System:" test="(f,role,admin)">(dir,system)</ti>
+        <ti label="Museum:" test="(f,role,admin)">(dir,museum)</ti> 
+      </ti>
+    </when>   
+       
+    <ti label="Current Environment" >
+      <ti  label="Workspace:" flag="flow">(prop,workspace)</ti>
+      <ti type="file" label="Takeoff:" flag="flow">(file,takeoff)</ti>
+      <ti type="text" label="Computer:" test="(f,has,prop,computer)">(f,vob,prop,computer)</ti>          
+      <ti type="text" label="Role:">(f,role)</ti> 
+      <ti type="text" label="Language:" test="(f,and,(f,role,admin),(f,exists,prop,lang))">(f,vob,prop,lang)</ti>   
+      <ti type="text" label="Operating System:">(f,vob,prop,os)</ti> 
+
+      	<ti label=" " type="call_service" job="dump_all" explain="See all Variables" />                   
+    </ti>
+
+    
+    <ti_hr/>
+    
+    <call_service job="Configuration">
+      <prop id="see-conf-header" x="1" />
+    </call_service>
+    <ti_hr/>
+      <!-- <ti label="[[pdname]] version (f,info,version)" > -->
+     <ti label="WebWalk1" >
+      <ti type="file" label="Java Core Software:">(f,info,sys_jar)</ti>
+      <ti label=" "     test="0"
+    	  type="call_service"
+    	  job="License"
+    	  explain="See License"/>    
+                  
+    </ti>           
+  </job>
+  
+
+  <job id="Configuration?" joblevel="ws">
+
+    <ti label="About: Configuration">
+    <ti>(f,html,bold,open)Lets you configure(f,html,bold,close)</ti>
+    <ti type="ul">()Computers: Programs, Computernames, ...()</ti>
+    <ti type="ul">Panorama: File Categories</ti>
+    <ti type="ul">ƒ Activities: Operations on files and directories</ti>
+
+    </ti>
+    
+  </job>
+    
+  <job id="Configuration"  joblevel="ws" tip="Configure Computers, File-Categories for Panorama and Operations for Directories and Files" role="hidden">
+    <need default="1">(prop,see-conf-header)</need>
+    <ti label="Configuration" test="(prop,see-conf-header)"/>
+    
+    <ti label="(f,html,bold,open)Computers:(f,html,bold,close)" type="call_service" job="Conf: Computers" explain="Configure Computers"/>        
+    <ti label=" " type="ul">Register a Computer &amp; define Recognizers for its detection</ti>
+    <ti label=" " type="ul">Register Programs to open files with</ti>         
+
+    <ti label="(f,html,bold,open)Panorama:(f,html,bold,close)" type="call_service" job="Conf: Pano-Categories" explain="Configure Panorama"/>    
+    <ti label=" " type="ul">Define Categories &amp; Extensions</ti>
+    <ti label=" " type="ul">The Panarama-File-Browser sorts files by categories.</ti>    
+    
+    <ti label="(f,html,bold,open)&#402; Operations:(f,html,bold,close)" type="call_service" job="()Conf: Pano-Operations (Dir,File)()" explain="Configure Dir &amp; File Operations"/> 
+      
+    <ti label=" " type="ul">()This is about the &#402;-Symbol which appears if a file or a directory is listet. By clicking on the &#402;, you can perform some activity on this item. These operations you can be programed.()</ti>
+
+    <ti label="(f,html,bold,open)Logging:(f,html,bold,close)" 
+      	type="rec">
+      	<ti type="call_service" job="add-debug-flag" explain="Turn [[pdname]]-Enhanced-Logging ON" 
+            flag="arrow"/>  
+      	
+    </ti> 
+    <ti label=" " type="ul">Interpreter-interal info for developers</ti>   
+
+               
+      	<ti type="call_service" job="Developer Snippets" 
+            explain="Work with Developer-Snippets" 
+            flag="arrow"
+            label="(f,html,bold,open)Snippets:(f,html,bold,close)"/>
+    <ti label=" " type="ul">()Create temporary [[pdname]]-Code, Run and Test them()</ti>            
+
+<ti_hr style="2" />
+    <ti label="(f,html,bold,open)Lists:(f,html,bold,close)" 
+      	type="rec">
+      	<ti type="call_service" job="mac-keys" explain="Character-shortcuts for mac-computers" 
+            flag="arrow"/>  
+    </ti> 
+    
+    <ti label=" " 
+      	type="rec">
+      	<ti type="call_service" job="entity-keys" explain="A handy list of entites" 
+            flag="arrow"/>  
+    </ti>   
+    <ti_hr />
+    <call_service job="entity-keys"  /> 
+
+  </job>
+  
+  <job id="startup info system" joblevel="ws" role="hidden"> 
+  
+     <ti label="System-Information">
+      <ti type="text" label="Workspace:">(prop,workspace)</ti>
+      <ti type="text" label="Role, Lang:">(f,vob,prop,role), (f,vob,prop,lang)</ti>   
+      
+     </ti>
+     <choose>
+      <when test="(f,has,prop,computer)">
+        <ti type="text" label="Os, Computer:">(f,vob,prop,os), (f,vob,prop,computer)</ti> 
+      </when>
+      <otherwise>
+       <ti type="text" label="Os:">(f,vob,prop,os)</ti> 
+      </otherwise>
+     </choose>
+       
+  </job>
+  
+
+
+
+
+
+  
+  <job id="mac-keys" joblevel="ws" role="hidden">
+    
+    <ti label="Signs" padding_top="6px">
+      <ti label="\">alt + Shift + 7</ti>
+      <ti label="�?�">alt + i</ti>      
+      <ti label="[">alt + 5</ti>
+      <ti label="]">alt + 6</ti>
+      <ti label="|">alt + 7</ti>
+      <ti label="{">alt + 8</ti>
+      <ti label="}">alt + 9</ti>
+      <ti label="'">alt + ´</ti>
+      <ti label="@">alt + l</ti>                       
+    </ti>
+    
+    <ti label="Missing Windows" padding_top="6px">
+      <ti label="Del">fn + Backspace</ti>
+      <ti label="Show Desktop">cmd + F3</ti>      
+      <ti label="Page Up">fn + Up Arrow</ti>
+      <ti label="Page Down">fn + Down Arrow</ti>
+      <ti label="Dock On/Off">alt + cmd + D</ti>      
+    </ti>
+    
+    <ti label="Screen Shots" padding_top="6px">
+      <ti label="Screen -&gt; File">cmd + Shift + 3</ti>
+      <ti label="Screen -&gt; Clipboard">cmd + Shift + ctrl + 3</ti>
+      <ti label="Selection -&gt; File">cmd + Shift + 4</ti>
+      <ti label="Selection -&gt; Clipboard">cmd + Shift + ctrl + 4</ti>
+    </ti>  
+  </job>
+  <job id="entity-keys" joblevel="ws" role="hidden">    
+    <ti label="Xml" padding_top="6px">
+      <ti label="Linefeed">&amp;#xA;</ti>
+      <ti label="&amp;">&amp;amp;</ti>
+      <ti label="&gt;">&amp;gt;</ti>
+      <ti label="&lt;">&amp;lt;</ti>
+    </ti> 
+    <ti label="Html" padding_top="6px">
+      <ti label="Linefeed">&amp;nbsp;</ti>
+
+    </ti>    
+    <ti label="Test-Strings" padding_top="6px">
+      <ti label="Test1">(e:o)e:s(e:c)(e:s)(e:c)&amp;'(e:s)&quot;()(dir,services)()&lt;&gt;# :</ti>
+    </ti>       
+  </job>
+  
+
+<job id="no-help" role="hidden">
+  <ti>There is no help for this job</ti>
+</job>
+
+</jobs>

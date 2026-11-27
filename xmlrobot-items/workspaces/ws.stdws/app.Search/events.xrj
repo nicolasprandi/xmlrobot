@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="api-olix" role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(file,ic-search))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <call_job job="Search"/>
+    </otherwise>
+  </choose>
+  
+</job>
+
+
+<job id="sys_project_setup" role="hidden">
+  <call_job job="Search"/>
+</job>
+
+<job id="?">
+
+  <ti label="When to use Application (f,html,i,open)Search(f,html,i,close) :">
+    <ti type="ul">(f,html,bold,open)You want to search for a specific text in textfiles !(f,html,bold,close)</ti>
+  </ti>
+  <ti type="img" x="(dir,app)search.png"/> 
+  <ti label="Online-Help">
+    <ti type="web" x="https://www.xmlrobot.net/search-help"/>
+  </ti>    
+  <ti label="Features">
+    <ti type="ul">Searches for pure text or for regular expressions</ti>
+    <ti type="ul">Define the number of directory-levels you want to include in the search</ti>
+    <ti>Currently in Test:</ti>
+    <ti type="ul">Replace encountered matches in one file with a text</ti>
+    <ti type="ul">Replace encountered matches in all files with a text</ti>
+   </ti>  
+  <ti label="Regex references">
+    <ti label="Zytrax" type="web">http://www.zytrax.com/tech/web/regex.htm</ti>
+    <ti label="Turial1" type="web">http://regexp-evaluator.de/tutorial/</ti>
+    <ti label="Turial2" type="web">http://www.regular-expressions.info/modifiers.html</ti>
+  
+  </ti>
+  
+  <ti_hr/>
+  <ti label="License: SEARCH"/>
+  <ti type="ul">Copyright &#xA9; 2015-2020 Nicolas Prandstaetter. All rights reserved.</ti> 
+  <ti type="ul">()SEARCH is in version 0.7 (April 2020).()</ti>
+  <ti type="ul">SEARCH is under test.</ti>  
+
+</job>
+
+<job id="Search?">
+
+    <ti>(f,html,bold,open)Lets you search in text-files(f,html,bold,close)</ti>
+    <ti type="ul">Searches for pure text or for regular expressions</ti>
+    <ti type="ul">Define the number of directory-levels you want to include in the search</ti>
+    <ti>Currently in Test:</ti>
+    <ti type="ul">Replace encountered matches in one file with a text</ti>
+    <ti type="ul">Replace encountered matches in all files with a text</ti>  
+</job>
+<job id="New Directory?">
+  <ti>(f,html,bold,open)Lets you specify another directory for the search(f,html,bold,close)</ti>
+  <ti type="ul">The job is here for convinience-reasons</ti>
+  <ti type="ul">It offers the preselection for faster navigation to XmlRobot-folders</ti>
+</job>
+
+<job id="??">
+  <choose>
+    <when test="(f,file_exists,(file,result))">
+      <call_job job="report-internal"/>
+    </when>
+    <otherwise>
+      <!-- <call_job job="Search"/>   -->
+    </otherwise>
+  </choose>
+                            
+  <call_job job="Regex Tester??"/>
+</job>
+<job id="???" >
+ 
+ <choose>
+  <when test="(f,has,dir,pro)">
+    <choose>
+      <when test="(f,exists_file,(file,result))">
+        <call_job job="??"/>
+      </when>
+      <otherwise>
+        <ti label="Welcome to Search">
+          <ti type="call_job" job="sys_project_setup" explain="Go &amp; search your textfiles ..."/>
+        </ti>
+        <ti_hr/>
+        <call_job job="?"/>
+      </otherwise>
+    </choose>
+  </when>
+  <otherwise>
+    <call_job job="?"/>
+  </otherwise>
+</choose>
+</job>
+
+</jobs>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="select-read">
+<need>(prop,select_key)</need>
+<spirit act="open" missing_strategy="empty" id="selects_spirit_tc" xml="(file,selects)"/>
+<prop id="select_dt_upd">(f,spirit,selects_spirit_tc,(prop,selects_offset)select[@row=(f,xpath_string,(prop,select_key))],@dt_upd)</prop>
+<prop id="select_dt_add">(f,spirit,selects_spirit_tc,(prop,selects_offset)select[@row=(f,xpath_string,(prop,select_key))],@dt_add)</prop>
+<prop id="select_sql">(f,spirit,selects_spirit_tc,(prop,selects_offset)select[@row=(f,xpath_string,(prop,select_key))],@sql)</prop>
+<prop id="select_id">(f,spirit,selects_spirit_tc,(prop,selects_offset)select[@row=(f,xpath_string,(prop,select_key))],@id)</prop>
+<prop id="select_desc">(f,spirit,selects_spirit_tc,(prop,selects_offset)select[@row=(f,xpath_string,(prop,select_key))],@desc)</prop>
+<prop id="select_update">(f,spirit,selects_spirit_tc,(prop,selects_offset)select[@row=(f,xpath_string,(prop,select_key))],@update)</prop>
+<prop id="select_archify">(f,spirit,selects_spirit_tc,(prop,selects_offset)select[@row=(f,xpath_string,(prop,select_key))],@archify)</prop>
+<spirit act="close" id="selects_spirit_tc"/>
+</job>

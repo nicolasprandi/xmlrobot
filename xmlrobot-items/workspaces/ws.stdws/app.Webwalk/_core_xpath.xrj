@@ -1,0 +1,181 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+<job id="hook-xpath-edit-go" role="hidden">
+  <call_job job="find-edit"/>
+  <ti_hr_break/>
+  <call_job job="hook-choose-xpath"/>
+</job>
+
+<job id="hook-generate-xsl-file" role="hidden">
+ 
+  <need>(prop,find_key) (prop,group_key)</need>
+  <call_job job="tk_genxsl_edit" />
+  <prop id="content">(f,file_content,(dir,app)xsl-template-generation.xsl)</prop>
+  <try_catch>
+    <try>
+      <call_job job="do-get-myxpath"/>
+    </try>
+    <catch/>
+  </try_catch>
+  <when test="(f,has,prop,myxpath)">
+    <prop id="content">(f,replace,(prop,content),##xpath##,(prop,myxpath))</prop>
+  </when>
+  <file id="created-xsl" x="(dir,genxsl_dir)(prop,genxsl_filename)"/>
+  <tk type="msg" test="(f,exists_file,(file,created-xsl))">Going to overwrite
+(file,created-xsl)</tk>
+  <create_file out="(file,created-xsl)">(prop,content)</create_file>
+  <ti label="Created">
+    <ti type="file" x="(file,created-xsl)"/>
+  </ti>
+  <dump_ti/>
+  
+</job>
+
+<job id="do-get-myxpath" role="hidden">
+  <need>(prop,find_key) (prop,group_key)</need>
+  <prop id="myxpath" x="(f,xpath,(file,finds),group[@row=(prop,group_key)]/find[@row=(prop,find_key)],@xpath)"/>
+</job>
+
+<job id="do-get-myfile" role="hidden">
+  <need>(prop,find_key) (prop,group_key) (prop,xmlf_key)</need>
+  <file id="myfile" x="(f,xpath,(file,finds),group[@row=(prop,group_key)]/find[@row=(prop,find_key)]/xmlf[@row=(prop,xmlf_key)],@file)" flag="cool"/>
+  <unescape id="myfile" type="file"/>
+  <translate id="myfile" type="file"/> 
+</job>
+
+<job id="do-get-myresult" role="hidden">
+  <need>(prop,find_key) (prop,group_key) (prop,xmlf_key)</need>
+  <file id="myresult" x="(f,xpath,(file,finds),group[@row=(prop,group_key)]/find[@row=(prop,find_key)]/xmlf[@row=(prop,xmlf_key)],@xsl_result)" flag="cool"/>
+  <unescape id="myresult" type="file"/>
+  <translate id="myresult" type="file"/> 
+</job>
+
+<job id="do-get-paras2" role="hidden">
+  <need>(prop,find_key) (prop,group_key) (prop,xmlf_key)</need>
+
+  <prop id="myparas2" x="(f,try,()(f,xpath,(file,finds),group[@row=(prop,group_key)]/find[@row=(prop,find_key)]/xmlf[@row=(prop,xmlf_key)],@xsl_paras)(),,)"/>
+ 
+</job>
+
+<job id="do-get-paras1" role="hidden">
+  <need>(prop,find_key) (prop,group_key)</need>
+
+  <prop id="myparas1" x="(f,try,()(f,xpath,(file,finds),group[@row=(prop,group_key)]/find[@row=(prop,find_key)],@xsl_paras)(),,)"/>
+ 
+</job>
+
+<job id="do-get-myxsl" role="hidden">
+  <need>(prop,find_key) (prop,group_key)</need>
+  <file id="myxsl" x="(f,xpath,(file,finds),group[@row=(prop,group_key)]/find[@row=(prop,find_key)],@xsl_file)" flag="cool"/>
+  <unescape id="myxsl" type="file"/>
+  <translate id="myxsl" type="file"/> 
+</job>
+
+<job id="do-execute-xsl-on-xml" role="hidden">
+ 
+  <need>(prop,find_key) (prop,xmlf_key) (prop,group_key)</need>
+  
+
+  <call_job job="do-get-myfile"/><need>(file,myfile)</need>
+  <call_job job="do-get-myxsl"/><need>(file,myxsl)</need>  
+  <call_job job="do-get-myresult"/><need>(file,myresult)</need>
+  <call_job job="do-get-paras1"/><need>(prop,myparas1)</need>
+  <call_job job="do-get-paras2"/><need>(prop,myparas2)</need>
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <xslt
+    xml="(file,myfile)"
+    xsl="(file,myxsl)"
+    out="(file,myresult)"
+    xhome="x">
+    <params>(prop,myparas1) (prop,myparas2)</params>
+  </xslt>
+  <ti label="Did transform Xsl"> 
+    <ti type="file" label="Xsl:" x="(file,myxsl)"/>
+    <ti type="file" label="Xml:" x="(file,myfile)"/>
+    <ti type="file" label="Result:" x="(file,myresult)"/>
+    <ti type="text" label="Params:" x="(prop,myparas1) (prop,myparas2)" />
+  </ti>                  
+  ()]]></prop>      
+      </call_job> 
+        
+  
+   
+</job>
+
+<job id="do-execute-xpath-on-xml" role="hidden">
+  <interpreter wcatch="1"/>
+  <need>(prop,find_key) (prop,xmlf_key) (prop,group_key)</need>
+  <call_job job="do-get-myxpath"/><need>(prop,myxpath)</need>
+  <call_job job="do-get-myfile"/><need>(file,myfile)</need>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <ti label="Xpath-Execution"/>
+  <ti label="xpath" x="(prop,myxpath)"/>
+  <ti label="on file" type="file" x="(file,myfile)"/>
+  <spirit id="x" act="open" xml="(file,myfile)"/>
+  <!-- 
+      <loop id="x" spirit="x" xpath="(prop,myxpath)">
+    
+        (e:o)loop(e:s)x(e:s)xml?(e:c)
+      </loop>  
+  -->
+
+  ()]]></prop>      
+      </call_job> 
+      
+      <loop id="x" spirit="x" xpath="(prop,myxpath)">
+    
+        <ti label="(loop,x,#i)">(loop,x,xml?)</ti>
+      </loop>
+        
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <spirit id="x" act="close" xml="(file,myfile)"/>
+  ()]]></prop>      
+      </call_job>       
+      
+  
+ 
+  
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="app-read">
+<need>(prop,app_key)</need>
+<spirit act="open" missing_strategy="empty" id="apps_spirit_tc" xml="(file,apps)"/>
+<prop id="app_dt_upd">(f,spirit,apps_spirit_tc,(prop,apps_offset)app[@row=(f,xpath_string,(prop,app_key))],@dt_upd)</prop>
+<prop id="app_dt_add">(f,spirit,apps_spirit_tc,(prop,apps_offset)app[@row=(f,xpath_string,(prop,app_key))],@dt_add)</prop>
+<prop id="app_appid">(f,spirit,apps_spirit_tc,(prop,apps_offset)app[@row=(f,xpath_string,(prop,app_key))],@appid)</prop>
+<prop id="app_explain">(f,spirit,apps_spirit_tc,(prop,apps_offset)app[@row=(f,xpath_string,(prop,app_key))],@explain)</prop>
+<spirit act="close" id="apps_spirit_tc"/>
+</job>

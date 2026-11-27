@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="search-tk">
+<need default="">(prop,searches_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,searches_tk_control) wrap ">
+<tk label="Suchbegriff" id="search_search" x="" test_first="1" tip="Danach wird in der app gesucht. Es kann entweder ein text oder ein regulaerer ausdruck sein." type="textblock" flag=" "/>
+<tk label="Type of Search" id="search_type" x="text" test_first="1" type="sel" flag=" ">
+<sel label="text">text</sel>
+<sel label="regex">regex</sel>
+</tk>
+<tk label="Description" id="search_desc" x="" test_first="1" type="textblock" flag=" "/>
+<tk label="Technisches" x="Technisches" test_first="0" type="msg" flag=" "/>
+<tk label="Name" id="search_techname" x="" test_first="1" tip="Technische Bezeichnung des Checks(e:s) landet letztendlich im dynamischen projektname." type="text" flag=" nono "/>
+<tk label="Nbr Before" id="search_before" x="100" test_first="0" tip="Anzahl der Zeichen zum andrucken vor Fundstelle" type="text" flag=" "/>
+<tk label="Nbr After" id="search_after" x="300" test_first="0" tip="Anzahl der Zeichen zum andrucken nach Fundstelle" type="text" flag=" "/>
+</tk>
+</job>

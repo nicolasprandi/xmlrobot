@@ -1,0 +1,225 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="get-starter" role="hidden">
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+  <call_job job="tk_para_read"/>
+
+  
+  <choose>
+    <when test="(f,eq_text,file,(prop,para_in_style))">
+      <file id="starter" x="(file,para_in_file)"/>
+      <prop id="starter-encoding" x="(prop,para_in_encoding)"/>
+    </when>
+    <when test="(f,eq_text,xml,(prop,para_in_style))">
+      <file id="starter" x="(file,starter)"/>
+      <create_file out="(file,starter)" encoding="utf-8">(prop,para_in_xml)</create_file>
+      <prop id="starter-encoding" x="utf-8"/>
+    </when>    
+  
+  </choose>
+</job>
+
+<job id="core-perform-xpath" role="hidden">
+ 
+  <call_job job="get-starter"/>
+  <prop id="tf">0</prop>
+  <ti_hr/>
+  <ti>going into loop id="in" xml="(file,starter)" encoding="(prop,starter-encoding)"
+        xpath="(prop,para_sel_xpath)"</ti>
+        
+  <when test="(f,has,prop,para_limit_rows)">
+    <ti label="Using Limit">(prop,para_limit_rows)</ti>
+  </when>        
+  <ti label="xpath=">(prop,para_sel_xpath)</ti>      
+  <loop id="in" xml="(file,starter)" encoding="(prop,starter-encoding)"
+        xpath="(prop,para_sel_xpath)" limit="(f,when,(f,has,prop,para_limit_rows),(prop,para_limit_rows),9999999)">
+    <ti_hr/>
+    <ti label="(loop,in,#i)">(loop,in,xml?)</ti>   
+    <prop id="tf">(f,add,1,(prop,tf))</prop> 
+  </loop>
+  <ti>found (prop,tf) for (prop,para_sel_xpath) in (file,starter)</ti>
+  
+</job>
+
+<job id="core-perform-fields" role="hidden">
+ 
+  <call_job job="get-starter"/>
+  <when test="(f,has,prop,para_limit_rows)">
+    <ti label="Using Limit">(prop,para_limit_rows)</ti>
+  </when>
+
+  <loop id="in" xml="(file,starter)" encoding="(prop,starter-encoding)"
+        xpath="(prop,para_sel_xpath)" missing_strategy="empty" limit="(f,when,(f,has,prop,para_limit_rows),(prop,para_limit_rows),9999999)">
+    <ti_hr/>
+    <ti label="(loop,in,#i)">(f,html,b,o)(f,substring,(f,replace,(loop,in,xml?),&#xA;,),0,100)(f,html,b,c)</ti>    
+    
+    <loop id="spalte" xml="(file,spalten)" xpath="spalte" missing_strategy="empty">
+      <prop id="atom">(loop,spalte,@expr)</prop>
+      <echo id="atom" type="prop" />
+      <unescape id="atom" type="prop"/>
+      <echo id="atom" type="prop" />
+      <translate id="atom" type="prop"/>
+      <echo id="atom" type="prop" />
+      <ti label="(loop,spalte,@name)=" flag="label_right">(prop,atom) </ti>
+    </loop>
+  </loop>
+  
+</job>
+
+<job id="core-perform-build" role="hidden">
+ 
+  <call_job job="get-starter"/>
+  
+  <print id="p" out="(file,base)" act="open" encoding="UTF-8" code="4711"/>
+  <print act="println" id="p">&lt;?xml version="1.0" ?&gt;</print>
+  <print act="println" id="p"><![CDATA[<rows>]]></print>
+  
+  <print act="println" id="p"><![CDATA[<row>]]></print>
+  
+    <loop id="spalte" xml="(file,spalten)" xpath="spalte" missing_strategy="empty">
+      <print act="println" id="p"><![CDATA[<c>(x,(loop,spalte,@name))</c>]]></print>
+    </loop>
+      
+  <print act="println" id="p"><![CDATA[</row>]]></print>
+
+  <dump_ti test="0" label="nach c"/>
+  <ti label="xpath=">(prop,para_sel_xpath)</ti>
+  <ti label="file" type="file">(file,starter)</ti>
+  <loop id="in" xml="(file,starter)" encoding="(prop,starter-encoding)"
+        xpath="(prop,para_sel_xpath)" missing_strategy="empty">
+    <print act="println" id="p"><![CDATA[<row>]]></print>    
+    <ti_hr/>
+    <prop id="inxml"><!--(loop,in,xml?)--></prop>
+  
+    <ti label="(loop,in,#i)" flag="catch"> (loop,in,xml?)</ti>
+    <!-- 
+    <ti label="(loop,in,#i)">(f,substring,(f,replace,(prop,inxml),&#xA;,),0,100)</ti>    
+                                -->
+    <loop id="spalte" xml="(file,spalten)" xpath="spalte" missing_strategy="empty">
+   
+      <prop id="atom">(loop,spalte,@expr)</prop>
+      <unescape id="atom" type="prop"/>
+      <translate id="atom" type="prop"/>
+      <print act="println" id="p"><![CDATA[<c>(x,(prop,atom))</c>]]></print>
+
+    </loop>
+    <print act="println" id="p"><![CDATA[</row>]]></print>
+  </loop>
+  <print act="println" id="p"><![CDATA[</rows>]]></print>
+  <print act="close" id="p" code="4711"/>
+  
+  <ti type="file"  label="Vorstufe">(file,base)</ti>
+  
+  <file id="empty" x="(dir,app)empty.xls"/>
+  <file id="emptyx" x="(dir,app)empty.xlsx"/>
+  <ti>vor excel update
+  what="(f,when,(f,ends_with,(file,para_out_file),x),(file,emptyx),(file,empty))"
+      out="(file,para_out_file)"
+      how="add"
+      with="(file,base)"
+      sheet_name="(prop,para_out_sheetname)"
+      remove_sheet="empty"</ti>
+    <excel_update
+      test="(f,has,file,para_out_file)"
+      what="(f,when,(f,ends_with,(file,para_out_file),x),(file,emptyx),(file,empty))"
+      out="(file,para_out_file)"
+      how="add"
+      with="(file,base)"
+      sheet_name="(prop,para_out_sheetname)"
+      remove_sheet="empty"/>  
+    <ti type="file" label="Created">(file,para_out_file)</ti>    
+</job>
+
+  
+<job id="core-operation-x2e" role="hidden">
+
+  <call_job job="get-starter"/>
+  
+
+  
+  <dump_ti_all label="Greetings from core-operation"/>
+  <create_file file="(file,project-exists)">yes</create_file>
+  
+  <prop id="stat_begin" x="(f,time,yyyyMMdd_HHmmss)"/>
+  
+  <dir id="starter" x="(dir,services)" />
+  
+  <file id="scan" x="(dir,temp)scan.xml" />
+  
+  <scan dir="(dir,starter)" 
+        level_limit="3"
+        out="(file,scan)"
+        field="fn"/>
+  
+  <prop id="counter" x="0" />
+  <prop id="found" x="0"/> 
+        
+  <loop id="scan" xml="(file,scan)" xpath="//file">
+    <prop id="counter" x="(f,add,1,(prop,counter))"/>
+    
+    <ti type="file" label="Some (prop,counter)" x="(loop,scan,@fn)"/>
+
+    <prop id="found" x="1"/> 
+    
+    <!--
+      <choose>
+        <when test="1">
+        </when>
+        <when test="0">
+        </when>
+        <otherwise>
+        </otherwise>
+      </choose>
+    -->     
+  
+  </loop>
+  <tk type="msg" x="Operation now finished-hello"/>
+  <prop id="stat_end" x="(f,time,yyyyMMdd_HHmmss)"/>
+  <prop id="stat_counter" x="(prop,counter)"/>  
+  <call_job job="tk_stat_write" />
+  
+  <ti label="Summary"/>
+  <ti type="dir" x="(dir,services)" label="Eben"/>
+  <ti type="file" x="(file,takeoff)" label="Dort"/>
+  <throw>Good By</throw>
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+</jobs>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2021 Nicolas Prandstaetter. All rights reserved. -->
+<app-info 
+role="user" 
+tip="It is doing this and that" 
+xhas_static_project="1" 
+xflag="has_static_project"
+commits="orders/"
+cache="cache/">
+
+</app-info>

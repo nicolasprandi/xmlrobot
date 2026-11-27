@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="namaste-read">
+<need>(prop,namaste_key)</need>
+<spirit act="open" missing_strategy="empty" id="namastes_spirit_tc" xml="(file,namastes)"/>
+<prop id="parent-objekttyp">(f,spirit,namastes_spirit_tc,(prop,namastes_offset).,@objekt_typ)</prop>
+<file id="pdi-sel-attr">(dir,repo)ot-(prop,parent-objekttyp)-asel-(prop,tip-term-class)-ident.xml</file>
+<remove id="parent-objekttyp" type="prop"/>
+
+<prop id="namaste_dt_upd">(f,spirit,namastes_spirit_tc,(prop,namastes_offset)namaste[@row=(f,xpath_string,(prop,namaste_key))],@dt_upd)</prop>
+<prop id="namaste_dt_add">(f,spirit,namastes_spirit_tc,(prop,namastes_offset)namaste[@row=(f,xpath_string,(prop,namaste_key))],@dt_add)</prop>
+<prop id="namaste_attributtyp">(f,spirit,namastes_spirit_tc,(prop,namastes_offset)namaste[@row=(f,xpath_string,(prop,namaste_key))],@attributtyp)</prop>
+<prop id="namaste_value">(f,spirit,namastes_spirit_tc,(prop,namastes_offset)namaste[@row=(f,xpath_string,(prop,namaste_key))],@value)</prop>
+<spirit act="close" id="namastes_spirit_tc"/>
+</job>

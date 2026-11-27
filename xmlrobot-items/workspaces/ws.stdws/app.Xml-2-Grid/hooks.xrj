@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="event_spalten_beginn" role="hidden">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+  <ti label="Spalten"/>
+
+</job>
+
+<job id="event_spalte_ende" role="hidden">
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is there great app</throw>
+  <ti>
+  </ti>
+  <ti_hr/>
+  <ti type="call_job" job="spalte-see-all" explain="Zur Liste" />
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

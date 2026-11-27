@@ -1,0 +1,467 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+
+<call_job job="prolog" />
+
+<job id="???" >
+ <choose>
+  <when test="(f,has,dir,pro)"> 
+    <choose>
+      <when test="(f,exists_file,(file,joe-in-store))">
+        <call_job job="??"/>
+      </when>
+      <otherwise>
+        <ti label="Welcome to Xsl-Executor">
+          <ti type="call_job" job="Run XSL" explain="Go &amp; run an xsl ..."/>
+        </ti>
+        <ti_hr/>
+        <call_job job="?"/>
+      </otherwise>
+    </choose>
+  </when>
+  <otherwise>
+    <call_job job="?"/>
+  </otherwise>
+</choose>  
+</job>
+
+<job id="??">
+  
+  <choose>
+    <when test="(f,file_exists,(file,joe-in-store))">
+      <call_job job="see complete input" />
+	  
+	  
+    <ti type="call_job" job="Explain parameters" label=" " explain="Explain this"/>
+
+    </when>
+    <otherwise>
+      <ti label="Nothing happened until now" test="(f,has,prop,pro)">
+        <ti type="call_job" job="Import Xml" label="(e:o)1(e:c)"/>
+        <ti type="call_job" job="Import Xsl" label="(e:o)2(e:c)"/>
+        <ti type="call_job" job="Run XSL" label="(e:o)3(e:c)"/>
+      </ti>
+      <ti_break/>
+    </otherwise>
+  </choose>
+
+</job>
+
+<job id="pi" role="hidden">
+
+  <call_job job="go-joe-read" />
+  
+  <prop id="last-proc" x=""/>
+  <prop id="last-proc" x="(f,file_content,(file,lastproc))" flag="catch"/>
+  
+  <ti label="Last processing results"/>
+  <when test="(f,has,file,in-export)">
+    <ti label="Exported:" x="(file,in-export))" type="file" />  
+  </when>
+  
+  <when test="(f,has,file,xsl-result)">
+    <ti label="Conversion result:" x="(file,xsl-result)" type="file" />  
+  </when>
+  
+  
+  <when test="(f,has,file,xml2)">
+  <when test="(f,has,file,in-excel)">
+    <ti label="Converted spreadsheet:" x="(file,xml2)" type="file" />  
+  </when>
+  </when>
+  
+    <ti label="When:" x="(prop,last-proc)"/>
+
+                
+  
+</job>
+<job id="see complete input" role="hidden">
+  <call_job job="pi"/>
+  <ti_space heigt="4px"/>
+  <call_job job="go-joe-read" />
+  <call_job job="do input">
+    <prop id="view" x="print_only prixnt_with_tips (f,when,(f,exists,prop,pro),,print_tips_only)"/>
+  </call_job>
+  
+</job>
+
+
+
+<job id="follow-in-excel" role="hidden">
+
+  <choose>
+    <when test="(f,has,prop,sys_follow_value)">
+      <call_job job="create-selector">
+        <file id="cs-by-cs" x="(prop,sys_follow_value)" />
+      </call_job>
+    </when>
+    <otherwise>
+      <copy file="(file,empty-selection)" tofile="(file,sheet-selector)"/>
+    </otherwise>
+  </choose>
+      
+</job>
+
+<job id="do input" role="hidden">
+  <need>(prop,view)</need>
+  
+  <tk label="Parameters: XSL-Transformer"
+      flag=" (prop,view) "
+      tip="()Primary parameters for the xsl-transformation are an xml-file and an xsl-file. Alternatively to the xml a spreadsheet can be used.()">
+      
+              
+    <tk type="msg" 
+        x="()(1a) Xml Input()"/>
+        
+    <tk type="file" 
+    	id="in-xml" 
+    	label="Xml-File" 
+    	tip="()This is be the primary base for the xsl transformation.()"/>           
+  
+    <tk type="msg" 
+        x="()(1b) Spreadsheet Input()"
+        />
+        
+    <tk type="file" 
+    	id="in-excel" 
+    	label="Spreadsheet-File" 
+      extension=".xls .xlsx"
+      follow_job="follow-in-excel"      
+      tip="()This spreadsheet serves as input instead of the Xml. The data must have a 'table-styled' layout (Columns, column-headers and rows). &#xA;It must be in format 'Microsoft Excel 2007-2013 XML (.xlsx)' -or- 'Microsoft Excel 97-2003 (.xls)'()"/>
+    	
+    <tk type="sel" 
+    	id="in-sheet" 
+    	label="Sheet" 
+    	tip="()Name of sheet: the sheet to process from the spreadsheet-file()"
+      xml="(file,sheet-selector)"
+      flag="fresh_xml"/>    
+      
+    <tk type="text" 
+    	id="in-row" 
+    	label="Header Row" 
+    	tip="()Numeric value, starting with 1. The row-number of the column-header. By default the column-header (with the column names) is expected to be in the first row. Data is expected to start in the second row. Use this parameter to specify another row for the header. Data will still be expected to start in the next row.()"
+      test_first="0"/>  
+      
+    <tk type="text" 
+    	id="in-limit" 
+    	label="Limit Rows to read" 
+    	tip="Limits the number of rows to read"
+      test_first="0"/>        
+
+    <tk type="msg" 
+        x="Spreadsheet-Namings to Xml"
+        test_first="0"
+        tip="Naming rules when converting the excel to an xml file"/>
+        
+    <tk type="text" 
+    	id="in-root-name" 
+    	label="Xml Root Name" 
+    	tip="The top-element-name(e:s) Default: 'root'"
+      test_first="0"/>  
+      
+    <tk type="text" 
+    	id="in-row-name" 
+    	label="Xml Row Name" 
+    	tip="The element-name for each row(e:s) Default: 'row'"
+      test_first="0"/>  
+      
+    <tk type="text" 
+    	id="in-row-index-name" 
+    	label="Xml Row Index Name" 
+    	tip="The name of an additional generated attribute(e:s) which will hold the rownumer(e:s) Optional(e:s) if not defined no such attribute will be produced"
+      test_first="0"/>                    
+  
+      
+    <tk type="msg" 
+        x="()(2) Xsl Stylesheet()"
+        tip="Stylsheet and parameters"/>
+        
+    <tk type="file" 
+    	id="in-xsl" 
+    	label="Xsl-File" 
+    	tip="()The xsl-file to be processed.()"
+      extension=".xsl"/>  
+      
+    <tk type="textblock" 
+    	id="in-xsl-params" 
+    	label="Xsl Parameters" 
+    	tip="say eg start=&apos;12&apos;; Xsl Parameters influence the xsl script; Escaping: use two &apos; if you have one as parameter."
+      test_first="0"/>  
+      
+    <tk type="dir" 
+    	id="in-xsl-home" 
+    	label="Location of Xsl Resources" 
+    	tip="Specifies where to look for Xsl-Requests: document(e:o)(e:c) xsl:include or xsl:import"
+      test_first="0"/>        
+      
+    <tk type="msg" 
+        x="()(3) Export()"
+        test_first="0"/>
+        
+    <tk type="file" 
+    	id="in-export" 
+    	label="Export-To-File" 
+    	tip="After the xsl is processed(e:s) the resuling file will be copied to this file."      
+      test_first="0"
+      flag="save"/>                    	
+        
+  </tk>  
+
+</job>
+
+<job id="Run XSL?">
+  <ti label="About: Run XSL">
+    <ti type="ul">This is the main-job of the Xsl-Executor</ti>
+    <ti type="ul">It asks for user-input and runs the xsl</ti>
+    <ti type="ul">The result of the xsl-transformation can be exported to some file</ti>
+  </ti>
+  <!--
+  <ti_hr/>
+  <call_job job="see-run-helper"/> -->
+
+
+</job>
+
+<job id="see-run-helper" role="hidden">
+
+  <prop id="flag_print_tips_only" x="print_tips_only" />
+  <when test="(f,has,prop,pro)">
+	<when test="(f,exists_file,(file,joe-in-store))">
+		<prop id="flag_print_tips_only" x="" />
+		<call_job job="go-joe-read" />
+	</when>
+  </when>
+  <call_job job="do input">
+    <prop id="view" x="print_only print_with_tips  (prop,flag_print_tips_only) print_all_fields"/>
+  </call_job>
+</job>
+
+<job id="do see all tips" role="hidden">
+
+  <call_job job="go-joe-read" />
+  <call_job job="do input">
+    <prop id="view" x="print_only print_with_tips print_all_fields"/>
+  </call_job>
+</job>
+
+<job id="Run XSL" tip="Asks for input and runs the xsl-transformation">
+  <need default="1">(prop,makeinput)</need>
+  <!-- Read gui-data from an xml-file -->
+  
+  <call_job job="go-joe-read" />
+  
+  <when test="(prop,makeinput)">
+  
+    <!-- Perform the user input -->
+    <call_job job="do input">
+      <prop id="view" x="sum_only"/>
+    </call_job>
+        
+    <!-- Write gui data to an xml-file -->  
+    <call_job job="go-joe-write">
+      <prop id="joe-in-regex">in-.+</prop>
+    </call_job>
+  </when>
+  
+  <!-- Process -->
+  
+  <!-- Read Excel -->
+  <when test="(f,has,file,in-excel)">
+    <tp>reading spreadsheet</tp>
+    <choose>
+      <when test="(f,and,(f,has,prop,in-row),(f,has,prop,in-limit))">
+        <prop id="y2" x="(f,add,(prop,in-row),(prop,in-limit))"/>
+      </when>
+      <when test="(f,has,prop,in-row)">
+        <prop id="y2" x=""/>
+      </when>   
+      <when test="(f,has,prop,in-limit)">
+        <prop id="y2" x="(f,add,1,(prop,in-limit))"/>
+      </when>          
+      <otherwise>
+        <prop id="y2" x=""/>
+      </otherwise>
+    </choose>
+    <ti align="right">(f,html,bold,open)Reading Excel ...(f,html,bold,close)</ti> 
+    <tp>Reading spreadsheet</tp> 
+    <ti_flush/>
+    <excel_table
+      excel="(file,in-excel)"
+      out="(file,xml2)"
+      sheet="(prop,in-sheet)"
+      y1="(prop,in-row)"
+      style="short"
+      y2="(prop,y2)"
+      count_base="1"
+      root_name="(f,when,(f,has,prop,in-root-name),(prop,in-root-name),)"
+      row_name="(f,when,(f,has,prop,in-row-name),(prop,in-row-name),)"
+      row_index_name="(f,when,(f,has,prop,in-row-index-name),(prop,in-row-index-name),)"
+      couxnt_base="1"/>
+    
+    <ti label="Did convert spreadsheet">  
+      <ti label="Spreadsheet:" type="file" x="(file,in-excel)"/>
+      <ti label="Sheet:" type="text" x="(f,xsl,(file,xml2),root/@sheet_name)"/>
+      <ti label="To:" type="file" x="(file,xml2)"/>
+    </ti>
+      
+  </when>
+  
+  <!-- perform xsl -->
+  <tp>perform xsl</tp>
+  <choose>
+    <when test="(f,and,(f,has,file,in-excel),(f,has,file,in-xml))">
+      <throw>()You can only specify an XML or a SPREADSHEET, not both! Clear one of these in the input-page!()</throw>
+    </when>  
+    <when test="(f,has,file,in-excel)">
+      <file id="xml-base" x="(file,xml2)"/>
+    </when>
+    <when test="(f,has,file,in-xml)">
+      <file id="xml-base" x="(file,in-xml)"/>
+    </when>    
+    <otherwise>
+      <throw>()You must specify either an Xml (1a) or Spreadsheet/Excel (1b) as data-input()</throw>
+    </otherwise>
+  </choose>
+  
+  <!-- create an xsl-template if the file is defined but does not exist -->
+  
+  <when test="(f,has,file,in-xsl)">
+    <when test="(f,not,(f,exists_file,(file,in-xsl)))">
+    
+      <tk type="msg" x="The file (file,in-xsl) does not exists. A template will be generated ..."/>
+      <file id="xsl-template" x="(dir,app)xsl-template.xsl"/>
+      
+      <tk type="textblock" id="template" x="(f,file_content,(file,xsl-template))"/>
+      
+      <create_file out="(file,in-xsl)">(prop,template)</create_file>
+      <ti type="file" label="Created Xsl" x="(file,in-xsl)"/>
+    </when> <!-- xsl does not exist -->   
+  </when> <!-- has file ext_xsl -->  
+  
+  <!-- execute the xsl -->
+    <ti align="right">(f,html,bold,open)Doing Xsl ...(f,html,bold,close)</ti> 
+    <tp>Doing Xsl</tp> 
+  <choose>
+    <when test="(f,has,file,in-xsl)">
+    
+      <xslt
+        xml="(file,xml-base)"
+        xsl="(file,in-xsl)"
+        out="(file,xsl-result)"
+        home="(dir,in-xsl-home)">
+        <params>(prop,in-xsl-params)</params>
+      </xslt>
+      <ti label="Did transform Xsl"> 
+        <ti type="file" label="Xsl:" x="(file,in-xsl)"/>
+        <ti type="file" label="Xml:" x="(file,xml-base)"/>
+        <ti type="file" label="Result:" x="(file,xsl-result)"/>
+        <ti type="file" label="Home:" x="(dir,in-xsl-home)" test="(f,has,dir,in-xsl-home)"/>
+        <ti type="text" label="Params:" x="(prop,in-xsl-params)" test="(f,has,prop,in-xsl-params)"/>
+      </ti>      
+    </when>  
+    <otherwise>
+      <ti align="right">()No Xsl found, did just a copy()</ti>
+      <copy file="(file,xml-base)" tofile="(file,xsl-result)" />
+    </otherwise>
+  </choose>
+  
+  <create_file out="(file,lastproc)">(f,time,EEEE(e:s) d. MMMM yyyy(e:s) HH:mm)</create_file>
+  
+  <!-- perform export -->
+  
+  <choose>
+    <when test="(f,has,file,in-export)">
+
+      <ti align="right">(f,html,bold,open)Doing Export ...(f,html,bold,close)</ti> 
+      <tp>Doing Export</tp> 
+      <ti test="(f,file_exists,(file,in-export))" align="right">(f,html,bold,open)Overwriting Export ...(f,html,bold,close)</ti> 
+      <!-- 
+      <ti test="(f,exists_file,(file,in-export))" align="right">(f,html,bold,open)Overwriting export...(f,html,bold,close)<ti>     
+      -->
+      <copy file="(file,xsl-result)" tofile="(file,in-export)"/>
+      <ti label="Final Result"/>        
+      <ti type="file" label="Exported:" x="(file,in-export)"/>
+    </when>
+    <otherwise>
+      <ti label="Final Result"/>
+      <ti type="file" label="Created:" x="(file,xsl-result)"/>
+    </otherwise>
+  </choose>
+  
+</job>
+
+<job id="Run XSL &amp; don't ask" tip="Runs the xsl-transformation without asking">
+  <call_job job="Run XSL">
+    <prop id="makeinput" x="0"/>
+  </call_job>
+</job>
+
+<job id="go" role="hidden">
+  <call_job job="Run XSL">
+    <prop id="makeinput" x="0"/>
+  </call_job>
+</job>
+
+<job id="Run XSL &amp; don't ask?" >
+  <ti label="About: Run XSL &amp; don't ask"/>
+  <ti type="ul">Runs the transformation and</ti>
+  <ti type="ul">does NOT ask for user-input</ti>
+
+</job>
+
+<job id="?">
+
+  <ti label="When to use Application (f,html,i,open)Xsl-Executor(f,html,i,close) :">
+    <ti type="ul">(f,html,bold,open)You want to run xsl-scripts(f,html,bold,close)</ti>
+    
+  </ti>
+  <ti_space height="3px" />
+  <ti label="Overview" />
+  <ti_space height="5px" />
+  <ti type="img" x="(dir,app)xsl-executor.png" />
+  <ti label="Online-Help">
+  <ti type="web">https://www.xmlrobot.net/xsl-exe-help</ti>
+  </ti>
+ 
+
+  <ti_hr/>
+  <ti_break/>
+  <prop id="do-normal" x="0"/>
+  <!-- 
+  <when test="(f,has,prop,pro)">
+      <when test="(f,exists_file,(file,joe-in-store))">
+        <call_job job="go-joe-read" />
+        <call_job job="do input">
+          <prop id="view" x="print_only print_with_tips"/>
+        </call_job> 
+        <prop id="do-normal" x="0"/>         
+      </when>
+  </when>
+  -->
+    
+  <when test="(prop,do-normal)">
+    <call_job job="do input">
+      <prop id="view" x="print_only print_with_tips print_tips_only print_all_fields"/>
+    </call_job>
+  </when>
+
+  <ti_hr/>
+  <call_job job="?excel-tip" />  
+  <ti_hr/>  
+  <ti label="License: XSL-EXECUTOR"/>
+  <ti type="ul">Copyright &#xA9; 2015-2020 Nicolas Prandstaetter. All rights reserved.</ti> 
+  <ti type="ul">()XSL-EXECUTOR is in version 0.4 .()</ti>
+  <ti type="ul">XSL-EXECUTOR is under test.</ti>
+
+<ti type="ul">Excel is a trademark of Microsoft®</ti>
+
+</job>
+
+
+
+
+
+</jobs>

@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+
+
+<job id="hook-zirami-after-edit" role="hidden">
+ <call_job job="zirami-see" /> 
+  <call_job job="zirami-see-all" />
+
+</job>
+
+<job id="hook-zirami-list-begin" role="hidden">
+  <ti label="List of Ziramis"/>
+
+</job>
+
+<job id="hook-zirami-list-end" role="hidden">
+  <ti_hr/>
+  <ti type="call_job" job="zirami-see-all" explain="&gt;&gt; See all ziramis" />
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

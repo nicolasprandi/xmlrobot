@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="monat-read">
+<need>(prop,monat_key)</need>
+<spirit act="open" missing_strategy="empty" id="monate_spirit_tc" xml="(file,monate)"/>
+<prop id="monat_dt_upd">(f,spirit,monate_spirit_tc,(prop,monate_offset)monat[@row=(f,xpath_string,(prop,monat_key))],@dt_upd)</prop>
+<prop id="monat_dt_add">(f,spirit,monate_spirit_tc,(prop,monate_offset)monat[@row=(f,xpath_string,(prop,monat_key))],@dt_add)</prop>
+<prop id="monat_monat">(f,spirit,monate_spirit_tc,(prop,monate_offset)monat[@row=(f,xpath_string,(prop,monat_key))],@monat)</prop>
+<spirit act="close" id="monate_spirit_tc"/>
+</job>

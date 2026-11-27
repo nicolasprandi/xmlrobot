@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="ima-see-all" level="ws" role="hidden">
+<need default="">(prop,imas_sort_attribute)</need>
+<need default="">(prop,imas_sort_number)</need>
+<need default="">(prop,imas_sort_ignore_case)</need>
+<need default="">(prop,imas_sort_desc)</need>
+<need default="">(prop,imas_where)</need>
+<need default="">(prop,imas_offset_label)</need>
+<need default="./">(prop,imas_offset)</need>
+<need default="">(prop,imas_return_job)</need>
+<need default="//">(prop,imas_offset_new_key)</need>
+<need default="0">(prop,imas_no_header)</need>
+<prop id="nothing">(f,not,(prop,imas_no_header))</prop>
+<loop missing_strategy="empty" id="ima_loop" xml="(file,imas)" xpath="(prop,imas_offset)ima(prop,imas_where)" sort="(prop,imas_sort_attribute)" number="(prop,imas_sort_number)" ignore_case="(prop,imas_sort_ignore_case)" desc="(prop,imas_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,imas_offset_label)),0)">
+<ti label="(prop,imas_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti isFromAction="1" type="call_job" page="view" flag="button" class="fb fbAction fbActionImarun" explain="Run" job="ima-run">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">run</prop>
+<prop page="view" id="ima_key">(loop,ima_loop,@row)</prop>
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+<ti type="text" x="(f,when,(loop,ima_loop,@on), ,(f,html,b,o)Off(f,html,b,c))"/>
+<ti isFromAction="1" type="call_job" page="view" flag="button" class="fb fbAction fbActionImaedit" explain="Edit" job="ima-edit">
+<prop id="greetings_from_page">view</prop>
+<prop id="greetings_from_action">edit</prop>
+<prop page="view" id="ima_key">(loop,ima_loop,@row)</prop>
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+<ti flag="" type="call_job" prefix="  " explain="(f,when,(f,has_flag,cmd sel,(loop,ima_loop,@type)),(f,html,bold,open)(f,replace,(f,text,cut_nice,(loop,ima_loop,@cmd),100),&#xA;,)(f,html,bold,close),(f,when,(f,eq_text,(loop,ima_loop,@type),break),- Breakpoint -,(f,when,(f,eq_text,(loop,ima_loop,@type),commit),- Commit -,?)))" job="ima-see">
+<prop id="ima_key">(loop,ima_loop,@row)</prop>
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+<ti test="(f,has,(loop,ima_loop,@cond))" type="text" x="(f,when,(f,has_flag,(loop,ima_loop,@cond),stat),Statistic,)"/>
+<ti test="(f,not,(f,has,(loop,ima_loop,@cond)))"/>
+<ti test="(f,has,(loop,ima_loop,@dbms))" type="text" x="(f,when,(f,has_flag,(loop,ima_loop,@dbms),maria),MariaDb,)(f,when,(f,has_flag,(loop,ima_loop,@dbms),mysql),MySql,)(f,when,(f,has_flag,(loop,ima_loop,@dbms),postgres),Postgres,)"/>
+<ti test="(f,not,(f,has,(loop,ima_loop,@dbms)))"/>
+<ti test="(f,has,(loop,ima_loop,@cust_flag))" type="text" x="Flag &apos;(loop,ima_loop,@cust_flag)&apos;"/>
+<ti test="(f,not,(f,has,(loop,ima_loop,@cust_flag)))"/>
+<ti test="(f,has,(loop,ima_loop,@cust_how))" type="text" x="(f,when,(f,has_flag,(loop,ima_loop,@cust_how),one),ONE: It‘s just one flag,)(f,when,(f,has_flag,(loop,ima_loop,@cust_how),and),AND: Number of flags combined by AND,)(f,when,(f,has_flag,(loop,ima_loop,@cust_how),or),OR: Number of flags combined by ORBreakpoint (e:o)Before(e:c),)"/>
+<ti test="(f,not,(f,has,(loop,ima_loop,@cust_how)))"/>
+<ti test="(f,has,(loop,ima_loop,@catch))" type="text" x="(f,when,(loop,ima_loop,@catch),,MayFail)"/>
+<ti test="(f,not,(f,has,(loop,ima_loop,@catch)))"/>
+<ti test="(f,has,(loop,ima_loop,@pronto))" type="text" x="(f,when,(f,has_flag,(loop,ima_loop,@pronto),i0),pronto=0,)(f,when,(f,has_flag,(loop,ima_loop,@pronto),i1),pronto=1,)(f,when,(f,has_flag,(loop,ima_loop,@pronto),l2),pronto&lt;2,)(f,when,(f,has_flag,(loop,ima_loop,@pronto),i2),pronto=2,)"/>
+<ti test="(f,not,(f,has,(loop,ima_loop,@pronto)))"/>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti type="rec">
+<ti span="3"> </ti>
+<ti flag="wrap_word">Keine Daten gefunden</ti>
+</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,imas_offset),node(e:o)(e:c)))">
+<ti type="rec" >
+<ti span="3"> </ti>
+<ti type="menu" span="7">
+<ti label=" " type="call_job" explain_nix="ima-add" flag="button " class="fb fbAdd fbAddIma" explain="+ Statement" job="ima-add">
+<file id="imas">(file,imas)</file>
+<prop id="imas_offset">(prop,imas_offset)</prop>
+<prop id="imas_offset_label">(prop,imas_offset_label)</prop>
+<prop id="imas_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="imas_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="imas_sort_number">(prop,imas_sort_number)</prop>
+<prop id="imas_sort_ignore_case">(prop,imas_sort_ignore_case)</prop>
+<prop id="imas_sort_desc">(prop,imas_sort_desc)</prop>
+<prop id="imas_where">(prop,imas_where)</prop>
+<prop id="imas_return_job">(prop,imas_return_job)</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+<ti test="(f,not,(prop,nothing))" label=" " type="call_job" flag="button" class="fb fbOrg fbOrgIma" explain="(prop,_x_organize)" job="do-org-me">
+<file id="orga">(file,imas)</file>
+<prop id="orga_where">(prop,imas_where)</prop>
+<prop id="orga_view_loop_id">ima_loop</prop>
+<prop id="orga_finished_job">ima-orga-finished</prop>
+<prop id="orga_offset">(prop,imas_offset)</prop>
+<prop id="orga_offset_label">(prop,imas_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,imas_offset_new_key)</prop>
+<prop id="orga_segment_plural">imas</prop>
+<prop id="orga_segment_singular">ima</prop>
+<prop id="orga_segment_plural_label">Statements</prop>
+<prop id="orga_segment_singular_label">Statement</prop>
+<prop id="orga_sort_attribute">(prop,imas_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,imas_sort_number)</prop>
+<prop id="orga_where">(prop,imas_where)</prop>
+<prop id="orga_name_expression_loop">()(f,when,(f,has_flag,cmd sel,(loop,ima_loop,@type)),(f,text,cut_nice,(loop,ima_loop,@cmd),100),(f,when,(f,eq_text,(loop,ima_loop,@type),break),- Breakpoint -,(f,when,(f,eq_text,(loop,ima_loop,@type),commit),- Commit -,?)))()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+<file id="imps">(file,imps)</file>
+<prop id="imps_offset">(prop,imps_offset)</prop>
+<prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+<prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+<prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+<prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+<prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+<prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+<prop id="imps_where">(prop,imps_where)</prop>
+<prop id="imps_return_job">(prop,imps_return_job)</prop>
+<prop id="imp_key">(prop,imp_key)</prop>
+</ti>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,imas)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,imas_offset)),0)">(prop,imas_offset)</ti>
+</ti>
+</when>
+</job>

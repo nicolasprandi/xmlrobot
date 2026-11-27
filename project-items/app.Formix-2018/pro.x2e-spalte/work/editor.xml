@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="spalte-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Spalte(prop,spalten_offset_label)"/>
+<prop x="sum" id="spalten_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,spalte_key)</need>
+<prop id="label" x="Spalte [(f,text,cut_nice,(prop,spalte_name),20)](prop,spalten_offset_label)"/>
+<prop x="sum_only" id="spalten_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="spalte-tk"/>
+</job>

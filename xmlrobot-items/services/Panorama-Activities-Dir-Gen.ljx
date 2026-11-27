@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><jobs>
+<!--Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved.-->
+<job role="hidden" id="Panorama-Dir-Activity">
+<need>(dir,with)</need>
+<try_catch>
+<try>
+<file id="joe-in-store">(dir,status)pano-dir-ic.lsx</file>
+<call_service job="go-joe-read"/>
+<tk label="Operation Selection">
+<tk id="selected_activity" type="sel" flag="nono" label="(dir,with)">
+<sel>()ZIP the directory()</sel>
+<sel>()Copy Specific Files()</sel>
+<sel>()See VFS INFOS()</sel>
+<sel>()see_dir_actions()</sel>
+<sel>()Move Specific Files()</sel>
+<sel>()Rename Specific Files()</sel>
+<sel>()Delete Specific Files()</sel>
+<sel>()Delete Specific Dirs()</sel>
+<sel>()Delete Directory()</sel>
+<sel>()Delete Empty Dirs()</sel>
+<sel>()Unzip all contained zips()</sel>
+<sel>()Browse with PANORAMA()</sel>
+<sel>()See ALL FILES under this dir()</sel>
+<sel>()Open TERMINAL()</sel>
+</tk>
+</tk>
+<prop id="joe-in-regex">selected_activity</prop>
+<call_service job="go-joe-write-srv"/>
+<choose>
+<when test="(f,eq,(prop,selected_activity),()ZIP the directory())">
+<ti label="(f,html,bold,open)()ZIP the directory()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-ZIP()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Copy Specific Files())">
+<ti label="(f,html,bold,open)()Copy Specific Files()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-COPY-FILES()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()See VFS INFOS())">
+<ti label="(f,html,bold,open)()See VFS INFOS()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-VFS()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()see_dir_actions())">
+<ti label="(f,html,bold,open)()see_dir_actions()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()see_dir_actions()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Move Specific Files())">
+<ti label="(f,html,bold,open)()Move Specific Files()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-MOVE-FILES()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Rename Specific Files())">
+<ti label="(f,html,bold,open)()Rename Specific Files()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-RENAME-FILES()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Delete Specific Files())">
+<ti label="(f,html,bold,open)()Delete Specific Files()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-DELETE-FILES()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Delete Specific Dirs())">
+<ti label="(f,html,bold,open)()Delete Specific Dirs()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-DELETE-DIRS()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Delete Directory())">
+<ti label="(f,html,bold,open)()Delete Directory()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-DELETE()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Delete Empty Dirs())">
+<ti label="(f,html,bold,open)()Delete Empty Dirs()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-DELETE-EMPTY-DIRS()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Unzip all contained zips())">
+<ti label="(f,html,bold,open)()Unzip all contained zips()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-UNZIPALL()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Browse with PANORAMA())">
+<ti label="(f,html,bold,open)()Browse with PANORAMA()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-PANORAMA()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()See ALL FILES under this dir())">
+<ti label="(f,html,bold,open)()See ALL FILES under this dir()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-SEE-ALL-FILES()"/>
+</when>
+<when test="(f,eq,(prop,selected_activity),()Open TERMINAL())">
+<ti label="(f,html,bold,open)()Open TERMINAL()(f,html,bold,close):" type="dir">(dir,with)</ti>
+<ti_hr/>
+<ti_break/>
+<call_service job="()Panorama-Dir-Activity-TERMINAL()"/>
+</when>
+<otherwise>
+<ti>You decided to do nothing. Your wish is our command!</ti>
+</otherwise>
+</choose>
+</try>
+<catch>
+<ti label="Error occured"/>
+<ti label="Activity:" x="(prop,selected_activity)" test="(f,exists,prop,selected_activity)"/>
+<ti label="Message:" x="(prop,catched_msg)" test="(f,exists,prop,catched_msg)"/>
+<ti label="Class:" x="(prop,catched_class)" test="(f,exists,prop,catched_class)"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>
+</jobs>

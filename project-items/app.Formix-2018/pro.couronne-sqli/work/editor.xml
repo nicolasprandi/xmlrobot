@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="sqli-editor">
+    <need>(prop,isAdd)</need>
+    <choose>
+        <when test="(prop,isAdd)">
+            <prop id="sqli_default_label_class" x="+ (prop,_sl_sqli)"/>
+            <prop id="sqli_default_label_name" x="(f,when,(f,has,(prop,sqlis_offset_label)), | (prop,sqlis_offset_label),)"/>
+            <prop id="sqlis_tk_control" x="sum"/>
+        </when>
+        <otherwise>
+            <need>(prop,sqli_key)</need>
+            <prop id="sqli_default_label_class" x="(prop,_sl_sqli)"/>
+            <prop id="sqli_default_label_name" x="(prop,sqli_name)(f,when,(f,has,(prop,sqlis_offset_label)), - (prop,sqlis_offset_label),)"/>
+            <prop id="sqlis_tk_control" x="sum_only"/>
+        </otherwise>
+    </choose>
+    <call_job job="sqli-tk"/>
+</job>

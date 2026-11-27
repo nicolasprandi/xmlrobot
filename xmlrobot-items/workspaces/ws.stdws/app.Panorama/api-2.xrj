@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="api-2" role="hidden">
+
+  <!-- <ti type="dir">(dir,pro)</ti> -->
+  <file id="in">(dir,pro)api-2.xml</file>
+  <dir id="dir_to_see">(f,xpath,(file,in),.,@dir_to_see)</dir>
+  
+  <file id="et">(dir,pro)setup.xml</file>
+    
+  <create_file out="(file,et)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <execution_type>
+    <scan dir="(dir,dir_to_see)" level_limit="99" policy="image"/>
+    <org type="system" />
+    <offset></offset> 
+    <report_ti dirs_types="child" dir_level="99" cats_use="1" sum_total="end" sum_cat="0" sum_sort="big" limit_files_per_group="100" files_flag="1" files_opt="size" file_hightlight="0"  limit_dirs="40" limit_next_dirs="80" files_sort="name"/>
+  </execution_type>
+    ]]>
+  </create_file>
+     
+  <call_job job="execute" />
+          
+</job>
+
+</jobs>

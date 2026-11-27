@@ -1,0 +1,171 @@
+<?xml version="1.0" ?>
+<steps>
+<!--
+<hibiscus-app edition="Die Erste Andere Edition" url="jdbc:postgresql://localhost:5432/hibiscus">                                    
+  <public user="postgres" pwd="servas"/>
+</hibiscus-app>
+<hibiscus-java pub_obj="777" />
+-->
+<ti label="ProdConf-Hibiscus-App" size="2"/>
+<interpreter watch="1" />
+<prop id="verschluesseler" 
+x="(f,random_text,16,ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$%/=?*+'#-_.:;|{[]}\0123456789!$%/=?*+'#-_.:;|{[]}\)"
+/>
+<prop id="verschluesseler2" 
+x="(f,random_text,16,ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$%/=?*+'#-_.:;|{[]}\0123456789!$%/=?*+'#-_.:;|{[]}\)"
+/>
+<interpreter watch="0" />
+<choose>
+  <when test="(f,has,file,#prodconf)" >
+    <spirit id="#prodconf" act="open" file="(file,#prodconf)"/>
+    <ti label="#prodconf">(f,spirit,#prodconf,xml?)</ti>
+      <prop id="#edition">(f,spirit,#prodconf,hibiscus-app,@edition)</prop>
+      <prop id="#url">(f,spirit,#prodconf,hibiscus-app,@url)</prop>
+      
+      <!-- db: rolle: public -->
+      <prop id="#dbuser_public">(f,spirit,#prodconf,hibiscus-app/public,@user)</prop>
+      <prop id="#dbpwd_public">(f,spirit,#prodconf,hibiscus-app/public,@pwd)</prop>
+      <prop id="#dbuser_latest">(prop,#dbuser_public)</prop>
+      <prop id="#dbpwd_latest">(prop,#dbpwd_public)</prop> 
+      
+      <!-- db: rolle: user2 -->
+      <choose>     
+        <when test="(f,spirit,#prodconf,exists?,hibiscus-app/user2)">
+          <prop id="#dbuser_user2">(f,spirit,#prodconf,hibiscus-app/user2,@user)</prop>
+          <prop id="#dbpwd_user2">(f,spirit,#prodconf,hibiscus-app/user2,@pwd)</prop>           
+        </when>
+        <otherwise>
+          <prop id="#dbuser_user2">(prop,#dbuser_latest)</prop>
+          <prop id="#dbpwd_user2">(prop,#dbpwd_latest)</prop>         
+        </otherwise>
+      </choose>      
+      <prop id="#dbuser_latest">(prop,#dbuser_user2)</prop>
+      <prop id="#dbpwd_latest">(prop,#dbpwd_user2)</prop>      
+      
+      <!-- db: rolle: expert -->
+      <choose>     
+        <when test="(f,spirit,#prodconf,exists?,hibiscus-app/expert)">
+          <prop id="#dbuser_expert">(f,spirit,#prodconf,hibiscus-app/expert,@user)</prop>
+          <prop id="#dbpwd_expert">(f,spirit,#prodconf,hibiscus-app/expert,@pwd)</prop>           
+        </when>
+        <otherwise>
+          <prop id="#dbuser_expert">(prop,#dbuser_latest)</prop>
+          <prop id="#dbpwd_expert">(prop,#dbpwd_latest)</prop>         
+        </otherwise>
+      </choose>      
+      <prop id="#dbuser_latest">(prop,#dbuser_expert)</prop>
+      <prop id="#dbpwd_latest">(prop,#dbpwd_expert)</prop>       
+      
+      <!-- db: rolle: expert2 -->
+      <choose>     
+        <when test="(f,spirit,#prodconf,exists?,hibiscus-app/expert2)">
+          <prop id="#dbuser_expert2">(f,spirit,#prodconf,hibiscus-app/expert2,@user)</prop>
+          <prop id="#dbpwd_expert2">(f,spirit,#prodconf,hibiscus-app/expert2,@pwd)</prop>           
+        </when>
+        <otherwise>
+          <prop id="#dbuser_expert2">(prop,#dbuser_latest)</prop>
+          <prop id="#dbpwd_expert2">(prop,#dbpwd_latest)</prop>         
+        </otherwise>
+      </choose>      
+      <prop id="#dbuser_latest">(prop,#dbuser_expert2)</prop>
+      <prop id="#dbpwd_latest">(prop,#dbpwd_expert2)</prop>            
+
+      <!-- db: rolle: boss -->
+      <choose>     
+        <when test="(f,spirit,#prodconf,exists?,hibiscus-app/boss)">
+          <prop id="#dbuser_boss">(f,spirit,#prodconf,hibiscus-app/boss,@user)</prop>
+          <prop id="#dbpwd_boss">(f,spirit,#prodconf,hibiscus-app/boss,@pwd)</prop>           
+        </when>
+        <otherwise>
+          <prop id="#dbuser_boss">(prop,#dbuser_latest)</prop>
+          <prop id="#dbpwd_boss">(prop,#dbpwd_latest)</prop>         
+        </otherwise>
+      </choose>      
+      <prop id="#dbuser_latest">(prop,#dbuser_boss)</prop>
+      <prop id="#dbpwd_latest">(prop,#dbpwd_boss)</prop>  
+      
+      <!-- db: rolle: boss2 -->
+      <choose>     
+        <when test="(f,spirit,#prodconf,exists?,hibiscus-app/boss2)">
+          <prop id="#dbuser_boss2">(f,spirit,#prodconf,hibiscus-app/boss2,@user)</prop>
+          <prop id="#dbpwd_boss2">(f,spirit,#prodconf,hibiscus-app/boss2,@pwd)</prop>           
+        </when>
+        <otherwise>
+          <prop id="#dbuser_boss2">(prop,#dbuser_latest)</prop>
+          <prop id="#dbpwd_boss2">(prop,#dbpwd_latest)</prop>         
+        </otherwise>
+      </choose>      
+      <prop id="#dbuser_latest">(prop,#dbuser_boss2)</prop>
+      <prop id="#dbpwd_latest">(prop,#dbpwd_boss2)</prop> 
+      
+      <!-- db: rolle: boss3 -->
+      <choose>     
+        <when test="(f,spirit,#prodconf,exists?,hibiscus-app/boss3)">
+          <prop id="#dbuser_boss3">(f,spirit,#prodconf,hibiscus-app/boss3,@user)</prop>
+          <prop id="#dbpwd_boss3">(f,spirit,#prodconf,hibiscus-app/boss3,@pwd)</prop>           
+        </when>
+        <otherwise>
+          <prop id="#dbuser_boss3">(prop,#dbuser_latest)</prop>
+          <prop id="#dbpwd_boss3">(prop,#dbpwd_latest)</prop>         
+        </otherwise>
+      </choose>      
+      <prop id="#dbuser_latest">(prop,#dbuser_boss3)</prop>
+      <prop id="#dbpwd_latest">(prop,#dbpwd_boss3)</prop>             
+            
+      <remove id="#dbuser_latest" type="prop"/>
+      <remove id="#dbpwd_latest" type="prop"/>
+      
+    <spirit id="#prodconf" act="close"/>
+  </when>
+  <otherwise>
+    <print id="messages" act="println">Keine Hibiscus-App-Produkt-Konfiguration gefunden. Es Wurden defaultwerte genommen.</print> 
+      
+    <prop id="#edition">NO EDITION</prop>
+    <prop id="#url">jdbc:postgresql://localhost:5432/hibiscus</prop>
+
+    <prop id="#dbuser_latest">postgres</prop>
+    <prop id="#dbpwd_latest">servas</prop>  
+        
+    <prop id="#dbuser_public">(prop,#dbuser_latest)</prop>
+    <prop id="#dbpwd_public">(prop,#dbpwd_latest)</prop>     
+    
+    <prop id="#dbuser_user2">(prop,#dbuser_latest)</prop>
+    <prop id="#dbpwd_user2">(prop,#dbpwd_latest)</prop>  
+    
+    <prop id="#dbuser_expert">(prop,#dbuser_latest)</prop>
+    <prop id="#dbpwd_expert">(prop,#dbpwd_latest)</prop> 
+    
+    <prop id="#dbuser_expert2">(prop,#dbuser_latest)</prop>
+    <prop id="#dbpwd_expert2">(prop,#dbpwd_latest)</prop> 
+    
+    <prop id="#dbuser_boss">(prop,#dbuser_latest)</prop>
+    <prop id="#dbpwd_boss">(prop,#dbpwd_latest)</prop> 
+    
+    <prop id="#dbuser_boss2">(prop,#dbuser_latest)</prop>
+    <prop id="#dbpwd_boss2">(prop,#dbpwd_latest)</prop>  
+    
+    <prop id="#dbuser_boss3">(prop,#dbuser_latest)</prop>
+    <prop id="#dbpwd_boss3">(prop,#dbpwd_latest)</prop>         
+    
+    <remove id="#dbuser_latest" type="prop"/>
+    <remove id="#dbpwd_latest" type="prop"/>
+                 
+  </otherwise>
+</choose>
+
+<ti label="ProdConf-Hibiscus-App: Db-User und Password" />
+<ti label="public" >(prop,#dbuser_public) / (prop,#dbpwd_public)</ti>
+<ti label="user2" >(prop,#dbuser_user2) / (prop,#dbpwd_user2)</ti>
+<ti label="expert" >(prop,#dbuser_expert) / (prop,#dbpwd_expert)</ti>
+<ti label="expert2" >(prop,#dbuser_expert2) / (prop,#dbpwd_expert2)</ti>
+<ti label="boss" >(prop,#dbuser_boss) / (prop,#dbpwd_boss)</ti>
+<ti label="boss2" >(prop,#dbuser_boss2) / (prop,#dbpwd_boss2)</ti>
+<ti label="boss3" >(prop,#dbuser_boss3) / (prop,#dbpwd_boss3)</ti>
+
+<ti label="ProdConf-Hibiscus-App" />
+<ti label="edition" >(prop,#edition)</ti>
+<ti label="url" >(prop,#url)</ti>
+
+<ti_flush/>
+
+</steps>

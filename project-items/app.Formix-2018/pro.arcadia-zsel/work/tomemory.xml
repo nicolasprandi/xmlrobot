@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zsel-read">
+<need>(prop,zsel_key)</need>
+<spirit act="open" missing_strategy="empty" id="zsels_spirit_tc" xml="(file,zsels)"/>
+<prop id="zsel_dt_upd">(f,spirit,zsels_spirit_tc,(prop,zsels_offset)zsel[@row=(f,xpath_string,(prop,zsel_key))],@dt_upd)</prop>
+<prop id="zsel_dt_add">(f,spirit,zsels_spirit_tc,(prop,zsels_offset)zsel[@row=(f,xpath_string,(prop,zsel_key))],@dt_add)</prop>
+<prop id="zsel_zblock">(f,spirit,zsels_spirit_tc,(prop,zsels_offset)zsel[@row=(f,xpath_string,(prop,zsel_key))],@zblock)</prop>
+<spirit act="close" id="zsels_spirit_tc"/>
+</job>

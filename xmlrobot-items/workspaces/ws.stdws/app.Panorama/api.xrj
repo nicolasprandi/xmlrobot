@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+  <call_job job="prolog"/>
+  
+<job id="??refresh" joblevel="ws" role="hidden">
+  
+  <spirit id="et" act="open" xml="(file,et)" 
+    flag="dont_escape_on_read nuevo"
+    missing_strategy="empty"/>
+  <ti type="file" label="Reading ET" x="(file,et)" test="0"/>
+  
+  <!-- scan -->
+  <dir  id="et_scan_dir" flag="cool">(f,spirit,et,scan,@dir)</dir>
+  <translate type="dir" id="et_scan_dir"/>
+  <spirit id="et" act="close" />
+  <ti test="0">(dir,et_scan_dir)</ti>
+  <dir id="redo_dir">(dir,et_scan_dir)</dir>
+  <prop id="redo_ipath"></prop>
+  <call_job job="Panorama Directory"/>
+</job>  
+  
+  <job id="Api-ExtensionGroupsEditor" joblevel="ws" role="hidden">
+  
+    <file id="eg-with">(file,app-extension-groups-edit)</file>
+    <call_job job="eg-editor-base"/>
+  
+  </job>
+    
+  
+<job id="Api-Panorama" joblevel="pro" role="hidden">
+  <need>(dir,with)</need>
+  <call_job job="write-initials"/>
+  
+  <call_job job="execute"/>  
+    
+</job>
+
+<job id="Api-Panorama-Select" joblevel="pro" role="hidden">
+
+      <call_service job="go-jil-run" flag="silent">
+        <prop id="jil-question" x="Select a directory"/>
+      </call_service>
+      <global act="get" id="jil-result"/>
+      
+ 
+        <dir id="with" x="(prop,jil-result)"/>
+      
+
+      
+  <need>(dir,with)</need>
+  <call_job job="write-initials"/>
+  
+  <call_job job="execute"/>  
+    
+</job>
+
+<job id="Api-Online-Services" joblevel="pro" role="hidden">
+
+  <call_service job="present-dirs-for-choose"/>
+  <ti_hr/>
+  <call_job job="Api-Panorama-Select" explain="Start Panarama with selection">
+
+  </call_job>
+ 
+    
+</job>
+
+</jobs>

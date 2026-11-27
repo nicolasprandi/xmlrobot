@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="folder-edit">
+<need>(prop,folder_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="folder-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="folder-editor"/>
+<call_job job="folder-write"/>
+<ti align="right" x="Did update Folder '(prop,folder_name)'"/>
+<call_job job="folder-see-all"/>
+</job>

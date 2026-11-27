@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kjob-tk">
+<call_job job="tr_kjob"/>
+<need default="">(prop,kjobs_tk_control)</need>
+<when test="(f,has_flag,(prop,kjobs_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,kjobs_tk_control),print_all_fields)">
+<ti label="(prop,kjob_default_label_class): (prop,kjob_default_label_name)"/>
+</when>
+<otherwise>
+<ti flag="label_right" label="(prop,kjob_default_label_class)" x="(f,html,b,o)(prop,kjob_default_label_name)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,kjobs_tk_control),print_only),,(prop,kjob_default_label_class)(f,when,(f,has,prop,kjob_default_label_name),: (prop,kjob_default_label_name),))" tip="(prop,_kjob_t)" tk_id="17" flag="(prop,kjobs_tk_control) wrap ">
+<tk label="(prop,_kjob_jobfile_l)" id="kjob_jobfile" x="" test_first="1" tip="(prop,_kjob_jobfile_t)" base="(dir,pro)" type="file" flag=" "/>
+<tk label="(prop,_kjob_id_l)" id="kjob_id" x="" test_first="1" tip="(prop,_kjob_id_t)" type="text" cols="30" flag=" nono "/>
+<tk label="(prop,_kjob_msg_impdata_l)" x="(prop,_kjob_msg_impdata_l)" test_first="0" tip="(prop,_kjob_msg_impdata_t)" type="msg" flag=" "/>
+<tk label="(prop,_kjob_datafile_l)" id="kjob_datafile" x="" test_first="0" tip="(prop,_kjob_datafile_t)" type="file" flag=" "/>
+<tk label="(prop,_kjob_datafolder_l)" id="kjob_datafolder" x="" test_first="0" tip="(prop,_kjob_datafolder_t)" type="dir" flag=" "/>
+<tk label="(prop,_kjob_msg_descs_l)" x="(prop,_kjob_msg_descs_l)" test_first="0" tip="(prop,_kjob_msg_descs_t)" type="msg" flag=" "/>
+<tk label="(prop,_kjob_desc_l)" id="kjob_desc" x="" test_first="0" tip="(prop,_kjob_desc_t)" type="textblock" flag="  big "/>
+<tk label="(prop,_kjob_hist_l)" id="kjob_hist" x="" test_first="0" tip="(prop,_kjob_hist_t)" type="textblock" flag="  big "/>
+<tk label="(prop,_kjob_uri_l)" id="kjob_uri" x="" test_first="0" tip="(prop,_kjob_uri_t)" type="textblock" flag=" "/>
+</tk>
+</job>

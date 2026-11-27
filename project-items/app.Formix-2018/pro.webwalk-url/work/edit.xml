@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="url-edit">
+    <need>(prop,url_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="url-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="url-editor"/>
+    <call_job job="url-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- Url '(f,text,cut_nice,(prop,url_url),50)'"/>
+    </ti>
+    <call_job job="url-see"/>
+</job>

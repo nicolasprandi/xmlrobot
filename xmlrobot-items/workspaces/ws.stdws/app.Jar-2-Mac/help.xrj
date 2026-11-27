@@ -1,0 +1,384 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+
+<include file="(dir,app)prolog.xrs"/>
+
+<job id="???" >
+
+  
+  <call_job job="get-has-active-project" />
+  
+  <choose>
+    <when test="(prop,has-active-project)">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <call_job job="?"/>
+    </otherwise>
+  </choose>  
+
+
+</job>
+
+<job id="get-has-active-project" role="hidden">
+  <prop id="has-active-project" x="0"/>
+  <when test="(f,exists_dir,(dir,result))">
+    <prop id="has-active-project" x="1"/>
+  </when>
+
+</job>
+
+<job id="?">
+  <call_job job="get-has-active-project"/>
+  <when test="(f,not,(prop,has-active-project))">
+    <ti label="Next"/>
+    <ti type="call_job" labexl=" " job="Create Mac-Application" explain="()Start a new Jar-2-Mac-Project here ...()"/>
+  </when>
+  <ti_hr/>
+  <ti label="When to use Application (f,html,i,open)Jar-2-Mac(f,html,i,close):">
+    <ti type="ul">(f,html,bold,open)You want to convert a jar-file to a mac-application(f,html,bold,close)</ti>
+  </ti>
+	
+  <ti type="img"  x="(dir,app)jar2mac.png" />
+  
+
+
+  
+  <ti label="Online Resources">
+    <ti type="web" x="http://www.xmlrobot.net/jar2mac-quickstart" label="Quick Start:"/>
+    <ti type="web" x="http://www.xmlrobot.net/jar2mac-guide"  label="App Guide:"/>   
+  </ti>
+            
+  <ti label="Application 'Jar-2-Mac'">
+    <ti type="ul">Since JarBundler is no longer supported by apple there is something missing</ti>
+    <ti type="ul">But there is the AppBundler-Ant-Task!</ti>
+    <ti type="ul">This application serves as a wrapper for that AppBundler-Task</ti>
+   </ti>
+
+  <ti_hr/>
+
+
+  <call_job job="tk_para_print_help" />
+	
+	<ti_hr/>	
+	<ti label="Appbundler Documentation"/>
+	<ti type="web" label="Guide:">http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html</ti>
+  <ti type="web" label="Appbundler-Task:">https://java.net/downloads/appbundler/appbundler.html</ti>
+  <ti type="web" label="JVM x-options:">https://docs.oracle.com/cd/E13150_01/jrockit_jvm/jrockit/jrdocs/refman/optionX.html</ti>
+  
+  <ti type="web" label="Packaging:">http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/packagingAppsForMac.html</ti>
+
+  
+  <call_service job="app-info-final" flag="silent">
+    <prop id="aif-app" x="(prop,app)"/>
+  </call_service> 
+    
+</job>
+
+<job id="explain-this" role="hidden">
+	<call_job job="tk_para_print_values_tips"/>
+
+  <ti label=" "
+      type="call_job"
+      job="tk_para_print_help"
+      explain="Explain all parameters" />	
+</job>
+
+<job id="??">
+
+	
+	<choose>
+    <when test="(f,dir_exists,(dir,result))">			
+			<call_job job="see-results"/>
+    </when>
+    <otherwise>
+      <ti label="No results found">
+				<ti type="call_job" job="Create Mac-Application" explain="Create a Mac-Application now"/>
+      </ti>
+    </otherwise>
+  </choose>
+  
+  <ti_hr/>
+  <call_job job="read-prot"/>
+	<when test="(f,has,prop,prot-date)">
+		<ti label="Last Creation">
+			<ti label="App:" x="(f,vob,prop,prot-appname)" test="(f,has,prop,prot-appname)"/>    
+			<ti label="Date:" x="(prop,prot-date)"/>
+
+      <ti label="Jar:" x="(f,vob,file,prot-jar)" test="(f,has,file,prot-jar)" type="file"/>      
+      <ti label="Main-Class:" x="(f,vob,prop,prot-main-class)" test="(f,has,prop,prot-main-class)"/>
+      <ti label="Computer:" x="(f,vob,prop,prot-computer)" test="(f,has,prop,prot-computer)"/>
+		</ti>		
+	</when>  
+  
+  <call_job job="tk_paras_exists"/>
+  <when test="(prop,tk_paras_exists)" >
+		<ti_hr/>
+    <call_job job="tk_para_print_values" />
+	  <ti type="call_job" job="explain-this"
+			explain="Explain this" label=" ">		
+	  </ti>
+  </when>
+	<!--
+  <ti_break/>
+  <call_service job="project-info-final" flag="silent">
+    <prop id="from-app">(prop,app)</prop>
+    <prop id="from-pro">(prop,pro)</prop>
+  </call_service>
+  
+  
+<job id="Create Mac-Application?">
+  <ti label="About: Create Mac-Application">
+   <ti type="ul">Asks for parameters and</ti>
+   <ti type="ul">creates the Mac-Application</ti>
+  </ti>
+  <ti_hr/>
+  <remove id="pro" type="prop" test="(f,exists,prop,pro)" />
+  <interpreter jovial="1" />
+  <call_job job="tk_para_print_help" />
+
+</job>  
+	-->
+</job>
+
+<job id="Create Mac-Application?">
+  <ti label="About: Create Mac-Application">
+   <ti type="ul">Asks for parameters and</ti>
+   <ti type="ul">creates the Mac-Application</ti>
+  </ti>
+  
+  <call_job job="get-has-active-project"/>
+  <when test="(f,not,(prop,has-active-project))">
+        
+      <ti_hr/>
+      <!-- <remove id="pro" type="prop" test="(f,exists,prop,pro)" />  -->
+      <interpreter jovial="1" />
+      <call_job job="tk_para_print_values" />
+  </when>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Create Mac-Application" explain="Go"/>
+    </ti>
+  </when>    
+
+</job>
+
+<job id="Remove Results?">
+  <ti label="About: Remove Results">
+   <ti type="ul">Removes a previousely created mac-app</ti>
+
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="Remove Results" explain="Go"/>
+    </ti>
+  </when> 
+
+</job>
+
+<job id="JRE Helper?">
+  <ti label="About: JRE Helper">
+   <ti>Verifies the existence of these directories:</ti>
+   <ti type="ul">/Library/Java</ti>
+   <ti type="ul">/Library/Java/JavaVirtualMachines</ti>
+  </ti>
+  
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="JRE Helper" explain="Go"/>
+    </ti>
+  </when>   
+</job>
+
+<job id="See Results?">
+  <ti label="About: See Results"/>
+   <ti type="ul">()Displays the created applications()</ti>
+   <ti type="ul">()Displays the created sh- &amp; bat-files()</ti>
+   <ti type="ul">()Basically the content of the result-folder is presented()</ti>
+   <ti type="ul">()The result-folder locates in the project-directory()</ti>
+  <ti label="Links for applications"/>
+   <ti type="ul">()For each application a couple of links are offered:()</ti>
+   <ti type="ul">()A link to run/execute the application (only on macs)()</ti>
+   <ti type="ul">()A link to view all files of the application. This includes all subdirectories. Uses the Panorama-file-browser.()</ti>
+   <ti type="ul">()A link to view the files of the application-folder. In contrast to 'view all files' only the top-directory is displayed. Uses the Panorama-file-browser. Ps: Mac-applications are technically directories. Their names start with 'app.'. Windows or linux will display them as plain folders. Mac behaves differently and simulates a file.()</ti>
+  <ti label="Links for files"/>
+   <ti type="ul">()Every sh- &amp; bat-file is listed:()</ti>
+   <ti type="ul">()Clicking on the file-extension (eg. sh or bat) will ask you with which programm you want to open the file.()</ti>
+   <ti type="ul">()Clicking on the filename (eg. Alice-Linux or test-java7-Win) will open the file with the 'typical programm'.()</ti>
+   <ti type="ul">()Clicking on the parent-folder-names to the right of each file will open that folder in finder/explorer.()</ti>   
+  <ti label="Links for the result-folder"/> 
+   <ti type="ul">()At the very end two links are offered:()</ti>
+   <ti type="ul">()A link to open the result-folder with finder/explorer()</ti>
+   <ti type="ul">()A link to view the result-folder with the panorama-file-browser()</ti>  
+   
+  <when test="(f,has,prop,pro)">
+    <ti_hr/>
+    <ti label="Next">
+    <ti type="call_job" job="See Results" explain="Go"/>
+    </ti>
+  </when>        
+  
+</job>
+
+<job id="see-results" role="hidden">
+
+  <choose>
+    <when test="(f,dir_exists,(dir,result))">
+
+			<file id="sr1" x="(dir,temp)sr1.xml" />
+			<scan 
+			 out="(file,sr1)" 
+			 dir="(dir,result)" 
+			 level_limit="1" 
+			 field="fn lm"/> 
+       		 
+		  <!-- do the loop and print every file, 
+		      sort by filename and ignore the cases -->
+		  <prop id="sr-found" x="0" />
+		  <ti label="Created Mac-Apps" />
+	  
+      <!-- loop for directories -->
+		  <loop 
+			 id="sx" 
+			 xml="(file,sr1)" 
+			 xpath="dir" 
+			 sort="text" 
+			 ignore_case="text">
+			 <choose>
+			   <when test="(f,ends_with,(loop,sx,@rpath),.app)" >
+          <!-- the directory is a mac-application 			
+					<ti label="(f,html,b,open)Application:(f,html,b,close)"
+						  x="(f,html,b,open)(loop,sx,@rpath)(f,html,b,close)" />      -->	
+
+          <ti type="dir" label="(f,html,b,open)(loop,sx,@rpath)(f,html,b,close)" x="(dir,result)(loop,sx,@ipath)" flag="download"/>
+          <ti type="dir" label="in" flag="label_right" x="(dir,result)" test="0"/>	
+					<ti 
+						label=" "
+						type="call_service"
+						job="open_dir" 
+						explain="Run application"
+						test="(f,eq_text,mac,(prop,os))"
+						flag="silent">
+						<dir id="with" x="(dir,result)(loop,sx,@ipath)" />
+					</ti>		
+					<ti type="call_service" label=" " job="Panorama-Dir-Activity-SEE-ALL-FILES"
+							explain="View all files of application">			
+						<dir id="with" x="(dir,result)(loop,sx,@ipath)"/>
+					</ti>	      
+           
+              
+          <!--      
+          
+					<ti type="call_service" label=" " job="open_dir"
+							explain="Open internal app-folder" flag="silent">			
+						<dir id="with" x="(dir,result)(loop,sx,@ipath)"/>
+					</ti>                			
+					<ti type="call_service" label=" " job="Goto-Panorama"
+							explain="View application-folder">			
+						<dir id="with" x="(dir,result)(loop,sx,@ipath)"/>
+					</ti>             
+          ...    
+				
+					<ti 
+						label=" "
+						type="call_service"
+						job="open_dir" 
+						explain="Run application"
+						test="(f,eq_text,mac,(prop,os))"
+						flag="silent">
+						<dir id="with" x="(dir,result)(loop,sx,@ipath)" />
+					</ti>		
+					<ti type="call_service" label="Actions: " job="Panorama-Dir-Activity-SEE-ALL-FILES"
+							explain="View all files of application">			    
+						<dir id="with" x="(dir,result)(loop,sx,@ipath)"/>
+					</ti>	          			
+					<ti type="call_service" label=" " job="Goto-Panorama"
+							explain="View application-folder">			
+						<dir id="with" x="(dir,result)(loop,sx,@ipath)"/>
+					</ti>
+          -->
+        
+				
+					<ti_space height="3px" />
+
+			   </when>
+  			 <otherwise>
+            <!-- the directoy is a plain directory -->
+  					<ti label="Folder:" 
+  						  type="dir" 
+  						  x="(dir,result)(loop,sx,@ipath)"/>
+  				
+  			 </otherwise>
+			 </choose>
+       
+			 <prop id="sr-found" x="1" />
+		 </loop>	
+     
+     <when test="(prop,sr-found)">
+      <ti_hr/>
+      <ti label="All results:" 
+  						  type="dir" 
+  						  x="(dir,result)"
+                flag="download" />
+     </when>
+     
+     <!-- loop for the files 
+		 <loop 
+			 id="sx" 
+			 xml="(file,sr1)" 
+			 xpath="file" 
+			 sort="text" 
+			 ignore_case="text"> 
+			 <ti 
+				 label="(f,when,(f,eq,1,(loop,sx,#i)),(f,html,b,open)Files:(f,html,b,close), )" 
+				 type="file" 
+				 x="(loop,sx,@fn)"/>
+			 <prop id="sr-found" x="1" />
+
+		 </loop>     	
+     <choose>
+       <when test="(f,eq,0,(prop,sr-found))">
+  		    <call_job job="no-results-link" />
+       </when>
+       <otherwise>
+
+
+         
+         Folder Actions  
+    		 <ti_space height="5px" />
+    		 <ti label="(f,html,b,open)Actions(f,html,b,close)"
+             x=" "
+             test="0"/> 		 
+
+    			
+    		 	<ti type="call_service" 
+              label="x "       
+              job="Goto-Panorama"
+    					explain="View folder with Panorama" >
+    				<dir id="with" x="(dir,result)"/>
+    			</ti>          
+        </otherwise>
+      </choose>     -->
+      
+		</when>
+		<otherwise>
+			<call_job job="no-results-link" />
+		</otherwise>
+	</choose>
+	
+
+</job>
+
+<job id="no-results-link" role="hidden">
+      <ti label="No results found">
+        <ti type="call_job" job="Create Mac-Application" explain="Create a Mac-Application now"/>
+      </ti>
+</job>
+</jobs>

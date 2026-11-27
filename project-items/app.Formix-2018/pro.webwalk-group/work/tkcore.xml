@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="group-tk">
+<need default="">(prop,groups_tk_control)</need>
+<when test="(f,has_flag,(prop,groups_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,groups_tk_control),print_all_fields)">
+<ti label="(prop,group_default_label_class) (prop,group_default_label_name)"/>
+</when>
+<otherwise>
+<ti flag="label_right" label="(prop,group_default_label_class)" x="(f,html,b,o)(prop,group_default_label_name)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,groups_tk_control),print_only),,(prop,group_default_label_class)(f,when,(f,has,prop,group_default_label_name), (prop,group_default_label_name),))" flag="(prop,groups_tk_control) wrap ">
+<tk label="Titel" id="group_titel" x="" test_first="1" tip="GruppenTitel" type="text" flag=" "/>
+</tk>
+</job>

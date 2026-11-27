@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+ <job id="systema-reco-hibiscus" role="hidden">
+  <need>(dir,systema-dir)</need>
+  <need>(file,systema-scan)</need>
+  <need>(prop,systema-encoding)</need>
+  <need>(dir,systema-residence)</need>
+  <need>(prop,is-reco-core)</need>
+
+  <call_job job="tk_hibis_edit">    
+    <file id="hibis-data" x="(dir,systema-residence)hibis.xrs"/>
+    <prop id="hibis-regex" x="hibis_.+"/>    
+  </call_job>
+  
+  <prop id="rs-encoding">(prop,systema-encoding)</prop>
+  
+   <need default="1000">(prop,hibis_obj_contract)</need>                                                 
+  <need default="1001">(prop,hibis_obj_real)</need>
+  <need default="800">(prop,hibis_obj_warn)</need>
+   
+  <when test="(f,eq_text,expression,(prop,hibis_syntax))">
+    <unescape id="hibis_obj_contract" type="prop"/>
+    <translate id="hibis_obj_contract" type="prop"/>
+    
+    <unescape id="hibis_obj_real" type="prop"/>
+    <translate id="hibis_obj_real" type="prop"/> 
+    
+    <unescape id="hibis_obj_warn" type="prop"/>
+    <translate id="hibis_obj_warn" type="prop"/> 
+    
+  
+
+  </when>
+
+  <!-- 
+   <need default="1000">(prop,hibis_obj_contract)</need>                                                 
+  <need default="1001">(prop,hibis_obj_real)</need>
+  <need default="800">(prop,hibis_obj_warn)</need>
+  -->
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/a.java</file>
+    <prop id="rs-search">/*[requo-taskdef-integrate]*/</prop>
+    <prop id="rs-replace">System.out.println(e:o)&quot;HIBISCUS LIMITATIONS&quot;(e:c);
+                          System.out.println(e:o)&quot; objects/contract - (f,text,fill_left,(prop,hibis_obj_contract),10, )&quot;(e:c);
+                          System.out.println(e:o)&quot; objects/real     - (f,text,fill_left,(prop,hibis_obj_real),10, )&quot;(e:c);
+                          System.out.println(e:o)&quot; objects/warn     - (f,text,fill_left,(prop,hibis_obj_warn),10, )&quot;(e:c);
+                                                                                                                                                                                                             
+                          </prop>  
+    <prop id="rs-expected">1</prop>       
+  </call_job>   
+
+    
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">/*[objects-contract]*/</prop>
+    <prop id="rs-replace">protected int maxObjectsContract = (prop,hibis_obj_contract); //</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job> 
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">/*[objects-real]*/</prop>
+    <prop id="rs-replace">protected int maxObjectsReal = (prop,hibis_obj_real); //</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>   
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">/*[objects-warning]*/</prop>
+    <prop id="rs-replace">protected int maxObjectsWarning = (prop,hibis_obj_warn); //</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>     
+  
+  
+  <!--
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">19580777;/*[bez]*/</prop>
+    <prop id="rs-replace">(prop,hibis_pub_bez);</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>   
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">111610777;/*[attr]*/</prop>
+    <prop id="rs-replace">(prop,hibis_pub_attr);</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>   
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">111610777;/*[wert]*/</prop>
+    <prop id="rs-replace">(prop,hibis_pub_wert);</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>   
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">720777;/*[mehr]*/</prop>
+    <prop id="rs-replace">(prop,hibis_pub_mehr);</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>    
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">62070777;/*[mig]*/</prop>
+    <prop id="rs-replace">(prop,hibis_mig_obj);</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>      
+  
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">300000777;/*[top]*/</prop>
+    <prop id="rs-replace">(prop,hibis_top);</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>   
+   
+  <call_job job="rs">
+    <file id="rs-file">(dir,systema-dir)at/nicolas/x/hibiscus/IntParas.java</file>
+    <prop id="rs-search">/*[do-log-debug2]*/</prop>
+    <prop id="rs-replace">doIt = (f,when,(prop,hibis_debug2),true,false);</prop> 
+    <prop id="rs-expected">1</prop>       
+  </call_job>    
+  --> 
+  
+  
+  
+</job>
+
+</jobs>

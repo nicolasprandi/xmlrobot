@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="file2-del">
+<need>(prop,file2_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="file2-read"/>
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting File [ (f,tk_sel_translate,(prop,file2_thefile),(file,file-selector-any)) (prop,files2_offset_label)] ?" x="Do you really want to delete that?&#10;()If you are not sure, make a backup of the ()project.">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()"/>
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,files2)" where="(prop,files2_offset)file2[@row='(prop,file2_key)']"/>
+<tp>Deleted (f,tk_sel_translate,(prop,file2_thefile),(file,file-selector-any)) #(prop,file2_key)</tp>
+<ti label="Did delete File:" x="(f,html,bold,open)(f,html,bold,open)(f,tk_sel_translate,(prop,file2_thefile),(file,file-selector-any))(f,html,bold,close)(f,html,bold,close)"/>
+<ti_hr/>
+<when test="(prop,do_return_job)"/>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+<call_job job="file2-see-all"/>
+</job>

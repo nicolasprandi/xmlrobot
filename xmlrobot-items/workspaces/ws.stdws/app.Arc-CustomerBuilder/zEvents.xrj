@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="generate-compile-selektor" role="hidden">
+
+</job>
+
+
+<job id="action_custset_folder" role="hidden">
+
+  <call_job job="custset-read" />
+  <ti type="dir" label="result">(dir,custset_result)</ti>
+  <call_service job="Goto-Panorama">
+    <dir id="with">(dir,custset_result)</dir>
+  </call_service>
+</job>
+
+
+
+
+<job id="hook_compi_listbegin" role="hidden">
+  <ti label="Compilations"/>
+</job>
+
+
+
+<job id="generate-pro-selector-arcadia-projects" role="hidden">
+      
+      <file id="appask" x="(dir,pro)psi-ask.xml"/>
+      <ask what="apps" out="(file,appask)" style="natural"/>
+      <ti type="file">(file,appask)</ti>
+      
+      <call_job job="tk_base_read"/>
+    
+      <xslt 
+          xml="(file,appask)" 
+          out="(dir,pro)arcadia-pro-selector-gui.xml">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//apps/app[@id='(prop,base_appid_arcadia)']/pro"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="pro">
+   <sel><xsl:attribute name="dir"><xsl:value-of select="@data_dir"/></xsl:attribute><xsl:value-of select="@id"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+</job>
+
+<job id="generate-pro-selector-appdark" role="hidden">
+      
+      <file id="appask" x="(dir,pro)psi-ask.xml"/>
+      <ask what="apps" out="(file,appask)" style="natural"/>
+      <ti type="file">(file,appask)</ti>
+      
+      <call_job job="tk_base_read"/>
+    
+      <xslt 
+          xml="(file,appask)" 
+          out="(dir,pro)app-selector-gui.xml">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//apps/app[@id='(prop,base_appid_appdark)']/pro"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="pro">
+   <sel><xsl:attribute name="dir"><xsl:value-of select="@data_dir"/></xsl:attribute><xsl:value-of select="@id"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+</job>
+
+
+<job id="generate-selector-product" xrole="hidden">
+      
+    
+      <xslt 
+          xml="(file,products)" 
+          out="(dir,pro)product-selector-gui.xml">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//product"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="product">
+   <sel><xsl:attribute name="label"><xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="@row"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+</job>
+
+<!--
+
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="squerys">(dir,pro)squerys.xml</file>
+<when test="(f,not,(f,exists_file,(file,squerys)))">
+<create_file out="(file,squerys)">&lt;squerys/&gt;</create_file>
+<i>Created: (file,squerys)</i>
+</when>
+<prop id="squerys_offset">./</prop>
+<prop id="squerys_offset_label"/>
+<prop id="squerys_offset_new_key">//</prop>
+<prop id="squerys_sort_attribute"/>
+<prop id="squerys_sort_number"/>
+<prop id="squerys_sort_ignore_case"/>
+<prop id="squerys_sort_desc"/>
+<prop id="squerys_where"/>
+<prop id="squerys_return_job">squery-see-all</prop>
+</prolog>

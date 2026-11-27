@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="imp-see-more">
+    <prop x="print_only print_with_tips print_all_fields" id="imps_tk_control"/>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,imps_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="imp-see">
+                    <prop id="imp_key">(prop,imp_key)</prop>
+                    <file id="imps">(file,imps)</file>
+                    <prop id="imps_offset">(prop,imps_offset)</prop>
+                    <prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+                    <prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+                    <prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+                    <prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+                    <prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+                    <prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+                    <prop id="imps_where">(prop,imps_where)</prop>
+                    <prop id="imps_return_job">(prop,imps_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="imp-see-all">
+                    <file id="imps">(file,imps)</file>
+                    <prop id="imps_offset">(prop,imps_offset)</prop>
+                    <prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+                    <prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+                    <prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+                    <prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+                    <prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+                    <prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+                    <prop id="imps_where">(prop,imps_where)</prop>
+                    <prop id="imps_return_job">(prop,imps_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+    <need>(prop,imp_key)</need>
+    <call_job job="imp-read"/>
+    <prop id="imp_default_label_class" x="Index Manipulation Point"/>
+    <prop id="imp_default_label_name" x="(f,tk_sel_translate,(prop,imp_point),(dir,app)index-points.xml)(f,when,(f,has,(prop,imps_offset_label)), - (prop,imps_offset_label),)"/>
+    <call_job job="imp-tk"/>
+    <ti_hr/>
+    <ti type="rec" info="an-edit-button-just" label=" ">
+        <ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailImp" explain="(prop,_x_edit)" job="imp-edit">
+            <prop id="imp_key">(prop,imp_key)</prop>
+            <file id="imps">(file,imps)</file>
+            <prop id="imps_offset">(prop,imps_offset)</prop>
+            <prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+            <prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+            <prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+            <prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+            <prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+            <prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+            <prop id="imps_where">(prop,imps_where)</prop>
+            <prop id="imps_return_job">(prop,imps_return_job)</prop>
+        </ti>
+    </ti>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,imps_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="imp-see">
+                    <prop id="imp_key">(prop,imp_key)</prop>
+                    <file id="imps">(file,imps)</file>
+                    <prop id="imps_offset">(prop,imps_offset)</prop>
+                    <prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+                    <prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+                    <prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+                    <prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+                    <prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+                    <prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+                    <prop id="imps_where">(prop,imps_where)</prop>
+                    <prop id="imps_return_job">(prop,imps_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="imp-see-all">
+                    <file id="imps">(file,imps)</file>
+                    <prop id="imps_offset">(prop,imps_offset)</prop>
+                    <prop id="imps_offset_label">(prop,imps_offset_label)</prop>
+                    <prop id="imps_offset_new_key">(prop,imps_offset_new_key)</prop>
+                    <prop id="imps_sort_attribute">(prop,imps_sort_attribute)</prop>
+                    <prop id="imps_sort_number">(prop,imps_sort_number)</prop>
+                    <prop id="imps_sort_ignore_case">(prop,imps_sort_ignore_case)</prop>
+                    <prop id="imps_sort_desc">(prop,imps_sort_desc)</prop>
+                    <prop id="imps_where">(prop,imps_where)</prop>
+                    <prop id="imps_return_job">(prop,imps_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+</job>

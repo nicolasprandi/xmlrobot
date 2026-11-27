@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+
+<jobs>
+  <call_job job="prolog"/>
+  
+<job id="hook_playback_orga_finished" role="hidden">
+
+  <choose>
+    <when test="(f,exists_file,(file,current-java-lib))">
+      <prop id="jump-to-compile-dir">(f,file_content,(file,current-java-lib))</prop>
+      <call_job job="jump-into-java-compilation"/>
+    </when>
+    <otherwise>
+      <call_job job="See Java-Compiles"/>
+    </otherwise>
+   
+  </choose>
+
+</job>  
+
+<job id="hook_playback_view_begin" role="hidden">
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

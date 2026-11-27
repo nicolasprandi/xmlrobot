@@ -1,0 +1,466 @@
+<?xml version="1.0" ?>
+<jobs>
+<!--                        
+Ue &#220;
+ue &#252;
+Oe &#214;
+oe &#246;                                                    
+Ae &#196;
+ae &#228;
+(prop,)
+                 
+-->
+
+
+<job id="prolog" role="hidden">
+ <!-- <tx_style ti_border="1" />    
+  <tx_style tk_align="left" tk_msg="right"/>    
+  <interpreter turbo="1" />           -->
+  <!-- für app
+  <throw test="(f,not,(f,eq_text,(prop,app),Hibiscus))">Sorry</throw>  projekt-unabhängiges -->
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great hibiscus-app</throw>
+
+  <prop id="ipax-regex">ip_pso|ip_domv|ip_mv|ip_kopfgrouped|dropindex|runstats|explain|projectdb|ip_dss|ip_numform|ip_solo|ip_smart|ip_smart_in_opti|ip_simple|ip_commit|ip_doubleoccupation|ip_report|ip_doindex|ip_index|ip_dokick|ip_dokickconfirm|ip_kick|ip_dobreak|ip_break|ip_flags|ip_checkonly|ip_intensive|ip_isdetails|upp|ip_adapt</prop>
+      
+  <prop id="itsnicolas">1</prop>
+  
+  <prop id="unbekannt">_?_</prop>
+
+  <prop id="cic_id">cick__</prop>  
+  
+  <choose>
+    <when test="(f,implement,online)">
+      <prop id="_label_ask">?</prop>
+      <prop id="_label_askask">??</prop>
+    </when>
+    <otherwise>
+      <prop id="_label_ask">[  ?  ]</prop>
+      <prop id="_label_askask">[  ??  ]</prop>    
+    </otherwise>
+  </choose>  
+  
+  <dir id="sql1" x="(dir,app)sql-1"/>
+  <dir id="sql-listall" x="(dir,app)sql-list-all"/>     
+  
+  <prop id="ling">de</prop>
+  
+  
+  <!-- für projekt -->
+<when test="(f,has,dir,pro)"> 
+
+<file id="ipax-data" x="(dir,pro)integration-paras.xrs" />
+
+<file id="ipaxx-data" x="(dir,pro)ipaxx-data.xrs" />
+<prop id="ipaxx-regex" x="ipax-data"/> 
+  
+  <prop id="pk"></prop>
+  <prop id="pk" test="(f,exists_file,(dir,pro)pk.txt)">X</prop>
+  <file id="movie-data" x="(dir,pro)movie-data.xrs"/>
+  <prop id="movie-regex" x="movie_.+"/>  
+  <choose>
+    <when test="(f,exists_file,(dir,pro)gui/wideoff.txt)">
+      <tx_style 
+        tk_align="left" tk_msg="right" 
+        tk_wide_on="0"/>
+    </when>
+    <otherwise>
+      <tx_style 
+        tk_align="left" tk_msg="right" 
+        tk_wide_size="160" tk_wide_intro_size="30"  tk_wide_extro_size="45" 
+        tk_wide_onxx="1" tk_wide_on="(f,implement,online)"/>    
+    </otherwise>
+  </choose>
+
+
+  
+  <file id="gpref-data" x="(dir,pro)gpref-data.xrs"/>
+  <prop id="gpref-regex" x="gpref_.+"/>  
+ 
+  <file id="mvc-data" x="(dir,pro)mvc-data.xrs"/>
+  <prop id="mvc-regex" x="mvc_.+"/>
+    
+  <prop id="pronto">1</prop> 
+  <prop id="do-nosql" prodconf="nosql-do-nosql">0</prop>
+  <prop id="coding-search-new">1</prop>
+
+  <file id="pasts">(dir,pro)pasts.xml</file>
+  <when test="(f,not,(f,exists_file,(file,pasts)))">
+  <create_file out="(file,pasts)">&lt;pasts/&gt;</create_file>
+  <i>Created: (file,pasts)</i>
+  </when>
+  <prop id="pasts_offset">./</prop>
+  <prop id="pasts_offset_label"/>
+  <prop id="pasts_return_job">past-see-all</prop>
+
+  <!-- 
+  <file id="qura-data" x="(dir,pro)qura-data.xrs"/>
+  -->
+  <prop id="qura-regex" x="qura_.+"/>
+      
+    <file id="blatt">(dir,pro)gui/blatt.txt</file>
+    
+    <!-- 
+    <copy test="(f,not,(f,exists_file,(file,bulksel_query_file)))"
+          file="(dir,app)dummy-selection.xml" 
+          tofile="(file,bulksel_query_file)"/>     -->
+
+  <prop id="bulks_offset">./</prop>
+
+  <file id="srv-orga-cp">(dir,pro)formix-organizer-copypaste.xml</file>
+  <prop id="pgen-regex" x="pgen_.+"/>
+  <file id="pgen-data" x="(dir,pro)pgen-data.xrs"/>
+       
+  <prop id="pgos_return_job">pgo-see-all</prop>
+  
+
+  <prop id="pgbs_return_job">pgb-see-all</prop>  
+  
+
+  <prop id="pgas_return_job">pga-see-all</prop>
+      
+  <prop id="hints_return_job">hint-see-all</prop>  
+ 
+  <file id="cc-data" x="(dir,pro)cc-data.xrs"/>
+  <prop id="cc-regex" x="cc_db|cc_repo|cc_dev|cc_ref|cc_rebuild"/>
+  
+  <prop id="bpRepo">0</prop>
+  <prop id="bpDb">0</prop>
+  <prop id="bpDev">0</prop>
+  <prop id="bpRebuild">0</prop>
+            
+  <!-- liest die privilegs -->
+  <call_job job="tk_cc_read"/>
+  
+  <prop test="(f,right,repo)" id="bpRepo">(prop,cc_repo)</prop>
+  <prop test="(f,right,db)" id="bpDb">(prop,cc_db)</prop>
+  <prop test="(f,right,dev)" id="bpDev">(prop,cc_dev)</prop>
+  <prop test="(f,right,ipr)" id="bpRebuild">(prop,cc_rebuild)</prop>
+  
+  <when test="(f,not,(f,right,ref))">
+    <when test="(f,has,dir,cc_ref)">
+        <remove type="dir" id="cc_ref"/>
+    </when>
+  </when>
+  
+  <dir id="goTestdata">(dir,pro)xDb/testdata/</dir>
+  <dir id="goCompos">(dir,pro)xDb/compos/</dir>
+  <dir id="goImp">(dir,pro)xDb/index/</dir>
+  <dir id="goCredit">(dir,pro)xDb/credentials/</dir>
+  
+  <mkdir dir="(dir,goTestdata)"/>
+  <mkdir dir="(dir,goCompos)"/>
+  <mkdir dir="(dir,goImp)"/>
+  
+  <choose>
+    <when test="(prop,bpDev)">
+      <dir id="goMoon">(dir,pro)xDb/</dir> 
+      <dir id="phome">(dir,pro)moon-paras/proj/</dir>
+      <dir id="rhome">(dir,pro)moon-results/proj/</dir>
+      <dir id="ghome">(dir,pro)gui/moon/proj/</dir>
+    </when>
+    <otherwise>
+      <dir id="goMoon">(f,request,dir,libro2)xDb/</dir>     
+      <!-- <dir id="goMoon">(dir,pro)xDb/</dir> --> 
+      <dir id="phome">(dir,pro)moon-paras/libro2/</dir>
+      <dir id="rhome">(dir,pro)moon-results/libro2/</dir>
+      <dir id="ghome">(dir,pro)gui/moon/libro2/</dir>      
+    </otherwise>
+  
+  </choose>
+  <when test="(f,has,dir,cc_ref)">
+  <when test="(f,right,ref)">
+      <prop id="the-ref-code">(f,hash,(dir,cc_ref),md2)</prop>
+      <dir id="goMoon">(dir,cc_ref)</dir>
+      <dir id="phome">(dir,pro)moon-paras/ref/(prop,the-ref-code)/</dir>
+      <dir id="rhome">(dir,pro)moon-results/ref/(prop,the-ref-code)/</dir>
+      <dir id="ghome">(dir,pro)gui/moon/ref/(prop,the-ref-code)/</dir>    
+      <ti_break/>
+      <remove type="prop" id="the-ref-code" />
+      <ti type="dir" label="Moon-Ref" test="(f,role,test)">(dir,cc_ref)</ti>   
+      <ti_break/>
+  </when>
+  </when>
+  
+  <mkdir dir="(dir,goMoon)" flag="catch"/>
+
+    
+  <!-- query und bulk selektoren und gui -->
+  
+  <file id="bulksel_query_file">(dir,pro)gui/bulksel_query_file.xml</file> 
+  
+  <!-- dummies -->
+  <file id="bulksel_query_id">(dir,pro)gui/bulksel_query_id.xml</file> 
+  <file id="bulksel_sqli_id">(dir,pro)gui/bulksel_sqli_id.xml</file>
+  
+  <file id="sqlisel_type">(dir,goMoon)gui-sqli-sel-type.xml</file> 
+  
+  <!-- dummies    --> 
+  <copy file="(dir,app)dummy-sel.xml" 
+        tofile="(file,bulksel_query_id)"
+        test="(f,not,(f,exists_file,(file,bulksel_query_id)))" 
+        flag="catch"/>
+        
+  <copy file="(dir,app)dummy-sel.xml" 
+        tofile="(file,bulksel_sqli_id)"
+        test="(f,not,(f,exists_file,(file,bulksel_sqli_id)))" 
+        flag="catch"/>
+                      
+  <copy test="(f,not,(f,exists_file,(file,sqlisel_type)))"
+        file="(dir,app)dummy-sqlisel-type.xml" 
+        tofile="(file,sqlisel_type)" 
+        flag="catch"/>        
+
+  <!-- <dump_ti label="BasicPrivilegs"/> -->
+
+  <file id="csv2xml-data" x="(dir,pro)csv2xml-data.xrs"/>
+  <prop id="csv2xml-regex" x="c2x-root-name|c2x-row-name|c2x-format"/> 
+  
+  <!-- <file id="mylanguage">(dir,pro)my-language.txt</file>  -->
+  <file id="lingua-data" x="(dir,pro)lingua-data.xrs"/>
+  <prop id="lingua-regex" x="lingua_lang|lingua_repo"/> 
+  
+  <dir id="myrepo">(dir,pro)myrepo</dir>
+  <mkdir dir="(dir,myrepo)"/>    
+  
+  <!-- lingua, sprache und repo einlesen -->
+  
+  <remove id="lingua_repo" test="(f,has,prop,lingua_repo)" />     <!-- zur sicherheit -->
+  
+  <call_job job="tk_lingua_read"/>
+  
+  <when test="(f,not,(f,has,prop,lingua_lang))">
+    <prop id="lingua_lang"  prodconf="lang">de</prop>
+  </when>   
+  
+  <prop id="ling">(prop,lingua_lang)</prop>
+      
+  <!-- wenn die eingestellte sprache von der app nicht mit der systemsprache passt, dann systemsprache umstellen -->
+  <when test="(f,not,(f,eq_text,(prop,lingua_lang),(f,interpreter,lang)))">
+      <call_job job="set-sys-lang" >
+        <prop id="olix-from-prolog">1</prop>
+      </call_job>
+  </when>
+   
+  <!-- dir repo setzen -->
+  <choose>
+    <when test="(f,not,(prop,bpRepo))">
+      <choose>
+        <when test="(f,exists_dir,(f,request,dir,libro2)repos/(prop,ling)/)">
+          <dir id="repo">(f,request,dir,libro2)repos/(prop,ling)/</dir>
+        </when>
+        <otherwise>
+          <dir id="repo">(dir,app)repos(prop,fs)(prop,ling)</dir>
+        </otherwise>
+      
+      </choose>
+        
+       
+    </when>       
+    <when test="(f,and,(f,has,dir,lingua_repo),(prop,bpRepo))">
+       <dir id="repo">(dir,lingua_repo)</dir>
+    </when>        
+    <otherwise>          
+      <dir id="repo">(dir,myrepo)</dir>
+    </otherwise> 
+  </choose>                            
+  
+  <!-- namings setzen -->        
+  <file id="nav-data" x="(dir,pro)nav-data.xrs"/>
+  <prop id="nav-regex" x="nav_.+"/> 
+    
+  <call_job job="tk_nav_read"/>          
+            
+  <choose>
+    <when test="(f,has,prop,nav_naming_attribute)">
+      <file id="tip-attr-sel" x="(dir,repo)attr-sel-(f,when,(prop,nav_naming_attribute),nm,tc).xml"/>
+      <prop id="tip-term-class" x="(f,when,(prop,nav_naming_attribute),nm,tc)"/>
+    </when>         
+    <otherwise>
+      <file id="tip-attr-sel" x="(dir,repo)attr-sel-nm.xml"/>
+      <prop id="tip-term-class" x="nm"/>
+      <prop id="nav_naming_attribute" x="nm"/>
+    </otherwise>      
+  </choose>
+                  
+  <file id="pdi-sel-obj" x="(dir,repo)pdi-sel-obj.xml"/>
+  <file id="pdi-sel-attr" x="(dir,repo)pdi-sel-attr.xml"/>
+  <file id="pdi-sel-bez" x="(dir,repo)pdi-sel-bez.xml"/>  
+      
+  <call_job job="tr_basic_terms"/>
+    
+  <file id="kjobs">(dir,pro)kjobs.xml</file>
+  <when test="(f,not,(f,exists_file,(file,kjobs)))">
+  <create_file out="(file,kjobs)">&lt;kjobs/&gt;</create_file>
+  <i>Created: (file,kjobs)</i>
+  </when>
+
+  <prop id="kjobs_return_job">kjob-see-all</prop>
+  
+  <file id="hg-data" x="(dir,pro)hg-data.xrs"/>
+  <prop id="hg-regex" x="hg-obj-id"/>  
+  
+  <file id="hgp-data" x="(dir,pro)hgp-data.xrs"/>
+  <prop id="hgp-regex2" x="hg-ident-by|hg-ident-collection"/>  
+  <prop id="hgp-regex" x="hg-ident-by|hg-ident-collection|hg-details"/> 
+  
+  <file id="sel-hint-collections" x="(dir,pro)sel-hint-collections.xml"/>
+
+  <file id="kitch-data" x="(dir,pro)kitch-data.xrs"/>
+  <prop id="kitch-regex" x="kitch_.+"/> 
+
+  <file id="para-data" x="(dir,pro)para-data.xrs"/>
+  <prop id="para-regex" x="para_.+"/>
+  
+  <file id="db-data" x="(dir,pro)db-data.xrs"/>
+  <prop id="db-regex" x="db_url|db_dbms|db_how|db_app|db_dbci"/> 
+  <file id="db-data-pwd" x="(dir,pro)cache(prop,fs)db-data2.xrs"/>
+  <file id="db-data-user" x="(dir,pro)cache(prop,fs)db-data3.xrs"/>
+  <mkdir dir="(dir,pro)cache(prop,fs)"/>
+  <file id="sql-data" x="(dir,pro)sql-data.xrs"/>
+  <prop id="sql-regex" x="sql_.+"/>   
+
+  <dir id="vok" x="(dir,pro)vokabulary"/>
+  <mkdir dir="(dir,vok)"/>
+  <file id="vok" x="(dir,vok)vok.xml"/>
+  <!-- 
+  <dir id="my-statistics" x="(dir,pro)myStatistics"/>
+  <mkdir dir="(dir,my-statistics)"/>    -->
+    
+   
+  <dir id="fin" x="(dir,pro)mat-views"/>
+  <mkdir dir="(dir,fin)"/>  
+  
+  <dir id="fin-create" x="(dir,fin)create"/>
+  <mkdir dir="(dir,fin-create)"/>    
+  
+  <dir id="fin-delete" x="(dir,fin)delete"/>
+  <mkdir dir="(dir,fin-delete)"/>    
+  
+  <dir id="fin-count" x="(dir,fin)count"/>
+  <mkdir dir="(dir,fin-count)"/>  
+  
+  <dir id="fin-select" x="(dir,fin)select"/>
+  <mkdir dir="(dir,fin-select)"/>      
+  
+  <dir id="fin-refresh" x="(dir,fin)refresh"/>
+  <mkdir dir="(dir,fin-refresh)"/>    
+  
+  <dir id="fin-report" x="(dir,fin)reports"/>
+  <mkdir dir="(dir,fin-report)"/>
+  <file id="mv-report-sql">(dir,fin-report)report.sql</file>  
+  <file id="mv-report-result">(dir,fin-report)report-result.xml</file>  
+  
+  <file id="surf-data" x="(dir,pro)surf-data.xrs"/>
+  <prop id="surf-regex" x="surf_.+"/> 
+  
+
+  
+  <file id="search-data" x="(dir,pro)search-data.xrs"/>
+  <prop id="search-regex" x="search_.+"/> 
+  
+   
+  <file id="dosi-data" x="(dir,pro)dosi-data.xrs"/>
+  <prop id="dosi-regex" x="dosi_.+"/>   
+  <!--  
+  <file id="dsis">(dir,pro)dsis.xml</file>
+  <when test="(f,not,(f,exists_file,(file,dsis)))">
+  <create_file out="(file,dsis)">&lt;dsis/&gt;</create_file>
+  <i>Created: (file,dsis)</i>
+  </when>
+  <file id="dsos">(file,dsis)</file>      -->
+  <!--        -->
+  <prop id="dsos_offset">./</prop>
+  <prop id="dsos_offset_label"/>
+
+  <prop id="dsos_offset_new_key">//</prop>
+  <prop id="dsos_sort_attribute"/>
+  <prop id="dsos_sort_number"/>
+  <prop id="dsos_sort_ignore_case"/>
+  <prop id="dsos_sort_desc"/>
+  <prop id="dsos_where"/>      
+  
+  <prop id="dsas_offset">./</prop>
+  <prop id="dsas_offset_label"/>
+
+  <prop id="dsas_offset_new_key">//</prop>
+  <prop id="dsas_sort_attribute"/>
+  <prop id="dsas_sort_number"/>
+  <prop id="dsas_sort_ignore_case"/>
+  <prop id="dsas_sort_desc"/>
+  <prop id="dsas_where"/>     
+  
+  <prop id="dsbs_offset">./</prop>
+  <prop id="dsbs_offset_label"/>
+
+  <prop id="dsbs_offset_new_key">//</prop>
+  <prop id="dsbs_sort_attribute"/>
+  <prop id="dsbs_sort_number"/>
+  <prop id="dsbs_sort_ignore_case"/>
+  <prop id="dsbs_sort_desc"/>
+  <prop id="dsbs_where"/>     
+  
+  <prop id="dsos_return_job">dss-see-all</prop>  
+  <!--   
+  <file id="dsas">(file,dsis)</file>
+  <file id="dsbs">(file,dsis)</file>      -->
+  <!--        -->
+  
+  <prop id="dsis_offset">./</prop>
+  <prop id="dsis_offset_label"/>
+  
+  <prop id="dsis_offset_new_key">//</prop>
+  <prop id="dsis_sort_attribute"/>
+  <prop id="dsis_sort_number"/>
+  <prop id="dsis_sort_ignore_case"/>
+  <prop id="dsis_sort_desc"/>
+  <prop id="dsis_where"/>         
+  <prop id="dsis_return_job">dsi-see-all</prop>   
+  <!-- 
+  <ti label="repo" type="dir">(dir,repo)</ti>
+  <ti label="repo" type="file">(file,vok)</ti>          -->
+</when>  
+
+</job>
+
+<job id="include-mymenu" role="hidden">
+<call_job job="prolog"/>
+<when test="(f,right,mymenu)">
+<try_catch>
+  <try>
+    <prop id="turbo-antes">(f,interpreter,turbo)</prop>
+    <interpreter turbo="0"/>
+    <include file="(dir,pro)mymenu.xml"  />
+    <interpreter turbo="(prop,turbo-antes)"/>
+  
+    
+  </try>
+  <catch>
+    <ti label="Problem with mymenu.xml"/>
+    <ti label="Error:">(prop,catched_msg)</ti>
+    <ti label="File" type="file">(dir,pro)mymenu.xml</ti>
+  </catch>
+</try_catch>
+
+</when>
+</job>
+
+
+<job id="api-olix" role="hidden">
+  
+  <ti label="Hibiscus on the side(e:s) Hibiscus Nebenher" />
+  <ti_break/>
+  <ti>Your referenced Hibiscus-Project</ti>
+  <ti type="dir">(dir,pro)</ti>
+  <!--   <call_job job="?"/>
+  <choose>
+    <when test="(f,exists_file,(file,ic-search))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <call_job job="Search"/>
+    </otherwise>
+  </choose>      -->
+  
+</job>
+
+</jobs>

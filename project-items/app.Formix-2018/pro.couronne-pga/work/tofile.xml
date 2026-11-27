@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pga-write">
+<need>(prop,pga_key) (prop,isAdd)</need>
+<need default="./">(prop,pgas_offset)</need>
+<spirit act="open" id="pgas_spirit_tc" xml="(file,pgas)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,pgas_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,pgas_offset),0,(f,sub,(f,len,(prop,pgas_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,pgas_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="pgas_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;pga row="(prop,pga_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="pgas_spirit_tc" where="(prop,pgas_offset)pga[@row='(prop,pga_key)']" attribute="attributtyp" value="(f,vob,prop,pga_attributtyp)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="pgas_spirit_tc" where="(prop,pgas_offset)pga[@row='(prop,pga_key)']" attribute="detail" value="(f,vob,prop,pga_detail)"/>
+<spirit act="close" flag="save pretty" id="pgas_spirit_tc"/>
+</job>

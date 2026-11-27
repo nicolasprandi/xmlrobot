@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+  <job id="?">
+    
+  <ti label="When to use Application (f,html,i,open)Panorama(f,html,i,close) :">
+    <ti type="ul">(f,html,bold,open)You want to organize files(f,html,bold,close)</ti>
+  </ti>
+  <!-- 
+  <ti label="Online-Help" padding_top="6px">
+    <ti type="web" x="https://www.xmlrobot.net/panorama-help"/>
+  </ti>  
+  -->
+  <ti label="Features" padding_top="6px">
+   <ti type="ul">View the files of several folders in one piece</ti>
+    <ti type="ul">()Specify the number of directory-levels you want to include in that 'one-piece-view'()</ti>  
+    <ti type="ul">See file-statistics per extension</ti>
+    <ti type="ul">()See file-statistics per category, a group of extensions() </ti>
+    <ti type="ul">Arrange and specify these categories yourself</ti>
+     <ti type="ul">Filter files per extension(e:s) category or size</ti>
+    <ti type="ul">()Analyze File-Content (eg. Tabs of calculation sheets or xml-robot jobs)()</ti>
+    <ti type="ul">Apply operations on files</ti>
+    <ti type="ul">Apply operations on directories</ti>
+    <ti type="ul">Write your own operations and implement them as scripts</ti>
+    <ti type="ul">Write your own operations and implement them as scripts</ti>
+  </ti>
+ 
+  <ti type="img" x="(dir,app)pano-introduction.png" test="(f,not,(f,implement,online))"/>
+  <!-- 
+  <call_service job="app-info-final" flag="silent">
+    <prop id="aif-app" x="(prop,app)"/>
+  </call_service>
+  -->
+</job>
+  
+<job id="?See report?" role="hidden">
+
+  <ti label="About: See report">
+    <ti>Prints the report to the terminal-browser</ti>
+  </ti>
+
+
+</job>
+
+<job id="?scan-folder?" role="hidden">
+  <ti label="About: New Folder">
+    <ti>..........</ti>
+  </ti>
+  <!-- 
+  <call_job job="do-tk-report">
+    <prop id="with-flags" x="print_only print_with_tips (f,when,(f,not,(f,has,prop,pro)),print_all_fields print_tips_only,)"/>
+    <prop id="with-read" x="(f,has,prop,pro)"/>
+  </call_job>
+  
+  -->
+
+</job>
+
+<job id="?SetupLayout?" role="hidden">
+  <ti label="About: Setup: Layout">
+    <ti>Lets you configure the report</ti>
+  </ti>
+  <!-- 
+  <call_job job="do-tk-report">
+    <prop id="with-flags" x="print_only print_with_tips (f,when,(f,not,(f,has,prop,pro)),print_all_fields print_tips_only,)"/>
+    <prop id="with-read" x="(f,has,prop,pro)"/>
+  </call_job>
+  
+  -->
+
+</job>
+<job id="?scan-folder?">
+
+  <ti label="About: Scan a directory">
+    <ti>Change the directory or the strategy and see the report again.</ti>
+  </ti>
+
+  <ti label="Parameter description">
+    <ti label="Directory to scan:">Defines the directory you want to view and scan</ti>
+    <ti label="Directory-Levels:">()Directory Levels to Scan,
+Defines how many sub-direcotries should be included in the report.
+    By default this value is 1. If it is 2(e:s) then one additional directory-hierarchy is included.()</ti>
+  <ti label="Strategy:">()This parameter is very essential and defines which strategy in executed.()</ti>
+<ti label="()   1) Strategy: life()" flxag="label_right">This is the standard. Whenever you want to view the report of a specific directory(e:s) the directory is scanned on the fly. 
+This is good as long as you view just one or two directory-levels. But when you want to scan more directory levels(e:s) this algorithm gets slow. 
+Then its time to use the policy 'image'.</ti>
+<ti label="()   2) Strategy: image()" fxlag="label_right">This algorithm is usefull if you want to see a lot of directory-levels. The algorithm scans one time the selected directory and all its sub-directories. 
+All calculations of directory-sizes and the aggregations are done once. 
+This may need some time(e:s) but once it is done(e:s) the reports for one currently viewed directory happens relativly fast.
+  </ti>
+  <ti label="Limit Files by Kb-Size:">This parameters recudes the files. This may be usefull in order to reduce the amount the the duration.</ti>
+
+  </ti>  
+</job>
+
+<job id="?SetupCategories?" role="hidden">
+
+  <ti label="About: Setup: Categories">
+    <ti>Lets you switch between the common categories and project-specific categories</ti>
+      <ti type="ul">Change extensions</ti>
+      <ti type="ul">Change category groups</ti>
+      <ti type="ul">Publish them</ti>
+      <ti type="ul">Use standard-categories again</ti>
+  </ti>
+
+</job>  
+
+<job id="?freshProject?" role="hidden">
+
+  <ti label="About: Make a fresh project">
+    <ti>Creates a project from scratch and runs the project-setup</ti>
+  </ti>
+
+</job>
+
+</jobs>

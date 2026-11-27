@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="search-edit">
+<need>(prop,search_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="search-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="search-editor"/>
+<call_job job="search-write"/>
+<ti align="right" x="Did update Search '(prop,search_techname)'"/>
+<call_job job="search-see"/>
+</job>

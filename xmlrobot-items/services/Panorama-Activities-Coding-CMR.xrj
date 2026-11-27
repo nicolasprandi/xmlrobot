@@ -1,0 +1,1478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+  <job id="cmr-delete-history" role="hidden" joblevel="ws">
+    <call_service job="cmr-prolog"/>  
+    <spirit 
+      act="open" 
+      id="hist" 
+      xml="(file,hist)"/>
+    <loop 
+      id="hist"
+      spirit="hist"
+      xpath="action"                       
+      sort="@id"
+      number="@id">
+      
+      <prop id="id-min" x="(f,format,(loop,hist,@id),#0)" test="(f,eq_num,1,(loop,hist,#i))"/>
+      <prop id="id-max" x="(f,format,(loop,hist,@id),#0)" test="(f,eq_num,(loop,hist,#max),(loop,hist,#i))"/>
+      
+    </loop>
+    
+    <echo id="id-min"/>
+    <echo id="id-max"/> 
+    
+   
+    <tk label="Delete history-entries" flag="sum">
+    
+      <tk id="del-from"
+          label="Lowest Id"
+          x="(prop,id-min)"
+          regex="\d*"
+          tip="Delete will start with this id. This id will also be deleted. The proposed value is the lowest id currently available in the history."/>
+           
+      <tk id="del-to"
+          label="Highest Id"
+          x="(prop,id-max)"
+          regex="\d*"
+          tip="Delete will end with this id. This id will also be deleted. The proposed value is the highest id currently available in the history."/>  
+
+          
+        
+    
+    </tk>
+    
+    <prop id="del-xpath" x="action"/>
+    <prop id="del-xpath" x="(prop,del-xpath)[@id &gt;= (prop,del-from)]" test="(f,has,prop,del-from)"/>
+    <prop id="del-xpath" x="(prop,del-xpath)[@id &lt;= (prop,del-to)]" test="(f,has,prop,del-to)"/>
+    <echo id="del-xpath"/> 
+    
+    <ti label="Going to delete these history-entries"/>
+    <call_service job="cmr-hist-list-core">
+      <prop id="cmr-hist-list-last" x="0"/>
+      <prop id="cmr-hist-list-xpath" x="(prop,del-xpath)"/>
+    </call_service>
+    <ti_flush/>
+    <prop id="del-count-preview" x="(f,xsl,(file,hist),count(e:o)history/(prop,del-xpath)(e:c))"/>
+    
+    <tk type="msg" msg_type="w">(prop,del-count-preview) records in the history will be removed(f,when,(f,has,prop,del-from),
+Starting Id=(prop,del-from),)(f,when,(f,has,prop,del-to),
+Ending   Id=(prop,del-to),)
+
+Continue?</tk>
+ 
+    <spirit 
+      id="hist" 
+      act="xml_update"
+      how="remove" 
+      where="(prop,del-xpath)"
+      flag="any" 
+      count_prop_id="del-count-response"/> 
+      
+    <ti label="Delete Performed">
+      <ti label="Nbr of deleted records:" x="(prop,del-count-response)"/>
+      <ti xlabel=" " type="call_service" job="File-Action-History" explain="See the new history"/>
+    </ti>
+            
+    <spirit 
+      act="close" 
+      id="hist"
+      flag="save"/>      
+  </job> 
+  
+<job id="cmr-prolog" role="hidden">  
+  <prop id="cmr-hist-list-len" x="15"/>
+  <file id="hist" x="(dir,status)cmr-history.xml" />
+  <file id="hist-sequ" x="(dir,status)cmr-history-sequ.xml" />  
+  <prop id="cmr-info-pattern" x="&#xA;About file-patterns in general: xxx. "/> 
+  <file id="intro" x="(dir,filetemp)cmr-intro.hmtl"/> 
+  <call_service job="tk_crmco_read"/> 
+</job> 
+
+ <job id="Panorama-Dir-Activity-COPY-FILES" role="hidden">
+
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="copy"/>
+   </call_service>
+ </job>
+ 
+ <job id="Panorama-Dir-Activity-DELETE-FILES" role="hidden">
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="delete-files"/>
+   </call_service>
+ </job>
+ 
+<job id="Panorama-Dir-Activity-DELETE-EMPTY-DIRS" role="hidden">
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="delete-empty-dirs"/>
+   </call_service>
+ </job>
+ 
+ <job id="Panorama-Dir-Activity-DELETE-DIRS" role="hidden">
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="delete-dirs"/>
+   </call_service>
+ </job>        
+ 
+  <job id="Panorama-Dir-Activity-DELETE-THIS-DIR" role="hidden">
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="delete-this-dir"/>
+   </call_service>
+ </job>
+ 
+ <job id="Panorama-Dir-Activity-MOVE-FILES" role="hidden">
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="move"/>
+   </call_service> 
+ </job> 
+ 
+      <ti explain="Create a directory" type="call_service" job="srv-mkdir">
+      <dir id="with" x="(dir,with)"/>
+    </ti> 
+    
+ <job id="srv-mkdir" role="hidden">
+  <need>(dir,with)</need>
+    <tk label="Making a directory" flas="sum">
+    <tk type="text" id="name-of-dir" rule="filename" label="Name of new Directory" flas="nono" tip="the folder (dir,with)XXX will be created."/>
+    </tk>
+    
+    <dir id="new-dir" x="(dir,with)(prop,name-of-dir)" />
+    <tk type="msg">Going to create (dir,new-dir)</tk>
+    <try_catch>
+      <try>
+        <mkdir dir="(dir,new-dir)"/>
+        <ti type="dir" label="successfully created" x="(dir,new-dir)" />
+      </try>
+      <catch>
+        <ti>(prop,catched_msg) (prop,catched_class)</ti>
+        <dump_ti label="failed to create a directory"/>
+      </catch>
+    
+    </try_catch>
+    
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="rename"/>
+   </call_service> 
+ </job>     
+
+ <job id="Panorama-Dir-Activity-RENAME-FILES" role="hidden">
+ <try_catch>
+  <try>
+  <ti>wir sind jetzt im rename files :(f,vob,dir,with):</ti>
+   <call_service job="Panorama-Dir-Activity-CMR-CORE">
+     <prop id="cmr-type" x="rename"/>
+   </call_service>
+   </try>
+   <catch>
+    <ti>problem (prop,catched_msg)</ti>
+   </catch> 
+  </try_catch>
+ </job> 
+ 
+  
+<job id="Panorama-Dir-Activity-CMR-CORE" role="hidden">
+
+  <need>(dir,with)</need>
+  <need>(prop,cmr-type)</need>
+
+  <need default="1">(prop,cmr-intro)</need>
+  <need default="1">(prop,cmr-read-store)</need>
+  <need default="1">(prop,cmr-edit-with-dir)</need>
+  
+  <call_service job="cmr-prolog"/>
+
+  <file id="cmr-store" x="(dir,status)op-dir-(prop,cmr-type)-ic.xrs"/>
+  
+  <file id="test-filelist" x="(dir,filetemp)filelist.txt" />
+  <file id="test-filelist-emptydirs" x="(dir,filetemp)filelist-empty-dirs.xml" />
+  <file id="test-filelist-rename" x="(dir,filetemp)filelist-rename.xml" />
+  
+  <when test="(prop,cmr-read-store)">
+    <call_service job="go-joe-read"> 
+      <file id="joe-in-store" x="(file,cmr-store)" />  
+    </call_service>
+  </when>
+  
+  <prop id="cmr-type2" x="(f,upper,(f,substring,(prop,cmr-type),0,1))(f,substring,(prop,cmr-type),1)" />
+  <prop id="x9" x="(prop,cmr-type2)"/>
+  <prop id="x8" x="(prop,cmr-type)"/>
+
+  
+  <choose>
+    <when test="(f,gt_num,(f,len,(dir,with)),50)">
+      <prop id="dir-with-tit" x="(f,substring,(dir,with),0,15)***(f,substring,(dir,with),(f,sub,(f,len,(dir,with)),34))"/>
+    </when>
+    <otherwise>
+      <prop id="dir-with-tit" x="(dir,with)"/>
+    </otherwise>
+  </choose>
+  <!-- 
+  <prop id="dir-with-tit-b" x=""/>
+  
+  <prop id="dir-with-tit" x="(f,name_of_dir,(dir,with))"/>
+  
+  <prop id="dir-with-upper" x="(f,name_of_dir,(f,dir_of_dir,(dir,with)))"/>
+  <prop id="dir-with-tit" test="(f,has,prop,dir-with-upper)"
+        x="(prop,dir-with-tit)(prop,fs)(prop,dir-with-upper)"/>
+  -->
+  <echo id="dir-with-tit"/>
+  
+  <prop id="just-info" x="0"/>
+  <choose>     
+    <when test="(f,eq,(prop,x8),copy)">
+      <call_service job="cmr-detail-copy-move-files"/> 
+    </when>
+          
+    <when test="(f,eq,(prop,x8),move)">
+      <call_service job="cmr-detail-copy-move-files"/> 
+    </when>    
+
+    <when test="(f,eq,(prop,x8),delete-files)">
+      <call_service job="cmr-detail-delete-files"/>    
+    </when>  
+    
+    <when test="(f,eq,(prop,x8),delete-dirs)">
+      <call_service job="cmr-detail-delete-dirs"/>    
+    </when>      
+        
+    <when test="(f,eq,(prop,x8),delete-empty-dirs)">
+      <call_service job="cmr-detail-delete-empty-dirs"/>    
+    </when>      
+             
+   <when test="(f,eq,(prop,x8),rename)">
+      <call_service job="cmr-detail-rename"/>
+    </when>                       
+        
+    <when test="(f,eq,(prop,x8),test)">
+      <call_service job="cmr-detail-test"/>    
+    </when>                
+    
+    <otherwise>
+      <throw>Internal Error. Unknow action-type: '(prop,x8)'</throw>
+    </otherwise>            
+         
+  </choose> 
+  
+  <choose>                     
+    <when test="(prop,just-info)">
+      <ti_hr/>
+      <ti_break/>
+      <ti label="Action File History"/>
+      
+      <call_service job="File-Action-History"/>
+    </when>
+    <otherwise>         
+      <call_service job="cmr-post-proc"/>
+    </otherwise>  
+  </choose> 
+  
+</job>  
+
+<job id="cmr-post-proc" role="hidden">
+  <dump_ti label="beginn cmr-post-proc" test="0"/>
+  <ti type="file" x="(dir,status)cmr-cashed-question-1.xrs" test="(f,role,test)"/>
+  <call_service job="go-joe-read">                 
+    <file id="joe-in-store" x="(dir,status)cmr-cashed-question-1.xrs" />  
+  </call_service>
+  <prop id="cmr-this-2" x="1"/>
+
+  <tk label="Execute the following ant-script ?"
+      top_label="(prop,x9)"
+      type="accept"
+      id="cmr-this-1"
+      x="(prop,todo)"
+      label_accept="Ok"
+      label_decline="Forget it"
+      width="800" height="280">
+      <q id="cmr-this-2" label="()YES, I know that this operation might delete my data()"
+      />
+      <q id="cmr-this-3" label="()I want to EDIT this script manually()" flag="load"/>
+      <q id="cmr-this-5" label="()I just want to PREVIEW potential results()" flag="load"/>
+  </tk>
+  <dump_ti label="nach 3er frage" test="0"/>
+  <call_service job="go-joe-write-srv">                                                   
+      <prop id="joe-in-regex">cmr-this-3|cmr-this-5</prop>  
+      <file id="joe-in-store" x="(dir,status)cmr-cashed-question-1.xrs" />   
+  </call_service>   
+
+  <when test="(f,not,(prop,cmr-this-1))">
+      <stop>Operation terminated on request.</stop>
+  </when>
+      
+  <choose>
+    <when test="(prop,cmr-this-5)">
+      <prop id="todo" x="(prop,todo-test)"/>
+    </when>
+    
+    <when test="(prop,cmr-this-3)">
+      <tk type="textblock" id="todo" flag="nono big" label="Script to execute"/>
+      <tk label="(prop,x9)">
+      <tk label="Execute the following ant-script ?"
+          type="accept"
+          id="cmr-this-1"
+          x="(prop,todo)"
+          label_accept="(prop,x9)"
+          label_decline="Forget it"
+          width="800" height="280">
+          <q id="cmr-this-2" label="()YES, I know that this operation might delete my data()" xtest="0"/>
+      </tk>    
+      </tk>
+      <prop id="cmr-this-3" x="0"/>
+      <prop id="cmr-this-5" x="0"/>
+    </when>
+
+  </choose>
+  <file id="todo" x="(dir,filetemp)ant-for-(prop,x8).xrs"/>
+  <create_file out="(file,todo)" flag="dont_unescape_on_write"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><steps>
+(prop,todo)
+</steps>
+]]></create_file>
+  
+
+  
+  <tp>Doing History</tp>
+  
+
+  <prop id="now-date" x="(f,time,yyyy-MM-dd,job)"/>
+  <prop id="now-time" x="(f,time,HH:mm:ss,job)"/>
+  <sequence id="hist-sequ" file="(file,hist-sequ)" act="open" len="5"/>
+  <sequence id="hist-sequ" act="next" />
+  <prop id="now-sequ" x="(f,sequence,hist-sequ)"/>
+  <sequence id="hist-sequ" act="close"/>
+  
+  <when test="(f,not,(f,file_exists,(file,hist)))">
+    <create_file out="(file,hist)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><history created-date="(prop,now-date)" created-time="(prop,now-time)"/>
+  ]]></create_file>  
+  </when>
+  
+  <!-- relativieren von cmr-todir -->
+  <when test="(f,has,dir,cmr-todir)">    
+		<call_service job="go-jack-do-dir-srv" flag="silent">
+      <dir id="jack-in" x="(dir,cmr-todir)" />	
+		</call_service>
+		<global act="get" id="jack-result"/>  
+    <prop id="cmr-todir-jack" x="(prop,jack-result)"/>
+  </when>
+  
+  <!-- relativieren von dir with -->   
+	<call_service job="go-jack-do-dir-srv" flag="silent">
+    <dir id="jack-in" x="(dir,with)" />	
+	</call_service>
+	<global act="get" id="jack-result"/>  
+  <prop id="cmr-with-jack" x="(prop,jack-result)"/>					                                               
+
+  <xml_update 
+    how="append" 
+    with_what="root" 
+    what="(file,hist)">
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <action id="(prop,now-sequ)" date="(prop,now-date)"  time="(prop,now-time)"               
+              cmr-type="(prop,cmr-type)"
+              cmr-did="(f,when,(prop,cmr-this-5),test,std)"
+              with-dir="(prop,cmr-with-jack)"
+              (f,when,(f,has,dir,cmr-todir),cmr-todir="(f,vob,prop,cmr-todir-jack)",)
+              (f,when,(f,has,prop,cmr-includes),cmr-includes="(f,vob,prop,cmr-includes)",)
+              (f,when,(f,has,prop,cmr-excludes),cmr-excludes="(f,vob,prop,cmr-excludes)",)            
+              (f,when,(f,has,prop,cmr-flatten),cmr-flatten="(f,vob,prop,cmr-flatten)",)
+              (f,when,(f,has,prop,cmr-preservelastmodified),cmr-preservelastmodified="(f,vob,prop,cmr-preservelastmodified)",)
+              (f,when,(f,has,prop,cmr-overwrite),cmr-overwrite="(f,vob,prop,cmr-overwrite)",)
+              (f,when,(f,has,prop,cmr-verbose),cmr-verbose="(f,vob,prop,cmr-verbose)",)              
+              (f,when,(f,has,prop,cmr-from),cmr-from="(f,vob,prop,cmr-from)",)
+              (f,when,(f,has,prop,cmr-to),cmr-to="(f,vob,prop,cmr-to)",)
+              
+              />                                  
+  ]]></inline>
+  </xml_update>  
+  
+  <xml_update 
+    how="insert_in" 
+    with_what="root" 
+    what="(file,hist)"
+    where="action[@id='(prop,now-sequ)']" 
+    with="(file,cmr-store)"/>   
+  <when test="(f,role,test)">
+    <ti_hr/>
+    <ti type="file" x="(file,hist)" label="History:"/>
+    <ti   x="New Id in history is: #(f,format,(prop,now-sequ),#0)" label=" "/>   
+    <ti type="file" x="(file,todo)" label="Now executing:"/>
+
+  </when>
+    <ti_hr/>    
+  <when test="(f,not,(f,or,(prop,cmr-this-2),(prop,cmr-this-3),(prop,cmr-this-5)))">
+      <throw>()Operation terminated because no option (YES, EDIT or TEST) selected.()</throw>
+  </when>
+  
+  <ti label="Temporary RUN" type="file" x="(file,todo)" test="(f,role,admin)"/>    
+  <tp>Running (f,when,(prop,cmr-this-5),PREVIEW of,) (prop,x8) ...</tp>  
+  <try_catch>
+    <try>
+      <include file="(file,todo)"/>
+    </try>
+    <catch>    
+      <call_service job="cmr-display-doitagain"/>
+      <ti_hr/>
+      <throw_again/>
+    </catch>  
+  </try_catch>
+  
+  
+  <ti  label="(f,when,(prop,cmr-this-5),PREVIEW of (prop,x8),(f,upper,(prop,x9))) finished successfully"/>
+  <call_service job="cmr-display-doitagain"/>
+  <ti_flush/>
+  <ti_hr/>
+  <when test="(prop,cmr-this-5)">
+    <ti_break/>
+    
+    <choose>
+    
+      <when test="(f,eq,(prop,x8),rename)">
+        <ti label="Preview: List of files to rename"/>
+
+        <need>(prop,cmr-from)</need>
+        <prop id="cmr-from-index" x="(f,last_index_of,(prop,cmr-from),*)"/>
+        <choose>
+          <when test="(f,eq_num,-1,(prop,cmr-from-index))">
+            <prop id="cmr-from-prefix" x="(prop,cmr-from)"/>
+            <prop id="cmr-from-postfix" x=""/>
+            <prop id="cmr-from-contains-star" x="0"/>
+          </when>
+          <otherwise>
+            <prop id="cmr-from-prefix" x="(f,substring,(prop,cmr-from),0,(prop,cmr-from-index))"/>
+            <prop id="cmr-from-postfix" x="(f,substring,(prop,cmr-from),(f,add,1,(prop,cmr-from-index)))"/>
+            <prop id="cmr-from-contains-star" x="1"/>  
+          </otherwise>
+        </choose>
+        
+        <prop id="cmr-from-prefix-length" x="(f,len,(prop,cmr-from-prefix))"/> 
+        <prop id="cmr-from-postfix-length" x="(f,len,(prop,cmr-from-postfix))"/>
+        
+        <ti type="file" label="List of all files" x="(file,test-filelist-rename)"/>
+        <echo id="cmr-from-index" /> 
+        <echo id="cmr-from-prefix" /> 
+        <echo id="cmr-from-postfix" /> 
+        <echo id="cmr-from-contains-star" /> 
+        <echo id="cmr-from-prefix-length" /> 
+        <echo id="cmr-from-postfix-length" /> 
+                
+        <prop id="found-total" x="0"/>
+        <loop id="found" 
+              regex="(e:o)[^$^\r^\n].*(e:c)$"
+              regex_flags="MULTILINE"
+              file="(file,test-filelist-rename)"
+              encoding="UTF-8">
+              
+          <prop id="fn" x="(f,name_of_file,(loop,found))"/>    
+          
+          <i>(prop,fn)</i>
+          
+          <choose>
+            <!-- 
+            <when test="(f,eq_num,0,(prop,cmr-from-prefix-length))">
+              <ti label=" ">No #1</ti>
+            </when>
+            -->
+            
+            <when test="(f,lt_num,(f,len,(prop,fn)),(f,add,(prop,cmr-from-prefix-length),(prop,cmr-from-postfix-length)))">
+              <i>   No #2</i>
+            </when>
+            
+            <when test="(f,and,(f,not,(prop,cmr-from-contains-star)),(f,not,(f,eq_text,(prop,fn),(prop,cmr-from-prefix))))">
+              <i>   No #3</i>
+            </when>
+            
+            <when test="(f,and,(prop,cmr-from-contains-star),(f,or,(f,not,(f,starts_with,(prop,fn),(prop,cmr-from-prefix))),(f,not,(f,ends_with,(prop,fn),(prop,cmr-from-postfix)))))">
+              <i>   No #4</i>
+            </when>
+                                                                                                     
+            <otherwise>
+              <prop id="found-total" x="(f,add,1,(prop,found-total))"/>
+              <ti label="(prop,found-total)(e:c)" type="file">(loop,found)</ti>    
+              
+            </otherwise>
+          </choose>    
+              
+        
+        </loop>
+        <ti_hr/>
+        <ti label="Total:" x="(prop,found-total) files"/> 
+        <tp flag="ok" x="(prop,found-total) files to rename found"/>        
+              
+      </when>
+   
+  
+      <when test="(f,eq,(prop,x8),delete-empty-dirs)">
+        <ti label="Preview: List of empty directories"/>
+        <prop id="found-total" x="0"/>
+        <loop id="found" 
+              xpath=".//dir[@agg_files=0]"
+              xml="(file,test-filelist-emptydirs)">
+          <ti label="(loop,found,#i)(e:c)" type="dir">(dir,with)(loop,found,@ipath)</ti>    
+          <prop id="found-total" x="(f,add,1,(prop,found-total))"/>  
+        </loop>
+        <ti_hr/>
+        <ti label="Total:" x="(prop,found-total) dirs"/> 
+        
+        <tp flag="ok" x="(prop,found-total) empty dirs found"/>     
+              
+      </when>      
+      <otherwise>
+        <prop id="todo-type-natural" x="files" test="(f,eq_text,file,(prop,todo-type))"/>
+        <prop id="todo-type-natural" x="directories" test="(f,eq_text,dir,(prop,todo-type))"/>
+        <ti label="Preview: List of (prop,todo-type-natural) to (prop,x8)"/>
+        <prop id="found-total" x="0"/>
+        <loop id="found" 
+              regex="(e:o)[^$^\r^\n].*(e:c)$"
+              regex_flags="MULTILINE"
+              file="(file,test-filelist)"
+              encoding="UTF-8"
+              xlimit="(prop,crmco_preview_limit)">
+          <when test="(f,lte_num,(loop,found,#i),(prop,crmco_preview_limit))">
+            <ti label="(loop,found,#i)(e:c)" type="(f,vob,prop,todo-type)">(loop,found)</ti>    
+          </when>
+            <prop id="found-total" x="(f,add,1,(prop,found-total))"/>  
+        </loop>
+        <ti_hr/>
+        <choose>
+          <when test="(f,gte_num,(prop,found-total),(prop,crmco_preview_limit))">
+            <ti label="Total:" x="(prop,found-total)++ (prop,todo-type-natural)"/>   
+            <ti label=" " x="The preview-limit of (prop,crmco_preview_limit) was reached(e:s) not all records are listed !"/>    
+            <tp flag="ok" x="(prop,found-total)++ (prop,todo-type-natural) to (prop,x8) found"/>             
+          </when>
+          <otherwise>
+            <ti label="Total:" x="(prop,found-total) (prop,todo-type-natural)"/>      
+            <tp flag="ok" x="(prop,found-total) (prop,todo-type-natural) to (prop,x8) found"/>           
+          </otherwise>
+        </choose>
+          
+ 
+      </otherwise>
+    </choose>
+    <ti_hr/>
+    <call_service job="cmr-display-doitagain"/>
+
+  </when>
+
+</job>
+
+<job id="cmr-display-doitagain" role="hidden">
+
+  <ti type="call_service" job="Panorama-Dir-Activity-CMR-CORE"
+      explain="Do it again" label=" ">
+      <dir id="with" x="(dir,with)"/>
+      <prop id="cmr-type" x="(prop,cmr-type)"/>
+      <prop id="cmr-intro" x="0" />
+      <prop id="cmr-edit-with-dir" x="1"/>
+  </ti>  
+  
+  <ti type="call_service" job="cmr-reactivate-1"
+      explain="Change action-type &amp; do it again" label=" ">
+      <dir id="with" x="(dir,with)"/>
+      <prop id="cmr-type" x="(prop,cmr-type)"/>
+      <prop id="cmr-intro" x="0" />
+      <file id="cmr-joe" x="(file,cmr-store)"/>
+  </ti>  
+  
+</job>
+
+<job id="cmr-reactivate-1" role="hidden">     
+  <need>(file,cmr-joe)</need>
+  <need>(prop,cmr-type)</need>
+  <need>(dir,with)</need>
+  
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store" x="(file,cmr-joe)" />  
+  </call_service>
+  
+  <tk label="Select Action-Type">
+    <tk type="sel" id="cmr-type" label="Action" flag="nono"
+        tip="Change here the type of activity if you want">
+      <sel>copy</sel>
+      <sel>move</sel>
+      <sel>rename</sel>
+      <sel>delete-files</sel>      
+      <sel>delete-empty-dirs</sel>
+      <sel>delete-dirs</sel>   
+      
+    </tk>
+  </tk>
+  
+  <call_service job="Panorama-Dir-Activity-CMR-CORE">
+    <prop id="cmr-read-store" x="0"/>
+    <prop id="cmr-edit-with-dir" x="1"/>  
+  </call_service>
+    
+</job>
+
+
+
+<job id="File-Action-History / Complete" role="hidden">
+  <call_service job="cmr-hist-list-core">
+    <prop id="cmr-hist-list-last" x="0"/>
+  </call_service>
+</job>
+    
+<job id="cmr-hist-list-core" role="hidden">
+  <need>(prop,cmr-hist-list-last)</need>
+  <call_service job="cmr-prolog"/>  
+  <throw test="(f,not,(f,file_exists,(file,hist)))">Nothing to show. No history created until now.</throw>
+  
+  <prop id="mylimit" x="999999999"/>
+  <prop id="mylimit" x="(prop,cmr-hist-list-len)" test="(prop,cmr-hist-list-last)"/>
+  <prop id="mymax" x="0" />
+  <prop id="mycount" x="0" />
+  
+  <prop id="crm-hist-xpath" x="action" />
+  <when test="(f,has,prop,cmr-hist-list-xpath)">
+    <prop id="crm-hist-xpath" x="(prop,cmr-hist-list-xpath)" />
+    <prop id="mylimit" x="999999999"/>
+  </when>
+  
+  <loop id="cmr-hist" 
+        xml="(file,hist)"
+        xpath="(prop,crm-hist-xpath)"
+        sort="@id"
+        number="@id"
+        desc="@id"
+        limit="(prop,mylimit)"
+        missing_strategy="empty" >
+        
+    <prop id="mycount" x="(f,add,1,(prop,mycount))" />    
+    <when test="(f,eq_num,1,(loop,cmr-hist,#i))">
+      <prop id="mymax" x="(loop,cmr-hist,#max)" />
+      <ti type="rec">
+        <ti> </ti> 
+        <ti> </ti> 
+        <ti span="2">(f,html,b,open)Source-Selectors(f,html,b,close)</ti>         
+        <ti  xalign="center">(f,html,b,open)Output(f,html,b,close)</ti>   
+        <ti span="2" xalign="center">(f,html,b,open)Rename(f,html,b,close)</ti> 
+        <ti>(f,html,b,open)Options(f,html,b,close)</ti>    
+      </ti>    
+          
+      <ti type="rec" label=" ">
+        <ti>(f,html,b,open)Action(f,html,b,close)</ti> 
+ 
+        <ti xalign="center">dir</ti>
+        <ti xalign="center">pattern</ti>  
+        <ti xalign="center">dir</ti>  
+        <ti xalign="center">old</ti> 
+        <ti xalign="center">new</ti>                  
+        <ti xalign="center"> </ti>      
+      </ti>    
+      <ti_hr xstyle="2"/>
+    </when>    
+                  
+    <prop id="cmr-hist-type" x="(loop,cmr-hist,@cmr-type)"/>
+    <prop id="cmr-hist-type" x="del-empty" test="(f,eq_text,delete-empty-dirs,(prop,cmr-hist-type))"/>
+    
+    <prop id="l1" x=""/>
+    <prop id="l2" x=""/>
+    <prop id="l1" x="(loop,cmr-hist,@cmr-includes)" test="(loop,cmr-hist,exists?,@cmr-includes)"/>
+    <when test="(loop,cmr-hist,exists?,@cmr-excludes)">
+      <choose>
+        <when test="(f,has,prop,l1)">
+          <prop id="l2" x="(f,html,strike,open)(loop,cmr-hist,@cmr-excludes)(f,html,strike,close)"/>    
+        </when>
+        <otherwise>
+         <prop id="l1" x="(f,html,strike,open)(loop,cmr-hist,@cmr-excludes)(f,html,strike,close)"/> 
+        </otherwise>
+      </choose>
+    </when>
+    
+    <ti type="rec" label="(e:o)(f,format,(loop,cmr-hist,@id),#0)(e:c)" key="(loop,cmr-hist,@date)">
+      
+      <ti type="call_service" job="Details of historic file-action" 
+      explain="(f,html,b,open)(prop,cmr-hist-type)(f,html,b,close)" xflag="arrow">
+        <prop id="cmr-hist-id" x="(loop,cmr-hist,@id)"/>        
+      </ti> 
+
+      <ti type="dir">(f,translate,(loop,cmr-hist,@with-dir),0,1)</ti> 
+      <ti>(prop,l1)</ti>   
+      <!--   
+      <ti>(loop,cmr-hist,@cmr-includes)</ti> 
+      <ti>(loop,cmr-hist,@cmr-excludes)</ti>
+      -->
+      <ti type="dir" test="(loop,cmr-hist,exists?,@cmr-todir)">(f,translate,(loop,cmr-hist,@cmr-todir),0,1)</ti>   
+      <ti test="(f,not,(loop,cmr-hist,exists?,@cmr-todir))"> </ti>       
+      <ti>(loop,cmr-hist,@cmr-from)</ti> 
+      <ti>(loop,cmr-hist,@cmr-to)</ti>  
+      
+      <ti flag="wrap">(f,when,(f,eq_text,test,(loop,cmr-hist,@cmr-did)),test,) (f,when,(f,try,()(loop,cmr-hist,@cmr-flatten)(),0,0),flatten ,) (f,when,(f,try,()(loop,cmr-hist,@cmr-overwrite)(),0,0),overwrite,)</ti>      
+                               
+    </ti>
+    
+    <ti type="rec" test="(f,has,prop,l2)" label=" ">
+      
+      <ti></ti>
+      <ti></ti>
+      <ti>(prop,l2)</ti>   
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+      <ti></ti>
+     
+    </ti>    
+                                                
+  </loop>
+  
+  <ti test="(f,eq_num,0,(prop,mycount))" x="Nothing found in action-history"/>
+  
+  <ti_hr/>
+  <when test="(f,gt_num,(prop,mymax),(prop,mycount))">    
+    <ti type="call_service" job="File-Action-History / Complete" explain="See all (prop,mymax) actions" xlabel=" "/>
+  </when>
+  <ti type="call_service" 
+      job="cmr-delete-history" 
+      explain="Delete some of these historic actions" 
+      test="(f,and,(f,gt,(prop,mycount),0),(f,not,(f,has,prop,cmr-hist-list-xpath)))"/>
+  
+
+</job>
+
+<job id="cmr-reactivate-2" role="hidden">       
+  <need>(prop,cmr-hist-id)</need>
+  <need>(prop,cmr-ask-for-type)</need>
+  <call_service job="cmr-prolog"/>
+  
+  <prop id="cmr-type" x="(f,xpath,(file,hist),action[@id=(prop,cmr-hist-id)],@cmr-type)"/>  
+  <file id="crm-react-store" x="(dir,filetemp)crm-react-joe.xml"/>
+  <xslt 
+        xml="(file,hist)" 
+        out="(file,crm-react-store)"
+        xsl="(dir,services)crm-get-store.xsl">
+        <params>action='(prop,cmr-hist-id)'</params>       
+  </xslt> 
+
+  <call_service job="go-joe-read"> 
+    <file id="joe-in-store" x="(file,crm-react-store)" />  
+  </call_service>
+  
+  <dir id="with" x="(f,translate,(f,xpath,(file,hist),action[@id=(prop,cmr-hist-id)],@with-dir),0,1)"/>   
+  
+  <tk label="Change action-type" test="(prop,cmr-ask-for-type)">
+    <tk type="sel" id="cmr-type" label="Action" flag="nono"
+        tip="Change here the type of action if you want. The current action '(prop,cmr-type)' is selected by default. By changing the action(e:s) you can keep the parameters and perform another operation.">
+      <sel>copy</sel>
+      <sel>move</sel>
+      <sel>rename</sel>     
+      <sel>delete-files</sel>      
+      <sel>delete-empty-dirs</sel>
+      <sel>delete-dirs</sel>         
+    </tk>
+  </tk>
+  
+  
+  
+  <call_service job="Panorama-Dir-Activity-CMR-CORE">
+    <prop id="cmr-read-store" x="0"/>
+    <prop id="cmr-edit-with-dir" x="1"/>
+    <prop id="cmr-intro" x="0" />
+  </call_service>
+    
+</job>
+
+<job id="Details of historic file-action" role="hidden">
+  <need>(prop,cmr-hist-id)</need>
+  <call_service job="cmr-prolog"/>
+
+  <loop id="cmr-hist" 
+        xml="(file,hist)"
+        xpath="action[@id=(prop,cmr-hist-id)]"
+        missing_strategy="empty" >
+    <ti label="Action" key="#(f,format,(loop,cmr-hist,@id),#0)">
+    <ti type="call_service" job="cmr-reactivate-2" 
+        label="(f,html,i,open)(loop,cmr-hist,@cmr-type)(f,html,i,close)" 
+        explain="Do it again">
+      <prop id="cmr-hist-id" x="(prop,cmr-hist-id)"/>
+      <prop id="cmr-ask-for-type" x="0"/>
+    </ti>
+    <ti type="call_service" job="cmr-reactivate-2" 
+        label=" " 
+        explain="Change action-type &amp; do it again">
+      <prop id="cmr-hist-id" x="(prop,cmr-hist-id)"/>
+      <prop id="cmr-ask-for-type" x="1"/>
+    </ti>    
+    </ti>
+              
+    <ti label="Source Selectors" test="(f,or,(loop,cmr-hist,exists?,@cmr-includes),(loop,cmr-hist,exists?,@cmr-excludes))">
+      <ti label="Directory:" x="(f,translate,(loop,cmr-hist,@with-dir),0,1)" type="dir"/>   
+      <ti label="Files:" x="(loop,cmr-hist,@cmr-includes)" test="(loop,cmr-hist,exists?,@cmr-includes)"/>  
+      <ti label="Excluded-files:" x="(loop,cmr-hist,@cmr-excludes)" test="(loop,cmr-hist,exists?,@cmr-excludes)"/>    
+    </ti>   
+    
+    <ti label="Target Directory" test="(loop,cmr-hist,exists?,@cmr-todir)">
+      <ti label="Result of (loop,cmr-hist,@cmr-type):" x="(f,translate,(loop,cmr-hist,@cmr-todir),0,1)" type="dir"/>  
+    </ti>       
+
+    <ti label="Renaming" test="(f,or,(loop,cmr-hist,exists?,@cmr-from),(loop,cmr-hist,exists?,@cmr-to))">
+      <ti label="From:" x="(loop,cmr-hist,@cmr-from)" test="(loop,cmr-hist,exists?,@cmr-from)"/>
+      <ti label="To" x="(loop,cmr-hist,@cmr-to)" test="(loop,cmr-hist,exists?,@cmr-to)"/>
+    </ti>
+        
+    <ti label="Options" test="(f,or,(f,try,()(loop,cmr-hist,@cmr-flatten)(),0,0),(f,try,()(loop,cmr-hist,@cmr-overwrite)(),0,0),(f,try,()(loop,cmr-hist,@cmr-verbose)(),0,0),(f,try,()(loop,cmr-hist,@cmr-preservelastmodified)(),0,0))">
+      <ti label="+" test="(f,try,()(loop,cmr-hist,@cmr-flatten)(),0,0)" x="Flatten"/>
+      <ti label="+" test="(f,try,()(loop,cmr-hist,@cmr-overwrite)(),0,0)" x="Overwrite"/>
+      <ti label="+" test="(f,try,()(loop,cmr-hist,@cmr-preservelastmodified)(),0,0)" x="Keep-Timestamp"/>      
+      <ti label="+" test="(f,try,()(loop,cmr-hist,@cmr-verbose)(),0,0)" x="Verbose"/>
+    </ti>  
+                                      
+    <ti label="Admin">    
+      <ti label="Status:" x="Preview" test="(f,eq_text,test,(loop,cmr-hist,@cmr-did))"/>
+      <ti label="Date:" x="(loop,cmr-hist,@date)"/>
+      <ti label="Time:" x="(loop,cmr-hist,@time)"/>      
+      <ti label="Id:" x="#(f,format,(loop,cmr-hist,@id),#0)"/>
+    </ti>
+                                                               
+  </loop>  
+  
+</job>  
+  
+
+<!-- ...............  .............. -->
+<!-- ............... COPY MOVE .............. -->
+<!-- ...............  ..............    -->  
+    
+<job id="cmr-detail-copy-move-files" role="hidden">
+      <need>(prop,x8)</need>
+      <need>(prop,x9)</need>
+      
+
+
+  <choose>
+    <when test="(f,eq_text,copy,(prop,x8))">
+      <prop id="cmr-lang-passive" x="copied"/>
+    </when>
+    <when test="(f,eq_text,move,(prop,x8))">
+      <prop id="cmr-lang-passive" x="moved"/>
+    </when>    
+  </choose>
+
+  <when xtest="0" test="(prop,cmr-intro)">
+    <when test="(f,eq_text,copy,(prop,x8))">
+      <create_file file="(file,intro)">(f,replace,(f,file_content,(dir,services)crm-intro-copy.html,UTF-8),##DIR##,(dir,with))</create_file>
+  
+      <tk label="About 'Copy Specific Files'">
+        <tk label="(prop,dir-with-tit)"
+            type="accept"
+            id="just-ok"
+            file="(file,intro)"
+            file_type="html"
+            label_accept="Ok"
+            label_decline="Forget it"
+            width="700" height="300">
+            <q id="just-info" label="()Show just the HISTORY of Actions &amp; INFO about parameters()"/>
+        </tk>
+      </tk>
+      <throw test="(f,not,(prop,just-ok))">Copy terminated on request</throw>
+    </when>    
+    
+    <when test="(f,eq_text,move,(prop,x8))">
+      <create_file file="(file,intro)">(f,replace,(f,file_content,(dir,services)crm-intro-move.html,UTF-8),##DIR##,(dir,with))</create_file>
+  
+      <tk label="About 'Move Specific Files'">
+        <tk label="(prop,dir-with-tit)"
+            type="accept"
+            id="just-ok"
+            file="(file,intro)"
+            file_type="html"
+            label_accept="Ok"
+            label_decline="Forget it"
+            width="700" height="300">
+            <q id="just-info" label="()Show just the HISTORY of Actions &amp; INFO about parameters()"/>
+        </tk>
+      </tk>
+      <throw test="(f,not,(prop,just-ok))">Move terminated on request</throw>
+    </when>  
+        
+  </when>
+                
+      <tk label="(prop,x9) from [ (f,name_of_dir,(dir,with)) ]" flag="(f,when,(prop,just-info),print_only print_with_tips ,)print sum">
+
+        <tk type="msg" x="Source-Selectors" test_first="0"/>         
+        <tk id="with"  
+            label="Dir" 
+            type="dir"
+            tip="The source-directory to make the (prop,x8) from."
+            flag="nono"
+            test="(f,or,(prop,cmr-edit-with-dir),(f,role,expert))"
+            test_first="0"
+            />          
+                      
+        <tk id="cmr-includes" 
+            x="**/*.xyz" 
+            label="Files"             
+            test_first="0"
+            tip="File-Pattern for files to (prop,x8). The files will be looked up in the source-directory. Leaving this parameter empty will include all files. (prop,cmr-info-pattern) &#xA;Example: **/*.xml"
+            />  
+            
+        <tk id="cmr-excludes" 
+            x="" 
+            label="Excluded files" 
+            test_first="0"
+            tip="File-Pattern for files to exclude from (prop,x8). (prop,cmr-info-pattern) &#xA;Example:  eg **/*.xxx "/>
+ 
+        <tk type="msg" x="Output" test_first="0"/>
+        <tk id="cmr-todir"  
+            label="Target-dir" 
+            type="dir"
+            tip="Output-directory of the (prop,x8)-action. Files will be (prop,cmr-lang-passive) to this directory."
+            flag="nono"
+            test_first="(f,not,(f,has,dir,cmr-todir))"
+            />  
+                                
+        <tk type="msg" x="Options" test_first="0"/>           
+        <tk id="cmr-flatten" 
+            x="0" 
+            label="Flatten" 
+            type="sel"
+            test_first="0"
+            tip="'Flatten structure' will (prop,x8) all files directly into the output-directory(e:s) no matter from which hierarchy-level they come from. &#xA;Take Care: If you have files with the same name(e:s) there will finally remain just one of them!"
+            flag="nono">
+            <sel label="FLATTEN file-structure">1</sel>
+            <sel label="Keep file-structure">0</sel>
+        </tk>       
+            
+        <tk id="cmr-overwrite" 
+            x="1" 
+            label="Overwrite" 
+            type="sel"
+            test_first="0"
+            tip="()Does overwrite the output in the output-dir. &#xA;A 'No' will only (prop,x8) files which are newer than those if you don't want the data in the output-dir stay untouched.()"
+            flag="nono"  >
+            <sel label="Overwrite only OLDER &amp; OUTDATED files">0</sel>
+            <sel label="Overwrite all files">1</sel>
+                       
+        </tk>                  
+
+        <tk id="cmr-preservelastmodified" 
+            x="1" 
+            label="Timestamp" 
+            type="sel"
+            test_first="0"
+            tip="Preserves the last-modified-timestamp of the source-files when doing the (prop,x8). &#xA;When set to 'No'(e:s) the new files get the timestamp when the (prop,x8) took place."
+            flag="nono"  >
+            <sel label="Keep timestamp of files">1</sel>
+            <sel label="Set NEW timestamp when (prop,x8)">0</sel>
+        </tk>                    
+                                     
+          
+        <tk type="msg" x="Logging" test_first="0"/>    
+        <tk id="cmr-verbose"
+            type="sel" 
+            x="1" 
+            test_first="0"
+            label="Report" 
+            tip="Whether to show the filename of each (prop,cmr-lang-passive) file in the logger &#xA;The logging will go to loglevel 'info'."
+            flag="nono" >
+            <sel label="Keep silent">0</sel>
+            <sel label="REPORT (prop,cmr-lang-passive) files">1</sel>
+            
+        </tk>          
+       </tk>  
+      <when test="(f,not,(prop,just-info))">
+      <dir id="with2" x="(dir,with)"/>
+      <call_service job="go-joe-write-srv">                                                   
+          <prop id="joe-in-regex">with2|cmr-todir|cmr-includes|cmr-excludes|cmr-flatten|cmr-overwrite|cmr-verbose|cmr-preservelastmodified</prop>  
+          <file id="joe-in-store" x="(file,cmr-store)" />   
+      </call_service> 
+      
+      <prop id="todo"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>
+ <(prop,x8) 
+            todir="(dir,cmr-todir)" (f,when,(prop,cmr-verbose),
+            verbose="true",) 
+            includeemptydirs="false"(f,when,(f,has,prop,cmr-overwrite),(f,when,(f,try,()(prop,cmr-overwrite)(),1,1),
+            overwrite="true",
+            overwrite="false"),
+            overwrite="true")(f,when,(f,has,prop,cmr-flatten),(f,when,(f,try,()(prop,cmr-flatten)(),0,0),
+            flatten="true",),)(f,when,(f,has,prop,cmr-preservelastmodified),(f,when,(f,try,()(prop,cmr-preservelastmodified)(),1,1), 
+            preservelastmodified="true", 
+            preservelastmodified="false"),
+            preservelastmodified="true")>
+  <fileset
+           dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+           includes="(prop,cmr-includes)",) (f,when,(f,has,prop,cmr-excludes),
+           excludes="(prop,cmr-excludes)",)
+           defaultexcludes="false"/>
+ </(prop,x8)>
+</ant>]]></prop>   
+
+      <prop id="todo-test"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>
+
+  <fileset dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+           includes="(prop,cmr-includes)",) (f,when,(f,has,prop,cmr-excludes),
+           excludes="(prop,cmr-excludes)",)
+           id="myfileset"/>
+  <pathconvert pathsep="${line.separator}" property="listi" refid="myfileset">
+  </pathconvert>
+    <echo file="(file,test-filelist)" encoding="UTF-8">${listi}</echo>
+</ant>]]></prop>   
+        <prop id="todo-type" x="file" />
+
+      </when>   
+
+</job>
+
+<!-- ...............  .............. -->
+<!-- ............... DELETE FILE .............. -->
+<!-- ...............  ..............  nic123  -->  
+<job id="cmr-detail-delete-files" role="hidden">
+
+   <when test="(prop,cmr-intro)">
+      
+        <tk label="(prop,dir-with-tit)"
+            top_label="About 'Delete Specific Files'"
+            type="accept"
+            id="just-ok"
+            file_type="html"
+            label_accept="Ok"
+            label_decline="Forget it"
+            width="700" height="300">
+            <q id="just-info" label="()Show just the HISTORY of Actions &amp; INFO about parameters()"/>
+            <inline attribute="file"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<style media="screen" type="text/css">
+.bigger {  
+  font-size: 14px;
+  margin-left: 20px; 
+}
+li {
+list-style-type: none;
+}
+
+</style>
+</head><body><h2>The action 'Delete Specific Files'</h2>
+<ul class="bigger">
+<li>... deletes files somewhere under this directory</li>
+<li>... uses file-patterns to filter the 'specific' files</li>
+</ul>
+<h2>The current directory is:</h2>
+<ul class="bigger">
+<li>(dir,with)</li>
+</ul>
+</body></html>]]></inline>
+        </tk>
+
+      <stop test="(f,not,(prop,just-ok))">Delete terminated on request</stop>
+   </when>
+
+            
+      <tk label="(prop,x9) from [ (f,name_of_dir,(dir,with)) ]" 
+          flag="(f,when,(prop,just-info),print_only print_with_tips ,)print sum_only">
+                    
+        <tk type="msg" x="Source-Selectors" />   
+        
+        <tk id="with"  
+            label="Dir" 
+            type="dir"
+            tip="The source-directory to make the (prop,x8) from"
+            flag="nono"
+            test="(f,or,(prop,cmr-edit-with-dir),(f,role,expert))"
+            />     
+                                 
+        <tk id="cmr-includes" 
+            x="**/*.xyz" 
+            label="Files" 
+            test_first="0"
+            tip="()File-Pattern for files to Delete , eg **/*.xyz()"
+            />  
+            
+        <tk id="cmr-excludes" 
+            x="" 
+            label="Excluded files" 
+            test_first="0"
+            tip="()File-Pattern for files to exclude from (prop,x8) , eg **/*.xxx()"/>            
+                              
+        <tk type="msg" x="Logging"/>    
+        <tk id="cmr-verbose"
+            type="sel" 
+            x="1" 
+            test_first="0"
+            label="Report" 
+            tip="Whether to show the filename of each deleted file in the logger &#xA;The logging will go to loglevel 'info'."
+            flag="nono" >
+            <sel label="Keep silent">0</sel>
+            <sel label="REPORT deleted files">1</sel>
+            
+        </tk>                                                       
+      </tk>
+      
+  <dir id="with2" x="(dir,with)"/>    
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">with2|cmr-includes|cmr-excludes|cmr-verbose</prop>  
+    <file id="joe-in-store" x="(file,cmr-store)" />    
+  </call_service> 
+  
+      <!-- nic123          <and>
+          <size value="0"/>
+          <type type="dir"/>
+         </and> -->
+      <prop id="todo"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>
+ <delete (f,when,(prop,cmr-verbose),verbose="true",)>
+  <fileset 
+           dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+           includes="(prop,cmr-includes)",) (f,when,(f,has,prop,cmr-excludes),
+           excludes="(prop,cmr-excludes)",)
+           defaultexcludes="false"/>
+ </delete>
+</ant>]]></prop> 
+    
+      <prop id="todo-test"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>
+
+  <fileset dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+           includes="(prop,cmr-includes)",) (f,when,(f,has,prop,cmr-excludes),
+           excludes="(prop,cmr-excludes)",)
+           id="myfileset"/>
+  <pathconvert pathsep="${line.separator}" property="listi" refid="myfileset">
+  </pathconvert>
+    <echo file="(file,test-filelist)" encoding="UTF-8">${listi}</echo>
+</ant>]]></prop>       
+        <prop id="todo-type" x="file" />
+
+</job>
+
+<!-- ...............  .............. -->
+<!-- ............... DELETE DIR .............. -->
+<!-- ...............  ..............  nic123  -->  
+<job id="cmr-detail-delete-dirs" role="hidden">
+
+   <when test="(prop,cmr-intro)">
+      
+        <tk label="(prop,dir-with-tit)"
+            top_label="About 'Delete Specific Dirs'"
+            type="accept"
+            id="just-ok"
+            file_type="html"
+            label_accept="Ok"
+            label_decline="Forget it"
+            width="700" height="300">
+            <q id="just-info" label="()Show just the HISTORY of Actions &amp; INFO about parameters()"/>
+            <inline attribute="file"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<style media="screen" type="text/css">
+.bigger {  
+  font-size: 14px;
+  margin-left: 20px; 
+}
+li {
+list-style-type: none;
+}
+
+</style>
+</head><body><h2>The action 'Delete Specific Directories'</h2>
+<ul class="bigger">
+<li>... deletes directories somewhere under this directory</li>
+<li>... uses file-patterns to filter the 'specific' dirs</li>
+</ul>
+<h2>The current directory is:</h2>
+<ul class="bigger">
+<li>(dir,with)</li>
+</ul>
+</body></html>]]></inline>
+        </tk>
+
+      <stop test="(f,not,(prop,just-ok))">Delete terminated on request</stop>
+   </when>
+
+            
+      <tk label="(prop,x9) from [ (f,name_of_dir,(dir,with)) ]" 
+          flag="(f,when,(prop,just-info),print_only print_with_tips ,)print sum_only">
+                    
+        <tk type="msg" x="Source-Selectors" />   
+        
+        <tk id="with"  
+            label="Dir" 
+            type="dir"
+            tip="The source-directory to make the (prop,x8) from"
+            flag="nono"
+            test="(f,or,(prop,cmr-edit-with-dir),(f,role,expert))"
+            />     
+                                 
+        <tk id="cmr-includes" 
+            x="**/*" 
+            label="Dirs" 
+            test_first="0"
+            tip="()Pattern for dirs to process , eg **/*()"
+            flag="nono"
+            />  
+            
+        <tk id="cmr-excludes" 
+            x="" 
+            label="Excluded dirs" 
+            test_first="0"
+            tip="()Pattern for dirs to exclude from processing, eg **/not*()"/>            
+                              
+        <tk type="msg" x="Logging"/>    
+        <tk id="cmr-verbose"
+            type="sel" 
+            x="1" 
+            test_first="0"
+            label="Report" 
+            tip="Whether to show the filename of each deleted file in the logger &#xA;The logging will go to loglevel 'info'."
+            flag="nono" >
+            <sel label="Keep silent">0</sel>
+            <sel label="REPORT deleted files">1</sel>
+            
+        </tk>                                                       
+      </tk>
+      
+  <dir id="with2" x="(dir,with)"/>    
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">cmr-includes|cmr-excludes|cmr-verbose</prop>  
+    <file id="joe-in-store" x="(file,cmr-store)" />    
+  </call_service> 
+  
+      <!-- nic123          <and>
+          <size value="0"/>
+          <type type="dir"/>
+         </and> -->
+      <prop id="todo"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>
+ <delete (f,when,(prop,cmr-verbose),verbose="true",) 
+           includeemptydirs="true">
+  <fileset 
+           dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+           includes="(prop,cmr-includes)/**",) (f,when,(f,has,prop,cmr-excludes),
+           excludes="(prop,cmr-excludes)/**",)
+           defaultexcludes="false"/>
+ </delete>
+</ant>]]></prop> 
+    
+      <prop id="todo-test"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>
+
+  <dirset dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+           includes="(prop,cmr-includes)/**",) (f,when,(f,has,prop,cmr-excludes),
+           excludes="(prop,cmr-excludes)/**",)
+           id="myfileset"
+           defaultexcludes="false">    
+  </dirset>
+  <pathconvert pathsep="${line.separator}" property="listi" refid="myfileset">
+  </pathconvert>
+    <echo file="(file,test-filelist)" encoding="UTF-8">${listi}</echo>
+</ant>]]></prop>
+  <prop id="todo-type" x="dir" />    
+   
+
+</job>
+
+<!-- ...............  .............. -->
+<!-- ............... DELETE-EMPTY-DIRS .............. -->
+<!-- ...............  ..............    -->  
+<job id="cmr-detail-delete-empty-dirs" role="hidden">
+
+   <when test="(prop,cmr-intro)">
+      
+        <tk label="(prop,dir-with-tit)"
+            top_label="About 'Delete Empty Directories'"
+            type="accept"
+            id="just-ok"
+            file_type="html"
+            label_accept="Ok"
+            label_decline="Forget it"
+            width="700" height="300">
+            <q id="just-info" label="()Show just the HISTORY of Actions &amp; INFO about parameters()"/>
+            <inline attribute="file"><![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<style media="screen" type="text/css">
+.bigger {  
+  font-size: 14px;
+  margin-left: 20px; 
+}
+li {
+list-style-type: none;
+}
+
+</style>
+</head><body><h2>The action 'Delete Empty Dirs'</h2>
+<ul class="bigger">
+<li>... deletes all empty directories under this directory</li>
+</ul>
+<h2>The current directory is:</h2>
+<ul class="bigger">
+<li>(dir,with)</li>
+</ul>
+</body></html>]]></inline>
+        </tk>
+
+      <stop test="(f,not,(prop,just-ok))">Delete terminated on request</stop>
+   </when>
+            
+      <tk label="Delete empty dirs in [ (f,name_of_dir,(dir,with)) ]" flag="(f,when,(prop,just-info),print_only print_with_tips ,)print sum_only">
+         
+        <tk type="msg" x="Source-Selectors" test="(f,or,(prop,cmr-edit-with-dir),(f,role,expert))"/>
+        <tk id="with"  
+            label="Dir" 
+            type="dir"
+            tip="The source-directory from which to remove the empty directories from"
+            flag="nono"
+            test="(f,or,(prop,cmr-edit-with-dir),(f,role,expert))"
+            />    
+                                                     
+        <tk type="msg" x="Logging"/>    
+        <tk id="cmr-verbose"
+            type="sel" 
+            x="1" 
+            test_first="0"
+            label="Report" 
+            tip="Whether to show the filename of each deleted file in the logger &#xA;The logging will go to loglevel 'info'."
+            flag="nono" >
+            <sel label="Keep silent">0</sel>
+            <sel label="REPORT deleted files">1</sel>
+            
+        </tk>                                            
+      </tk>
+      
+  <dir id="with2" x="(dir,with)"/>    
+  <call_service job="go-joe-write-srv">
+    <prop id="joe-in-regex">with2|cmr-verbose</prop>  
+    <file id="joe-in-store" x="(file,cmr-store)" />    
+  </call_service> 
+  
+  
+      <prop id="todo"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>
+ <delete includeemptydirs="true" (f,when,(prop,cmr-verbose),
+         verbose="true",) >
+  <fileset 
+         dir="(dir,with)"  
+         includes="**/*" 
+         defaultexcludes="false">
+         <and>
+          <size value="0"/>
+          <type type="dir"/>
+         </and>
+  </fileset>
+ </delete>
+</ant>]]></prop> 
+    
+      <prop id="todo-test"><![CDATA[<scan dir="(dir,with)"
+       out="(file,test-filelist-emptydirs)" 
+       field="level files"
+       agg="files"/>]]></prop>   
+       
+  <prop id="todo-type" x="dir" />              
+
+</job>
+
+
+<!-- ...............  .............. -->
+<!-- ............... RENAME .............. -->
+<!-- ...............  ..............    --> 
+<job id="cmr-detail-rename" role="hidden">
+
+   <when test="(prop,cmr-intro)">
+      <create_file file="(file,intro)">(f,replace,(f,file_content,(dir,services)crm-intro-rename.html,UTF-8),##DIR##,(dir,with))</create_file>
+  
+      <tk label="About 'Rename Specific Files'">
+        <tk label="(prop,dir-with-tit)"
+            type="accept"
+            id="just-ok"
+            file="(file,intro)"
+            file_type="html"
+            label_accept="Ok"
+            label_decline="Forget it"
+            width="700" height="300">
+            <q id="just-info" label="()Show just the HISTORY of Actions &amp; INFO about parameters()"/>
+        </tk>
+      </tk>
+      <throw test="(f,not,(prop,just-ok))">Rename terminated on request</throw>
+   </when>
+            
+      <tk label="Rename in [ (f,name_of_dir,(dir,with)) ]" flag="(f,when,(prop,just-info),print_only print_with_tips ,)print sum_only">
+      
+        <tk type="msg" x="Source-Selectors" />   
+        
+        <tk id="with"  
+            label="Dir" 
+            type="dir"
+            tip="The source-directory from which to reanme the files"
+            flag="nono"
+            test="(f,or,(prop,cmr-edit-with-dir),(f,role,expert))"
+            />                        
+        <tk id="cmr-includes" 
+            x="**/*.*" 
+            label="Files" 
+            test_first="0"
+            tip="()File-Pattern for files to rename, eg **/*.xyz()"
+            />  
+            
+        <tk id="cmr-excludes" 
+            x="" 
+            label="Excluded files" 
+            test_first="0"
+            tip="()File-Pattern for files to exclude from rename, eg **/*.xxx()"/>        
+                         
+        <tk type="msg" x="Rename" />                
+        <tk id="cmr-from" 
+            x="*.java" 
+            label="From" 
+            test_first="0"
+            flag="nono"
+            tip="()File-Name-Filter for files to rename; Use a * as wildcard; Only ONE * allowed; eg *.xyz()"
+            />  
+            
+        <tk id="cmr-to" 
+            x="*-java.txt" 
+            label="To" 
+            test_first="0"
+            flag="nono"
+            tip="()New filename; Use * to indicate the part of the filename (as specified in the From name-pattern) which should stay the same; eg *.abc()"
+            />                                                                
+                                                        
+        <tk type="msg" x="Logging"/>    
+        <tk id="cmr-verbose"
+            type="sel" 
+            x="1" 
+            test_first="0"
+            label="Report" 
+            tip="Whether to show the filename of each processed file in the logger &#xA;The logging will go to loglevel 'info'."
+            flag="nono" >
+            <sel label="Keep silent">0</sel>
+            <sel label="REPORT renamed files">1</sel>
+            
+        </tk>                                               
+      </tk>
+      
+      <dir id="with2" x="(dir,with)"/>
+      <call_service job="go-joe-write-srv">
+        <prop id="joe-in-regex">with2|cmr-from|cmr-to|cmr-includes|cmr-excludes|cmr-verbose</prop>  
+        <file id="joe-in-store" x="(file,cmr-store)" />    
+      </call_service> 
+      
+      <prop id="todo"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>   
+ <move 
+       todir="(dir,with)" (f,when,(prop,cmr-verbose),
+       verbose="true",) 
+       includeemptydirs="false">
+    <fileset 
+             dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+             includes="(prop,cmr-includes)",) (f,when,(f,has,prop,cmr-excludes),
+             excludes="(prop,cmr-excludes)",)/>       
+    <mapper 
+            type="glob" 
+            from="(prop,cmr-from)" 
+            to="(prop,cmr-to)"/>
+ </move>
+</ant>]]></prop>    
+                                           
+      <prop id="todo-test"><![CDATA[<ant(f,when,(prop,cmr-verbose), level="info",)>   
+      
+  <fileset dir="(dir,with)" (f,when,(f,has,prop,cmr-includes),
+             includes="(prop,cmr-includes)",) (f,when,(f,has,prop,cmr-excludes),
+             excludes="(prop,cmr-excludes)",)
+             id="myfileset"/>
+  <pathconvert pathsep="${line.separator}" property="listi" refid="myfileset">
+  </pathconvert>
+  <echo file="(file,test-filelist-rename)" encoding="UTF-8">${listi}</echo>
+</ant>]]></prop>    
+        <prop id="todo-type" x="file" />
+          
+              
+</job>
+
+
+
+
+ 
+</jobs>

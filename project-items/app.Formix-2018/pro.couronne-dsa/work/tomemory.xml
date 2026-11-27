@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsa-read">
+<need>(prop,dsa_key)</need>
+<spirit act="open" missing_strategy="empty" id="dsas_spirit_tc" xml="(file,dsas)"/>
+<prop id="dsa-parent-objekttyp">(f,spirit,dsas_spirit_tc,(prop,dsas_offset).,@objekttyp)</prop>
+<file id="pdi-sel-attr">(dir,repo)ot-(prop,dsa-parent-objekttyp)-asel-(prop,tip-term-class).xml</file>
+
+<prop id="dsa_dt_upd">(f,spirit,dsas_spirit_tc,(prop,dsas_offset)dsa[@row=(f,xpath_string,(prop,dsa_key))],@dt_upd)</prop>
+<prop id="dsa_dt_add">(f,spirit,dsas_spirit_tc,(prop,dsas_offset)dsa[@row=(f,xpath_string,(prop,dsa_key))],@dt_add)</prop>
+<prop id="dsa_attributtyp">(f,spirit,dsas_spirit_tc,(prop,dsas_offset)dsa[@row=(f,xpath_string,(prop,dsa_key))],@attributtyp)</prop>
+<prop id="dsa_wert">(f,spirit,dsas_spirit_tc,(prop,dsas_offset)dsa[@row=(f,xpath_string,(prop,dsa_key))],@wert)</prop>
+<prop id="dsa_von">(f,spirit,dsas_spirit_tc,(prop,dsas_offset)dsa[@row=(f,xpath_string,(prop,dsa_key))],@von)</prop>
+<prop id="dsa_bis">(f,spirit,dsas_spirit_tc,(prop,dsas_offset)dsa[@row=(f,xpath_string,(prop,dsa_key))],@bis)</prop>
+<spirit act="close" id="dsas_spirit_tc"/>
+</job>

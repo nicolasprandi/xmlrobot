@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="computer-del">
+<need>(prop,computer_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="computer-read"/>
+<tk type="accept" id="delete-it-1" label_accept="Delete" label_decline="Forget it" width="300" height="150" label="Sure about deleting [ (prop,computer_computer) (prop,computers_offset_label)] ?" x="Do you really want to delete that?&#10;()If you are not sure, make a backup of the ()project.">
+<q id="delete-it-2" label="()Yes, I know that the record will be gone forever()"/>
+</tk>
+<choose>
+<when test="(f,and,(prop,delete-it-1),(prop,delete-it-2))">
+<xml_update how="remove" what="(file,computers)" where="(prop,computers_offset)computer[@row='(prop,computer_key)']"/>
+<i>Deleted (prop,computer_computer) #(prop,computer_key)(e:s) (prop,computer_computer)</i>
+<ti label="Did delete Computer:" x="(f,html,bold,open)(prop,computer_computer)(f,html,bold,close)"/>
+<ti_hr/>
+<when test="(prop,do_return_job)"/>
+</when>
+<otherwise>
+<tp>No delete performed.</tp>
+<ti>No delete performed.</ti>
+</otherwise>
+</choose>
+<call_job job="Runcomputer-see-all"/>
+</job>

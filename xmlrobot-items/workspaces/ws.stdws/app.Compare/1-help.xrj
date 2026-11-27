@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="?" joblevel="app">
+
+  <ti label="When to use Application (f,html,i,open)Compare(f,html,i,close) :">
+    <ti type="ul">(f,html,bold,open)You want to compare folders(f,html,bold,close)</ti>
+    <ti type="ul">(f,html,bold,open)You want to compare files(f,html,bold,close)</ti>
+  </ti>
+  
+
+ 
+
+      
+  
+</job>
+
+<job id="_compare_dirs?" role="hidden">
+  <ti label="About: Compare Directories">
+    <ti>Compares the files of 2 directories</ti>
+    <ti>Results of this comparison are categorized in 4 groups:</ti>
+    <ti label="()(1) Equals:()">File exists in both directories and has the same value</ti>
+    <ti label="()(2) Changed:()">File exists in both directories but has changed</ti>
+    <ti label="()(3) Only Left:()">File exist only in the socalled 'left/old' directory</ti>
+    <ti label="()(4) Only Left:()">File exist only in the socalled 'right/new' directory</ti> 
+   </ti>
+   
+  <call_job job="do-tk-dirs">
+    <prop id="with-flags" x="print_only print_with_tips (f,when,(f,not,(f,has,prop,pro)),print_all_fields print_tips_only,)"/>
+    <prop id="with-read" x="(f,has,prop,pro)"/>
+  </call_job>
+  
+  <ti type="call_job" job="Compare Directories" explain="Do it and compare directories" label=" " test="(f,has,prop,pro)"/>
+     
+</job>
+
+<job id="Clear Compare Directories?">
+<ti>(f,html,bold,open)Clears the input-memory of 'Compare Directories'(f,html,bold,close)</ti>
+<ti type="ul">The job 'Compare Directories' offers a preselection when selecting directories</ti>
+<ti type="ul">This preselection is only available the first time you do input</ti>
+<ti type="ul">()By using this job, you can use the preselection once again()</ti>
+</job>
+
+<job id="_compare_files?">
+  <ti label="About: Compare Files"> 
+    <ti>Let's you compare 2 files on a textual basis</ti>  
+    <ti>Categorizes the results into 3 groups:</ti>
+    <ti label="()(1) Change:()">A text changed</ti>
+    <ti label="()(2) Insert:()">A new text was encountered</ti>
+    <ti label="()(3) Delete:()">A text was deleted</ti>
+  </ti>
+  
+  <call_job job="do-tk-files">
+    <prop id="with-flags" x="print_only print_with_tips (f,when,(f,not,(f,has,prop,pro)),print_all_fields print_tips_only,)"/>
+    <prop id="with-read" x="(f,has,prop,pro)"/>
+  </call_job>
+  
+  <ti type="call_job" job="Compare Files" explain="Do it and compare files" label=" " test="(f,has,prop,pro)"/>  
+</job>
+<!-- 
+<job id="???" >
+  <file id="ld-file">(dir,pro)dir-diff.xml</file>
+  <choose>
+    <when test="(f,exists_file,(file,ld-file))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <ti label="Welcome to Compare">
+        <ti type="call_job" job="Compare Directories" explain="Go &amp; compare 2 directories ..."/>
+        <ti type="call_job" job="Compare Files" explain="Go &amp; compare 2 text-files ..."/>
+      </ti>
+      <ti_hr/>
+      <call_job job="?"/>
+    </otherwise>
+  </choose>
+</job>
+-->
+<job id="??">
+
+  <file id="ld-file">(dir,pro)dir-diff.xml</file> 
+  <choose>
+    <when test="(f,and,(f,file_exists,(file,ld-file)),(f,exists,prop,pro))">
+      <call_job job="tr_cdir"/>
+      <call_job job="list-differences-internal"/>
+    </when>
+    <otherwise>
+      
+    </otherwise>
+  </choose>
+
+
+  
+</job>
+
+
+</jobs>

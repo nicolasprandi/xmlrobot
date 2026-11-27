@@ -1,0 +1,127 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+
+<call_job job="prolog" />
+<job id="Xsl-Tips?">
+<ti label="About: Xsl-Tips"/>
+<ti type="ul">Brings some advice regarding xsl-coding</ti>
+<ti type="ul">This advice comes in two manners:
+1(e:c) a list of coding-snippes covering typical issues
+2(e:c) a link to a resource-folder with xsl-sample-files. These examples are part of the application</ti>
+
+</job> 
+<job id="Xsl-Tips" tip="A listing of often used xsl-snippets" joblevel="app" xpri="10">
+<ti label="Some Xsl-Files" >
+<ti label="Resources:" type="dir" x="(dir,app)xsl-templates" />
+</ti>
+<ti label="Values"/>
+
+<ti label="Copy:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:copy-of select="@*"/>
+  <xsl:copy-of select="@*|text(e:o)(e:c)"/>
+<xsl:copy-of select="@*|coltype|dims"/>
+<xsl:copy-of select="@*|node(e:o)(e:c)"/>]]>)&lt;font&gt; </ti>
+
+<ti label="Document:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[()document($redu_list)/redus/redu
+<xsl:value-of select="document($ebfile,/)/rows/r[@ri=$rid]/@desc" />()]]>)&lt;font&gt;</ti>
+ 
+<ti label="Attribute:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:attribute name="var">
+  <xsl:text>(e:c)</xsl:text>
+</xsl:attribute>]]>)&lt;font&gt;</ti> 
+
+<ti label="Select:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:value-of select="$name_separator"/>]]>)&lt;font&gt;</ti>
+
+<ti label="Count:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[count(e:o)//unique_rows/coltype_u[@col_index=$col_index]/uniques/unique[@row_index_u=$row_index](e:c) &gt; 0  ]]>)&lt;font&gt;</ti>
+
+
+<ti label="Logic"/>
+<ti label="if document:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:if test="()not(count(document($redu_list)/redus/redu[text()(e:o)(e:c)()=$g])&gt;0)">
+</xsl:if>  ()]]>)&lt;font&gt;</ti> 
+<!-- nic123 hier weitermachen -->     
+
+<ti label="If last:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:if test="not(e:o)position(e:o)(e:c)=last(e:o)(e:c)(e:c)">
+</xsl:if>  ]]>)&lt;font&gt;</ti>      
+
+<ti label="Choose:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:choose>
+  <xsl:when test="@type='dir'">
+  </xsl:when>  
+  <xsl:otherwise>
+  </xsl:otherwise>
+</xsl:choose>]]>)&lt;font&gt;</ti>               
+
+<ti label="For Each:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:for-each select="field[@name_flag=1]" >
+  <xsl:sort select="@position" data-type="number"/>
+</xsl:for-each>  ]]>)&lt;font&gt;</ti>                   
+        
+<ti label="Templates"/>
+<ti label="Apply Template:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:apply-templates select="field" mode="data"/>  ]]>)&lt;font&gt;</ti>      
+
+<ti label="Template:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:template match="field" mode="data">
+</xsl:template>  ]]>)&lt;font&gt;</ti>      
+
+<ti label="Named Templates"/>
+<ti label="Apply Template:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:call-template name="do_file">
+  <xsl:with-param name="g"><xsl:value-of select="@g"/></xsl:with-param>
+</xsl:call-template>  ]]>)&lt;font&gt;</ti>      
+
+<ti label="Template:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:template name="do_file">
+  <xsl:param name="g"/>
+</xsl:template>  ]]>)&lt;font&gt;</ti>        
+
+<ti label="Programm structure"/>
+<ti label="Stylsheet:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml" indent="yes"/>
+<xsl:include href="include-hooks2.xsl" />
+<xsl:template match="/">
+   <xsl:apply-templates/>
+</xsl:template>
+<xsl:template match="conf">
+</xsl:template>
+</xsl:stylesheet>]]>)&lt;font&gt;</ti>           
+
+<ti label="Include:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:include href="updater.xsl"/>  ]]>)&lt;font&gt;</ti>     
+
+<ti label="Handling Variables"/>  
+<ti label="Waterfall 1:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:apply-templates select="//dims/dim_col/col">
+  <xsl:with-param name="row_index" select="@row_index"/>
+</xsl:apply-templates>]]>)&lt;font&gt;</ti>   
+
+<ti label="Waterfall 2:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:template match="col">
+  <xsl:param name="row_index"/>  
+  <xsl:call-template name="col2">
+    <xsl:with-param name="col_index" select="@col - 1"/>
+    <xsl:with-param name="row_index" select="$row_index"/>
+  </xsl:call-template>    
+</xsl:template>  ]]>)&lt;font&gt;</ti>       
+
+<ti label="Waterfall 3:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:template name="col2">
+  <xsl:param name="row_index"/>
+  <xsl:param name="col_index"/>
+</xsl:template>  ]]>)&lt;font&gt;</ti>   
+
+<ti label="Generate Xsl"/>
+<ti label="Element:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:element name="xsl:output">
+  <xsl:attribute name="method">xml</xsl:attribute>
+  <xsl:attribute name="indent">yes</xsl:attribute>
+</xsl:element>  ]]>)&lt;font&gt;</ti>   
+
+<ti label="axsl Header:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<xsl:stylesheet version="1.0"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:axsl="http://www.w3.org/1999/XSL/TransformAlias">
+<xsl:namespace-alias stylesheet-prefix="axsl" result-prefix="xsl"/>]]>)&lt;font&gt;</ti>       
+
+<ti label="axsl Usage:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,<![CDATA[<axsl:stylesheet version="1.0">
+  <axsl:template name="row_header">
+  </axsl:template>
+</axsl:stylesheet>  ]]>)&lt;font&gt;</ti>   
+
+</job>
+
+
+
+
+</jobs>

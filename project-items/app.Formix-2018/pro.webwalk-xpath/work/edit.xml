@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="find-edit">
+    <need>(prop,find_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="find-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="find-editor"/>
+    <call_job job="find-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- Selektor '(f,text,cut_nice,(prop,find_titel),40)'"/>
+    </ti>
+    <call_job job="find-see"/>
+</job>

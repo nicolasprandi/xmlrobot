@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rezpic-see">
+<need>(prop,rezpic_key)</need>
+<call_job job="rezpic-read"/>
+<prop x="print print_only" id="rezpics_tk_control"/>
+<prop id="label" x="Rezept-Pic: (f,html,bold,open)(f,text,cut_nice,(prop,rezpic_bez),20)(f,html,bold,close)(f,when,(f,has,(prop,rezpics_offset_label)), - (prop,rezpics_offset_label),)"/>
+<call_job job="rezpic-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="[ ? ]" align="right" job="rezpic-see-more">
+<prop id="rezpic_key">(prop,rezpic_key)</prop>
+<file id="rezpics">(file,rezpics)</file>
+<prop id="rezpics_offset">(prop,rezpics_offset)</prop>
+<prop id="rezpics_offset_label">(prop,rezpics_offset_label)</prop>
+<prop id="rezpics_offset_new_key">(prop,rezpics_offset_new_key)</prop>
+<prop id="rezpics_sort_attribute">(prop,rezpics_sort_attribute)</prop>
+<prop id="rezpics_sort_number">(prop,rezpics_sort_number)</prop>
+<prop id="rezpics_where">(prop,rezpics_where)</prop>
+<prop id="rezpics_return_job">(prop,rezpics_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag=" block" type="call_job" explain="[ Editiere Rezept-Pic ]" job="rezpic-edit">
+<prop id="rezpic_key">(prop,rezpic_key)</prop>
+<file id="rezpics">(file,rezpics)</file>
+<prop id="rezpics_offset">(prop,rezpics_offset)</prop>
+<prop id="rezpics_offset_label">(prop,rezpics_offset_label)</prop>
+<prop id="rezpics_offset_new_key">(prop,rezpics_offset_new_key)</prop>
+<prop id="rezpics_sort_attribute">(prop,rezpics_sort_attribute)</prop>
+<prop id="rezpics_sort_number">(prop,rezpics_sort_number)</prop>
+<prop id="rezpics_where">(prop,rezpics_where)</prop>
+<prop id="rezpics_return_job">(prop,rezpics_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-rezpic-detail-end</trace>
+<call_job job="hook-rezpic-detail-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: rezpic-details: end.0">
+<ti> hook_job=hook-rezpic-detail-end hook=end page=details station=0 object=rezpic</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

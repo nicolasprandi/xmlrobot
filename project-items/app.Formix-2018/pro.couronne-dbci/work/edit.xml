@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dbci-edit">
+<need>(prop,dbci_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="dbci-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="dbci-editor"/>
+<call_job job="dbci-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_dbci) '(f,text,cut_nice,(prop,dbci_id),50)'"/>
+</ti>
+<call_job job="event_post_update_dbci"/>
+</job>

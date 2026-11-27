@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+
+<job id="Report" tip="shows last report" role="dev">
+  <choose>
+    <when test="(f,file_exists,(file,result))">
+      <call_job job="report-internal"/>
+    </when>
+    <otherwise>
+      <ti>No Report available.</ti>
+    </otherwise>
+  </choose>  
+
+</job>
+
+<job id="report-internal" role="hidden">
+  <spirit id="result" xml="(file,result)" act="open" flag="nuevo"/>
+  
+  <call_job job="read-ic-search"/>
+  <ti label="Parameters">
+    <ti label="Search for:">(f,html,bold,open)(prop,search_for)(f,html,bold,close) as (f,when,(f,eq,regex,(prop,search_type)),Regular Expression,Text)</ti>
+    <ti label="Where:" type="dir" flag="flow">(dir,search_dir)</ti>
+  </ti>
+
+  <ti label="Result">  
+    <ti label="Found:">(f,html,bold,open)(f,spirit,result,@sum_times) Time(f,plural,(f,spirit,result,@sum_times))(f,html,bold,close) in (f,html,bold,open)(f,spirit,result,@sum_files) File(f,plural,(f,spirit,result,@sum_files))(f,html,bold,close)(f,when,(f,eq,0,(f,spirit,result,@sum_times)),(e:s) Nothing Found,)</ti>  
+  </ti>
+  
+  <ti label="Developer Info" test="(f,role,hidden)">
+    <ti type="file" label="Scan:" x="(file,scan)"/>
+    <ti type="file" label="Result:" x="(file,result)"/>
+  </ti>
+  <ti_hr/>
+  <ti label="Result Summary"/> 
+  <loop id="files" spirit="result" xpath="file" sort="@filename" ignore_case="@filename">
+
+    <ti type="file" x="(dir,search_dir)(loop,files,@fn_rel)" flag="flow label_right wrap" 
+    label="(loop,files,@times) time(f,plural,(loop,files,@times))"/>
+    
+  </loop>
+  <ti_hr/>
+  <ti_break/>  
+  <ti label="Details per file ..."/>
+  <loop id="files" spirit="result" xpath="file" sort="@filename" ignore_case="@filename">
+    <ti_hr/>
+
+    <!-- ueberschrift fuer file -->    
+    <choose>
+      <when test="(f,implement,online)">      
+        <ti type="call_service" job="Panorama-File-Activity" explain="(f,substring,(loop,files,@fn_rel),0)" key="(f,html,bold,open)(loop,files,@times) Time(f,plural,(loop,files,@times))(f,html,bold,close)">
+          <file id="with">(dir,search_dir)(loop,files,@fn_rel)</file>
+        </ti>      
+      </when>
+      <otherwise>
+        <ti type="file" x="(dir,search_dir)(loop,files,@fn_rel)" flag="flow focus" key="(f,html,bold,open)(loop,files,@times) Time(f,plural,(loop,files,@times))(f,html,bold,close)"/>
+    </otherwise>
+    </choose>
+    <ti_break test="(f,implement,online)"/>
+
+    <loop id="findings" spirit="result" xpath="file[@id=(f,xpath_string,(loop,files,@id))]/finding">
+      <ti_hr style="2" test="(f,gt,(loop,findings,#i),1)"/>
+      <ti label="(e:o)(loop,findings,#i)(e:c)"  flag="label_right">(loop,findings,before)(f,html,bold,open)(loop,findings,found)(f,html,bold,close)(loop,findings,after)</ti>
+    </loop>
+    <when test="(f,role,boss)">
+      <ti_hr style="2"/>
+      <ti type="call_job" 
+          job="Replace File" 
+          explain="Replace (loop,files,@times) time(f,plural,(loop,files,@times)) in '(loop,files,@fn_rel)'" label=" ">
+        <prop id="requ_file_id">(loop,files,@file_id)</prop>
+      </ti>
+    </when>
+    
+  </loop>
+  <when test="(f,and,(f,gt,(f,spirit,result,@sum_times),0),(f,role,boss))">
+    <ti_hr/>
+    <ti type="call_job" 
+        job="Replace All Files" 
+        explain="Replace all files: (f,html,bold,open)(f,spirit,result,@sum_times) Time(f,plural,(f,spirit,result,@sum_times))(f,html,bold,close) in (f,html,bold,open)(f,spirit,result,@sum_files) File(f,plural,(f,spirit,result,@sum_files))(f,html,bold,close)" />
+  </when>
+  <ti_hr/>
+  
+  
+  <spirit id="result" act="close"/>
+</job>
+
+
+
+</jobs>

@@ -1,0 +1,208 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+  <file id="cd-dirlist">(dir,pro)api-comp-dirs-dirlist.xml</file>
+  <file id="cd-dirlist-2">(dir,pro)api-comp-dirs-dirlist-2.xml</file>
+  <file id="cd-dirlist-3">(dir,pro)api-comp-dirs-dirlist-3.xml</file>
+  <file id="cd-paras">(dir,pro)api-comp-dirs.xml</file>
+
+<job id="group_to_0" role="hidden">
+  <throw>Shouldn't be here in group_to_0</throw>
+
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="0"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="0"
+                          flag="noupdate" />    
+</job>
+
+<job id="perform_reduction2" role="hidden">
+  <throw>Shouldn't be here in perform_reduction2</throw>
+  <when test="(f,exists,prop,redu_cat_type)">
+    <when test="(f,not,(f,eq,,(prop,redu_cat_type)))">
+      <tp>Performing Reductions ...</tp>
+      <!-- <ti>Performing Reductions ...</ti>  -->
+      <file id="flist">(dir,filetemp)pano-clist.txt</file>
+      <create_file out="(file,flist)">(prop,redu_cat_cats)</create_file>
+      <prop id="sammeln">-</prop>
+      <loop id="redus" file="(file,flist)" regex="\d+">
+        <trace>(loop,redus,#i)) (loop,redus)</trace>
+        <prop id="sammeln">(prop,sammeln)(loop,redus)-</prop>
+      </loop>      
+      <ti type="text" label="Reductions for">(prop,sammeln)</ti>
+
+      <loop_xml id="redu" 
+                  act="open" 
+                  spirit="scan" 
+                  xpath="//file" />
+
+      <!-- test: sammeln contains -@g- -->
+      <choose>
+        <when test="(f,eq,1,(prop,redu_cat_type))">
+          <!-- positive reduction -->      
+          <loop id="redu2" while="()(f,loop_xml,redu,has_next?)()">
+            <loop_xml id="redu" act="next"/>
+            
+            <when test="(f,not,(f,contains,(prop,sammeln),-(f,loop_xml,redu,@g)-))">
+              <spirit id="scan"
+                      act="xml_update"
+                      where_is_loop_xml="redu"
+                      how="remove"/>                      
+            </when>
+          </loop>
+        </when>
+        
+        <when test="(f,eq,2,(prop,redu_cat_type))">
+          <!-- negative reduction -->      
+          <loop id="redu2" while="()(f,loop_xml,redu,has_next?)()">
+            <loop_xml id="redu" act="next"/>
+            <when test="(f,contains,(prop,sammeln),-(f,loop_xml,redu,@g)-)">
+              <spirit id="scan"
+                      act="xml_update"
+                      where_is_loop_xml="redu"
+                      how="remove"/>          
+            </when>
+          </loop>
+        </when>        
+        
+      </choose>       
+      <loop_xml id="redu" 
+                  act="close" />
+
+
+      <loop_xml id="toomuch" 
+                  act="open" 
+                  spirit="scan" 
+                  xpath="()//dir[count(.//file)=0]()" />
+                  
+      <loop id="toomuch2" while="()(f,loop_xml,toomuch,has_next?)()">
+        <loop_xml id="toomuch" act="next"/>
+          <!-- <i>Dir too much: (f,loop_xml,toomuch,@ipath)</i>  -->
+          <spirit id="scan"
+                  act="xml_update"
+                  where_is_loop_xml="toomuch"
+                  how="remove"/>                      
+      </loop>                  
+                                                     
+      <loop_xml id="toomuch" 
+                  act="close"  />     
+                                             
+    </when>
+  </when>
+
+</job>
+
+<job id="do_exclude_path" role="hidden">
+    <throw>Shouldn't be here in do_exclude_path</throw>
+    <tp>doing path exclude for '(prop,et_scan_path_exclude)'</tp>
+    <spirit id="off" act="open" xml="(file,left)" flag="nuevo"/>
+    <prop id="cr">0</prop>
+    <loop_xml id="off" 
+                  act="open" 
+                  spirit="off" 
+                  xpath="//dir[contains(@ipath,(f,xpath_string,(prop,et_scan_path_exclude)))]" />    
+
+          <loop id="w-off" while="()(f,loop_xml,off,has_next?)()">
+            <loop_xml id="off" act="next"/>
+            <trace>removed (f,loop_xml,off,@ipath) with dir-id=(f,loop_xml,off,@id)</trace>
+            <!-- <when test="(f,not,(f,contains,(prop,sammeln),-(f,loop_xml,redu,@g)-))"> -->
+
+                <spirit id="off"
+                      act="xml_update"
+                      where_is_loop_xml="off"
+                      how="remove"/>
+                <prop id="cr">(f,add,1,(prop,cr))</prop>
+            <!-- </when> -->
+          </loop>
+
+    <loop_xml id="off" 
+                  act="close" />    
+          
+    <spirit id="off" act="close" flag="save" ouxxt="(dir,pro)xxx.xml"/>
+    <tp>path exclude removed (prop,cr) directories</tp>
+    
+</job>
+
+<job id="irgendwas" role="hidden">
+  <throw>Shouldn't be here in irgendwas</throw>
+    <tp>doing path exclude for '(prop,et_scan_path_exclude)'</tp>
+    <choose>
+      <when test="(f,eq,(prop,org_key),(prop,scan_key))">
+      
+        <!-- Verarbeite scan -->
+        
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="(f,loop_xml,org,..,@id)"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan" act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="(f,loop_xml,org,@id)"
+                          flag="noupdate" />                                  
+
+        <call_job job="read_scan" />
+        
+      </when>
+
+      <when test="(f,eq,(prop,scan_key),?#?#?)">
+        <!-- File with no extension -->
+          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="0"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="0"
+                          flag="noupdate" /> 
+                                                       
+        <call_job job="read_scan" />
+      </when>
+                
+      <when test="(f,lt,(prop,org_key),(prop,scan_key))">
+        <call_job job="read_org" />
+      </when>
+      
+      <otherwise>
+        <!-- File with no extension -->
+          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="g" 
+                          value="0"
+                          flag="noupdate" />  
+                          
+        <spirit id="scan"  act="xml_update" 
+                          where_is_loop_xml="scan" 
+                          how="set_attribute" 
+                          attribute="e" 
+                          value="0"
+                          flag="noupdate" /> 
+                                                       
+        <call_job job="read_scan" />
+      </otherwise>
+     </choose>      
+</job>
+
+
+</jobs>

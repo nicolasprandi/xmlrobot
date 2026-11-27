@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pga-see">
+<need>(prop,pga_key)</need>
+<need default="">(prop,pgas_sort_attribute)</need>
+<need default="">(prop,pgas_sort_number)</need>
+<need default="">(prop,pgas_sort_ignore_case)</need>
+<need default="">(prop,pgas_sort_desc)</need>
+<need default="">(prop,pgas_where)</need>
+<need default="">(prop,pgas_offset_label)</need>
+<need default="">(prop,pgas_offset)</need>
+<need default="">(prop,pgas_return_job)</need>
+<need default="//">(prop,pgas_offset_new_key)</need>
+<need default="">(prop,pgos_sort_attribute)</need>
+<need default="">(prop,pgos_sort_number)</need>
+<need default="">(prop,pgos_sort_ignore_case)</need>
+<need default="">(prop,pgos_sort_desc)</need>
+<need default="">(prop,pgos_where)</need>
+<need default="">(prop,pgos_offset_label)</need>
+<need default="">(prop,pgos_offset)</need>
+<need default="">(prop,pgos_return_job)</need>
+<need default="//">(prop,pgos_offset_new_key)</need>
+<need default="(file,pgas)">(file,pgos)</need>
+<call_job job="tr_pga"/>
+<prop x="print print_only" id="pgas_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,pgas_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="pga-see">
+<prop id="pga_key">(prop,pga_key)</prop>
+<file id="pgas">(file,pgas)</file>
+<prop id="pgas_offset">(prop,pgas_offset)</prop>
+<prop id="pgas_offset_label">(prop,pgas_offset_label)</prop>
+<prop id="pgas_offset_new_key">(prop,pgas_offset_new_key)</prop>
+<prop id="pgas_sort_attribute">(prop,pgas_sort_attribute)</prop>
+<prop id="pgas_sort_number">(prop,pgas_sort_number)</prop>
+<prop id="pgas_sort_ignore_case">(prop,pgas_sort_ignore_case)</prop>
+<prop id="pgas_sort_desc">(prop,pgas_sort_desc)</prop>
+<prop id="pgas_where">(prop,pgas_where)</prop>
+<prop id="pgas_return_job">(prop,pgas_return_job)</prop>
+<file id="pgos">(file,pgos)</file>
+<prop id="pgos_offset">(prop,pgos_offset)</prop>
+<prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+<prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+<prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+<prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+<prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+<prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+<prop id="pgos_where">(prop,pgos_where)</prop>
+<prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+<prop id="pgo_key">(prop,pgo_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="pgo-see">
+<file id="pgas">(file,pgas)</file>
+<prop id="pgas_offset">(prop,pgas_offset)</prop>
+<prop id="pgas_offset_label">(prop,pgas_offset_label)</prop>
+<prop id="pgas_offset_new_key">(prop,pgas_offset_new_key)</prop>
+<prop id="pgas_sort_attribute">(prop,pgas_sort_attribute)</prop>
+<prop id="pgas_sort_number">(prop,pgas_sort_number)</prop>
+<prop id="pgas_sort_ignore_case">(prop,pgas_sort_ignore_case)</prop>
+<prop id="pgas_sort_desc">(prop,pgas_sort_desc)</prop>
+<prop id="pgas_where">(prop,pgas_where)</prop>
+<prop id="pgas_return_job">(prop,pgas_return_job)</prop>
+<file id="pgos">(file,pgos)</file>
+<prop id="pgos_offset">(prop,pgos_offset)</prop>
+<prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+<prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+<prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+<prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+<prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+<prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+<prop id="pgos_where">(prop,pgos_where)</prop>
+<prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+<prop id="pgo_key">(prop,pgo_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<call_job job="pga-read"/>
+<prop id="pga_default_label_class" x="(prop,_sl_pga)"/>
+<prop id="pga_default_label_name" x="(f,tk_sel_translate,(prop,pga_attributtyp),(file,pdi-sel-attr))(f,when,(f,has,(prop,pgas_offset_label)), - (prop,pgas_offset_label),)"/>
+<call_job job="pga-tk"/>
+<ti_space height="3px"/>
+<ti type="menu" info="an-edit-button-details" first_cell="2">
+<ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailPga" explain="(prop,_x_edit)" job="pga-edit">
+<prop id="pga_key">(prop,pga_key)</prop>
+<file id="pgas">(file,pgas)</file>
+<prop id="pgas_offset">(prop,pgas_offset)</prop>
+<prop id="pgas_offset_label">(prop,pgas_offset_label)</prop>
+<prop id="pgas_offset_new_key">(prop,pgas_offset_new_key)</prop>
+<prop id="pgas_sort_attribute">(prop,pgas_sort_attribute)</prop>
+<prop id="pgas_sort_number">(prop,pgas_sort_number)</prop>
+<prop id="pgas_sort_ignore_case">(prop,pgas_sort_ignore_case)</prop>
+<prop id="pgas_sort_desc">(prop,pgas_sort_desc)</prop>
+<prop id="pgas_where">(prop,pgas_where)</prop>
+<prop id="pgas_return_job">(prop,pgas_return_job)</prop>
+<file id="pgos">(file,pgos)</file>
+<prop id="pgos_offset">(prop,pgos_offset)</prop>
+<prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+<prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+<prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+<prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+<prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+<prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+<prop id="pgos_where">(prop,pgos_where)</prop>
+<prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+<prop id="pgo_key">(prop,pgo_key)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskPga" explain="(prop,_label_askask)" job="pga-see-more">
+<prop id="pga_key">(prop,pga_key)</prop>
+<file id="pgas">(file,pgas)</file>
+<prop id="pgas_offset">(prop,pgas_offset)</prop>
+<prop id="pgas_offset_label">(prop,pgas_offset_label)</prop>
+<prop id="pgas_offset_new_key">(prop,pgas_offset_new_key)</prop>
+<prop id="pgas_sort_attribute">(prop,pgas_sort_attribute)</prop>
+<prop id="pgas_sort_number">(prop,pgas_sort_number)</prop>
+<prop id="pgas_sort_ignore_case">(prop,pgas_sort_ignore_case)</prop>
+<prop id="pgas_sort_desc">(prop,pgas_sort_desc)</prop>
+<prop id="pgas_where">(prop,pgas_where)</prop>
+<prop id="pgas_return_job">(prop,pgas_return_job)</prop>
+<file id="pgos">(file,pgos)</file>
+<prop id="pgos_offset">(prop,pgos_offset)</prop>
+<prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+<prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+<prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+<prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+<prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+<prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+<prop id="pgos_where">(prop,pgos_where)</prop>
+<prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+<prop id="pgo_key">(prop,pgo_key)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<call_job job="hook_pga_details_end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: pga-details: end.0">
+<ti> hook_job=hook_pga_details_end hook=end page=details station=0 object=pga</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,pgas_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="pga-see">
+<prop id="pga_key">(prop,pga_key)</prop>
+<file id="pgas">(file,pgas)</file>
+<prop id="pgas_offset">(prop,pgas_offset)</prop>
+<prop id="pgas_offset_label">(prop,pgas_offset_label)</prop>
+<prop id="pgas_offset_new_key">(prop,pgas_offset_new_key)</prop>
+<prop id="pgas_sort_attribute">(prop,pgas_sort_attribute)</prop>
+<prop id="pgas_sort_number">(prop,pgas_sort_number)</prop>
+<prop id="pgas_sort_ignore_case">(prop,pgas_sort_ignore_case)</prop>
+<prop id="pgas_sort_desc">(prop,pgas_sort_desc)</prop>
+<prop id="pgas_where">(prop,pgas_where)</prop>
+<prop id="pgas_return_job">(prop,pgas_return_job)</prop>
+<file id="pgos">(file,pgos)</file>
+<prop id="pgos_offset">(prop,pgos_offset)</prop>
+<prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+<prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+<prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+<prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+<prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+<prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+<prop id="pgos_where">(prop,pgos_where)</prop>
+<prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+<prop id="pgo_key">(prop,pgo_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="pgo-see">
+<file id="pgas">(file,pgas)</file>
+<prop id="pgas_offset">(prop,pgas_offset)</prop>
+<prop id="pgas_offset_label">(prop,pgas_offset_label)</prop>
+<prop id="pgas_offset_new_key">(prop,pgas_offset_new_key)</prop>
+<prop id="pgas_sort_attribute">(prop,pgas_sort_attribute)</prop>
+<prop id="pgas_sort_number">(prop,pgas_sort_number)</prop>
+<prop id="pgas_sort_ignore_case">(prop,pgas_sort_ignore_case)</prop>
+<prop id="pgas_sort_desc">(prop,pgas_sort_desc)</prop>
+<prop id="pgas_where">(prop,pgas_where)</prop>
+<prop id="pgas_return_job">(prop,pgas_return_job)</prop>
+<file id="pgos">(file,pgos)</file>
+<prop id="pgos_offset">(prop,pgos_offset)</prop>
+<prop id="pgos_offset_label">(prop,pgos_offset_label)</prop>
+<prop id="pgos_offset_new_key">(prop,pgos_offset_new_key)</prop>
+<prop id="pgos_sort_attribute">(prop,pgos_sort_attribute)</prop>
+<prop id="pgos_sort_number">(prop,pgos_sort_number)</prop>
+<prop id="pgos_sort_ignore_case">(prop,pgos_sort_ignore_case)</prop>
+<prop id="pgos_sort_desc">(prop,pgos_sort_desc)</prop>
+<prop id="pgos_where">(prop,pgos_where)</prop>
+<prop id="pgos_return_job">(prop,pgos_return_job)</prop>
+<prop id="pgo_key">(prop,pgo_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

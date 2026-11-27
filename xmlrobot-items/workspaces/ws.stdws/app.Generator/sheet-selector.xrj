@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2020 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="follow-spreadsheet" role="hidden">
+
+  <choose>
+    <when test="(f,has,prop,sys_follow_value)">
+      <call_job job="create-sheet-selector">
+        <file id="css-by-spreadsheet" x="(prop,sys_follow_value)" />
+      </call_job>
+    </when>
+    <otherwise>
+      <copy file="(file,empty-selection)" tofile="(file,sheet-selector)"/>
+    </otherwise>
+  </choose>
+      
+</job>
+
+<job id="create-sheet-selector" role="hidden">
+  <need>(file,css-by-spreadsheet)</need> 
+
+  <excel_sheets
+    excel="(file,css-by-spreadsheet)"
+    out="(dir,filetemp)sheets.xml" />
+    
+  <xslt
+    xml="(dir,filetemp)sheets.xml"
+    xsl="(dir,app)sheetlist2sel.xsl"
+    out="(file,sheet-selector)"/>  
+    
+</job>
+
+</jobs>

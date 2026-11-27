@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2018-2020 Nicolas Prandstaetter. All rights reserved.  -->
+
+<jobs>
+<call_job job="prolog"/>
+
+<!-- surf-core, make your changes here -->
+<job id="tk_surf_core" role="hidden" tip="surf_: Tk Internal">
+  <call_job job="tr_search"/>
+
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is this great app</throw>
+  
+  <need default="">(prop,tk_surf_add_flag)</need>
+  <need default="5">(prop,surf_id)</need>
+  <tk label="(prop,_sl_surf_head)" 
+      flag="(prop,tk_surf_add_flag)"
+      >     
+         
+    <tk id="surf_id" 
+        label="(prop,_sl_object)-Id" 
+        tip="(prop,_sl_surf_id_tip)"
+        regex="\d+"
+        flag="nono"
+        regex_msg="(prop,_sl_surf_nummsg)"
+        cols="20"/>
+                                 
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_surf_edit" tip="surf_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,surf-data))">
+      <!-- data exists already -->
+      <prop id="tk_surf_add_flag" x="sum_xonly xprint"/>
+      <call_job job="tk_surf_read"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_surf_add_flag" x="suxm xprint"/>
+    </otherwise>
+  </choose>
+  
+  <!-- doing input -->
+  <call_job job="tk_surf_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_surf_write"/>
+
+</job>
+
+
+
+<job id="tk_surf_print_values" tip="surf_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_surf_read"/>
+  
+  <call_job job="tk_surf_core">
+    <prop id="tk_surf_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_surf_print_values_tips" tip="surf_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_surf_read"/>
+  
+  <call_job job="tk_surf_core">
+    <prop id="tk_surf_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_surf_print_help" tip="surf_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_surf_core">
+    <prop id="tk_surf_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_surf_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,surf-data)" />
+    <prop id="joe-in-regex" x="(prop,surf-regex)" />
+  </call_job>
+  
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_surf_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,surf-data)" />
+    <prop id="joe-in-regex" x="(prop,surf-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_surf_clear"  tip="surf_: Clears the data" role="hidden">
+  <delete file="(file,surf-data)"/>
+</job>
+
+
+</jobs>

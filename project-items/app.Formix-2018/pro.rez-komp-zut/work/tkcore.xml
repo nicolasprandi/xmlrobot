@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="kompzut-tk">
+<need default="">(prop,kompzuts_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,kompzuts_tk_control) wrap ">
+<tk label="(f,vob,prop,myclassZutat)" id="kompzut_zut_key" x="" test_first="1" tip="Verwendete Zutat" type="sel" flag=" nono " xml="(file,akt-zutatenliste)"/>
+<tk label="Komponente" id="kompzut_komp_key" x="" test_first="1" tip="in der Komponente" test="0" type="sel" flag=" nono " xml="(file,akt-komponentenliste)"/>
+<tk label="Anteil" id="kompzut_anteil" x="" test_first="1" tip="mengenanteil bezogen auf die zutaten-menge – eg 10%  oder ¼" type="text" flag=" "/>
+<tk label="Beschreibung" id="kompzut_besch" x="" test_first="0" type="textblock" flag=" "/>
+</tk>
+</job>

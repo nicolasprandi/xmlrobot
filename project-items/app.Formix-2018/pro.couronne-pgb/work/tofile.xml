@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pgb-write">
+<need>(prop,pgb_key) (prop,isAdd)</need>
+<need default="./">(prop,pgbs_offset)</need>
+<spirit act="open" id="pgbs_spirit_tc" xml="(file,pgbs)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,pgbs_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,pgbs_offset),0,(f,sub,(f,len,(prop,pgbs_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,pgbs_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="pgbs_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;pgb row="(prop,pgb_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="pgbs_spirit_tc" where="(prop,pgbs_offset)pgb[@row='(prop,pgb_key)']" attribute="beztyp" value="(f,vob,prop,pgb_beztyp)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="pgbs_spirit_tc" where="(prop,pgbs_offset)pgb[@row='(prop,pgb_key)']" attribute="detail" value="(f,vob,prop,pgb_detail)"/>
+<spirit act="close" flag="save pretty" id="pgbs_spirit_tc"/>
+</job>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="komp-edit">
+<need>(prop,komp_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="komp-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="komp-editor"/>
+<call_job job="komp-write"/>
+<ti align="right" x="Did update Komponente '(f,text,cut_nice,(prop,komp_bez),20)'"/>
+<call_job job="komp-see"/>
+</job>

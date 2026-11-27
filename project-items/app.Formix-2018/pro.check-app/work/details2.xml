@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="app-see-more">
+<need>(prop,app_key)</need>
+<call_job job="app-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="apps_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,app_appid)(f,html,bold,close)(f,when,(f,has,(prop,apps_offset_label)), - (prop,apps_offset_label),)"/>
+<call_job job="app-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="Edit Data of Application" job="app-edit">
+<prop id="app_key">(prop,app_key)</prop>
+<file id="apps">(file,apps)</file>
+<prop id="apps_offset">(prop,apps_offset)</prop>
+<prop id="apps_offset_label">(prop,apps_offset_label)</prop>
+<prop id="apps_offset_new_key">(prop,apps_offset_new_key)</prop>
+<prop id="apps_sort_attribute">(prop,apps_sort_attribute)</prop>
+<prop id="apps_sort_number">(prop,apps_sort_number)</prop>
+<prop id="apps_where">(prop,apps_where)</prop>
+<prop id="apps_return_job">(prop,apps_return_job)</prop>
+</ti>
+</ti>
+</job>

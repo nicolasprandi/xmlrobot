@@ -1,0 +1,172 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.  -->
+
+<jobs>                                                         
+<call_job job="prolog"/>
+
+<job id="sys_project_setup" role="hidden">
+
+  <tk label="Welcome to Backup-Manager: (prop,pro)">
+  <tk label="You are going to be asked for:" 
+    type="accept" 
+    id="psi-1" 
+    x="()1. A directory to make a backup of&#xA;2. A title for that folder (Default will be the directories name)&#xA;3. A filter for the selection of files (optional)&#xA;4. A negative filter for the omittment of files (optional)&#xA;&#xA;Finally:&#xA;- Confirm the review-page with [ Ok ] and &#xA;- Add more folders if you want to ('Add another Source')()" 
+    label_accept="Ok(e:s) lets go" 
+    label_decline="Cancel" 
+    width="340" height="210">
+  </tk>
+  </tk>
+      
+  <call_job job="Add another Source" />
+</job>
+
+<job id="Make Backup" tip="Makes a Backup">
+  <call_job job="need_source"/>
+  
+  <when test="(prop,need_source_ok)">
+    <tk label="Make a backup">
+      <tk id="add" label="Backup Title" rule="filename_with_blanks"/>
+    </tk>
+    
+    <prop id="add">(f,good_filename,(prop,add))</prop>
+    <prop id="add_len">(f,len,(prop,add))</prop>
+    <choose>
+      <when test="(f,gt,(prop,add_len),0)">
+        <prop id="add2">.(prop,add)</prop>
+      </when>
+      <otherwise>
+        <prop id="add2"></prop>
+      </otherwise>
+    </choose>
+    <sequence id="backups" act="next" />      
+    <dir id="dest">(dir,backups)(f,sequence,backups)_(f,time,yyyy-MM-dd,job)_(f,time,HH-mm,job)(prop,add2)</dir>
+
+    <file id="ant">(dir,filetemp)ant-do-(f,random_text,7)backup.xml</file>
+    <prop id="code">(f,random_text,16)</prop>
+    <ti type="file" x="(file,ant)" test="0"/>
+    <xslt 
+        xml="(file,sources)" 
+        xsl="(dir,app)pkg_2_ant.xsl" 
+        out="(file,ant)"
+        code="(prop,code)">
+        <params>dest='(f,xslp,(f,escape,sys,(dir,dest)))'</params>
+    </xslt>
+    <ti xtest="(prop,debug)" type="file" label="Ant:">(file,ant)</ti>
+    <!-- <throw>ok</throw>  -->
+    <include file="(file,ant)" code="(prop,code)"/>
+    
+    <ti label="Backup Done!"/>
+    <choose>
+      <when test="(f,exists_dir,(dir,dest))">
+        <ti label="Created Backup:" type="dir" flag="flow wrap">(dir,dest)</ti>
+  
+  <choose>     
+    <when test="(f,has,prop,conf_trailer)">
+      <tp>Executing backup trailer ...</tp>
+      <prop id="code">(f,random_text,16)</prop>
+      <file id="bt-temp" x="(dir,filetemp)bu-trai(f,random_text,8)ler.xrs"/>
+        <create_file out="(file,bt-temp)" code="(prop,code)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+  <steps>(prop,conf_trailer)</steps>]]></create_file>
+      <ti label=" " key="(f,html,b,open)...executing backup-trailer(f,html,b,close)"/>
+      <dir id="bt-dir" x="(dir,dest)"/>
+      <include file="(file,bt-temp)" code="(prop,code)"/>
+    </when>
+    <otherwise>
+      <ti type="call_service" 
+          job="archify_backup" 
+          explain="Export this Backup to a zip"
+          label=" ">
+        <dir  id="eb_dir"   x="(dir,dest)"/>
+        <file id="eb_file"  x="(dir,workspace)bu-(prop,pro)_(f,replace,(f,name_of_dir,(dir,dest)),.,_).zip"/>
+        <prop id="eb_title" x="(prop,pro)"/>
+      </ti>    
+    </otherwise>
+  </choose>
+        
+
+
+
+
+        <ti_hr/>
+          <prop id="list_limit">(prop,conf_limit)</prop>
+        
+          <call_job job="List Backups-Internal"/>
+      </when>
+      <otherwise>
+        <ti label="But:">There was nothing found to make a backup of</ti>
+        <ti label=" ">Check your include or exclude-parameters</ti>
+      </otherwise>
+    </choose>  
+  
+  </when>
+  
+</job>
+
+<job id="Define Backup" joblevel="pro" role="user" tip="Let's you define the backup-folders">
+
+  <call_job job="source-see-all" />
+</job>
+<job id="List Backups-Internal" role="hidden">
+  
+  <scan
+    dir="(dir,backups)"
+    out="(file,api-dirs)"
+    level_limit="1" 
+    field="fn pre post"/>
+
+  <choose>
+    <when test="(f,exists,prop,list_limit)">
+      <prop id="limit-xsl">(prop,list_limit)</prop>       
+    </when>
+    <otherwise>
+      <prop id="limit-xsl">0</prop>
+    </otherwise>
+  </choose>
+  
+  <print id="o1" out="(file,api-paras)" act="open"/>
+  <print id="o1" act="print">&lt;paras limit="(x,(prop,limit-xsl))" label="(x,(prop,pro))" /&gt;</print>
+  <print id="o1" act="close"/>  
+  
+  <call_job job="List Backups"/>
+</job>
+
+<job id="??" joblevel="pro">
+  <choose>
+    <when test="(f,has,prop,pro)">
+      
+      <call_job job="need_source"/>
+    
+      <when test="(prop,need_source_ok)">
+        <ti label="Actions">
+          <ti type="call_job" job="Make Backup" explain="Make a Backup ..."/>
+        </ti>    
+        <choose>
+        
+          <when test="(f,file_exists,(file,sources))">
+              <prop id="list_limit">(prop,conf_limit)</prop>
+            
+              <call_job job="List Backups-Internal"/>
+    
+          </when>    
+        </choose>
+        
+        <ti_hr/>
+        <ti label="Defined Backup Sources"/>
+        <call_job job="source-see-all"/>  
+      </when>      
+    </when>
+    <otherwise>
+      <ti>No Project defined</ti>
+    </otherwise>
+  </choose>
+
+  
+
+
+</job>
+
+<job id="List All Backups" tip="Lists Backups, Last ones first!" joblevel="pro" pri="10">
+  <call_job job="??" />
+</job>
+
+</jobs>

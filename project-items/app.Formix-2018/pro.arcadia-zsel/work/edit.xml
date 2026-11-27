@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zsel-edit">
+<need>(prop,zsel_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="zsel-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="zsel-editor"/>
+<call_job job="zsel-write"/>
+<ti align="right" x="+/- ZelixBlockSelection '(f,tk_sel_translate,(prop,zsel_zblock),(file,zblock-selector))'"/>
+<call_job job="zsel-see"/>
+</job>

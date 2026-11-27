@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="extjob-edit">
+<need>(prop,extjob_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="extjob-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="extjob-editor"/>
+<call_job job="extjob-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- Job '(prop,extjob_jobid)'"/>
+</ti>
+<call_job job="extjob-see-all"/>
+</job>

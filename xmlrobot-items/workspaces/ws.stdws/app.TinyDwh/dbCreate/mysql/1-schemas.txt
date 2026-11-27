@@ -1,0 +1,6 @@
+-- Copyright © 2018-2021 Nicolas Prandstaetter. All rights reserved.
+-- mysyl
+CREATE SCHEMA `import`;
+CREATE SCHEMA `int`;
+CREATE SCHEMA `vok`;
+CREATE SCHEMA `stat`;

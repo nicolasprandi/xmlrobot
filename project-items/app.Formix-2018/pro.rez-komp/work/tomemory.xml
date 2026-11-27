@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="komp-read">
+<need>(prop,komp_key)</need>
+<spirit act="open" missing_strategy="empty" id="komps_spirit_tc" xml="(file,komps)"/>
+<prop id="komp_dt_upd">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@dt_upd)</prop>
+<prop id="komp_dt_add">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@dt_add)</prop>
+<prop id="komp_bez">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@bez)</prop>
+<prop id="komp_beschreibung">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@beschreibung)</prop>
+<prop id="komp_phasen">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@phasen)</prop>
+<prop id="komp_kalkulationen">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@kalkulationen)</prop>
+<prop id="komp_zeiten">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@zeiten)</prop>
+<prop id="komp_moda_zutaten">(f,spirit,komps_spirit_tc,(prop,komps_offset)komp[@row=(f,xpath_string,(prop,komp_key))],@moda_zutaten)</prop>
+<spirit act="close" id="komps_spirit_tc"/>
+</job>

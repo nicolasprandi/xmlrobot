@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="encrypor-auf-admin" file_class="view" desc="Die darstellung des verschluesselungpasswortes wird in der list ansicht nur fur rolle admin ermoeglicht" search="(loop,custset_loop,@encryptor)" search_type="text" expectation="2" replace="(f,when,(f,role,admin),(loop,custset_loop,@encryptor),***)" off="1" />
+</updates>

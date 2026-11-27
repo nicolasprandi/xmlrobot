@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="prolog" role="hidden">
+
+<prop id="ant" x="1"/>
+
+<when test="(f,has,prop,pro)">
+  <file id="conf-data" x="(dir,pro)conf-data.xrs"/>
+  <prop id="conf-regex" x="conf_.+"/>
+  
+  <file id="refl-data" x="(dir,pro)refl-data.xrs"/>
+  <prop id="refl-regex" x="refl_.+"/>  
+  
+  <dir id="imported_jars" x="(dir,pro)imported-jars"/>
+  <mkdir dir="(dir,imported_jars)"/>
+  
+  <dir id="mt" x="(dir,pro)jar-result-content"/>
+  <mkdir dir="(dir,mt)"/>  
+</when>
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

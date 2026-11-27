@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Compare Directories" lang="en" tip="Compares the files of 2 directories">
+  <call_job job="_compare_dirs"/>
+</job>
+
+<job id="Verzeichnisse vergleichen" lang="de" tip="Vergleicht 2 Verzeichnisse miteinander">
+  <call_job job="_compare_dirs"/>
+</job>
+
+<job id="Comparar dos carpetas" lang="es" tip="Compara dos carpetas">
+  <call_job job="_compare_dirs"/>
+</job>
+
+<job id="Compare Directories?" lang="en" >
+  <call_job job="_compare_dirs?"/>
+</job>
+
+<job id="Verzeichnisse vergleichen?" lang="de">
+  <call_job job="_compare_dirs?"/>
+</job>
+
+<job id="Comparar dos carpetas?" lang="es">
+  <call_job job="_compare_dirs?"/>
+</job>
+
+<job id="Compare Files" lang="en" tip="Compares 2 text- or pdf-files">
+  <call_job job="_compare_files"/>
+</job>
+
+<job id="Dateien vergleichen" lang="de" tip="Vergleicht 2 Text- oder Pdf-Dateien">
+  <call_job job="_compare_files"/>
+</job>
+
+<job id="Comparar archivos" lang="es" tip="Comparas dos text- y pdf-archivos">
+  <call_job job="_compare_files"/>
+</job>
+
+<job id="Compare Files?" lang="en" >
+  <call_job job="_compare_files?"/>
+</job>
+
+<job id="Dateien vergleichen?" lang="de">
+  <call_job job="_compare_files?"/>
+</job>
+
+<job id="Comparar archivos?" lang="es">
+  <call_job job="_compare_files?"/>
+</job>
+
+<job id="Test: Pdf to text" role="hidden">
+  <file id="out">(dir,pro)pdf-to-text-result.txt</file>
+  <tk type="file" id="pdf" label="Pdf-File to convert" flag="nono"/>
+  <pdf_to_text in="(file,pdf)" out="(file,out)" format="text"/>
+  <ti type="file" label="Output" x="(file,out)"/>
+  <ti type="file" label="Input" x="(file,pdf)"/>
+</job>
+
+
+
+
+</jobs>

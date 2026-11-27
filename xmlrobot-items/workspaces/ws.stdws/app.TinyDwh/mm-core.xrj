@@ -1,0 +1,159 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+
+<job id="mm-create-dir-and-view" role="hidden">
+
+  <need>(dir,mm-home)</need>
+  <need>(prop,mm-postfix)</need>
+  <need>(prop,mm-ojob)</need>  
+  <need>(prop,mm-singular)</need>  
+  <need>(prop,mm-plural)</need>
+  
+  <prop id="finaldirname"></prop>
+  
+  <call_job job="tr_mm"/> 
+  
+  <loop id="dw" while="()(f,not,(f,has,prop,finaldirname))()">
+  
+    <tk id="dirname" flag="nono" rule="filename" label="(prop,_mm_name_of_new) (prop,mm-singular)" 
+      tip="(prop,_mm_name_of_new_t)" cols="30"/>
+    <dir id="newdir">(dir,mm-home)(prop,dirname)</dir>
+    <choose>
+      <when test="(f,exists_dir,(dir,newdir))">
+        <tk type="msg">(prop,_mm_a_book) (prop,mm-singular) &apos;(prop,dirname)&apos; (prop,_mm_exists)</tk>
+        <!-- <ti>Erfolgloser Versuch: (prop,dirname)</ti>  -->
+      </when>
+      <otherwise>
+        <mkdir dir="(dir,newdir)"/>
+        <create_file file="(dir,newdir)official-book">ok</create_file>
+        <prop id="finaldirname">(prop,dirname)</prop>
+        
+        <ti_break class_table="tabNavigator" />        
+        <ti type="rec">
+        <ti align="right" x="(prop,_mm_new_book) &apos;(prop,dirname)&apos; (prop,_mm_created)" />
+        </ti>        
+        
+        <ti_hr_break/>
+       
+      </otherwise>
+    </choose>
+  </loop>
+  <prop id="mm-what">all</prop>
+  <file id="mm-info">(dir,mm-home)(prop,finaldirname)/(prop,mm-postfix)-info.xml</file>
+  <file id="mm-liste">(dir,mm-home)(prop,finaldirname)/(prop,mm-postfix)-list.xml</file> 
+  
+  <call_job job="(prop,mm-ojob)"/>
+  
+  
+</job>                             
+<job id="mm-master-edit-other" role="hidden">
+  <call_job job="tr_mm"/>
+  <tk id="dataview" type="file" label="(prop,_mm_select_file)" tip="(prop,_mm_will_use) (prop,mm-singular)" flag="nono"/>
+  <call_job job="(prop,mm-ojob)">
+    <prop id="mm-what">all</prop>
+    <file id="mm-liste">(file,dataview)</file>
+  </call_job>
+  
+</job>
+
+<job id="mm-master-see-data" role="hidden">     
+  <call_job job="tr_mm"/>
+  <ti type="call_job" job="mm-master-edit-other" explain="(prop,_mm_edit_another) (prop,mm-singular)">
+      <prop id="mm-ojob">(prop,mm-ojob)</prop>
+      <prop id="mm-singular">(prop,mm-singular)</prop>
+        
+  </ti>
+  <ti_hr_break/>
+   <call_service job="Goto-Panorama">
+    <dir id="with">(dir,mm-home)</dir>
+   </call_service>
+      
+</job>
+
+<job id="mm-master" role="hidden">
+  <need>(dir,mm-home)</need>
+  <need default="doku">(prop,mm-postfix)</need>
+  <need>(prop,mm-ojob)</need>  
+  <need>(prop,mm-singular)</need>  
+  <need>(prop,mm-plural)</need>
+  <mkdir dir="(dir,mm-home)"/>
+  <!-- <interpreter watch="0"/> -->
+  <file id="mm-scanner" x="(dir,filetemp)mm-scanner.xml"/>
+  <scan out="(file,mm-scanner)" 
+        dir="(dir,mm-home)"
+        level_limit="1"
+        field="fn pre" />      
+         
+
+  <call_job job="tr_mm"/> 
+
+  <ti label="(prop,_mm_bib): (prop,mm-plural)"/>
+  
+  <!-- <prop id="found-book">0</prop>    -->
+  <prop id="book-counter">0</prop>
+  <ti_break class_table="tabLinklist" />
+     
+  <loop id="dlist" xml="(file,mm-scanner)" xpath="dir" sort="@rpath" ignore_case="@rpath">
+  
+    <when test="(f,file_exists,(dir,mm-home)(loop,dlist,@rpath)/official-book)">
+      <file id="mm-info">(dir,mm-home)(loop,dlist,@rpath)/(prop,mm-postfix)-info.xml</file>
+      <file id="mm-liste">(dir,mm-home)(loop,dlist,@rpath)/(prop,mm-postfix)-list.xml</file>
+      <!-- <prop id="found-book">1</prop>    -->
+      <prop id="book-counter">(f,add,1,(prop,book-counter))</prop> 
+      <ti type="rec" flag="label_right" label="(prop,book-counter)." >
+        <ti type="call_job" job="(prop,mm-ojob)" explain="(loop,dlist,@rpath)" flag="block">
+          <prop id="mm-what">all</prop>
+          <file id="mm-info">(file,mm-info)</file>
+          <file id="mm-liste">(file,mm-liste)</file>
+        </ti>
+      </ti>
+    </when>
+  </loop>  
+  <!-- <<when test="(f,not,(prop,found-book))">
+    ti label=" ">Nothing found</ti>  
+  </when>              -->
+  <ti_space height="5px"/>
+  <ti type="menu" first_cell="2" last_cell="10">      
+ 
+    <ti type="call_job" job="mm-create-dir-and-view" explain="+ (prop,_mm_buch) (prop,mm-singular)" flag="button"  
+      class="fb fbEdit">
+      <dir id="mm-home">(dir,mm-home)</dir>
+      <prop id="mm-postfix">(prop,mm-postfix)</prop>
+      <prop id="mm-ojob">(prop,mm-ojob)</prop>
+      <prop id="mm-singular">(prop,mm-singular)</prop>
+      <prop id="mm-plural">(prop,mm-plural)</prop>                           
+    </ti>
+    <ti type="call_job" job="mm-master-see-data" explain="(prop,_mm_see)" flag="button "  class="fb fbAdd" >
+      <dir id="mm-home">(dir,mm-home)</dir>
+      <prop id="mm-postfix">(prop,mm-postfix)</prop>
+      <prop id="mm-ojob">(prop,mm-ojob)</prop>
+      <prop id="mm-singular">(prop,mm-singular)</prop>
+      <prop id="mm-plural">(prop,mm-plural)</prop>      
+    </ti>
+  </ti>     
+
+</job>
+
+<job id="call-and-go" role="hidden">
+  <call_job job="(prop,cg-call)"/>
+  <remove id="cg-call" type="prop" />
+  <when test="(f,has,prop,cg-go)">
+    <call_job job="(prop,cg-go)"/>
+    <remove id="cg-go" type="prop" />
+  </when>                                    
+</job>
+
+
+<job id="mm-see" role="hidden">
+  <need>(dir,mm-h)</need>
+  <need>(prop,mm-job)</need>
+  <need>(prop,mm-job-add-list)</need>
+  
+</job>
+
+
+
+</jobs>

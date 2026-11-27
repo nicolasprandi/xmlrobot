@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="File" xrole="hidden">
+  <call_job job="tk_fcrypt_edit"/>
+  <when test="(f,not,(f,eq_text,x,(prop,fcrypt_set)))">
+  
+    <interpreter watch="1"/>
+    <file id="the-in">(f,vob,file,fcrypt_fi(prop,fcrypt_set))</file>
+    <file id="the-out">(f,vob,file,fcrypt_fo(prop,fcrypt_set))</file>
+    <prop id="the-act">(f,vob,prop,fcrypt_fa(prop,fcrypt_set))</prop>
+      
+    
+  <crypto id="scrypt" act="open" type="(prop,fcrypt_pwd)"/>
+  
+  <choose>
+    <when test="(f,eq_text,e,(prop,the-act))">
+      <crypto id="scrypt" act="encrypt" from="(file,the-in)" to="(file,the-out)"/>
+    
+    </when>
+    <when test="(f,eq_text,d,(prop,the-act))">
+      <crypto id="scrypt" act="decrypt" from="(file,the-in)" to="(file,the-out)"/>
+      
+    </when>  
+  
+  </choose>
+  
+  
+   <interpreter watch="0"/>
+  
+  <crypto id="scrypt" act="close" />    
+  
+  </when>
+  
+</job>
+
+<job id="File?" xrole="hidden">
+  <call_job job="tk_fcrypt_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_fcrypt_clear" explain="Clear this data"/>
+  
+</job>
+
+<job id="Text" xrole="hidden">
+  <call_job job="tk_tcrypt_edit"/>
+  <interpreter watch="1"/>
+  <prop id="the-value">(f,vob,prop,tcrypt_v(prop,tcrypt_value))</prop>
+  <prop id="the-pwd">(f,vob,prop,tcrypt_p(prop,tcrypt_pwd))</prop>
+  <interpreter watch="0"/>
+  <crypto id="scrypt" act="open" type="(prop,the-pwd)"/>
+  
+  <choose>
+    <when test="(f,eq_text,e,(prop,tcrypt_action))">
+      <crypto id="scrypt" act="encrypt" in="(prop,the-value)" out="result"/>
+      <ti label="result">(prop,result)</ti>
+    </when>
+    <when test="(f,eq_text,d,(prop,tcrypt_action))">
+      <crypto id="scrypt" act="decrypt" in="(prop,the-value)" out="result"/>
+      <ti label="result">(prop,result)</ti>
+    </when>  
+  
+  </choose>
+  
+  
+  
+  
+  <crypto id="scrypt" act="close" />
+
+</job>
+
+<job id="Text?">
+  <call_job job="tk_tcrypt_print_values_tips"/>
+  <ti_hr/>
+  <ti type="call_job" job="tk_tcrypt_clear" explain="Clear this data"/>
+</job>
+
+<!--
+
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+
+-->
+
+
+</jobs>

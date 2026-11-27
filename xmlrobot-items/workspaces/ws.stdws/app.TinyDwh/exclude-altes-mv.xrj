@@ -1,0 +1,287 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+<job id="xxxx-gen-finals" role="hidden">
+  <ti label="Converting create views ..."/>
+  <prop id="gfx" x="0"/>
+  
+  <loop id="ot" xml="(file,vok)" xpath="ots/ot">
+    <tp>(loop,ot,#i) (loop,ot,@tech_name)</tp>
+    <prop id="gfx" x="(f,add,1,(prop,gfx))"/>
+    <xslt 
+      xml="(file,vok)" 
+      xsl="(dir,app)vok2f2.xsl" 
+      out="(dir,fin-create)(loop,ot,@tech_name).sql">
+        <params>obj_typ='(f,xslp,(loop,ot,@obj_typ))' dwh_prefix='' view_prefix=''  mv_prefix='stat.'</params>
+    </xslt>
+    
+    <xslt 
+      xml="(file,vok)" 
+      xsl="(dir,app)vok2refresh.xsl" 
+      out="(dir,fin-refresh)(loop,ot,@tech_name).sql">
+        <params>obj_typ='(f,xslp,(loop,ot,@obj_typ))' dwh_prefix='' view_prefix=''  mv_prefix='stat.'</params>
+    </xslt>
+        
+    <tp>Did #(loop,ot,#i):(loop,ot,@tech_name)</tp>
+  </loop>
+  <ti label="Anzahl der Erzeugten:" x="(prop,gfx)"/>
+  <ti_hr/>
+  
+   <call_job job="sql-list-them">
+    <prop id="sr-label" x="Weiter mit Aufruf der Creates"/>
+    <dir id="sr-dir" x="(dir,fin-create)"/>
+   </call_job>
+</job>
+
+
+<job id="xxxx" role="hidden">
+  <need>(file,re-in) (file,re-out)</need>
+  
+  <create_file file="(file,re-out)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><root/>]]></create_file>
+
+  <!-- obj -->
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="obj-typ"
+    root_name="ots"
+    row_name="ot"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>
+
+  <!-- attr -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="attr-typ"
+    root_name="ats"
+    row_name="at"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>    
+
+  <!-- bez -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="bez-typ"
+    root_name="bts"
+    row_name="bt"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>  
+
+  <!-- teil -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="teil-typ"
+    root_name="tts"
+    row_name="tt"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/> 
+         
+  
+  <!-- loesche alle leeren dinger -->    
+  <xml_update
+    what="(file,re-out)"
+    how="remove"
+    where="node(e:o)(e:c)/node(e:o)(e:c)[string-length(e:o)@tech_name(e:c)=0]"
+    with="(dir,filetemp)sheet.xml"
+    flag="any"/>      
+    
+  <!-- attr-usg -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="attr-usg"
+    root_name="aus"
+    row_name="au"
+    style="short"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/> 
+    
+  <!-- final -->    
+  <excel_table 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="final-typ"
+    root_name="fts"
+    row_name="ft"
+    style="short"
+    y1="3"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>    
+    
+  <!-- once -->    
+  <excel_form 
+    excel="(file,re-in)" 
+    out="(dir,filetemp)sheet.xml"
+    sheet="once"
+    root_name="once"
+    style="short"
+    y1="2"/>
+  <xml_update
+    what="(file,re-out)"
+    how="append"
+    with="(dir,filetemp)sheet.xml"/>      
+    
+  <!-- spririt open: vok --> 
+  <spirit id="vok"
+          act="open"
+          xml="(file,re-out)"/>  
+            
+  <!-- open loop for spirit: au -->
+  <loop_xml id="au" 
+            act="open" 
+            spirit="vok"
+            xpath="aus/au"/>  
+   
+  <!-- core while loop -->          
+  <loop id="w" while="()(f,loop_xml,au,has_next?)()">
+    <loop_xml act="next" id="au" />
+    
+    <!-- do a lookup and set the value to the spirit if exists -->
+    <when test="(f,loop_xml,au,exists?,@attr)">
+      <!-- do the lookup -->
+      <prop   id="attr_typ" 
+              x="(f,spirit,vok,ats/at[@tech_name=(f,xpath_string,(f,loop_xml,au,@attr))],@attr_typ)"/>
+      <!-- set the value -->
+      <spirit id="vok"  
+              act="xml_update" 
+              where_is_loop_xml="au" 
+              how="set_attribute" 
+              attribute="attr_typ" 
+              value="(prop,attr_typ)" />     
+    </when>
+    
+  <when test="(f,loop_xml,au,exists?,@obj)">
+    <!-- do the lookup -->
+    <prop   id="obj_typ" 
+            x="(f,spirit,vok,ots/ot[@tech_name=(f,xpath_string,(f,loop_xml,au,@obj))],@obj_typ)"/>
+    <!-- set the value -->
+    <spirit id="vok"  
+            act="xml_update" 
+            where_is_loop_xml="au" 
+            how="set_attribute" 
+            attribute="obj_typ" 
+            value="(prop,obj_typ)" />     
+  </when>      
+  
+  <when test="(f,loop_xml,au,exists?,@bez)">
+    <!-- do the lookup -->
+    <prop   id="bez_typ" 
+            x="(f,spirit,vok,bts/bt[@tech_name=(f,xpath_string,(f,loop_xml,au,@bez))],@bez_typ)"/>
+    <!-- set the value -->
+    <spirit id="vok"  
+            act="xml_update" 
+            where_is_loop_xml="au" 
+            how="set_attribute" 
+            attribute="bez_typ" 
+            value="(prop,bez_typ)" />     
+  </when>    
+  
+  <when test="(f,loop_xml,au,exists?,@teil)">
+    <!-- do the lookup -->
+    <prop   id="teil_typ" 
+            x="(f,spirit,vok,tts/tt[@tech_name=(f,xpath_string,(f,loop_xml,au,@teil))],@teil_typ)"/>
+    <!-- set the value -->
+    <spirit id="vok"  
+            act="xml_update" 
+            where_is_loop_xml="au" 
+            how="set_attribute" 
+            attribute="teil_typ" 
+            value="(prop,teil_typ)" />     
+  </when>   
+    
+  </loop> <!-- close the while -->
+  
+  <!-- close loop for spirit -->
+  <loop_xml id="au" act="close"/>
+  
+  <!-- open loop for spirit: ats/at -->
+  <loop_xml id="at" 
+            act="open" 
+            spirit="vok"
+            xpath="ats/at"/>  
+   
+  <!-- core while loop -->          
+  <loop id="w" while="()(f,loop_xml,at,has_next?)()">
+    <loop_xml act="next" id="at" />
+    
+    <!-- do a lookup and set the value to the spirit if exists -->
+    <when test="(f,loop_xml,at,exists?,@final)">
+      <!-- do the lookup -->
+      <prop   id="final_typ" 
+              x="(f,spirit,vok,fts/ft[@name=(f,xpath_string,(f,loop_xml,at,@final))],@final_typ)"/>
+      <!-- set the value -->
+      <spirit id="vok"  
+              act="xml_update" 
+              where_is_loop_xml="at" 
+              how="set_attribute" 
+              attribute="final_typ" 
+              value="(prop,final_typ)" />     
+    </when>
+ 
+  </loop> <!-- close the while -->
+  
+  <!-- close loop for spirit -->
+  <loop_xml id="at" act="close"/>  
+                        
+  <!-- spririt close with save --> 
+  <spirit id="vok"
+          act="close"
+          flag="save"/>                 
+        
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

@@ -1,0 +1,488 @@
+<?xml version="1.0" ?>
+
+<jobs>                                                                                                           
+
+<call_job job="prolog"/>
+
+<job id="get-max-ids" role="hidden">
+  <ti label="Get Max Ids" />
+  <file id="sh-max-result">(dir,filetemp)sh-max-result.xml</file>
+  <call_job job="get-max-imports" >
+    <prop id="get-max-imports-report">0</prop>
+  </call_job>
+  <prop id="max-box">(prop,sh-max-box)</prop>
+  <prop id="max-obj">(prop,sh-max-obj)</prop>
+  <prop id="max-attr">(prop,sh-max-attr)</prop>
+  <prop id="max-wert">(prop,sh-max-wert)</prop>
+  <prop id="max-bez">(prop,sh-max-bez)</prop>
+  <ti label="max-box">(prop,max-box)</ti>
+  <ti label="max-obj">(prop,max-obj)</ti>
+  <ti label="max-attr">(prop,max-attr)</ti>
+  <ti label="max-wert">(prop,max-wert)</ti>
+  <ti label="max-bez">(prop,max-bez)</ti>
+</job>
+
+
+<job id="commit" role="hidden">
+  <ti>doing commit</ti>
+  <dbc id="(prop,mydbc)" act="commit" />
+</job>
+
+<job id="commit-sqli" role="hidden">
+  <ti>Doing commit (loop,rec,#i)</ti>
+  <dbc id="(prop,mydbc)" act="commit" />
+</job>
+
+<job id="commit-sqli2" role="hidden">
+  <ti>Doing final commit</ti>
+  <dbc id="(prop,mydbc)" act="commit" />
+</job>
+
+<job id="finish-session"  role="hidden">
+
+  <need>(prop,do-close-session) (prop,giveback-update-import) (prop,giveback-update-central)</need>
+  
+  <call_job job="-db-get-id-" />      
+  <prop id="begin-dbc-existiert">(f,exists,coop2,_db,(prop,mydbc))</prop>
+  <prop id="begin-dbc-autocommit"></prop>
+  <when test="(prop,begin-dbc-existiert)">
+    <dbc id="(prop,mydbc)" act="get_autocommit" prop="begin-dbc-autocommit"/>
+  </when>
+
+    
+    
+  <choose>
+    <when test="(f,or,(prop,giveback-update-import),(prop,giveback-update-central))">
+    
+      <when test="(f,not,(prop,begin-dbc-existiert))">      
+          <call_job job="-db-open-">
+            <prop id="open-with-autocommit">0</prop>
+          </call_job>           
+      </when>
+          
+      <when test="(prop,giveback-update-import)">
+            <dbc id="(prop,mydbc)"
+            update_return_prop="removed-import"
+           act="update">delete from import_running;</dbc> 
+           <ti label="deleted import_running:" x="(prop,removed-import)" />                 
+      </when>
+      <when test="(prop,giveback-update-central)">
+            <dbc id="(prop,mydbc)"
+            update_return_prop="removed-central"
+           act="update">delete from integration_running;</dbc>    
+           <ti label="deleted integration_running:" x="(prop,removed-central)" />                
+      </when>          
+          
+      <dbc id="(prop,mydbc)" act="get_autocommit" prop="dbc-autocommit"/>
+      <choose>
+        <when test="(prop,dbc-autocommit)">
+        
+          <call_job job="stop-dbc-real" />
+          
+          <when test="(f,not,(prop,do-close-session))">
+          
+            <call_job job="-db-open-">
+              <prop id="open-with-autocommit">1</prop>
+            </call_job>             
+          
+          </when>
+        
+        </when>
+        <otherwise>
+        
+          <call_job job="commit" />
+          
+          <when test="(prop,do-close-session)">
+        
+            <call_job job="stop-dbc-real" />    
+            
+          </when>          
+        
+        </otherwise>
+      </choose>
+        
+    </when>
+    
+    <!-- keine givebacks nur die sitzung handhaben -->
+    <otherwise>
+    
+      <when test="(prop,begin-dbc-existiert)">
+      
+        <when test="(prop,do-close-session)">
+      
+          <call_job job="stop-dbc-real" />     
+          
+        </when>
+      
+      </when>    
+    
+    </otherwise>
+  </choose>
+  
+
+  
+
+        
+
+</job>
+
+<job id="request-session"  role="hidden">
+
+  <need>(prop,request-commit-session) (prop,request-update-import) (prop,request-update-central)</need>
+  
+  <choose>
+    <when test="(f,eq_num,0,(f,add,(prop,request-commit-session),(prop,request-update-import),(prop,request-update-central)))">
+      <!-- nichts gewuenscht trotzdem die db anfrodern -->
+      <call_job job="-db-open-">
+        <prop id="open-with-autocommit">1</prop>
+      </call_job>   
+    </when>
+    
+    <otherwise>
+
+      <choose>
+        <when test="(f,and,(f,has,prop,request-dbc-id),(f,has,prop,request-dbci-id))">
+          
+          <prop id="mydbc">(prop,request-dbc-id)</prop>
+          <dbc id="(prop,mydbc)"
+            how="dbci"
+            dbci="(prop,request-dbci-id)"
+            dbci_app="Hibiscus"          
+            act="open"/>
+                                  
+        </when>
+        <otherwise>
+          <!-- eine commitable session muss her -->
+          <call_job job="-db-get-id-" />      
+          <prop id="dbc-existiert">(f,exists,coop2,_db,(prop,mydbc))</prop>
+          <prop id="dbc-autocommit"></prop>
+          <when test="(prop,dbc-existiert)">
+            <dbc id="(prop,mydbc)" act="get_autocommit" prop="dbc-autocommit"/>
+          </when>
+          
+          <!-- commitable session herbeischaffen -->
+          <choose>
+            <when test="(prop,dbc-existiert)">
+              <when test="(prop,dbc-autocommit)">               
+                <call_job job="stop-dbc-real" />
+                <call_job job="-db-open-">
+                  <prop id="open-with-autocommit">0</prop>
+                </call_job>            
+              </when>
+            
+            </when>
+            <otherwise>
+              <!-- keine existierende db-verbindung -->
+                <call_job job="-db-open-">
+                  <prop id="open-with-autocommit">0</prop>
+                </call_job>                   
+            </otherwise>           
+          </choose>
+        
+        </otherwise>
+      </choose>    
+      
+      
+      <!-- gegebenenfalls die tokens fuer running besorgen -->
+      <choose>
+        <when test="(f,and,(prop,request-update-import),(prop,request-update-central))">
+          <!-- beide updates gewuenscht -->
+                
+          <prop id="beginningWasImport"></prop>
+          <prop id="beginningWasCentral"></prop> 
+          <file id="requested-update">(dir,filetemp)requestedUpdate.xml</file>
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select beginningWas(e:s) 'i' as area from import_running
+                        union
+                        select beginningWas(e:s) 'c' as area from integration_running;
+          </dbc>
+           
+          <prop id="beginningWasImport">(f,xpathx,,(file,requested-update),row[@area='i'],@beginningWas)</prop> 
+          <prop id="beginningWasCentral">(f,xpathx,,(file,requested-update),row[@area='c'],@beginningWas)</prop>
+    
+          <choose>
+            <when test="(f,and,(f,has,prop,beginningWasImport),(f,has,prop,beginningWasCentral))">
+              <throw>Update for Import &amp; Central are requested(e:s) both are not available right now: Import=(prop,beginningWasImport) Central=(prop,beginningWasCentral)</throw>
+            </when>
+            <when test="(f,has,prop,beginningWasImport)">
+              <throw>Update for Import is requested(e:s) but it is not available right now: Import=(prop,beginningWasImport)</throw>      
+            </when>
+            <when test="(f,has,prop,beginningWasCentral)">
+              <throw>Update for Central is requested(e:s) but it is not available right now: Central=(prop,beginningWasCentral)</throw>      
+            </when>      
+          </choose>
+          
+          <prop id="beginningTime">(f,time,yyyy-MM-dd HH:mm:ss)</prop>
+        
+          <dbc id="(prop,mydbc)"
+           act="update">insert into import_running (e:o)beginningWas(e:c) values (e:o)&apos;(prop,beginningTime)&apos;(e:c);</dbc> 
+                  
+          <dbc id="(prop,mydbc)"
+           act="update">insert into integration_running (e:o)beginningWas(e:c) values (e:o)&apos;(prop,beginningTime)&apos;(e:c);</dbc>            
+             
+           
+           <dbc id="(prop,mydbc)" act="commit" />
+          
+          <!-- pruefen ob in import_running eh nur ein satz drinnen ist -->
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select count(e:o)*(e:c) as anz from import_running;
+          </dbc>          
+          <prop id="anz">(f,xpathx,,(file,requested-update),row,@anz)</prop> 
+          <throw test="(f,not,(f,eq_num,(prop,anz),1))">There is a problem with concurrency in updating the import-area. We have now (prop,anz) records in table 'import_running'. resolve it manually.</throw>
+          
+          <!-- pruefen ob in integration_running eh nur ein satz drinnen ist -->
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select count(e:o)*(e:c) as anz from integration_running;
+          </dbc>          
+          <prop id="anz">(f,xpathx,,(file,requested-update),row,@anz)</prop> 
+          <throw test="(f,not,(f,eq_num,(prop,anz),1))">There is a problem with concurrency in updating the central-area. We have now (prop,anz) records in table 'import_running'. resolve it manually.</throw>          
+          
+          
+          <ti>Requested Update-Rights are granted in stage#1 !</ti> 
+        </when>
+        
+        <!-- nur import gewuenscht -->
+        <when test="(prop,request-update-import)">
+                       
+          <prop id="beginningWasImport"></prop>
+          <file id="requested-update">(dir,filetemp)requestedUpdate.xml</file>
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select beginningWas(e:s) 'i' as area from import_running;
+          </dbc>
+           
+          <prop id="beginningWasImport">(f,xpathx,,(file,requested-update),row[@area='i'],@beginningWas)</prop> 
+    
+          <when test="(f,has,prop,beginningWasImport)">
+            <throw>Update for Import is requested(e:s) but it is not available right now: Import=(prop,beginningWasImport)</throw>      
+          </when>
+          
+          <prop id="beginningTime">(f,time,yyyy-MM-dd HH:mm:ss)</prop>
+        
+          <dbc id="(prop,mydbc)"
+           act="update">insert into import_running (e:o)beginningWas(e:c) values (e:o)&apos;(prop,beginningTime)&apos;(e:c);</dbc> 
+                                     
+           <dbc id="(prop,mydbc)" act="commit" />
+          
+          <!-- pruefen ob in import_running eh nur ein satz drinnen ist -->
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select count(e:o)*(e:c) as anz from import_running;
+          </dbc>          
+          <prop id="anz">(f,xpathx,,(file,requested-update),row,@anz)</prop> 
+          <throw test="(f,not,(f,eq_num,(prop,anz),1))">There is a problem with concurrency in updating the import-area. We have now (prop,anz) records in table 'import_running'. resolve it manually.</throw>
+                
+          
+          
+          <ti>Requested Update-Rights IMPORT are granted in stage#1 !</ti>         
+        </when>
+        
+        <when test="(prop,request-update-central)">
+          <!-- nur entral gewuenscht -->
+          <prop id="beginningWasCentral"></prop> 
+          <file id="requested-update">(dir,filetemp)requestedUpdate.xml</file>
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select beginningWas(e:s) 'c' as area from integration_running;
+          </dbc>
+           
+
+            <when test="(f,has,prop,beginningWasCentral)">
+              <throw>Update for Central is requested(e:s) but it is not available right now: Central=(prop,beginningWasCentral)</throw>      
+            </when>  
+          
+          <prop id="beginningTime">(f,time,yyyy-MM-dd HH:mm:ss)</prop>
+                  
+          <dbc id="(prop,mydbc)"
+           act="update">insert into integration_running (e:o)beginningWas(e:c) values (e:o)&apos;(prop,beginningTime)&apos;(e:c);</dbc>            
+             
+           
+           <dbc id="(prop,mydbc)" act="commit" />
+          
+          <!-- pruefen ob in integration_running eh nur ein satz drinnen ist -->
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select count(e:o)*(e:c) as anz from integration_running;
+          </dbc>          
+          <prop id="anz">(f,xpathx,,(file,requested-update),row,@anz)</prop> 
+          <throw test="(f,not,(f,eq_num,(prop,anz),1))">There is a problem with concurrency in updating the central-area. We have now (prop,anz) records in table 'import_running'. resolve it manually.</throw>          
+          
+          
+          <ti>Requested Update-Rights CENTRAL are granted in stage#1 !</ti>         
+        </when>
+      
+      </choose>          
+      
+      <!-- letzendlich autocommit-session aufmachen wenn gewuensch -->
+      <when test="(f,not,(prop,request-commit-session))">    
+        <call_job job="stop-dbc-real"/>     
+        <call_job job="-db-open-">
+          <prop id="open-with-autocommit">1</prop>
+        </call_job>                     
+      </when>
+                  
+        
+   </otherwise>   
+
+   </choose>  
+  
+</job>
+
+<job id="request-session-alt"  role="hidden">
+  <need>(prop,request-commit-session) (prop,request-update-import) (prop,request-update-central)</need>
+  
+  <choose>
+    <when test="(f,eq_num,0,(f,add,(prop,request-commit-session),(prop,request-update-import),(prop,request-update-central)))">
+      <!-- nichts gewuenscht trotzdem die db anfrodern -->
+      <call_job job="-db-open-"/>
+    </when>
+    
+    <when test="(f,and,(prop,request-commit-session),(f,not,(prop,request-update-import)),(f,not,(prop,request-update-central)))">
+      <!-- es ist nur eine commit-session gewuenscht -->      
+      <call_job job="-db-close-on-purpose-" />
+      <call_job job="-db-open-">
+        <prop id="open-with-autocommit">0</prop>
+      </call_job>              
+    </when>
+    
+    <otherwise>
+    
+      <choose>
+        <when test="(f,and,(prop,request-update-import),(prop,request-update-central))">
+          <!-- beide updates gewuenscht -->
+          
+          <call_job job="-db-open-"/>
+      
+          <prop id="beginningWasImport"></prop>
+          <prop id="beginningWasCentral"></prop> 
+          <file id="requested-update">(dir,filetemp)requestedUpdate.xml</file>
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select beginningWas(e:s) 'i' as area from import_running
+                        union
+                        select beginningWas(e:s) 'c' as area from integration_running;
+          </dbc>
+           
+          <prop id="beginningWasImport">(f,xpathx,,(file,requested-update),row[@area='i'],@beginningWas)</prop> 
+          <prop id="beginningWasCentral">(f,xpathx,,(file,requested-update),row[@area='c'],@beginningWas)</prop>
+    
+          <choose>
+            <when test="(f,and,(f,has,prop,beginningWasImport),(f,has,prop,beginningWasCentral))">
+              <throw>Update for Import &amp; Central are requested(e:s) both are not available right now: Import=(prop,beginningWasImport) Central=(prop,beginningWasCentral)</throw>
+            </when>
+            <when test="(f,has,prop,beginningWasImport)">
+              <throw>Update for Import is requested(e:s) but it is not available right now: Import=(prop,beginningWasImport)</throw>      
+            </when>
+            <when test="(f,has,prop,beginningWasCentral)">
+              <throw>Update for Central is requested(e:s) but it is not available right now: Central=(prop,beginningWasCentral)</throw>      
+            </when>      
+          </choose>
+          
+          <prop id="beginningTime">(f,time,yyyy-MM-dd HH:mm:ss)</prop>
+        
+          <dbc id="(prop,mydbc)"
+           act="update">insert into import_running (e:o)beginningWas(e:c) values (e:o)&apos;(prop,beginningTime)&apos;(e:c);</dbc> 
+                  
+          <dbc id="(prop,mydbc)"
+           act="update">insert into integration_running (e:o)beginningWas(e:c) values (e:o)&apos;(prop,beginningTime)&apos;(e:c);</dbc>            
+             
+           
+           <!-- hier moeglicherweise ein commit rein --> 
+    
+          <call_job job="-db-close-on-purpose-"/>
+          
+          
+            
+          <choose>
+            <when test="(prop,request-commit-session)">            
+              <call_job job="-db-open-">
+                <prop id="open-with-autocommit">0</prop>
+              </call_job>                     
+            </when>
+            <otherwise>
+              <call_job job="-db-open-"/> 
+            </otherwise>     
+          </choose>      
+          
+          <!-- pruefen ob in import_running eh nur ein satz drinnen ist -->
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select count(e:o)*(e:c) as anz from import_running;
+          </dbc>          
+          <prop id="anz">(f,xpathx,,(file,requested-update),row,@anz)</prop> 
+          <throw test="(f,not,(f,eq_num,(prop,anz),1))">There is a problem with concurrency in updating the import-area. We have now (prop,anz) records in table 'import_running'. resolve it manually.</throw>
+          
+          <!-- pruefen ob in integration_running eh nur ein satz drinnen ist -->
+          <dbc id="(prop,mydbc)"
+              act="select"
+              out="(file,requested-update)"
+              style="a">select count(e:o)*(e:c) as anz from integration_running;
+          </dbc>          
+          <prop id="anz">(f,xpathx,,(file,requested-update),row,@anz)</prop> 
+          <throw test="(f,not,(f,eq_num,(prop,anz),1))">There is a problem with concurrency in updating the central-area. We have now (prop,anz) records in table 'import_running'. resolve it manually.</throw>          
+          
+          
+          <ti>Requested Update-Rights are granted in stage#1 !</ti> 
+        </when>
+        
+        <when test="(prop,request-update-import)">
+        </when>
+        
+        <when test="(prop,request-update-central)">
+        </when>
+      
+      </choose>    
+    
+    </otherwise>
+  
+  </choose>
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

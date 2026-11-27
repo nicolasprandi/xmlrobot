@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsa-edit">
+<need>(prop,dsa_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="dsa-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="dsa-editor"/>
+<call_job job="dsa-write"/>
+<ti_break class_table="tabNavigator"/>
+<ti type="rec">
+<ti align="right" x="+/- (prop,_sl_dsa) '(f,tk_sel_translate,(prop,dsa_attributtyp),(file,pdi-sel-attr))'"/>
+</ti>
+<call_job job="dsa_did_edit"/>
+</job>

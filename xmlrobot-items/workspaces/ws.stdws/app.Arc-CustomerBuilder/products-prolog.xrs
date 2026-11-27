@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="products">(dir,pro)products.xml</file>
+<when test="(f,not,(f,exists_file,(file,products)))">
+<create_file out="(file,products)">&lt;products/&gt;</create_file>
+<i>Created: (file,products)</i>
+</when>
+<prop id="products_offset">./</prop>
+<prop id="products_offset_label"/>
+<prop id="products_offset_new_key">//</prop>
+<prop id="products_sort_attribute"/>
+<prop id="products_sort_number"/>
+<prop id="products_sort_ignore_case"/>
+<prop id="products_sort_desc"/>
+<prop id="products_where"/>
+<prop id="products_return_job">product-see-all</prop>
+</prolog>

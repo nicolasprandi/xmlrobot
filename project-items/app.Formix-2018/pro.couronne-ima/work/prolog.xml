@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="imas">(dir,pro)imas.xml</file>
+<when test="(f,not,(f,exists_file,(file,imas)))">
+<create_file out="(file,imas)">&lt;imas/&gt;</create_file>
+<i>Created: (file,imas)</i>
+</when>
+<prop id="imas_offset">./</prop>
+<prop id="imas_offset_label"/>
+<prop id="imas_offset_new_key">//</prop>
+<prop id="imas_sort_attribute"/>
+<prop id="imas_sort_number"/>
+<prop id="imas_sort_ignore_case"/>
+<prop id="imas_sort_desc"/>
+<prop id="imas_where"/>
+<prop id="imas_return_job">ima-see-all</prop>
+</prolog>

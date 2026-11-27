@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+  <update row="1" titel="view-actual-user" file_class="view" search="explain=&quot;Cmd:User&quot;" search_type="text" expectation="1" replace="explain=&quot;(f,html,b,o)(loop,user_loop,@userid)(f,html,b,c) &amp;gt; Db&quot;" off="1" />
+  <update row="2" titel="wrapper bei applist in view" file_class="view" search="&lt;ti test=&quot;(f,has,(loop,user_loop,@apps))&quot;" search_type="text" expectation="1" replace="&lt;ti test=&quot;(f,has,(loop,user_loop,@apps))&quot; flag=&quot;wrap&quot;" off="1" />
+</updates>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="attribute-see">
+<need>(prop,attribute_key)</need>
+<call_job job="attribute-read"/>
+<ti_hr/>
+<ti label="[ (prop,attribute_name) ]" key="#(prop,attribute_key)"/>
+<ti padding_top="0px" laxxbel="(prop,attribute_name)(prop,attributes_offset_label)"/>
+<ti label="Position:" type="text" test="(f,has,prop,attribute_pos)">(f,vob,prop,attribute_pos)</ti>
+<prop id="formix-field-locator-hook">attribute_pos</prop>
+<ti label="Attribute name:" type="text" test="(f,has,prop,attribute_name)">(f,vob,prop,attribute_name)</ti>
+<prop id="formix-field-locator-hook">attribute_name</prop>
+<ti_space height="3px"/>
+<ti label=" " flag="no_arrow" type="call_job" explain="Edit" job="attribute-edit">
+<prop id="attribute_key">(prop,attribute_key)</prop>
+<file id="attributes">(file,attributes)</file>
+<prop id="attributes_offset">(prop,attributes_offset)</prop>
+<prop id="attributes_offset_label">(prop,attributes_offset_label)</prop>
+<prop id="attributes_offset_new_key">(prop,attributes_offset_new_key)</prop>
+<prop id="attributes_sort_attribute">(prop,attributes_sort_attribute)</prop>
+<prop id="attributes_sort_number">(prop,attributes_sort_number)</prop>
+<prop id="attributes_where">(prop,attributes_where)</prop>
+<prop id="attributes_return_job">(prop,attributes_return_job)</prop>
+</ti>
+<ti label=" " flag="no_arrow" type="call_job" explain="Del" job="attribute-del">
+<prop id="attribute_key">(prop,attribute_key)</prop>
+<file id="attributes">(file,attributes)</file>
+<prop id="attributes_offset">(prop,attributes_offset)</prop>
+<prop id="attributes_offset_label">(prop,attributes_offset_label)</prop>
+<prop id="attributes_offset_new_key">(prop,attributes_offset_new_key)</prop>
+<prop id="attributes_sort_attribute">(prop,attributes_sort_attribute)</prop>
+<prop id="attributes_sort_number">(prop,attributes_sort_number)</prop>
+<prop id="attributes_where">(prop,attributes_where)</prop>
+<prop id="attributes_return_job">(prop,attributes_return_job)</prop>
+</ti>
+<ti isFromAction="1" type="call_job" page="details" explain="Move" job="hook_att_move">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">move</prop>
+<prop page="details" id="attribute_key">(prop,attribute_key)</prop>
+<file id="attributes">(file,attributes)</file>
+<prop id="attributes_offset">(prop,attributes_offset)</prop>
+<prop id="attributes_offset_label">(prop,attributes_offset_label)</prop>
+<prop id="attributes_offset_new_key">(prop,attributes_offset_new_key)</prop>
+<prop id="attributes_sort_attribute">(prop,attributes_sort_attribute)</prop>
+<prop id="attributes_sort_number">(prop,attributes_sort_number)</prop>
+<prop id="attributes_where">(prop,attributes_where)</prop>
+<prop id="attributes_return_job">(prop,attributes_return_job)</prop>
+</ti>
+</job>

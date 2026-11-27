@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ass-write">
+<need>(prop,ass_key) (prop,isAdd)</need>
+<spirit act="open" id="asss_spirit_tc" xml="(file,asss)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,asss_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,asss_offset),0,(f,sub,(f,len,(prop,asss_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,asss_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="asss_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;ass row="(prop,ass_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="asss_spirit_tc" where="(prop,asss_offset)ass[@row='(prop,ass_key)']" attribute="bez" value="(f,vob,prop,ass_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="asss_spirit_tc" where="(prop,asss_offset)ass[@row='(prop,ass_key)']" attribute="beschreibung" value="(f,vob,prop,ass_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="asss_spirit_tc" where="(prop,asss_offset)ass[@row='(prop,ass_key)']" attribute="dauer" value="(f,vob,prop,ass_dauer)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="asss_spirit_tc" where="(prop,asss_offset)ass[@row='(prop,ass_key)']" attribute="einheit" value="(f,vob,prop,ass_einheit)"/>
+<spirit act="close" flag="save pretty" id="asss_spirit_tc"/>
+</job>

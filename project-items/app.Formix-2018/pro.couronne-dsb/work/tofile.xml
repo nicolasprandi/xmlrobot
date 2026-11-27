@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsb-write">
+<need>(prop,dsb_key) (prop,isAdd)</need>
+<need default="./">(prop,dsbs_offset)</need>
+<spirit act="open" id="dsbs_spirit_tc" xml="(file,dsbs)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,dsbs_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,dsbs_offset),0,(f,sub,(f,len,(prop,dsbs_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,dsbs_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="dsbs_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;dsb row="(prop,dsb_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsbs_spirit_tc" where="(prop,dsbs_offset)dsb[@row='(prop,dsb_key)']" attribute="beztyp" value="(f,vob,prop,dsb_beztyp)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsbs_spirit_tc" where="(prop,dsbs_offset)dsb[@row='(prop,dsb_key)']" attribute="dso_from_row" value="(f,vob,prop,dsb_dso_from_row)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsbs_spirit_tc" where="(prop,dsbs_offset)dsb[@row='(prop,dsb_key)']" attribute="dso_to_row" value="(f,vob,prop,dsb_dso_to_row)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsbs_spirit_tc" where="(prop,dsbs_offset)dsb[@row='(prop,dsb_key)']" attribute="name" value="(f,vob,prop,dsb_name)"/>
+<spirit act="close" flag="save pretty" id="dsbs_spirit_tc"/>
+</job>

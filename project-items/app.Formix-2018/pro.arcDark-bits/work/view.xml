@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="bit-see-all" level="ws" role="hidden" tip="Lists all Bits">
+<try_catch>
+<try>
+<call_job job="hook_bit_view_begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: bit-view: begin.0">
+<ti> hook_job=hook_bit_view_begin hook=begin page=view station=0 object=bit</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="bit_loop" xml="(file,bits)" xpath="(prop,bits_offset)bit(prop,bits_where)" sort="(prop,bits_sort_attribute)" number="(prop,bits_sort_number)" ignore_case="(prop,bits_sort_ignore_case)" desc="(prop,bits_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,bits_offset_label)),0)">
+<ti label="(prop,bits_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Off"/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,when,(f,has_flag,(loop,bit_loop,@bit),0),0(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),1),1(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),2),2(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),3),3(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),4),4(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),5),5(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),6),6(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),7),7(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),8),8(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),9),9(e:s),)(f,html,bold,close)" job="bit-see">
+<prop id="bit_key">(loop,bit_loop,@row)</prop>
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,bit_loop,@off))" type="text" x="(loop,bit_loop,@off)" flag=""/>
+<ti test="(f,not,(f,has,(loop,bit_loop,@off)))"/>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Bits found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,bits_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="bit-add" explain="Add another bit" job="bit-add">
+<file id="bits">(file,bits)</file>
+<prop id="bits_offset">(prop,bits_offset)</prop>
+<prop id="bits_offset_label">(prop,bits_offset_label)</prop>
+<prop id="bits_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="bits_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="bits_sort_number">(prop,bits_sort_number)</prop>
+<prop id="bits_where">(prop,bits_where)</prop>
+<prop id="bits_return_job">(prop,bits_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,bits)</file>
+<prop id="orga_where">(prop,bits_where)</prop>
+<prop id="orga_view_loop_id">bit_loop</prop>
+<prop id="orga_finished_job">bit-see-all</prop>
+<prop id="orga_offset">(prop,bits_offset)</prop>
+<prop id="orga_offset_label">(prop,bits_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,bits_offset_new_key)</prop>
+<prop id="orga_segment_plural">bits</prop>
+<prop id="orga_segment_singular">bit</prop>
+<prop id="orga_segment_plural_label">Bits</prop>
+<prop id="orga_segment_singular_label">Bit</prop>
+<prop id="orga_sort_attribute">(prop,bits_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,bits_sort_number)</prop>
+<prop id="orga_where">(prop,bits_where)</prop>
+<prop id="orga_name_expression_loop">()(f,when,(f,has_flag,(loop,bit_loop,@bit),0),0(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),1),1(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),2),2(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),3),3(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),4),4(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),5),5(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),6),6(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),7),7(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),8),8(e:s),)(f,when,(f,has_flag,(loop,bit_loop,@bit),9),9(e:s),)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,bits)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,bits_offset)),0)">(prop,bits_offset)</ti>
+</ti>
+</when>
+</job>

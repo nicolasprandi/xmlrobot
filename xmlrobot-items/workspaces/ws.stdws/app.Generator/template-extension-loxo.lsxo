@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<steps>
+<!-- Copyright [Write the year here ...] [Write your name here ...]. All rights reserved. -->
+
+<!-- default values -->
+<need default="0">(prop,$starter)</need>
+
+<!-- load data-xml into memory -->
+<spirit id="data" act="open"  xml="(file,data)"/>
+
+<!-- create an iterator over the memory-object -->  
+<loop_xml act="open" id="data" missing_strategy="empty" spirit="data"  xpath="row" />
+
+<!-- do the iteration and append new attributes -->  
+<loop id="w" while="()(f,loop_xml,data,has_next?)()">
+  <loop_xml act="next" id="data" />
+  <spirit 
+    id="data" act="xml_update" where_is_loop_xml="data" how="set_attribute" 
+    attribute="a" 
+    value="(f,add,(prop,$starter),(loop,w,#i))" />
+  <spirit 
+    id="data" act="xml_update" where_is_loop_xml="data" how="set_attribute" 
+    attribute="b" 
+    value="(f,mul,2,(loop,w,#i))" />
+  <spirit 
+    id="data" act="xml_update" where_is_loop_xml="data" how="set_attribute" 
+    attribute="c" 
+    value="(f,add,1,(f,remain,(loop,w,#i),3))" />   
+    
+  <spirit 
+    id="data" act="xml_update" where_is_loop_xml="data" how="set_attribute" 
+    attribute="d" 
+    value="(f,loop_xml,data,@Name)" />    
+    
+  <spirit 
+    id="data" act="xml_update" where_is_loop_xml="data" how="set_attribute" 
+    attribute="e" 
+    value="(f,loop_xml,data,@Name) lives (f,loop_xml,data,@Lives)" />    
+</loop>
+
+<!-- closing iterator and memory object -->
+<loop_xml act="close" id="data" />
+<spirit act="close" id="data" flag="save" />
+
+</steps>

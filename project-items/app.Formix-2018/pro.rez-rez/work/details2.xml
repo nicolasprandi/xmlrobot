@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rez-see-more">
+<need>(prop,rez_key)</need>
+<call_job job="rez-read"/>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=1 hook_job=hook_rezeptdetails1</trace>
+<call_job job="hook_rezeptdetails1"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: rez-details: 1.0">
+<ti> hook_job=hook_rezeptdetails1 hook=1 page=details station=0 object=rez</ti>
+</ti>
+</catch>
+</try_catch>
+<prop x="print_only print_with_tips print_all_fields" id="rezs_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(prop,rez_bez)(f,html,bold,close)(f,when,(f,has,(prop,rezs_offset_label)), - (prop,rezs_offset_label),)"/>
+<call_job job="rez-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="[ Edit ]" job="rez-edit">
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+</ti>
+</ti>
+</job>

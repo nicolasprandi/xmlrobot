@@ -1,0 +1,92 @@
+<?xml version="1.0" ?>
+
+<jobs>
+  
+  <job id="sys_project_setup" joblevel="pro" role="hidden">
+    <call_job job="prolog" />
+
+    <call_job job="open" />
+    <!-- <call_job job="execute"/> -->
+      
+  </job>
+  
+
+
+  <job id="prolog" role="hidden"><!--  
+    <interpreter act="check-login"/>
+    
+    <dir id="status" x="(dir,pro)cache/"/>
+    <mkdir dir="(dir,status)" test="(f,not,(f,exists_dir,(dir,status)))" />
+    -->
+    <!-- only app needed, no pro required <interpreter turbo="1"/> -->
+    <call_job job="tr_basics"/>
+  
+      
+    <interpreter turbo="1"/>
+    <interpreter jovial="1"/>
+    <prop id="unlimited">99</prop>
+    <prop id="unlimited2">9999</prop>
+    <prop id="do_snapshot">1</prop>
+    <prop id="do_debug">0</prop>
+    <prop id="do_super_debug">0</prop>
+    <prop id="conf_debug">0</prop>
+    
+    <file id="service-types">(dir,services)panorama-groups-life.xml</file>
+    <file id="app-extension-groups-edit">(dir,app)extension-groups-edit.xml</file>
+    <file id="app-extension-groups-life">(dir,app)extension-groups-life.xml</file>
+    <file id="app-extension-groups-tisel">(dir,app)extension-groups-tisel.xml</file>
+    
+  <file id="visual-data" x="(f,request,dir,session_home_fs)visual-config.xml"/>
+  <prop id="visual-regex" x="visual_.+"/>    
+      
+
+    <when test="(f,exists,prop,pro)">  
+    
+    
+    
+      <dir id="work">(dir,pro)Work</dir>
+      <when test="(f,not,(f,dir_exists,(dir,work)))">
+        <mkdir dir="(dir,work)" />
+        <i>(dir,work) created</i>
+      </when>
+      <file id="pano-initials" x="(dir,pro)pano-initials.xml"/>
+      
+      <dir id="snaps">(dir,work)Snapshots</dir>
+      <when test="(f,not,(f,dir_exists,(dir,snaps)))">
+        <mkdir dir="(dir,snaps)" />
+        <i>(dir,snaps) created</i>
+      </when>
+      <sequence id="snaps" file="(dir,snaps)snapshots-sequence.xml" len="5" act="open" flag="catch"/>
+      <file id="snaps">(dir,snaps)snapshots-index.xml</file>
+      <when test="(f,not,(f,file_exists,(file,snaps)))">
+        <create_file out="(file,snaps)"><![CDATA[
+          <snaps/>]]></create_file>
+        <i>(file,snaps) created</i>
+      </when>
+      
+      <file id="scan">(dir,work)scan.xml</file>
+      
+      <file id="scan3">(dir,work)scan3.xml</file>
+      <file id="scan4">(dir,work)scan4.xml</file>
+      <file id="scan5">(dir,work)scan5.xml</file>
+      <file id="scan9">(dir,work)scan9.xml</file>
+      
+      <file id="org2">(dir,work)org2.xml</file>
+      <file id="org3">(dir,work)org3.xml</file>  
+      
+      <file id="et">(dir,pro)setup.xml</file> 
+      <file id="redu">(dir,pro)reduction.xml</file>   
+        
+      <file id="extension-groups-edit">(dir,pro)extension-groups-edit.xml</file>
+      <file id="extension-groups-life">(dir,pro)extension-groups-life.xml</file>
+      <file id="extension-groups-tisel">(dir,pro)extension-groups-tisel.xml</file>
+      
+      <prop id="temp-pro-id">Panorama-Temporary</prop>
+    
+    </when>  
+
+  </job>
+
+
+
+</jobs>

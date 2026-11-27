@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<prolog>
+<include file="(dir,services)static-project-prolog.xrs"/>
+ 
+<!-- define directories -->
+<choose>
+  <when test="(f,has,prop,pro)">
+    <dir id="conf" x="(dir,pro)project-configuration"/>
+    <dir id="result" x="(dir,pro)Result"/>
+
+	<mkdir dir="(dir,conf)" />
+
+  
+	<file id="para-data" x="(dir,conf)joe-in-store.xml"/>
+	<prop id="para-regex" x="in-.+"/>
+	
+  </when>
+  <otherwise>
+    <interpreter jovial="1"/>
+  </otherwise>
+</choose>
+
+<prop id="tip-name">()The name of the produced application. Will be visible to the user.()</prop>
+<prop id="tip-jar">()The Jar-File to be converted to a Mac-Application.()</prop>
+
+</prolog>

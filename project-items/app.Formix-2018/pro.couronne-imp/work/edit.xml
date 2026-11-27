@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="imp-edit">
+    <need>(prop,imp_key)</need>
+    <need default="1">(prop,do_return_job)</need>
+    <call_job job="imp-read"/>
+    <prop id="isAdd">0</prop>
+    <call_job job="imp-editor"/>
+    <call_job job="imp-write"/>
+    <ti_break class_table="tabNavigator"/>
+    <ti type="rec">
+        <ti align="right" x="+/- Index Manipulation Point '(f,tk_sel_translate,(prop,imp_point),(dir,app)index-points.xml)'"/>
+    </ti>
+    <call_job job="imp-see-all"/>
+</job>

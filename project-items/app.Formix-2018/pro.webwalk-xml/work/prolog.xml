@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+    <!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+    <file id="xmlfs">(dir,pro)xmlfs.xml</file>
+    <when test="(f,not,(f,exists_file,(file,xmlfs)))">
+        <create_file out="(file,xmlfs)">&lt;xmlfs/&gt;</create_file>
+        <i>Created: (file,xmlfs)</i>
+    </when>
+    <prop id="xmlfs_offset">./</prop>
+    <prop id="xmlfs_offset_label"/>
+    <prop id="xmlfs_offset_new_key">//</prop>
+    <prop id="xmlfs_sort_attribute"/>
+    <prop id="xmlfs_sort_number"/>
+    <prop id="xmlfs_sort_ignore_case"/>
+    <prop id="xmlfs_sort_desc"/>
+    <prop id="xmlfs_where"/>
+    <prop id="xmlfs_return_job">xmlf-see-all</prop>
+</prolog>

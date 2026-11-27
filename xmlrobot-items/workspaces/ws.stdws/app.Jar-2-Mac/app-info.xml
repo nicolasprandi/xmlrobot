@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter and affiliated partners. All rights reserved. -->
+<app-info role="user" tip="Converts a jar-file to a mac-application" flag="has_static_project" sort="9 Jar-2-Mac">
+
+</app-info>

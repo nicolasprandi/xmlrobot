@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="komp-see-all" level="ws" role="hidden" tip="Lists all Komponenten">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="komp_loop" xml="(file,komps)" xpath="(prop,komps_offset)komp(prop,komps_where)" sort="(prop,komps_sort_attribute)" number="(prop,komps_sort_number)" ignore_case="(prop,komps_sort_ignore_case)" desc="(prop,komps_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,komps_offset_label)),0)">
+<ti label="(prop,komps_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<try_catch>
+<try>
+<call_job job="strich"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: komp-view: 2.0">
+<ti> hook_job=strich hook=2 page=view station=0 object=komp</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<dump_ti label="dosamma" test="0" />
+<ti type="rec" test="(f,gt_num,(prop,nbr-of-comps),1)">
+<ti type="call_job" postfix=" (e:o)(loop,komp_loop,#i). Komponente(e:c)"  explain="(f,html,bold,open)(f,text,cut_nice,(loop,komp_loop,@bez),20)(f,html,bold,close)" job="komp-see">
+<prop id="komp_key">(loop,komp_loop,@row)</prop>
+<file id="komps">(file,komps)</file>
+<prop id="komps_offset">(prop,komps_offset)</prop>
+<prop id="komps_offset_label">(prop,komps_offset_label)</prop>
+<prop id="komps_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="komps_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="komps_sort_number">(prop,komps_sort_number)</prop>
+<prop id="komps_where">(prop,komps_where)</prop>
+<prop id="komps_return_job">(prop,komps_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,komp_loop,@beschreibung),50)</ti>
+<try_catch>
+<try>
+<call_job job="hook-komp-listed"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: komp-view: 2.1">
+<ti> hook_job=hook-komp-listed hook=2 page=view station=1 object=komp</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,komps_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="komp-add" explain="[ + Komponente ]" job="komp-add">
+<file id="komps">(file,komps)</file>
+<prop id="komps_offset">(prop,komps_offset)</prop>
+<prop id="komps_offset_label">(prop,komps_offset_label)</prop>
+<prop id="komps_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="komps_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="komps_sort_number">(prop,komps_sort_number)</prop>
+<prop id="komps_where">(prop,komps_where)</prop>
+<prop id="komps_return_job">(prop,komps_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,komps)</file>
+<prop id="orga_where">(prop,komps_where)</prop>
+<prop id="orga_view_loop_id">komp_loop</prop>
+<prop id="orga_finished_job">Aktuelles Rezept</prop>
+<prop id="orga_offset">(prop,komps_offset)</prop>
+<prop id="orga_offset_label">(prop,komps_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="orga_segment_plural">komps</prop>
+<prop id="orga_segment_singular">komp</prop>
+<prop id="orga_segment_plural_label">Komponenten</prop>
+<prop id="orga_segment_singular_label">Komponente</prop>
+<prop id="orga_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,komps_sort_number)</prop>
+<prop id="orga_where">(prop,komps_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,komp_loop,@bez),20)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,komp_loop,@beschreibung),50)()</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,komps)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,komps_offset)),0)">(prop,komps_offset)</ti>
+</ti>
+</when>
+<try_catch>
+<try>
+<call_job job="hook-komp-listend"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: komp-view: end.0">
+<ti> hook_job=hook-komp-listend hook=end page=view station=0 object=komp</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>

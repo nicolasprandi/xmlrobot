@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="attribute-edit">
+<need>(prop,attribute_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="attribute-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="attribute-editor"/>
+<call_job job="attribute-write"/>
+<ti label="Did update Attribute:" x="(f,html,bold,open)(prop,attribute_name)(f,html,bold,close)"/>
+<ti_break/>
+<ti_hr/>
+<when test="(prop,do_return_job)">
+<call_job job="(prop,attributes_return_job)"/>
+</when>
+</job>

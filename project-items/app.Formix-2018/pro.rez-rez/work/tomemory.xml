@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="rez-read">
+<need>(prop,rez_key)</need>
+<spirit act="open" missing_strategy="empty" id="rezs_spirit_tc" xml="(file,rezs)"/>
+<prop id="rez_dt_upd">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@dt_upd)</prop>
+<prop id="rez_dt_add">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@dt_add)</prop>
+<prop id="rez_bez">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@bez)</prop>
+<prop id="rez_character">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@character)</prop>
+<prop id="rez_beschreibung">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@beschreibung)</prop>
+<prop id="rez_portionen">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@portionen)</prop>
+<file flag="cool" id="rez_logo">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@logo)</file>
+<unescape type="file" id="rez_logo"/>
+<translate type="file" id="rez_logo"/>
+<prop id="rez_logo_max_x">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@logo_max_x)</prop>
+<prop id="rez_logo_max_y">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@logo_max_y)</prop>
+<prop id="rez_logo_max_x_main">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@logo_max_x_main)</prop>
+<prop id="rez_logo_max_y_main">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@logo_max_y_main)</prop>
+<prop id="rez_rezeptstatus">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@rezeptstatus)</prop>
+<prop id="rez_bewertung">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@bewertung)</prop>
+<prop id="rez_detail">(f,spirit,rezs_spirit_tc,(prop,rezs_offset)rez[@row=(f,xpath_string,(prop,rez_key))],@detail)</prop>
+<spirit act="close" id="rezs_spirit_tc"/>
+</job>

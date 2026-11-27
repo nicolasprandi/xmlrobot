@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="spalte-see-all" level="ws" role="hidden" tip="Lists all Spalten">
+<try_catch>
+<try>
+<call_job job="event_spalten_beginn"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: spalte-view: begin.0">
+<ti> hook_job=event_spalten_beginn hook=begin page=view station=0 object=spalte</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="spalte_loop" xml="(file,spalten)" xpath="(prop,spalten_offset)spalte(prop,spalten_where)" sort="(prop,spalten_sort_attribute)" number="(prop,spalten_sort_number)" ignore_case="(prop,spalten_sort_ignore_case)" desc="(prop,spalten_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,spalten_offset_label)),0)">
+<ti label="(prop,spalten_offset_label)"/>
+</when>
+<ti type="rec" xlabel=" ">
+<ti x=" "/>
+<ti x="Ausdruck"/>
+<ti/>
+<ti x=" "/>
+</ti>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti type="call_job" prefix="  " explain="(f,html,bold,open)(f,text,cut_nice,(loop,spalte_loop,@name),20)(f,html,bold,close)" job="spalte-see">
+<prop id="spalte_key">(loop,spalte_loop,@row)</prop>
+<file id="spalten">(file,spalten)</file>
+<prop id="spalten_offset">(prop,spalten_offset)</prop>
+<prop id="spalten_offset_label">(prop,spalten_offset_label)</prop>
+<prop id="spalten_offset_new_key">(prop,spalten_offset_new_key)</prop>
+<prop id="spalten_sort_attribute">(prop,spalten_sort_attribute)</prop>
+<prop id="spalten_sort_number">(prop,spalten_sort_number)</prop>
+<prop id="spalten_where">(prop,spalten_where)</prop>
+<prop id="spalten_return_job">(prop,spalten_return_job)</prop>
+</ti>
+<ti test="(f,has,(loop,spalte_loop,@expr))" type="textblock" x="(loop,spalte_loop,@expr)"/>
+<ti test="(f,not,(f,has,(loop,spalte_loop,@expr)))"/>
+<ti type="call_job" explain="Edit" job="spalte-edit">
+<prop id="spalte_key">(loop,spalte_loop,@row)</prop>
+<file id="spalten">(file,spalten)</file>
+<prop id="spalten_offset">(prop,spalten_offset)</prop>
+<prop id="spalten_offset_label">(prop,spalten_offset_label)</prop>
+<prop id="spalten_offset_new_key">(prop,spalten_offset_new_key)</prop>
+<prop id="spalten_sort_attribute">(prop,spalten_sort_attribute)</prop>
+<prop id="spalten_sort_number">(prop,spalten_sort_number)</prop>
+<prop id="spalten_where">(prop,spalten_where)</prop>
+<prop id="spalten_return_job">(prop,spalten_return_job)</prop>
+</ti>
+<ti type="call_job" explain="Delete" job="spalte-del">
+<prop id="spalte_key">(loop,spalte_loop,@row)</prop>
+<file id="spalten">(file,spalten)</file>
+<prop id="spalten_offset">(prop,spalten_offset)</prop>
+<prop id="spalten_offset_label">(prop,spalten_offset_label)</prop>
+<prop id="spalten_offset_new_key">(prop,spalten_offset_new_key)</prop>
+<prop id="spalten_sort_attribute">(prop,spalten_sort_attribute)</prop>
+<prop id="spalten_sort_number">(prop,spalten_sort_number)</prop>
+<prop id="spalten_where">(prop,spalten_where)</prop>
+<prop id="spalten_return_job">(prop,spalten_return_job)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">No Spalten found</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,spalten_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" label=" " type="call_job" explain_nix="spalte-add" explain="[ Add another Spalte ]" job="spalte-add">
+<file id="spalten">(file,spalten)</file>
+<prop id="spalten_offset">(prop,spalten_offset)</prop>
+<prop id="spalten_offset_label">(prop,spalten_offset_label)</prop>
+<prop id="spalten_offset_new_key">(prop,spalten_offset_new_key)</prop>
+<prop id="spalten_sort_attribute">(prop,spalten_sort_attribute)</prop>
+<prop id="spalten_sort_number">(prop,spalten_sort_number)</prop>
+<prop id="spalten_where">(prop,spalten_where)</prop>
+<prop id="spalten_return_job">(prop,spalten_return_job)</prop>
+</ti>
+<ti flag="no_arrow" label=" " type="call_job" explain="/ Organize /" job="do-org-me">
+<file id="orga">(file,spalten)</file>
+<prop id="orga_where">(prop,spalten_where)</prop>
+<prop id="orga_view_loop_id">spalte_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,spalten_offset)</prop>
+<prop id="orga_offset_label">(prop,spalten_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,spalten_offset_new_key)</prop>
+<prop id="orga_segment_plural">spalten</prop>
+<prop id="orga_segment_singular">spalte</prop>
+<prop id="orga_segment_plural_label">Spalten</prop>
+<prop id="orga_segment_singular_label">Spalte</prop>
+<prop id="orga_sort_attribute">(prop,spalten_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,spalten_sort_number)</prop>
+<prop id="orga_where">(prop,spalten_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,spalte_loop,@name),20)()</prop>
+<prop id="orga_desc_expression_loop">()()</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,spalten)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,spalten_offset)),0)">(prop,spalten_offset)</ti>
+</ti>
+</when>
+</job>

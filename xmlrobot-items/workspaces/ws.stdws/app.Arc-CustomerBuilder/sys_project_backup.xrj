@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="sys_project_backup" role="hidden">
+
+  <need>(dir,the-backup)</need>
+  
+  <tk type="bool" id="clear" label="Remove Passwords &amp; Secrets" x="1" flag="nono" tip="Remove passwords and secrets from the backup?"/>
+  <choose>
+    <when test="(prop,clear)">
+      <file id="customers">(dir,the-backup)custsets.xml</file>
+      <choose>
+        <when test="(f,exists_file,(file,customers))">
+          <spirit id="customers" act="open" xml="(file,customers)"/>
+          <ti type="file" label="Customers">(file,customers)</ti>          
+          <spirit 
+            id="customers" 
+            act="xml_update" 
+            how="remove_attribute"
+            where="//custset"
+            attribute="password"
+            flag="any" />
+          <ti label="">Did remove //custset@password</ti>
+
+          <spirit 
+            id="customers" 
+            act="xml_update" 
+            how="remove_attribute"
+            where="//custset"
+            attribute="encryptor"
+            flag="any" />
+          <ti label="">Did remove //custset@encryptor</ti>
+          
+          <spirit 
+            id="customers" 
+            act="xml_update" 
+            how="remove_attribute"
+            where="//custset"
+            attribute="encryptor_xsl"
+            flag="any" />
+          <ti label="">Did remove //custset@encryptor_xsl</ti>
+                                              
+          <spirit id="customers" act="close" flag="save"/>
+        </when>
+        <otherwise>
+          <ti label="The customers-file does not exist"/>
+          <ti type="file">(file,customers)</ti>
+        </otherwise>
+      </choose>  
+    </when>
+    <otherwise>
+      <ti>Keeping backup as it is</ti>
+    
+    </otherwise>
+  
+  </choose>
+  
+
+
+</job>
+
+<!--
+<job id="test-2">
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+</jobs>

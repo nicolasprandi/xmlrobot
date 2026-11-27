@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zut-editor">
+<try_catch>
+<try>
+<trace>Hook Station page=editor station=0 hook=begin hook_job=hook-zutat-editor-begin</trace>
+<call_job job="hook-zutat-editor-begin"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zut-editor: begin.0">
+<ti> hook_job=hook-zutat-editor-begin hook=begin page=editor station=0 object=zut</ti>
+</ti>
+</catch>
+</try_catch>
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Zutat(prop,zuts_offset_label)"/>
+<prop x="sum" id="zuts_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,zut_key)</need>
+<prop id="label" x="Zutat [(f,text,cut_nice,(prop,zut_bez),20)](prop,zuts_offset_label)"/>
+<prop x="sum_only" id="zuts_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="zut-tk"/>
+</job>

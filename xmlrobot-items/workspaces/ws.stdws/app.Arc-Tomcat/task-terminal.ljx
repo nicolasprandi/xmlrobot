@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog" />
+
+<job id="script-info" role="hidden">
+    <ti>sh ./update.sh</ti>
+    
+        <ti>sudo chown -R (f,sys_prop,user.name) (dir,loc)bin</ti>
+        <ti>sudo chmod +x (dir,loc)bin/*.sh</ti>
+    
+</job>
+
+<job id="open-terminal-internal" level="pro" os="mac" role="dev">
+
+    <exe>
+      <arg>open</arg>
+      <arg>-a</arg>
+      <arg>Terminal</arg>
+      <arg>(dir,task-terminal-dir)</arg>
+    </exe>      
+
+</job>
+
+<job id="open-terminal-internal" level="pro" os="linux" role="dev">
+
+    <exe dir="(dir,task-terminal-dir)">
+      <arg>gnome-terminal</arg>
+    </exe>
+
+</job>
+
+<job id="open-terminal-internal" level="pro" os="win" role="dev">
+
+  <exe dir="(dir,task-terminal-dir)">
+    <arg>cmd</arg>
+    <arg>/c</arg>
+    <arg>start</arg>
+  </exe>
+
+</job>
+
+<job id="Open Mac Terminal"  level="ws" role="dev">
+    <exe>
+      <arg>open</arg>
+      <arg>-a</arg>
+      <arg>Terminal</arg>
+    </exe>
+
+</job>
+
+<job id="Terminal-Os-Intern (?)"  level="ws" role="hidden" os="mac">
+    
+    <exe>
+      <arg>open</arg>
+      <arg>-a</arg>
+      <arg>Terminal</arg>
+      <arg>(dir,where)</arg>
+    </exe>
+
+</job>
+<job id="Terminal-Os-Intern (?)"  level="ws" role="hidden" os="linux">
+    
+    <exe dir="(dir,where)">
+      <arg>gnome-terminal</arg>
+    </exe>
+
+</job>
+
+<job id="Terminal-Os-InternXXX (?)"  level="ws" role="hidden" os="win">
+
+    <tk type="dir" id="where" />
+    <exe dir="(dir,where)">
+      <arg>cmd</arg>
+    </exe>
+
+</job>
+<job id="Terminal-Os-Intern (?)"  level="ws" role="hidden" os="win">
+  <!-- 
+  <ant>
+  <exec executable="cmd" spawn="true">
+    <arg line="/K" />
+
+  </exec>
+  </ant>-->
+<ant>  
+<exec executable="cmd">
+    <arg value="/c"/>
+    <arg value="start"/>
+  </exec> 
+</ant>
+  
+</job>
+<!-- 
+<job id="Terminal-Windows3 (?)"  level="ws" role="hidden">
+  <exe dir="(dir,bin)">
+    <arg>cmd</arg>
+    <arg>/c</arg>
+    <arg>start</arg>
+  </exe>
+</job>
+-->
+
+
+</jobs>

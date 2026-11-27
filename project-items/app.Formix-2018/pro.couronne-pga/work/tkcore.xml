@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pga-tk">
+<call_job job="tr_pga"/>
+<need default="">(prop,pgas_tk_control)</need>
+<when test="(f,has_flag,(prop,pgas_tk_control),print_only)">
+<choose>
+<when test="(f,has_flag,(prop,pgas_tk_control),print_all_fields)">
+<ti label="(prop,pga_default_label_class): (prop,pga_default_label_name)"/>
+</when>
+<otherwise>
+<ti label=" " x="(f,html,b,o)(prop,pga_default_label_class)(f,html,b,c)"/>
+</otherwise>
+</choose>
+</when>
+<tk label="(f,when,(f,has_flag,(prop,pgas_tk_control),print_only),,(prop,pga_default_label_class)(f,when,(f,has,prop,pga_default_label_name),: (prop,pga_default_label_name),))" tip="(prop,_pga_t)" tk_id="18" flag="(prop,pgas_tk_control) wrap ">
+<tk label="(prop,_pga_atyp_l)" id="pga_attributtyp" x="" test_first="1" tip="(prop,_pga_atyp_t)" type="sel" flag=" nono " xml="(file,pdi-sel-attr)"/>
+<tk label="(prop,_pga_docu_l)" id="pga_detail" x="" test_first="0" tip="(prop,_pga_docu_t)" type="textblock" flag=" "/>
+</tk>
+</job>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="opt-read">
+<need>(prop,opt_key)</need>
+<spirit act="open" missing_strategy="empty" id="opts_spirit_tc" xml="(file,opts)"/>
+<prop id="opt_dt_upd">(f,spirit,opts_spirit_tc,(prop,opts_offset)opt[@row=(f,xpath_string,(prop,opt_key))],@dt_upd)</prop>
+<prop id="opt_dt_add">(f,spirit,opts_spirit_tc,(prop,opts_offset)opt[@row=(f,xpath_string,(prop,opt_key))],@dt_add)</prop>
+<prop id="opt_bez">(f,spirit,opts_spirit_tc,(prop,opts_offset)opt[@row=(f,xpath_string,(prop,opt_key))],@bez)</prop>
+<prop id="opt_besch">(f,spirit,opts_spirit_tc,(prop,opts_offset)opt[@row=(f,xpath_string,(prop,opt_key))],@besch)</prop>
+<prop id="opt_klasse">(f,spirit,opts_spirit_tc,(prop,opts_offset)opt[@row=(f,xpath_string,(prop,opt_key))],@klasse)</prop>
+<spirit act="close" id="opts_spirit_tc"/>
+</job>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="exportfiles">(dir,pro)exportfiles.xml</file>
+<when test="(f,not,(f,exists_file,(file,exportfiles)))">
+<create_file out="(file,exportfiles)">&lt;exportfiles/&gt;</create_file>
+<i>Created: (file,exportfiles)</i>
+</when>
+<prop id="exportfiles_offset">./</prop>
+<prop id="exportfiles_offset_label"/>
+<prop id="exportfiles_offset_new_key">//</prop>
+<prop id="exportfiles_sort_attribute"/>
+<prop id="exportfiles_sort_number"/>
+<prop id="exportfiles_sort_ignore_case"/>
+<prop id="exportfiles_sort_desc"/>
+<prop id="exportfiles_where"/>
+<prop id="exportfiles_return_job">exportfile-see-all</prop>
+</prolog>

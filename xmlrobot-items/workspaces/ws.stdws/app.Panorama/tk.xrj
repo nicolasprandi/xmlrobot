@@ -1,0 +1,297 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+
+<!--
+  <call_job job="do-tk-template">
+    <prop id="with-flags" x="print_only"/>
+    <prop id="with-read" x="1"/>
+  </call_job>
+-->
+
+<job id="do-tk-template" role="hidden">
+  <need default="">(prop,with-flags)</need>
+  <need default="0">(prop,with-read)</need>
+  
+  <when test="(prop,with-read)">
+    <call_job job="go-joe-read">
+    </call_job>
+  </when>
+  
+
+</job>
+
+<job id="do-tk-select" role="hidden">
+  <need default="">(prop,with-flags)</need>
+  <need default="0">(prop,with-read)</need>
+  <need default="sum_only">(prop,with-sum-flag)</need>  
+  
+  <prop id="with-read" x="0" test="(f,not,(f,is_bool,(prop,with-read)))"/>
+  <when test="(prop,with-read)">
+    <call_job job="Read Definitions"/>
+  </when>
+  
+  
+  <tk label="(prop,_dscan_l)" flag="(prop,with-sum-flag) (prop,with-flags)">
+
+    <tk type="dir" 
+        id="et_scan_dir" 
+        label="(prop,_dscan_dir_l)" 
+        tip="(prop,_dscan_dir_t)"
+        flag="nono"/>
+    <!--     
+    <tk type="sel" 
+        id="et_scan_policy" 
+        label="Strategy" 
+        tip="How to scan folders:&#xA;[ Life ] keeps the data fresh and scans for files whenever you switch to another folder&#xA;[ Image ] scans all files once and can therefore make statistics. Uses the parameter 'Directory-Levels' to define the levels to include." 
+        no_is="life">
+      <sel label="Life = Scan always">life</sel>
+      <sel label="Image = Preload once">image</sel>
+    </tk>    
+    
+    <tk id="et_scan_level_limit" 
+        type="sel" 
+        label="Directory-Levels" 
+        tip="How many directory-levels do you want to integrate? &#xA;By default: 1"  
+        no_is="1">
+      <sel>1</sel>
+      <sel>2</sel>
+      <sel>3</sel>
+      <sel>4</sel>
+      <sel>5</sel>
+      <sel>6</sel>
+      <sel>8</sel>
+      <sel>9</sel>
+      <sel>10</sel>
+      <sel label="Unlimited">(prop,unlimited)</sel>
+    </tk>     
+           
+
+    <tk type="msg" 
+        x="Reduction: File-Size" 
+        test="(f,role,expert)"
+        tip="Lets you filer for filesizes"/>
+        
+    <tk id="et_scan_min_kb" 
+        label="Limit by Filesize/Kb" 
+        tip="Minimum Filesize (e:o)kb(e:c) of files to be integrated" test="(f,role,expert)"/>
+        
+    <tk type="msg" 
+        x="Reduction: File-Extensions"  
+        test="(f,role,test)"
+        tip="Filter for File-Extensions"/>
+    
+    <tk type="sel" 
+        id="dlg_fext_type" 
+        label="Filter Type"
+         test="(f,role,test)"
+         tip="Reduce the amount of data by defining extension you want - or you don't want: Positive or Negative Filter">
+      <sel label="Positive Filter = Extensions you WANT">1</sel>
+      <sel label="Negative Filter = Extensions you DON'T WANT">2</sel>
+    </tk> 
+    
+    <tk id="dlg_fext_ext" 
+        label="Extensions" 
+        tip="Extensions according to your filter type(e:s) including the preceeding dot. Use space for separating several extensions.&#xA;eg: .xml .wav .pdf" 
+        test="(f,role,test)"
+        />
+    <tk id="et_scan_fext_no" label="Negative Extension Filter" xtip="0=All, 10=Forget the small ones" />    
+    -->
+  
+    
+    <tk type="msg" 
+        x="Reduction: Categories - nur bei TEST" 
+        test="(f,role,test)"
+        tip="Filter per category"/>
+    <tk type="sel" 
+        id="redu_cat_type" 
+        label="Filter Type" 
+        test="(f,role,test)"
+        tip="Filter type: Positive or Negative">
+      <sel label="Positive Filter = Categories you WANT">1</sel>
+      <sel label="Negative Filter = Categories you DONT'T WANT">2</sel>
+    </tk>  
+    <tk type="sel" 
+        flag="multi"
+        id="redu_cat_cats" 
+        test="(f,and,(f,role,test),(f,eq,system,(prop,et_org_type)))"
+        label="Categories"
+        xml="(file,app-extension-groups-tisel)"
+        tip="Common categories for filter"/>
+
+    <tk type="sel" 
+        flag="multi"
+        id="redu_cat_cats" 
+        test="(f,and,(f,role,test),(f,eq,project,(prop,et_org_type)))"
+        label="Categories"
+        xml="(file,extension-groups-tisel)"
+        tip="Private categories for filter"/>
+        
+    <tk type="msg" 
+        x="Reduction: Directories"  
+        test="(f,role,test)"
+        tip="Filter for directories"/>
+        
+    <tk id="et_scan_path_exclude" label="Dirname to Exclude" test="(f,role,test)" tip="Xpath for directories to exclude"/>
+                     
+  </tk>
+
+</job>
+
+<job id="do-tk-report" role="hidden">
+  <need default="">(prop,with-flags)</need>
+  <need default="0">(prop,with-read)</need>
+  <need default="sum_only">(prop,with-sum-flag)</need>
+
+  
+  <when test="(prop,with-read)">
+    <call_job job="Read Definitions"/>    
+  </when>
+  
+  <prop id="et_report_ti_dir_level">1</prop>
+  
+  <call_job job="tr_lysp"/>
+  
+  <tk label="(prop,_lysp_l)" flag="(prop,with-sum-flag) (prop,with-flags)">
+    <!-- <tk type="sel" id="et_report_ti_job" label="Layout" xml="(dir,app)sel-report-job.xml" flag="nono"/> -->
+    <tk type="msg" 
+        x="(prop,_lysp_mscope_l)"/>
+    <!-- 
+    <tk test="(f,eq,life,(prop,et_scan_policy))" type="dir" id="et_scan_dir" label="Directory to scan"/>
+    
+    <tk test="(f,eq,image,(prop,et_scan_policy))" type="text" id="et_offset_ipath" label="Current Image-View"/>      
+    <tk type="sel" id="et_report_ti_dir_level" label="Directory Levels" flag="nono" tip="Number of directory-levels visible in the report">
+      <sel>1</sel>
+      <sel>2</sel>
+      <sel>3</sel>
+      <sel>4</sel>
+      <sel>5</sel>
+      <sel>6</sel>
+      <sel>8</sel>
+      <sel>10</sel>
+      <sel label="Unlimited">(prop,unlimited)</sel>
+    </tk>          -->
+    
+    <tk type="bool" 
+        id="et_report_ti_cats_use" 
+        label="(prop,_lysp_cats_l)" 
+        flag="no_is_0" 
+        tip="(prop,_lysp_cats_t)"/>
+                 
+    <tk type="msg" x="(prop,_lysp_msums_l)" tip="(prop,_lysp_msums_t)"/>  
+    
+    <tk type="sel" 
+        id="et_report_ti_sum_total" 
+        label="(prop,_lysp_ptot_l)" 
+        tip="(prop,_lysp_ptot_t)">
+      <sel label="(prop,_lysp_ptot_beg)">begin</sel>
+      <sel label="(prop,_lysp_ptot_end)">end</sel>
+    </tk>     
+    
+    <tk type="bool" 
+        id="et_report_ti_sum_cat" 
+        label="(prop,_lysp_sumcat_l)" 
+        xflag="no_is_0" 
+        tip="(prop,_lysp_sumcat_t)"/>
+        
+    <tk type="bool" id="et_report_ti_sum_ext" 
+        label="(prop,_lysp_sumext_l)" 
+        xflag="no_is_0" 
+        tip="(prop,_lysp_sumext_t)"/>
+        
+    <tk type="sel" 
+        id="et_report_ti_sum_sort" 
+        label="(prop,_lysp_sumsort_l)"
+        tip="(prop,_lysp_sumsort_t)">
+      <sel label="(prop,_lysp_sumsort_big)">big</sel>
+      <sel label="(prop,_lysp_sumsort_small)">small</sel>
+      <sel label="(prop,_lysp_sumsort_fequ)">most</sel>
+      <sel label="(prop,_lysp_sumsort_less)">less</sel>      
+    </tk>     
+    <tk type="msg" x="(prop,_lysp_mfdet_l)" tip="(prop,_lysp_mdfet_t)"/>
+    <!-- <tk type="bool" id="et_report_ti_files_flag" label="See Filenames" flag="no_is_0" tip="Should files be listed?"/> -->
+
+    <tk type="sel" id="dlg_see_files" label="(prop,_lysp_sefi_l)" no_is="-1"
+        tip="(prop,_lysp_sefi_t)" >
+      <sel label="(prop,_lysp_sefi_no)">-1</sel>
+      <sel label="(prop,_lysp_sefi_yes)">0</sel>
+      <sel label="(prop,_lysp_sefi_yesb)">1</sel>
+      <sel label="(prop,_lysp_sefi_yesbc)">2</sel>      
+    </tk> 
+
+
+    <tk type="bool" id="see_file_size" label="(prop,_lysp_sesi_l)" flag="no_is_0" 
+        tip="(prop,_lysp_sesi_t)"/>
+    <!--     
+    <tk type="bool" id="see_file_specials" label="Do Content Analysis" flag="no_is_0" 
+        tip="Lists sheets(e:s) jobs and xsl-matches"/>
+    
+    <tk type="sel" id="et_report_ti_files_opt" label="Additional File Information" tip="Information to see for every listed file" flag="multi">
+      <sel label="Size">size</sel>
+      <sel label="Content Analysis">specials</sel>
+    </tk> --> 
+    <tk type="sel" id="et_report_ti_files_sort" label="(prop,_lysp_sofi_l)" 
+      tip="(prop,_lysp_sofi_t)">
+      <sel label="(prop,_lysp_sofi_name)">name</sel>
+      <sel label="(prop,_lysp_sofi_ext)">ext</sel>
+      <sel label="(prop,_lysp_sofi_big)">size</sel>
+      <sel label="(prop,_lysp_sofi_small)">size_sf</sel>
+    </tk>
+    
+    <tk type="text" 
+        id="et_report_ti_limit_files_per_group" 
+        label="(prop,_lysp_limitf_l)"
+        tip="(prop,_lysp_limitf_t)"
+        regex="/d+"/>  
+      
+    <tk type="msg" x="(prop,_lysp_mdirs_l)" tip="(prop,_lysp_mdirs_t)"/>
+           
+    <tk  type="sel" id="et_report_ti_dirs_types" label="(prop,_lysp_dirtyp_l)" tip="(prop,_lysp_dirtyp_t)" flag="multi">
+      <sel label="(prop,_lysp_dirtyp_direct)">child</sel>
+      <sel label="(prop,_lysp_dirtyp_next)">next</sel>
+      <sel label="(prop,_lysp_dirtyp_all)">all</sel>
+      <sel label="(prop,_lysp_dirtyp_big)">big</sel>
+      <sel label="(prop,_lysp_dirtyp_big_av)">avg</sel>      
+    </tk>
+      
+    <tk type="bool" id="see_dir_size" label="(prop,_lysp_dirsiz_l)" flag="no_is_0" 
+        tip="(prop,_lysp_dirsiz_t)"/>
+        
+    <tk type="msg" x="(prop,_lysp_ldirs_l)" tip="(prop,_lysp_ldirs_t)"/>    
+       
+    <tk type="text" id="et_report_ti_limit_dirs" label="(prop,_lysp_limitbig_l)" 
+        tip="(prop,_lysp_limitbig_t)"/>
+        
+    <tk type="text" id="et_report_ti_limit_next_dirs"  label="(prop,_lysp_maxnext_l)"
+        tip="(prop,_lysp_maxnext_t)"/>
+    
+    <tk type="msg" x="(prop,_lysp_mfilpc_l)"
+        tip="(prop,_lysp_mfilpc_t)"/>
+    
+    <tk type="sel" id="et_report_ti_grp_filter_type" label="(prop,_lysp_typfilt_l)"
+        tip="(prop,_lysp_typfilt_t)">
+      <sel label="(prop,_lysp_typfilt_want)">1</sel>
+      <sel label="(prop,_lysp_typfilt_wantnot)">2</sel>      
+    </tk> 
+
+    <tk type="sel" 
+        flag="multi"
+        id="et_report_ti_grp_filter_system" 
+        test="(f,and,1,(f,eq,system,(prop,et_org_type)))"
+        label="(prop,_lysp_catsel_l)"
+        xml="(file,app-extension-groups-tisel)"
+        tip="(prop,_lysp_catsel_t)"/>
+
+    <tk type="sel" 
+        flag="multi"
+        id="et_report_ti_grp_filter_project" 
+        test="(f,and,1,(f,eq,project,(prop,et_org_type)))"
+        label="(prop,_lysp_catsel_l)"
+        xml="(file,extension-groups-tisel)"
+        tip="(prop,_lysp_catselpriv_t)"/>       
+  </tk>
+</job>
+
+</jobs>

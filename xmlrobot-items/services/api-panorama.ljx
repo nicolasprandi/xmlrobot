@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="Goto-Panorama" joblevel="ws" role="hidden">
+  <need>(dir,with)</need>
+  <need default="0">(prop,is-first-chooser)</need>
+  <!-- <interpreter watch="1"/> -->
+  <prop id="found-master" x="0"/>
+  <ti test="0">Goto-Panorama requested for (dir,with)</ti>
+  <try_catch>
+  <try>
+  <when xtest="1" test="(f,guicontroller,general,is-web,)">
+  <when test="(f,has,(f,request,dir,master_project))">
+    <!-- <interpreter watch="1"/>   -->
+    <dir id="mp">(f,request,dir,master_project)</dir>
+    <dir id="mp">(dir,mp)cache</dir>
+    <file id="little">(dir,mp)little-panorama.txt</file>
+    <ti test="0" type="file" label="looking four">(file,little)</ti>
+    <when test="(f,exists_file,(file,little))">
+      <dir id="pro_temp" x="(f,file_content,(file,little))"/>
+      <ti test="0" label="little-pro-dir">(dir,pro_temp)</ti>
+      
+      <call_app     app="Panorama" 
+                    job="Panorama Directory" 
+                    pro_dir="(dir,pro_temp)" 
+                    pro_id="Your Pano"
+                    flag="silent">
+          <!-- <ti>entering old pano with (dir,with)</ti>   -->       
+          <dir id="redo_dir">(dir,with)</dir>
+          <prop id="redo_ipath">(f,name_of_dir,(dir,with))/</prop>          
+          <prop id="is-first-chooser">(prop,is-first-chooser)</prop>         
+                            
+      </call_app> 
+      <prop id="found-master" x="1"/>      
+    </when>
+  </when>
+  </when>
+  </try>
+  <catch>
+    <ti label="problem">(prop,catched_msg)</ti>
+  </catch>
+  </try_catch>
+  
+  <when test="(f,not,(prop,found-master))">
+    <dir id="pro_temp" x="(f,request,dir,new_temp_pro)"/>
+    <mkdir dir="(dir,pro_temp)" flag="cascade"/>
+    <ti type="dir" label="TemporaryPanoPro" x="(dir,pro_temp)" test="0"/>
+  
+    <call_app     app="Panorama" 
+                  job="Api-Panorama" 
+                  pro_dir="(dir,pro_temp)" 
+                  pro_id="Goto-Panorama at (f,time)"
+                  flag="silent">       
+      <dir id="with">(dir,with)</dir>
+      <prop id="is-first-chooser">(prop,is-first-chooser)</prop>                       
+    </call_app> 
+  </when>
+  <!-- <interpreter watch="0"/> -->
+</job>
+
+
+<job id="Goto-Panorama-File" joblevel="ws" role="hidden">
+  <choose>
+    <when test="(f,exists,prop,label)">
+      <ti label="(prop,label)" type="file">(file,with)</ti>
+    </when>
+    <otherwise>
+      <ti type="file">(file,with)</ti>
+    </otherwise>
+  </choose>  
+</job>
+  
+<job id="Conf: Pano-Categories" joblevel="ws" role="hidden" tip="You can define the groupings of the files in the Panorama-Browser" >
+    <call_app app="Panorama" 
+              job="Api-ExtensionGroupsEditor" 
+              pro_dir="(f,request,dir,session_home_fs)pano-conf-cat/" 
+              pro_id="Temporary"
+              flag="silent"/> 
+</job>
+<!--   
+<job id="add-any-project-type" joblevel="ws" role="hidden">  
+    <ask what="services apps" out="(dir,filetemp)x.xml"/>
+    <ti type="file" label="X:">(dir,filetemp)x.xml</ti>
+    <loop id="apps" xml="(dir,filetemp)x.xml" xpath="apps/app">
+      <ti>app (loop,apps,@id)</ti>
+    </loop>  
+</job> 
+
+-->
+
+
+</jobs>

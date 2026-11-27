@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="compi-tk">
+<need default="">(prop,compis_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="Ein Rezept ist ein Beschreibung eines Kochvorganges dervin einem Endresultat muendet. &#10;Zum einen gibt es Grund-Zutaten fuer das gesamte Rezept. &#10;Weiters kann ein Rezept in Teilprodukte gegliedert werden - diese werden Komponenten genannt;&#10;Innerhalb jeder Komponente kann aus den Grund-Zutaten auswgewaet werden um diese zu verarbeiten. ie Verarbeitungsschritte &#10;Wwerden dokumentiert. " flag="(prop,compis_tk_control) wrap ">
+<tk label="The Compilation to Run" id="compi_compilation" x="" test_first="1" tip="kompilation" type="sel" flag=" " xml="(dir,pro)current-compi-compile-selection.xml"/>
+</tk>
+</job>

@@ -1,0 +1,266 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<job id="core-operation-integrate-zelix-outputs" role="hidden">
+
+<tk type="msg" msg_type="w">Sure to integrate zelix-OUTPUTS back to Arcadia?</tk>
+
+  <interpreter watch="0"/>
+  <ti>in job: core-operation-integrate-zelix-outputs</ti>
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_para_print_values_tips"/>
+  <ti_hr/>
+  <ti label="Performed Integration"/>
+  <ti type="dir" label="Outputs of Zelix" x="(dir,para_zelix_output)"/>
+  <ti type="call_service" job="Goto-Panorama" label=" ">
+    <dir id="with" x="(dir,para_zelix_output)"/>
+  </ti>  
+  <ti_hr/>  
+  <file id="scan" x="(dir,temp)scan.xml" />
+  
+  <scan dir="(dir,para_arc_pro)" 
+        level_limit="1"
+        out="(file,scan)"/>
+  <loop id="compiles" xml="(file,scan)" xpath="dir" >
+    <when test="(f,starts_with,(loop,compiles,@rpath),compile-)">
+      <ti label="(loop,compiles,@rpath)"/>
+      <prop id="name" x="(f,substring_after,(loop,compiles,@rpath),compile-)"/>
+      <dir id="root" x="(dir,para_arc_pro)(loop,compiles,@rpath)"/>
+
+      <file id="from-compiled" x="(dir,root)compiled-bin.jar"/>
+      
+      <file id="obf-compiled" x="(dir,para_zelix_output)(prop,name)-compiled.jar"/>   
+      
+      
+      <!-- compiled -->
+      <choose>
+        <when test="(f,exists_file,(file,obf-compiled))">
+          <when test="(f,exists_file,(file,from-compiled))">
+            <tp>renaming  (prop,name)-compiled.jar</tp>
+            <file id="thebackup" x="(f,dir_of_dir,(file,from-compiled))(f,name_of_file2,(file,from-compiled))-(f,time).(f,vfs,(file,from-compiled),extension)"/>
+            <ant log_level="info">
+              <move   
+                file="(f,file,classic,(file,from-compiled))"
+                tofile="(f,file,classic,(file,thebackup))" />
+            </ant>
+            <ti label="Created backup:" x="(file,thebackup)" type="file"/>
+          </when>
+          <tp>copy (prop,name) obfuriscated JAR</tp>
+          <!--
+          <delete file="(file,from-compiled)" flag="catch"/>
+          <copy file="(file,obf-compiled)" tofile="(file,from-compiled)"/>
+                      -->
+          <ant>
+          <copy file="(f,file,classic,(file,obf-compiled))" tofile="(f,file,classic,(file,from-compiled))"/>
+          </ant>                  
+          <ti>&lt;copy file="(f,file,classic,(file,obf-compiled))" tofile="(f,file,classic,(file,from-compiled))"/&gt;</ti>
+          <ti x="Copy Obfuriscated"/>
+          <ti xtype="file" label="from" x="(file,obf-compiled)"/>
+          <ti type="file" label="from" x="(file,obf-compiled)"/>          
+          <ti xtype="file" label="to" x="(file,from-compiled)"/>
+
+          <ti type="file" label="to" x="(file,from-compiled)"/>          
+          <!-- 
+          <tp>copy (prop,name) compiled JAR</tp>
+          <copy file="(file,from-compiled)" tofile="(file,to-compiled)"/>
+          <ti type="file" label="Copied compiled to" x="(file,to-compiled)"/>
+          -->
+        </when>
+           
+        <otherwise>
+          <ti label="CRITICAL:">No obfuriscated-bin available</ti>         
+        </otherwise>
+      </choose>      
+    
+    </when>
+  
+  </loop>
+
+        
+        
+  <dump_ti label="core-operation-collect-zelix-inputs" test="0"/>      
+</job>
+
+<job id="core-operation-collect-zelix-inputs" role="hidden">
+  <tk type="msg" msg_type="w">Sure to collect INPUTs for Zelix from Arcadia ?</tk>
+  <interpreter watch="0"/>
+  <ti>in job: core-operation-collect-zelix-inputs</ti>
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_para_print_values_tips"/>
+  
+  
+  <file id="printer1" x="(dir,pro)printer1.txt"/>
+  <file id="printer3" x="(dir,pro)printer3.txt"/>
+  <print id="p1" out="(file,printer1)" act="open"/> 
+  <print id="p3" out="(file,printer3)" act="open"/> 
+
+  
+  
+  <file id="scan" x="(dir,systemp)scan.xml" />
+  
+  <tk id="do-with-3rdparty" label="do-with-3rdparty" x="1" flag="nono" type="bool"/>
+  
+  <scan dir="(dir,para_arc_pro)" 
+        level_limit="1"
+        out="(file,scan)"/>
+  <loop id="compiles" xml="(file,scan)" xpath="dir" >
+    <when test="(f,starts_with,(loop,compiles,@rpath),compile-)">
+      <ti label="(loop,compiles,@rpath)"/>
+      <prop id="name" x="(f,substring_after,(loop,compiles,@rpath),compile-)"/>
+      <dir id="root" x="(dir,para_arc_pro)(loop,compiles,@rpath)"/>
+      <file id="from-3rd" x="(dir,root)3rd-party-bin.jar"/>
+      <file id="from-compiled" x="(dir,root)compiled-bin-original.jar"/>
+      
+      <file id="to-3rd" x="(dir,para_zelix_input)(prop,name)-3rd.jar"/>
+      <file id="to-compiled" x="(dir,para_zelix_input)(prop,name)-compiled.jar"/>   
+      
+      <tp>Deleting old  (prop,name)-3rd-party.jar</tp>
+      <delete file="(file,to-3rd)"/>  
+      
+      <tp>Deleting old  (prop,name)-compiled.jar</tp>
+      <delete file="(file,to-compiled)"/>
+      
+      <!-- 3rd-party -->
+      <when test="(prop,do-with-3rdparty)">
+        <choose>
+          <when test="(f,exists_file,(file,from-3rd))">
+            <tp>copy (prop,name) 3rd-party JAR</tp>
+            <copy file="(file,from-3rd)" tofile="(file,to-3rd)"/>
+            <ti type="file" label="Copied 3rd-party to" x="(file,to-3rd)"/>
+            
+            <print act="println" id="p3">&quot;(f,file,classic,(file,to-3rd))&quot;</print>
+          </when>
+          <otherwise>
+            <ti label="CRITICAL:">No 3rd-party-bin available</ti>         
+          </otherwise>
+        </choose>
+      </when>
+      
+      <!-- compiled -->
+      <choose>
+        <when test="(f,exists_file,(file,from-compiled))">
+          <tp>copy (prop,name) compiled JAR</tp>
+          <copy file="(file,from-compiled)" tofile="(file,to-compiled)"/>
+          <ti type="file" label="Copied compiled to" x="(file,to-compiled)"/>
+          <print act="println" id="p1">&quot;(f,file,classic,(file,to-compiled))&quot;</print>
+        </when>
+        <otherwise>
+          <ti label="CRITICAL:">No compiled-bin available</ti>         
+        </otherwise>
+      </choose>      
+    
+    </when>
+  
+  </loop>
+  <ti label="Performed Collection"/>
+  <ti type="dir" label="Inputs 4 Zelix" x="(dir,para_zelix_input)"/>
+  <ti type="call_service" job="Goto-Panorama">
+    <dir id="with" x="(dir,para_zelix_input)"/>
+  </ti>
+
+
+  <print id="p1" act="close"/>
+  <print id="p3" act="close"/>
+
+  <create_file out="(file,advice)">(f,file_content,(file,printer3))  ;
+  
+open (f,file_content,(file,printer1)) ;</create_file> 
+  <ti type="file" x="(file,advice)"/>
+  <ti>(f,file_content,(file,advice))</ti>
+  
+  <create_file out="(file,advice2)">saveAll archiveCompression=all &quot;(f,dir,classic,(dir,para_zelix_output))&quot;;</create_file>
+  <ti type="file" x="(file,advice2)"/>
+  <!-- <print act="println" id="p"><![CDATA[<?xml version="1.0" ?><steps><ti type="rec">]]></print>  -->       
+        
+  <dump_ti label="core-operation-collect-zelix-inputs" test="0"/>      
+</job>
+
+<job id="core-operation" role="hidden">
+
+  <call_job job="tk_para_read"/>
+  <call_job job="tk_conf_read"/>
+  
+  <dump_ti_all label="Greetings from core-operation"/>
+  <create_file file="(file,project-exists)">yes</create_file>
+  
+  <prop id="stat_begin" x="(f,time,yyyyMMdd_HHmmss)"/>
+  
+  <dir id="starter" x="(dir,services)" />
+  
+  <file id="scan" x="(dir,temp)scan.xml" />
+  
+  <scan dir="(dir,starter)" 
+        level_limit="3"
+        out="(file,scan)"
+        field="fn"/>
+  
+  <prop id="counter" x="0" />
+  <prop id="found" x="0"/> 
+        
+  <loop id="scan" xml="(file,scan)" xpath="//file">
+    <prop id="counter" x="(f,add,1,(prop,counter))"/>
+    
+    <ti type="file" label="Some (prop,counter)" x="(loop,scan,@fn)"/>
+
+    <prop id="found" x="1"/>     
+  
+  </loop>
+
+  <prop id="stat_end" x="(f,time,yyyyMMdd_HHmmss)"/>
+  <prop id="stat_counter" x="(prop,counter)"/>  
+  <call_job job="tk_stat_write" />
+  
+  <ti label="Summary"/>
+  <ti type="dir" x="(dir,services)" label="Eben"/>
+  <ti type="file" x="(file,takeoff)" label="Dort"/>
+  <throw>Good By</throw>
+
+</job>
+
+<!--
+<job id="test-2">
+
+      <choose>
+        <when test="1">
+        </when>
+        <when test="0">
+        </when>
+        <otherwise>
+        </otherwise>
+      </choose>
+</job>
+
+<job id="test-3">
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+</job>
+
+<job id="test-4">
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="test-4?">
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+</job>
+
+-->
+
+
+
+
+</jobs>

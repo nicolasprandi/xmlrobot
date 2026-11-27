@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job  id="eg-editor-base" joblevel="ws" 
+      role="hidden" 
+      tip="You can define the groupings of the files in the Panorama-Browser" >
+      
+  <need>(file,eg-with)</need>    
+  
+  <file id="groups">(file,eg-with)</file>
+  <prop id="groups_offset">./</prop>
+  <prop id="groups_offset_label" />
+  <prop id="groups_offset_new_key">//</prop>
+  <prop id="groups_sort_attribute">@sort</prop>
+  <prop id="groups_sort_number">@sort</prop>
+  <prop id="groups_sort_ignore_case"></prop>
+  <prop id="groups_sort_desc"></prop>
+  <prop id="groups_where" />
+  <prop id="groups_return_job">View File-Categories</prop>
+  <call_job job="View File-Categories" />
+
+</job>
+
+<job id="pnx_hook_view_21" role="hidden">
+
+  <!-- <dump/> -->
+  <!-- <ti type="call_job" job="Publish Panorama File-Categories" explain="Publish"/> -->
+</job>
+
+<job id="List All Extensions" role="hidden">
+
+  <prop id="result"></prop>
+  <ti label="List of Extensions"/>
+  <loop id="r" xml="(file,groups)" xpath="group[@id=(prop,group_key)]/extension">
+    <ti label=" ">(loop,r,@extension)</ti>
+    <prop id="result">(prop,result).(loop,r,@extension) </prop>
+  </loop>
+  
+  <ti label="All Extensions">
+    <ti label=" ">(prop,result)</ti>
+  </ti>
+  <!-- <dump/> -->
+  <!-- <ti type="call_job" job="Publish Panorama File-Categories" explain="Publish"/> -->
+</job>
+
+<job id="pnx_hook_view_extensions_end" role="hidden">
+  <ti_hr/>
+  <ti type="call_job" job="Publish Panorama File-Categories" explain="Publish">
+    <tk type="msg">Sure to publish the categories?</tk>
+    <file id="groups">(file,groups)</file>
+  </ti>    
+  <ti type="call_job" job="View File-Categories" explain="See all categories">
+    <file id="groups">(f,vob,file,groups)</file>
+    <prop id="groups_offset">(f,vob,prop,groups_offset)</prop>
+    <prop id="groups_offset_label">(f,vob,prop,groups_offset_label)</prop>
+    <prop id="groups_offset_new_key">(f,vob,prop,groups_offset_new_key)</prop>
+    <prop id="groups_sort_attribute">(f,vob,prop,groups_sort_attribute)</prop>
+    <prop id="groups_sort_number">(f,vob,prop,groups_sort_number)</prop>
+    <prop id="groups_sort_ignore_case">(f,vob,prop,groups_sort_ignore_case)</prop>
+    <prop id="groups_sort_desc">(f,vob,prop,groups_sort_desc)</prop>
+    <prop id="groups_where">(f,vob,prop,groups_where)</prop>
+    <prop id="groups_return_job">(f,vob,prop,groups_return_job)</prop>  
+  </ti>
+
+</job>
+
+<job id="pnx_hook_view_groups_end" role="hidden">
+  <!-- <ti>Greetings from pnx_hook_view_groups_end</ti> -->
+  <ti_hr/>
+  <ti type="call_job" 
+      job="Get Panorama File-Extensions" 
+      explain="Get list of extensions"
+      test="(f,role,hidden)">
+    <file id="groups">(file,groups)</file>
+  </ti>  
+  <ti type="call_job" job="Publish Panorama File-Categories" explain="Publish">
+    <tk type="msg">Sure to publish the categories?</tk>
+    <file id="groups">(file,groups)</file>
+  </ti>
+  <!-- 
+  <ti type="call_job" job="View Groups" explain="Home">
+    <file id="groups">(file,groups)</file>
+    <prop id="groups_offset">(prop,groups_offset)</prop>
+    <prop id="groups_offset_label">(prop,groups_offset_label)</prop>
+    <prop id="groups_offset_new_key">(prop,groups_offset_new_key)</prop>
+    <prop id="groups_sort_attribute">(prop,groups_sort_attribute)</prop>
+    <prop id="groups_sort_number">(prop,groups_sort_number)</prop>
+    <prop id="groups_sort_ignore_case">(prop,groups_sort_ignore_case)</prop>
+    <prop id="groups_sort_desc">(prop,groups_sort_desc)</prop>
+    <prop id="groups_where">(prop,groups_where)</prop>
+    <prop id="groups_return_job">(prop,groups_return_job)</prop>  
+  </ti>
+  -->
+           
+</job>
+
+<job id="Get Panorama File-Extensions" role="hidden">
+  <need>(file,groups)</need>
+  <dump_ti_all/>
+</job>
+
+<job id="Publish Panorama File-Categories" role="hidden">
+  
+  <!-- create the name of the destination files -->
+  <prop id="dof">(f,dir_of_file,(file,groups))</prop>
+  <prop id="nof">(f,name_of_file,(file,groups))</prop>
+  <prop id="last">(f,last_index_of,(prop,nof),edit.xml)</prop>
+  <when test="(f,eq,-1,(prop,last))">
+    <throw>Invalid Filename: (file,groups)</throw>
+  </when>
+  <file id="life">(prop,dof)(f,substring,(prop,nof),0,(prop,last))life.xml</file>
+  <file id="tisel">(prop,dof)(f,substring,(prop,nof),0,(prop,last))tisel.xml</file>
+  
+  <!-- filter non-active, and sort by attribute @sort -->
+  <file id="tx">(dir,filetemp)(f,time).xml</file>
+  <xslt
+    xml="(file,groups)"
+    xsl="(dir,app)publish-groups.xsl"
+    out="(file,tx)"/>
+  <!-- <ti label="tx:" type="file">(file,tx)</ti> -->
+  
+  <!-- for the aggreation, it is nessecarry to make sure a specific 
+       organisation of group and extions-ids,
+       group-ids start with 1
+       all extension-ids are above all group-ids -->
+  <prop id="next_id_to_give">0</prop>  
+  <spirit id="x" act="open" xml="(file,tx)" flag="nuevo"/>
+  <loop_xml id="x" act="open" spirit="x" xpath="//group" sort="@sort" number="@sort"/>
+  <loop id="wx" while="()(f,loop_xml,x,has_next?)()">
+    <loop_xml act="next" id="x" />
+    <prop id="next_id_to_give">(f,add,1,(prop,next_id_to_give))</prop>
+    <spirit 
+      id="x"  
+      act="xml_update" 
+      where_is_loop_xml="x" 
+      how="set_attribute" 
+      attribute="id" 
+      value="(prop,next_id_to_give)" /> 
+  </loop>
+  <loop_xml id="x" act="close"/>
+  
+  <spirit 
+    id="x"  
+    act="xml_update" 
+    where="." 
+    how="set_attribute" 
+    attribute="max_g_id" 
+    value="(prop,next_id_to_give)" />  
+     
+  <loop_xml id="x" act="open" spirit="x" xpath="//extension"/>
+  <loop id="wx" while="()(f,loop_xml,x,has_next?)()">
+    <loop_xml act="next" id="x" />
+    <prop id="next_id_to_give">(f,add,1,(prop,next_id_to_give))</prop>
+    <spirit 
+      id="x"  
+      act="xml_update" 
+      where_is_loop_xml="x" 
+      how="set_attribute" 
+      attribute="id" 
+      value="(prop,next_id_to_give)" /> 
+  </loop>
+  <loop_xml id="x" act="close"/>
+    
+  <spirit 
+    id="x"  
+    act="xml_update" 
+    where="." 
+    how="set_attribute" 
+    attribute="max_id" 
+    value="(prop,next_id_to_give)" /> 
+      
+  <spirit id="x" act="close" flag="save" out="(file,life)"/>
+  
+  <!-- create the ti-selector for group selections -->
+  <xslt
+    xml="(file,life)"
+    xsl="(dir,app)publish-group-selector.xsl"
+    out="(file,tisel)"/>
+  <!-- <ti label="tisel:" type="file">(file,tisel)</ti> -->
+  
+  <!-- done -->  
+  <ti label="Published Successfully">
+    <ti label="Created:" type="file">(file,life)</ti>
+
+  </ti>
+
+</job>
+
+<job id="pnx_hook_details_group_end" role="hidden">
+  <call_job job="To Memory File-Category"/>
+  <!-- <dump flag="ti"/> -->
+  
+  <file id="extensions">(file,groups)</file>
+  <prop id="extensions_offset">group[@id=(prop,group_key)]/</prop>
+  <prop id="extensions_offset_label"></prop>
+  <prop id="extensions_offset_new_key">//</prop>
+  <prop id="extensions_sort_attribute" />
+  <prop id="extensions_sort_number" />
+  <prop id="extensions_sort_ignore_case" />
+  <prop id="extensions_sort_desc" />
+  <prop id="extensions_where" />
+  <prop id="extensions_return_job">See File-Category</prop>
+  
+  <ti_hr/>
+  <ti label="File-Extensions:"/>
+  <call_job job="View File-Extensions" />
+  <!-- <ti_break/> -->
+    
+<!-- <ti_break/>
+<ti type="call_job" job="pnx_act_publish" explain="Publish">
+  <file id="activities">(file,activities)</file>
+  <prop id="activities_offset">(prop,activities_offset)</prop>
+  <prop id="activities_offset_label">(prop,activities_offset_label)</prop>
+  <prop id="activities_offset_new_key">(prop,activities_offset_new_key)</prop>
+  <prop id="activities_sort_attribute">(prop,activities_sort_attribute)</prop>
+  <prop id="activities_sort_number">(prop,activities_sort_number)</prop>
+  <prop id="activities_where">(prop,activities_where)</prop>
+  <prop id="activities_return_job">(prop,activities_return_job)</prop>
+</ti>
+-->
+
+</job>
+
+<job id="pnx_hook_view_activity_end" role="hidden">
+<ti type="call_job" job="pnx_act_publish" explain="Publish">
+  <file id="activities">(f,vob,file,activities)</file>
+  <prop id="activities_offset">(f,vob,prop,activities_offset)</prop>
+  <prop id="activities_offset_label">(f,vob,prop,activities_offset_label)</prop>
+  <prop id="activities_offset_new_key">(f,vob,prop,activities_offset_new_key)</prop>
+  <prop id="activities_sort_attribute">(f,vob,prop,activities_sort_attribute)</prop>
+  <prop id="activities_sort_number">(f,vob,prop,activities_sort_number)</prop>
+  <prop id="activities_sort_ignore_case">(f,vob,prop,activities_sort_ignore_case)</prop>
+  <prop id="activities_sort_desc">(f,vob,prop,activities_sort_desc)</prop>
+  <prop id="activities_where">(f,vob,prop,activities_where)</prop>
+  <prop id="activities_return_job">(f,vob,prop,activities_return_job)</prop>
+</ti>
+
+</job>
+
+<job id="pnx_act_publish" role="hidden">
+  <interpreter watch="1"/>
+  <choose>
+    <when test="(f,eq,(prop,activities_offset),file_activities/)">
+      <prop id="pub_type">file</prop>
+      <prop id="pub_type_human">File</prop>
+      <file id="dest">(dir,services)Panorama-File-Activities.jobs.xml</file>
+    </when>
+    <when test="(f,eq,(prop,activities_offset),dir_activities/)">
+      <prop id="pub_type">dir</prop>
+      <prop id="pub_type_human">Dir</prop>
+      <file id="dest">(dir,services)Panorama-Dir-Activities.jobs.xml</file>
+    </when>    
+    <otherwise>
+      <throw>Terrible 7234</throw>
+    </otherwise>
+  </choose>
+  
+  <ti label="pub_type:" x="(prop,pub_type)" />
+  <file id="gen_jobs">(dir,filetemp)pnx_generated_activity_jobs.xml</file>
+  
+  <xslt
+    xml="(dir,services)activities-panorama.xml"
+    xsl="(dir,services)pano-activities-jobs.xsl"
+    out="(file,dest)">
+    <params>job_id='(f,xslp,Panorama-(prop,pub_type_human)-Activities)' type_dir_file='(prop,pub_type)'</params>
+  </xslt>
+  <tk type="msg" x="Activate Changes by Restarting ..." />
+  <restart/>
+
+  <!-- <dump flag="ti" label="pnx_act_publish"/> -->
+</job>  
+
+</jobs>

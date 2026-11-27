@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="compi-read">
+<need>(prop,compi_key)</need>
+<spirit act="open" missing_strategy="empty" id="compis_spirit_tc" xml="(file,compis)"/>
+<prop id="compi_dt_upd">(f,spirit,compis_spirit_tc,(prop,compis_offset)compi[@row=(f,xpath_string,(prop,compi_key))],@dt_upd)</prop>
+<prop id="compi_dt_add">(f,spirit,compis_spirit_tc,(prop,compis_offset)compi[@row=(f,xpath_string,(prop,compi_key))],@dt_add)</prop>
+<prop id="compi_compilation">(f,spirit,compis_spirit_tc,(prop,compis_offset)compi[@row=(f,xpath_string,(prop,compi_key))],@compilation)</prop>
+<spirit act="close" id="compis_spirit_tc"/>
+</job>

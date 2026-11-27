@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="update-edit">
+<need>(prop,update_key)</need>
+<need default="1">(prop,do_return_job)</need>
+<call_job job="update-read"/>
+<prop id="isAdd">0</prop>
+<call_job job="update-editor"/>
+<call_job job="update-write"/>
+<ti align="right" x="Did update Update '(f,text,cut_nice,(prop,update_titel),20)'"/>
+<call_job job="update-see-all"/>
+</job>

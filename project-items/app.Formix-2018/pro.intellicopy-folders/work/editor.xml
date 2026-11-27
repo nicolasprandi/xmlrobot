@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="folder-editor">
+<need>(prop,isAdd)</need>
+<choose>
+<when test="(prop,isAdd)">
+<prop id="label" x="Add a new Folder(prop,folders_offset_label)"/>
+<prop x="sum" id="folders_tk_control"/>
+</when>
+<otherwise>
+<need>(prop,folder_key)</need>
+<prop id="label" x="Folder [(prop,folder_name)](prop,folders_offset_label)"/>
+<prop x="sum_only" id="folders_tk_control"/>
+</otherwise>
+</choose>
+<call_job job="folder-tk"/>
+</job>

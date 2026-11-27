@@ -1,0 +1,625 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog"/>
+                                                                                                            
+<job id="tox1_mox1" role="hidden">       
+
+<!-- wenn es keinen kopf gibt dann die ersten 3 identifizierenden werte reinstellen -->
+<when test="(f,eq_text,(prop,unbekannt),(prop,tox1-obj-name))"> 
+  <call_job job="-db-open-"/>
+  <prop id="tox1-obj-name"></prop>
+  
+  <prop id="tox1-mox1-sel">()select 
+  attr.attr_id as attr_id, 
+  attr.attr_typ as attr_typ, 
+  wert.wert_id as wert_id, 
+  wert.inhalt as inhalt 
+  from obj as obj, attr as attr, wert as wert, t_u 
+  where 
+    obj.obj_id =()(prop,tox1-obj)() and 
+    t_u.obj_typ = obj.obj_typ and 
+    t_u.attr_typ = attr.attr_typ and 
+    attr.obj_id = obj.obj_id and 
+    wert.attr_id = attr.attr_id and 
+    t_u.ident=1 
+    order by attr.attr_typ;()</prop>
+  <!-- <tk type="msg">(prop,tox1-mox1-sel)</tk> -->
+  
+  <loop id="toxmox" select="(prop,tox1-mox1-sel)" flag="trim" missing_strategy="empty" 
+    dbc="(prop,mydbc)"
+    limit="3">  
+    
+    <choose>
+      <when test="(f,has,prop,tox1-obj-name)">
+        <prop id="tox1-obj-name">(prop,tox1-obj-name)(e:s) (loop,toxmox,@inhalt)</prop>
+      </when>
+      <otherwise>
+        <prop id="tox1-obj-name">(loop,toxmox,@inhalt)</prop>
+      </otherwise>
+    </choose>
+    
+  </loop>
+  
+  <when test="(f,not,(f,has,prop,tox1-obj-name))">
+    <prop id="tox1-obj-name">(prop,unbekannt)</prop>
+  </when>  
+  
+  <call_job job="-db-close-"/>
+</when>
+                                                 
+<choose>
+  <when test="(f,role,expert2)">
+    <!-- bei testdaten -->
+    <call_job job="go-joe-read">
+      <prop id="joe-in-regex" x="tox-mox" />
+      <file id="joe-in-store" x="(dir,pro)toxmox-cached-input.xrs" />
+    </call_job>   
+    <call_job job="tr_oxi"/>
+    <tk label="(prop,tox1-obj-name)">
+    <tk type="sel" id="tox-mox" flag="nono" label="(prop,_oxi_where)"
+        tip="(prop,_oxi_tip)">
+      <sel label="(prop,_oxi_unite) =&gt; (prop,_sl_hint)">comp</sel>
+      <sel label="(prop,_oxi_copy) =&gt; (prop,_pl_dsi)">td</sel>
+    </tk>
+    </tk>
+    <call_job job="go-joe-write"/>
+    <choose>
+      <when test="(f,eq_text,comp,(prop,tox-mox))">
+        <call_job job="tox1"/>
+      </when>
+      <when test="(f,eq_text,td,(prop,tox-mox))">
+        <call_job job="mox1"/>
+      </when>    
+    </choose>
+  </when>
+  <when test="(f,role,user)">
+    <!-- bei compositions -->
+    <call_job job="tox1"/>  
+  </when>
+</choose>
+    
+
+</job>
+                                                                                                
+<job id="tox3" role="hidden">
+  <!-- buch und komposition liegt fest, hier wird sich um die attribute gekümmert -->                                                    
+  <need>(dir,tox2-dir) (file,tox2-liste) (prop,tox1-obj-name) (prop,tox3-row) (prop,tox2-pfad)</need>
+  
+  <prop id="tox3-pfad">(prop,tox2-pfad) / (prop,tox3-row)</prop>
+
+  <prop id="hack-namasteadd-process">1</prop>
+  <call_job job="hook_hint_add_object_internal">
+    <file id="ha-file">(file,tox2-liste)</file>
+    <prop id="ha-hint-key">(prop,tox3-row)</prop>    
+    <prop id="hg-obj-id">(prop,tox1-obj)</prop>
+    
+      
+  </call_job>
+  <remove type="prop" id="hack-namasteadd-process"/>
+  <prop id="tox3-return">end</prop>
+ 
+                             
+</job>
+
+<job id="tox2" role="hidden">               
+  <!-- ein buch liegt fest, hier wird eine komposition ausgewählt oder auch neu angelgt -->                                                      
+                                                      
+  <need>(dir,tox2-dir) (file,tox2-liste) (prop,tox1-obj-name) (prop,tox1-pfad) (prop,tox1-what)</need>
+  
+  <prop id="tox2-pfad">(prop,tox1-pfad) &gt;&gt; (prop,tox1-what)</prop>
+  <!-- scan vorbereiten                     
+  <file id="tox2-scan">(dir,pro)cache/tox2-scan.xml</file>  -->
+  <file id="tox2-sel">(dir,pro)cache/tox2-sel.xml</file>
+        
+  <!-- schleife vorbereiten -->
+  <prop id="tox2-busy">1</prop>
+  <prop id="tox2-scan">1</prop>
+  
+  <!-- schleife  -->
+  <loop while="()(prop,tox2-busy)()" id="tox2">
+  
+    <when test="(prop,tox2-scan)">
+    
+      <!-- scannen, dh das xsl auf das file ausfuehren und ein file tox2-sel erzeugen 
+      <quick_scan dir="(dir,tox2-home)" out="(file,tox2-scan)" flag="sel" level_limit="2" limit_level="2"/>     -->
+      
+      <!-- xsl: scan-to-sel -->    
+      <xslt 
+        xml="(file,tox2-liste)" 
+        xsl="(dir,app)tox2-data-to-sel.xsl"
+        out="(file,tox2-sel)">
+        <params>new='&lt; (prop,_tox_neue_kompo) &gt;' back='&lt; (prop,_tox_zurueck_samml) &gt;' xxend='&lt; (prop,_tox_zurueck_objekt) &gt;'</params>
+      </xslt>
+      
+      <!-- scan kennzeichen setzen -->
+      <prop id="tox2-scan">0</prop>
+    
+    </when> <!-- ende: <when test="(prop,tox2-scan)"> -->
+    
+    <!-- auswahl -->
+    
+    <call_job job="go-joe-read">
+      <prop id="joe-in-regex" x="tox2-what" />
+      <file id="joe-in-store" x="(dir,pro)cache/tox2-(f,name_of_dir,(dir,tox2-dir))-cached-input.xrs" />
+    </call_job>   
+    <tk label="(prop,tox2-pfad)">  
+    <tk type="sel" id="tox2-what" label="(prop,_tox_auswahl)"
+      tip="(prop,_tox_select_a_t)" flag="nono" 
+      xml="(file,tox2-sel)"/>
+    </tk>
+      
+            
+    
+    <!-- neuanlage ueberschreibt die eingabe -->
+    <choose>
+      <when test="(f,eq_text,%new,(prop,tox2-what))">        
+        <!-- <ti label="(prop,_tox_neue_kompo_norm)"/> -->                         
+        <file id="hints">(file,tox2-liste)</file>
+        <!-- <prop id="hints_offset_label">(prop,tox2-pfad)</prop>  -->
+        <prop id="hints_offset_label"></prop>
+        <prop id="hint_objekt_typ">(prop,tox1-obj-type)</prop>
+        <prop id="hint_name">(prop,tox1-obj-name)</prop>
+        
+        <prop id="hack-hintadd-process">1</prop>
+        <call_job job="hint-add" />
+        <remove type="prop" id="hack-hintadd-process"/>
+        <prop id="tox2-what">(prop,hint_key)</prop>
+        <call_job job="go-joe-write">
+          <prop id="joe-in-regex" x="tox2-what" />
+          <file id="joe-in-store" x="(dir,pro)cache/tox2-(f,name_of_dir,(dir,tox2-dir))-cached-input.xrs" />        
+        </call_job>
+                
+      </when>
+      <otherwise>
+        <call_job job="go-joe-write"/>
+      </otherwise>
+    </choose>
+    
+    <tk type="msg" test="0">gewaehlt: row=(prop,tox2-what)</tk>
+      
+    <!-- ausgewaehlte aktion ausfuehren -->
+    <choose>
+
+      <!-- abbruch der auswahl eines verzeichnosses -->
+      <when test="(f,not,(f,has,prop,tox2-what))">
+        <prop id="tox2-busy">0</prop>
+        <prop id="tox2-return">back</prop>
+      </when> 
+      
+      <!-- abbruch der eingabe eines neuen verzeichnisses
+      <when test="(f,eq_text,%stop-new,(prop,tox2-what))">
+        <prop id="tox2-busy">1</prop>
+      </when>                  -->
+            
+      <!-- back, dh wieder eine stufe rauf -->
+      <when test="(f,eq_text,%end,(prop,tox2-what))">
+        <prop id="tox2-busy">0</prop>
+        <prop id="tox2-return">end</prop>
+      </when>    
+      
+      <when test="(f,eq_text,%back,(prop,tox2-what))">
+        <prop id="tox2-busy">0</prop>
+        <prop id="tox2-return">back</prop>
+      </when>          
+      
+      <!-- auswahl erfolgreich, tox3 aufrufen -->
+      <otherwise>
+      
+        <prop id="tox3-row">(prop,tox2-what)</prop>
+        
+        <!-- tox3 aufrufen -->
+        <call_job job="tox3"/>
+        
+        <!-- in return steht: end oder back -->
+        <need>(prop,tox3-return)</need>
+        <!-- 
+        <prop id="tox2-return">(prop,tox3-return)</prop>        -->
+        
+        <choose>
+    
+          <!-- abbruch der eingabe eines neuen verzeichnisses-->
+          <when test="(f,eq_text,back,(prop,tox3-return))">
+            <prop id="tox2-busy">1</prop>
+            
+          </when>         
+          <when test="(f,eq_text,end,(prop,tox3-return))">
+            <prop id="tox2-busy">0</prop>
+            <prop id="tox2-return">end</prop>
+          </when>             
+          
+          <otherwise>
+            <throw>adf</throw>
+          </otherwise>
+        </choose>
+            
+      </otherwise>
+    </choose>    
+  
+  </loop>
+  
+  <!-- tox2-return auswerten 
+        einfach wieder das objekt ansehen-->
+
+  <tk type="msg"  test="0" >tox2-return: (prop,tox2-return)</tk>
+
+</job>
+
+<!-- auswahl eines files/dirs wo das objekt angehaengt werden soll.
+fuer compositionen und testdaten -->
+
+<job id="test2-tox1" role="hidden">
+  
+  
+      <call_job job="tox1">
+        <prop id="tox1-obj">9</prop>
+
+      </call_job>
+        
+</job>
+
+<job id="test1-tox1" role="hidden">
+  
+  <prop id="on-id">9</prop>
+  <call_job job="Object"/>
+  
+</job>
+
+<job id="tox1" role="hidden">
+
+  <need>(prop,tox1-obj)</need>    <!-- = die objekt-id -->
+  <need>(prop,tox1-obj-type)</need>
+  <need>(prop,tox1-obj-name)</need>
+  
+  <call_job job="tr_tox" />
+  <call_job job="tr_tomo" />
+  
+  <prop id="tox1-pfad">(prop,tox1-obj-name)</prop>
+  
+  
+  
+
+  <dir id="tox1-home">(dir,goCompos)</dir>
+  <prop id="tox1-fn">compos-list.xml</prop>
+  <prop id="tox1-rn">compos</prop>
+      
+    
+
+
+  <!-- scan vorbereiten -->                    
+  <file id="tox1-scan">(dir,pro)cache/tox1-scan.xml</file>
+  <file id="tox1-sel">(dir,pro)cache/tox1-sel.xml</file>
+        
+  <!-- schleife vorbereiten -->
+  <prop id="tox1-busy">1</prop>
+  <prop id="tox1-scan">1</prop>
+  
+  <!-- schleife  -->
+  <loop while="()(prop,tox1-busy)()" id="tox1">
+  
+    <when test="1" xtest="(prop,tox1-scan)">
+    
+      <!-- scannen -->
+      <mkdir dir="(dir,tox1-home)"/>
+      <quick_scan dir="(dir,tox1-home)" out="(file,tox1-scan)" flag="sel" level_limit="2" limit_level="2"/>
+      
+      
+      <!-- xsl: scan-to-sel <ti type="file">(file,tox1-scan)</ti>-->
+      <xslt 
+        xml="(file,tox1-scan)" 
+        xsl="(dir,app)tox1-scan-to-sel.xsl"
+        out="(file,tox1-sel)">
+        <params>new='&lt; (prop,_tox_neue_sammlung) &gt;' back='- (prop,_tox_zurueck_nix)' end='&lt; (prop,_tox_zurueck_objekt) &gt;'</params>
+      </xslt>
+      
+      <!-- scan kennzeichen setzen -->
+      <prop id="tox1-scan">0</prop>
+    
+    </when> <!-- ende: <when test="(prop,tox1-scan)"> -->
+    
+    <!-- auswahl -->
+    
+    <call_job job="go-joe-read">
+      <prop id="joe-in-regex" x="tox1-what" />
+      <file id="joe-in-store" x="(dir,pro)tox1-cached-input.xrs" />
+    </call_job>   
+    <tk label="(prop,tox1-pfad)">  
+    <tk type="sel" id="tox1-what" label="(prop,_tox_ausw_sammlung)"
+      tip="(prop,_tox_ausw_sammlung_t)" flag="nono" 
+      xml="(file,tox1-sel)"/>
+    </tk>
+          
+    <call_job job="go-joe-write"/>        
+    
+    <!-- neuanlage ueberschreibt die eingabe -->
+    <when test="(f,eq_text,%new,(prop,tox1-what))">
+
+      <call_job job="tox1-create"/>
+
+      
+      <!-- <tk type="msg">tox1-what = (prop,tox1-what)</tk> -->
+      
+      <choose>
+        <when test="(f,has,prop,tox1-finaldirname)">
+          <prop id="tox1-what">(prop,tox1-finaldirname)</prop>
+          
+          <ti_break class_table="tabNavigator" />
+          <ti type="rec">
+          <ti align="right" x="+ Buch '(prop,tox1-what)'" />
+          </ti>
+                
+          <call_job job="go-joe-write"/> 
+          <prop id="tox2-what">%new</prop>
+          <call_job job="go-joe-read">
+            <prop id="joe-in-regex" x="tox2-what" />
+            <file id="joe-in-store" x="(dir,pro)cache/tox2-c-(prop,tox1-what)-cached-input.xrs" />
+          </call_job>   
+        </when>
+        <otherwise>
+          <!-- abbruch der eingabe eines neuen verzeichnisses-->
+          <prop id="tox1-what">%stop-new</prop>
+          
+        </otherwise>
+      
+      </choose>
+    </when>
+    <!-- 
+    <tk id="tox1-what"/>
+      
+    ausgewaehlte aktion ausfuehren -->
+    <choose>
+
+      <!-- abbruch der auswahl eines verzeichnosses -->
+      <when test="(f,not,(f,has,prop,tox1-what))">
+        <prop id="tox1-busy">0</prop>
+      </when> 
+      
+      <!-- abbruch der eingabe eines neuen verzeichnisses-->
+      <when test="(f,eq_text,%stop-new,(prop,tox1-what))">
+        <prop id="tox1-busy">1</prop>
+      </when> 
+            
+      <!-- back, dh wieder eine stufe rauf -->
+      <when test="(f,eq_text,%end,(prop,tox1-what))">
+        <prop id="tox1-busy">0</prop>
+      </when>    
+      
+      
+      
+      <!-- auswahl erfolgreich, tox2 aufrufen -->
+      <otherwise>
+        <!-- buch vormerken -->
+        <create_file out="(dir,ghome)last-books/compos_last.txt">(prop,tox1-what)</create_file>
+        
+        <dir id="tox2-dir">(dir,tox1-home)(prop,tox1-what)</dir>
+        <file id="tox2-liste">(dir,tox1-home)(prop,tox1-what)/(prop,tox1-fn)</file>
+        
+        <!-- tox2 aufrufen -->
+        <call_job job="tox2"/>
+        
+        <!-- in return steht: end oder back -->
+        <need>(prop,tox2-return)</need>
+        
+        <choose>
+    
+          <!-- abbruch der eingabe eines neuen verzeichnisses-->
+          <when test="(f,eq_text,back,(prop,tox2-return))">
+            <prop id="tox1-busy">1</prop>
+          </when>         
+          <when test="(f,eq_text,end,(prop,tox2-return))">
+            <prop id="tox1-busy">0</prop>
+          </when>             
+          
+          <otherwise>
+            <throw>adf</throw>
+          </otherwise>
+        </choose>
+            
+      </otherwise>
+    </choose>    
+  
+  </loop>
+  
+  <!-- tox1-return auswerten 
+        einfach wieder das objekt ansehen
+  <ti_hr_break/>
+  
+  <prop id="on-id">(prop,tox1-obj)</prop>       
+  <call_job job="Object"/>   -->
+  
+  <call_job job="tox4" />
+
+</job>
+
+<job id="tox4" role="hidden">
+
+<call_job job="tk_search_read"/>
+<prop id="tox4-search-alt-for"></prop>
+<when test="(f,has,prop,search_for)">
+  <prop id="tox4-search-alt-for">(prop,search_for)</prop>
+</when>
+     
+<call_job job="go-joe-read">
+  <prop id="joe-in-regex" x="tox4-what" />
+  <file id="joe-in-store" x="(dir,pro)tox4-cached-input.xrs" />
+</call_job>   
+                            
+<prop id="tox3-obj-typ-plural">(f,xpath,(dir,repo)objects.xml,//ot[@tp=(prop,tox1-obj-type)],@np)</prop>
+
+<call_job job="tk_search_read"/>
+<choose>
+  <when test="(f,eq_text,(prop,hint_name),(prop,tox1-obj-name))">
+    <prop id="search_for_propose">(prop,hint_name)</prop>
+  </when>
+  <otherwise>
+     <prop id="search_for_propose">(prop,tox1-obj-name) / (prop,hint_name)</prop>
+  </otherwise>  
+</choose>   
+      
+<tk label="(prop,_tox_erledigt)">  
+  <tk type="sel" id="tox4-what" label="(prop,_tomo_weiter): " x="otyp-liste-ab"
+     xflag="nono" >
+    <sel label="(prop,_tomo_lider) (prop,tox3-obj-typ-plural) (prop,_tomo_ab) '(prop,tox1-obj-name)'">otyp-liste-ab</sel> 
+    <sel label="(prop,_tomo_lial) (prop,tox3-obj-typ-plural)">otyp-liste</sel>
+    <sel label="(prop,_tomo_alt_such): (prop,tox4-search-alt-for)"
+        test="(f,has,prop,tox4-search-alt-for)" >alte-suche</sel>    
+    <sel label="(prop,_tomo_neu_such) (prop,search_for_propose)">neue-suche</sel>  
+    <sel label="(prop,_tox_next_this): (prop,hint_name)">nix</sel>      
+    <sel label="(prop,_tomo_buch): (prop,tox1-what)">buch</sel>      
+    
+  </tk>
+</tk>
+
+<when test="(f,has,prop,tox4-what)">
+  
+  <call_job job="go-joe-write">
+    <prop id="joe-in-regex" x="tox4-what" />
+    <file id="joe-in-store" x="(dir,pro)tox4-cached-input.xrs" />
+  </call_job>   
+  
+  <choose>
+    <when test="(f,eq_text,alte-suche,(prop,tox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_alt_such): (prop,tox4-search-alt-for)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <prop id="hack-tox4-search-alt">1</prop>
+      <call_job job="_search" />
+      <remove type="prop" id="hack-tox4-search-alt" />
+    </when>
+    
+    <when test="(f,eq_text,neue-suche,(prop,tox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_neu_such) (prop,search_for_propose)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <prop id="search_for">(prop,search_for_propose)</prop>
+     
+      <prop id="search_type">-contains-</prop>
+      <prop id="search_obj_tech_name">(prop,hint_objekt_typ)</prop>
+      <prop id="search_attr_tech_name"></prop>
+      <call_job job="tk_search_write"/>
+      <call_job job="_search" />
+      
+    </when> 
+       
+    <when test="(f,eq_text,otyp-liste,(prop,tox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_lial) (prop,tox3-obj-typ-plural)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <call_job job="Type-Of-Object">
+        <prop id="on-obj-typ">(prop,tox1-obj-type)</prop>
+        <prop id="on-obj-name-plural">(prop,tox3-obj-typ-plural)</prop>
+      
+      </call_job>
+    </when> 
+    
+    <when test="(f,eq_text,otyp-liste-ab,(prop,tox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_lider) (prop,tox3-obj-typ-plural) (prop,_tomo_ab) '(prop,tox1-obj-name)'(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+      <call_job job="Type-Of-Object">
+        <prop id="on-obj-typ">(prop,tox1-obj-type)</prop>
+        <prop id="on-obj-name-plural">(prop,tox3-obj-typ-plural)</prop>
+        <prop id="on-obj-start-id">(prop,tox1-obj)</prop>
+        <prop id="on-obj-see-ja">1</prop>
+        <prop id="on-obj-tox-mox-direct">1</prop>       
+      
+      </call_job>
+    </when>     
+    <when test="(f,eq_text,buch,(prop,tox4-what))">
+      <ti_hr_break class_table="tabNavigator"/>
+      <ti type="rec">
+      <ti flag="xx">(prop,_tomo_aktion): (f,html,b,o)(prop,_tomo_buch): (prop,tox1-what)(f,html,b,c)</ti>
+      </ti>
+      <ti_hr_break/>
+       <call_job job="_connect"/>    
+    </when>    
+    <when test="(f,eq_text,nix,(prop,tox4-what))">
+        <ti_hr_break class_table="tabNavigator" />
+        <ti type="rec">
+        <ti type="call_job" job="Type-Of-Object"   
+            explain="(prop,_tomo_lider) (prop,tox3-obj-typ-plural) (prop,_tomo_ab) '(prop,tox1-obj-name)'" 
+            xflag="button" xclass="fx fxAction " align="right">
+          <prop id="on-obj-typ">(prop,tox1-obj-type)</prop>
+          <prop id="on-obj-name-plural">(prop,tox3-obj-typ-plural)</prop>
+          <prop id="on-obj-start-id">(prop,tox1-obj)</prop>
+          <prop id="on-obj-see-ja">1</prop>
+          <prop id="on-obj-tox-mox-direct">1</prop>         
+        </ti>
+        </ti>
+                                                                                 
+
+    </when>
+    
+    <otherwise>
+      <throw>problem 34yer</throw>
+    
+    </otherwise>  
+  </choose>
+  
+
+</when>
+         
+</job>
+
+<job id="tox1-create" role="hidden">
+
+<try_catch>
+  <try>
+  <prop id="tox1-create-finished">1</prop>
+  <prop id="tox1-finaldirname"></prop>
+  
+  <loop id="dw" while="()(prop,tox1-create-finished)()">
+    <tk label="(prop,tox1-pfad)">
+    <tk id="tox1-dirname" rule="filename" label="(prop,_tomo_newbook)" cols="30" />
+    </tk>
+    <choose>
+      <when test="(f,has,prop,tox1-dirname)">
+      
+        <dir id="tox1-newdir">(dir,tox1-home)(prop,tox1-dirname)</dir>
+        <choose>
+          <when test="(f,exists_dir,(dir,tox1-newdir))">
+            <tk label="(prop,tox1-pfad)">
+            <tk type="msg">(prop,_tox_ein_buch) &apos;(prop,tox1-dirname)&apos; (prop,_tox_existiert)</tk>
+            </tk>
+          </when>
+          <otherwise>
+            <mkdir dir="(dir,tox1-newdir)"/>
+            <create_file file="(dir,tox1-newdir)official-book">ok</create_file>
+            <create_file out="(dir,tox1-newdir)(prop,tox1-fn)">&lt;(prop,tox1-rn)/&gt;</create_file>       
+            <prop id="tox1-finaldirname">(prop,tox1-dirname)</prop>
+            <prop id="tox1-create-finished">0</prop>
+          </otherwise>
+        </choose>      
+      </when>
+      
+      <otherwise>
+        <prop id="tox1-create-finished">0</prop>
+        <prop id="tox1-what">%stop-new</prop>
+        
+      
+      </otherwise>
+    
+    </choose>
+    
+  </loop>
+  </try>
+  <catch>
+    <prop id="tox1-what">%stop-new</prop>
+  </catch>
+</try_catch>  
+ 
+</job>  
+
+
+
+
+</jobs>

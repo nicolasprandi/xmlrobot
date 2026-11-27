@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="task-tk">
+<need default="">(prop,tasks_tk_control)</need>
+<need default="">(prop,label)</need>
+<tk label="(prop,label)" tip="" flag="(prop,tasks_tk_control) wrap ">
+<tk label="Name" id="task_name" x="" test_first="1" tip="The unique name of the Application" type="text" flag=" nono "/>
+<tk label="Description" id="task_description" x="" test_first="0" tip="a short text which appears in the list" type="textblock" flag=" "/>
+<tk label="Full Description" id="task_full" x="" test_first="0" type="textblock" flag="  big "/>
+<tk label="Classes" id="task_classes" x="" test_first="0" tip="Classifications" type="text" flag=" "/>
+</tk>
+</job>

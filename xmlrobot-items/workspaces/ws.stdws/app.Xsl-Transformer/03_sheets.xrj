@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<call_job job="prolog" />
+
+<job id="?sheetlist" pri="10" role="dev">
+  <call_job job="go-joe-read" />
+  <choose>
+    <when test="(f,not,(f,exists,file,in-excel))">
+      <ti>()Sorry, no excel defined()</ti>
+    </when>
+    <otherwise>
+      <call_job job="read sheetlist to sel"/>
+    </otherwise>
+  </choose>
+  
+</job>
+
+<job id="create-selector" role="hidden">
+  <need>(file,cs-by-cs)</need> 
+
+  <file id="rsts-a" x="(dir,temp)sheets.xml"/>
+    <excel_sheets
+    excel="(file,cs-by-cs)"
+    out="(file,rsts-a)" />
+    
+  <xslt
+    xml="(file,rsts-a)"
+    xsl="(dir,app)sheetlist2sel.xsl"
+    out="(file,sheet-selector)"/>  
+    
+</job>
+
+<job id="read sheetlist to sel" role="hidden">
+  <need default="1">(prop,rsts-print)</need>
+  <file id="rsts-a" x="(dir,temp)sheets.xml"/>
+  <file id="rsts-b" x="(dir,temp)sels.xml"/>
+    <excel_sheets
+    excel="(file,in-excel)"
+    out="(file,rsts-a)" />
+    
+  <xslt
+    xml="(file,rsts-a)"
+    xsl="(dir,app)sheetlist2sel.xsl"
+    out="(file,rsts-b)"/>    
+  <when test="(prop,rsts-print)">
+   	<ti_space height="5px" />
+  <ti label="Next: Select a sheet of (f,name_of_file,(file,in-excel))" />  
+  <loop id="rsts" xml="(file,rsts-a)" xpath="sheet">
+
+   <ti label="(loop,rsts,#i)." type="call_job" 
+        job="sheet-switch" 
+        explain="(loop,rsts,@name)">     
+      <prop id="with-sheet-name" x="(loop,rsts,@name)"/>
+    </ti>
+  </loop>
+  </when>
+  <!--
+  <ti_hr/>
+  <ti type="file" label="Sheets of Excel:" x="(file,in-excel)"/>
+  -->
+  
+</job>
+
+<job id="sheet-switch" role="hidden"> 
+  <need>(prop,with-sheet-name)</need> 
+  
+  <call_job job="read cached paras" />
+  
+  <prop id="in-sheet" x="(prop,with-sheet-name)"/>
+  <call_job job="write cached paras" />
+  <ti label="Did switch">
+    <ti label="to sheet:" x="(prop,with-sheet-name)"/>
+  </ti>
+
+  <call_job job="read sheetlist to sel">
+	<prop id="rsts-print" x="0" />
+  </call_job>
+  <ti label="Next">
+    <ti type="call_job" job="Run XSL"/>
+  </ti>  
+  
+</job>
+ 
+
+</jobs>

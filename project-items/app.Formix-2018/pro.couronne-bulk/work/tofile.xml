@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bulk-write">
+<need>(prop,bulk_key) (prop,isAdd)</need>
+<need default="./">(prop,bulks_offset)</need>
+<spirit act="open" id="bulks_spirit_tc" xml="(file,bulks)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,bulks_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,bulks_offset),0,(f,sub,(f,len,(prop,bulks_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,bulks_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="bulks_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;bulk row="(prop,bulk_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="type" value="(f,vob,prop,bulk_type)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="name" value="(f,vob,prop,bulk_name)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="doku" value="(f,vob,prop,bulk_doku)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="bscript" value="(f,vob,prop,bulk_bscript)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="flags" value="(f,vob,prop,bulk_flags)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="qu_file" value="(f,vob,prop,bulk_qu_file)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="qu_row" value="(f,vob,prop,bulk_qu_row)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="sqli_file" value="(f,vob,prop,bulk_sqli_file)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="sqli_row" value="(f,vob,prop,bulk_sqli_row)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="bulks_spirit_tc" where="(prop,bulks_offset)bulk[@row='(prop,bulk_key)']" attribute="script" value="(f,vob,prop,bulk_script)"/>
+<spirit act="close" flag="save pretty" id="bulks_spirit_tc"/>
+</job>

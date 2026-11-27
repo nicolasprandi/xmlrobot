@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zirami-see">
+<need>(prop,zirami_key)</need>
+<call_job job="zirami-read"/>
+<prop x="print print_only" id="ziramis_tk_control"/>
+<prop id="label" x="Zirami: (f,html,bold,open)(prop,zirami_bez)(f,html,bold,close)(f,when,(f,has,(prop,ziramis_offset_label)), - (prop,ziramis_offset_label),)"/>
+<call_job job="zirami-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" test="(f,role,user)">
+<ti type="call_job" explain="[ ? ]" align="right" job="zirami-see-more">
+<prop id="zirami_key">(prop,zirami_key)</prop>
+<file id="ziramis">(file,ziramis)</file>
+<prop id="ziramis_offset">(prop,ziramis_offset)</prop>
+<prop id="ziramis_offset_label">(prop,ziramis_offset_label)</prop>
+<prop id="ziramis_offset_new_key">(prop,ziramis_offset_new_key)</prop>
+<prop id="ziramis_sort_attribute">(prop,ziramis_sort_attribute)</prop>
+<prop id="ziramis_sort_number">(prop,ziramis_sort_number)</prop>
+<prop id="ziramis_where">(prop,ziramis_where)</prop>
+<prop id="ziramis_return_job">(prop,ziramis_return_job)</prop>
+</ti>
+<ti flag=" block" type="call_job" explain="[ Edit ]" job="zirami-edit">
+<prop id="zirami_key">(prop,zirami_key)</prop>
+<file id="ziramis">(file,ziramis)</file>
+<prop id="ziramis_offset">(prop,ziramis_offset)</prop>
+<prop id="ziramis_offset_label">(prop,ziramis_offset_label)</prop>
+<prop id="ziramis_offset_new_key">(prop,ziramis_offset_new_key)</prop>
+<prop id="ziramis_sort_attribute">(prop,ziramis_sort_attribute)</prop>
+<prop id="ziramis_sort_number">(prop,ziramis_sort_number)</prop>
+<prop id="ziramis_where">(prop,ziramis_where)</prop>
+<prop id="ziramis_return_job">(prop,ziramis_return_job)</prop>
+</ti>
+</ti>
+<try_catch>
+<try>
+<trace>Hook Station page=details station=0 hook=end hook_job=hook-zirami-list-end</trace>
+<call_job job="hook-zirami-list-end"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: zirami-details: end.0">
+<ti> hook_job=hook-zirami-list-end hook=end page=details station=0 object=zirami</ti>
+</ti>
+</catch>
+</try_catch>
+</job>

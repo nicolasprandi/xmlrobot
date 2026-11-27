@@ -1,0 +1,123 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="Gesucht?" lang="de">
+  <ti label="Job &apos;Gesucht&apos;"/>
+  <ti type="ul">Zeigt die Historie der Suchen an</ti>
+  <ti type="ul">F&#252;hrt eine Suche erneut aus</ti>
+</job>
+
+<job id="Searched?" lang="en">
+  <ti label="Job &apos;Searched&apos;"/>
+  <ti type="ul">Shows the list of past searches</ti>
+  <ti type="ul">Runs these historical searches once again</ti>
+</job>
+
+<job id="Buscar?" lang="es">
+  <ti label="Job &apos;Buscar&apos;"/>
+  <ti type="ul">Buscar un objecto</ti>
+  <ti type="ul">Die Suche kann auf bestimmte Attribute eingegrenzt werden</ti>
+  <ti type="ul">Bei der Suche und in den Ergebnissen wird die Conf-Navi(e:s) im speziellen die Definition der &apos;Attributsbezeichnungen&apos; ber&#252;cksichtigt.</ti>   
+</job>
+
+<job id="Suche?" lang="de">
+  <ti label="Job &apos;Suche&apos;"/>
+  <ti type="ul">Erm&#246;glicht die Suche nach Objekten</ti>
+  <ti type="ul">Die Suche kann auf bestimmte Attribute eingegrenzt werden</ti>
+                                             
+  <prop id="_help_die_aktuellen_sind">Die aktuellen Suchparameter sind:</prop>  
+  <call_job job="?explain_advanced_search_arguments"/>     
+  
+</job>
+
+<job id="Search?" lang="en">
+
+  <ti label="Job &apos;Search&apos;"/>
+  <ti type="ul">Search for objects by a text</ti>
+  <ti type="ul">You may limit the search to specific attributes in the database</ti>
+   
+  
+  <prop id="_help_die_aktuellen_sind">Your current parameters are:</prop>  
+  <call_job job="?explain_advanced_search_arguments"/>
+ 
+
+
+</job>
+
+<job id="?explain_advanced_search_arguments" role="hidden">
+<ti_hr/>
+<need>(prop,_help_die_aktuellen_sind)</need>
+ <call_job job="tk_search_print_help"/>
+
+ <!-- 
+ <choose>                                             
+   <when test="(f,exists,prop,pro)">
+    <ti_hr/>
+    <ti type="rec">
+    <ti x="(prop,_help_die_aktuellen_sind)" xflag="block"/>
+    </ti>
+    
+    <call_job xjob="tk_search_print_help" job="tk_search_print_values"/>
+    <ti_hr/>
+   </when> 
+   <otherwise>
+    
+   </otherwise>
+  </choose>  
+  -->
+
+<when test="(f,right,searchplus)">
+  <ti_break_hr/>
+
+ <ti label="Advanced Search Arguments"/>
+ <ti type="rec">
+  <ti x="Argument" flag="block"/>
+  <ti x="What it does" xflag="block"/>
+  </ti> 
+
+ <!-- <ti_hr xstyle="2"/>    -->
+ <ti label="(f,html,b,open)% ILIKE %(f,html,b,close)" type="rec">
+  <ti>upper(e:o)wert.inhalt(e:c) ILIKE '%' || upper(e:o)'(f,html,i,open)argument(f,html,i,close)'(e:c) || '%'</ti>
+
+ </ti> 
+ 
+ <ti label="(f,html,b,open)ILIKE(f,html,b,close)" type="rec">
+  <ti>upper(e:o)trim(e:o)both from wert.inhalt(e:c)(e:c) ILIKE upper(e:o)'(f,html,i,open)argument(f,html,i,close)'(e:c) </ti>
+
+ </ti>  
+ 
+ <ti label="(f,html,b,open)% LIKE %(f,html,b,close)" type="rec">
+  <ti>upper(e:o)wert.inhalt(e:c) LIKE '%' || upper(e:o)'(f,html,i,open)argument(f,html,i,close)'(e:c) || '%'</ti>
+
+ </ti>   
+ 
+ <ti label="(f,html,b,open)LIKE(f,html,b,close)" type="rec">
+  <ti>upper(e:o)trim(e:o)both from wert.inhalt(e:c)(e:c) LIKE upper(e:o)'(f,html,i,open)argument(f,html,i,close)'(e:c) </ti>
+
+ </ti>   
+ 
+ <ti label="(f,html,b,open)% ILIKE % - CaseSensitive(f,html,b,close)" type="rec">
+  <ti>wert.inhalt ILIKE '%' || ''(f,html,i,open)argument(f,html,i,close)' || '%'</ti>
+
+ </ti>   
+ 
+ <ti label="(f,html,b,open)ILIKE - CaseSensitive(f,html,b,close)" type="rec">
+  <ti>trim(e:o)both from wert.inhalt(e:c) ILIKE ''(f,html,i,open)argument(f,html,i,close)'</ti>
+
+ </ti>   
+ 
+ <ti label="(f,html,b,open)% LIKE % - CaseSensitive(f,html,b,close)" type="rec">
+  <ti>wert.inhalt LIKE '%' || ''(f,html,i,open)argument(f,html,i,close)' || '%'</ti>
+
+ </ti>   
+ 
+ <ti label="(f,html,b,open)LIKE - CaseSensitive(f,html,b,close)" type="rec">
+  <ti>trim(e:o)both from wert.inhalt(e:c) LIKE ''(f,html,i,open)argument(f,html,i,close)'</ti>
+
+ </ti>      
+
+</when>
+</job>
+
+</jobs>

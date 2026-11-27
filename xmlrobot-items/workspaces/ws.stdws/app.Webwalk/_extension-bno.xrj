@@ -1,0 +1,172 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog"/>
+
+<job id="bno-daily-countries" role="hidden">
+  
+  <prop id="paras_url">http://bnonews.com/index.php/2020/04/the-latest-coronavirus-cases/</prop>
+  <wdriver act="get"
+           url="(prop,paras_url)"/>
+ 
+  <prop id="pab-regex">//a[@id='cn-accept-cookie']</prop>
+  <prop id="pab-name">Cookie-Button</prop>           
+  <call_job job="pab-press-a-button"/>
+           
+  <wdriver act="scroll" x="0" y="(f,random,100,300)"/> 
+  <wdriver act="scroll" x="0" y="(f,random,100,300)"/>   
+  
+  <prop id="pab-regex">//button[text(e:o)(e:c)=&apos;NO THANKS&apos;]</prop>
+  <prop id="pab-name">No-Notification-Thanks</prop>
+  <prop id="pab-wait-timeout">5000</prop>        
+  <call_job job="pab-press-a-button"/>  
+  
+  
+  <wdriver act="scroll" x="0" y="(f,random,100,300)"/>   
+  <wdriver act="scroll" x="0" y="(f,random,100,300)"/>   
+  
+  
+  <file id="frames1">(dir,temp)frames1.xml</file>
+  <wdriver act="find_elements"
+           by_xpath="//div[@id='mvp-content-main']/iframe"
+           new_file="(file,frames1)"
+           flag="keep"
+           expected_count="1"/> 
+           
+  <prop id="frame_id_1">(f,xpath,(file,frames1),we,@id)</prop>           
+    
+  <welement id="(prop,frame_id_1)"
+    act="switch_to_this_frame"         
+    sleep="(f,random,1000,2000)"/>     
+    
+  <file id="frames2">(dir,temp)frames2.xml</file>
+  <wdriver act="find_elements"
+           by_xpath="//iframe"
+           new_file="(file,frames2)"
+           flag="keep"
+           expected_count="1"/> 
+           
+  <prop id="frame_id_2">(f,xpath,(file,frames2),we,@id)</prop>           
+  <welement id="(prop,frame_id_2)"
+    act="switch_to_this_frame"         
+    sleep="(f,random,1000,2000)"/>       
+    
+  <dir id="bno-main">(dir,pro)bno-daily-countrylist</dir>
+  <mkdir dir="(dir,bno-main)"/>
+  <file id="to_file">(dir,bno-main)(f,time).xml</file>  
+  <need>(file,to_file)</need>
+  <wdriver act="get_xml"
+           how="pagesource"
+           to_file="(file,to_file)"/>   
+         
+  <file id="latest_file">(dir,bno-main)_latest.xml</file>
+  <copy file="(file,to_file)" tofile="(file,latest_file)"/> 
+  <ti label="Did copy daily bno-table"/>
+  <ti type="file" label="Latest">(file,latest_file)</ti>    
+  <ti type="file" label="Timed">(file,to_file)</ti>          
+</job>
+
+
+
+<job id="pab-press-a-button" role="hidden">
+  <need>(prop,pab-name)</need> 
+  <tp>Working on Button: (prop,pab-name)</tp>
+  <need>(prop,pab-regex)</need>                          <!-- regulaerer ausdruck fuer die buttonlocation, es sollte nur einen geben -->
+                            <!-- menschensprachliche bezeichnung des buttons -->
+  <need default="0">(prop,pab-must-click)</need>         <!-- sagt aus ob der button gefunden und geclickt werden muss -->
+  <need default="0">(prop,pab-ask-click)</need>          <!-- sagt aus ob bei gefundenem button nochmal nachgefragt werden soll ob wirklich gekllickt werden soll -->
+  <need default="3000">(prop,pab-wait-timeout)</need>    <!-- wartezeit, 0 wenn keine gewuenscht -->
+  
+  <file id="pab-file">(dir,temp)pab-(f,time)-(f,random_text,3).xml</file>
+  
+  <try_catch>
+    <try>
+      <wdriver act="find_elements"
+               by_xpath="(prop,pab-regex)"
+               new_file="(file,pab-file)"
+               flag="keep"
+               wait="(prop,pab-wait-timeout)"
+               wait_for="clickable"
+               return_prop_count="pab-found-counter"/>
+    </try>
+    <catch>
+      <ti>Did not find visiblity for button &apos;(prop,pab-name)&apos;</ti>
+      <prop id="pab-found-counter">0</prop>
+    </catch>
+  </try_catch>
+  
+  <choose>
+    <when test="(f,eq_num,0,(prop,pab-found-counter))">
+      <throw test="(prop,pab-must-click)">Did not find button &apos;(prop,pab-name)&apos;. But it was requested to find</throw>
+      <ti>No button &apos;(prop,pab-name)&apos; found</ti>
+    </when>     
+    <when test="(f,eq_num,1,(prop,pab-found-counter))">
+      <prop id="pab-confirm" x="1"/>
+      <tk type="bool" id="pab-confirm"  label="Confirm pressing of button &apos;(prop,pab-name)&apos;" 
+          tip="Found the button &apos;(prop,pab-name)&apos;. Click on that and continue?" 
+          flag="nono"
+          test="(prop,pab-ask-click)"/>
+      <choose>
+        <when test="(prop,pab-confirm)">
+        
+          <prop id="pab-button-id">(f,xpath,(file,pab-file),we,@id)</prop>           
+            
+          <welement id="(prop,pab-button-id)"
+            act="click"   /> 
+          <ti>Did click on button &apos;(prop,pab-name)&apos;</ti>          
+        </when>
+        <otherwise>
+          <ti>Ignored to click on button &apos;(prop,pab-name)&apos; due to your choice.</ti>
+        </otherwise>
+      </choose>
+      
+      <remove type="prop" id="pab-confirm"/>
+          
+    </when>          
+    <otherwise>
+      <tk label="Problem with button &apos;(prop,pab-name)&apos;">
+      <tk type="msg" msg_level="w">There is a problem with the button &apos;(prop,pab-name)&apos;.
+We found several of them.
+Have been looking for:
+(prop,pab-regex)</tk>
+      </tk>
+    </otherwise>
+   </choose>  
+   
+   <remove type="file" id="pab-file"/>
+   <remove type="prop" id="pab-found-counter"/>
+ 
+   <remove type="prop" id="pab-must-click"/>
+   <remove type="prop" id="pab-ask-click"/>
+   <remove type="prop" id="pab-wait-timeout"/>         
+   
+
+
+</job>
+
+<!--
+
+  <try_catch>
+    <try>
+    </try>
+    <catch>
+    </catch>
+  </try_catch>
+
+  <choose>
+    <when test="1">
+    </when>
+    <when test="0">
+    </when>
+    <otherwise>
+    </otherwise>
+  </choose>
+
+  <ti label="About: test-4"/>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+  <ti type="ul"></ti>
+
+-->
+
+
+</jobs>

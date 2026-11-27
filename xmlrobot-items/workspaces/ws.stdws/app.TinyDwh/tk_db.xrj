@@ -1,0 +1,795 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2021 Nicolas Prandstaetter. all rights reserved. 
+-->
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="-db-request-import-return" role="hidden">
+    <need>(prop,db-import-post-job)</need>
+    <call_job job="-db-request-import-"/>
+    <call_job job="(prop,db-import-post-job)"/>
+</job>
+
+<job id="-db-giveback-import-return" role="hidden">
+    <need>(prop,db-import-post-job)</need>
+    <call_job job="-db-giveback-import-"/>
+    <call_job job="(prop,db-import-post-job)"/>
+</job>
+
+<job id="-db-request-import-" role="hidden">
+    <throw test="(f,not,(f,right,import))">No right to import</throw>
+    <!-- <call_job job="-db-close-on-purpose-"/> -->                
+    <call_job job="-db-open-"/>
+
+    <prop id="beginningWas"></prop> 
+    
+    <dbc id="(prop,mydbc)"
+        act="select"
+        out="(dir,pro)verify-import.xml"
+        style="a">select beginningWas from import_running;</dbc> 
+    <prop id="beginningWas">(f,xpathx,,(dir,pro)verify-import.xml,row,@beginningWas)</prop> 
+    <throw test="(f,has,prop,beginningWas)">Import already running: (prop,beginningWas)</throw>
+    <dbc id="(prop,mydbc)"
+         act="update">insert into import_running (e:o)beginningWas(e:c) values (e:o)&apos;(f,time,yyyy-MM-dd HH:mm:ss)&apos;(e:c);</dbc>  
+    <call_job job="-db-close-on-purpose-"/>     
+
+    
+     <choose>
+        <when test="(f,eq_text,(prop,ling),de)" lang="de">
+          <ti label="Berechtigung f&#252;r den Import-Bereich wurde erhalten"/>
+          <ti>Nur Sie k&#246;nnen jetzt auf den Import-Bereich schreiben</ti>         
+        </when>
+        <otherwise>
+          <ti label="Privileg for the Import-Area was granted"/>
+          <ti>Only you are now allowed to perform updates to the Import-Area</ti>         
+        </otherwise>
+      </choose>          
+
+           
+</job>
+
+<job id="-db-giveback-import-" role="hidden">
+    <call_job job="-db-open-"/>
+    <dbc id="(prop,mydbc)"
+         act="update"                                           
+         update_return_prop="giveback-return-prop">TRUNCATE import_running;</dbc>   
+    <!-- delete from import_running; -->
+    <!-- <ti label="giveback-return-prop" >(prop,giveback-return-prop)</ti>  --> 
+    <call_job job="-db-close-on-purpose-"/>   
+    
+     <choose>
+        <when test="(f,eq_text,(prop,ling),de)" lang="de">
+          <ti label="Import-Bereich wurde freigegeben"/>
+          <ti>Andere Benutzer k&#246;nnen jetzt auf den Import-Bereich schreiben</ti>         
+        </when>
+        <otherwise>
+          <ti label="Import-Area was released"/>
+          <ti>Other users may write to the Import-Area now</ti>         
+        </otherwise>
+      </choose>                 
+    
+                   
+                       
+</job>
+
+<job id="do-nosql" role="hidden">
+  <need>(prop,nosql-label) (prop,nosql-sql) (file,nosql-result-csv) (prop,nosql-act)</need>
+  <prop id="nosql-generate-result">(f,and,(f,eq_text,select,(prop,nosql-act)),(f,has,file,nosql-result-csv))</prop>
+  <tk label="Sql-Befehl wird nicht ausgefuehrt">
+    <tk type="msg" msg_type="w">Auf Grund von Sicherheitskehrungen wird 
+das angeforderte Sql-Kommando nicht ausgefuehrt.(f,when,(prop,nosql-generate-result),
+Das Ergebnis des Kommandos wird simuliert und 
+mit einem fix definierten Wert vorgeben.,)
+Betaetigen Sie [ Ok ] um mit dem Skript fortzufahren.
+
+Katgorie: (prop,nosql-label)(f,when,(f,has,prop,nosql-explain), 
+Bezeichung: (prop,nosql-explain),)(f,when,(f,has,prop,nosql-limit),
+Limit: (f,vob,prop,nosql-limit),)
+Typ: (prop,nosql-act)(f,when,(prop,nosql-generate-result), 
+Csv-Ergebnis: (f,substring_after,(f,vob,file,nosql-result-csv),(dir,pro)),)
+
+--- SQL ---  
+(prop,nosql-sql)
+</tk>
+  </tk>
+  <when test="(prop,nosql-generate-result)">
+    <create_file file="(file,nosql-result-csv)">()richtung,satz,obj_id_x,bez_typ,bez_id,kopf,obj_typ
+b,ba,1400,25,1004,001.178.000.000-001.179.127.255,15
+b,ba,1394,25,1003,001.120.000.000-001.159.255.255,15
+b,ba,1362,25,1002,001.040.000.000-001.044.255.255,15
+b,ba,1426,25,1005,002.016.036.000-002.016.036.255,15
+b,ba,1294,25,1001,001.010.010.000-001.010.010.255,15
+b,ba,1278,25,1000,001.004.000.000-001.004.000.255,15
+b,ba,1260,25,999,001.001.001.000-001.001.001.255,15
+b,ba,1246,25,998,001.000.004.000-001.000.007.255,15
+b,ba,1242,25,997,001.000.000.000-001.000.000.255,15()</create_file>
+  </when>
+
+  <remove type="prop" id="nosql-generate-result"/>
+  <!-- 
+  <remove type="prop" id="nosql-act"/>  
+  <remove type="prop" id="nosql-label"/>
+  <remove type="prop" id="nosql-limit" test="(f,exists,prop,nosql-limit)"/>
+  <remove type="prop" id="nosql-explain" test="(f,exists,prop,nosql-explain)"/>
+  <remove type="prop" id="nosql-sql"/>
+  <remove type="file" id="nosql-result-csv" test="(f,exists,file,nosql-result-csv)"/>
+  -->
+</job>
+
+<job id="-db-prepare-operations-" role="hidden">                 
+</job>
+
+<job id="-db-prepare-operations-OUT-" role="hidden">
+  <need>(prop,prepare-reason)</need>
+
+  <choose>
+    <when test="(f,role,test)">
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)db-prepare-operations.xml" />
+        <prop id="joe-in-regex" x="doclose" />  
+      </call_job>
+      
+      <tk id="doclose" label="Do Close the Db-Conn" flag="nono" type="bool" 
+          tip="Reason: (prop,prepare-reason)"/>
+
+      <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(dir,pro)db-prepare-operations.xml" />
+        <prop id="joe-in-regex" x="doclose" />  
+      </call_job> 
+      
+      <choose>
+        <when test="(prop,doclose)">
+          <call_job job="-db-close-on-purpose-" />
+        </when>
+        
+        <otherwise>
+          <ti>Did Not close the db</ti>        
+        </otherwise>
+      
+      </choose>
+      
+    </when>
+    <otherwise>  
+      <choose>
+        <when test="(f,exists_file,(dir,pro)disconnect.off)">
+          <ti>did not disconnect due to disconnect.off</ti>
+        </when>
+        <otherwise>
+          <call_job job="-db-close-on-purpose-"/>
+        </otherwise>
+      </choose>
+    </otherwise>
+  </choose>
+  
+  <remove id="prepare-reason" type="prop"/>
+
+</job>
+<!-- 
+
+-->
+
+<job id="-db-verify-" role="hidden">
+  <need>(prop,from-sender) (prop,guided-setup-job)</need>
+  <call_job job="tr_dbver"/>
+  <ti label="(prop,_dbver_ueberpruefe)"/>
+  <try_catch>
+  <try>
+    <call_job job="-db-open-"/>
+          <!-- <dbc id="(prop,mydbc)"            
+            act="commit"/> -->            
+    <dbc id="(prop,mydbc)"
+        act="select"
+        out="(dir,filetemp)verify.xml"
+        style="a">select now(e:o)(e:c) as now;</dbc> 
+    
+    <prop id="the-now">(f,xpath,(dir,filetemp)verify.xml,row,@now)</prop> 
+    <ti x="(prop,_dbver_inordnung): (f,html,b,o)OK(f,html,b,c)"/>
+    <ti x="(prop,_dbver_uhrzeit): (prop,the-now)"/>
+    <remove type="prop" id="the-now"/>
+  </try>
+  <catch>
+    <ti label="(prop,_dbver_problem)"/>
+    <ti label="(prop,_dbver_fehler):">(prop,catched_msg)</ti>
+  </catch>
+  </try_catch>
+  
+  <when  test="(f,exists,coop2,_db,(prop,mydbc))" > 
+  
+    <try_catch>
+    <try>       
+      <call_job job="-db-close-on-purpose-"/> 
+    </try>
+    <catch>
+      <ti label="(prop,_dbver_prob_schliess)"/>
+      <ti label="(prop,_dbver_fehler):">(prop,catched_msg)</ti>
+    </catch>
+    </try_catch>    
+  </when>   
+  
+  <call_job job="return-to-sender" />    
+</job>     
+
+<job id="-db-commit-" role="hidden">
+    <!--     <dbc id="(prop,mydbc)"            
+          act="commit"/>     -->
+</job>  
+
+<job id="-db-rollback-" role="hidden">
+    <!--     <dbc id="(prop,mydbc)"            
+          act="rollback"/>     -->
+</job>  
+
+<job id="-db-commit-real-" role="hidden">
+        <dbc id="(prop,mydbc)"            
+          act="commit"/>
+</job>  
+
+<job id="-db-rollback-real-" role="hidden">
+        <dbc id="(prop,mydbc)"            
+          act="rollback"/>
+</job> 
+
+<job id="-db-get-id-" role="hidden">
+  <prop id="mydbc">(f,when,(f,implement,online),ak__,(prop,pro)k__)</prop>
+</job>
+                      
+<job id="-db-open-" role="hidden">
+  <need default="1">(prop,open-with-autocommit)</need>
+  <call_job job="-db-get-id-" />
+  
+  <when test="(f,not,(f,exists,coop2,_db,(prop,mydbc)))">
+    
+    <call_job job="tr_db"/>
+    <choose>
+      <when test="(prop,bpDb)" >
+        <call_job job="tk_db_read"/>
+        
+        <try_catch>
+        <try>
+        <when test="(f,has,prop,db_dbci)">
+        <when test="(f,ends_with,(prop,db_dbci),a__)">
+        <when test="(f,not,(f,has,prop,db_app))">
+          <prop id="db_app">Hibiscus</prop>
+          <ti>(f,html,s,o)Assumed &apos;Hibiscus&apos; as default for dbci called &apos;(prop,db_dbci)&apos;(f,html,s,c)</ti>
+        </when>
+        </when>  
+        </when>    
+        
+        <dbc id="(prop,mydbc)"
+          how="(prop,db_how)"
+          dbci="(f,vob,prop,db_dbci)"
+          dbci_app="(f,vob,prop,db_app)"
+          db="(f,vob,prop,db_dbms)"
+          url="(f,vob,prop,db_url)"
+          user="(f,vob,prop,db_userid)"
+          password="(f,vob,prop,db_pix)"             
+          act="open"
+          autocommit="(f,vob,prop,open-with-autocommit)"
+          error_id="dbproblem"/>
+          
+          <ti>(f,html,s,o)Db-Connection has been established: how=(f,vob,prop,db_how) dbci=(f,vob,prop,db_dbci) dbci_app=(f,vob,prop,db_app)(f,html,s,o)</ti>
+                   
+        </try>
+        <catch>
+          <ti>(prop,catched_msg)</ti>
+          <throw_again/>
+        </catch>
+        </try_catch>
+            
+        <ti test="(f,role,test)" x="(f,html,small,o)(prop,_db_dbms_msg_did_connect)(f,html,small,c)"/>
+        <!-- <remove type="prop" id="db_dbms" flag="catch"/> -->
+        <remove type="prop" id="db_url" flag="catch"/>
+        <remove type="prop" id="db_userid" flag="catch"/>
+        <remove type="prop" id="db_pix" flag="catch"/>  
+      </when>
+      <otherwise>
+        <dbc id="(prop,mydbc)"
+          how="dbci"
+          dbci="hansa__"
+          dbci_app="Hibiscus"          
+          act="open"
+          error_id="dbproblem"
+          prodconf-user="default_dbci"/>
+                
+        <!--
+        <prop id="db_dbms" prodconf="db-dbms" x="postgres" />
+        <prop id="2db_dbms" xtest="(f,has,prop,db_dbms)">(f,when,(f,eq_text,maria,(prop,db_dbms)),mysql,(prop,db_dbms))</prop>
+        <choose>
+          <when test="(f,role,boss3)">
+            <dbc 
+              prodconf="db-url"
+              prodconf-user="boss3"
+              id="(prop,mydbc)"
+              db="(prop,db_dbms)"
+              url="jdbc:postgresql://localhost:5432/hibiscus"
+              user="postgres"
+              password="servas" 
+              act="open"
+              autocommit="(prop,open-with-autocommit)"
+              error_id="dbproblem"/>          
+          </when>
+          <when test="(f,role,boss2)">
+            <dbc 
+              prodconf="db-url"
+              prodconf-user="boss2"
+              id="(prop,mydbc)"
+              db="(prop,db_dbms)"
+              url="jdbc:postgresql://localhost:5432/hibiscus"
+              user="postgres"
+              password="servas" 
+              act="open"
+              autocommit="(prop,open-with-autocommit)"
+              error_id="dbproblem"/>          
+          </when>     
+          <when test="(f,role,boss)">
+            <dbc 
+              prodconf="db-url"
+              prodconf-user="boss"
+              id="(prop,mydbc)"
+              db="(prop,db_dbms)"
+              url="jdbc:postgresql://localhost:5432/hibiscus"
+              user="postgres"
+              password="servas" 
+              act="open"
+              autocommit="(prop,open-with-autocommit)"
+              error_id="dbproblem"/>          
+          </when>       
+          <when test="(f,role,expert2)">
+            <dbc 
+              prodconf="db-url"
+              prodconf-user="expert2"
+              id="(prop,mydbc)"
+              db="(prop,db_dbms)"
+              url="jdbc:postgresql://localhost:5432/hibiscus"
+              user="postgres"
+              password="servas" 
+              act="open"
+              autocommit="(prop,open-with-autocommit)"
+              error_id="dbproblem"/>          
+          </when>      
+          <when test="(f,role,expert)">
+            <dbc 
+              prodconf="db-url"
+              prodconf-user="expert"
+              id="(prop,mydbc)"
+              db="(prop,db_dbms)"
+              url="jdbc:postgresql://localhost:5432/hibiscus"
+              user="postgres"
+              password="servas" 
+              act="open"
+              autocommit="(prop,open-with-autocommit)"
+              error_id="dbproblem"/>          
+          </when>       
+          <when test="(f,role,user2)">
+            <dbc 
+              prodconf="db-url"
+              prodconf-user="user2"
+              id="(prop,mydbc)"
+              db="(prop,db_dbms)"
+              url="jdbc:postgresql://localhost:5432/hibiscus"
+              user="postgres"
+              password="servas" 
+              act="open"
+              autocommit="(prop,open-with-autocommit)"
+              error_id="dbproblem"/>          
+          </when>                              
+          <otherwise>
+            <dbc 
+              prodconf="db-url"
+              prodconf-user="public"
+              id="(prop,mydbc)"
+              db="(prop,db_dbms)"
+              url="jdbc:postgresql://localhost:5432/hibiscus"
+              user="postgres"
+              password="servas" 
+              act="open"
+              autocommit="(prop,open-with-autocommit)"
+              error_id="dbproblem"/>          
+          </otherwise>
+        
+        </choose>
+        -->
+                
+      </otherwise>
+    </choose>
+    <!--  
+    <when test="(f,eq_text,mysql,(f,vob,prop,2db_dbms))">
+    
+      <dbc id="(prop,mydbc)"
+        act="update">()SET sql_mode = 'PAD_CHAR_TO_FULL_LENGTH';()</dbc>     
+    </when>   -->
+    
+  </when>
+    
+    
+
+    
+</job>
+
+<job id="-db-close-" role="hidden">
+  <!-- 
+  <ti key="CLOSE DB: (prop,mydbc)"> </ti>
+  <dbc id="a"
+    act="close"/>       -->
+</job>
+
+<job id="-db-kill-" role="hidden">
+
+<when test="(f,not,(f,has,prop,killid))">
+  <tk id="killid" flag="nono"/>
+</when>
+<need>(prop,killid)</need>
+
+  <prop id="dbci-gleiches">admina__</prop>
+  <prop id="dbc-gleiches">admin</prop>
+  
+        <dbc id="(prop,dbc-gleiches)"
+          how="dbci"
+          dbci="(prop,dbci-gleiches)"
+          dbci_app="Hibiscus"          
+          act="open"/>
+          
+
+     <try_catch>
+      <try>
+        <dbc id="(prop,dbc-gleiches)"
+          act="update"
+          update_return_prop="kill-run-return">KILL CONNECTION (prop,killid);</dbc> 
+        <ti label="Killed Connection">(prop,killid)</ti>  
+        <ti label="Returns">(prop,kill-run-return)</ti> 
+        <remove id="kill-run-return" type="prop" />
+      </try><catch>
+      <ti label="problem kill connection">(prop,catched_msg)</ti>
+      </catch></try_catch>
+        
+     <dbc id="(prop,dbc-gleiches)"
+                   
+          act="close"/>
+</job>
+
+
+<job id="-db-close-on-purpose-" role="hidden">
+  <!-- --> <!-- <ti>-db-close-on-purpose-</ti>          --> 
+
+  <choose>
+    <when test="(f,exists_file,(dir,pro)dc.txt)">
+      <call_job job="stop-dbc-real" />
+    </when>
+    <otherwise>
+      <!--<ti>no action done. enable delete by ...</ti>  -->
+    </otherwise>
+  </choose>
+</job>
+<job id="stop-dbc-gui" role="hidden">
+
+  <ti_break class_table="tabNavigator"/>    
+  <ti type="rec" >   
+    <ti flag="block wrap_word" span="8"></ti>                     
+    <ti type="call_job" explain="(f,when,(f,eq_text,(f,interpreter,lang),de),Verbindung zur Db trennen,Disconnect from Db)" flxag="button" align="right" cxlass="justup" job="stop-dbc-real">  
+    <prop id="return-job">(f,vob,prop,return-job)</prop>
+    </ti> 
+  </ti>  
+  <ti_break /> 
+</job>  
+
+<job id="stop-dbc-real" role="hidden">
+
+  <call_job job="-db-get-id-" />
+  <try_catch>
+    <try>
+      <dbc id="(prop,mydbc)"
+        act="close"/>   
+      <call_job job="tr_db"/> 
+      <ti type="rec">
+      <ti flag="block" x="(f,html,small,o)(prop,_db_dbms_msg_did_disconnect)(f,html,small,c)" />
+      </ti>
+    </try>
+    <catch>
+      <call_job job="tr_db"/> 
+      <ti type="rec">
+      <tii flag="block" x="(f,html,small,o)(prop,_db_dbms_msg_did_noconn)(f,html,small,c)"/>
+      </ti>
+    </catch>
+  </try_catch>
+  
+   <!--
+   <call_job job="(prop,return-job)" test="(f,has,prop,return-job)"/>
+        -->               
+
+</job>  
+
+<job id="tk_db_default" role="hidden">
+  <!--
+  <need default="jdbc:postgresql://localhost:5432/hibiscus">(prop,db_url)</need>
+                
+  <need default="postgres">(prop,db_userid)</need>   
+  <need default="postgres">(prop,db_dbms)</need>    -->    
+  
+</job>
+<!-- db-core, make your changes here -->
+<job id="tk_db_core" role="hidden" tip="db_: Tk Internal">
+
+  <need default="">(prop,tk_db_add_flag)</need>
+  
+  <call_job job="tk_db_default"/>
+  <call_job job="tr_db"/>
+  
+  
+  <tk xlabel="(prop,_db_top_l)"
+      label="(f,when,(f,has_flag,(prop,tk_db_add_flag),print_tips_only),(prop,_db_top_l_desc),(prop,_db_top_l))"      
+      flag="(prop,tk_db_add_flag)"
+      tip="(prop,_db_top_t)"
+      tk_id="35"> 
+      
+    <tk id="db_how" 
+        label="Method"  
+        flag="nono"                 
+        tip="strategy"
+        type="sel">
+        <sel label="Dbci">dbci</sel>
+        <sel label="Url">url</sel>
+    </tk>          
+    <tk type="msg" msg="Dbci"/>
+    <tk id="db_dbci" 
+        label="Dbci-Id"  
+        xflag="nono"                 
+        tip="On type dbci "
+        cols="60"/>
+        
+    <tk id="db_app" 
+        label="Dbci-App"  
+        xflag="nono"                 
+        tip="possible an app "
+        cols="60"/>        
+    <tk type="msg" msg="Url"/>            
+    <tk id="db_url" 
+        label="(prop,_db_url_l)"  
+        xflag="nono"                 
+        tip="(prop,_db_url_t)"
+        cols="60"/>
+        
+    <tk id="db_dbms" 
+        label="(prop,_db_dbms_l)"  
+        xflag="nono"                 
+        tip="(prop,_db_dbms_t)"
+        type="sel">
+        <sel label="Postgres">postgres</sel>
+        <sel label="MySql">mysql</sel>
+        <sel label="MariaDb">maria</sel>
+    </tk>        
+        
+    <tk id="db_userid" 
+        label="(prop,_db_userid_l)"  
+        flag="xnono password"                 
+        tip="(prop,_db_userid_t)"
+        cols="20"/>
+        
+    <tk id="db_pix" 
+        label="(prop,_db_pix_l)"  
+        flag="xnono password"                 
+        tip="(prop,_db_pix_t)"
+        cols="20"/>
+             
+                  
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_db_edit" tip="db_: Edit the Data" role="hidden">
+  
+  
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,db-data))">
+      <!-- data exists already -->
+      <prop id="tk_db_add_flag" x="sum_only print"/>
+      <call_job job="tk_db_read_for_edit"/>
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <prop id="tk_db_add_flag" x="sum_only print"/>
+    </otherwise>
+  </choose>
+  
+  <!-- doing input -->
+  <call_job job="tk_db_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_db_write"/>
+
+</job>
+
+
+
+<job id="tk_db_print_values" tip="db_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_db_read_for_edit"/>
+  
+  <call_job job="tk_db_core">
+    <prop id="tk_db_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_db_print_values_tips" tip="db_: Prints values and tips" role="hidden">
+  
+  
+  <call_job job="tk_db_read_for_edit"/>
+  <call_job job="tk_db_core">
+    <prop id="tk_db_add_flag" x="print_only print_with_tips print_all_fields"/>
+  </call_job>
+  
+    <ti_hr/>  
+    <ti type="rec" label=" " > 
+      <ti type="call_job" job="Db Conf" explain="(prop,_x_edit)" label=" " flag="button" class="fx fxEdit fxEditDetail fxEditDetailConf fxEditDetailConfDb"/>
+      <ti> </ti>
+      
+    </ti>  
+  
+</job>
+
+<job id="tk_db_print_help" tip="db_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_db_core">
+    <prop id="tk_db_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_db_read_for_edit" role="hidden">
+<when test="(prop,bpDb)" >
+  <file id="joe-in-store" x="(file,db-data)" />
+  <prop id="joe-in-regex" x="(prop,db-regex)" />
+  <call_job job="go-joe-read"/>
+</when>
+</job>  
+
+<job id="tk_db_read" role="hidden">
+<when test="(prop,bpDb)" >
+  <file id="joe-in-store" x="(file,db-data)" />
+  <prop id="joe-in-regex" x="(prop,db-regex)" />
+  <call_job job="go-joe-read"/>
+  
+  <prop id="2db_dbms" test="(f,has,prop,db_dbms)">(f,when,(f,eq_text,maria,(prop,db_dbms)),mysql,(prop,db_dbms))</prop>
+
+  <when test="(f,exists_file,(file,db-data-pwd))">
+
+    <!-- <crypto id="acc" act="close" flag="catch"/> -->
+    <try_catch>
+      <try>
+        <crypto id="acc" act="open" type="FWUspzSgLr1bWKID"/>
+        <crypto id="acc" act="decrypt" in="(f,file_content,(file,db-data-pwd))" out="db_pix"/>
+        <!-- <ti>(prop,db_pix)</ti> -->
+        <crypto id="acc" act="close" />  
+      </try>
+      <catch>
+        <call_job job="tr_dbpr"/>
+        <ti label="(prop,_dbpr_pPwd)" />
+        <ti label="(prop,_dbpr_exception)">(prop,catched_msg)</ti>
+        <crypto id="acc" act="close" flag="catch"/>
+      </catch>
+    </try_catch>    
+  </when>
+
+  <when test="(f,exists_file,(file,db-data-user))">
+    <!-- <crypto id="acc" act="close" flag="catch"/> -->
+    <try_catch>
+      <try>
+        
+        <crypto id="bcc" act="open" type="FWUspzSgLr1bWKxx"/>
+        
+        <crypto id="bcc" act="decrypt" in="(f,file_content,(file,db-data-user))" out="db_userid"/>
+        <!-- <ti>(prop,db_userid)</ti> -->
+        <crypto id="bcc" act="close" />  
+        
+      </try>
+      <catch>
+        <ti label="(prop,_dbpr_pUser)" />
+        <ti label="(prop,_dbpr_exception)">(prop,catched_msg)</ti>
+        <crypto id="bcc" act="close" flag="catch"/>
+      </catch>
+    </try_catch>    
+  </when>  
+</when>
+  
+</job>
+
+<job id="tk_db_read_dbms" role="hidden">
+<need default="0">(prop,ask-user-for-dbms)</need>
+<need default="0">(prop,ask-user-always-for-dbms)</need>
+
+<remove type="prop" id="db_dbms" test="(f,exists,prop,db_dbms)"/>
+
+<call_job job="go-joe-read">
+  <file id="joe-in-store" x="(file,db-data)" />
+  <prop id="joe-in-regex" x="db_dbms" />  
+</call_job>
+
+<when test="(f,or,(f,not,(f,has,prop,db_dbms)),(prop,ask-user-always-for-dbms))" >
+
+  <choose>  
+    <when test="(f,not,(prop,bpDb))" >
+      <prop id="db_dbms" prodconf="default-dbms">postgres</prop>    
+    </when>
+    
+    <when test="(prop,ask-user-for-dbms)" >
+      <call_job job="tr_db"/>
+      <tk id="db_dbms" 
+          label="(prop,_db_dbms_l)"  
+          flag="nono"                 
+          tip="(prop,_db_dbms_t)"
+          type="sel">
+        <sel label="Postgres">postgres</sel>
+        <sel label="MySql">mysql</sel>
+        <sel label="MariaDb">maria</sel>
+      </tk>    
+      
+      <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(file,db-data)" />
+        <prop id="joe-in-regex" x="db_dbms" />  
+      </call_job>
+      
+    </when>
+  </choose> 
+
+</when>
+      
+<prop id="2db_dbms" test="(f,has,prop,db_dbms)">(f,when,(f,eq_text,maria,(prop,db_dbms)),mysql,(prop,db_dbms))</prop>
+
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_db_write" role="hidden">
+  <call_job job="-db-close-on-purpose-"/>
+  <file id="joe-in-store" x="(file,db-data)" />
+  <prop id="joe-in-regex" x="(prop,db-regex)" />
+    
+  <call_job job="go-joe-write"/>
+  <!-- <crypto id="acc" act="close" flag="catch"/>  -->
+  <try_catch>
+    <try>
+      
+      <crypto id="acc" act="open" type="FWUspzSgLr1bWKID"/>
+      
+      <crypto id="acc" act="encrypt" in="(prop,db_pix)" out="db_pix2"/>
+      <crypto id="acc" act="close" />          
+
+      <create_file out="(file,db-data-pwd)">(prop,db_pix2)</create_file>    
+      
+    </try>
+    <catch>
+      <ti>There seems to be a problem in putting the secret way to the database</ti>
+      <crypto id="acc" act="close" flag="catch"/>
+    </catch>
+  </try_catch>   
+  
+  <try_catch>
+    <try>
+      
+      <crypto id="bcc" act="open" type="FWUspzSgLr1bWKxx"/>
+      
+      <crypto id="bcc" act="encrypt" in="(prop,db_userid)" out="db_userid2"/>
+      <crypto id="bcc" act="close" />          
+
+      <create_file out="(file,db-data-user)">(prop,db_userid2)</create_file>    
+      
+    </try>
+    <catch>
+      <ti>There seems to be a problem in putting the secret way to the database</ti>
+      <crypto id="bcc" act="close" flag="catch"/>
+    </catch>
+  </try_catch>     
+ 
+  
+  
+</job>
+
+<!-- cleares data -->
+<job id="tk_db_clear"  tip="db_: Clears the data" role="hidden">
+  <delete file="(file,db-data)"/>
+</job>
+
+
+</jobs>

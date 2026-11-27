@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="stew-write">
+<need>(prop,stew_key) (prop,isAdd)</need>
+<need default="./">(prop,stews_offset)</need>
+<spirit act="open" id="stews_spirit_tc" xml="(file,stews)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,stews_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,stews_offset),0,(f,sub,(f,len,(prop,stews_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,stews_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="stews_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;stew row="(prop,stew_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="type" value="(f,vob,prop,stew_type)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="hd_usage" value="(f,vob,prop,stew_hd_usage)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="hd_script" value="(f,vob,prop,stew_hd_script)"/>
+<file id="jack-in" x="(file,stew_hd_file)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="hd_file" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ow_usage" value="(f,vob,prop,stew_ow_usage)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ow_script" value="(f,vob,prop,stew_ow_script)"/>
+<file id="jack-in" x="(file,stew_ow_file)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ow_file" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ft_usage" value="(f,vob,prop,stew_ft_usage)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ft_script" value="(f,vob,prop,stew_ft_script)"/>
+<file id="jack-in" x="(file,stew_ft_file)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ft_file" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ex_usage" value="(f,vob,prop,stew_ex_usage)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ex_script" value="(f,vob,prop,stew_ex_script)"/>
+<file id="jack-in" x="(file,stew_ex_file)"/>
+<prop id="jack-result-prop" x="(f,random_text,5)"/>
+<prop id="jack-result-did-prop" x="(f,random_text,5)"/>
+<call_service job="go-jack-do-file" flag="silent">
+<file id="jack-in" x="(file,jack-in)"/>
+<prop id="jack-result-prop" x="(prop,jack-result-prop)"/>
+<prop id="jack-result-did-prop" x="(prop,jack-result-did-prop)"/>
+</call_service>
+<global act="get" as_id="jack-result" id="(prop,jack-result-prop)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="ex_file" value="(prop,jack-result)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="off" value="(f,vob,prop,stew_off)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="stews_spirit_tc" where="(prop,stews_offset)stew[@row='(prop,stew_key)']" attribute="docu" value="(f,vob,prop,stew_docu)"/>
+<spirit act="close" flag="save pretty" id="stews_spirit_tc"/>
+</job>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="bulk-read">
+<need>(prop,bulk_key)</need>
+<spirit act="open" missing_strategy="empty" id="bulks_spirit_tc" xml="(file,bulks)"/>
+<prop id="bulk_dt_upd">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@dt_upd)</prop>
+<prop id="bulk_dt_add">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@dt_add)</prop>
+<prop id="bulk_type">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@type)</prop>
+<prop id="bulk_name">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@name)</prop>
+<prop id="bulk_doku">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@doku)</prop>
+<prop id="bulk_bscript">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@bscript)</prop>
+<prop id="bulk_flags">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@flags)</prop>
+<prop id="bulk_qu_file">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@qu_file)</prop>
+<prop id="bulk_qu_row">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@qu_row)</prop>
+<prop id="bulk_sqli_file">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@sqli_file)</prop>
+<prop id="bulk_sqli_row">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@sqli_row)</prop>
+<prop id="bulk_script">(f,spirit,bulks_spirit_tc,(prop,bulks_offset)bulk[@row=(f,xpath_string,(prop,bulk_key))],@script)</prop>
+<spirit act="close" id="bulks_spirit_tc"/>
+</job>

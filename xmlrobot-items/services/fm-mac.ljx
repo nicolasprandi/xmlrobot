@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+  
+  <job id="open_dir" os="mac">
+    <exe>
+      <arg>open</arg>
+      <arg>(dir,with)</arg>
+    </exe>
+  </job>   
+  
+  <job id="open_file" os="mac">
+    <exe>
+      <arg>open</arg>
+      <arg>(file,with)</arg>
+    </exe>
+  </job>
+  
+  <job id="sel_open_file_typical" os="mac">
+    <call_service job="sel_open_file_memo_in"/>
+    <call_service job="sel_open_file_exe" />
+  </job>
+  
+ <job id="sel_open_file" os="mac">
+  
+    <call_service job="sel_open_file_memo_in"/>
+  
+    <tk label="open (f,name_of_file,(file,with))">
+      <tk type="sel" id="sel" label="Select a programm" default="default"
+	  flag="nono">
+        <option label="System Default Programm">default</option>
+        <option label="Safari">browser</option>
+      	<option label="TextEdit">editor</option>
+      	<option label="Open Dir ...">openfolder</option>
+      </tk>
+    </tk>
+    
+    <call_service job="sel_open_file_memo_out"/>
+       
+    <call_service job="sel_open_file_exe" />
+    
+  </job>
+ 
+<job id="sel_open_file_exe" os="mac">
+    <need default="nothing">(prop,sel)</need>
+    <choose>
+      <when test="(f,eq,(prop,sel),openfolder)">
+  			<exe>
+  			  <arg>/usr/bin/open</arg>
+  			  <arg>(f,dir_of_file,(file,with))</arg>
+  			</exe>
+      </when>          
+      <when test="(f,eq,(prop,sel),browser)">
+  			<exe>
+  			  <arg>/usr/bin/open</arg>
+  			  <arg>-a</arg>
+  			  <arg>Safari</arg>
+  			  <arg>(file,with)</arg>
+  			</exe>
+      </when>
+      <when test="(f,eq,(prop,sel),editor)">
+  			<exe>
+  			  <arg>/usr/bin/open</arg>
+  			  <arg>-a</arg>
+  			  <arg>TextEdit</arg>
+  			  <arg>(file,with)</arg>
+  			</exe>
+      </when>        
+       
+      <otherwise>
+			<!-- default os -->
+  			<exe>
+  			  <arg>/usr/bin/open</arg>
+  			  <arg>-a</arg>
+  			  <arg>Finder</arg>			  
+  			  <arg>(file,with)</arg>
+  			</exe>
+      </otherwise>
+    </choose>      
+</job>
+
+</jobs>

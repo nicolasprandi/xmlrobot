@@ -1,0 +1,541 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!--
+
+-->
+<call_job job="prolog" />
+
+
+
+
+<!-- setting the default-values -->
+<job id="tk_ole_default" role="hidden">
+       <need default="0">(prop,ole_trace)</need>
+       <need default="3">(prop,ole_sicherheitsstufe)</need>
+       <need default="0">(prop,ole_force_script_decryption)</need>
+       
+       <need default="20200101">(prop,ole_ablaufdatum)</need>
+       <need default="0">(prop,ole_ant)</need>
+       <need default="Echnaton">(prop,ole_sw_name)</need>
+       <need default="0">(prop,ole_exe)</need>
+       
+       
+       
+</job>
+
+
+<!-- ole-core, make your changes here -->
+<job id="tk_ole_core" role="hidden" tip="ole_: Tk Internal">
+  <need default="1">(prop,olecoron)</need>
+  <prop id="olecoreoff">(f,not,(prop,olecoreon))</prop>
+  <need default="Some doku should be here ...">(prop,oledoku)</need>
+  
+  <ti label="ole doku">
+    <ti>(prop,oledoku)</ti>
+  </ti>
+  
+  
+  <choose>
+    <when test="(prop,olecoreon)">
+      <prop id="oleheader">Core</prop>
+    </when>
+    <otherwise>
+      <prop id="oleheader">Web Base</prop>
+    </otherwise>
+  </choose>
+
+  <need default="">(prop,tk_ole_add_flag)</need>
+  
+  <prop id="tip_ole_sql_repo_type">Speicherort des UserRepos</prop>  <!-- -->  
+  <prop id="tip_ole_sql_repo_dir">Das Root-Verzeichnis der User-Repo-Infos bei einem Datei-basierten Repo(e:s) Format lt. Reconquista-Dir(e:s) zb /var/www/formix.at/private/formixDd/users/s/userRepo/ oder H:\Echnaton-Dbs\db1\users\s\userRepo\</prop>  <!-- -->  
+  
+  <prop id="tip_ole_sql_db">at/nicolas/x/web/EeSystem.java</prop>  <!-- (prop,tip_ole_sql_db) -->
+  <prop id="tip_ole_sql_url">[jdbc:mysql://localhost:3306/formixat001] - [jdbc:postgresql://localhost:5432/formixat001] goes to at/nicolas/x/web/EeSystem.java</prop>  <!-- (prop,tip_ole_sql_url) -->
+  <prop id="tip_ole_sql_tabprefix">Postgres-Schema oder MySql-Tabellenprefix. Wird den tabellen immer vorangestellt-mit punkt! [formixat001.] goes to at/nicolas/x/web/EeSystem.java</prop>  <!-- (prop,tip_ole_sql_tabprefix) -->
+  <prop id="tip_ole_sql_user">[formixat001] [postgres] goes to at/nicolas/x/web/EeSystem.java</prop>  <!-- (prop,tip_ole_sql_user) -->
+  <prop id="tip_ole_sql_pass">secret goes to at/nicolas/x/web/EeSystem.java</prop>  <!-- (prop,tip_ole_sql_pass) -->
+  <prop id="tip_ole_sql_crypto">This thing encrypts the sored passwords in the db. secret maria goes to at/nicolas/x/web/EeSystem.java</prop>  <!-- (prop,tip_ole_sql_crypto) -->
+  <prop id="tip_ole_db">Dort wo die Echnaton-Datenbank liegt. URI+/ eg  file:///var/www/formix.at/private/formixDd/ goes to at/nicolas/x/web/OnlineSitzung.java</prop>  <!-- (prop,tip_ole_db) -->
+  
+  <prop id="tip_ole_uploadtemp">Ein Verzeichnisname das fuer die temporaeren daten beim upload verwendet wird. Format: C:\Users\nicolas\Documents\tomcat-temp-upload - also klassisch und lt. Os</prop>  <!-- (prop,tip_ole_db) -->  
+  
+  <prop id="label_ole_sql_repo_type">Storage of UserRepo</prop>  <!--  -->
+  <prop id="label_ole_sql_repo_type_file">File (e:o)File(e:c)</prop>  <!--  -->
+  <prop id="label_ole_sql_repo_type_db">Database (e:o)Db(e:c)</prop>  <!--  -->
+  <prop id="val_ole_sql_repo_type_file">file</prop>  <!--  -->
+  <prop id="val_ole_sql_repo_type_db">db</prop>  <!--  -->  
+  
+  <prop id="label_ole_sql_repo_dir">UserRepo Dir (e:o)File(e:c)</prop>  <!-- -->
+  <prop id="label_ole_sql_db">DBMS (e:o)Db(e:c)</prop>  <!-- (prop,label_ole_sql_db) -->
+  <prop id="label_ole_sql_url">Jdbc-Url-Connection (e:o)Db(e:c)</prop>  <!-- (prop,label_ole_sql_url) -->
+  <prop id="label_ole_sql_tabprefix">Tabellen-Prefix (e:o)Db(e:c)</prop>  <!-- (prop,label_ole_sql_tabprefix) -->
+  <prop id="label_ole_sql_user">User (e:o)Db(e:c)</prop>  <!-- (prop,label_ole_sql_user) -->
+  <prop id="label_ole_sql_pass">Password (e:o)Db(e:c)</prop>  <!-- (prop,label_ole_sql_pass) -->
+  <prop id="label_ole_sql_crypto">Pwd-Encryptor-CoopId</prop>  <!-- (prop,label_ole_sql_crypto) -->
+  <prop id="label_ole_db">Project-Db-Uri</prop>  <!-- (prop,label_ole_db) -->
+  <prop id="label_ole_uploadtemp">Upload-Temp-Folder</prop>  <!-- (prop,label_ole_db) -->  
+  <need default="1">(prop,ac-ask-p2-indiv)</need>
+  
+  <tk label="Parameters: (prop,oleheader)" 
+      flag="(prop,tk_ole_add_flag)"
+      tip="()Doku: (prop,oledoku)()"
+      test="(prop,ac-ask-p2-indiv)"> 
+
+    <tk id="ole_ablaufdatum"
+        label="Ablaufdatum YYYYMMDD" 
+        test_first="0" 
+        regex="\d\d\d\d\d\d\d\d"
+        tip="()YYYYMMDD - Ablaufdatum defines the enddate()"
+        flag="nono"/>
+        
+    <tk id="ole_customer"
+        label="Customer Name" 
+        test_first="0" 
+        tip="()Kunden-Name()"
+        flag="nono"/>       
+        
+    <tk id="ole_customer_notice"
+        label="Customer Notice" 
+        test_first="0" 
+        tip="()Zusaetzliche Anmerkung fuer print()"/>             
+        
+   <tk type="msg"
+        x="1(e:c) Echnaton-WebServer-Specs"
+        test_first="0"
+        test="(prop,olecoreoff)"/> 
+               
+    <tk id="ole_sql_do"
+        type="sel"
+        label="Set to use"       
+      	test_first="0"
+        x="1"
+        flag="nono"
+        test="(prop,olecoreoff)">
+       <sel label="Set-1">1</sel>
+       <sel label="Set-2">2</sel>
+       <sel label="Set-3(e:s) Expression">3</sel>
+       <sel label="Dont-Do-Db-Replacements">0</sel>
+     </tk>  
+     
+    <tk id="ole_memory5"
+        type="textblock"
+        label="Notepad"
+        tip="nur was zum zwischenschpeichern"
+        flag="big"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>        
+
+   <tk type="msg"
+        x="Set-1"
+        test_first="0"
+        test="(prop,olecoreoff)"/>
+        
+    <tk id="ole_sql_repotype1"            
+        type="sel" 
+        label="(prop,label_ole_sql_repo_type)"
+        tip="(prop,tip_ole_sql_repo_type)"               
+      	test_first="0"
+        test="(prop,olecoreoff)">
+       <sel label="(prop,label_ole_sql_repo_type_file)">(prop,val_ole_sql_repo_type_file)</sel>
+       <sel label="(prop,label_ole_sql_repo_type_db)">val_ole_sql_repo_type_db</sel>
+     </tk>         
+     
+    <tk id="ole_sql_repodir1"
+        type="textblock"
+        label="(prop,label_ole_sql_repo_dir)"
+        tip="(prop,tip_ole_sql_repo_dir)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>       
+    <!--    
+    <tk id="ole_sql_db1"            
+        type="sel" 
+        label="(prop,label_ole_sql_db)"
+        tip="(prop,tip_ole_sql_db)"               
+      	test_first="0"
+        test="(prop,olecoreoff)">
+       <sel label="Postgres">postgres</sel>
+       <sel label="MySql">mysql</sel>
+       <sel label="MariaDb">maria</sel>
+     </tk> 
+
+                     
+    <tk id="ole_sql_url1"
+        type="textblock"
+        label="(prop,label_ole_sql_url)"
+        tip="(prop,tip_ole_sql_url)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/> 
+
+    <tk id="ole_sql_tabprefix1"
+        type="text"
+        label="(prop,label_ole_sql_tabprefix)"
+        tip="(prop,tip_ole_sql_tabprefix)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>           
+        
+    <tk id="ole_sql_user1"
+        type="text"
+        label="(prop,label_ole_sql_user)"
+        tip="(prop,tip_ole_sql_user)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>  
+        
+    <tk id="ole_sql_pass1"
+        type="text"
+        label="(prop,label_ole_sql_pass)"
+        tip="(prop,tip_ole_sql_pass)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/> 
+    -->            
+    <tk id="ole_sql_crypto1"
+        type="text"
+        label="(prop,label_ole_sql_crypto)"
+        tip="(prop,tip_ole_sql_crypto)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"
+        />   
+                  
+    <tk id="ole_db1"
+        type="textblock"
+        label="(prop,label_ole_db)"
+        tip="(prop,tip_ole_db)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>   
+        
+    <tk id="ole_uptemp1"
+        type="textblock"
+        label="(prop,label_ole_uploadtemp)"
+        tip="(prop,tip_ole_uploadtemp)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>         
+        
+   <tk type="msg"
+        x="Set-2"
+        test_first="0"
+        test="(prop,olecoreoff)"/>
+
+    <tk id="ole_sql_repotype2"            
+        type="sel" 
+        label="(prop,label_ole_sql_repo_type)"
+        tip="(prop,tip_ole_sql_repo_type)"               
+      	test_first="0"
+        test="(prop,olecoreoff)">
+       <sel label="(prop,label_ole_sql_repo_type_file)">(prop,val_ole_sql_repo_type_file)</sel>
+       <sel label="(prop,label_ole_sql_repo_type_db)">val_ole_sql_repo_type_db</sel>
+     </tk>         
+     
+    <tk id="ole_sql_repodir2"
+        type="textblock"
+        label="(prop,label_ole_sql_repo_dir)"
+        tip="(prop,tip_ole_sql_repo_dir)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>  
+    <!--            
+    <tk id="ole_sql_db2"            
+        type="sel" 
+        label="(prop,label_ole_sql_db)"
+        tip="(prop,tip_ole_sql_db)"               
+      	test_first="0"
+        test="(prop,olecoreoff)">
+       <sel label="Postgres">postgres</sel>
+       <sel label="MySql">mysql</sel>
+       <sel label="MariaDb">maria</sel>       
+     </tk> 
+
+                     
+    <tk id="ole_sql_url2"
+        type="textblock"
+        label="(prop,label_ole_sql_url)"
+        tip="(prop,tip_ole_sql_url)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/> 
+
+    <tk id="ole_sql_tabprefix2"
+        type="text"
+        label="(prop,label_ole_sql_tabprefix)"
+        tip="(prop,tip_ole_sql_tabprefix)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>           
+        
+    <tk id="ole_sql_user2"
+        type="text"
+        label="(prop,label_ole_sql_user)"
+        tip="(prop,tip_ole_sql_user)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>  
+        
+    <tk id="ole_sql_pass2"
+        type="text"
+        label="(prop,label_ole_sql_pass)"
+        tip="(prop,tip_ole_sql_pass)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/> 
+    -->            
+    <tk id="ole_sql_crypto2"
+        type="text"
+        label="(prop,label_ole_sql_crypto)"
+        tip="(prop,tip_ole_sql_crypto)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"
+        />   
+                  
+    <tk id="ole_db2"
+        type="textblock"
+        label="(prop,label_ole_db)"
+        tip="(prop,tip_ole_db)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>      
+        
+    <tk id="ole_uptemp2"
+        type="textblock"
+        label="(prop,label_ole_uploadtemp)"
+        tip="(prop,tip_ole_uploadtemp)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>              
+        
+  <tk type="msg"
+        x="Set-3(e:s) Expression"
+        test_first="0"
+        test="(prop,olecoreoff)"/>
+        
+    <tk id="ole_sql_repotype3"            
+        type="text" 
+        label="(prop,label_ole_sql_repo_type)"
+        tip="(prop,tip_ole_sql_repo_type)"               
+      	test_first="0"
+        test="(prop,olecoreoff)">
+       <sel label="(prop,label_ole_sql_repo_type_file)">(prop,val_ole_sql_repo_type_file)</sel>
+       <sel label="(prop,label_ole_sql_repo_type_db)">val_ole_sql_repo_type_db</sel>
+     </tk>         
+     
+    <tk id="ole_sql_repodir3"
+        type="textblock"
+        label="(prop,label_ole_sql_repo_dir)"
+        tip="(prop,tip_ole_sql_repo_dir)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>          
+    <!--    
+    <tk id="ole_sql_db3"            
+        type="text" 
+        label="(prop,label_ole_sql_db)"
+        tip="(prop,tip_ole_sql_db)"               
+      	test_first="0"
+        test="(prop,olecoreoff)">
+       <sel label="Postgres">postgres</sel>
+       <sel label="MySql">mysql</sel>
+       <sel label="MariaDb">maria</sel>       
+     </tk> 
+
+                     
+    <tk id="ole_sql_url3"
+        type="text"
+        label="(prop,label_ole_sql_url)"
+        tip="(prop,tip_ole_sql_url)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/> 
+
+    <tk id="ole_sql_tabprefix3"
+        type="text"
+        label="(prop,label_ole_sql_tabprefix)"
+        tip="(prop,tip_ole_sql_tabprefix)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>           
+        
+    <tk id="ole_sql_user3"
+        type="text"
+        label="(prop,label_ole_sql_user)"
+        tip="(prop,tip_ole_sql_user)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>  
+        
+    <tk id="ole_sql_pass3"
+        type="text"
+        label="(prop,label_ole_sql_pass)"
+        tip="(prop,tip_ole_sql_pass)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/> 
+    -->
+                
+    <tk id="ole_sql_crypto3"
+        type="text"
+        label="(prop,label_ole_sql_crypto)"
+        tip="(prop,tip_ole_sql_crypto)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"
+        />   
+                  
+    <tk id="ole_db3"
+        type="text"
+        label="(prop,label_ole_db)"
+        tip="(prop,tip_ole_db)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>     
+        
+    <tk id="ole_uptemp3"
+        type="textblock"
+        label="(prop,label_ole_uploadtemp)"
+        tip="(prop,tip_ole_uploadtemp)"               
+      	test_first="0"
+        test="(prop,olecoreoff)"/>                               
+ 
+   <tk type="msg"
+        x="2(e:c) Core-Teil "
+        test_first="0"
+        test="(prop,olecoreon)"/> 
+
+    <tk id="ole_ant"
+        type="bool" flag="nono"
+        label="Entable Ant"
+        tip="Enables ant for offline-version. im online ist es sowieso ausgeschalten aber sicher ist sicher. at/nicolas/x/int_interpreter/PlugTryTask.java"               
+      	test_first="0"
+        test="(prop,olecoreon)"/>  
+        
+    <tk id="ole_exe"
+        type="bool" flag="nono"
+        label="exe-task Enabled"
+        tip="Enables the exe-task. Is not allowed to be used in the online-version of echnaton."               
+      	test_first="0"
+        test="(prop,olecoreon)"/>          
+                        
+    <tk id="ole_trace"
+        type="bool" flag="nono"
+        label="TRAcing Enabled"
+        tip="This sets the tracinglevel trace in: at/nicolas/x/int_interpreter/Interpreter.java"               
+      	test_first="0"
+        test="(prop,olecoreon)"/>    
+    <!--     
+    <tk id="ole_sicherheitsstufe"
+        type="sel" flag="nono"
+        label="Sicherheitsstufe"
+        tip="1=nichts uebersetzen 2=pro und libro 3=pro libro und app 4=alles - sicherheitsstufe in: at/nicolas/x/int_interpreter/Interpreter.java"               
+      	test_first="0"
+        test="(prop,olecoreon)">
+       <sel label="1=nichts uebersetzen">1</sel>
+       <sel label="2=pro und libro">2</sel>
+       <sel label="3=pro libro und app">3</sel>
+       <sel label=" 4=alles">4</sel> 
+     </tk>               -->
+     
+    <tk id="ole_force_script_decryption"
+        type="sel" flag="nono"
+        label="Force Script Decryption"
+        tip="0=No(e:s) as defined in app 1=just offline 2=just online 3=always(e:s) offline and online in at/nicolas/x/int_db/DbJm.java"               
+      	test_first="0"
+        test="(prop,olecoreon)">
+       <sel label="0=No(e:s) as defined in app">0</sel>
+       <sel label="1=just offline">1</sel>
+       <sel label="2=just online">2</sel>
+       <sel label="3=always(e:s) offline and online">3</sel> 
+       <sel label="4=depending on the file(e:s) -encrypted.xrj">4</sel> 
+     </tk>        
+     
+    <tk id="ole_app_encryptor"
+        type="text"
+        label="Decriptor for apps"
+        tip="the secret word for encryped applicatios to read ein 16-stelliges schluesselding - eg  q=AKVrst4?Fn4*X- : app encryption in: at/nicolas/x/int_db/DbJm.java zb: q=EvE%Mt2?F44*+-"               
+      	test_first="0"
+        test="(prop,olecoreon)"/>  
+        
+    <tk type="msg" x="Produced Software" test_first="0"/>
+    <tk id="ole_sw_name"
+        label="Product-Name" 
+        test_first="1" 
+        tip="()Der name der software eg &apos;EchnatonWeb&apos;()"
+        flag="nono"/>           
+        
+                                                
+
+        
+ 
+                          
+  </tk>   
+</job>
+
+<!-- edit data: read, userinput, write -->
+<job id="tk_ole_edit" tip="ole_: Edit the Data" role="hidden">
+
+  <!-- preparing -->
+  <choose>
+    <when test="(f,exists_file,(file,ole-data))">
+      <!-- data exists already -->
+      <prop id="tk_ole_add_flag" x="sum_only print print_with_tips"/>
+      <call_job job="tk_ole_read"/>
+      
+    </when>
+    <otherwise>
+      <!-- no data exists -->
+      <ti>no data exists</ti>
+      <prop id="tk_ole_add_flag" x="sum print print_with_tips"/>
+    </otherwise>
+  </choose>
+  <call_job job="tk_ole_default"/>
+  <!-- doing input -->
+  <call_job job="tk_ole_core"/>
+  
+  <!-- writing data -->
+  <call_job job="tk_ole_write"/>
+
+</job>
+
+
+
+<job id="tk_ole_print_values" tip="ole_: Prints the entered values" role="hidden">
+  
+  <call_job job="tk_ole_read"/>
+  
+  <call_job job="tk_ole_core">
+    <prop id="tk_ole_add_flag" x="print_only"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_ole_print_values_tips" tip="ole_: Prints values and tips" role="hidden">
+  
+  <call_job job="tk_ole_read"/>
+  
+  <call_job job="tk_ole_core">
+    <prop id="tk_ole_add_flag" x="print_only print_with_tips"/>
+  </call_job>
+  
+</job>
+
+<job id="tk_ole_print_help" tip="ole_: Prints only tips for help" role="hidden">
+  
+  <call_job job="tk_ole_core">
+    <prop id="tk_ole_add_flag" x="print_only print_with_tips print_tips_only print_all_fields"/>
+  </call_job>
+  
+</job>
+
+<!-- read only the data, dont change that jobname! -->
+<job id="tk_ole_read" role="hidden">
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,ole-data)" />
+    <prop id="joe-in-regex" x="(prop,ole-regex)" />
+  </call_job>
+  <call_job job="tk_ole_default"/>
+  <dump/>
+</job>
+
+<!-- write only the data, dont change that jobname! -->
+<job id="tk_ole_write" role="hidden">
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,ole-data)" />
+    <prop id="joe-in-regex" x="(prop,ole-regex)" />
+  </call_job>
+</job>
+
+<!-- cleares data -->
+<job id="tk_ole_clear"  tip="ole_: Clears the data" role="hidden">
+  <delete file="(file,ole-data)"/>
+</job>
+
+<!-- bis 31.8.2023 11:40
+
+-->
+
+
+</jobs>

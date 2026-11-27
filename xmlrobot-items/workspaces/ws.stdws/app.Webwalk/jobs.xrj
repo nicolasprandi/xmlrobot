@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog" />
+
+<job id="check-login" role="hidden">
+
+</job>
+
+<job id="xpath-samples" role="hidden">
+  <ti>//div[@id='content']//ul[@class='menu']/li/a
+  
+  //div[@id='navigation']//ul[@class='menu']/li/a
+  </ti>
+</job>
+
+
+<job id="info" role="hidden">
+   <ti type="call_job" job="reload-links"/>
+  <ti type="call_job" job="enter-url"/>
+  <ti type="call_job" job="select-by-xpath"/>
+  <ti label="Scroll/Go">
+  <ti type="call_job" job="go-back"/>
+  <ti type="call_job" job="scroll-to-end"/>
+  <ti type="call_job" job="scroll-to-position"/>
+  <ti type="call_job" job="clear-memory"/>  
+  </ti>
+  <ti label="Get html-content">
+    <ti type="call_job" job="get-html-dom" explain="Get PageSource">
+      <prop id="html_dom" x="pagesource"/>
+    </ti>
+    <ti type="call_job" job="get-html-dom" explain="Get Dom">
+      <prop id="html_dom" x="dom"/>
+    </ti>  
+
+  </ti>
+</job>
+
+
+<job id="see-screenshot" role="hidden">
+  <need>(file,with)</need>
+  <ti type="img" x="(file,with)" />
+</job>
+
+
+
+
+
+
+
+
+</jobs>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="zblock-see-more">
+<need>(prop,zblock_key)</need>
+<call_job job="zblock-read"/>
+<prop x="print_only print_with_tips print_all_fields" id="zblocks_tk_control"/>
+<prop id="zblock_default_label" x="(f,html,bold,open)(prop,zblock_titel)(f,html,bold,close)(f,when,(f,has,(prop,zblocks_offset_label)), - (prop,zblocks_offset_label),)"/>
+<call_job job="zblock-tk"/>
+<ti_hr/>
+<ti type="rec" label=" ">
+<ti type="call_job" flag="button" class="fx fxEditInfo fxEditInfoZblock" explain="Edit" job="zblock-edit">
+<prop id="zblock_key">(prop,zblock_key)</prop>
+<file id="zblocks">(file,zblocks)</file>
+<prop id="zblocks_offset">(prop,zblocks_offset)</prop>
+<prop id="zblocks_offset_label">(prop,zblocks_offset_label)</prop>
+<prop id="zblocks_offset_new_key">(prop,zblocks_offset_new_key)</prop>
+<prop id="zblocks_sort_attribute">(prop,zblocks_sort_attribute)</prop>
+<prop id="zblocks_sort_number">(prop,zblocks_sort_number)</prop>
+<prop id="zblocks_sort_ignore_case">(prop,zblocks_sort_ignore_case)</prop>
+<prop id="zblocks_sort_desc">(prop,zblocks_sort_desc)</prop>
+<prop id="zblocks_where">(prop,zblocks_where)</prop>
+<prop id="zblocks_return_job">(prop,zblocks_return_job)</prop>
+</ti>
+</ti>
+</job>

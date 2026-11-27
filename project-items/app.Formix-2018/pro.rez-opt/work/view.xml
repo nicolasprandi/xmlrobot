@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><job id="opt-see-all" level="ws" role="hidden" tip="Lists all Optionen">
+<prop id="nothing">1</prop>
+<loop missing_strategy="empty" id="opt_loop" xml="(file,opts)" xpath="(prop,opts_offset)opt(prop,opts_where)" sort="(prop,opts_sort_attribute)" number="(prop,opts_sort_number)" ignore_case="(prop,opts_sort_ignore_case)" desc="(prop,opts_sort_desc)">
+<when test="(prop,nothing)">
+<when test="(f,gt,(f,len,(prop,opts_offset_label)),0)">
+<ti label="(prop,opts_offset_label)"/>
+</when>
+<prop id="nothing">0</prop>
+</when>
+<ti type="rec">
+<ti align="right" type="call_job" postfix=":" explain="(f,html,bold,open)(f,text,cut_nice,(loop,opt_loop,@bez),30)(f,html,bold,close)" job="opt-see">
+<prop id="opt_key">(loop,opt_loop,@row)</prop>
+<file id="opts">(file,opts)</file>
+<prop id="opts_offset">(prop,opts_offset)</prop>
+<prop id="opts_offset_label">(prop,opts_offset_label)</prop>
+<prop id="opts_offset_new_key">(prop,opts_offset_new_key)</prop>
+<prop id="opts_sort_attribute">(prop,opts_sort_attribute)</prop>
+<prop id="opts_sort_number">(prop,opts_sort_number)</prop>
+<prop id="opts_where">(prop,opts_where)</prop>
+<prop id="opts_return_job">(prop,opts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<prop id="zut_key">(prop,zut_key)</prop>
+</ti>
+<ti flag="(f,when,(f,guicontroller,general,is-web,),wrap,)">(f,text,cut_nice,(loop,opt_loop,@besch),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,opt_loop,@klasse),1),Sojaflocken(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),2),Kürbiskerne(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),3),Soja-Block(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),4),Tofu(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),5),Saiblinger(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),6),Honig(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),7),Sonnenblumenkerne(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),8),Erdnüsse(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),9),Polenta(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),10),Cottage Cheese(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),11),Jogurt(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),12),Dosentunfisch(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),13),Rindfleisch(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),14),Hafer(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),15),Nuesse(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),16),Fermentiertes Erdnusslaibchen(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),17),Gemischtes Kornlaibchen(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),18),Unersetzbar weil ESSENTiELL(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),19),Tomatenmark(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),20),Rosinen(e:s),),10)</ti>
+<ti test="(f,role,business)" type="call_job" explain="Del" job="opt-del">
+<prop id="opt_key">(loop,opt_loop,@row)</prop>
+<file id="opts">(file,opts)</file>
+<prop id="opts_offset">(prop,opts_offset)</prop>
+<prop id="opts_offset_label">(prop,opts_offset_label)</prop>
+<prop id="opts_offset_new_key">(prop,opts_offset_new_key)</prop>
+<prop id="opts_sort_attribute">(prop,opts_sort_attribute)</prop>
+<prop id="opts_sort_number">(prop,opts_sort_number)</prop>
+<prop id="opts_where">(prop,opts_where)</prop>
+<prop id="opts_return_job">(prop,opts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<prop id="zut_key">(prop,zut_key)</prop>
+</ti>
+</ti>
+</loop>
+<when test="(prop,nothing)">
+<ti label=" ">Keine Optionen gefunden</ti>
+</when>
+<when test="(f,not,(f,contains,(prop,opts_offset),node(e:o)(e:c)))">
+<ti type="rec" label=" ">
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain_nix="opt-add" explain="[ + Option fuer Zutat ]" job="opt-add">
+<file id="opts">(file,opts)</file>
+<prop id="opts_offset">(prop,opts_offset)</prop>
+<prop id="opts_offset_label">(prop,opts_offset_label)</prop>
+<prop id="opts_offset_new_key">(prop,opts_offset_new_key)</prop>
+<prop id="opts_sort_attribute">(prop,opts_sort_attribute)</prop>
+<prop id="opts_sort_number">(prop,opts_sort_number)</prop>
+<prop id="opts_where">(prop,opts_where)</prop>
+<prop id="opts_return_job">(prop,opts_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<prop id="zut_key">(prop,zut_key)</prop>
+</ti>
+<ti flag="no_arrow" test="(f,role,business)" label=" " type="call_job" explain="/ Sort /" job="do-org-me">
+<file id="orga">(file,opts)</file>
+<prop id="orga_where">(prop,opts_where)</prop>
+<prop id="orga_view_loop_id">opt_loop</prop>
+<prop id="orga_finished_job"/>
+<prop id="orga_offset">(prop,opts_offset)</prop>
+<prop id="orga_offset_label">(prop,opts_offset_label)</prop>
+<prop id="orga_offset_new_key">(prop,opts_offset_new_key)</prop>
+<prop id="orga_segment_plural">opts</prop>
+<prop id="orga_segment_singular">opt</prop>
+<prop id="orga_segment_plural_label">Optionen</prop>
+<prop id="orga_segment_singular_label">Option</prop>
+<prop id="orga_sort_attribute">(prop,opts_sort_attribute)</prop>
+<prop id="orga_sort_number">(prop,opts_sort_number)</prop>
+<prop id="orga_where">(prop,opts_where)</prop>
+<prop id="orga_name_expression_loop">()(f,text,cut_nice,(loop,opt_loop,@bez),30)()</prop>
+<prop id="orga_desc_expression_loop">()(f,text,cut_nice,(loop,opt_loop,@besch),30).(f,text,cut_nice,(f,when,(f,has_flag,(loop,opt_loop,@klasse),1),Sojaflocken(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),2),Kürbiskerne(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),3),Soja-Block(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),4),Tofu(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),5),Saiblinger(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),6),Honig(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),7),Sonnenblumenkerne(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),8),Erdnüsse(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),9),Polenta(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),10),Cottage Cheese(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),11),Jogurt(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),12),Dosentunfisch(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),13),Rindfleisch(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),14),Hafer(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),15),Nuesse(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),16),Fermentiertes Erdnusslaibchen(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),17),Gemischtes Kornlaibchen(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),18),Unersetzbar weil ESSENTiELL(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),19),Tomatenmark(e:s),)(f,when,(f,has_flag,(loop,opt_loop,@klasse),20),Rosinen(e:s),),10)()</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="zuts">(file,zuts)</file>
+<prop id="zuts_offset">(prop,zuts_offset)</prop>
+<prop id="zuts_offset_label">(prop,zuts_offset_label)</prop>
+<prop id="zuts_offset_new_key">(prop,zuts_offset_new_key)</prop>
+<prop id="zuts_sort_attribute">(prop,zuts_sort_attribute)</prop>
+<prop id="zuts_sort_number">(prop,zuts_sort_number)</prop>
+<prop id="zuts_where">(prop,zuts_where)</prop>
+<prop id="zuts_return_job">(prop,zuts_return_job)</prop>
+<prop id="zut_key">(prop,zut_key)</prop>
+</ti>
+</ti>
+</when>
+<when test="(f,has_flag,debug trace all,(f,interpreter,level))">
+<ti_hr/>
+<ti label="Debug Information">
+<ti label="File:" type="file">(file,opts)</ti>
+<ti label="Xml-Offset:" test="(f,gt_num,(f,len,(prop,opts_offset)),0)">(prop,opts_offset)</ti>
+</ti>
+</when>
+</job>

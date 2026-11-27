@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<!-- <include file="(dir,services)noname_project.lsx"/> -->
+<job id="prolog" role="hidden">
+<prop id="dm">0</prop>
+<prop id="produktname">[[pdname]]</prop>
+  <!-- static -->
+  <when test="(f,eq,1,(f,sissi))">
+    <when test="(f,not,(f,has,prop,pro))"  >
+      <choose>
+        <when test="(f,ask,app_has_static_pro,(prop,app))"  >
+          <prop id="pro" x="Standard-Project" />
+          <dir id="pro" x="(dir,pro_home)pro_standard" />
+          <when test="(f,not,(f,dir_exists,(dir,pro)))">
+            <mkdir dir="(dir,pro)" />
+            <!-- <restart app="(prop,app)" pro="(prop,pro)"/> -->
+          </when>
+        </when>
+        <otherwise>
+          <i>kein standard-project</i>
+        </otherwise>
+      </choose>
+    </when>
+  </when>
+  <throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Backup-Manager out of service</throw>
+<when test="(f,has,prop,pro)">
+  <dir id="conf">(dir,pro)Config</dir>
+  <file id="conf">(dir,conf)config.xml</file>
+
+  <dir id="backups">(dir,pro)Backups</dir>
+  <dir id="api">(dir,pro)Api</dir>
+  <file id="api-paras">(dir,api)api-paras.xml</file>
+  <file id="api-dirs">(dir,api)api-dirs.xml</file>
+
+  <when test="(f,not,(f,dir_exists,(dir,conf)))">
+    <mkdir dir="(dir,conf)" />
+    <i>(dir,conf) created</i>
+  </when>
+  
+  <when test="(f,not,(f,file_exists,(file,conf)))">
+    <create_file out="(file,conf)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+      <conf conf_limit="20" debug="0"/>]]></create_file>
+    <i>(file,conf) created</i>
+  </when>  
+  
+  
+  <when test="(f,not,(f,dir_exists,(dir,backups)))">
+    <mkdir dir="(dir,backups)" />
+    <i>(dir,backups) created</i>
+  </when>  
+  
+  <when test="(f,not,(f,dir_exists,(dir,api)))">
+    <mkdir dir="(dir,api)" />
+    <i>(dir,api) created</i>
+  </when>  
+  
+  <sequence id="backups" file="(dir,conf)backups.sequ.xml" len="4" act="open"/>
+  
+  <prop id="conf_limit">(f,xpathx,20,(file,conf),.,@conf_limit)</prop>
+  <prop id="conf_trailer">(f,xpathx,,(file,conf),.,@conf_trailer)</prop>
+  <prop id="debug">(f,xpathx,0,(file,conf),.,@debug)</prop>
+  
+  
+  <file id="sources">(dir,conf)sources.xml</file>
+  <when test="(f,not,(f,exists_file,(file,sources)))">
+  <create_file out="(file,sources)">&lt;sources/&gt;</create_file>
+  <i>Created: (file,sources)</i>
+  </when>
+  <prop id="sources_offset">./</prop>
+  <prop id="sources_offset_label"/>
+  <prop id="sources_offset_new_key">//</prop>
+  <prop id="sources_sort_attribute"/>
+  <prop id="sources_sort_number"/>
+  <prop id="sources_sort_ignore_case"/>
+  <prop id="sources_sort_desc"/>
+  <prop id="sources_where"/>
+  <prop id="sources_return_job">source-see-all</prop>
+
+</when>
+
+</job>
+
+</jobs>

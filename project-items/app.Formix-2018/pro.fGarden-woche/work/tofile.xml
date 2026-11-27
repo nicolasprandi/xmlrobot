@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="woche-write">
+<need>(prop,woche_key) (prop,isAdd)</need>
+<spirit act="open" id="wochen_spirit_tc" xml="(file,wochen)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,wochen_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,wochen_offset),0,(f,sub,(f,len,(prop,wochen_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,wochen_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="wochen_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;woche row="(prop,woche_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="wochen_spirit_tc" where="(prop,wochen_offset)woche[@row='(prop,woche_key)']" attribute="bez" value="(f,vob,prop,woche_bez)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="wochen_spirit_tc" where="(prop,wochen_offset)woche[@row='(prop,woche_key)']" attribute="beschreibung" value="(f,vob,prop,woche_beschreibung)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="wochen_spirit_tc" where="(prop,wochen_offset)woche[@row='(prop,woche_key)']" attribute="menge" value="(f,vob,prop,woche_menge)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="wochen_spirit_tc" where="(prop,wochen_offset)woche[@row='(prop,woche_key)']" attribute="einheit" value="(f,vob,prop,woche_einheit)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="wochen_spirit_tc" where="(prop,wochen_offset)woche[@row='(prop,woche_key)']" attribute="klasse" value="(f,vob,prop,woche_klasse)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="wochen_spirit_tc" where="(prop,wochen_offset)woche[@row='(prop,woche_key)']" attribute="ersatz" value="(f,vob,prop,woche_ersatz)"/>
+<spirit act="close" flag="save pretty" id="wochen_spirit_tc"/>
+</job>

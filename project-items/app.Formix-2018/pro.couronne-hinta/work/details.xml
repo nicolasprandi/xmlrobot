@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="namaste-see">
+<need>(prop,namaste_key)</need>
+<need default="">(prop,namastes_sort_attribute)</need>
+<need default="">(prop,namastes_sort_number)</need>
+<need default="">(prop,namastes_sort_ignore_case)</need>
+<need default="">(prop,namastes_sort_desc)</need>
+<need default="">(prop,namastes_where)</need>
+<need default="">(prop,namastes_offset_label)</need>
+<need default="">(prop,namastes_offset)</need>
+<need default="">(prop,namastes_return_job)</need>
+<need default="//">(prop,namastes_offset_new_key)</need>
+<need default="">(prop,hints_sort_attribute)</need>
+<need default="">(prop,hints_sort_number)</need>
+<need default="">(prop,hints_sort_ignore_case)</need>
+<need default="">(prop,hints_sort_desc)</need>
+<need default="">(prop,hints_where)</need>
+<need default="">(prop,hints_offset_label)</need>
+<need default="">(prop,hints_offset)</need>
+<need default="">(prop,hints_return_job)</need>
+<need default="//">(prop,hints_offset_new_key)</need>
+<need default="(file,namastes)">(file,hints)</need>
+<call_job job="tr_namaste"/>
+<prop x="print print_only" id="namastes_tk_control"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,namastes_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="namaste-see">
+<prop id="namaste_key">(prop,namaste_key)</prop>
+<file id="namastes">(file,namastes)</file>
+<prop id="namastes_offset">(prop,namastes_offset)</prop>
+<prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+<prop id="namastes_offset_new_key">(prop,namastes_offset_new_key)</prop>
+<prop id="namastes_sort_attribute">(prop,namastes_sort_attribute)</prop>
+<prop id="namastes_sort_number">(prop,namastes_sort_number)</prop>
+<prop id="namastes_sort_ignore_case">(prop,namastes_sort_ignore_case)</prop>
+<prop id="namastes_sort_desc">(prop,namastes_sort_desc)</prop>
+<prop id="namastes_where">(prop,namastes_where)</prop>
+<prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+<prop id="hint_key">(prop,hint_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="hint-see">
+<file id="namastes">(file,namastes)</file>
+<prop id="namastes_offset">(prop,namastes_offset)</prop>
+<prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+<prop id="namastes_offset_new_key">(prop,namastes_offset_new_key)</prop>
+<prop id="namastes_sort_attribute">(prop,namastes_sort_attribute)</prop>
+<prop id="namastes_sort_number">(prop,namastes_sort_number)</prop>
+<prop id="namastes_sort_ignore_case">(prop,namastes_sort_ignore_case)</prop>
+<prop id="namastes_sort_desc">(prop,namastes_sort_desc)</prop>
+<prop id="namastes_where">(prop,namastes_where)</prop>
+<prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+<prop id="hint_key">(prop,hint_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+<call_job job="namaste-read"/>
+<call_job job="hook_namaste_details_top"/>
+<prop id="namaste_default_label_class" x="(prop,_sl_namaste)"/>
+<prop id="namaste_default_label_name" x="(f,tk_sel_translate,(prop,namaste_attributtyp),(file,pdi-sel-attr))(f,when,(f,has,(prop,namastes_offset_label)), - (prop,namastes_offset_label),)"/>
+<ti type="menu" info="an-edit-button-details" first_cell="2">
+<ti type="call_job" flag="button" class="fb fbEdit fbEditDetail fbEditDetailNamaste" explain="(prop,_x_edit)" job="namaste-edit">
+<prop id="namaste_key">(prop,namaste_key)</prop>
+<file id="namastes">(file,namastes)</file>
+<prop id="namastes_offset">(prop,namastes_offset)</prop>
+<prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+<prop id="namastes_offset_new_key">(prop,namastes_offset_new_key)</prop>
+<prop id="namastes_sort_attribute">(prop,namastes_sort_attribute)</prop>
+<prop id="namastes_sort_number">(prop,namastes_sort_number)</prop>
+<prop id="namastes_sort_ignore_case">(prop,namastes_sort_ignore_case)</prop>
+<prop id="namastes_sort_desc">(prop,namastes_sort_desc)</prop>
+<prop id="namastes_where">(prop,namastes_where)</prop>
+<prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+<prop id="hint_key">(prop,hint_key)</prop>
+</ti>
+<ti type="call_job" flag="button" class="fb fbAskAsk fbAskAskNamaste" explain="(prop,_label_askask)" job="namaste-see-more">
+<prop id="namaste_key">(prop,namaste_key)</prop>
+<file id="namastes">(file,namastes)</file>
+<prop id="namastes_offset">(prop,namastes_offset)</prop>
+<prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+<prop id="namastes_offset_new_key">(prop,namastes_offset_new_key)</prop>
+<prop id="namastes_sort_attribute">(prop,namastes_sort_attribute)</prop>
+<prop id="namastes_sort_number">(prop,namastes_sort_number)</prop>
+<prop id="namastes_sort_ignore_case">(prop,namastes_sort_ignore_case)</prop>
+<prop id="namastes_sort_desc">(prop,namastes_sort_desc)</prop>
+<prop id="namastes_where">(prop,namastes_where)</prop>
+<prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+<prop id="hint_key">(prop,hint_key)</prop>
+</ti>
+</ti>
+<call_job job="namaste-tk"/>
+<ti_space height="3px"/>
+<ti_break class_table="tabNavigator"/>
+<choose>
+<when test="(f,has_flag,(prop,namastes_tk_control),print_all_fields)">
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="namaste-see">
+<prop id="namaste_key">(prop,namaste_key)</prop>
+<file id="namastes">(file,namastes)</file>
+<prop id="namastes_offset">(prop,namastes_offset)</prop>
+<prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+<prop id="namastes_offset_new_key">(prop,namastes_offset_new_key)</prop>
+<prop id="namastes_sort_attribute">(prop,namastes_sort_attribute)</prop>
+<prop id="namastes_sort_number">(prop,namastes_sort_number)</prop>
+<prop id="namastes_sort_ignore_case">(prop,namastes_sort_ignore_case)</prop>
+<prop id="namastes_sort_desc">(prop,namastes_sort_desc)</prop>
+<prop id="namastes_where">(prop,namastes_where)</prop>
+<prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+<prop id="hint_key">(prop,hint_key)</prop>
+</ti>
+</ti>
+</when>
+<otherwise>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="hint-see">
+<file id="namastes">(file,namastes)</file>
+<prop id="namastes_offset">(prop,namastes_offset)</prop>
+<prop id="namastes_offset_label">(prop,namastes_offset_label)</prop>
+<prop id="namastes_offset_new_key">(prop,namastes_offset_new_key)</prop>
+<prop id="namastes_sort_attribute">(prop,namastes_sort_attribute)</prop>
+<prop id="namastes_sort_number">(prop,namastes_sort_number)</prop>
+<prop id="namastes_sort_ignore_case">(prop,namastes_sort_ignore_case)</prop>
+<prop id="namastes_sort_desc">(prop,namastes_sort_desc)</prop>
+<prop id="namastes_where">(prop,namastes_where)</prop>
+<prop id="namastes_return_job">(prop,namastes_return_job)</prop>
+<file id="hints">(file,hints)</file>
+<prop id="hints_offset">(prop,hints_offset)</prop>
+<prop id="hints_offset_label">(prop,hints_offset_label)</prop>
+<prop id="hints_offset_new_key">(prop,hints_offset_new_key)</prop>
+<prop id="hints_sort_attribute">(prop,hints_sort_attribute)</prop>
+<prop id="hints_sort_number">(prop,hints_sort_number)</prop>
+<prop id="hints_sort_ignore_case">(prop,hints_sort_ignore_case)</prop>
+<prop id="hints_sort_desc">(prop,hints_sort_desc)</prop>
+<prop id="hints_where">(prop,hints_where)</prop>
+<prop id="hints_return_job">(prop,hints_return_job)</prop>
+<prop id="hint_key">(prop,hint_key)</prop>
+</ti>
+</ti>
+</otherwise>
+</choose>
+<ti_break/>
+</job>

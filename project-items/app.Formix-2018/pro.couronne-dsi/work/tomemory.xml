@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsi-read">
+<need>(prop,dsi_key)</need>
+<spirit act="open" missing_strategy="empty" id="dsis_spirit_tc" xml="(file,dsis)"/>
+<prop id="dsi_dt_upd">(f,spirit,dsis_spirit_tc,(prop,dsis_offset)dsi[@row=(f,xpath_string,(prop,dsi_key))],@dt_upd)</prop>
+<prop id="dsi_dt_add">(f,spirit,dsis_spirit_tc,(prop,dsis_offset)dsi[@row=(f,xpath_string,(prop,dsi_key))],@dt_add)</prop>
+<prop id="dsi_name">(f,spirit,dsis_spirit_tc,(prop,dsis_offset)dsi[@row=(f,xpath_string,(prop,dsi_key))],@name)</prop>
+<prop id="dsi_docu">(f,spirit,dsis_spirit_tc,(prop,dsis_offset)dsi[@row=(f,xpath_string,(prop,dsi_key))],@docu)</prop>
+<prop id="dsi_cat">(f,spirit,dsis_spirit_tc,(prop,dsis_offset)dsi[@row=(f,xpath_string,(prop,dsi_key))],@cat)</prop>
+<prop id="dsi_status">(f,spirit,dsis_spirit_tc,(prop,dsis_offset)dsi[@row=(f,xpath_string,(prop,dsi_key))],@status)</prop>
+<spirit act="close" id="dsis_spirit_tc"/>
+</job>

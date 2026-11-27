@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+
+<job id="Developer Snippets?" joblevel="ws">
+    <ti label="About: Developer Snippets"/>
+    <ti>(f,html,bold,open)Enables you to execute Script-code without having an application(f,html,bold,close)</ti>
+
+  <ti type="ul">Collects snippets in a list</ti>
+  <ti type="ul">Comes with about 15 examples</ti>
+  
+</job>
+  
+<job id="Developer Snippets" joblevel="ws" role="admin" >
+
+<file id="snippets">(dir,services)snippets.xml</file>
+<when test="(f,not,(f,exists_file,(file,snippets)))">
+  <create_file out="(file,snippets)">&lt;snippets/&gt;</create_file>
+  <i>Created: (file,snippets)</i>
+</when>
+<prop id="snippets_offset">./</prop>
+<prop id="snippets_offset_label" />
+<prop id="snippets_offset_new_key">//</prop>
+<prop id="snippets_sort_attribute">@label</prop>
+<prop id="snippets_sort_number"></prop>
+<prop id="snippets_sort_ignore_case">@label</prop>
+<prop id="snippets_sort_desc" />
+<prop id="snippets_where" />
+<prop id="snippets_return_job">View Snippets</prop>
+<call_service job="View Snippets" />
+</job>
+
+<job id="snippet_act_run" role="hidden" info="Executes a Snippet">
+<need>(file,snippets) (prop,snippet_key) (prop,snippets_offset)</need>
+<prop id="to_execute">(f,xpath,(file,snippets),snippet[@row=(f,xpath_string,(prop,snippet_key))],@steps)</prop>
+
+<file id="to_include">(dir,filetemp)snippet_to_include.lsx</file>
+<create_file out="(file,to_include)">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;steps&gt;
+(prop,to_execute)
+&lt;/steps&gt;</create_file>
+
+<ti label="(f,html,bold,open)'(f,xpathx,,(file,snippets),snippet[@row=(f,xpath_string,(prop,snippet_key))],@label)' is executed ...(f,html,bold,close)"  />
+
+
+<ti_break/>
+
+<echo type="prop" id="to_execute"/>
+
+
+<ti flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,(prop,to_execute))&lt;font&gt;</ti>
+
+<ti_flush/>
+<ti_hr/>
+<try_catch>
+  <try>
+    <include file="(file,to_include)"/>
+    <ti_hr/>
+    <ti label="Ok(e:s) Execution well finished"/>
+  </try>
+  <catch>
+    <ti_hr/>
+    <ti label="Execution with Problems"/>
+    <ti laxbel=" " 
+        type="call_service" 
+        job="snippet_act_edit_and_run" 
+        explain="Edit &amp; Run again">
+        <prop id="snippet_key" x="(prop,snippet_key)"/>
+        <file id="snippets" x="(file,snippets)"/>
+        <prop id="snippets_offset" x="(prop,snippets_offset)"/>
+    </ti>    
+    <throw_again/>
+  </catch>
+</try_catch>
+
+
+<ti laxbel=" " 
+    type="call_service" 
+    job="snippet_act_edit_and_run" 
+    explain="Edit &amp; Run again">
+    <prop id="snippet_key" x="(prop,snippet_key)"/>
+    <file id="snippets" x="(file,snippets)"/>
+    <prop id="snippets_offset" x="(prop,snippets_offset)"/>
+</ti>
+
+<ti lxabel=" " 
+    type="call_service" 
+    job="snippet_act_run" 
+    explain="Run again">
+    <prop id="snippet_key" x="(prop,snippet_key)"/>
+    <file id="snippets" x="(file,snippets)"/>
+    <prop id="snippets_offset" x="(prop,snippets_offset)"/>
+</ti>
+
+<ti laxbel=" " 
+    type="call_service" 
+    job="Developer Snippets" 
+    explain="See all snippets"/>
+</job>
+
+<job id="snippet_act_edit_and_run" role="hidden">
+
+  <need>(file,snippets) (prop,snippets_offset) (prop,snippet_key)</need>
+    
+    <prop id="snippet_steps">(f,xpathx,,(file,snippets),(prop,snippets_offset)snippet[@row=(f,xpath_string,(prop,snippet_key))],@steps)</prop>
+    
+    <tk id="snippet_steps" 
+        label="Job-Steps" 
+        type="textblock" 
+        flag="nono big"/>
+    
+    <xml_update 
+      how="set_attribute" 
+      attribute="steps" 
+      what="(file,snippets)" 
+      where="(prop,snippets_offset)snippet[@row='(prop,snippet_key)']"
+      value="(prop,snippet_steps)" />
+    <!-- 
+      <ti>should be updated with (prop,snippet_steps)</ti>
+    <ti_flush/>
+    <tk type="msg" msg="Going to coninue with Execution !!!"/>
+    -->
+    
+    <call_service job="snippet_act_run"/>
+</job>
+</jobs>

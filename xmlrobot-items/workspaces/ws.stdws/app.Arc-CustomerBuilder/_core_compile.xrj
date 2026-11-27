@@ -1,0 +1,616 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="action_complete" role="hidden">
+
+  <call_job job="custset-read"/> 
+  <ti type="call_job" job="custset-see" explain="(prop,custset_name)">
+    <prop id="custset_key">(prop,custset_key)</prop>
+  </ti>
+  <ti_hr_break/>      
+  <prop id="from-action-complete">1</prop>
+    
+  <call_job job="tk_aska_edit">
+    <prop id="do-aska-p1">1</prop>
+    <prop id="do-aska-p2">1</prop>
+    <prop id="do-aska-p3">1</prop>
+    <prop id="do-aska-p4">1</prop>  
+  </call_job>
+  
+  <call_job job="action_custset_build" />
+  <call_job job="do-compiles-for-custset" />
+  <call_job job="do-obfu-replay" />
+  <call_job job="do-finalize-compiles" />
+
+</job>
+
+<job id="action_complete_java" role="hidden">
+
+  <call_job job="custset-read"/> 
+  <ti type="call_job" job="custset-see" explain="(prop,custset_name)">
+    <prop id="custset_key">(prop,custset_key)</prop>
+  </ti>
+  <ti_hr_break/>      
+  <prop id="from-action-complete">1</prop>
+
+  <call_job job="tk_aska_edit">
+    <prop id="do-aska-p1">0</prop>
+    <prop id="do-aska-p2">1</prop>
+    <prop id="do-aska-p3">1</prop>
+    <prop id="do-aska-p4">1</prop>  
+  </call_job>
+    
+  <call_job job="do-compiles-for-custset" />
+  <call_job job="do-obfu-replay" />
+  <call_job job="do-finalize-compiles" />
+</job>
+
+<job id="action_custset_build" role="hidden">
+
+  <call_job job="phase-headline">
+    <prop id="headline-phase">1</prop>
+  </call_job>
+  
+  <call_job job="get-prodconf" />
+           
+  <prop id="the-info">apps  dark  =       [ (f,vob,prop,product_apps) ]
+apps  open  =       [ (f,vob,prop,product_apps_open) ]      
+serial  =           [ (f,vob,prop,custset_serial) ] 
+ablaufdatum =       [ (f,vob,prop,custset_ablaufdatum) ]
+delivery customer = [ (f,vob,dir,custset_result) ]
+encryptor jobs =    [ (f,vob,prop,custset_encryptor) ]
+encryptor xsl =     [ (f,vob,prop,custset_encryptor_xsl) ]
+productname =     [ (f,vob,prop,product_productname) ]</prop> 
+
+  <tk label="P1. Build Scrips = Build individual Apps &amp; Services"
+    test="(prop,aska_p1_intro)">
+    <tk type="msg">(prop,the-info)</tk>
+  </tk>
+  
+  <delete dir="(dir,custset_result)system/services" flag="catch"/>
+  <delete dir="(dir,custset_result)system/service_apps" flag="catch"/>
+  
+  
+  <!-- 
+  <interpreter watch="1"/>
+  <delete content_of_dir="(dir,custset_result)zip"/>   -->
+  
+  <file id="ww" x="(dir,filetemp)items-dark.xml"/> 
+  <split text="(f,vob,prop,product_apps)" out="(file,ww)"/>
+  <ti type="file" x="(file,ww)" label="Dark Apps"/>  
+  
+  <prop id="this-app-is-dark" x="1"/>      
+  <loop id="item" xml="(file,ww)" xpath="split">
+      <call_job job="producer-inner-loop"/>
+      
+  </loop>
+  
+  <file id="ww" x="(dir,filetemp)items-open.xml"/> 
+  <split text="(f,vob,prop,product_apps_open)" out="(file,ww)"/>
+  <ti type="file" x="(file,ww)" label="Open Apps"/>  
+  
+  <prop id="this-app-is-dark" x="0"/>      
+  <loop id="item" xml="(file,ww)" xpath="split">
+      <call_job job="producer-inner-loop"/>
+      
+  </loop>                                                                    
+  
+  <delete dir="(dir,o_dark)" />
+  <ti  test="0" type="dir" label="to DELETE">(dir,o_dark)</ti>
+
+</job>
+
+
+
+<job id="do-compiles-for-custset" role="hidden">
+
+  <call_job job="phase-headline" >
+    <prop id="headline-phase">2</prop>
+  </call_job>
+  
+  <call_job job="get-prodconf" />
+  
+  <call_job job="tk_base_read"/>
+  <need>(prop,product_arcadia_pro) </need>
+
+    <prop id="the-info">name    =        [ (f,vob,prop,custset_name) ]
+remarks =        [ (f,vob,prop,custset_remarks) ]  
+ablaufdatum =    [ (f,vob,prop,custset_ablaufdatum) ]  
+password = [ (f,vob,prop,custset_password) ]   
+encryptor jobs = [ (f,vob,prop,custset_encryptor) ]
+encryptor xsl =  [ (f,vob,prop,custset_encryptor_xsl) ] 
+
+arcadia proj  =  [ (f,vob,prop,product_arcadia_pro) ] </prop>
+  <tk  label="P2. Compile = Compile Java"
+    test="(prop,aska_p2_intro)">
+  <tk type="msg">(prop,the-info)</tk>
+  </tk>
+
+  <call_app
+    app="(prop,base_appid_arcadia)"
+    pro_dir="(f,ask,pro_dir,(prop,base_appid_arcadia),(prop,product_arcadia_pro))"
+    pro_id="(prop,custset_name)"
+    job="auto-compile" flxag="silent">
+    <file id="#prodconf">(file,#prodconf)</file> 
+    <prop id="ac-customer-name">(prop,custset_name)</prop>
+    <prop id="ac-customer-notice">(prop,custset_remarks)</prop> 
+    <prop id="ac-final-date">(prop,custset_ablaufdatum)</prop>
+    <prop id="ac-secret-job">(prop,custset_encryptor)</prop>  
+    <prop id="ac-secret-xsl">(prop,custset_encryptor_xsl)</prop>  
+    <prop id="ac-password">(prop,custset_password)</prop>  
+    
+    <prop id="ac-ask-p2-std">(prop,aska_p2_std)</prop> 
+    <prop id="ac-ask-p2-indiv">(prop,aska_p2_indiv)</prop> 
+    
+  </call_app>
+
+
+</job>
+
+<job id="do-obfu-replay" role="hidden">  
+ 
+  <call_job job="phase-headline" >
+    <prop id="headline-phase">3</prop>
+  </call_job>
+  <call_job job="get-prodconf" />  
+  
+  <call_job job="tk_base_read"/>
+              
+  <prop id="the-info">delivery customer = [ (f,vob,dir,custset_result) ]
+arcadia proj  =  [ (f,vob,prop,product_arcadia_pro) ] </prop>  
+  
+  <tk label="p3. Obfuriscate = Zelix &amp; Replay"
+    test="(prop,aska_p3_intro)">
+    <tk type="msg">(prop,the-info)</tk>
+  </tk>  
+  
+  <call_app
+    app="(prop,base_appid_arcadia)"
+    pro_dir="(f,ask,pro_dir,(prop,base_appid_arcadia),(prop,product_arcadia_pro))"
+    pro_id="(prop,custset_name)"
+    job="auto-obfuriscate" flxag="silent">
+    <file id="#prodconf">(file,#prodconf)</file> 
+    <dir id="ac-delivery">(dir,custset_result)</dir>
+    <prop id="ac-ask-p3-review">(prop,aska_p3_review)</prop> 
+  </call_app> 
+           
+</job>
+
+<job id="do-finalize-compiles" role="hidden">
+
+  <call_job job="phase-headline" >
+    <prop id="headline-phase">4</prop>
+  </call_job>
+  
+  <call_job job="get-prodconf" />   
+  
+  <call_job job="tk_base_read"/>  
+           
+  <prop id="the-info">delivery customer = [ (f,vob,dir,custset_result) ]     
+arcadia proj  =  [ (f,vob,prop,product_arcadia_pro) ] </prop>  
+  <tk  label="P4. Finalize = Build the final Jar-Application"
+    test="(prop,aska_p4_intro)">
+  <tk type="msg">(prop,the-info)</tk>
+  </tk>
+  <call_app
+    app="(prop,base_appid_arcadia)"
+    pro_dir="(f,ask,pro_dir,(prop,base_appid_arcadia),(prop,product_arcadia_pro))"
+    pro_id="(prop,custset_name)"
+    job="auto-finalize" flxag="silent">
+    <file id="#prodconf">(file,#prodconf)</file> 
+    <dir id="ac-delivery">(dir,custset_result)</dir>
+    <prop id="ac-ask-p4-libs">(prop,aska_p4_libs)</prop>
+  </call_app>  
+  
+
+  
+</job>
+
+
+
+<job id="phase-headline" role="hidden">
+  <when test="(f,not,(f,has,prop,from-action-complete))"> 
+    <call_job job="custset-read"/> 
+    <ti type="call_job" job="custset-see" explain="(prop,custset_name)">
+      <prop id="custset_key">(prop,custset_key)</prop>
+    </ti>
+    <ti_hr_break/>
+    <prop id="do-aska-p1">0</prop>
+    <prop id="do-aska-p2">0</prop>
+    <prop id="do-aska-p3">0</prop>
+    <prop id="do-aska-p4">0</prop>   
+    <prop id="do-aska-p(prop,headline-phase)">1</prop>   
+    <call_job job="tk_aska_edit"/>
+  </when> 
+</job>
+
+
+
+<job id="producer-inner-loop" role="hidden">
+
+  <ti label="(loop,item,@x)" key="(f,when,(prop,this-app-is-dark),Dark,Open)"/>
+  
+  <dir id="ad_pro_dir" x="(f,ask,pro_dir,Arc-App-Dark,(loop,item,@x))"/>
+  <dir id="loc_pro_dir" x="(dir,o_dark)(loop,item,@x)"/>
+  <mkdir dir="(dir,loc_pro_dir)"/>
+  <ti type="dir" label="Temporary Pro">(dir,loc_pro_dir)</ti>
+  
+  <!-- appi-data.xrs  application-source -->
+  <prop id="copymsg">Nicht gefunden aber soll vorhanden sein:</prop>
+  
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)appi-data.xrs))">(prop,copymsg) (dir,ad_pro_dir)appi-data.xrs</throw>
+  <copy file="(dir,ad_pro_dir)appi-data.xrs"
+        tofile="(dir,loc_pro_dir)appi-data.xrs" />
+        
+  <!-- dirig-data.xrs dirs to ignore -->
+  
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)dirig-data.xrs))">(prop,copymsg) (dir,ad_pro_dir)dirig-data.xrs</throw>
+  <copy file="(dir,ad_pro_dir)dirig-data.xrs"
+        tofile="(dir,loc_pro_dir)dirig-data.xrs" 
+        flag="catch"/> 
+        
+  <!-- fileig-data.xrs files to ignore-->
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)fileig-data.xrs))">(prop,copymsg) (dir,ad_pro_dir)fileig-data.xrs</throw>
+  <copy file="(dir,ad_pro_dir)fileig-data.xrs"
+        tofile="(dir,loc_pro_dir)fileig-data.xrs" 
+        flag="catch"/>       
+        
+  <!-- filepd-data.xrs files to ignore-->
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)filepd-data.xrs))">(prop,copymsg) (dir,ad_pro_dir)filepd-data.xrs</throw>
+  <copy file="(dir,ad_pro_dir)filepd-data.xrs"
+        tofile="(dir,loc_pro_dir)filepd-data.xrs" 
+        flag="catch"/>               
+
+  <!-- noxsl-data.xrs xsl to ignore -->      
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)noxsl-data.xrs))">(prop,copymsg) (dir,ad_pro_dir)noxsl-data.xrs</throw>
+  <copy file="(dir,ad_pro_dir)noxsl-data.xrs"
+        tofile="(dir,loc_pro_dir)noxsl-data.xrs" 
+        flag="catch"/>  
+  <!-- prod-data.xrs main-parameters -->                      
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)prod-data.xrs))">(prop,copymsg) (dir,ad_pro_dir)prod-data.xrs</throw>
+  <copy file="(dir,ad_pro_dir)prod-data.xrs"          flag="catch"
+        tofile="(dir,loc_pro_dir)prod-data.xrs" />
+  <!-- files2.xml --> 
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)blurries.xml))">(prop,copymsg) (dir,ad_pro_dir)blurries.xml</throw>
+  <copy file="(dir,ad_pro_dir)blurries.xml"         flag="catch"
+        tofile="(dir,loc_pro_dir)blurries.xml" />    
+        
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)prodconf.xml))">(prop,copymsg) (dir,ad_pro_dir)prodconf.xml</throw>
+  <copy file="(dir,ad_pro_dir)prodconf.xml"         flag="catch"
+        tofile="(dir,loc_pro_dir)prodconf.xml" />            
+
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)prolog-steps.xrs))">(prop,copymsg) (dir,ad_pro_dir)prolog-steps.xrs</throw>
+  <copy file="(dir,ad_pro_dir)prolog-steps.xrs"         flag="catch"
+        tofile="(dir,loc_pro_dir)prolog-steps.xrs" />         
+        
+  <!--serial-nbr-spec.xml  serien-nummer speicification = signation editor --> 
+  <throw test="(f,not,(f,exists_file,(dir,ad_pro_dir)serial-nbr-spec.xml))">(prop,copymsg) (dir,ad_pro_dir)serial-nbr-spec.xml</throw>
+  <copy file="(dir,ad_pro_dir)serial-nbr-spec.xml"      flag="catch"
+        tofile="(dir,loc_pro_dir)serial-nbr-spec.xml" /> 
+        
+  <!--  
+  <copy file="(dir,ad_pro_dir)prod-data.xrs"       flag="catch"
+        tofile="(dir,loc_pro_dir)prod-data.xrs" /> 
+        
+  
+  <copy file="(dir,ad_pro_dir)prod-data.xrs"
+        tofile="(dir,loc_pro_dir)prod-data.xrs" />    -->                          
+   <!--  -->         
+        
+  <file id="pd" x="(dir,loc_pro_dir)prod-data.xrs"/>
+  
+  <prop id="prod_type" x=""/>
+  
+  <!-- final date -->
+  <ti test="0">isdark=(prop,this-app-is-dark)  ablauf=(f,has,prop,custset_ablaufdatum)</ti>
+  <choose>
+    <when test="(f,and,(prop,this-app-is-dark),(f,has,prop,custset_ablaufdatum))">
+      <prop id="prod_type" x="(prop,prod_type) f"/>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_ablaufdatum)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_ablaufdatum">(x,(f,vob,prop,custset_ablaufdatum))</p> ]]></inline>       
+      </xml_update>      
+      <ti test="0">did replace prod_ablaufdatum to in '(f,vob,prop,custset_ablaufdatum)' (file,pd)</ti>
+    </when>
+    <otherwise>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_ablaufdatum)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_ablaufdatum"></p> ]]></inline>       
+      </xml_update>    
+    </otherwise>
+  
+  </choose>
+  
+  <!-- job encryption -->
+  <choose>
+    <when test="(prop,this-app-is-dark)">
+      <prop id="prod_type" x="(prop,prod_type) e"/>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_pwd)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_pwd">(x,(f,escape,(f,vob,prop,custset_encryptor)))</p> ]]></inline>       
+      </xml_update>      
+    </when>
+    <otherwise>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_pwd)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_pwd"></p> ]]></inline>       
+      </xml_update>    
+    </otherwise>  
+  </choose>
+  
+  <!-- xsl encryption -->
+  <choose>
+    <when test="(prop,this-app-is-dark)">
+      <prop id="prod_type" x="(prop,prod_type) x"/>
+      <ti>(f,xpath,(file,pd),p[@id=(f,xpath_string,prod_pwd_xsl)])</ti>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_pwd_xsl)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_pwd_xsl">(x,(f,escape,(f,vob,prop,custset_encryptor_xsl)))</p> ]]></inline>       
+      </xml_update>      
+    </when>
+    <otherwise>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_pwd_xsl)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_pwd_xsl"></p> ]]></inline>       
+      </xml_update>    
+    </otherwise>  
+  </choose>  
+  
+  <!-- serial -->
+  <choose>
+    <when test="(f,and,(prop,this-app-is-dark),(f,has,prop,custset_serial))">
+      <ti>SERIENNuMMER gesetzt</ti>
+      <prop id="prod_type" x="(prop,prod_type) s"/>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_serial_nbr)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_serial_nbr">(x,(f,escape,(f,vob,prop,custset_serial)))</p> ]]></inline>       
+      </xml_update>      
+    </when>
+    <otherwise>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_serial_nbr)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_serial_nbr"></p> ]]></inline>       
+      </xml_update>    
+    </otherwise>  
+  </choose>  
+  
+  
+  <!-- productname -->
+  <choose>
+    <when test="(f,has,prop,product_productname)">
+      <ti>productname gesetzt</ti>
+      <!-- <prop id="prod_type" x="(prop,prod_type) p"/>  -->
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_productname)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_productname">(x,(f,escape,(f,vob,prop,product_productname)))</p> ]]></inline>       
+      </xml_update>      
+    </when>
+    <otherwise>
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_productname)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_productname"></p> ]]></inline>       
+      </xml_update>    
+    </otherwise>  
+  </choose>    
+  
+  <!-- prod_type aus dem existierenden ermittelnt -->
+  <prop id="prod_type">(f,xpath,(dir,ad_pro_dir)prod-data.xrs,p[@id='prod_type'])</prop>
+
+  <!-- what to do -->
+      <xml_update
+        what="(file,pd)"
+        how="replace"
+        where="p[@id=(f,xpath_string,prod_type)]">      
+    <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+     <p id="prod_type">(x,(prop,prod_type))</p> ]]></inline>       
+      </xml_update>   
+  
+  
+  <choose>
+    <!-- <when test="(f,eq_text,(loop,item,@x),(f,vob,prop,custset_service))">   -->
+    <when test="(f,has_flag,(prop,product_dcl_services),(loop,item,@x))">
+      <!-- das service -->
+      <dir id="tagetto">(dir,custset_result)system/services</dir>
+      <file id="tagetto2">(dir,custset_result)zip/system/services.zip</file>
+    </when>
+    <otherwise>
+    <!-- das app -->
+    <prop id="x1" x="(f,substring_after,(loop,item,@x),-)"/>
+    <dir id="tagetto">(dir,custset_result)system/service_apps/app.(prop,x1)</dir>
+    <file id="tagetto2">(dir,custset_result)zip/system/service_apps/(prop,x1).zip</file>
+    </otherwise>
+  </choose>
+  
+  <mkdir dir="(dir,tagetto)"/>
+  
+  
+  <xml_update
+    what="(file,pd)"
+    how="replace"
+    where="d[@id=(f,xpath_string,prod_target)]">      
+<inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+ <d id="prod_target">(x,(f,escape,(dir,tagetto)))</d> ]]></inline>       
+  </xml_update> 
+  <ti test="0">Creation of Temporary 'Arc-App-Dark' Projekt finished</ti>
+  <ti label="#prodconf" type="file" x="(file,#prodconf)" />
+  <ti_hr/>
+  <ti_hr style="4"/>
+  <ti_hr/>   
+  <ti label="(loop,item,@x)" />
+  <ti label="Prod-Order" x="(file,pd)" type="file"/>
+  <ti_flush/>
+  <tk type="msg" test="0">scripte aufrufen: file #prodconf =(file,#prodconf)</tk>
+  <call_app
+    app="Arc-App-Dark"
+    job="go-production"
+    pro_dir="(dir,loc_pro_dir)"
+    pro_id="(prop,custset_name)-(loop,item,@x)">
+    <file id="#prodconf">(file,#prodconf)</file>   
+  </call_app>
+    
+  <zip destfile="(f,file,classic,(file,tagetto2))" basedir="(f,dir,classic,(dir,tagetto))" />
+  
+  <tp flag="ok">(loop,item,@x)(f,when,(f,not,(prop,this-app-is-dark)), OPEN,)</tp>
+
+</job>
+
+<job id="get-prodconf" role="hidden">
+
+
+    
+  <when test="(f,not,(f,has,prop,did-do-get-prodconf))">
+ 
+    <need>(prop,custset_key)</need>
+    <call_job job="custset-read"/>
+    <prop id="product_key" x="(prop,custset_product)"/>
+    <call_job job="product-read" />
+    
+    <!-- -->
+    <dir id="o_runtime">(dir,pro)runtimes</dir>
+    <dir id="o_custset">(dir,o_runtime)(prop,custset_key)</dir>
+    <dir id="o_time">(dir,o_custset)(f,time,yyyMMdd)/(f,time,HHmmss)/</dir>
+    <dir id="o_dark">(dir,o_time)dark-projects</dir>
+    <mkdir dir="(dir,o_dark)"/>    
+    
+    <dir id="xa">(dir,custset_result)</dir>
+    <!-- customer-element erstellen -->
+    <prop id="cust-xml">&lt;customer 
+    name=&quot;(x,(prop,custset_name))&quot;
+    ablaufdatum=&quot;(x,(prop,custset_ablaufdatum))&quot;
+    delivery=&quot;(x,(dir,xa))&quot;
+    serial=&quot;(x,(prop,custset_serial))&quot;
+    randomize=&quot;(x,(prop,custset_randomize))&quot; </prop>
+    
+    <prop id="cust-xml" test="(f,and,(f,has,prop,custset_randomize_len),(prop,custset_randomize))">(prop,cust-xml) 
+    randomize_len=&quot;(x,(prop,custset_randomize_len))&quot;</prop>
+        
+    <prop id="cust-xml" test="(f,has,prop,custset_remarks)">(prop,cust-xml) 
+    remarks=&quot;(x,(prop,custset_remarks))&quot;</prop>
+    <remove type="dir" id="xa"/>
+    <prop id="cust-xml">(prop,cust-xml) /&gt; </prop>       
+
+    <create_file file="(dir,o_time)customer.xml">(prop,cust-xml)</create_file>    
+    <ti label="cust-xml" type="file">(dir,o_time)customer.xml</ti>       
+    <copy file="(dir,o_time)customer.xml" intodir="(dir,o_custset)"/>
+    
+    <choose>
+      <when test="(prop,custset_randomize)">
+        <call_job job="get-random" />
+        <prop id="crypto_coop_id">(prop,get-random)g__</prop>
+        <call_job job="get-random" />
+        <prop id="dbci_coop_id">(prop,get-random)a__</prop>      
+        
+        <call_job job="get-random" />
+        <prop id="dbci_coop_id_int_fast">(prop,get-random)a__</prop>  
+        
+        <call_job job="get-random" />
+        <prop id="dbci_coop_id_int_full">(prop,get-random)a__</prop>          
+                
+      </when>
+      <otherwise>
+        <prop id="crypto_coop_id">frog__</prop>
+        <prop id="dbci_coop_id">hansa__</prop>
+        <prop id="dbci_coop_id_int_fast">fasta__</prop>
+        <prop id="dbci_coop_id_int_full">fulla__</prop>  
+      </otherwise>
+    </choose>
+    
+    <prop id="rand-xml">&lt;randomizer  
+    crypto_coop_id=&quot;(x,(prop,crypto_coop_id))&quot;
+    dbci_coop_id=&quot;(x,(prop,dbci_coop_id))&quot;      
+    dbci_coop_id_int_fast=&quot;(x,(prop,dbci_coop_id_int_fast))&quot;
+    dbci_coop_id_int_full=&quot;(x,(prop,dbci_coop_id_int_full))&quot; /&gt;</prop>
+       
+    <create_file file="(dir,o_time)randomizer.xml">(prop,rand-xml)</create_file>    
+     
+    <ti label="randomizer-xml" type="file">(dir,o_time)randomizer.xml</ti>       
+    <copy file="(dir,o_time)randomizer.xml" intodir="(dir,o_custset)"/>
+    
+    
+    
+    <choose>
+      <when test="(f,and,(f,has,prop,custset_prodconf),(f,has,prop,product_prodconf))">
+        <prop id="prodconf-content">(prop,custset_prodconf)
+(prop,product_prodconf)</prop>
+      </when>
+      <when test="(f,has,prop,custset_prodconf)">
+        <prop id="prodconf-content">(prop,custset_prodconf)</prop>      
+      </when>
+      <when test="(f,has,prop,product_prodconf)">
+        <prop id="prodconf-content">(prop,product_prodconf)</prop>      
+      </when>
+      <otherwise>
+        <prop id="prodconf-content"></prop> 
+      </otherwise>
+    </choose>
+    
+    <prop id="prodconf-content">(prop,cust-xml)
+(prop,rand-xml)
+(prop,prodconf-content)</prop>
+    
+    <choose>
+      <when test="(f,has,prop,prodconf-content)">
+        <file id="#prodconf">(dir,custset_result)prodconf.xml</file>
+        
+
+        
+        <create_file out="(file,#prodconf)"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<prodconf>
+(prop,prodconf-content)
+</prodconf>]]></create_file>
+        <copy file="(file,#prodconf)" intodir="(dir,o_custset)"/>
+        <copy file="(file,#prodconf)" intodir="(dir,o_time)"/>
+
+      <ti label="#prodconf" type="file">(file,#prodconf)</ti>
+      </when>
+      <otherwise>
+        <delete file="(dir,custset_result)prodconf.xml" flag="catch" />
+        <file id="#prodconf"></file>
+      </otherwise>
+    </choose>
+    
+
+  
+    <prop id="did-do-get-prodconf">1</prop>
+  </when>
+</job>
+<job id="get-random" role="hidden">
+  <prop id="get-random" 
+x="(f,random_text,(prop,custset_randomize_len),ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$%/=?*+'#-.:;|{[]})"
+/>
+</job>
+    
+
+</jobs>

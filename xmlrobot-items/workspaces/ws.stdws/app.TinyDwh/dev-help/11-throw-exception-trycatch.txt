@@ -1,0 +1,14 @@
+<!-- throw an exception -->
+<throw test="(f,not,(f,role,user))">Suche mit diesen Privilegien nicht moeglich</throw>
+
+<!-- try catch -->
+<try_catch>
+  <try>
+
+  </try>
+  <catch>
+
+    <!-- <throw_again/> -->
+  </catch>
+</try_catch>    
+

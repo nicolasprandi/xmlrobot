@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<job id="source-hook-add-begin" role="hidden">
+    <prop id="joe-in-regex" x="source_includes|source_excludes|source_dir_rel" />
+    <file id="joe-in-store">(dir,pro)Config(prop,fs)input-cache-add-source.xml</file>
+    <call_job job="go-joe-read"/>        
+</job>
+<job id="source-hook-add-end" role="hidden">
+    <prop id="joe-in-regex" x="source_includes|source_excludes|source_dir_rel" />
+    <file id="joe-in-store">(dir,pro)Config(prop,fs)input-cache-add-source.xml</file>
+    <call_job job="go-joe-write"/>
+</job>
+
+<job id="source_act_run" role="hidden">
+  <!-- 
+  <dump flag="ti"/>
+  <interpreter watch="1"/>
+  -->
+  <spirit id="xy" xml="(file,sources)" act="open"
+    missing_strategy="empty"/>
+  
+  <prop id="folder_name">(f,spirit,xy,source[@row=(f,xpath_string,(prop,source_key))],@name)</prop>
+  <prop id="folder_dir_rel">(f,spirit,xy,source[@row=(f,xpath_string,(prop,source_key))],@dir_rel)</prop> 
+  <unescape id="folder_dir_rel" type="prop"/>
+  <translate id="folder_dir_rel" type="prop"/> 
+  <prop id="folder_includes">(f,spirit,xy,source[@row=(f,xpath_string,(prop,source_key))],@includes)</prop>
+  <prop id="folder_excludes">(f,spirit,xy,source[@row=(f,xpath_string,(prop,source_key))],@excludes)</prop>  
+  <spirit id="xy" act="close"/>    
+  <translate type="prop" id="folder_dir_rel"/>  
+  <dir id="test" x="(dir,filetemp)testing-(prop,folder_name)" /><!-- haken 1 -->
+  <mkdir dir="(dir,test)" />
+<!--  
+<ti label="Steps:" flag="html">&lt;font face="Courier"&gt;(f,escape,_htmlb,(prop,snippet_steps))&lt;font&gt;</ti>
+-->
+  
+  <ant>
+    <copy preservelastmodified="true" 
+          todir="(f,dir,classic,(dir,test))">
+          <fileset dir="(f,dir,classic,(prop,folder_dir_rel))" includes="(prop,folder_includes)" excludes="(prop,folder_excludes)"/>
+    </copy>
+  </ant>  
+  <ti label="Testing Backup">
+    <ti label="Name:">(prop,folder_name)</ti>
+    <ti label="File-Filter:" test="(f,not,(f,eq,(prop,folder_includes),))">(prop,folder_includes)</ti>
+    <ti label="File-Filter-Negative:" test="(f,not,(f,eq,(prop,folder_excludes),))">(prop,folder_excludes)</ti>
+  </ti>
+
+  <ti label="Backuped data would be ..."/>
+  <!-- <ti_hr/> -->
+
+      <call_service
+        job="Goto-Panorama"
+        flag="silent">
+        <dir id="with">(dir,test)</dir>
+      </call_service>
+
+
+</job>            
+
+<job id="Validate Source" role="hidden">
+  <prop id="folder_input_valid">1</prop>
+  <!-- 
+  <prop id="folder_input_valid">0</prop>
+  <choose>
+    <when test="(f,and,(f,eq,,(prop,folder_excludes)),(f,not,(f,eq,,(prop,folder_includes))))">
+      <prop id="folder_input_valid">1</prop>
+    </when>
+    <when test="(f,and,(f,eq,,(prop,folder_includes)),(f,not,(f,eq,,(prop,folder_excludes))))">
+      <prop id="folder_input_valid">1</prop>
+    </when>   
+    <when test="(f,and,(f,eq,,(prop,folder_includes)),(f,eq,,(prop,folder_excludes)))">
+      <prop id="folder_input_valid">0</prop>
+      <tk type="msg" msg_type="e" x="()You defined NOTHING in INCLUDE and EXCLUDE, &#xA;that's not possible, &#xA;define at least one of them!()"/>
+    </when>  
+    <otherwise>
+      <prop id="folder_input_valid">0</prop>
+      <tk type="msg" msg_type="e" x="()You defined SOMETHING in INCLUDE and EXCLUDE, &#xA;that's not possible, &#xA;clear one of them!()"/>
+    
+    </otherwise>     
+  </choose>
+  -->
+
+</job>
+
+</jobs>

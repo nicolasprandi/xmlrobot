@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<sel>
+
+<sel label="Start-1">1</sel>
+<sel label="SearchMigrations-2">2</sel>
+<sel label="AfterFirstMigrationSearch-3">3</sel>
+<sel label="Heal-4">4</sel>
+<sel label="Top-5">5</sel>
+<sel label="Statistics-6">6</sel>
+<sel label="Kopf-7">7</sel>
+<sel label="End-8">8</sel>
+
+<sel label="iMigObj-Sel-09">9</sel>
+<sel label="iMigObj-Upd-10">10</sel>
+<sel label="iMigObj-Rel-11">11</sel>
+
+
+
+<sel label="iHealWert-Sel-12">12</sel>
+<sel label="iHealWert-Upd-13">13</sel>
+
+<sel label="iTop-Sel-14">14</sel>
+<sel label="iTop-Upd-15">15</sel>
+
+<sel label="roundBusyStart-16">16</sel>
+<sel label="roundBusyEnd-17">17</sel>
+<sel label="BeforeSel-PubBox-18">18</sel>
+<sel label="BeforeSel-PubObj-19">19</sel>
+<sel label="BeforeSel-PubAttr-20">20</sel>  
+<sel label="BeforeSel-PubWert-21">21</sel>
+<sel label="BeforeSel-PubMehr-22">22</sel>
+<sel label="BeforeSel-PubBez-23">23</sel>  
+<sel label="BeforeSel-MigProduceMigs-24">24</sel>
+<sel label="BeforeSel-MigOptiEquals-25">25</sel>
+<sel label="BeforeSel-MigOptiCyles-26">26</sel>  
+<sel label="BeforeSel-MigOptiDouble-27">27</sel>
+<sel label="BeforeSel-MigSmart-28">28</sel>
+<sel label="BeforeSel-MigCoreGetAttrMigs-29">29</sel>  
+<sel label="BeforeSel-MigCoreGetBezBMigs-30">30</sel>
+<sel label="BeforeSel-MigCoreGetBezAMigs-31">31</sel>
+<sel label="BeforeSel-MigUntop-32">32</sel>  
+<sel label="BeforeSel-MigRemoveObjects-33">33</sel>
+<sel label="BeforeSel-HealRelations-34">34</sel>
+<sel label="BeforeSel-HealAttributes-35">35</sel>  
+<sel label="BeforeSel-HealWert-36">36</sel>
+<sel label="BeforeSel-TopSolo-37">37</sel>
+<sel label="BeforeSel-TopWerte-38">38</sel>  
+<sel label="BeforeSel-Mig2FrischJdbc-39">39</sel>
+<sel label="BeforeSel-Mig2FrischDssDelete-40">40</sel>
+<!-- 
+<sel label="Mv-41">41</sel>
+
+<sel label="CustMv-42">42</sel>
+<sel label="CustProcess-43">43</sel>           -->
+
+<sel label="BeforeSel-KopfGrouped-44">44</sel>
+<sel label="BeforeSel-KopfPlain-45">45</sel>
+
+<sel label="LimitCorrection-Start-46">46</sel>
+<sel label="LimitCorrection-End-47">47</sel>
+
+
+
+
+</sel>

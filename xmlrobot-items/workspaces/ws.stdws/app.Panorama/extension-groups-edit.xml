@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. --><groups>
+<group id="5" dt_add="20131207_085137" dt_upd="20190906_183317" title="Echnaton Jobs" active="1" sort="0">
+<extension id="9" dt_add="20131207_085232" dt_upd="20160602_023401" extension="xrj" active="1" />
+<extension id="90" dt_add="20140328_092708" dt_upd="20140328_092708" extension="ljx" active="1" /></group>
+<group id="6" dt_add="20131207_085311" dt_upd="20190906_183332" title="Echnaton Steps" active="1" sort="10">
+<extension id="10" dt_add="20131207_085322" dt_upd="20160602_023421" extension="xrs" active="1" />
+<extension id="91" dt_add="20140328_094227" dt_upd="20140328_094239" extension="lsx" active="1" /></group>
+<group id="18" dt_add="20140227_095333" dt_upd="20190906_183346" title="Echnaton Takeoff" active="1" sort="12">
+
+<extension id="92" dt_add="20140328_094252" dt_upd="20160602_023445" extension="xrt" active="1" /></group>
+<group id="10" dt_add="20131207_090110" dt_upd="20131207_094226" title="Xsl" active="1" sort="15">
+<extension id="19" dt_add="20131207_090120" dt_upd="20140227_082344" extension="xsl" active="1" />
+</group>
+<group id="4" dt_add="20131206_180612" dt_upd="20131207_085348" title="Java" active="1" sort="20">
+<extension id="5" dt_add="20131206_181333" dt_upd="20140227_082359" extension="jar" active="1" />
+<extension id="6" dt_add="20131206_181338" dt_upd="20140227_082408" extension="java" active="1" />
+<extension id="7" dt_add="20131206_181342" dt_upd="20140227_082416" extension="war" active="1" />
+<extension id="8" dt_add="20131206_181350" dt_upd="20140227_082427" extension="class" active="1" />
+<extension id="40" dt_add="20131208_142240" dt_upd="20140227_082450" extension="mf" active="1" />
+<extension id="98" dt_add="20140403_160114" dt_upd="20140403_160114" extension="jsp" active="1" /></group>
+<group id="7" dt_add="20131207_085423" dt_upd="20131207_085423" title="Windows-Executable" active="1" sort="30">
+<extension id="11" dt_add="20131207_085432" dt_upd="20140629_101705" extension="exe" active="1" />
+
+</group>
+<group id="8" dt_add="20131207_085704" dt_upd="20131207_085704" title="Xml" active="1" sort="40">
+<extension id="13" dt_add="20131207_085805" dt_upd="20140227_083102" extension="xml" active="1" />
+<extension id="20" dt_add="20131207_090134" dt_upd="20140227_083108" extension="dtd" active="1" />
+<extension id="86" dt_add="20140331_225335" dt_upd="20140331_225335" extension="fo" active="1" /></group>
+<group id="9" dt_add="20131207_085833" dt_upd="20140326_200133" title="Html Css Php Js" active="1" sort="60">
+<extension id="14" dt_add="20131207_085905" dt_upd="20150211_170830" extension="html" active="1" />
+<extension id="15" dt_add="20131207_085911" dt_upd="20140227_083225" extension="htm" active="1" />
+<extension id="16" dt_add="20131207_085917" dt_upd="20140227_083231" extension="css" active="1" />
+<extension id="17" dt_add="20131207_085924" dt_upd="20140227_083237" extension="php" active="1" />
+<extension id="18" dt_add="20131207_085929" dt_upd="20140227_083242" extension="js" active="1" />
+<extension id="60" dt_add="20140302_203913" dt_upd="20140302_203913" extension="htaccess" active="1" /><extension id="70" dt_add="20140329_205946" dt_upd="20140329_205946" extension="mht" active="1" /><extension id="81" dt_add="20140331_224751" dt_upd="20140331_224751" extension="xhtml" active="1" /><extension id="88" dt_add="20140401_151516" dt_upd="20140401_151516" extension="cgi" active="1" /><extension id="112" dt_add="20140403_212306" dt_upd="20140403_212306" extension="asp" active="1" /><extension id="123" dt_add="20140406_124149" dt_upd="20140406_124149" extension="webarchive" active="1" /></group>
+<group id="11" dt_add="20131207_090238" dt_upd="20140326_200118" title="Data Sheets" active="1" sort="50">
+<extension id="21" dt_add="20131207_090252" dt_upd="20140227_084005" extension="xls" active="1" />
+<extension id="101" dt_add="20140403_161256" dt_upd="20140403_161256" extension="xlsx" active="1" /><extension id="116" dt_add="20140403_215313" dt_upd="20140403_215313" extension="csv" active="1" /></group>
+<group id="17" dt_add="20131209_141521" dt_upd="20140312_102130" title="Text, Rtf" active="1" sort="66">
+<extension id="44" dt_add="20131209_141536" dt_upd="20140227_084130" extension="txt" active="1" />
+
+<extension id="52" dt_add="20131209_143713" dt_upd="20140227_084143" extension="rtf" active="1" />
+</group>
+<group id="12" dt_add="20131207_090512" dt_upd="20131209_142434" title="Layoutet Documents" active="1" sort="70">
+<extension id="22" dt_add="20131207_090534" dt_upd="20140227_084158" extension="doc" active="1" />
+<extension id="23" dt_add="20131207_090540" dt_upd="20140227_084203" extension="docx" active="1" />
+<extension id="25" dt_add="20131207_090558" dt_upd="20140227_084208" extension="odt" active="1" />
+<extension id="47" dt_add="20131209_142524" dt_upd="20140227_084214" extension="ai" active="1" />
+<extension id="49" dt_add="20131209_142839" dt_upd="20140227_084219" extension="psd" active="1" />
+
+<extension id="51" dt_add="20131209_142943" dt_upd="20140227_084230" extension="ppt" active="1" />
+<extension id="108" dt_add="20140403_182353" dt_upd="20140403_182353" extension="indd" active="1" /></group>
+<group id="16" dt_add="20131209_141254" dt_upd="20140314_114356" title="Media Movies" active="1" sort="90">
+<extension id="43" dt_add="20131209_141334" dt_upd="20140227_084243" extension="mov" active="1" />
+<extension id="45" dt_add="20131209_141750" dt_upd="20140227_084251" extension="avi" active="1" />
+
+<extension id="63" dt_add="20140320_110249" dt_upd="20140320_110249" extension="m4v" active="1" /><extension id="64" dt_add="20140320_110526" dt_upd="20140320_110526" extension="mp4" active="1" /><extension id="104" dt_add="20140403_161933" dt_upd="20140403_161933" extension="wmv" active="1" /><extension id="105" dt_add="20140403_161937" dt_upd="20140403_161937" extension="mkv" active="1" /></group>
+<group id="19" dt_add="20140228_071343" dt_upd="20140228_071343" title="Media Audio" active="1" sort="95">
+<extension id="57" dt_add="20140228_071422" dt_upd="20140228_071422" extension="mp3" active="1" />
+<extension id="61" dt_add="20140302_205249" dt_upd="20140302_205249" extension="wma" active="1" /><extension id="69" dt_add="20140329_205734" dt_upd="20140329_205734" extension="wav" active="1" /></group>
+<group id="3" dt_add="20131206_175502" dt_upd="20140314_114439" title="Media Pictures" active="1" sort="110">
+<extension id="1" dt_add="20131206_181108" dt_upd="20140227_085132" extension="mpg" active="1" />
+<extension id="30" dt_add="20131207_091927" dt_upd="20140227_085138" extension="jpg" active="1" />
+
+<extension id="37" dt_add="20131208_124426" dt_upd="20140227_085149" extension="png" active="1" />
+<extension id="39" dt_add="20131208_142143" dt_upd="20140227_085156" extension="bmp" active="1" />
+<extension id="46" dt_add="20131209_142013" dt_upd="20140227_085200" extension="gif" active="1" />
+<extension id="68" dt_add="20140329_205626" dt_upd="20140329_205626" extension="tif" active="1" /><extension id="72" dt_add="20140326_072519" dt_upd="20140326_072519" extension="ico" active="1" /><extension id="82" dt_add="20140331_224927" dt_upd="20140331_224927" extension="svg" active="1" /><extension id="89" dt_add="20140328_003333" dt_upd="20140328_003333" extension="wmf" active="1" /><extension id="96" dt_add="20140403_150059" dt_upd="20140403_150059" extension="eps" active="1" /><extension id="97" dt_add="20140403_160031" dt_upd="20140403_160031" extension="icns" active="1" /><extension id="109" dt_add="20140403_183137" dt_upd="20140403_183137" extension="dng" active="1" /><extension id="110" dt_add="20140403_183248" dt_upd="20140403_183248" extension="cr2" active="1" /><extension id="111" dt_add="20140403_184419" dt_upd="20140403_184419" extension="jpeg" active="1" /><extension id="124" dt_add="20140406_124328" dt_upd="20140406_124328" extension="tiff" active="1" /><extension id="125" dt_add="20140406_124511" dt_upd="20140406_124511" extension="raw" active="1" /><extension id="132" dt_add="20150214_013555" dt_upd="20150214_013555" extension="xcf" active="1" /></group>
+<group id="14" dt_add="20131207_100228" dt_upd="20150511_063954" title="Archives" active="1" sort="300">
+<extension id="33" dt_add="20131207_100238" dt_upd="20140314_114706" extension="zip" active="1" />
+<extension id="42" dt_add="20131208_142517" dt_upd="20140227_085246" extension="t3x" active="1" />
+<extension id="54" dt_add="20131209_144015" dt_upd="20140227_085253" extension="iso" active="1" />
+<extension id="55" dt_add="20140227_085300" dt_upd="20140227_085300" extension="rar" active="1" />
+<extension id="66" dt_add="20140325_110055" dt_upd="20140325_110055" extension="gz" active="1" /><extension id="67" dt_add="20140329_205609" dt_upd="20140329_205609" extension="dmg" active="1" /><extension id="107" dt_add="20140329_165326" dt_upd="20140329_165326" extension="tgz" active="1" /></group>
+<group id="15" dt_add="20131207_100338" dt_upd="20150507_201313" title="Links" active="1" sort="400">
+<extension id="34" dt_add="20131207_100359" dt_upd="20140227_085314" extension="lnk" active="1" />
+<extension id="41" dt_add="20131208_142318" dt_upd="20140227_085319" extension="url" active="1" />
+<extension id="100" dt_add="20140403_160722" dt_upd="20140403_160722" extension="webloc" active="1" /><extension id="106" dt_add="20140329_164817" dt_upd="20140329_164817" extension="desktop" active="1" /></group>
+<group id="20" dt_add="20140228_224101" dt_upd="20140228_224101" title="Database" active="1" sort="45"><extension id="58" dt_add="20140228_224112" dt_upd="20140228_224112" extension="sql" active="1" /></group><group id="21" dt_add="20140228_225615" dt_upd="20140324_143755" title="Animations, Geometric Design" active="1" sort="75"><extension id="59" dt_add="20140228_225626" dt_upd="20140228_225626" extension="c4d" active="1" /><extension id="65" dt_add="20140324_143726" dt_upd="20140324_143726" extension="swf" active="1" /><extension id="77" dt_add="20140326_195758" dt_upd="20140326_195758" extension="3dm" active="1" /><extension id="79" dt_add="20140331_224657" dt_upd="20140331_224657" extension="fla" active="1" /><extension id="80" dt_add="20140331_224702" dt_upd="20140331_224702" extension="as" active="1" /><extension id="102" dt_add="20140403_161320" dt_upd="20140403_161320" extension="vsd" active="1" /><extension id="103" dt_add="20140403_161325" dt_upd="20140403_161325" extension="dia" active="1" /><extension id="126" dt_add="20140406_133516" dt_upd="20140406_133516" extension="flv" active="1" /></group><group id="22" dt_add="20140312_101817" dt_upd="20140312_101817" title="Pdf" active="1" sort="68"><extension id="62" dt_add="20140312_101922" dt_upd="20140312_101922" extension="pdf" active="1" /></group><group id="23" dt_add="20140326_072426" dt_upd="20140326_072426" title="Software Components" active="1" sort="500"><extension id="71" dt_add="20140326_072433" dt_upd="20140326_072433" extension="dll" active="1" /><extension id="75" dt_add="20140326_073029" dt_upd="20140326_073029" extension="h" active="1" /><extension id="94" dt_add="20140403_091457" dt_upd="20140403_091457" extension="lib" active="1" /><extension id="113" dt_add="20140403_214012" dt_upd="20140403_214012" extension="mui" active="1" /><extension id="119" dt_add="20140331_125301" dt_upd="20140331_125301" extension="cab" active="1" /></group><group id="24" dt_add="20140326_072729" dt_upd="20140326_072757" title="Software Control" active="1" sort="700"><extension id="73" dt_add="20140326_072745" dt_upd="20140326_072745" extension="ini" active="1" /><extension id="74" dt_add="20140326_072847" dt_upd="20140326_072847" extension="log" active="1" /><extension id="76" dt_add="20140331_105831" dt_upd="20140331_105831" extension="properties" active="1" /><extension id="78" dt_add="20140326_195809" dt_upd="20140326_195809" extension="config" active="1" /><extension id="83" dt_add="20140331_225023" dt_upd="20140331_225023" extension="prefs" active="1" /><extension id="87" dt_add="20140327_104042" dt_upd="20140327_104042" extension="manifest" active="1" /><extension id="93" dt_add="20140328_101516" dt_upd="20140328_101516" extension="conf" active="1" /><extension id="99" dt_add="20140403_160308" dt_upd="20140403_160308" extension="plist" active="1" /><extension id="120" dt_add="20140331_125340" dt_upd="20140331_125340" extension="cfg" active="1" /></group><group id="25" dt_add="20140331_225122" dt_upd="20140331_130025" title="Shell Scripting" active="1" sort="32"><extension id="84" dt_add="20140331_225138" dt_upd="20140331_225138" extension="sh" active="1" /><extension id="121" dt_add="20140331_130049" dt_upd="20140331_130049" extension="bat" active="1" /><extension id="122" dt_add="20140331_130056" dt_upd="20140331_130056" extension="bak" active="1" /></group><group id="26" dt_add="20140403_214846" dt_upd="20181212_213632" title="Software Source Code" active="1" sort="490"><extension id="114" dt_add="20140403_214854" dt_upd="20140403_214854" extension="h" active="1" /><extension id="115" dt_add="20140403_214859" dt_upd="20140403_214859" extension="cpp" active="1" /></group><group id="27" dt_add="20140522_100327" dt_upd="20140522_100327" title="Pentaho" active="1" sort="13"><extension id="127" dt_add="20140522_100341" dt_upd="20140626_225923" extension="mondrian.xml" active="1" /><extension id="128" dt_add="20140522_100348" dt_upd="20140522_100348" extension="ktr" active="1" /><extension id="129" dt_add="20140522_100424" dt_upd="20140522_100424" extension="kjb" active="1" /><extension id="130" dt_add="20140522_100441" dt_upd="20140522_100441" extension="xmi" active="1" /><extension id="131" dt_add="20140522_100451" dt_upd="20150427_150020" extension="xaction" active="1" /></group></groups>

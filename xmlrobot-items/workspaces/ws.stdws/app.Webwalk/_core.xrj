@@ -1,0 +1,1724 @@
+<?xml version="1.0" ?>
+
+<jobs>
+
+<call_job job="prolog" />
+<!-- <ti type="call_job" job="hook-choose-xpath" explain="test"/>  -->
+<throw test="(f,gt_num,(f,time,yyyyMMdd),30000101)">Out of service is that great app</throw>
+
+<job id="do-change-color" role="hidden">
+
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)highlight-color.xml" />
+    <prop id="joe-in-regex" x="color" />
+  </call_job>   
+      
+  <tk id="color" 
+      label="Html-Border-Style" 
+      x="3px solid red" 
+      flag="nono"
+      tip="This is a html border style which is used for highlighting"/>
+      
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)highlight-color.xml" />
+    <prop id="joe-in-regex" x="color" />
+  </call_job>         
+      
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  
+  
+  <wdriver act="set_light_border"
+           light_border="(prop,color)"/>
+           ()]]></prop>      
+      </call_job>        
+</job>
+<job id="find-element" role="hidden">
+  <ti_hr/>
+  
+  <call_job job="find-see-all2"/>
+
+</job>
+
+<job id="hook-choose-xpath" role="hidden">
+  <need>(prop,find_key) (prop,group_key)</need>
+  <!-- <ti>(prop,find_key)</ti>   -->
+  
+  <call_job job="tk_reco_read"
+    test="(f,not,(f,has,prop,reco_prefix))"/>
+    
+  <prop id="var-spirit" x="(prop,reco_prefix)spirit"/>
+  <prop id="(prop,var-spirit)" x="hasen"/>
+  
+  <spirit id="finds" 
+          xml="(file,finds)" 
+          act="open"
+          missing_strategy="empty"/>
+          
+  <!-- <interpreter watch="1" />   -->
+  <prop id="find_style" x="(f,spirit,finds,group[@row=(f,xpath_string,(prop,group_key))]/find[@row=(f,xpath_string,(prop,find_key))],@style)"/>
+  
+  <prop id="find_title" x="(f,spirit,finds,group[@row=(f,xpath_string,(prop,group_key))]/find[@row=(f,xpath_string,(prop,find_key))],@title)"/>  
+  
+  <prop id="search_var">(prop,find_style)</prop>
+  <prop id="search_var"                        
+        test="(f,eq_text,by_xpath,(prop,search_var))" >xpath</prop>
+                                               
+  <prop id="search_var_content">(f,xpath,(file,finds),group[@row=(f,xpath_string,(prop,group_key))]/find[@row=(f,xpath_string,(prop,find_key))],@(prop,search_var))</prop>
+  <prop id="search_var_content_unescaped">(prop,search_var_content)</prop>
+  
+  <escape type="prop" id="search_var_content"/>
+    
+  <!-- 
+  <prop id="var-xpath" x="(prop,reco_prefix)xpath"/>
+  <prop id="(prop,var-xpath)" x="(f,xpath,(file,finds),group[@row=(f,xpath_string,(prop,group_key))]/find[@row=(f,xpath_string,(prop,find_key))],@xpath)"/>  
+  -->
+  
+  <prop id="ps-desc" x="Go: (prop,find_style) &apos;(prop,search_var_content)&apos;"/>
+  <ti type="rec" key="(prop,find_title)">
+  <ti>Go: (prop,find_style) &apos;(f,html,b,o)(prop,search_var_content_unescaped)(f,html,b,c)&apos;</ti>
+  </ti>
+
+  <tp>(prop,ps-desc) ...</tp>  
+  
+  <call_job job="tk_conf_read" />
+  
+  <choose>
+    <when test="(f,not,(f,has,prop,conf_implicit))">
+      <prop id="tkx">e</prop>
+    </when>
+    <when test="(f,eq_text,,(prop,conf_implicit))">
+      <prop id="tkx">e</prop>
+    </when>
+    <when test="(f,eq_num,0,(prop,conf_implicit))">
+      <prop id="tkx">e</prop>
+    </when>    
+    <otherwise>
+      <prop id="tkx">i</prop>
+    </otherwise>
+  </choose>
+  
+  <choose>
+    <when test="(f,eq_text,i,(prop,tkx))">
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[
+  <wdriver act="find_elements"
+           (prop,find_style)="(prop,search_var_content)"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_count="nbr-found-elements"
+           return_prop_single_id="found-single-id"/>]]></prop>      
+      </call_job>       
+      
+    </when>
+                
+    <when test="(f,eq_text,e,(prop,tkx))">
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[
+  <wdriver act="find_elements"
+           (prop,find_style)="(prop,search_var_content)"
+           new_spirit_id="found"      
+           flag="keep"
+           return_prop_single_id="found-single-id"
+           return_prop_count="nbr-found-elements"/>
+         
+           ]]></prop>      
+      </call_job>       
+      
+    </when>   
+   </choose> 
+          
+      <!--       <ti>found single id=(f,vob,prop,found-single-id)</ti>
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,()(prop,var-spirit)())</need>
+  <need>(prop,()(prop,var-xpath)())</need>
+  <wdriver act="find_elements"
+           by_xpath="(prop,()(prop,var-xpath)())"
+           new_spirit_id="(prop,()(prop,var-spirit)())"
+           flag="keep"/>
+           ()]]></prop>      
+      </call_job>       
+      -->
+       
+      <prop id="ps-desc" x="finding (prop,find_style) &apos;(prop,search_var_content)&apos;"/>
+      <prop id="ps-desc" x="(prop,ps-desc) on url &apos;(f,wdriver,?,get_url)&apos;" flag="catch"/>
+      <prop id="ps-desc" x="(prop,ps-desc) with title &apos;(f,wdriver,?,get_title)&apos;" flag="catch" />
+      
+  <!-- <interpreter watch="0" />  --> 
+  <spirit id="finds" act="close"/>        
+       
+    <call_job job="ps-print-spirit">
+      <!-- <prop id="ps-xpath" x="(f,vob,prop,(prop,var-xpath))" />  -->
+      <prop id="ps-id" x="found" />
+      <prop id="ps-type" x="find_elements" />
+      <prop id="ps-desc">(prop,ps-desc)</prop>
+      <prop id="ps-count" x="(prop,nbr-found-elements)" />
+      <prop id="ps-single-id" x="(f,vob,prop,found-single-id)" test="(f,has,prop,found-single-id)"/>
+    </call_job> 
+  
+     <call_job job="record">
+        <prop id="steps"><![CDATA[()  <spirit id="found" act="close"/>
+        ()]]></prop>      
+    </call_job>    
+
+</job>
+
+<job id="save-as-file" role="hidden">
+  <need default="get_xml">(prop,saf-action)</need>  
+  <need default="pagesource">(prop,saf-how)</need>  
+  <ti label="Saving to file"/>
+  <ti label="action:">(prop,saf-action)</ti>
+  <ti label="how:">(prop,saf-how)</ti>
+  
+  <sequence id="pages"  act="next"/>
+  <tk label="Save to file">
+  <tk id="tit" label="Titel" flxag="nono" tip="action=(prop,saf-action) how=(prop,saf-how)" />
+  </tk>
+    
+  <prop id="kurzz">(prop,tit)-(f,time)</prop>
+  <tk label="Short Filename" id="kurzz" flag="nono" />
+  
+  <file id="to_file" x="(dir,pages)(prop,kurzz).(f,substring_after,(prop,saf-action),get_)"/>
+    
+    
+           
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(file,to_file)</need>
+  <wdriver act="(prop,saf-action)"
+           how="(prop,saf-how)"
+           to_file="(file,to_file)"/>
+           ()]]></prop>      
+      </call_job>            
+  <ti label="Done"/>
+  <ti label="Result" type="file" x="(file,to_file)"/>
+  <ti label="Type">(prop,saf-how)</ti>
+  
+
+
+</job>
+
+<job id="get-html-dom" role="hidden">
+  <need default="get_dom">(prop,style)</need>  
+  <sequence id="pages"  act="next"/>
+  <tk id="tit" label="Titel" flxag="nono"/>
+    
+  <file id="to_file" x="(dir,pages)(prop,tit)-(f,time).(f,when,(f,eq_text,get_dom,(prop,style)),html,xml)"/>
+    
+    
+           
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(file,to_file)</need>
+  <wdriver act="(prop,style)"
+           to_file="(file,to_file)"/>
+           ()]]></prop>      
+      </call_job>            
+
+  <ti label="Result" type="file" x="(file,to_file)"/>
+  
+
+
+</job>
+
+
+
+<job id="go-somewhere" role="hidden">
+  <need>(prop,go-url)</need>
+  <call_job job="tk_reco_read"
+    test="(f,not,(f,has,prop,reco_storage))"/>
+    
+  <prop id="varprefix" x="(prop,reco_prefix)"/>
+  <prop id="var-url" x="(prop,varprefix)url"/>  
+  
+  <prop id="(prop,var-url)" x="(prop,go-url)"/>
+  <call_job job="record">
+      <prop id="steps"><![CDATA[()  <need>(prop,()(prop,var-url)())</need>
+  <wdriver act="get"
+           url="(prop,()(prop,var-url)())"/>
+           ()]]></prop>      
+  </call_job>
+  <tp>Finished get</tp>
+  <ti label="Went to" xx="(f,vob,prop,(prop,var-url))"/>
+  <ti labyel="Went to" x="(f,vob,prop,(prop,var-url))"/>
+  <call_job job="find-element" />
+  <!-- 
+  <when test="(f,has_flag,(prop,reco_storage),file)">
+  
+    <tp>Starting find-elelemnts</tp> 
+    <file id="found" x="(dir,pro)nicolas-tag-a.xml"/> 
+  
+    <prop id="var-file" x="(prop,varprefix)found"/>      
+    <file id="(prop,var-file)" x="(file,found)"/>   
+    <call_job job="record">
+        <prop id="steps"><![CDATA[()  <need>(file,()(prop,var-file)())</need>
+  <wdriver act="find_elements"
+           by_tag_name="a"
+           new_file="(file,()(prop,var-file)())" 
+           flag="keep"/>
+  <ti type="file" x="(file,()(prop,var-file)())" />
+    ()]]></prop>      
+    </call_job>  
+       
+                       
+     <tp>finished find-elelemnts</tp>   
+  
+  </when>
+  -->
+</job>
+
+
+
+
+
+<job id="go-back" role="hidden">
+
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()  <wdriver act="back"/>()]]></prop>      
+  </call_job>  
+  
+  <call_job job="post-nav"/>       
+  <ti_hr_break/>           
+  <ti label="Did go to previous page" />           
+</job>
+
+<job id="go-forward" role="hidden">
+
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()  <wdriver act="forward"/>()]]></prop>      
+  </call_job>  
+  
+  
+  
+  
+  <call_job job="post-nav"/>     
+  <ti_hr_break/>   
+  <ti label="Did go to next page" />          
+             
+</job>
+
+<job id="go-back2" role="hidden">
+
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()  <wdriver act="back2"/>()]]></prop>      
+  </call_job>  
+
+  <call_job job="post-nav"/>     
+  <ti_hr/>       
+  <ti label="Did go to previous page" />
+            
+             
+</job>
+
+<job id="go-refresh" role="hidden">
+
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()  <wdriver act="refresh"/>()]]></prop>      
+  </call_job>  
+
+  <call_job job="post-nav"/>     
+  <ti_hr/>       
+  <ti label="Did Refresh Page" />             
+</job>
+
+<job id="scroll-to-end" role="hidden">
+  
+  
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()  <wdriver act="scroll_to_end"/>()]]></prop>      
+  </call_job>    
+
+
+  <call_job job="post-nav"/>     
+  <ti_hr/>       
+  <ti label="Did Scoll to End of Page" />
+                               
+</job>
+
+<job id="scroll-to-begin" role="hidden">
+  
+  
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()  <wdriver act="scroll_to_begin"/>()]]></prop>      
+  </call_job>    
+
+  <call_job job="post-nav"/>     
+  <ti_hr/>           
+  <ti label="Did Scoll to Begin of Page" />  
+                                 
+</job>
+
+<job id="scroll" role="hidden">
+  <call_job job="tk_scroll_edit"/>
+  
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()<wdriver act="scroll" x="(prop,scroll_x)" y="(prop,scroll_y)"/>()]]></prop>      
+  </call_job> 
+    
+ 
+  
+  <call_job job="post-nav"/>  
+  <ti_hr/>           
+  <ti label="Did Scoll by x(e:s) y" />                                
+</job>
+
+ <job id="scroll-bit-down" role="hidden">
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()<wdriver act="scroll" x="0" y="200"/>()]]></prop>      
+  </call_job> 
+  
+  <call_job job="post-nav"/>     
+  <ti_hr/>           
+  <ti label="Did Scoll Down"/>
+ 
+</job>
+
+<job id="scroll-bit-up" role="hidden">
+  <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()<wdriver act="scroll" x="0" y="-200"/>()]]></prop>      
+  </call_job> 
+  <call_job job="post-nav"/>     
+  <ti_hr/>           
+  <ti label="Did Scoll Up"/>
+</job>
+
+<job id="post-nav" role="hidden">
+  <!-- 
+  <ti_hr/>
+  <ti type="call_job" job="??" explain="See current Situation"/>
+  <ti type="call_job" job="|| Selektoren ||"/>   
+  <ti_hr_break/>           -->
+  <call_job job="navigation"/>
+
+</job>
+
+
+<job id="screenshot" role="hidden">
+  <sequence id="ss"  act="next"/>
+  <tk id="screenshot-name" label="Name of Screen" rule="filename_with_blanks" x="screenshot-(f,sequence,ss)"/>
+  <file id="file" x="(dir,screens)(prop,screenshot-name).png"/>
+  
+  <tk label="Screenshot" flag="(f,when,(f,file_exists,(file,file)),sum,sum_only)">
+    <tk type="file" id="file" xflag="nono" tip="(f,when,(f,file_exists,(file,file)),Warning: Such a file exists already: (prop,screenshot-name),)"/>
+  </tk>
+  
+  <tk type="msg" msg_type="w" test="(f,file_exists,(file,file))" >File exists already and is going to be overwritten</tk>
+    <call_job job="record">
+      <prop id="steps"><![CDATA[
+      ()  <wdriver act="screenshot" file="(file,file)"/>()]]></prop>      
+  </call_job>  
+  
+  
+  <ti label="Done"/>
+  <ti type="file" x="(file,file)"/>
+  <file id="with" x="(file,file)"/>
+  <call_job job="see-screenshot"/>
+  <!-- 
+  <ti type="call_job" job="see-screenshot">
+    <file id="with" x="(file,file)"/>
+  </ti>          -->
+                               
+</job>
+
+
+
+<job id="ps-print-spirit" role="hidden">
+  <need>(prop,ps-id) (prop,ps-type) (prop,ps-desc)</need>
+  <tp>Doing Report of type (prop,ps-type) ...</tp>
+  
+  <file id="prot" x="(dir,cache)latest_(prop,ps-type).xml"/>
+  <spirit id="(prop,ps-id)" act="save" out="(file,prot)"/>
+  <ti type="file" label="Received:" x="(file,prot)" test="(prop,debug)"/>
+  
+  <prop id="ps-counter" x="0"/>
+  
+  <loop_xml 
+    act="open" 
+    id="lx" 
+    spirit="(prop,ps-id)" 
+    xpath="we" missing_strategy="empty"/>
+
+
+   
+  <loop id="wx" while="()(f,loop_xml,lx,has_next?)()">
+    <loop_xml act="next" id="lx" />
+    <prop id="ps-counter" x="(f,add,1,(prop,ps-counter))"/>
+    
+    <ti label=" " type="rec" test="(f,eq_num,1,(prop,ps-counter))">
+      <ti> </ti>
+      <ti> </ti>       
+      <ti> </ti>
+      <ti> </ti>  
+      <ti> </ti> 
+ 
+      <ti >text</ti>  
+      <ti align="center">tag</ti>
+      
+      <ti align="center">disp</ti>
+      <ti align="center">enab</ti>
+      <ti align="center">sel</ti>  
+    </ti>
+    <prop id="ps-elementid" x="(f,loop_xml,lx,@id)"/>    
+    <prop id="ps-marker"></prop>    
+    <prop id="ps-marker-o"></prop> 
+    <prop id="ps-marker-c"></prop>                       
+    <when test="(f,has,prop,ps-print-should-mark)">
+      <when test="(f,eq_text,(prop,ps-print-should-mark),(prop,ps-elementid))">
+        <prop id="ps-marker">* </prop>
+        <prop id="ps-marker-o">(f,html,b,o)</prop> 
+        <prop id="ps-marker-c">(f,html,b,c)</prop>         
+      </when>
+    </when>
+                     
+
+    <ti type="rec">
+      <!-- 
+      <ti type="call_job" job="do-more" 
+          explain="(f,substring,(f,loop_xml,lx,@text),0,30)"
+          prefix="(prop,ps-marker)">
+        <prop id="dc-we" x="(f,loop_xml,lx,@id)"/>
+      </ti>  -->     
+      <ti type="call_job" job="do-more" 
+          explain="(f,loop_xml,lx,@id)" 
+          postfix="(prop,ps-marker)">
+        <prop id="dc-we" x="(f,loop_xml,lx,@id)"/>
+      </ti>   
+      <ti type="call_job" job="act-plus" explain="f +">
+        <prop id="with-element" x="(f,loop_xml,lx,@id)"/>
+        <prop id="dc-we" x="(f,loop_xml,lx,@id)"/>
+        <prop id="ps-id">(prop,ps-id)</prop>
+        <prop id="ps-type">(prop,ps-type)</prop>
+        <prop id="ps-desc">(prop,ps-desc)</prop>
+        <file id="prot">(file,prot)</file>
+        <prop id="finally-return-ps-print-spirit">1</prop>         
+        
+      </ti>       
+      <ti type="call_job" job="make-mouse-element" explain="Mouse">
+        <prop id="with-element" x="(f,loop_xml,lx,@id)"/>
+        <prop id="dc-we" x="(f,loop_xml,lx,@id)"/>
+        <prop id="ps-id">(prop,ps-id)</prop>
+        <prop id="ps-type">(prop,ps-type)</prop>
+        <prop id="ps-desc">(prop,ps-desc)</prop>
+        <file id="prot">(file,prot)</file>
+        <prop id="finally-return-ps-print-spirit">1</prop>        
+      </ti>     
+
+                
+
+      <ti type="call_job" job="make-light-element" explain="Light">
+        <prop id="with-element" x="(f,loop_xml,lx,@id)"/>
+        <prop id="dc-we" x="(f,loop_xml,lx,@id)"/>
+        <prop id="ps-id">(prop,ps-id)</prop>
+        <prop id="ps-type">(prop,ps-type)</prop>
+        <prop id="ps-desc">(prop,ps-desc)</prop>
+        <file id="prot">(file,prot)</file>
+        <prop id="finally-return-ps-print-spirit">1</prop>         
+        
+      </ti>    
+            
+      <ti type="call_job" job="do-click" explain="Click">
+        <prop id="with-element" x="(f,loop_xml,lx,@id)"/>
+        <prop id="dc-we" x="(f,loop_xml,lx,@id)"/>
+        <prop id="ps-id">(prop,ps-id)</prop>
+        <prop id="ps-type">(prop,ps-type)</prop>
+        <prop id="ps-desc">(prop,ps-desc)</prop>
+        <file id="prot">(file,prot)</file>
+        <prop id="finally-return-ps-print-spirit">1</prop>    
+      </ti>
+                
+      <ti type="call_job" job="make-scroll-element" explain="Scroll">
+        <prop id="with-element" x="(f,loop_xml,lx,@id)"/>
+        <prop id="dc-we" x="(f,loop_xml,lx,@id)"/>
+        <prop id="ps-id">(prop,ps-id)</prop>
+        <prop id="ps-type">(prop,ps-type)</prop>
+        <prop id="ps-desc">(prop,ps-desc)</prop>
+        <file id="prot">(file,prot)</file>
+        <prop id="finally-return-ps-print-spirit">1</prop>        
+      </ti>  
+       
+
+            
+
+                                                  
+        
+      
+      
+      <ti wrap="word">(f,substring,(f,loop_xml,lx,@text),0,30)</ti>
+      <ti align="center">(f,loop_xml,lx,@tag_name)</ti>
+      <ti align="center">(f,loop_xml,lx,@is_displayed)</ti>
+      <ti align="center">(f,loop_xml,lx,@is_enabled)</ti>
+      <ti align="center">(f,loop_xml,lx,@is_selected)</ti>
+    </ti>  
+    <ti_space height="3px" />
+  </loop>  
+  <loop_xml id="lx" act="close"/>
+  <!-- 
+  <when test="(f,eq_num,1,(prop,ps-counter))">
+    <ti  type="rec">
+      <ti  >(f,html,b,o)Found just one thing(f,html,b,o)</ti>
+    </ti>
+    <ti type="call_job" job="do-one-element">
+      <prop id="doe-element-id" x="(prop,ps-elementid)"/>
+      <prop id="doe-xpath" x="(prop,ps-xpath)"/>
+    </ti>
+  </when>    -->
+  <ti_hr_break/>
+
+  <choose>
+    <when test="(f,not,(f,has,prop,ps-count))">
+    </when>                                           
+    <when test="(f,eq_num,(prop,ps-count),(prop,ps-counter))">
+    </when>  
+    <otherwise>
+      <ti label="There is an internal problem" />
+      <ti>Counters do not match  (prop,ps-count) &lt;&gt; (prop,ps-counter)</ti>
+    </otherwise>
+  </choose>
+  <choose>
+  <when test="(f,gt_num,(prop,ps-counter),0)">
+    
+    <ti label="List of WebElements"/>
+    <ti x="(prop,ps-counter)"  label="Count:" />     
+    <ti explain="(f,vob,prop,ps-single-id)"  
+        label="Single-Id:" 
+        test="(f,has,prop,ps-single-id)"
+        type="call_job"
+        job="do-more">
+        <prop id="dc-we" x="(prop,ps-single-id)"/>
+    </ti>
+    <ti type="rec" label="Xml:">
+    <ti type="file" x="(file,prot)"  />   
+    </ti>
+
+    <!--
+    <ti type="call_job" job="archify" explain="Archify this Xml-File"
+      label=" ">
+      <file id="prot" x="(file,prot)"/>
+      <prop id="prot-type" x="(prop,ps-type)"/>
+      <prop id="prot-desc" x="(prop,ps-desc)"/>    
+    </ti>
+    -->    
+ 
+  </when>
+  <otherwise>
+    <ti>didn&apos;t find anything</ti>
+  </otherwise>
+  </choose>
+</job>
+
+<job id="archify" role="hidden">
+  <need>(file,prot)</need>
+  <need>(prop,prot-type)</need>
+  <need>(prop,prot-desc)</need>
+  <sequence id="archives" act="next"/>
+  
+  <tk id="title" rule="filename" tip="(prop,prot-desc)"/>
+
+  <file id="arc" x="(dir,smart)(prop,prot-type)/(prop,title).xml"/>
+  <tk type="msg"
+      msg_type="w"
+      test="(f,exists_file,(file,arc))">The file
+(file,arc)
+exists already!
+Continue with overwriting ?
+  </tk>            
+  <mkdir dir="(dir,smart)(prop,prot-type)"/>
+  <copy file="(file,prot)" tofile="(file,arc)"/>
+  <ti label="Created" type="file" x="(file,arc)"/>
+</job>
+
+<job id="do-one-element" role="hidden">
+  <interpreter watch="1"/>
+
+   
+  <need>(prop,doe-element-id)</need>
+  <need>(prop,doe-xpath)</need>
+  <ti>xpath=(prop,doe-xpath)</ti>
+  
+  <call_job job="prepare1" /> 
+  <prop id="var-xpath" x="(prop,reco_prefix)xpath"/>
+  <prop id="(prop,var-xpath)" x="(prop,doe-xpath)"/> 
+  
+  <prop id="var-return" x="(prop,reco_prefix)return"/>
+  <prop id="(prop,var-return)" x="return"/> 
+  <tp>selecting 1 thing ...</tp>  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,()(prop,var-xpath)())</need>
+  <wdriver act="find_element2"
+           by_xpath="(prop,()(prop,var-xpath)())"
+           return_prop_element_id="(prop,()(prop,var-return)())"
+           flag="keep"/>
+           ()]]></prop>      
+      </call_job>       
+      
+      <call_job job="do-more">
+        <prop id="dc-we" x="(f,vob,prop,(prop,var-return))"/>
+      </call_job>   
+  
+</job>
+
+<job id="prep-coop" role="hidden">
+  
+  <need>(prop,dc-we)</need>
+  <need default="0">(prop,debug)</need>
+   <!-- 
+  <try_catch>
+    <try>
+      <prop id="prep-coop:test" x="(f,welement,(prop,dc-we),is_displayed)"/>
+      <prop id="prep-coop:exists" x="1"/>
+    </try>
+    <catch>
+      <prop id="prep-coop:exists" x="0"/>
+    </catch>
+  </try_catch>
+ --> 
+ 
+  <prop id="prep-coop:exists" x="(f,welement,(prop,dc-we),exists)"/>
+  
+  
+  <choose>
+    <when test="(prop,prep-coop:exists)">
+      <ti test="(prop,debug)">das element '(prop,dc-we)' ist schon geladen</ti>
+    </when>
+    <otherwise>
+      <call_job job="record">
+        <prop id="steps"><![CDATA[()  <need>(prop,dc-we)</need>
+  <wdriver 
+    act="build_element"
+    element_id="(prop,dc-we)" />
+           ()]]></prop>      
+      </call_job>   
+              
+      <ti label="loaded element:" x="(prop,dc-we)" test="(prop,debug)"/>
+          
+    </otherwise>
+  </choose>
+    
+    
+
+</job>
+
+<job id="see-entire-text" role="hidden">
+  <need>(prop,dc-we)</need>
+  <call_job job="prep-coop"/>
+  <ti>(f,welement,(prop,dc-we),text)</ti>
+</job>
+
+<job id="do-more" role="hidden">
+  <need>(prop,dc-we)</need>
+  <call_job job="prep-coop"/>
+  <choose>
+    <when test="(f,gt_num,(f,len,(f,welement,(prop,dc-we),text)),100)">
+      <ti label="(prop,dc-we): (f,cut,nice,(f,welement,(prop,dc-we),text),100)"/>
+      <ti type="call_job" job="see-entire-text" explain="See complete text">
+        <prop id="dc-we">(prop,dc-we)</prop>
+      </ti>
+    </when>
+    <otherwise>
+      <ti label="(prop,dc-we): (f,welement,(prop,dc-we),text)"/>
+    </otherwise>
+  </choose>
+  
+  <ti_hr/>
+  <ti type="rec">
+     <ti>(f,html,b,o)Mouse(f,html,b,c)</ti>
+     <ti> | </ti>
+     <ti>(f,html,b,o)Keyboard(f,html,b,c)</ti>
+     <ti>   </ti>
+
+  </ti>
+      
+  <ti type="rec">
+  <ti type="call_job" job="do-mouse-over" explain="Mouse Over"> 
+    <prop id="dc-we" x="(prop,dc-we)"/>
+  </ti> 
+    <ti> | </ti>
+  <ti type="call_job" job="make-enter-element" explain="Enter Text"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+  </ti> 
+  <ti>   </ti>
+  <ti type="call_job" job="act-enter" explain="Clear and enter a text"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+    <prop id="dc-we" x="(prop,dc-we)"/>
+   <prop id="do-then-see-more">1</prop>
+  </ti>
+      
+      
+  </ti>  
+  
+  <ti type="rec">
+  <ti type="call_job" job="do-control-click" explain="Control-Click"> 
+    <prop id="dc-we" x="(prop,dc-we)"/>
+    
+  </ti>
+  <ti> | </ti>
+  <ti type="call_job" job="make-key-element" explain="Press Key"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+    <prop id="key-by-selection" x="1"/>
+  </ti>  
+  <ti>  </ti>
+ 
+  <ti type="call_job" job="act-varinput" explain="Clear and select a value"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+    <prop id="dc-we" x="(prop,dc-we)"/>
+    <prop id="do-then-see-more">1</prop>
+  </ti>    
+  
+  </ti>
+  
+  <ti type="rec">
+  <ti type="call_job" job="do-click" explain="Click"> 
+    <prop id="dc-we" x="(prop,dc-we)"/>
+    
+  </ti>  
+  <ti> | </ti>
+
+    <!-- 
+  <ti type="call_job" job="make-enter-element-freestyle" explain="Key &amp; Text"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+
+  </ti>   --> 
+  <ti>   </ti>
+  <ti>   </ti>
+  
+    <ti  type="call_job" job="make-clear-element" explain="Clear"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+  </ti>    
+    <!-- <ti type="call_job" job="make-unlight-element" explain="Un-Light"> 
+      <prop id="with-element" x="(prop,dc-we)"/>
+    </ti> -->     
+  </ti>
+  
+  <ti type="rec">
+  <ti> </ti>  
+  <ti>   </ti>
+
+  <ti>(f,html,b,o)Screenshot(f,html,b,c)</ti>  
+   <ti>   </ti>
+    <ti>(f,html,b,o)Light(f,html,b,c)</ti>       
+  
+  </ti>    
+ 
+          
+  <!-- 
+    <ti type="call_job" job="make-key-element" explain="Key"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+  </ti>    
+  
+  <ti laxbel=" " type="call_job" job="make-enter-element" explain="Enter Text CNTL"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+    <prop id="key-class" x="_control"/>
+  </ti>   -->
+  
+
+  
+  <ti type="rec">
+    <ti type="call_job" job="make-scroll-element" explain="Scroll here"> 
+      <prop id="with-element" x="(prop,dc-we)"/>
+    </ti>   
+  
+    <ti> | </ti>
+
+<ti type="call_job" job="make-screenshot-element" explain="Picture this"> 
+    <prop id="with-element" x="(prop,dc-we)"/>
+  </ti>  
+  <ti> | </ti> 
+    <ti type="call_job" job="make-light-element" explain="Highlight"> 
+      <prop id="with-element" x="(prop,dc-we)"/>
+    </ti> 
+  </ti>     
+
+  <ti type="rec">
+  
+  <ti></ti> 
+  <ti> | </ti>
+
+  <ti></ti>   
+  <ti> | </ti>  
+    
+    <ti type="call_job" job="act-color" explain="Highlight in anther color"> 
+      <prop id="with-element" x="(prop,dc-we)"/>
+      <prop id="dc-we" x="(prop,dc-we)"/>
+      <prop id="do-then-see-more">1</prop>
+    </ti>  
+  </ti>   
+  <!--  
+  <ti type="rec">
+  
+  <ti></ti> 
+  <ti> | </ti>
+
+  <ti></ti>   
+  <ti> | </ti>  
+    
+  <ti></ti>  
+  </ti>   
+  
+  <ti type="rec">
+  
+  <ti></ti> 
+  <ti> | </ti>
+
+  <ti></ti>   
+  <ti> | </ti>  
+    
+
+  </ti>   
+   --> 
+    <ti_hr/>     
+    <ti label="Frame Navigation"/>
+    <ti labxel=" " type="call_job" job="do-switch-to-frame" explain="Switch to this frame"> 
+      <prop id="dc-we" x="(prop,dc-we)"/>
+    </ti>   
+    <ti labxel=" " type="call_job" job="do-iframes-parent" explain="Go to parent-frame"/>
+    <ti labxel=" " type="call_job" job="do-iframes-select" explain="See all frames"/>
+  <!--                    do-iframes-parent                          do-iframes-select
+  <when test="(f,or,(f,eq_text,frame,(f,welement,(prop,dc-we),tag_name)),(f,eq_text,iframe,(f,welement,(prop,dc-we),tag_name)))">
+    <ti_hr/>     
+    <ti label="Frame Navigation"/>
+    <ti labxel=" " type="call_job" job="do-switch-to-frame" explain="Switch to this frame"> 
+      <prop id="dc-we" x="(prop,dc-we)"/>
+    </ti>   
+  </when>  -->
+  <ti_hr/>
+  <ti label="Properties of this element"/>
+  <ti label="text" x="(f,welement,(prop,dc-we),text)"/>  
+  <ti label="tag_name" x="(f,welement,(prop,dc-we),tag_name)"/>
+
+  <ti label="is_enabled" x="(f,welement,(prop,dc-we),is_enabled)"/>
+  <ti label="is_displayed" x="(f,welement,(prop,dc-we),is_displayed)"/>
+  <ti label="is_selected" x="(f,welement,(prop,dc-we),is_selected)"/> 
+  <ti label="Location and Size"/>
+  <ti label="location_x" x="(f,welement,(prop,dc-we),location_x)"/>
+  <ti label="location_y" x="(f,welement,(prop,dc-we),location_y)"/>
+  <ti label="size_x" x="(f,welement,(prop,dc-we),size_x)"/>
+  <ti label="size_y" x="(f,welement,(prop,dc-we),size_y)"/> 
+  <!-- 
+  
+  <ti type="call_job" job="do-change-color-from-do-more" explain="Change highlight-color">
+    <prop id="dc-we">(prop,dc-we)</prop>
+  </ti>   -->
+</job>
+
+<job id="do-change-color-from-do-more" role="hidden">
+  <need>(prop,dc-we)</need>
+  <call_job job="do-change-color"/>
+  <!-- 
+  <ti_hr_break/>
+  <call_job job="do-more"/>    -->
+
+</job>
+
+<job id="post-action" role="hidden">
+<call_job job="see-filters"/>
+<!-- 
+<ti_hr/>
+
+<call_job job="navigation"/>    -->
+</job>
+
+<job id="do-click" role="hidden">
+  <need>(prop,dc-we)</need>
+  
+  <call_job job="prep-coop"/>
+      
+  <try_catch>
+    <try> 
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(prop,dc-we)"
+    act="click"/>
+()]]></prop>      
+      </call_job>       
+      <ti label="Did Click: (prop,dc-we)"/>  
+            
+    </try>
+    <catch>
+      <ti label="Could not click"/>
+      <ti label="msg" x="(prop,catched_msg)"/>
+      <ti label="class" x="(prop,catched_class)"/>
+    </catch>
+  </try_catch>
+<ti_hr/>           
+  <call_job job="finally"/>                               
+
+    <ti_hr/>
+  <call_job job="find-see-all2"/>  
+  
+       
+
+</job>
+
+<job id="do-switch-to-frame" role="hidden">
+  <need>(prop,dc-we)</need>
+  
+  <call_job job="prep-coop"/>
+      
+  <try_catch>
+    <try> 
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(prop,dc-we)"
+    act="switch_to_this_frame"/>
+()]]></prop>      
+      </call_job>       
+      <ti label="Did Switch to: (prop,dc-we)"/>  
+                
+    </try>
+    <catch>
+      <ti label="Could not switch to frame"/>
+      <ti label="msg" x="(prop,catched_msg)"/>
+      <ti label="class" x="(prop,catched_class)"/>
+    </catch>
+  </try_catch>
+           
+  <ti_hr/>   
+    <call_job job="find-see-all2"/>   
+</job>
+
+<job id="do-control-click" role="hidden">
+  <need>(prop,dc-we)</need>
+  
+  <call_job job="prep-coop"/>
+      
+  <try_catch>
+    <try> 
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(prop,dc-we)"
+    act="control_click"/>
+()]]></prop>      
+      </call_job>       
+      <ti label="Did Ctrl-Click: (prop,dc-we)"/>  
+             
+    </try>
+    <catch>
+      <ti label="Could not control-click"/>
+      <ti label="msg" x="(prop,catched_msg)"/>
+      <ti label="class" x="(prop,catched_class)"/>
+    </catch>
+  </try_catch>
+           
+  <ti_hr/>   
+    <call_job job="find-see-all2"/>   
+</job>
+
+<job id="do-mouse-over" role="hidden">
+  <need>(prop,dc-we)</need>
+  
+  <call_job job="prep-coop"/>
+      
+  <try_catch>
+    <try> 
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(prop,dc-we)"
+    act="mouse_over"/>
+()]]></prop>      
+      </call_job>       
+      <ti label="Did Mouse-Over: (prop,dc-we)"/>  
+                
+    </try>
+    <catch>
+      <ti label="Could not mouse-over"/>
+      <ti label="msg" x="(prop,catched_msg)"/>
+      <ti label="class" x="(prop,catched_class)"/>
+    </catch>
+  </try_catch>
+           
+    <ti_hr/>   
+  <call_job job="do-more"/> 
+</job>
+
+<job id="make-submit-element" role="hidden">
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,with-element)</need>                                             
+  <welement 
+    act="submit"
+    id="(prop,with-element)"/>
+()]]></prop>      
+      </call_job> 
+      <ti label="Did Submit: (prop,dc-we)"/>
+  <ti_hr/>    
+  <call_job job="find-see-all2"/>   
+    
+</job>
+
+<job id="make-clear-element" role="hidden">
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,with-element)</need>                                             
+  <welement 
+    act="clear"
+    id="(prop,with-element)"/>
+()]]></prop>      
+      </call_job> 
+      <ti label="Did Clear: (prop,with-element)"/>
+  <ti_hr/>    
+  <call_job job="do-more"/>   
+    
+</job>
+
+<job id="prepare1" role="hidden">
+  <call_job job="tk_reco_read"
+    test="(f,not,(f,has,prop,reco_storage))"/>
+  <prop id="varprefix" x="(prop,reco_prefix)"/>  
+</job>
+
+<job id="make-enter-element" role="hidden">
+  <need>(prop,with-element)</need>
+  <need default="">(prop,key-class)</need>
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+  
+  <call_job job="prepare1"/>
+  <tk id="enter"/>
+  
+  <prop id="var-enter" x="(prop,varprefix)enter"/> 
+  <prop id="(prop,var-enter)" x="(prop,enter)"/>
+  
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,()(prop,var-enter)())</need>                                             
+  <welement 
+    act="send_keys()(prop,key-class)()"
+    id="(prop,with-element)"
+    keys="(prop,()(prop,var-enter)())"/>      
+()]]></prop>      
+      </call_job> 
+                                                 
+     
+  <ti label="Did Enter"/>
+  <ti label="What:">(prop,enter)</ti>
+  <ti label="in Element">(prop,with-element)</ti>
+  <ti label="Key-Style" test="(f,has,prop,key-class)">(prop,key-class)</ti>
+  <ti_hr_break/>
+  <call_job job="do-more"/>
+    
+</job>
+
+<job id="make-enter-element-freestyle" role="hidden">
+  <need>(prop,with-element)</need>
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+                                                            
+  <call_job job="prepare1"/>
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)hold-and-enter.xml" />
+    <prop id="joe-in-regex" x="enter|keycode" />
+  </call_job>    
+  
+  <tk label="Hold a key and enter text" flag="sum">
+  <tk id="enter"/>
+  <tk id="keycode" type="sel">
+    <sel>SHIFT</sel>
+    <sel>CONTROL</sel>
+    <sel>ALT</sel>
+    <sel>SPACE</sel>
+    <sel>COMMAND</sel>
+    <sel>F1</sel>
+    <sel>F2</sel>
+    <sel>F3</sel>
+    <sel>F4</sel>
+    <sel>F5</sel>
+    <sel>F6</sel>
+    <sel>F7</sel>
+    <sel>F8</sel>
+    <sel>F9</sel>
+    <sel>F10</sel>
+    <sel>F11</sel>
+    <sel>F12</sel>    
+    <sel>NUMPAD0</sel>
+    <sel>NUMPAD1</sel>
+    <sel>NUMPAD2</sel>
+    <sel>NUMPAD3</sel>
+    <sel>NUMPAD4</sel>
+    <sel>NUMPAD5</sel>
+    <sel>NUMPAD6</sel>
+    <sel>NUMPAD7</sel>
+    <sel>NUMPAD8</sel>
+    <sel>NUMPAD9</sel> 
+    </tk>
+  </tk>
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)hold-and-enter.xml" />
+    <prop id="joe-in-regex" x="enter|keycode" />
+  </call_job>   
+  
+  <prop id="var-enter" x="(prop,varprefix)enter"/> 
+  <prop id="(prop,var-enter)" x="(prop,enter)"/>
+  
+  <prop id="var-keycode" x="(prop,varprefix)keycode"/> 
+  <prop id="(prop,var-keycode)" x="(prop,keycode)"/>  
+  
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,()(prop,var-enter)())</need>                                             
+  <welement 
+    act="send_keys_freestyle"
+    id="(prop,with-element)"
+    keys="(prop,()(prop,var-enter)())"
+    keycode="(prop,()(prop,var-keycode)())"/>      
+()]]></prop>      
+      </call_job> 
+                                                 
+     
+  <ti label="Did Enter with holded key"/>
+  <ti label="What:">(prop,enter)</ti>
+  <ti label="Holded key:">(prop,keycode)</ti>
+  <ti label="in Element">(prop,with-element)</ti>
+  
+  <ti_hr_break/>
+  <call_job job="do-more"/>
+    
+</job>
+
+<job id="make-key-element" role="hidden">
+  <need>(prop,with-element)</need>
+  <need default="0">(prop,key-by-selection)</need>
+
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+  
+  <call_job job="prepare1"/>
+  <prop id="keycode-tip">https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/Keys.html#values(e:o)(e:c)&#xA;UP&#xA;ARROW_UP&#xA;DOWN&#xA;ARROW_DOWN</prop>
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(dir,pro)keycode.xml" />
+    <prop id="joe-in-regex" x="enter" />
+  </call_job>   
+  <choose>
+    <when test="(prop,key-by-selection)">
+      <tk id="enter" 
+      tip="(prop,keycode-tip)" type="sel">
+      <sel>NULL</sel>
+<sel>CANCEL</sel>
+<sel>HELP</sel>
+<sel>BACK_SPACE</sel>
+<sel>TAB</sel>
+<sel>CLEAR</sel>
+<sel>RETURN</sel>
+<sel>ENTER</sel>
+<sel>SHIFT</sel>
+<sel>LEFT_SHIFT</sel>
+<sel>CONTROL</sel>
+<sel>LEFT_CONTROL</sel>
+<sel>ALT</sel>
+<sel>LEFT_ALT</sel>
+<sel>PAUSE</sel>
+<sel>ESCAPE</sel>
+<sel>SPACE</sel>
+<sel>PAGE_UP</sel>
+<sel>PAGE_DOWN</sel>
+<sel>END</sel>
+<sel>HOME</sel>
+<sel>LEFT</sel>
+<sel>ARROW_LEFT</sel>
+<sel>UP</sel>
+<sel>ARROW_UP</sel>
+<sel>RIGHT</sel>
+<sel>ARROW_RIGHT</sel>
+<sel>DOWN</sel>
+<sel>ARROW_DOWN</sel>
+<sel>INSERT</sel>
+<sel>DELETE</sel>
+<sel>SEMICOLON</sel>
+<sel>EQUALS</sel>
+<sel>NUMPAD0</sel>
+<sel>NUMPAD1</sel>
+<sel>NUMPAD2</sel>
+<sel>NUMPAD3</sel>
+<sel>NUMPAD4</sel>
+<sel>NUMPAD5</sel>
+<sel>NUMPAD6</sel>
+<sel>NUMPAD7</sel>
+<sel>NUMPAD8</sel>
+<sel>NUMPAD9</sel>
+<sel>MULTIPLY</sel>
+<sel>ADD</sel>
+<sel>SEPARATOR</sel>
+<sel>SUBTRACT</sel>
+<sel>DECIMAL</sel>
+<sel>DIVIDE</sel>
+<sel>F1</sel>
+<sel>F2</sel>
+<sel>F3</sel>
+<sel>F4</sel>
+<sel>F5</sel>
+<sel>F6</sel>
+<sel>F7</sel>
+<sel>F8</sel>
+<sel>F9</sel>
+<sel>F10</sel>
+<sel>F11</sel>
+<sel>F12</sel>
+<sel>META</sel>
+<sel>COMMAND</sel>
+<sel>ZENKAKU_HANKAKU</sel>
+      </tk>
+    </when>
+    <otherwise>
+      <tk id="enter" 
+      tip="(prop,keycode-tip)" />
+    </otherwise>
+  </choose>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(dir,pro)keycode.xml" />
+    <prop id="joe-in-regex" x="enter" />
+  </call_job>   
+  
+  <prop id="var-enter" x="(prop,varprefix)enter"/> 
+  <prop id="(prop,var-enter)" x="(prop,enter)"/>
+  
+
+   
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,()(prop,var-enter)())</need>                                             
+  <welement 
+    act="send_keycode"
+    id="(prop,with-element)"
+    keycode="(prop,()(prop,var-enter)())"/>      
+()]]></prop>      
+      </call_job>       
+                                                 
+     
+  <ti label="Did KeyCode"/>
+  <ti label="What:">(prop,enter)</ti>
+  <ti label="in Element">(prop,with-element)</ti>
+  <ti_hr_break/>
+  <call_job job="do-more"/>
+    
+</job>
+
+<job id="make-mouse-element" role="hidden">
+  <need>(prop,with-element)</need>
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,with-element)</need>                                             
+  <welement 
+    act="mouse_over"
+    id="(prop,with-element)" 
+    webdriver_id="(prop,wdid)"/>      
+()]]></prop>      
+      </call_job> 
+
+  <ti type="rec">
+    <ti explain="(prop,with-element)" type="call_job" job="do-more">
+      <prop id="dc-we" x="(prop,with-element)"/>
+    </ti> 
+    <ti> - Was moused to</ti>  
+  </ti>
+  <!-- 
+  <ti label="Scrolled to" explain="(prop,with-element)" type="call_job" job="do-more">
+    <prop id="dc-we" x="(prop,with-element)"/>
+  </ti>   -->
+  
+  <ti_hr/>   
+  
+   <call_job job="finally"/>
+  
+   
+</job>
+<job id="finally" role="hidden">
+   <choose>
+    <when test="(f,has,prop,finally-return-ps-print-spirit)">
+      <!-- <ti_break/> -->
+      <spirit act="open" id="(prop,ps-id)" file="(file,prot)" />
+      <prop id="ps-print-should-mark">(prop,with-element)</prop>
+      <call_job job="ps-print-spirit" />
+    </when>
+    <otherwise>
+      <call_job job="do-more"/>
+    </otherwise>
+  </choose>
+</job>
+
+<job id="make-scroll-element" role="hidden">
+  <need>(prop,with-element)</need>
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <need>(prop,with-element)</need>                                             
+  <welement 
+    act="scroll"
+    id="(prop,with-element)" 
+    webdriver_id="(prop,wdid)"/>      
+()]]></prop>      
+      </call_job> 
+
+  <ti type="rec">
+    <ti explain="(prop,with-element)" type="call_job" job="do-more">
+      <prop id="dc-we" x="(prop,with-element)"/>
+    </ti> 
+    <ti> - Was scrolled to</ti>  
+  </ti>
+  <!-- 
+  <ti label="Scrolled to" explain="(prop,with-element)" type="call_job" job="do-more">
+    <prop id="dc-we" x="(prop,with-element)"/>
+  </ti>   -->
+  
+  <ti_hr/>   
+  
+  <choose>
+    <when test="(f,has,prop,finally-return-ps-print-spirit)">
+      <!-- <ti_break/> -->
+      <spirit act="open" id="(prop,ps-id)" file="(file,prot)" />
+      <prop id="ps-print-should-mark">(prop,with-element)</prop>
+      <call_job job="ps-print-spirit" />
+    </when>
+    <otherwise>
+      <call_job job="do-more"/>
+    </otherwise>
+  </choose>
+  
+   
+</job>
+
+
+<job id="make-light-element" role="hidden">
+  <need>(prop,with-element)</need>
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement 
+    act="light"
+    id="(prop,with-element)" 
+    webdriver_id="(prop,wdid)"/>      
+()]]></prop>      
+      </call_job> 
+          
+  <ti type="rec">
+    <ti explain="(prop,with-element)" type="call_job" job="do-more">
+      <prop id="dc-we" x="(prop,with-element)"/>
+    </ti> 
+    <ti> - Was Highlighted</ti>  
+  </ti>  
+    
+  
+  <ti_hr/>
+ 
+      
+  <choose>
+    <when test="(f,has,prop,finally-return-ps-print-spirit)">
+      <ti_break/>
+      <spirit act="open" id="(prop,ps-id)" file="(file,prot)" />
+      <prop id="ps-print-should-mark">(prop,with-element)</prop>
+      <call_job job="ps-print-spirit" />
+    </when>
+    <otherwise>
+      <call_job job="do-more"/>
+    </otherwise>
+  </choose>         
+</job>
+
+<job id="make-unlight-element" role="hidden">
+  <need>(prop,with-element)</need>
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement 
+    act="unlight"
+    id="(prop,with-element)" 
+    webdriver_id="(prop,wdid)"/>      
+()]]></prop>      
+      </call_job> 
+          
+  
+    
+  <ti label="Un-Highlighted" x="(prop,with-element)"/>
+  
+  <ti_hr/>
+ 
+      
+  <choose>
+    <when test="(f,has,prop,finally-return-ps-print-spirit)">
+      <ti_break/>
+      <spirit act="open" id="(prop,ps-id)" file="(file,prot)" />
+      <prop id="ps-print-should-mark">(prop,with-element)</prop>
+      <call_job job="ps-print-spirit" />
+    </when>
+    <otherwise>
+      <call_job job="do-more"/>
+    </otherwise>
+  </choose>         
+</job>
+
+ 
+
+
+<job id="make-screenshot-element" role="hidden">
+
+  <need>(prop,with-element)</need>
+  <prop id="dc-we" x="(prop,with-element)"/>
+  <call_job job="prep-coop"/>
+  
+  <need default="0">(prop,fast)</need>
+
+
+  
+  <sequence id="ss"  act="next"/>
+  <tk id="screenshot-title"  label="Filename" rule="filename_with_blanks"/>
+  <choose>
+    <when test="(f,has,prop,screenshot-title)">
+      <file id="output">(dir,screens)(prop,screenshot-title)</file>
+    </when>
+    <otherwise>
+      <file id="output" x="(dir,screens)element-(prop,with-element)"/>
+    </otherwise>
+  </choose>
+  <when test="(f,exists_file,(file,output).png)">
+    <file id="output">(file,output)-(f,sequence,ss)</file>
+  </when>
+   <file id="output">(file,output).png</file>
+  <tk label="Save to" flag="sum_only" test="(f,not,(prop,fast))">
+  <tk type="file" id="output" flag="save"/>
+  </tk>
+  <call_job job="tk_conf_read" />
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement 
+    act="screenshot"
+    id="(prop,with-element)" 
+    webdriver_id="(prop,wdid)"
+    file="(file,output)"
+    error_id="no-element-screenshot"
+    />
+  <ti type="file" x="(file,output)" flag="naked"/>      
+()]]></prop>      
+      </call_job>     
+  <!-- 
+    scale_loc_x="(f,vob,prop,conf_scale_loc_x)"
+    scale_loc_y="(f,vob,prop,conf_scale_loc_y)"
+    scale_size_x="(f,vob,prop,conf_scale_size_x)"
+    scale_size_y="(f,vob,prop,conf_scale_size_y)"
+   -->
+  
+  <!-- 
+  <ti type="call_job" job="see-screenshot">
+    <file id="with" x="(file,output)"/>
+  </ti>          -->
+  <ti type="img"  x="(file,output)"/>
+  <ti_hr/>   
+  <call_job job="do-more"/>    
+</job>
+
+
+
+
+
+
+<job id="clear-memory" role="hidden">
+    <need default="0">(prop,really)</need>
+    <need default="0">(prop,memory-all)</need>
+                                           
+   
+   <ask out="(dir,pro)memo.xml" what="coops" style="natural" />
+   
+    <when test="(f,and,(prop,really),(prop,memory-all))">
+      <prop id="cnt-element">(f,xsl,(dir,pro)memo.xml,()count(ws/coops/coop[@memory='keep'][@type='at.nicolas.webwalk.we'])())</prop>
+       <tk label="Clear complete memory ?">
+       <tk type="msg" msg_type="w" x="(prop,cnt-element) Element(f,plural,(prop,cnt-element)) will be removed."/>   
+       </tk>   
+    </when>      
+       
+   <ti type="file" x="(dir,pro)memo.xml" />
+   <ti_flush/>
+   
+   <choose>
+    <when test="(prop,memory-all)">
+      <prop id="clear_lower_than">100000000000000</prop>
+      <prop id="clear_higher_than">1</prop>
+    </when>
+    <otherwise>
+   
+       <prop id="clear_lower_than_label">ends including</prop>
+       
+       <prop id="clear_higher_than_label">starts including</prop>
+      
+       
+      <call_job job="go-joe-read">
+        <file id="joe-in-store" x="(dir,pro)memory-lower-input.xml" />
+        <prop id="joe-in-regex" x="clear_lower_than|clear_higher_than" />
+      </call_job>   
+         
+        <tk label="(f,when,(prop,really),Clear Elements of Memory,See Elements of Memory)" 
+            flag="sum">
+        <tk id="clear_higher_than" 
+            label="(prop,clear_higher_than_label)" 
+            flag="nono"
+            x="1"/>            
+        <tk id="clear_lower_than" 
+            label="(prop,clear_lower_than_label)" 
+            flag="nono"
+            x="9999"/>
+            
+            
+        </tk>
+    
+      <call_job job="go-joe-write">
+        <file id="joe-in-store" x="(dir,pro)memory-lower-input.xml" />
+        <prop id="joe-in-regex" x="clear_lower_than|clear_higher_than" />
+      </call_job>  
+    </otherwise>
+    </choose>
+      
+   <prop id="did" x="0"/>
+   
+   <loop id="weg" 
+   xml="(dir,pro)memo.xml" 
+   xpath="coops/coop[@memory='keep'][@type='at.nicolas.webwalk.we']"
+   xxxpath="coops/coop[@memory='keep']"
+   sort="@keeplessId"
+   number="@keeplessId"
+   missing_strategy="empty">
+    <when test="(f,lte_num,(loop,weg,@keeplessId),(prop,clear_lower_than))">
+    <when test="(f,gte_num,(loop,weg,@keeplessId),(prop,clear_higher_than))">
+      <ti_hr test="(f,eq_num,0,(prop,did))" />
+      <prop id="did" x="(f,add,(prop,did),1)"/>
+      <choose>
+        <when test="(prop,really)">
+          
+             
+          
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(loop,weg,@id)" act="closeit"/>
+  <ti label="Removed:">(loop,weg,@id)</ti>                
+()]]></prop>      
+      </call_job> 
+                     
+        </when>
+        <otherwise>
+          <try_catch>
+            <try>
+              <ti type="rec" >          
+                <ti type="call_job" job="do-more" explain="(loop,weg,@id)">
+                  <prop id="dc-we" x="(loop,weg,@id)"/>
+                </ti>
+                <ti type="call_job" job="clear-memory-element" explain="Delete">
+                  <prop id="dc-we" x="(loop,weg,@id)"/>
+                </ti>
+                  <ti x="(f,welement,(loop,weg,@id),tag_name)"/>
+                  <ti x="(f,replace,(f,welement,(loop,weg,@id),text),&#xA;, )"/>  
+                  
+              </ti>
+            </try>
+            <catch>
+              <ti type="rec" >          
+                <ti type="call_job" job="do-more" explain="(loop,weg,@id)">
+                  <prop id="dc-we" x="(loop,weg,@id)"/>
+                </ti>
+                <ti type="call_job" job="clear-memory-element" explain="Delete">
+                  <prop id="dc-we" x="(loop,weg,@id)"/>
+                </ti>
+                <ti span="2">(f,replace,(prop,catched_msg),&#xA;, )</ti>
+
+              </ti>            
+            </catch>
+          </try_catch>
+        </otherwise>
+      </choose>
+
+    </when>
+    </when>
+   </loop>
+   <ti_hr/>
+   
+   <choose>
+     <when test="(f,eq_num,0,(prop,did))">
+      <ti type="rec">
+      <ti>Didn&apos;t find anything </ti>
+      </ti>
+     </when>
+     <otherwise>
+      <ti label="(f,when,(prop,really),Did remove,Did list)">(prop,did) Element(f,plural,(prop,did))</ti>
+     </otherwise>
+   </choose>                   
+   
+   <ti_hr_break/>
+  <call_job job="Memory-Classic">
+    <prop id="memory-no-help">1</prop>
+  </call_job>                               
+</job>
+
+<job id="clear-memory-element" role="hidden">
+  <need>(prop,dc-we)</need>
+  <tk label="Delete Element?">
+  <tk type="msg" msg_type="w">Id: (prop,dc-we)
+Tag: (f,welement,(prop,dc-we),tag_name)(f,when,(f,has,(f,welement,(prop,dc-we),text)),
+Text: (f,welement,(prop,dc-we),text),)                         
+</tk>
+</tk>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <welement id="(prop,dc-we)" act="closeit"/>
+  <ti label="Removed:">(prop,dc-we)</ti>                
+()]]></prop>      
+      </call_job> 
+      
+  <call_job job="Memory-Classic">
+    <prop id="memory-no-help">1</prop>
+  </call_job>    
+</job>
+
+
+<job id="new-close-tab" role="hidden">
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <wdriver act="close_tab" />      
+()]]></prop>      
+      </call_job>   
+  
+  
+</job>
+
+<job id="new-switch-window-index" role="hidden">
+  <tk id="index"  test="(f,not,(f,has,prop,index))" label="Position-Number of Tab"/>
+  <wdriver act="switch_tab" by_index="(f,sub,(prop,index),1)"/>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <wdriver act="switch_tab" by_index="(f,sub,(prop,index),1)"/>        
+()]]></prop>      
+      </call_job> 
+      <ti label="Did Switch Tab #(prop,index)" />
+      <ti_hr_break/>
+      <call_job job="??"/> 
+  
+</job>
+
+<job id="new-switch-window-pos" role="hidden">
+  <tk id="pos"  test="(f,not,(f,has,prop,pos))"/>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <wdriver act="switch_tab" by_pos="(prop,pos)"/>        
+()]]></prop>      
+      </call_job>   
+</job>
+
+<job id="new-switch-window-id" role="hidden">
+  <tk id="id" test="(f,not,(f,has,prop,id))" tip="The tab-id is that number in the list of tabs."/>
+  
+      <call_job job="record">
+          <prop id="steps"><![CDATA[()  <wdriver act="switch_tab" by_id="(prop,id)"/>        
+()]]></prop>      
+      </call_job>     
+      
+      <ti label="Did Switch to Tab with id: (prop,id)" />
+      <ti_hr_break/>
+      <call_job job="??"/>       
+</job>
+
+</jobs>

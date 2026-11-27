@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="past-see-more">
+    <prop x="print_only print_with_tips print_all_fields" id="pasts_tk_control"/>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,pasts_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="past-see">
+                    <prop id="past_key">(prop,past_key)</prop>
+                    <file id="pasts">(file,pasts)</file>
+                    <prop id="pasts_offset">(prop,pasts_offset)</prop>
+                    <prop id="pasts_offset_label">(prop,pasts_offset_label)</prop>
+                    <prop id="pasts_offset_new_key">(prop,pasts_offset_new_key)</prop>
+                    <prop id="pasts_sort_attribute">(prop,pasts_sort_attribute)</prop>
+                    <prop id="pasts_sort_number">(prop,pasts_sort_number)</prop>
+                    <prop id="pasts_sort_ignore_case">(prop,pasts_sort_ignore_case)</prop>
+                    <prop id="pasts_sort_desc">(prop,pasts_sort_desc)</prop>
+                    <prop id="pasts_where">(prop,pasts_where)</prop>
+                    <prop id="pasts_return_job">(prop,pasts_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="past-see-all">
+                    <file id="pasts">(file,pasts)</file>
+                    <prop id="pasts_offset">(prop,pasts_offset)</prop>
+                    <prop id="pasts_offset_label">(prop,pasts_offset_label)</prop>
+                    <prop id="pasts_offset_new_key">(prop,pasts_offset_new_key)</prop>
+                    <prop id="pasts_sort_attribute">(prop,pasts_sort_attribute)</prop>
+                    <prop id="pasts_sort_number">(prop,pasts_sort_number)</prop>
+                    <prop id="pasts_sort_ignore_case">(prop,pasts_sort_ignore_case)</prop>
+                    <prop id="pasts_sort_desc">(prop,pasts_sort_desc)</prop>
+                    <prop id="pasts_where">(prop,pasts_where)</prop>
+                    <prop id="pasts_return_job">(prop,pasts_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+    <need>(prop,past_key)</need>
+    <call_job job="past-read"/>
+    <prop id="past_default_label_class" x="(prop,_sl_past)"/>
+    <prop id="past_default_label_name" x="(prop,past_for)(f,when,(f,has,(prop,pasts_offset_label)), - (prop,pasts_offset_label),)"/>
+    <call_job job="past-tk"/>
+    <ti_hr/>
+    <ti type="rec" info="an-edit-button-just" label=" ">
+        <ti type="call_job" flag="button" class="fx fxEdit fxEditDetail fxEditDetailPast" explain="(prop,_x_edit)" job="past-edit">
+            <prop id="past_key">(prop,past_key)</prop>
+            <file id="pasts">(file,pasts)</file>
+            <prop id="pasts_offset">(prop,pasts_offset)</prop>
+            <prop id="pasts_offset_label">(prop,pasts_offset_label)</prop>
+            <prop id="pasts_offset_new_key">(prop,pasts_offset_new_key)</prop>
+            <prop id="pasts_sort_attribute">(prop,pasts_sort_attribute)</prop>
+            <prop id="pasts_sort_number">(prop,pasts_sort_number)</prop>
+            <prop id="pasts_sort_ignore_case">(prop,pasts_sort_ignore_case)</prop>
+            <prop id="pasts_sort_desc">(prop,pasts_sort_desc)</prop>
+            <prop id="pasts_where">(prop,pasts_where)</prop>
+            <prop id="pasts_return_job">(prop,pasts_return_job)</prop>
+        </ti>
+    </ti>
+    <ti_break class_table="tabNavigator"/>
+    <choose>
+        <when test="(f,has_flag,(prop,pasts_tk_control),print_all_fields)">
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys2)" flag="button" align="right" class="justback2" job="past-see">
+                    <prop id="past_key">(prop,past_key)</prop>
+                    <file id="pasts">(file,pasts)</file>
+                    <prop id="pasts_offset">(prop,pasts_offset)</prop>
+                    <prop id="pasts_offset_label">(prop,pasts_offset_label)</prop>
+                    <prop id="pasts_offset_new_key">(prop,pasts_offset_new_key)</prop>
+                    <prop id="pasts_sort_attribute">(prop,pasts_sort_attribute)</prop>
+                    <prop id="pasts_sort_number">(prop,pasts_sort_number)</prop>
+                    <prop id="pasts_sort_ignore_case">(prop,pasts_sort_ignore_case)</prop>
+                    <prop id="pasts_sort_desc">(prop,pasts_sort_desc)</prop>
+                    <prop id="pasts_where">(prop,pasts_where)</prop>
+                    <prop id="pasts_return_job">(prop,pasts_return_job)</prop>
+                </ti>
+            </ti>
+        </when>
+        <otherwise>
+            <ti type="rec" label=" ">
+                <ti type="call_job" explain="(prop,_x_go_up_sys)" flag="button" align="right" class="justup" job="past-see-all">
+                    <file id="pasts">(file,pasts)</file>
+                    <prop id="pasts_offset">(prop,pasts_offset)</prop>
+                    <prop id="pasts_offset_label">(prop,pasts_offset_label)</prop>
+                    <prop id="pasts_offset_new_key">(prop,pasts_offset_new_key)</prop>
+                    <prop id="pasts_sort_attribute">(prop,pasts_sort_attribute)</prop>
+                    <prop id="pasts_sort_number">(prop,pasts_sort_number)</prop>
+                    <prop id="pasts_sort_ignore_case">(prop,pasts_sort_ignore_case)</prop>
+                    <prop id="pasts_sort_desc">(prop,pasts_sort_desc)</prop>
+                    <prop id="pasts_where">(prop,pasts_where)</prop>
+                    <prop id="pasts_return_job">(prop,pasts_return_job)</prop>
+                </ti>
+            </ti>
+        </otherwise>
+    </choose>
+    <ti_break/>
+</job>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="pga-read">
+<need>(prop,pga_key)</need>
+<spirit act="open" missing_strategy="empty" id="pgas_spirit_tc" xml="(file,pgas)"/>
+<prop id="parent-objekttyp">(f,spirit,pgas_spirit_tc,(prop,pgas_offset).,@objekttyp)</prop>
+<file id="pdi-sel-attr">(dir,repo)ot-(prop,parent-objekttyp)-asel-(prop,tip-term-class).xml</file>
+<remove id="parent-objekttyp" type="prop"/>
+
+<prop id="pga_dt_upd">(f,spirit,pgas_spirit_tc,(prop,pgas_offset)pga[@row=(f,xpath_string,(prop,pga_key))],@dt_upd)</prop>
+<prop id="pga_dt_add">(f,spirit,pgas_spirit_tc,(prop,pgas_offset)pga[@row=(f,xpath_string,(prop,pga_key))],@dt_add)</prop>
+<prop id="pga_attributtyp">(f,spirit,pgas_spirit_tc,(prop,pgas_offset)pga[@row=(f,xpath_string,(prop,pga_key))],@attributtyp)</prop>
+<prop id="pga_detail">(f,spirit,pgas_spirit_tc,(prop,pgas_offset)pga[@row=(f,xpath_string,(prop,pga_key))],@detail)</prop>
+<spirit act="close" id="pgas_spirit_tc"/>
+</job>

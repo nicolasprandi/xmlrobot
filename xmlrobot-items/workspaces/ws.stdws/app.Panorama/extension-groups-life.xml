@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<groups max_g_id="24" max_id="134">
+<group title="Echnaton Jobs" active="1" sort="0" id="1">
+<extension extension="xrj" active="1" id="25" />
+<extension extension="ljx" active="1" id="26" />
+</group>
+<group title="Echnaton Steps" active="1" sort="10" id="2">
+<extension extension="xrs" active="1" id="27" />
+<extension extension="lsx" active="1" id="28" />
+</group>
+<group title="Echnaton Takeoff" active="1" sort="12" id="3">
+<extension extension="xrt" active="1" id="29" />
+</group>
+<group title="Pentaho" active="1" sort="13" id="4">
+<extension extension="mondrian.xml" active="1" id="30" />
+<extension extension="ktr" active="1" id="31" />
+<extension extension="kjb" active="1" id="32" />
+<extension extension="xmi" active="1" id="33" />
+<extension extension="xaction" active="1" id="34" />
+</group>
+<group title="Xsl" active="1" sort="15" id="5">
+<extension extension="xsl" active="1" id="35" />
+</group>
+<group title="Java" active="1" sort="20" id="6">
+<extension extension="jar" active="1" id="36" />
+<extension extension="java" active="1" id="37" />
+<extension extension="war" active="1" id="38" />
+<extension extension="class" active="1" id="39" />
+<extension extension="mf" active="1" id="40" />
+<extension extension="jsp" active="1" id="41" />
+</group>
+<group title="Windows-Executable" active="1" sort="30" id="7">
+<extension extension="exe" active="1" id="42" />
+</group>
+<group title="Shell Scripting" active="1" sort="32" id="8">
+<extension extension="sh" active="1" id="43" />
+<extension extension="bat" active="1" id="44" />
+<extension extension="bak" active="1" id="45" />
+</group>
+<group title="Xml" active="1" sort="40" id="9">
+<extension extension="xml" active="1" id="46" />
+<extension extension="dtd" active="1" id="47" />
+<extension extension="fo" active="1" id="48" />
+</group>
+<group title="Database" active="1" sort="45" id="10">
+<extension extension="sql" active="1" id="49" />
+</group>
+<group title="Data Sheets" active="1" sort="50" id="11">
+<extension extension="xls" active="1" id="50" />
+<extension extension="xlsx" active="1" id="51" />
+<extension extension="csv" active="1" id="52" />
+</group>
+<group title="Html Css Php Js" active="1" sort="60" id="12">
+<extension extension="html" active="1" id="53" />
+<extension extension="htm" active="1" id="54" />
+<extension extension="css" active="1" id="55" />
+<extension extension="php" active="1" id="56" />
+<extension extension="js" active="1" id="57" />
+<extension extension="htaccess" active="1" id="58" />
+<extension extension="mht" active="1" id="59" />
+<extension extension="xhtml" active="1" id="60" />
+<extension extension="cgi" active="1" id="61" />
+<extension extension="asp" active="1" id="62" />
+<extension extension="webarchive" active="1" id="63" />
+</group>
+<group title="Text, Rtf" active="1" sort="66" id="13">
+<extension extension="txt" active="1" id="64" />
+<extension extension="rtf" active="1" id="65" />
+</group>
+<group title="Pdf" active="1" sort="68" id="14">
+<extension extension="pdf" active="1" id="66" />
+</group>
+<group title="Layoutet Documents" active="1" sort="70" id="15">
+<extension extension="doc" active="1" id="67" />
+<extension extension="docx" active="1" id="68" />
+<extension extension="odt" active="1" id="69" />
+<extension extension="ai" active="1" id="70" />
+<extension extension="psd" active="1" id="71" />
+<extension extension="ppt" active="1" id="72" />
+<extension extension="indd" active="1" id="73" />
+</group>
+<group title="Animations, Geometric Design" active="1" sort="75" id="16">
+<extension extension="c4d" active="1" id="74" />
+<extension extension="swf" active="1" id="75" />
+<extension extension="3dm" active="1" id="76" />
+<extension extension="fla" active="1" id="77" />
+<extension extension="as" active="1" id="78" />
+<extension extension="vsd" active="1" id="79" />
+<extension extension="dia" active="1" id="80" />
+<extension extension="flv" active="1" id="81" />
+</group>
+<group title="Media Movies" active="1" sort="90" id="17">
+<extension extension="mov" active="1" id="82" />
+<extension extension="avi" active="1" id="83" />
+<extension extension="m4v" active="1" id="84" />
+<extension extension="mp4" active="1" id="85" />
+<extension extension="wmv" active="1" id="86" />
+<extension extension="mkv" active="1" id="87" />
+</group>
+<group title="Media Audio" active="1" sort="95" id="18">
+<extension extension="mp3" active="1" id="88" />
+<extension extension="wma" active="1" id="89" />
+<extension extension="wav" active="1" id="90" />
+</group>
+<group title="Media Pictures" active="1" sort="110" id="19">
+<extension extension="mpg" active="1" id="91" />
+<extension extension="jpg" active="1" id="92" />
+<extension extension="png" active="1" id="93" />
+<extension extension="bmp" active="1" id="94" />
+<extension extension="gif" active="1" id="95" />
+<extension extension="tif" active="1" id="96" />
+<extension extension="ico" active="1" id="97" />
+<extension extension="svg" active="1" id="98" />
+<extension extension="wmf" active="1" id="99" />
+<extension extension="eps" active="1" id="100" />
+<extension extension="icns" active="1" id="101" />
+<extension extension="dng" active="1" id="102" />
+<extension extension="cr2" active="1" id="103" />
+<extension extension="jpeg" active="1" id="104" />
+<extension extension="tiff" active="1" id="105" />
+<extension extension="raw" active="1" id="106" />
+<extension extension="xcf" active="1" id="107" />
+</group>
+<group title="Archives" active="1" sort="300" id="20">
+<extension extension="zip" active="1" id="108" />
+<extension extension="t3x" active="1" id="109" />
+<extension extension="iso" active="1" id="110" />
+<extension extension="rar" active="1" id="111" />
+<extension extension="gz" active="1" id="112" />
+<extension extension="dmg" active="1" id="113" />
+<extension extension="tgz" active="1" id="114" />
+</group>
+<group title="Links" active="1" sort="400" id="21">
+<extension extension="lnk" active="1" id="115" />
+<extension extension="url" active="1" id="116" />
+<extension extension="webloc" active="1" id="117" />
+<extension extension="desktop" active="1" id="118" />
+</group>
+<group title="Software Source Code" active="1" sort="490" id="22">
+<extension extension="h" active="1" id="119" />
+<extension extension="cpp" active="1" id="120" />
+</group>
+<group title="Software Components" active="1" sort="500" id="23">
+<extension extension="dll" active="1" id="121" />
+<extension extension="h" active="1" id="122" />
+<extension extension="lib" active="1" id="123" />
+<extension extension="mui" active="1" id="124" />
+<extension extension="cab" active="1" id="125" />
+</group>
+<group title="Software Control" active="1" sort="700" id="24">
+<extension extension="ini" active="1" id="126" />
+<extension extension="log" active="1" id="127" />
+<extension extension="properties" active="1" id="128" />
+<extension extension="config" active="1" id="129" />
+<extension extension="prefs" active="1" id="130" />
+<extension extension="manifest" active="1" id="131" />
+<extension extension="conf" active="1" id="132" />
+<extension extension="plist" active="1" id="133" />
+<extension extension="cfg" active="1" id="134" />
+</group>
+</groups>

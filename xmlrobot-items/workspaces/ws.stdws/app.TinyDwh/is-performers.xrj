@@ -1,0 +1,322 @@
+<?xml version="1.0" ?>
+
+<jobs>
+<call_job job="prolog"/>
+
+<job id="imp-run" role="hidden">
+
+<call_job job="imp-read"/>
+<ti label="Running Point: (prop,imp_point)"/>
+  <file id="imr-data">(dir,pro)gui/point-run.xml</file>
+  <prop id="imr-regex">imr_dbms|imr_stat|imr_break|imr_simu|imr_pronto</prop>
+  <call_job job="go-joe-read">
+    <file id="joe-in-store" x="(file,imr-data)" />
+    <prop id="joe-in-regex" x="(prop,imr-regex)" />
+  </call_job>
+  <need default="mysql">(prop,imr_dbms)</need>
+  <need default="0">(prop,imr_stat)</need>
+  <need default="0">(prop,imr_break)</need>
+  <need default="2">(prop,imr_pronto)</need>
+  <need default="1">(prop,imr_simu)</need>
+  
+  <tk label="Running Point: #(prop,imp_point)" tk_id="0" flag="print (f,when,(f,exists_file,(file,imr-data)),sum_only ,)">
+      <tk type="sel" label="Current Dbms" id="imr_dbms" flag="nono">
+        <sel>mysql</sel>
+        <sel>maria</sel>
+        <sel>postgres</sel>
+      </tk>
+      
+      <tk type="sel" label="Pronto" id="imr_pronto" flag="nono">
+        <sel>0</sel>
+        <sel>1</sel>
+        <sel>2</sel>
+      </tk>
+            
+      <tk type="bool" id="imr_break" label="Do Breakpoints" flag="nono"/>
+      <tk type="bool" id="imr_stat" label="Do Statistics" flag="nono"/>
+      <tk type="bool" id="imr_simu" label="Do Just Simulate" flag="nono"/>
+  </tk>
+  
+  <call_job job="go-joe-write">
+    <file id="joe-in-store" x="(file,imr-data)" />
+    <prop id="joe-in-regex" x="(prop,imr-regex)" />
+  </call_job>  
+
+<call_job job="-db-open-"/>
+<prop id="imp-run-inside">1</prop>
+
+<loop missing_strategy="empty" id="ima_loop" xml="(file,imps)" xpath="imp[@row='(prop,imp_key)']/ima[@on='1']">
+  <ti_hr/>
+   <prop id="ima_name">(loop,ima_loop,@name)</prop>
+   <prop id="ima_cmd">(loop,ima_loop,@cmd)</prop>
+   <prop id="ima_type">(loop,ima_loop,@type)</prop>
+   <prop id="ima_catch">(loop,ima_loop,@catch)</prop>
+   <prop id="ima_on">(loop,ima_loop,@on)</prop>
+   <prop id="ima_cond">(loop,ima_loop,@cond)</prop>
+   <prop id="ima_dbms">(loop,ima_loop,@dbms)</prop>
+   <prop id="ima_name">(loop,ima_loop,@name)</prop>
+   <prop id="ima_pronto">(loop,ima_loop,@pronto)</prop>
+   <prop id="ima_key">(loop,ima_loop,@row)</prop>
+   
+   <prop id="do-ima">1</prop>
+
+   
+   <prop id="imas_offset">(prop,imps_offset)imp[@row='(prop,imp_key)']/</prop>
+   
+     <ti label="Attempting to run Index-Action"/>
+     
+
+             
+     <ti label="Type:" x="(prop,ima_type)"/>
+     <ti label="Cmd:" x="(prop,ima_cmd)" test="(f,has,prop,ima_cmd)"/>     
+     <ti label="Name:" x="(prop,ima_name)" test="(f,has,prop,ima_name)"/>   
+     <ti label="Stats:" x="(prop,ima_cond)" test="(f,has,prop,ima_cond)"/>
+     
+   <when test="(f,has,prop,ima_cond)">   
+    <when test="(f,has_flag,(prop,ima_cond),stat)">    
+      <when test="(f,not,(prop,imr_stat))">
+          <prop id="do-ima">0</prop>
+          <ti label="(f,html,b,o)Ignored(f,html,b,c)">Action ignored because it requires the statistics-flag as integration-parameter and this is not the case</ti>
+      </when>    
+    </when>   
+   </when>
+        
+     <ti label="Dbms:" x="(prop,ima_dbms)" test="(f,has,prop,ima_dbms)"/>
+   <when test="(f,has,prop,ima_dbms)">   
+    <when test="(f,not,(f,has_flag,(prop,ima_dbms),(prop,imr_dbms)))">    
+          <prop id="do-ima">0</prop>
+          <ti label="(f,html,b,o)Ignored(f,html,b,c)">Action ignored because it requires the dbms [(prop,ima_dbms)] and the parameters intend to allow only [(prop,imr_dbms)] as dbms</ti>
+    </when>   
+   </when>   
+        
+     <ti label="Pronto:" x="(prop,ima_pronto)" test="(f,has,prop,ima_pronto)"/>
+   
+
+
+   
+                      
+
+   
+                     
+   <when test="(f,eq_text,break,(prop,ima_type))">   
+    <when test="(f,not,(prop,imr_break))">    
+          <prop id="do-ima">0</prop>
+          <ti label="(f,html,b,o)Ignored(f,html,b,c)">Action ignored because it is a breakpoint and parameters intend to omit breakpoints</ti>
+    </when>   
+   </when>    
+   
+                     
+   <when test="(f,has,prop,ima_pronto)">
+    <choose>
+      <when test="(f,eq_text,i0,(prop,ima_pronto))">
+      
+        <when test="(f,not,(f,eq_num,0,(prop,imr_pronto)))">
+          <prop id="do-ima">0</prop>
+          <ti label="(f,html,b,o)Ignored(f,html,b,c)">Action ignored because it requires pronto==0 and the parameter-pronto is [(prop,imr_pronto)]</ti>
+        
+        </when>
+      
+      </when>
+      
+      <when test="(f,eq_text,i1,(prop,ima_pronto))">
+      
+        <when test="(f,not,(f,eq_num,1,(prop,imr_pronto)))">
+          <prop id="do-ima">0</prop>
+          <ti label="(f,html,b,o)Ignored(f,html,b,c)">Action ignored because it requires pronto==1 and the parameter-pronto is [(prop,imr_pronto)]</ti>
+        
+        </when>
+      
+      </when>    
+      
+      <when test="(f,eq_text,i2,(prop,ima_pronto))">
+      
+        <when test="(f,not,(f,eq_num,2,(prop,imr_pronto)))">
+          <prop id="do-ima">0</prop>
+          <ti label="(f,html,b,o)Ignored(f,html,b,c)">Action ignored because it requires pronto==2 and the parameter-pronto is [(prop,imr_pronto)]</ti>
+        
+        </when>
+      
+      </when>     
+      
+      <when test="(f,eq_text,l2,(prop,ima_pronto))">
+      
+        <when test="(f,not,(f,lt_num,2,(prop,imr_pronto)))">
+          <prop id="do-ima">0</prop>
+          <ti label="(f,html,b,o)Ignored(f,html,b,c)">Action ignored because it requires pronto&lt;2 and the parameter-pronto is [(prop,imr_pronto)]</ti>
+        
+        </when>
+      
+      </when>              
+    
+    </choose>   
+   </when>      
+   
+   
+   <when test="(prop,do-ima)">
+   
+      <choose>
+        <when test="(prop,imr_simu)">
+          <ti label=" ">Would be performed</ti>
+        </when>
+        <otherwise>
+          <try_catch>
+            <try>
+              <call_job job="ima-run"/>
+            
+            </try>
+            <catch>
+              <ti label="(f,html,b,o)Exception(f,html,b,c)">(prop,catched_msg)</ti>
+              <choose>
+                <when test="(prop,ima_catch)">
+                  <ti label=" ">Exception will be ignored as defined in the Index-Action</ti>
+                </when>
+                <otherwise>
+                
+        <ti label=" " type="call_job" job="ima-see" explain="Go Index-Action" >
+          <prop id="ima_key">(prop,ima_key)</prop>
+          <prop id="imp_key">(prop,imp_key)</prop>
+          
+          <prop id="imas_offset">(prop,imas_offset)</prop>
+          <file id="imas">(file,imps)</file>       
+        </ti>                  
+                  <throw_again/>
+                </otherwise>
+              </choose>
+            
+            </catch>
+          </try_catch>
+        
+        </otherwise>
+      </choose>
+        
+   </when>
+   
+        <ti label=" " type="call_job" job="ima-see" explain="Go Index-Action" >
+          <prop id="ima_key">(prop,ima_key)</prop>
+          <prop id="imp_key">(prop,imp_key)</prop>
+          
+          <prop id="imas_offset">(prop,imas_offset)</prop>
+          <file id="imas">(file,imps)</file>       
+        </ti>  
+   
+   
+   <!-- 
+   <prop id="ima_name">(loop,ima_loop,@ima_name)</prop>
+     <ti label="Name:" x="(prop,ima_name)"/>     <dump_ti/>
+     <ti label="Cmd:" x="(prop,ima_cmd)"/>
+     <ti label="Type:" x="(prop,ima_type)     -->
+   
+</loop>
+
+ 
+  
+</job>
+<job id="ima-run" role="hidden">
+  <prop id="ima-run-inside">(f,not,(f,has,prop,imp-run-inside))</prop>
+  
+  <when test="(prop,ima-run-inside)">
+    <ti_break class_table="tabNavigator"/>
+
+     
+          
+      <ti type="rec" >
+        <ti type="menu" align="right" span="10">
+        <!-- 
+        <ti type="call_job" job="_select" explain="(prop,_x_go_up_sys)" flag="button " class="justback"
+            xalign="right" >          
+        </ti>      -->   
+         <ti type="call_job" job="imp-see" explain="&#8593; Index-Point &#8593;" flag="button " class="justback">
+
+          <prop id="imp_key">(prop,imp_key)</prop>
+          
+          <prop id="imps_offset">./</prop>
+          <file id="imps">(file,imas)</file>       
+        </ti>  
+                
+         <ti type="call_job" job="ima-see" explain="&lt; Action &lt;" flag="button " class="justback">
+          <prop id="ima_key">(prop,ima_key)</prop>
+          <prop id="imp_key">(prop,imp_key)</prop>
+          
+          <prop id="imas_offset">(prop,imas_offset)</prop>
+          <file id="imas">(file,imas)</file>       
+        </ti>  
+      </ti> 
+      </ti> 
+        
+
+       <call_job job="ima-read"/>   
+       
+       <call_job job="-db-open-"/>
+       
+     <ti label="Running Index-Action"/>
+     <ti label="Type:" x="(prop,ima_type)"/>
+     <ti label="Cmd:" x="(prop,ima_cmd)" test="(f,has,prop,ima_cmd)"/>     
+     <ti label="Name:" x="(prop,ima_name)" test="(f,has,prop,ima_name)"/>       
+     
+     </when>
+ 
+
+     
+     
+     <ti label="Start" x="(f,time)"/>
+     
+     
+     <choose>
+      <when test="(f,eq_text,cmd,(prop,ima_type))">
+      
+        <dbc id="(prop,mydbc)"
+          act="update"
+          update_return_prop="ima-run-return">(prop,ima_cmd)</dbc> 
+        <ti label="End" x="(f,time)"/>   
+        <ti label="Done"/>  
+        <ti label="Return-Value:">(f,html,b,o)(prop,ima-run-return)(f,html,b,c)</ti> 
+         
+      </when>
+      <when test="(f,eq_text,sel,(prop,ima_type))">
+          <file id="run_sel">(dir,filetemp)running-index-action.csv</file>
+          <dbc id="(prop,mydbc)"
+          act="select"
+          out="(file,run_sel)"
+          style="c"
+          flag="trim">(prop,ima_cmd)</dbc> 
+          <ti label="End" x="(f,time)"/> 
+          <ti label="Done"/>  
+          
+                <call_service job="fps">
+                  <file id="fps-file">(file,run_sel)</file>   
+                  <prop id="fps-regex">\n</prop>
+                  <prop id="fps-limit">999999999</prop>
+                  <prop id="fps-header">1</prop>     
+                    
+                </call_service>          
+           
+      </when>      
+      
+      <when test="(f,eq_text,commit,(prop,ima_type))">
+        <call_job job="-db-commit-"/>
+        <ti label="End" x="(f,time)"/>   
+        <ti label="Done"/> 
+      </when>      
+      
+      <when test="(f,eq_text,break,(prop,ima_type))">
+        <tk type="msg" msg="Breakpoint"/>
+        <ti label="End" x="(f,time)"/>   
+        <ti label="Done"/> 
+      </when>     
+            
+    </choose>
+      
+     
+<when test="(prop,ima-run-inside)">
+<ti type="call_job" job="-db-commit-" explain="Do a Commit" xlabel=" "/>
+</when>
+      
+    
+   
+           
+
+  
+</job>
+
+
+</jobs>

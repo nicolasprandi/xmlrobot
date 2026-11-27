@@ -1,0 +1,469 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+<job id="Configuration" xrole="hidden" tip="configures">
+  <!-- <call_job job="do-create-project"/> -->
+  <call_job job="sys_project_setup2"/>
+  <ti_hr/>
+  <ti type="call_job" job="generate-app-selektor" explain="Create App-Selektor"/>
+</job>
+<job id="Configuration?" xrole="hidden">
+  <call_job job="Edit: Configuration?"/>
+  
+  <ti_hr/>
+  <ti type="call_job" job="generate-app-selektor" explain="Create App-Selektor"/>
+    
+</job>
+<job id="clear-downloaded-app" role="hidden">
+  <need>(dir,cda)</need>
+  <need>(prop,cda-path)</need>
+  <need>(prop,cda-name)</need>
+  
+
+   <delete dir="(dir,cda)"/>
+
+  
+  <ti label="Did clear folder."/>
+  <ti_hr/>
+  <ti label="New Status:"/> 
+  <ti_hr style="2"/> 
+  <call_job job="see-app-2-download">
+    <prop id="app-path" x="(prop,cda-path)"/>
+    <prop id="app-name" x="(prop,cda-name)"/>
+  </call_job> 
+
+</job>
+
+
+<job id="refresh-downloaded-app" role="hidden">
+  <need>(dir,cda)</need>
+  <need>(prop,cda-path)</need>
+  <need>(prop,cda-name)</need>
+
+  
+  <prop id="cda-id" x="(f,substring_after,(prop,cda-name),.)"/>
+  
+  <tk type="msg" x="Updating application: (prop,cda-id) - continue?"/>
+ 
+  <ti label="Refresh: Ok"/>
+  <ti x="Refreshed: (prop,cda-id)"/>
+
+  <ti label="Next">
+    <ti type="call_service" job="Restart"/>
+  </ti>
+      
+  <call_service job="update-app-central">
+    <dir id="app-tu" x="(f,ask,app_dir,(prop,cda-id))"/>
+    <dir id="from-dir" x="(dir,cda)"/>
+  </call_service>
+  
+
+</job>
+
+<job id="install-downloaded-app" role="hidden">
+  <need>(dir,cda)</need>
+  <need>(prop,cda-path)</need>
+  <need>(prop,cda-name)</need>
+  
+  <prop id="cda-id" x="(f,substring_after,(prop,cda-name),.)"/>
+  
+  
+  <tk type="msg" x="Installing application: (prop,cda-id) - continue?" msg_type="w"/>  
+  <dir id="soll" x="(dir,workspace)(prop,cda-name)"/>
+  <throw test="(f,exists_dir,(dir,soll))">exists schon? </throw>
+  <copy uri="(dir,cda)" touri="(dir,soll)"/>
+  
+  <ti label="Install Ok"/>
+  <ti x="Installed: (prop,cda-id)"/>
+  <tk type="msg" x="Switching to app [(prop,cda-id)]"/>
+  <restart app="(prop,cda-id)" />
+  <!-- 
+  <ti_switch app="(prop,cda-id)" pxro=""/>
+  
+  <ti label="Next">
+    <ti type="call_service" job="Restart"/>
+  </ti>  
+  -->
+</job>
+<job id="compare-downloaded-app" role="hidden">
+  <need>(dir,cda)</need>
+  <need>(prop,cda-path)</need>
+  <need>(prop,cda-name)</need>
+  <prop id="cda-appname" x="(f,substring_after,(prop,cda-name),app.)"/> 
+  <dump_ti_all label="compare-downloaded-app" test="0"/>
+  
+  <dir id="compare-with" x="(dir,backup)app-(prop,cda-appname)"/>
+  <tk label="Compare app.(prop,cda-appname) with" flag="sum">
+    <tk id="compare-with" flag="nono" type="dir" tip="one specific backup of (prop,cda-name) to compare the downloaded app with"/>
+    <tk id="standard-direction" type="bool" x="1" test_first="0" flag="nono"/>
+  </tk>
+  <call_service job="Goto-Compare-Dirs">
+    <dir id="old" x="(f,when,(prop,standard-direction),(dir,cda),(dir,compare-with))"/>
+    <dir id="new" x="(f,when,(prop,standard-direction),(dir,compare-with),(dir,cda))"/>
+  </call_service>
+
+</job>
+      
+<job id="do-download-app" role="hidden">
+  <need>(prop,app-path)</need>
+  <need>(prop,app-name)</need>
+  <ti label="Downloading (prop,app-name)"/>  
+  <ti>Do download app: (prop,app-name) (prop,app-path)</ti>
+ 
+  <dir id="coll" x="(dir,appDwnGh)(prop,app-name)"/>
+   <delete dir="(dir,coll)" />
+  <mkdir dir="(dir,coll)"/>
+  
+ 
+    
+    
+  <tp>Downloading files ...</tp>
+  <call_job job="connect"/>
+  <call_job job="caf">
+    <prop id="caf-path" x="(prop,app-path)"/>
+    <dir id="caf-target" x="(dir,coll)"/>
+    <dir id="caf-retry" x="1"/>
+  </call_job>
+    
+  <ti label="App Download: Ok">
+    <ti type="dir" label="Downloaded app:" x="(dir,coll)"/>
+  </ti>
+  <create_file 
+    file="(dir,appDwnGh)ts-(prop,app-name).xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+    <ts ts="(x,(f,time,yyyy-MM-dd HH:mm))" date="(x,(f,time,yyyy-MM-dd))" time="(x,(f,time,HH:mm))"/>]]></create_file>
+  <ti_hr/>
+  <ti label="New Status:"/>
+  <ti_hr style="3"/> 
+  
+  <call_job job="see-app-2-download">
+    <prop id="app-path" x="(prop,app-path)"/>
+    <prop id="app-name" x="(prop,app-name)"/>
+  </call_job> 
+
+</job>
+<job id="jump-into-java-compilation" role="hidden">
+  <need>(prop,jump-to-compile-dir)</need>
+  <interpreter watch="0"/>
+  <prop id="the-lib-name" x="(f,substring_after,(prop,jump-to-compile-dir),compile-)"/>
+  
+  
+  <ti label="(prop,the-lib-name)"/> 
+  
+  <create_file out="(file,current-java-lib)">(prop,jump-to-compile-dir)</create_file>
+ 
+  <!-- auto.xml edit --> 
+  <file id="auto-data" x="(dir,pro)-store-(prop,the-lib-name)/auto.xml"/>
+  <!-- <prop id="auto-regex" x="auto_compile|auto_zelix"/>     -->
+  
+  <copy file="(dir,app)auto_template.xml"
+        tofile="(file,auto-data)"
+        test="(f,not,(f,exists_file,(file,auto-data)))"/>
+     
+   <call_job job="tk_auto_print_values"/>  
+   <ti type="rec" label=" ">
+     <ti type="call_job" job="tk_auto_edit" explain="Edit this" label=" ">
+      <file id="auto-data" x="(file,auto-data)"/>
+      <!-- <prop id="auto-regex" x="auto_.+"/> -->  
+     </ti>
+     <ti type="call_job" job="tk_auto_print_values_tips" explain="[ ?? ]" label=" ">
+      <file id="auto-data" x="(file,auto-data)"/>
+      <!-- <prop id="auto-regex" x="auto_.+"/> -->  
+     </ti>   
+   </ti>
+   <ti_hr/>  
+   
+  <!-- prolog-specdef.xml edit --> 
+  
+  <file id="prol-data" x="(dir,pro)-store-(prop,the-lib-name)/prolog-specdef.xml"/>
+    
+  
+  <copy file="(dir,app)prolog-specdef_template.xml"
+        tofile="(file,prol-data)"
+        test="(f,not,(f,exists_file,(file,prol-data)))"/>
+     
+   <call_job job="tk_prol_print_values"/>  
+   <ti type="rec" label=" ">
+     <ti type="call_job" job="tk_prol_edit" explain="Edit this" label=" ">
+      <file id="prol-data" x="(file,prol-data)"/>  
+     </ti>
+     <ti type="call_job" job="tk_prol_print_values_tips" explain="[ ?? ]" label=" ">
+      <file id="prol-data" x="(file,prol-data)"/>   
+     </ti>   
+   </ti>
+   <ti_hr/>   
+   
+
+  <!-- <ti label="Playbacks of &quot;(prop,the-lib-name)&quot;" /> -->  
+  
+  <file id="playbacks">(dir,pro)-store-(prop,the-lib-name)/playbacks.xml</file>
+  <when test="(f,not,(f,exists_file,(file,playbacks)))">
+  <create_file out="(file,playbacks)">&lt;playbacks/&gt;</create_file>
+  <i>Created: (file,playbacks)</i>
+  </when>  
+  <prop id="playbacks_offset_label">Playbacks of &quot;(prop,the-lib-name)&quot;</prop>
+  <call_job job="playback-see-all"/>
+  <ti_break/>
+  <ti_hr/>
+   <loop id="b" xml="(file,lJava)" xpath="dir[@name='grp.XmlRobot']/dir"> 
+    <when test="(f,eq_text,(loop,b,@name),(prop,the-lib-name))">
+      <call_job job="browse-java-item"> 
+        <prop id="name" x="(loop,b,@name)"/>
+        <prop id="path" x="(loop,b,@path)"/>
+      </call_job>          
+    </when>
+   
+   </loop>   
+   
+     
+</job>  
+<job id="see-app-2-download" role="hidden">
+  <need>(prop,app-path)</need>
+  <need>(prop,app-name)</need>
+
+  <dir id="maybe" x="(dir,appDwnGh)(prop,app-name)"/>
+  <prop id="app-id" x="(f,substring_after,(prop,app-name),.)"/>
+  <ti label="Github-connector for apps"/>
+  <ti label="App:" fxlag="label_right" x="(f,html,bold,open)(f,substring_after,(prop,app-name),.)(f,html,bold,close)"/>
+
+      
+  <file id="app-ts"    x="(dir,appDwnGh)ts-(prop,app-name).xml" />
+  
+  <ti label="Download"/>    
+  <ti label="Lately downloaded:"
+      type="dir" 
+      x="(dir,maybe)"
+      test="(f,exists_dir,(dir,maybe))"/>
+  <when test="(f,and,(f,exists_dir,(dir,maybe)),(f,exists_file,(file,app-ts)))">
+    <spirit act="open" id="ts" xml="(file,app-ts)" missing_strategy="empty"/>
+      <ti label=" " flag="label_right" x="at (f,spirit,ts,@time) on (f,spirit,ts,@date)"/>  
+      <spirit act="close" id="ts" /> 
+  </when>
+  <ti x="Not Downloaded yet"
+      test="(f,not,(f,exists_dir,(dir,maybe)))"/>  
+  <ti label=" "
+      type="call_job" 
+      job="clear-downloaded-app"
+      test="(f,exists_dir,(dir,maybe))"
+      explain="Remove downloaded app">
+      <dir id="cda" x="(dir,maybe)"/>
+      <prop id="cda-path" x="(prop,app-path)"/>
+      <prop id="cda-name" x="(prop,app-name)"/>
+  </ti>        
+  <ti label=" " type="call_job" job="do-download-app"
+      explain="Do Download &apos;(prop,app-id)&apos; (f,when,(f,exists_dir,(dir,maybe)),again,)">
+      <prop id="app-path" x="(prop,app-path)"/>
+      <prop id="app-name" x="(prop,app-name)"/>
+  </ti>          
+  
+  
+  <prop id="has-backup" x="(f,exists_dir,(dir,backup)app-(prop,app-id))" />  
+  <prop id="has-app" x="(f,ask,exists_app,(f,substring_after,(prop,app-name),.))" /> 
+    
+  <ti label="Compare:"
+      type="call_job" 
+      job="compare-downloaded-app"
+      test="(f,and,(f,exists_dir,(dir,maybe)),(prop,has-backup))"
+      explain="Compare downloaded app with a backup of your loacal &apos;(prop,app-id)&apos;">
+      <dir id="cda" x="(dir,maybe)"/>
+      <prop id="cda-path" x="(prop,app-path)"/>
+      <prop id="cda-name" x="(prop,app-name)"/>      
+  </ti>   
+  <!--     
+  <ti label=" "
+      type="call_job" 
+      job="compare-downloaded-app"
+      test="(f,and,(f,exists_dir,(dir,maybe)),(prop,has-backup))"
+      explain="Compare downloaded app to one of your application-backups">
+      <dir id="cda" x="(dir,maybe)"/>
+      <prop id="cda-path" x="(prop,app-path)"/>
+      <prop id="cda-name" x="(prop,app-name)"/>
+  </ti>      
+  -->
+  <ti label="Install local:"
+      type="call_job" 
+      job="install-downloaded-app"
+      test="(f,and,(f,exists_dir,(dir,maybe)),(f,not,(prop,has-app)))"
+      explain="Install downloaded app in workspace &apos;(prop,workspace)&apos;">
+      <dir id="cda" x="(dir,maybe)"/>
+      <prop id="cda-path" x="(prop,app-path)"/>
+      <prop id="cda-name" x="(prop,app-name)"/>
+  </ti>   
+  <ti label="Refresh local app:"
+      type="call_job" 
+      job="refresh-downloaded-app"
+      test="(f,and,(f,exists_dir,(dir,maybe)),(prop,has-app))"
+      explain="Refresh the locally installed app &apos;(prop,app-id)&apos; with the downloaded app">
+      <dir id="cda" x="(dir,maybe)"/>
+      <prop id="cda-path" x="(prop,app-path)"/>
+      <prop id="cda-name" x="(prop,app-name)"/>
+  </ti>     
+  
+  <ti label="Details"/>
+  <ti label="Full app-name:" x="(prop,app-name)"/>
+  <ti label="Path:" x="(prop,app-path)"/>
+
+  <ti label="Github:"
+      type="web" 
+      x="(prop,github-repo-default)/(prop,app-path)"/>           
+
+</job>
+<job id="create-new-app-index" role="hidden">
+  <delete file="(file,l)"/>
+  <call_job job="List Applications"/>
+</job>
+
+
+
+<job id="List Applications" tip="Lists XmlRobot-Apps from GitHub for download" role="test">
+
+  <call_job job="do-create-project" />
+  <call_job job="connect"/>
+  
+
+   
+    <choose>
+      <when test="(f,not,(f,exists_file,(file,l)))">
+        <tp>reading application-list from github ...</tp>
+        <xrghub  
+                act="list" 
+                out="(file,l)"
+                path="xmlrobot-items/workspaces"
+                level="2"
+                flag="folderOnly"/>      
+      </when>
+      <otherwise>
+
+        <ti type="call_job" job="create-new-app-index" label=" " 
+          explain="This is a reused Application-Index(e:s) to get the newest one click here ..."/>
+      </otherwise>
+    </choose>
+   <ti type="call_job" job="list-apps-by-name" explain="List Applications sorted by app-name" 
+   label=" "/>    
+   <ti type="file" x="(file,l)"/>
+   <spirit id="list" xml="(file,l)" act="open"/>
+   <loop_xml 
+      act="open" 
+      id="ws" 
+      spirit="list" 
+      xpath="dir"/> 
+   <loop 
+      id="while-ws" 
+      while="()(f,loop_xml,ws,has_next?)()">
+      <loop_xml act="next" id="ws" />
+      <ti label="(f,loop_xml,ws,@name)"/>
+      
+       <loop_xml 
+          act="open" 
+          id="app" 
+          spirit="list" 
+          xpath="dir[@name=(f,xpath_string,(f,loop_xml,ws,@name))]/dir"/> 
+       <loop 
+          id="while-ws" 
+          while="()(f,loop_xml,app,has_next?)()">
+          <loop_xml act="next" id="app" />
+          <ti label=" " x="(f,loop_xml,app,@name)" type="call_job" job="see-app-2-download"
+            explain="(f,loop_xml,app,@name)">
+            <prop id="app-path" x="(f,loop_xml,app,@path)"/>
+            <prop id="app-name" x="(f,loop_xml,app,@name)"/>
+          </ti>     
+       </loop>
+       
+       <loop_xml 
+          act="close" 
+          id="app" /> 
+                
+   </loop>
+   
+   <loop_xml 
+      act="close" 
+      id="ws" />           
+   
+   <spirit id="list" act="close"/>
+   <!-- 
+   <ti_hr/>      
+   <loop id="a" xml="(file,l)" xpath="dir">
+    <ti label="(loop,a,@name)"/>
+    
+     <loop id="b" xml="(file,l)" xpath="dir[@name='(loop,a,@name)']/dir">  
+      <ti label=" " x="(loop,b,@name)" type="call_job" job="see-app-2-download"
+        explain="(loop,b,@name)">
+        <prop id="app-path" x="(loop,b,@path)"/>
+        <prop id="app-name" x="(loop,b,@name)"/>
+      </ti>       
+     </loop> 
+       
+   </loop> 
+   -->   
+   
+   <ti_hr/> 
+ 
+           
+</job>
+
+<job id="List Projects" tip="Lists projects from GitHub for download" role="test">
+  <call_job job="do-create-project" />
+   <call_job job="list-projects"/>
+</job>
+
+<job id="list-apps-by-name" role="hidden">
+  
+  <call_job job="connect"/>
+   
+  <choose>
+    <when test="(f,not,(f,exists_file,(file,l)))">
+      <tp>reading application-list from github ...</tp>
+      <xrghub  
+              act="list" 
+              out="(file,l)"
+              path="xmlrobot-items/workspaces"
+              level="2"
+              flag="folderOnly"/>      
+    </when>
+    <otherwise>
+
+      <ti type="call_job" job="create-new-app-index" laxbel=" " 
+        explain="This is a reused Application-Index(e:s) to get the newest one click here ..."/>
+    </otherwise>
+  </choose>
+
+  <ti type="rec">
+    <ti>(f,html,b,open)App(f,html,b,close)</ti>
+    <ti>(f,html,b,open)Workspace(f,html,b,close)</ti>
+  </ti>
+               
+   <loop id="a" xml="(file,l)" xpath="dir/dir" sort="@name" ignore_case="@name">
+      <ti type="rec">
+      <ti type="call_job" job="see-app-2-download"
+        explain="(loop,a,@name)">
+        <prop id="app-path" x="(loop,a,@path)"/>
+        <prop id="app-name" x="(loop,a,@name)"/>
+      </ti>       
+      <ti>(loop,a,..,@name)</ti>
+      </ti>
+       
+   </loop>      
+ 
+           
+</job>
+
+<job id="List Java-Libraries?">  
+  <call_job job="browse-java?"/>
+</job>
+<job id="See Java-Compiles" role="expert" tip="Lists the java-compiles performed until now">
+  <call_job job="see-java-compilations"/>
+  <call_job job="do-create-project" />
+</job>
+<job id="List Java-Libraries" tip="Lists Java-Libraries for download and build" role="expert">
+<call_job job="do-create-project" />  
+  <call_job job="browse-java"/>
+</job>
+
+
+
+<job id="See Java-Compiles?" role="expert">
+  <ti>Lists the java-compiles performed until now</ti>
+</job>
+
+
+</jobs>

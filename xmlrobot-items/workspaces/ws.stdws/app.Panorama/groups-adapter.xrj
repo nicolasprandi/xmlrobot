@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+
+<jobs>
+<call_job job="prolog" />
+
+
+
+<job id="Use Standard Categories" role="hidden">
+  <call_job job="Read Definitions" />
+  
+  <tk type="msg" x="Going to use standard-categories again ..."/>
+  
+  <prop id="et_org_type">system</prop>
+  <call_job job="Write Definitions-OrgType"/>
+  
+  <choose>
+    <when test="(f,eq,life,(prop,et_scan_policy))">
+      <tk type="msg" x="We have to do the scanning again ..."/>
+   
+        <delete dir="(dir,work)"/>
+    
+      <call_job job="prolog" />        
+      <call_job job="execute"/>
+    </when>
+    <otherwise>
+      <call_job job="??"/>
+    </otherwise>
+  </choose>
+  
+  
+  
+</job>
+
+<job id="Edit Extension-Groups" docu="lang lang ists her" role="hidden">
+
+  <when test="(f,not,(f,file_exists,(file,extension-groups-edit)))">
+    <tk label="No Extension-Groups defined until now" type="sel" regex=".+" x="system" id="whattodo">
+      <sel label="Copy from system">system</sel>
+      <sel label="Create from scratch">empty</sel>
+    </tk>
+    
+    <choose>
+      <when test="(f,eq,system,(prop,whattodo))">
+        <copy file="(file,app-extension-groups-life)" tofile="(file,extension-groups-edit)"/>
+      </when>
+      <when test="(f,eq,empty,(prop,whattodo))">
+        <create_file out="(file,extension-groups-edit)">&lt;groups/&gt;</create_file>      
+      </when>
+    </choose>
+    
+    
+    <i label="Created:" type="file">Created: (file,extension-groups-edit)</i>
+  </when>
+  
+  <file id="eg-with">(file,extension-groups-edit)</file>
+  <call_job job="eg-editor-base"/>
+
+</job>
+
+
+
+
+
+
+
+</jobs>

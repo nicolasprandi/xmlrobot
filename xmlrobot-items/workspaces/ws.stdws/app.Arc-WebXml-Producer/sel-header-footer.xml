@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<sel>
+  <sel label="OFF">0</sel>
+  <sel label="YES_STANDARD">1</sel>
+  <sel label="YES_SERVICE_JOB">2</sel>
+  <sel label="YES_APP_JOB">3</sel>
+</sel>

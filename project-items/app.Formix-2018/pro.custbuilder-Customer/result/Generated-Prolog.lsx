@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+<!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+<file id="custsets">(dir,pro)custsets.xml</file>
+<when test="(f,not,(f,exists_file,(file,custsets)))">
+<create_file out="(file,custsets)">&lt;custsets/&gt;</create_file>
+<i>Created: (file,custsets)</i>
+</when>
+<prop id="custsets_offset">./</prop>
+<prop id="custsets_offset_label"/>
+<prop id="custsets_offset_new_key">//</prop>
+<prop id="custsets_sort_attribute"/>
+<prop id="custsets_sort_number"/>
+<prop id="custsets_sort_ignore_case"/>
+<prop id="custsets_sort_desc"/>
+<prop id="custsets_where"/>
+<prop id="custsets_return_job">custset-see-all</prop>
+</prolog>

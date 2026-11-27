@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><prolog>
+    <!--Copyright © 2015-2019 Nicolas Prandstaetter. All rights reserved.-->
+    <file id="urls">(dir,pro)urls.xml</file>
+    <when test="(f,not,(f,exists_file,(file,urls)))">
+        <create_file out="(file,urls)">&lt;urls/&gt;</create_file>
+        <i>Created: (file,urls)</i>
+    </when>
+    <prop id="urls_offset">./</prop>
+    <prop id="urls_offset_label"/>
+    <prop id="urls_offset_new_key">//</prop>
+    <prop id="urls_sort_attribute"/>
+    <prop id="urls_sort_number"/>
+    <prop id="urls_sort_ignore_case"/>
+    <prop id="urls_sort_desc"/>
+    <prop id="urls_where"/>
+    <prop id="urls_return_job">url-see-all</prop>
+</prolog>

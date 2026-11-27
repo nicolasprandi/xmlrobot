@@ -1,0 +1,210 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog" />
+
+
+
+
+<job id="server-start-stop" role="hidden" >
+  
+  <call_job job="server-check"/>
+  
+  <choose>
+    <when test="(prop,server-check-running)">
+      <tk label="Server is Running(e:s) Stop now?" id="stop" x="1" type="sel" flag="no_is_0">
+        <sel label="Stop the Server!">1</sel>
+        <sel label="Do Nothing">0</sel>
+      </tk>
+      <when test="(f,eq,1,(prop,stop))">
+        <call_job job="server-shutdown" />
+        
+        <ti type="call_job" job="server-report" explain="Get Current Server Status" label="Next:"/>
+      </when>
+    </when>
+    <otherwise>
+      <tk label="Server is Stopped(e:s) Start now?" id="start" x="1" type="sel" flag="no_is_0">
+        <sel label="Start the Server Now!">1</sel>
+        <sel label="Do Nothing">0</sel>
+      </tk>
+      <when test="(f,eq,1,(prop,start))">
+        <call_job job="server-startup" />
+        <ti type="call_job" job="server-report" explain="Get Current Server Status" label="Next:"/>
+        
+      </when>      
+    </otherwise>
+  </choose>
+  <ti type="call_service" job="sel_open_file" explain="Open WebBrowser" label="Next:">
+      <file id="with">http://localhost:(prop,port-http)</file>
+  </ti>
+  <ti type="web"  label="Web:">http://localhost:(prop,port-http)</ti>  
+</job>
+
+<job id="server-report" role="hidden">
+  <call_job job="server-check"/>
+  <ti label="Server">
+    <ti label="Current Status:" test="(prop,server-check-running)">(f,html,b,o)Running(f,html,b,c)</ti>
+    <ti label="Current Status:" test="(f,not,(prop,server-check-running))">(f,html,b,o)Stopped(f,html,b,c)</ti>
+  </ti>
+  <ti type="web"  label="Web:">http://localhost:(prop,port-http)</ti>
+
+  <ti type="call_job" label="Start(e:s)Stop:" job="server-startup" explain="Start Server"/>
+  <ti type="call_job" label=" "  job="server-shutdown" explain="Stop Server"/>
+
+  <!-- 
+  <ti type="call_job"  label="Webapps:" job="webapp-list" explain="List Applications in Tomcat"/>    -->
+  
+  <ti label="Installation">
+    <!--
+    <ti label="Computer:" test="(f,eq,(prop,computer),(prop,computer_setup))">(prop,computer_setup)(e:s) Its this computer</ti>
+    <ti label="Computer:" test="(f,not,(f,eq,(prop,computer),(prop,computer_setup)))">(prop,computer_setup)(e:s) Its NOT this computer</ti>
+    -->
+    <ti label="Tomcat Location:" type="dir">(dir,loc)</ti>
+    <ti label=" " type="call_service" job="Goto-Panorama">
+      <dir id="with">(dir,loc)</dir>
+    </ti>
+  </ti>
+  
+  <ti label="Known Sites" padding_top="6px">
+    <ti type="web" label="Manager">http://localhost:(prop,port-http)/manager/html/</ti>
+    <ti label=" ">Top: add role 'manager' to somebody</ti>
+  </ti>
+  
+
+</job>
+
+<job id="server-startup" pri="10" role="hidden">
+  <tp>Going to start tomcat-server ...</tp>
+  <call_job job="server-startup-internal" />
+  <call_job job="??"/>
+</job>
+
+<job id="server-shutdown"  pri="10" role="hidden">
+  <tp>Going to shutdown tomcat-server ...</tp>
+  <call_job job="server-shutdown-internal" />
+  <call_job job="??"/>
+</job>
+
+<job id="server-check" pri="10" role="hidden" >
+  <call_job job="brain-read" />
+  <!--
+  <dump flag="ti"/>
+  <throw>asfd</throw>
+  -->
+  <file id="check-result">(dir,temp)check-result.html</file>
+  <try_catch>
+    <try>
+      <ant level="info">
+        <get src="http://localhost:(prop,port-http)"
+             dest="(file,check-result)"
+             verbose="true"
+             maxtime="10"/>
+      </ant>
+      <!-- <ti type="file" label="Test-Result">(file,check-result)</ti>  -->
+      <prop id="server-check-running">1</prop>
+    </try>
+    <catch>
+      <prop id="server-check-running">0</prop>
+      
+    </catch>
+  </try_catch>
+
+  <need>(prop,server-check-running)</need>
+
+</job>
+<!-- Start and Stop for Mac -->
+<job id="server-startup-internal"  level="pro" role="hidden" os="mac">
+    <ant level="info">
+      <exec executable="/bin/sh">
+        <arg value="(file,sh_startup)"/>
+      </exec>
+    </ant>
+
+</job>
+
+<job id="server-shutdown-internal" level="pro" role="hidden" os="mac">
+    <ant level="info">
+      <exec executable="/bin/sh">
+        <arg value="(file,sh_shutdown)"/>
+      </exec>
+    </ant>
+</job>
+
+<!-- Start and Stop for linux -->
+<job id="server-startup-internal"  level="pro" role="hidden" os="linux">
+    <ant level="info">
+      <exec executable="/bin/sh">
+        <arg value="(file,sh_startup)"/>
+      </exec>
+    </ant>
+
+</job>
+
+<job id="server-shutdown-internal" level="pro" role="hidden" os="linux">
+    <ant level="info">
+      <exec executable="/bin/sh">
+        <arg value="(file,sh_shutdown)"/>
+      </exec>
+    </ant>
+</job>
+
+<job id="Tips" role="hidden">
+     <ti>
+Lupe windows suche
+"umgebungsvar"
+Umgebungsvariablen bearbeiten !
+Schirm: Systemeigenschaften/Erweitert
+Umgebungsvariablen !
+Benutzervariablen [Oben] Neu
+Systemvariablen [Unten] Neu
+1(e:c) JAVA_HOME
+2(e:c) C:\Program Files\Java\jdk1.8.0_121
+OK !
+OK !
+Im terminal mit "set" alle variablen anzeigen
+
+</ti>
+</job>
+
+<!-- Start and Stop for Windows -->
+<job id="server-startup-internal"  level="pro" role="hidden" os="win">
+  <ti label="Going to start">
+    <ti type="dir" x="(dir,bin)" label="in dir"/>
+    <ti type="file" x="(file,bat_startup)" label="calling script"/>
+  </ti>
+  <tk type="msg" x="Type: (f,name_of_file,(file,bat_startup)) ENTER"/>
+  <call_service
+    job="Panorama-Dir-Activity-TERMINAL">
+    <dir id="with" x="(dir,bin)"/>
+  </call_service>
+  <!-- 
+  <exe dir="(dir,bin)">
+    <arg>cmd</arg>
+    <arg>/k</arg>
+    <arg>(file,bat_startup)</arg>
+  </exe>      -->
+
+</job>
+
+<job id="server-shutdown-internal" level="pro" role="hidden" os="win">
+  <exe dir="(dir,bin)">
+    <arg>cmd</arg>
+    <arg>/k</arg>
+    <arg>(file,bat_shutdown)</arg>
+  </exe>
+</job>
+
+<job id="InternetTest" level="pro" role="dev">
+  <file id="out">(dir,pro)internettest.html</file>
+      <ant level="info">
+        <get src="http://derstandard.at/"
+             dest="(file,out)"
+             verbose="true"
+             maxtime="2"/>
+      </ant>
+      <ti type="file" >(file,out)</ti>
+</job>
+
+
+
+
+</jobs>

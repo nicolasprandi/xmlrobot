@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="dsa-write">
+<need>(prop,dsa_key) (prop,isAdd)</need>
+<need default="./">(prop,dsas_offset)</need>
+<spirit act="open" id="dsas_spirit_tc" xml="(file,dsas)"/>
+<when test="(prop,isAdd)">
+<choose>
+<when test="(f,ends_with,(prop,dsas_offset),/)">
+<prop id="offset2" x="(f,substring,(prop,dsas_offset),0,(f,sub,(f,len,(prop,dsas_offset)),1))"/>
+</when>
+<otherwise>
+<prop id="offset2" x="(prop,dsas_offset)"/>
+</otherwise>
+</choose>
+<spirit act="xml_update" how="insert_in" id="dsas_spirit_tc" where="(prop,offset2)">
+<inline attribute="with">&lt;dsa row="(prop,dsa_key)" /&gt;</inline>
+</spirit>
+<i>Added a new record</i>
+</when>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsas_spirit_tc" where="(prop,dsas_offset)dsa[@row='(prop,dsa_key)']" attribute="attributtyp" value="(f,vob,prop,dsa_attributtyp)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsas_spirit_tc" where="(prop,dsas_offset)dsa[@row='(prop,dsa_key)']" attribute="wert" value="(f,vob,prop,dsa_wert)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsas_spirit_tc" where="(prop,dsas_offset)dsa[@row='(prop,dsa_key)']" attribute="von" value="(f,vob,prop,dsa_von)"/>
+<spirit act="xml_update" how="set_attribute" flag="remove" id="dsas_spirit_tc" where="(prop,dsas_offset)dsa[@row='(prop,dsa_key)']" attribute="bis" value="(f,vob,prop,dsa_bis)"/>
+<spirit act="close" flag="save pretty" id="dsas_spirit_tc"/>
+</job>

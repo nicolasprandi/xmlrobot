@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="check-login"/>
+
+<call_job job="prolog" />
+
+<job id="???" >
+  <!--<ti>hallo ???</ti> --> 
+   
+  <choose>
+    <when test="(f,exists_file,(file,project-exists))">
+      <call_job job="??"/>
+    </when>
+    <otherwise>
+      <ti label="Welcome to (prop,app) s Application">
+        <ti type="call_job" job="Run" explain="Go &amp; do i ..."/>
+      </ti>
+      <ti_hr/>
+      <call_job job="?"/>
+    </otherwise>
+  </choose>    
+  
+</job>
+
+<job id="Impressum" role="hidden">
+<ti label="Impressum">
+  <ti label="Web-Seiten-Betreiber:">Nicolas Prandstaetter</ti>
+  <ti label="Adresse:">1010 Wien(e:s) Stubenring 22</ti>
+  <ti label="Kontakt:">hallodri [at] nicolas.at</ti>
+</ti>
+</job>
+
+<job id="choose-this-template" role="hidden">
+  <tk type="msg" msg_type="w">Going to overwrite project with (prop,rpath)
+Continue ...
+</tk>
+  <copy uri="(dir,app-material)sample_pros/(prop,rpath)" touri="(dir,pro)"/>
+  <ti>did copy (prop,rpath)</ti>
+  <ti_hr/>
+  <ti label="This is the new: (prop,rpath)" />
+  <call_job job="??"/>
+</job>
+<!-- <interpreter watch="1"/> -->
+<job id="choose-template" role="hidden">
+
+<file id="e" x="(dir,filetemp)e.xml" /> 
+<scan dir="(dir,app-material)sample_pros/" level_limit="1" out="(file,e)"/> 
+<loop id="e" xml="(file,e)" xpath="dir">
+ 
+
+<ti label="(loop,e,#i)" type="call_job" job="choose-this-template" explain="(loop,e,@rpath)">
+  <prop id="rpath">(loop,e,@rpath)</prop>
+</ti> 
+
+</loop>
+
+</job>
+
+<job id="??" >
+ 
+<!-- 
+ <try_catch>
+  <try>
+<call_job job="Aktuelles Rezept"/>
+</try>
+<catch>    
+<call_job job="Rezept Liste"/>    
+</catch>
+</try_catch>
+-->
+
+  <call_job job="Rezept Liste"/>
+  <ti_hr/>
+  <ti type="rec">
+  <ti type="call_job" job="Impressum" explain="Impressum"/>
+  
+  <ti type="call_job" job="choose-template" explain="Read other (prop,myclassPl)"/>
+  
+  </ti>
+
+    
+
+
+
+
+
+
+   <!-- 
+  <call_service job="project-info-final" flag="silent">
+    <prop id="from-app">(prop,app)</prop>
+    <prop id="from-pro">(prop,pro)</prop>
+  </call_service>    -->
+    
+</job>
+
+
+<job id="?">
+  <ti label="When to use Application (f,html,i,open)(prop,app)(f,html,i,close) :">
+    <ti xtype="ul">1(e:c) (f,html,bold,open)You want to do this(f,html,bold,close)</ti>
+	  <ti xtype="ul">2(e:c) (f,html,bold,open)You want to do that(f,html,bold,close)</ti>
+   <ti label="xxx:">alskdj aksdfj akdjf a
+asdfköa akdjf </ti> 
+    <ti label="More help online:" type="web" x="https://www.xmlrobot.net/data-generator-help"/>
+  </ti>
+  <ti_break/>
+  <ti_space height="5px" />
+  <ti label="Overview"/>
+  
+  <call_service job="app-info-final" flag="silent">
+    <prop id="aif-app" x="(prop,app)"/>
+  </call_service>
+   
+
+</job>
+
+
+</jobs>

@@ -1,0 +1,300 @@
+<?xml version="1.0" ?>
+<jobs>
+<call_job job="prolog" />
+  <!-- apps:
+  
+  <file id="joe-in-store">(file,gui-store)</file>  
+  <call_job job="go-joe-read"/>
+  
+  .... tk ....
+  
+    <prop id="joe-in-regex">in-.*</prop>
+  <file id="joe-in-store">(file,gui-store)</file>  
+  <call_job job="go-joe-write"/>
+  
+  -->
+<job id="king-kong-version" role="dev">
+  <ti>version 25.Mai 2014 !</ti>
+</job>
+
+<job id="kong" level="pro" role="hidden">
+  <!-- 
+  <fundef id="has_common_flag" 
+    class="at.nicolas.plugins.Has_Common_Flag" 
+    jar="(dir,app)flags_in_flags.jar" />       -->
+  <need default="dir|prop|file">(prop,kong_in_type_rex)</need>
+  <need default=".*">(prop,kong_in_id_rex)</need>
+  <need>(file,kong_data)</need>
+  <need>(prop,kong_groups_flags)</need>
+  <need default="0">(prop,kong_tips)</need>
+  <!-- 
+  <interpreter watch="1"/>
+  <ti type="dir" id="loc" label="Tomcat Home:">(dir,loc)</ti> 
+  <ti type="file" label="kong_data" x="(file,kong_data)"/>
+  -->
+  <spirit id="def" act="open" xml="(file,kong_data)" missing_strategy="empty"/>
+  <prop id="last-ti-type" x="???"/>
+  <loop_xml 
+      act="open"                                    
+      id="def" 
+      spirit="def" 
+      xpath="var[contains(e:o)@groups(e:s)(f,xpath_string,(prop,kong_groups_flags))(e:c)]"
+      sort="@ti_type @label"/> 
+  <loop 
+      id="while-def" 
+      while="()(f,loop_xml,def,has_next?)()">
+      <loop_xml act="next" id="def" />
+      <when test="(f,not,(f,eq_text,(prop,last-ti-type),(f,loop_xml,def,@ti_type)))">
+         <prop id="last-ti-type" x="(f,loop_xml,def,@ti_type)"/>
+         <ti label="(prop,last-ti-type)" />
+         
+      </when>
+      
+      <prop id="xt" x="(f,loop_xml,def,@x)"/>
+      <unescape type="prop" id="xt"/>
+      <echo id="xt" type="prop" label="Going to translate"/>
+      <translate type="prop" id="xt"/>
+      <choose>
+        <when test="(prop,kong_tips)">
+          <ti label="(f,loop_xml,def,@label)" type="rec" xkey="(f,loop_xml,def,@id)">
+              <ti type="(f,loop_xml,def,@ti_type)" x="(prop,xt)"/>
+              <ti type="text" x="(f,replace,(f,loop_xml,def,@tip),++++,; )" flag="wrap"/>
+          </ti>
+        </when>
+        <otherwise>
+          <ti 
+            label="(f,loop_xml,def,@label)" 
+            xkey="(f,replace,(f,loop_xml,def,@tip),++++,; )"
+            type="(f,loop_xml,def,@ti_type)" 
+            x="(prop,xt)"/>        
+        </otherwise>
+      </choose>
+      
+  </loop>  
+  <loop_xml 
+      act="close" 
+      id="def"/>    
+      
+  <when test="(f,not,(prop,kong_tips))">
+    <ti_hr/>
+    <ti type="call_job" 
+      job="kong"
+      explain="See that with more tips">
+      <prop id="kong_in_type_rex">(prop,kong_in_type_rex)</prop>
+      <prop id="kong_in_id_rex">(prop,kong_in_id_rex)</prop>
+      <file id="kong_data">(file,kong_data)</file>            
+      <prop id="kong_groups_flags">(prop,kong_groups_flags)</prop>        
+      <prop id="kong_tips">1</prop>   
+    </ti>
+
+  </when>      
+</job>  
+
+<job id="king" level="pro" role="hidden">
+  <need>(file,king_in_execl)</need>
+  <need>(prop,king_in_sheet)</need>
+  <need>(file,king_result)</need>
+  <!-- <need>(file,king_result_prolog</need> -->
+
+  <ti type="file" id="king_in_execl" label="king is going to read:"/>
+  
+    <excel_table 
+        excel="(file,king_in_execl)" 
+        sheet="(prop,king_in_sheet)" 
+        out="(file,king_result)" 
+        count_base="1" 
+        style="short" 
+        root_name="vars" 
+        row_name="var" />  
+    <ti type="file" label="craeted: kingkongindex:">(file,king_result)</ti>   
+
+    <file id="temp1">(dir,temp)kk-temp1.txt</file>
+    <file id="temp2">(dir,temp)kk-temp2.txt</file>
+    <spirit id="kk" act="open" xml="(file,king_result)"/>
+    <loop_xml id="kk" spirit="kk" act="open" xpath="var" missing_strategy="empty"/>
+    <loop id="w" while="()(f,loop_xml,kk,has_next?)()">
+      <loop_xml id="kk" act="next"/>
+      <ti test="0">(loop,w,#i)</ti>
+      <prop id="ctip">(f,loop_xml,kk,@tip)</prop>
+      <ti test="0">(prop,ctip)</ti>
+      <when test="(f,loop_xml,kk,exists?,@tip)">
+        <create_file out="(file,temp1)">(f,loop_xml,kk,@tip)++++</create_file>
+        <loop id="w2" file="(file,temp1)" regex="\+\+\+\+">
+          <prop id="line">(loop,w2,$before)</prop>
+
+          <spirit id="kk" act="xml_update" 
+                  how="insert_in" 
+                  where_is_loop_xml="kk">
+                  <inline attribute="with"><![CDATA[<?xml version="1.0" encoding="UTF-8"?><tip>(x,(prop,line))</tip>]]></inline>
+                  
+          </spirit>
+        </loop>
+      
+      </when>
+      
+    </loop>
+    <loop_xml id="kk" act="close"/>
+    <spirit id="kk" act="close" flag="save"/>
+    
+    
+    <when test="(f,has,file,king_result_prolog)">    
+      <xslt
+      xml="(file,king_result)"
+      xsl="(dir,app)kings-script.xsl"
+      out="(file,king_result_prolog)">
+        <params>ti_test='0'</params>
+      </xslt>
+      
+  
+      <ti type="file">(file,king_result_prolog)</ti>
+      <include test="1" file="(file,king_result_prolog)"/>
+    </when>
+     
+</job>
+
+  <job id="go-joe-read" role="hidden">
+    <try_catch><try>
+    <need>(file,joe-in-store)</need>
+    <when test="(f,file_exists,(file,joe-in-store))">
+      <include file="(file,joe-in-store)"/>
+    </when>
+    </try><catch>
+    <tp>Some problem in reading gui-store: (file,joe-in-store)</tp>
+    </catch></try_catch>
+  </job>
+  
+  <job id="go-joe-write" role="hidden">
+    <dump vars="0"/>
+    <need>(prop,joe-in-regex) (file,joe-in-store)</need>
+    <file id="gj-ask">(dir,systemp)joe-ask.xml</file>
+    <dump vars="0"/>
+    <ask what="vars" out="(file,gj-ask)" style="natural"/>
+    <ti type="file" x="(file,gj-ask)" test="0"/> 
+    <print act="open" id="jp" out="(file,joe-in-store)"/>
+    <print act="println" id="jp">&lt;?xml version="1.0" ?&gt;&lt;steps&gt;</print>
+    <loop id="j" xml="(file,gj-ask)" xpath="vars/var">
+      <prop id="do-this">1</prop>
+      <when test="(f,and,(f,eq,dir,(loop,j,@type)),(f,eq,(prop,fs),(loop,j)))">
+        <prop id="do-this">0</prop>
+      </when>
+      <when test="(f,matches_regex,(loop,j,@id),(prop,joe-in-regex))">
+      <when test="(prop,do-this)">
+       <ti test="0">(loop,j,@type),(loop,j,@id) = (loop,j)</ti>
+       
+       <print act="print" id="jp" test="(f,eq,prop,(loop,j,@type))">&lt;prop </print>
+       <print act="print" id="jp" test="(f,eq,file,(loop,j,@type))">&lt;file </print>
+       <print act="print" id="jp" test="(f,eq,dir,(loop,j,@type))">&lt;dir </print>
+
+       <print act="print" id="jp">id=&quot;(loop,j,@id)&quot;&gt;</print>
+       <choose>
+        <when test="(f,eq,,(loop,j))">
+          
+        </when>
+        <otherwise>
+          <choose>
+            <when test="(f,eq,prop,(loop,j,@type))">
+             <print act="print" id="jp">(x,(loop,j))</print>
+            </when>
+            <when test="(f,eq,file,(loop,j,@type))">
+             <dir id="jack_in">(f,dir_of_file,(loop,j))</dir>
+             <call_job job="jack"/>
+             <print act="print" id="jp">(x,(prop,jack_out)(f,name_of_file,(loop,j)))</print>
+            </when>
+            <when test="(f,eq,dir,(loop,j,@type))">
+             <dir id="jack_in">(loop,j)</dir>
+             <call_job job="jack"/>
+             <print act="print" id="jp">(x,(prop,jack_out))</print>
+            </when>                  
+          </choose>          
+        </otherwise>
+       </choose>
+
+       
+       <print act="print" id="jp">&lt;</print>
+       <print act="println" id="jp" test="(f,eq,prop,(loop,j,@type))">/prop&gt;</print>
+       <print act="println" id="jp" test="(f,eq,file,(loop,j,@type))">/file&gt;</print>
+       <print act="println" id="jp" test="(f,eq,dir,(loop,j,@type))">/dir&gt;</print>
+
+       </when>
+      </when>
+    </loop>
+    <print act="println" id="jp">&lt;/steps&gt;</print>
+    <print act="close" id="jp"/>
+    <ti_break/>
+    <ti_hr/>
+    <ti label="creator" type="file" test="0">(file,joe-in-store)</ti>
+  </job>
+
+
+<job id="kong-bis-2018-09-21" level="pro" role="hidden">
+  <!-- 
+  <fundef id="has_common_flag" 
+    class="at.nicolas.plugins.Has_Common_Flag" 
+    jar="(dir,app)flags_in_flags.jar" />       -->
+  <need>(prop,kong_in_type_rex)</need>
+  <need>(prop,kong_in_id_rex)</need>
+  <need>(file,kingkong_index)</need>
+  <need>(prop,kingkong_groups_flags)</need>
+  <interpreter watch="1"/>
+  <ti type="file" label="kingkong_index" x="(file,kingkong_index)"/>
+  
+  <file id="tempvars">(dir,temp)kk-sdkjf.xml</file>
+  <ti type="file" test="0" label="kingkong-index">(file,kingkong_index)</ti>
+  <spirit id="index" act="open" xml="(file,kingkong_index)"/>
+
+  <ask out="(file,tempvars)" what="vars" style="natural"/>
+  <ti type="file" test="0" label="asked vars:">(file,tempvars)</ti>
+  <ti label="List of '(prop,kingkong_groups_flags)' Server Items"/>
+  <!-- 
+    <ti type="dir" id="loc" label="Tomcat Home:">(dir,loc)</ti>
+  </ti>
+  -->
+  
+  <!-- <fundef id="flags_in_flags" class="at.nicolas.plugins.FlagsinFlags" jar="(dir,app)flags_in_flags.jar"/>
+  <prop id="xxx">(f,flags_in_flags,xxx,xxx)</prop> -->
+
+  <prop id="last_type">x</prop>
+
+  <loop id="var" xml="(file,tempvars)" xpath="vars/var">
+      <ti test="0">loop (loop,var,@type) (loop,var,@id) </ti>
+
+      <when test88="1" test="(f,matches_regex,(loop,var,@id),(prop,kong_in_id_rex))">
+      <ti test="0">survived id rex</ti>
+      <when test="(f,matches_regex,(loop,var,@type),(prop,kong_in_type_rex))">
+        <ti test="0">survived type rex</ti>
+        <prop id="grp">(f,try,()(f,spirit,index,var[@id='(loop,var,@id)'],@groups))(),,)</prop>
+        <prop id="label">(f,try,()(f,spirit,index,var[@id='(loop,var,@id)'],@label))(),nolabel,nolabel)</prop>
+        <prop id="ti_type">(f,try,()(f,spirit,index,var[@id='(loop,var,@id)'],@ti_type))(),text,text)</prop>
+        <prop id="tip">(f,try,()(f,spirit,index,var[@id='(loop,var,@id)'],@tip))(),,)</prop>
+        <prop id="more_job">(f,try,()(f,spirit,index,var[@id='(loop,var,@id)'],@more_job))(),,)</prop>
+        <prop id="more_job_explain">(f,try,()(f,spirit,index,var[@id='(loop,var,@id)'],@more_job_explain))(),,)</prop>
+        <!-- <when test="(f,has_flag,(prop,grp),(prop,kingkong_groups_flags))"> -->
+        <!-- <tk type="msg" x="(prop,kingkong_groups_flags) (prop,grp)" />   -->
+        <when test="(f,has_flag,(prop,kingkong_groups_flags),(prop,grp))">
+        
+          <prop id="this_type">(loop,var,@type)</prop>
+          <when test="(f,not,(f,eq,(prop,last_type),(prop,this_type)))">
+            <!-- change of types -->
+            <prop id="last_type">(prop,this_type)</prop>
+            <ti x="(f,html,b,o)(prop,last_type)s ...(f,html,b,c)" y=" "/> 
+          </when>
+              
+          <ti type="(prop,ti_type)" flaxg="label_right" label="(f,html,b,o)(prop,label):(f,html,b,c)" key="((prop,this_type),(loop,var,@id))">(loop,var)</ti>
+          <when test="(f,gt,(f,length,(prop,tip)),0)">
+            <loop id="tips" spirit="index" xpath="var[@id='(loop,var,@id)']/tip">
+              <ti label=" " type="ul" >(loop,tips)</ti>
+            </loop>          
+          </when>
+          <ti test="(f,gt,(f,length,(prop,more_job)),0)" label=" " type="call_job" job="(prop,more_job)" explain="(prop,more_job_explain)"/>
+          <ti_hr style="2"/>
+        </when>
+
+        
+    
+      </when>
+      </when>
+  </loop>
+
+  <spirit id="index" act="close"/>
+</job>  
+</jobs>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="ephase-see-more">
+<need>(prop,ephase_key)</need>
+<call_job job="ephase-read"/>
+<try_catch>
+<try>
+<call_job job="hook_ephasedetails1"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: ephase-details: 1.0">
+<ti> hook_job=hook_ephasedetails1 hook=1 page=details station=0 object=ephase</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+<prop x="print_only print_with_tips print_all_fields" id="ephasen_tk_control"/>
+<prop id="label" x="(f,html,bold,open)(f,text,cut_nice,(f,tk_sel_translate,(prop,ephase_zut_key),(file,akt-zutatenliste-komponente)),30).(f,text,cut_nice,(prop,ephase_besch),40)(f,html,bold,close)(f,when,(f,has,(prop,ephasen_offset_label)), - (prop,ephasen_offset_label),)"/>
+<call_job job="ephase-tk"/>
+<ti_hr/>
+<ti type="rec" test="(f,role,business)">
+<ti type="call_job" explain="[ Edit ]" job="ephase-edit">
+<prop id="ephase_key">(prop,ephase_key)</prop>
+<file id="ephasen">(file,ephasen)</file>
+<prop id="ephasen_offset">(prop,ephasen_offset)</prop>
+<prop id="ephasen_offset_label">(prop,ephasen_offset_label)</prop>
+<prop id="ephasen_offset_new_key">(prop,ephasen_offset_new_key)</prop>
+<prop id="ephasen_sort_attribute">(prop,ephasen_sort_attribute)</prop>
+<prop id="ephasen_sort_number">(prop,ephasen_sort_number)</prop>
+<prop id="ephasen_where">(prop,ephasen_where)</prop>
+<prop id="ephasen_return_job">(prop,ephasen_return_job)</prop>
+<file id="rezs">(file,rezs)</file>
+<prop id="rezs_offset">(prop,rezs_offset)</prop>
+<prop id="rezs_offset_label">(prop,rezs_offset_label)</prop>
+<prop id="rezs_offset_new_key">(prop,rezs_offset_new_key)</prop>
+<prop id="rezs_sort_attribute">(prop,rezs_sort_attribute)</prop>
+<prop id="rezs_sort_number">(prop,rezs_sort_number)</prop>
+<prop id="rezs_where">(prop,rezs_where)</prop>
+<prop id="rezs_return_job">(prop,rezs_return_job)</prop>
+<prop id="rez_key">(prop,rez_key)</prop>
+<file id="komps">(file,komps)</file>
+<prop id="komps_offset">(prop,komps_offset)</prop>
+<prop id="komps_offset_label">(prop,komps_offset_label)</prop>
+<prop id="komps_offset_new_key">(prop,komps_offset_new_key)</prop>
+<prop id="komps_sort_attribute">(prop,komps_sort_attribute)</prop>
+<prop id="komps_sort_number">(prop,komps_sort_number)</prop>
+<prop id="komps_where">(prop,komps_where)</prop>
+<prop id="komps_return_job">(prop,komps_return_job)</prop>
+<prop id="komp_key">(prop,komp_key)</prop>
+</ti>
+</ti>
+</job>

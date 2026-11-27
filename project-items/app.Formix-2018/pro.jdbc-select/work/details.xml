@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="select-see">
+<need>(prop,select_key)</need>
+<call_job job="select-read"/>
+<prop x="print print_only" id="selects_tk_control"/>
+<prop id="label" x="Select: (f,html,bold,open)(f,text,cut_nice,(prop,select_sql),50)(f,html,bold,close)(f,when,(f,has,(prop,selects_offset_label)), - (prop,selects_offset_label),)"/>
+<call_job job="select-tk"/>
+<ti_space height="3px"/>
+<ti type="rec" label=" ">
+<ti type="call_job" explain="Edit" job="select-edit">
+<prop id="select_key">(prop,select_key)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+<ti type="call_job" explain="[ ? ]" job="select-see-more">
+<prop id="select_key">(prop,select_key)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+</ti>
+<ti isFromAction="1" label=" " type="call_job" page="details" explain="Run Sql ..." job="event_select_run">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">run</prop>
+<prop page="details" id="select_key">(prop,select_key)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+<ti isFromAction="1" label=" " type="call_job" page="details" explain="See Result Files..." job="event_select_see">
+<prop id="greetings_from_page">details</prop>
+<prop id="greetings_from_action">see</prop>
+<prop page="details" id="select_key">(prop,select_key)</prop>
+<file id="selects">(file,selects)</file>
+<prop id="selects_offset">(prop,selects_offset)</prop>
+<prop id="selects_offset_label">(prop,selects_offset_label)</prop>
+<prop id="selects_offset_new_key">(prop,selects_offset_new_key)</prop>
+<prop id="selects_sort_attribute">(prop,selects_sort_attribute)</prop>
+<prop id="selects_sort_number">(prop,selects_sort_number)</prop>
+<prop id="selects_where">(prop,selects_where)</prop>
+<prop id="selects_return_job">(prop,selects_return_job)</prop>
+</ti>
+<try_catch>
+<try>
+<call_job job="event_select_ende"/>
+</try>
+<catch>
+<ti label="Hook must be implemented: select-details: end.0">
+<ti> hook_job=event_select_ende hook=end page=details station=0 object=select</ti>
+</ti>
+<tk type="msg" x="You have to implement the hook!"/>
+<throw_again/>
+</catch>
+</try_catch>
+</job>

@@ -1,0 +1,1100 @@
+<?xml version="1.0" ?>   
+<!-- Copyright © 2015-2018 Nicolas Prandstaetter. All rights reserved. -->
+<jobs>
+<call_job job="prolog" />
+<job id="Download Material" pri="10" tip="Sub-Step #4 of Generate XmlRobot" role="expert">
+
+  <call_job job="connect"/>
+  <mkdir dir="(dir,material)"/>
+  <tp>preparing ...</tp>
+  
+  
+  <ti type="dir" x="(dir,material)" label="Copy material to:"/>
+  
+  <tp>auxilary-items/xmlrobot-legals</tp>
+  <call_job job="caf" >
+    <prop id="caf-path" x="auxilary-items/xmlrobot-legals"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)xmlrobot-legals"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>   
+  
+  <tp>auxilary-items/resources-default-takeoffs</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="auxilary-items/resources-default-takeoffs"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)resources-default-takeoffs"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>    
+
+  <tp>auxilary-items/manifest</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="auxilary-items/manifest"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)manifest"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>  
+    
+  <tp>auxilary-items/3rd-party-licenses</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="auxilary-items/3rd-party-licenses"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)3rd-party-licenses"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>    
+  <!-- 
+  <tp>auxilary-items/environmental-runners</tp>
+  <call_job job="caf" >
+    <prop id="caf-path" x="auxilary-items/environmental-runners"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)environmental-runners"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>    
+  -->
+  
+  
+  <call_job job="do-retry"/>  
+</job>
+
+
+<job id="Clear TempXrMaterial" pri="10" tip="Clear temporary material" role="hidden">
+  <dir id="ress" x="(dir,ultimo)resources"/>
+  <choose>
+    <when test="(f,exists_dir,(dir,ress))">
+      <ti type="dir" label="Ress" x="(dir,ress)"/>
+      <tk type="msg">Continue with deleting ressources
+at
+(dir,ress)
+      </tk>
+      <delete dir="(dir,ress)service_apps"/>
+      <delete dir="(dir,ress)services"/>
+      <mkdir dir="(dir,ress)service_apps"/>
+      <mkdir dir="(dir,ress)services"/>      
+      
+    </when>
+    <otherwise>
+      <ti>does not exist (dir,ress)</ti>
+    </otherwise>
+  </choose>
+</job>
+<job id="Finish XmlRobot?" pri="10" tip="Sub-Step #5 of Generate XmlRobot" role="expert">
+  <call_job job="tk_finish_print_values_tips"/>
+</job>
+
+<job id="Finish XmlRobot" pri="10" tip="Sub-Step #5 of Generate XmlRobot" role="expert">
+  <ti label="MATERIAL" x="(dir,material)" type="dir"/>
+  <mkdir dir="(dir,ultimo)"/>
+  <ti type="dir" label="Preparing in ultimo:">(dir,ultimo)</ti>
+  <mkdir dir="(dir,work)"/>
+  <call_job job="connect" test="0"/>
+  <call_job job="tk_finish_edit"/>
+  
+  <dir id="ress" x="(dir,ultimo)resources"/>
+  
+  <prop id="ant-lib-name">ant-lib.jar</prop>
+  <file id="ant-lib-dest">(dir,ress)libs/(prop,ant-lib-name)</file>
+  
+  <prop id="poi-lib-name">poi-lib.jar</prop>
+  <file id="poi-lib-dest">(dir,ress)libs/(prop,poi-lib-name)</file> 
+    
+  <mkdir dir="(dir,ress)"/>
+  <ti type="dir" label="Preparing in ress:">(dir,ress)</ti>
+  
+  <!-- 
+  ant geht nach (file,ant-lib-dest) / ultimo
+  poi geht nach (file,poi-lib-dest) / ultimo
+  -->
+  <when test="(prop,finish_rebuild_libs)">
+    <delete content_of_dir="(dir,ress)"/>
+    
+    <delete file="(file,ant-lib-dest)" flag="catch"/>
+    <throw test="(f,exists_file,(file,ant-lib-dest))">Could not file (file,ant-lib-dest)</throw>    
+    
+    <choose>
+      <when test="(f,exists_dir,(dir,pro)compile-adapter-ant/)">
+        <tp>Copy (prop,ant-lib-name)</tp>
+        <!-- ant vorhanden -->      
+    
+        <dir id="unzipped-compile" x="(dir,pro)compile-adapter-ant/unzipped-compile"/>
+        <delete dir="(dir,unzipped-compile)" flag="catch"/>
+        
+        <throw test="(f,exists_dir,(dir,unzipped-compile))">Could not delete (dir,unzipped-compile)</throw>
+        <mkdir dir="(dir,unzipped-compile)"/>
+    
+        <call_job job="tk_jvcp_read" test="(f,not,(f,has,prop,jvcp_jar_unzip_by_ant))"/>      
+        <tp>unzipping ant-adapter ... by (f,when,(prop,jvcp_jar_unzip_by_ant),ant,vfs) ...</tp>                          
+                                   
+        <choose>
+          <when test="(prop,jvcp_jar_unzip_by_ant)">
+            <ant>
+              <unzip 
+                src="(f,file,classic,(dir,pro)compile-adapter-ant/3rd-party-bin.jar)" 
+                dest="(f,dir,classic,(dir,unzipped-compile))"/>
+                
+              <unzip 
+                src="(f,file,classic,(dir,pro)compile-adapter-ant/compiled-bin.jar)" 
+                dest="(f,dir,classic,(dir,unzipped-compile))"/>
+                        
+            </ant>
+          </when>
+          <otherwise>               
+              <unzip file="(dir,pro)compile-adapter-ant/3rd-party-bin.jar"
+                     todir="(dir,unzipped-compile)"/>     
+              <unzip file="(dir,pro)compile-adapter-ant/compiled-bin.jar"
+                     todir="(dir,unzipped-compile)"/>                                   
+          </otherwise>
+        </choose>   
+        <tp>zipping ant (f,file,classic,(file,ant-lib-dest))</tp>
+        <ant level="debug">
+          
+          <zip 
+            destfile="(f,file,classic,(file,ant-lib-dest))">
+            <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>      
+          </zip>  
+        </ant>
+        <ti label="Created" type="file" x="(file,ant-lib-dest)"/>       
+      </when>
+      <otherwise>
+        <ti label="Cleared Ant" x="No ant-lib included."/>
+      </otherwise>
+    </choose>
+    
+    <!-- poi -->
+    
+    <delete file="(file,poi-lib-dest)" flag="catch"/>
+    <throw test="(f,exists_file,(file,poi-lib-dest))">Could not file (file,poi-lib-dest)</throw>     
+    
+    <choose>
+      <when test="(f,exists_dir,(dir,pro)compile-adapter-poi/)">
+        <tp>Copy poi (prop,poi-lib-name)</tp>    
+            
+        <copy file="(dir,pro)compile-adapter-poi/3rd-party-bin.jar" 
+              tofile="(file,poi-lib-dest)"/> 
+              
+        <ti label="Created" type="file" x="(file,poi-lib-dest)"/>    
+      </when>
+      <otherwise>
+        <ti label="Cleared Poi" x="No poi-lib included."/>
+      </otherwise>
+    </choose>              
+
+     
+  </when>
+             
+  <!-- 3rd-party-licences sollen aus templetto genommen werden -->
+  <tp>Copy 3rd-party-licenses</tp> 
+  <ant level="info">
+   <copy 
+              todir="(f,dir,classic,(dir,ress)third-party-licenses)" 
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)3rd-party-licenses)"  
+             defaultexcludes="false"/>
+   </copy>
+  </ant>    
+ 
+ <!-- das soll auch alles aus templetto genommen werden -->
+  <ant level="info">
+   <copy 
+              todir="(f,dir,classic,(dir,ultimo)META-INF)" 
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)3rd-party-licenses)"  
+             defaultexcludes="false"/>
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)xmlrobot-legals)"  
+             defaultexcludes="false"/>     
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)manifest)"  
+             defaultexcludes="false"/>                        
+   </copy>
+  </ant>    
+       
+  <!-- auxiliray items from github -->
+  <ant >
+   <copy      todir="(f,dir,classic,(dir,ress))"
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)resources-default-takeoffs)"/>
+   </copy>
+  </ant>        
+
+  
+  <!-- <ti label="Created 3rd-party-licenses" type="dir" x="(dir,ress)third-party-licenses"/> -->
+  <ti label="ress" type="dir" x="(dir,ress)"/>
+      <delete dir="(dir,ress)service_apps" test="(f,exists_dir,(dir,ress)service_apps)"/>
+      <delete dir="(dir,ress)services" test="(f,exists_dir,(dir,ress)services)"/>  
+  <mkdir dir="(dir,ress)services"/>
+  <mkdir dir="(dir,ress)service_apps"/> 
+  <when test="(f,has,dir,finish_delivery_customer)">
+    <when test="(f,exists_dir,(dir,finish_delivery_customer)system/services)">
+      <ant xlevel="dexbug">
+       <copy      todir="(f,dir,classic,(dir,ress)services)"
+                  overwrite="true" 
+                  preservelastmodified="true">
+        <fileset
+                 dir="(f,dir,classic,(dir,finish_delivery_customer)system/services)"/>
+       </copy>
+      </ant> 
+    </when>
+
+    <when test="(f,exists_dir,(dir,finish_delivery_customer)system/service_apps)">
+      <ant xlevel="debug">
+       <copy      todir="(f,dir,classic,(dir,ress)service_apps)"
+                  overwrite="true" 
+                  preservelastmodified="true">
+        <fileset
+                 dir="(f,dir,classic,(dir,finish_delivery_customer)system/service_apps)"/>
+       </copy>
+      </ant>     
+    </when>
+  </when>
+  
+  <!--  zipping XmlRobot.jar 
+  dieses unzipp und zip brauchen wir nicht 
+  wir nehmen das aus
+  (dir,pro)compile-xmlrobot-core/bin
+  --> 
+  <!-- 
+   <tp>unzipping core</tp>
+  <dir id="unzipped-compile" x="(dir,pro)compile-xmlrobot-core/unzipped-compile"/>
+  <delete dir="(dir,unzipped-compile)" test="(f,exists_dir,(dir,unzipped-compile))"/>
+  <mkdir dir="(dir,unzipped-compile)"/>
+  <ant level="debug">
+    <unzip src="(f,file,classic,(dir,pro)compile-xmlrobot-core/compiled-bin.jar)"
+           dest="(f,dir,classic,(dir,unzipped-compile))"/>
+  </ant>
+  -->
+   <tp>unzipping core</tp>
+  <dir id="unzipped-compile" x="(dir,pro)compile-xmlrobot-core/unzipped-compile"/>
+  <delete dir="(dir,unzipped-compile)" test="(f,exists_dir,(dir,unzipped-compile))"/>
+  <mkdir dir="(dir,unzipped-compile)"/>
+  <ti label="Doing Unzip of compiled core"/>
+    <ti type="file" label="From:">(dir,pro)compile-xmlrobot-core/compiled-bin.jar</ti>
+  <ant level="debug">
+    <unzip src="(f,file,classic,(dir,pro)compile-xmlrobot-core/compiled-bin.jar)"
+           dest="(f,dir,classic,(dir,unzipped-compile))"/>
+  </ant>
+    <ti type="dir" label="To:">(dir,unzipped-compile)</ti>
+    
+  <!-- das third kommt aus templetto 
+  <tp>unzipping core third</tp>
+  <dir id="unzipped-drittes" x="(dir,pro)compile-xmlrobot-core/unzipped-drittes"/>
+  <choose>
+    <when test="(f,not,(f,exists_dir,(dir,unzipped-drittes)))">
+     <ti>core 3rd does not exists and will be creted</ti>
+     <mkdir dir="(dir,unzipped-drittes)"/>
+     <ant level="debug">
+       <unzip src="(f,file,classic,(dir,pro)compile-xmlrobot-core/3rd-party-bin.jar)"
+             dest="(f,dir,classic,(dir,unzipped-drittes))"/>
+      </ant>
+    </when>
+    <otherwise>
+      <ti>core 3rd does exist already</ti>
+    </otherwise>
+  </choose>
+  -->
+    
+  <!--
+    <unzip file="(dir,pro)compile-xmlrobot-core/compiled-bin.jar"
+         todir="(dir,unzipped-compile)"/>
+  -->
+  <!-- 
+  <ti label="did unzip core-compile"/>
+  <ti label="From" x="(dir,pro)compile-xmlrobot-core/compiled-bin.jar" type="file"/>
+  <ti label="to" x="(dir,unzipped-compile)" type="dir"/>
+  -->
+  
+  <choose>
+    <when test="(f,has,dir,finish_delivery_customer)">
+      <dir id="ultimo3">(dir,finish_delivery_customer)</dir>
+    </when>
+    <otherwise>
+      <dir id="ultimo3">(dir,ultimo2)</dir>
+    </otherwise>
+  </choose>
+           
+  <mkdir dir="(dir,ultimo3)"/>
+  
+  <choose>
+    <when test="(f,exists_file,(file,prodfn))">
+      <prop id="produktname">(f,file_content,(file,prodfn))</prop>
+    </when>
+    <otherwise>
+      <prop id="produktname">DasAllheilmittel</prop>
+    </otherwise>
+  </choose>
+  
+  <file id="finalo">(dir,ultimo3)(prop,produktname).jar</file>
+  <tp>zipping (prop,produktname).jar</tp>
+  <ti label="Composing (prop,produktname).jar"/>
+  
+  <ti type="dir" label="from ultimo" x="(dir,ultimo)"/>
+
+  <!-- <ti type="dir" label="from compiled" x="(dir,unzipped-compile)"/>
+  <ti type="dir" label="from dritte" x="(dir,unzipped-drittes)"/>      -->
+  <ti type="file" label="to" x="(file,finalo)"/>
+  <delete file="(file,finalo)" test="(f,exists_file,(file,finalo))" />
+  <throw test="(f,exists_file,(file,finalo))">Could not delete resulting file. (file,finalo)</throw>
+  <prop id="zip-msg">
+  zip  
+  to     (f,file,classic,(file,finalo))
+  from   (f,dir,classic,(dir,ultimo))
+  </prop> <!-- from   (f,dir,classic,(dir,unzipped-drittes))
+  from   (f,dir,classic,(dir,unzipped-compile)) -->
+  
+  <ti label="Create final jar"/>
+  <ti label="From: ultimo" type="dir">(dir,ultimo)</ti>
+  
+  <ti label="From: xmlrobot" type="dir">(dir,unzipped-compile)</ti>
+  
+  <ti label="From: templetto" type="dir" test="(f,has,(dir,finish_templetto))">(dir,finish_templetto)</ti>
+  
+  <ti label="Fo: finalo" type="file">(file,finalo)</ti>
+    <!-- >
+    <zip 
+      destfile="(f,file,classic,(file,finalo))">
+      <fileset dir="(f,dir,classic,(dir,ultimo))"/>
+       <fileset dir="(f,dir,classic,(dir,unzipped-drittes))"/>   
+       <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>     
+      <fileset dir="(f,dir,classic,(dir,pro)compile-xmlrobot-core/bin)"/>
+    </zip>               -->
+    
+    <choose>
+      <when test="(f,has,(dir,finish_templetto))">
+      
+        <ant level="debug">
+          
+          <zip 
+            destfile="(f,file,classic,(file,finalo))">
+            <fileset dir="(f,dir,classic,(dir,ultimo))"/>  
+            <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>    
+            <fileset dir="(f,dir,classic,(dir,finish_templetto))"/> 
+          </zip>  
+        </ant>       
+      </when>
+      <otherwise>
+        <ant level="debug">
+          
+          <zip 
+            destfile="(f,file,classic,(file,finalo))">
+            <fileset dir="(f,dir,classic,(dir,ultimo))"/>  
+            <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>     
+          </zip>  
+        </ant>  
+      </otherwise>
+     </choose>  
+      
+  <!-- 
+  <ant level="debug">
+    <zip 
+      destfile="(f,file,classic,(file,finalo))">
+      <fileset dir="(f,dir,classic,(dir,ultimo))"/>
+      <fileset dir="(f,dir,classic,(dir,unzipped-drittes))"/>
+      <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>   
+    </zip>  
+  </ant>
+  -->    
+ 
+  <create_file out="(dir,ultimo3)(prop,produktname)-Win.bat">java -Xms512m -Xmx1024m -jar (prop,produktname).jar</create_file>
+  <create_file out="(dir,ultimo3)(prop,produktname)-Linux.sh">java -Xms512m -Xmx1024m -jar (prop,produktname).jar</create_file>
+  <!-- 
+  <ant level="debug">                                    
+   <copy      todir="(f,dir,classic,(dir,ultimo3))"
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)environmental-runners)"/>
+   </copy>
+  </ant>  
+  --> 
+   
+  
+  <ant level="debug">
+   <copy      todir="(f,dir,classic,(dir,ultimo3))"
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)xmlrobot-legals)"/>
+   </copy>
+  </ant>   
+                         
+  <ti label="Generated (prop,produktname)" test="(f,exists_dir,(dir,ultimo3))"/>
+  <ti label="Extracted:" type="dir" x="(dir,ultimo)" test="(f,exists_dir,(dir,ultimo))"/>  
+  <ti label="Presentation:" type="dir" x="(dir,ultimo3)" test="(f,exists_dir,(dir,ultimo3))"/>  
+  <call_service job="open_dir" test="(f,exists_dir,(dir,ultimo3))">
+    <dir id="with">(dir,ultimo3)</dir>
+  </call_service> 
+  
+    
+</job>
+
+<job id="Import AntPoi" role="admin">
+
+     <file id="appask" x="(dir,temp)psi-ask.xml"/>
+     <file id="selectio" x="(dir,temp)selectio.xml"/>
+      <ask what="apps" out="(file,appask)" style="natural"/>
+      <ti type="file">(file,appask)</ti>
+    
+      <xslt 
+          xml="(file,appask)" 
+          out="(file,selectio)">
+          <inline attribute="xsl"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet 
+  version="1.0" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:output method="xml"/>
+
+<xsl:template match="/">
+  <sels>
+   <xsl:apply-templates select="//apps/app[@id='Arcadia']/pro"/>
+  </sels>
+</xsl:template>
+
+<xsl:template match="pro">
+   <sel><xsl:attribute name="dir"><xsl:value-of select="@data_dir"/></xsl:attribute><xsl:value-of select="@id"/></sel>
+</xsl:template>
+
+</xsl:stylesheet>
+  ]]></inline>         
+      </xslt>
+     <tk label="Importing ant-poi-jar" flag="sum">                                
+      <tk type="sel" id="apo" label="Arcadia Project to copy from" xml="(file,selectio)" flag="nono"/>
+     </tk>
+     <interpreter watch="1"/>
+     <dir id="root">(f,ask,pro_dir,Arcadia,(prop,apo))</dir>
+     
+     <copy 
+       file="(dir,root)compile-adapter-ant/compiled-bin.jar"
+       tofile="(dir,pro)compile-adapter-ant/compiled-bin.jar"/>
+       
+     <copy 
+       file="(dir,root)compile-adapter-ant/3rd-party-bin.jar"
+       tofile="(dir,pro)compile-adapter-ant/3rd-party-bin.jar"/>       
+     
+     <copy 
+       file="(dir,root)compile-adapter-poi/3rd-party-bin.jar"
+       tofile="(dir,pro)compile-adapter-poi/3rd-party-bin.jar"/>        
+    
+
+</job>
+
+<job id="Download Material-alt" pri="10" tip="Sub-Step #4 of Generate XmlRobot" role="hidden">
+  <interpreter watch="0"/>
+  <call_job job="connect"/>
+  <mkdir dir="(dir,material)"/>
+  <tp>preparing ...</tp>
+  <file id="scj" x="(dir,filetemp)scan-scj-(f,random_text,5).xml"/>
+  <ti type="file" label="Scj" x="(file,scj)"/>
+  <xrghub  
+        act="list" 
+        out="(file,scj)"
+        path=""
+        level="1"
+        flag="folderOnly"/>
+        
+  <file id="scj-selector" x="(dir,temp)scj-selector.xml"/>
+  
+            
+  <xslt
+        xml="(file,scj)"
+        xsl="(dir,app)create-matto-selector.xsl"
+        out="(file,scj-selector)"/>
+  <ti type="file" label="Scj-Selector" x="(file,scj-selector)"/>      
+  
+  <call_job job="tk_matto_edit"/>
+  
+  <prop id="matto-items">(prop,matto_origin)</prop>    <!-- (prop,matto-items) -->
+    
+  <tp>doing input for (prop,matto-items)...</tp> 
+  
+  <file id="sci" x="(dir,filetemp)scanix.xml"/>
+  
+  <xrghub  
+        act="list" 
+        out="(file,sci)"
+        path="(prop,matto-items)/workspaces"
+        level="2"
+        flag="folderOnly"/>
+  <ti type="file" label="Sci" x="(file,sci)"/>      
+        
+  <file id="sci-selector" x="(dir,temp)scanix-selector.xml"/>          
+  <xslt
+        xml="(file,sci)"
+        xsl="(dir,app)applist-2-selector.xsl"
+        out="(file,sci-selector)"
+        >
+        <params></params>
+      </xslt>
+                
+  <call_job job="tk_scnf_edit"/>
+  <ti_hr/>
+  <!-- 
+  <tk label="Configuration of Services-Apps" flag="sum_only">
+    <tk id="scnf_encrypt_services" type="bool" label="Encrypt Services" x="1" flag="nono"/>
+    <tk type="sel" id="scnf_encrypt_apps" label="Encrypted Apps" flag="nono multi" xml="(file,sci-selector)" 
+    tip="These apps should be in the services and encrypted"/>  
+    <tk type="sel" id="scnf_plain_apps" label="Plain Apps" flag="nono multi" xml="(file,sci-selector)"
+    tip="These apps should be in the services and the source-code should be open"/>
+
+    
+  </tk>        
+
+  
+  
+  <tk label="Configuration of Services" flag="sum">
+    <tk type="sel" id="srv-conf-which" label="Which Services" flag="nono">
+      <sel label="Standard-Services">(prop,matto-items)/services</sel>
+      <sel label="Online-Services">(prop,matto-items)/services_online</sel>
+    </tk>
+    
+  </tk>   -->
+  
+  <ti type="dir" x="(dir,material)" label="Copy material to:"/>
+  
+  <tp>auxilary-items/xmlrobot-legals</tp>
+  <call_job job="caf" >
+    <prop id="caf-path" x="auxilary-items/xmlrobot-legals"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)xmlrobot-legals"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>   
+  
+  <tp>auxilary-items/resources-default-takeoffs</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="auxilary-items/resources-default-takeoffs"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)resources-default-takeoffs"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>    
+
+  <tp>auxilary-items/manifest</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="auxilary-items/manifest"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)manifest"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>  
+    
+  <tp>auxilary-items/3rd-party-licenses</tp>
+  <call_job job="caf">
+    <prop id="caf-path" x="auxilary-items/3rd-party-licenses"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)3rd-party-licenses"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>  
+    
+  <tp>(prop,matto-items)/services</tp> 
+  <!-- <delete content_of_dir="(dir,material)services"/>  -->
+  <ant>
+    <delete dir="(f,dir,classic,(dir,material)services)"/>
+    <mkdir dir="(f,dir,classic,(dir,material)services)"/>
+  </ant>
+  
+  <dir id="temp-services1" x="(dir,temp)temp-services1"/>
+  <call_job job="caf">
+    <prop id="caf-path" x="(prop,matto-items)/services"/>
+    <dir id="caf-target" x="(dir,temp-services1)"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>
+  
+  <choose>
+    <when test="(prop,scnf_web_services)">
+      <dir id="temp-services2" x="(dir,filetemp)temp-services(f,time)"/>
+      <!-- <copy uri="(dir,temp-services1)" touri="(dir,temp-services2)"/> -->
+      <copy uri="(dir,temp-services1)" touri="(dir,temp-services2)" level_limit="1">
+        <select>
+          <file base_regex="_web.+" />
+        </select>
+      </copy>
+ 
+      <copy file="(dir,temp-services1)api-panorama.ljx" intodir="(dir,temp-services2)"/>
+      <copy file="(dir,temp-services1)api-compare.ljx" intodir="(dir,temp-services2)"/>
+      <copy file="(dir,temp-services1)static-project-prolog.xrs" intodir="(dir,temp-services2)"/>
+      <ti type="dir" x="(dir,temp-services2)" label="Created Web-Services"/>
+    </when>
+    <otherwise>
+      <dir id="temp-services2" x="(dir,temp-services1)"/>
+    </otherwise>
+  </choose>      
+  
+  <choose>
+    <when test="(prop,scnf_encrypt_services)">
+      <ti>Services werden verschluesselt</ti>
+      <!-- 
+      <dir id="tp1" x="(dir,temp)(f,random_text,3)"/>
+      <call_job job="caf">
+        <prop id="caf-path" x="(prop,matto-items)/services"/>
+        <dir id="caf-target" x="(dir,tp1)"/>
+        <prop id="caf-retry" x="1"/>
+      </call_job>      
+      -->  
+      
+      <call_app
+        app="Arc-App-Dark"
+        pro_dir="(dir,temp)-Arc-App-Dark-Temp(f,random_text,3)"
+        pro_id="tempo"
+        job="interface-a">
+        <dir id="source" x="(dir,temp-services2)"/>
+        <dir id="target" x="(dir,material)services"/>
+        <prop id="pwd" x="tipico"/>
+      </call_app>    
+      <!-- <create_file file="(dir,material)services/ISENCRYPTED">YES</create_file>  -->
+      
+        
+    </when>
+    <otherwise>
+      <!-- keine encryption -->
+      <ti>Services werden NICHT verschluesselt</ti>
+      <copy uri="(dir,temp-services2)" touri="(dir,material)services"/>
+      <!-- 
+      <call_job job="caf">
+        <prop id="caf-path" x="(prop,matto-items)/services"/>
+        <dir id="caf-target" x="(dir,material)services"/>
+        <prop id="caf-retry" x="1"/>
+      </call_job>        
+      -->
+    </otherwise>
+  </choose>
+  
+  <ti type="dir" label="Created Services" x="(dir,material)services"/>
+  <when test="(f,has,dir,scnf_copy_services)">
+    <delete content_of_dir="(dir,scnf_copy_services)"/>
+    <copy uri="(dir,material)services" touri="(dir,scnf_copy_services)"/>
+    
+    <ti label="Did Copy Services" type="dir" x="(dir,scnf_copy_services)"/>
+  
+  </when>
+  
+   <interpreter watch="0"/>
+  
+  <tp>(prop,matto-items)/workspaces/service-apps</tp> 
+  
+
+  <need>(prop,scnf_encrypt_apps) (prop,scnf_plain_apps)  (file,sci-selector) (file,sci) (prop,scnf_clear_all_serviceapps)</need>
+  <!-- 
+  <call_job job="caf">
+    <prop id="caf-path" x="(prop,matto-items)/workspaces/service-apps"/>
+    <dir id="caf-target" x="(dir,material)service_apps"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>  
+  -->
+  <when test="(prop,scnf_clear_all_serviceapps)">
+    <tp>deleting all service-apps until now produced</tp>
+    <delete 
+      content_of_dir="(dir,material)service_apps/"/>  
+  </when>
+  
+  <when test="(prop,scnf_clear_copies_serviceapps)">
+    <when test="(f,has,dir,scnf_copy_service_apps)">
+    
+      <tp>deleting copies of service-apps</tp>
+      <delete 
+        content_of_dir="(dir,scnf_copy_service_apps)" /> 
+          
+    </when>
+ 
+  </when>  
+
+               
+  <ti type="file" x="(file,sci)" label="sci" test="0"/>
+  <ti label="to encrpyt" test="0">(prop,scnf_encrypt_apps)</ti>
+  <ti label="plain apss" test="0">(prop,scnf_plain_apps)</ti>
+  <loop id="all-apps" xml="(file,sci)" xpath="dir/dir">
+    <ti test="0">working on (loop,all-apps,..,@name):(loop,all-apps,@name) </ti>
+    
+      <when test="(f,not,(f,has_flag,(prop,scnf_sc_dont_clear),(loop,all-apps,..,@name):(loop,all-apps,@name)))">
+        <ti test="0">clearing this</ti>
+        <delete content_of_dir="(dir,material)service_apps/(loop,all-apps,@name)"/>
+      </when>
+    
+    <prop id="did-this-app" x="0"/>      
+    <choose>
+      <when test="(f,has_flag,(prop,scnf_sc_dont_do_at_all),(loop,all-apps,..,@name):(loop,all-apps,@name))">
+        <ti>dont do this at all</ti>
+      </when>
+      <when test="(f,has_flag,(prop,scnf_encrypt_apps),(loop,all-apps,..,@name):(loop,all-apps,@name))">
+        <ti label="TAKE AND ENCRYPT (loop,all-apps,..,@name):(loop,all-apps,@name)"/>
+        
+        <dir id="tp2" x="(dir,filetemp)(f,random_text,3)"/>
+        <call_job job="caf">
+          <prop id="caf-path" x="(prop,matto-items)/workspaces/(loop,all-apps,..,@name)/(loop,all-apps,@name)"/>
+          <dir id="caf-target" x="(dir,tp2)"/>
+          <prop id="caf-retry" x="1"/>
+        </call_job>      
+        <ti type="dir" label="original app" x="(dir,tp2)"/>
+        <ti type="dir" label="encrypted app" x="(dir,material)service_apps/(loop,all-apps,@name)"/>   
+        <tp>encrypting  (loop,all-apps,@name)</tp>
+        <call_app
+          app="Arc-App-Dark"
+          pro_dir="(dir,temp)-Arc-App-Dark-Temp(f,random_text,3)"
+          pro_id="tempo"
+          job="interface-a">
+          <dir id="source" x="(dir,tp2)"/>
+          <dir id="target" x="(dir,material)service_apps/(loop,all-apps,@name)"/>
+          <prop id="pwd" x="tipico"/>
+        </call_app>   
+        <ti type="dir" label="encrypted app" x="(dir,material)service_apps/(loop,all-apps,@name)"/> 
+        <prop id="did-this-app" x="1"/> 
+      </when>
+      
+      <when test="(f,has_flag,(prop,scnf_plain_apps),(loop,all-apps,..,@name):(loop,all-apps,@name))">
+        <ti label="TAKE AND KEEP OPEN (loop,all-apps,..,@name):(loop,all-apps,@name)"/>
+        <tp>downloading app (loop,all-apps,@name)</tp> 
+        <ant>
+          <delete dir="(f,dir,classic,(dir,material)service_apps/(loop,all-apps,@name))"/>
+          <mkdir dir="(f,dir,classic,(dir,material)service_apps/(loop,all-apps,@name))"/>
+        </ant>
+        <call_job job="caf">
+          <prop id="caf-path" x="(prop,matto-items)/workspaces/(loop,all-apps,..,@name)/(loop,all-apps,@name)"/>
+          <dir id="caf-target" x="(dir,material)service_apps/(loop,all-apps,@name)"/>
+          <prop id="caf-retry" x="1"/>
+        </call_job> 
+        <ti type="dir" label="plain app" x="(dir,material)service_apps/(loop,all-apps,@name)"/>
+        <prop id="did-this-app" x="1"/>          
+      </when>      
+    
+    </choose>
+    
+    <when test="(prop,did-this-app)">
+      <when test="(f,has,dir,scnf_copy_service_apps)">
+        <file id="target-app-zip" x="(dir,scnf_copy_service_apps)(loop,all-apps,@name).zip"/>
+        
+        <ant>
+          <zip destfile="(f,file,classic,(file,target-app-zip))">
+            <fileset dir="(f,dir,classic,(dir,material)service_apps/(loop,all-apps,@name))" />
+          </zip>
+        </ant>  
+            
+        <!-- 
+        <zip
+          basedir="(dir,material)service_apps/(loop,all-apps,@name)"
+          destfile="(file,target-app-zip)"/>
+        -->  
+        <ti type="file" label="Copied App to" x="(file,target-app-zip)"/>
+      </when>
+    </when>
+  </loop>
+  
+  <tp>auxilary-items/environmental-runners</tp>
+  <call_job job="caf" >
+    <prop id="caf-path" x="auxilary-items/environmental-runners"/>
+    <dir id="caf-target" x="(dir,material)auxilary-items(prop,fs)environmental-runners"/>
+    <prop id="caf-retry" x="1"/>
+  </call_job>    
+  
+  
+  <call_job job="do-retry"/>
+</job>
+<job id="Finish XmlRobot-bis20260524" pri="10" tip="Sub-Step #5 of Generate XmlRobot" role="expert">
+  <ti label="MATERIAL" x="(dir,material)" type="dir"/>
+  <mkdir dir="(dir,ultimo)"/>
+  <ti type="dir" label="Preparing in ultimo">(dir,ultimo)</ti>
+  <mkdir dir="(dir,work)"/>
+  <call_job job="connect" test="0"/>
+  <call_job job="tk_finish_edit"/>
+  
+  <dir id="ress" x="(dir,ultimo)resources"/>
+  
+  <prop id="ant-lib-name">ant-lib.jar</prop>
+  <file id="ant-lib-dest">(dir,ress)libs/(prop,ant-lib-name)</file>
+  
+  <prop id="poi-lib-name">poi-lib.jar</prop>
+  <file id="poi-lib-dest">(dir,ress)libs/(prop,poi-lib-name)</file> 
+    
+  <mkdir dir="(dir,ress)"/>
+  
+  <when test="(prop,finish_rebuild_libs)">
+    <delete content_of_dir="(dir,ress)"/>
+    
+    <delete file="(file,ant-lib-dest)" flag="catch"/>
+    <throw test="(f,exists_file,(file,ant-lib-dest))">Could not file (file,ant-lib-dest)</throw>    
+    
+    <choose>
+      <when test="(f,exists_dir,(dir,pro)compile-adapter-ant/)">
+        <tp>Copy (prop,ant-lib-name)</tp>
+        <!-- ant vorhanden -->      
+    
+        <dir id="unzipped-compile" x="(dir,pro)compile-adapter-ant/unzipped-compile"/>
+        <delete dir="(dir,unzipped-compile)" flag="catch"/>
+        
+        <throw test="(f,exists_dir,(dir,unzipped-compile))">Could not delete (dir,unzipped-compile)</throw>
+        <mkdir dir="(dir,unzipped-compile)"/>
+    
+        <call_job job="tk_jvcp_read" test="(f,not,(f,has,prop,jvcp_jar_unzip_by_ant))"/>      
+        <tp>unzipping ant-adapter ... by (f,when,(prop,jvcp_jar_unzip_by_ant),ant,vfs) ...</tp>                          
+                                   
+        <choose>
+          <when test="(prop,jvcp_jar_unzip_by_ant)">
+            <ant>
+              <unzip 
+                src="(f,file,classic,(dir,pro)compile-adapter-ant/3rd-party-bin.jar)" 
+                dest="(f,dir,classic,(dir,unzipped-compile))"/>
+                
+              <unzip 
+                src="(f,file,classic,(dir,pro)compile-adapter-ant/compiled-bin.jar)" 
+                dest="(f,dir,classic,(dir,unzipped-compile))"/>
+                        
+            </ant>
+          </when>
+          <otherwise>               
+              <unzip file="(dir,pro)compile-adapter-ant/3rd-party-bin.jar"
+                     todir="(dir,unzipped-compile)"/>     
+              <unzip file="(dir,pro)compile-adapter-ant/compiled-bin.jar"
+                     todir="(dir,unzipped-compile)"/>                                   
+          </otherwise>
+        </choose>   
+
+        <ant level="debug">
+          
+          <zip 
+            destfile="(f,file,classic,(file,ant-lib-dest))">
+            <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>      
+          </zip>  
+        </ant>
+        <ti label="Created" type="file" x="(file,ant-lib-dest)"/>       
+      </when>
+      <otherwise>
+        <ti label="Cleared Ant" x="No ant-lib included."/>
+      </otherwise>
+    </choose>
+    
+    <!-- poi -->
+    
+    <delete file="(file,poi-lib-dest)" flag="catch"/>
+    <throw test="(f,exists_file,(file,poi-lib-dest))">Could not file (file,poi-lib-dest)</throw>     
+    
+    <choose>
+      <when test="(f,exists_dir,(dir,pro)compile-adapter-poi/)">
+        <tp>Copy (prop,poi-lib-name)</tp>    
+            
+        <copy file="(dir,pro)compile-adapter-poi/3rd-party-bin.jar" 
+              tofile="(file,poi-lib-dest)"/> 
+      </when>
+      <otherwise>
+        <ti label="Cleared Poi" x="No poi-lib included."/>
+      </otherwise>
+    </choose>              
+     <!-- 
+    <dir id="unzipped-compile" x="(dir,pro)compile-adapter-poi/unzipped-compile"/>
+    <delete dir="(dir,unzipped-compile)"/>
+    <mkdir dir="(dir,unzipped-compile)"/>
+    
+    <unzip file="(dir,pro)compile-adapter-poi/3rd-party-bin.jar"
+           todir="(dir,unzipped-compile)"/>     
+    <unzip file="(dir,pro)compile-adapter-ant/compiled-bin.jar"
+           todir="(dir,unzipped-compile)"/>      
+  
+    <delete file="(dir,ress)libs/ant-4-xmlrobot.jar"/>
+    <ant level="debug">
+      
+      <zip 
+        destfile="(f,file,classic,(dir,ress)libs/ant-4-xmlrobot.jar)">
+        <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>      
+      </zip>  
+    </ant>    -->
+    <!-- 
+    <copy file="(dir,pro)compile-adapter-poi(prop,fs)application-complete.jar" 
+          tofile="(dir,ress)libs(prop,fs)poi-4-xmlrobot.jar"/>            -->
+    
+    <!--      
+    <dir id="unzipped-compile" x="(dir,pro)compile-adapter-poi/unzipped-compile"/>
+    <ti> unzip file= (dir,pro)compile-adapter-poi/compiled-bin.jar 
+  todir= (dir,unzipped-compile)</ti>
+    <tp>doing unzip po
+    <unzip file="(dir,pro)compile-adapter-poi/compiled-bin.jar"
+           todir="(dir,unzipped-compile)"/>      
+    <ti>did unzip poi</ti>
+    <tp>zipping poi-4-xmlrobot.jar</tp>
+   
+    <tp>zipping poi-4-xmlrobot.jar</tp>
+    <delete file="(dir,ress)libs/poi-4-xmlrobot.jar"/>
+    <ant level="info">
+      
+      <zip 
+        destfile="(f,file,classic,(dir,ress)libs/poi-4-xmlrobot.jar)">
+
+        <fileset dir="(f,dir,classic,(dir,pro)compile-adapter-poi/bin_extract)"/>           
+      </zip>  
+    </ant>                 --> 
+     
+  </when>
+             
+  <tp>Copy 3rd-party-licenses</tp> 
+  <ant level="info">
+   <copy 
+              todir="(f,dir,classic,(dir,ress)third-party-licenses)" 
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)3rd-party-licenses)"  
+             defaultexcludes="false"/>
+   </copy>
+  </ant>    
+ 
+  <ant level="info">
+   <copy 
+              todir="(f,dir,classic,(dir,ultimo)META-INF)" 
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)3rd-party-licenses)"  
+             defaultexcludes="false"/>
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)xmlrobot-legals)"  
+             defaultexcludes="false"/>     
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)manifest)"  
+             defaultexcludes="false"/>                        
+   </copy>
+  </ant>    
+       
+  
+  <ant >
+   <copy      todir="(f,dir,classic,(dir,ress))"
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)resources-default-takeoffs)"/>
+   </copy>
+  </ant>        
+
+  
+  <ti label="Created 3rd-party-licenses" type="dir" x="(dir,ress)third-party-licenses"/>
+  <ti label="ress" type="dir" x="(dir,ress)"/>
+      <delete dir="(dir,ress)service_apps" test="(f,exists_dir,(dir,ress)service_apps)"/>
+      <delete dir="(dir,ress)services" test="(f,exists_dir,(dir,ress)services)"/>  
+  <mkdir dir="(dir,ress)services"/>
+  <mkdir dir="(dir,ress)service_apps"/> 
+  <when test="(f,has,dir,finish_delivery_customer)">
+    <when test="(f,exists_dir,(dir,finish_delivery_customer)system/services)">
+      <ant xlevel="dexbug">
+       <copy      todir="(f,dir,classic,(dir,ress)services)"
+                  overwrite="true" 
+                  preservelastmodified="true">
+        <fileset
+                 dir="(f,dir,classic,(dir,finish_delivery_customer)system/services)"/>
+       </copy>
+      </ant> 
+    </when>
+
+    <when test="(f,exists_dir,(dir,finish_delivery_customer)system/service_apps)">
+      <ant xlevel="debug">
+       <copy      todir="(f,dir,classic,(dir,ress)service_apps)"
+                  overwrite="true" 
+                  preservelastmodified="true">
+        <fileset
+                 dir="(f,dir,classic,(dir,finish_delivery_customer)system/service_apps)"/>
+       </copy>
+      </ant>     
+    </when>
+  </when>
+  
+  <!--  zipping XmlRobot.jar --> 
+   <tp>unzipping core</tp>
+  <dir id="unzipped-compile" x="(dir,pro)compile-xmlrobot-core/unzipped-compile"/>
+  <delete dir="(dir,unzipped-compile)" test="(f,exists_dir,(dir,unzipped-compile))"/>
+  <mkdir dir="(dir,unzipped-compile)"/>
+  <ant level="debug">
+    <unzip src="(f,file,classic,(dir,pro)compile-xmlrobot-core/compiled-bin.jar)"
+           dest="(f,dir,classic,(dir,unzipped-compile))"/>
+  </ant>
+  <tp>unzipping core third</tp>
+  <dir id="unzipped-drittes" x="(dir,pro)compile-xmlrobot-core/unzipped-drittes"/>
+  <choose>
+    <when test="(f,not,(f,exists_dir,(dir,unzipped-drittes)))">
+     <ti>core 3rd does not exists and will be creted</ti>
+     <mkdir dir="(dir,unzipped-drittes)"/>
+     <ant level="debug">
+       <unzip src="(f,file,classic,(dir,pro)compile-xmlrobot-core/3rd-party-bin.jar)"
+             dest="(f,dir,classic,(dir,unzipped-drittes))"/>
+      </ant>
+    </when>
+    <otherwise>
+      <ti>core 3rd does exist already</ti>
+    </otherwise>
+  </choose>
+    
+  <!--
+    <unzip file="(dir,pro)compile-xmlrobot-core/compiled-bin.jar"
+         todir="(dir,unzipped-compile)"/>
+  -->
+  <ti label="did unzip core-compile"/>
+  <ti label="From" x="(dir,pro)compile-xmlrobot-core/compiled-bin.jar" type="file"/>
+  <ti label="to" x="(dir,unzipped-compile)" type="dir"/>
+
+  
+  <choose>
+    <when test="(f,has,dir,finish_delivery_customer)">
+      <dir id="ultimo3">(dir,finish_delivery_customer)</dir>
+    </when>
+    <otherwise>
+      <dir id="ultimo3">(dir,ultimo2)</dir>
+    </otherwise>
+  </choose>
+           
+  <mkdir dir="(dir,ultimo3)"/>
+  
+  <choose>
+    <when test="(f,exists_file,(file,prodfn))">
+      <prop id="produktname">(f,file_content,(file,prodfn))</prop>
+    </when>
+    <otherwise>
+      <prop id="produktname">DasAllheilmittel</prop>
+    </otherwise>
+  </choose>
+  
+  <file id="finalo">(dir,ultimo3)(prop,produktname).jar</file>
+  <tp>zipping (prop,produktname).jar</tp>
+  <ti label="Composing (prop,produktname).jar"/>
+  
+  <ti type="dir" label="from ultimo" x="(dir,ultimo)"/>
+
+  <ti type="dir" label="from compiled" x="(dir,unzipped-compile)"/>
+  <ti type="dir" label="from dritte" x="(dir,unzipped-drittes)"/>
+  <ti type="file" label="to" x="(file,finalo)"/>
+  <delete file="(file,finalo)" test="(f,exists_file,(file,finalo))" />
+  <throw test="(f,exists_file,(file,finalo))">Could not delete resulting file. (file,finalo)</throw>
+  <prop id="zip-msg">
+  zip  
+  to     (f,file,classic,(file,finalo))
+  from   (f,dir,classic,(dir,ultimo))
+  from   (f,dir,classic,(dir,unzipped-drittes))
+  from   (f,dir,classic,(dir,unzipped-compile))</prop>
+
+  <ant level="debug">
+    <zip 
+      destfile="(f,file,classic,(file,finalo))">
+      <fileset dir="(f,dir,classic,(dir,ultimo))"/>
+      <fileset dir="(f,dir,classic,(dir,unzipped-drittes))"/>
+      <fileset dir="(f,dir,classic,(dir,unzipped-compile))"/>   
+    </zip>  
+  </ant>    
+ 
+  <create_file out="(dir,ultimo3)(prop,produktname)-Win.bat">java -Xms512m -Xmx1024m -jar (prop,produktname).jar</create_file>
+  <create_file out="(dir,ultimo3)(prop,produktname)-Linux.sh">java -Xms512m -Xmx1024m -jar (prop,produktname).jar</create_file>
+  <!-- 
+  <ant level="debug">                                    
+   <copy      todir="(f,dir,classic,(dir,ultimo3))"
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)environmental-runners)"/>
+   </copy>
+  </ant>  
+  --> 
+   
+  
+  <ant level="debug">
+   <copy      todir="(f,dir,classic,(dir,ultimo3))"
+              overwrite="true" 
+              preservelastmodified="true">
+    <fileset
+             dir="(f,dir,classic,(dir,material)auxilary-items(prop,fs)xmlrobot-legals)"/>
+   </copy>
+  </ant>   
+                         
+  <ti label="Generated (prop,produktname)" test="(f,exists_dir,(dir,ultimo3))"/>
+  <ti label="Extracted:" type="dir" x="(dir,ultimo)" test="(f,exists_dir,(dir,ultimo))"/>  
+  <ti label="Presentation:" type="dir" x="(dir,ultimo3)" test="(f,exists_dir,(dir,ultimo3))"/>  
+  <call_service job="open_dir" test="(f,exists_dir,(dir,ultimo3))">
+    <dir id="with">(dir,ultimo3)</dir>
+  </call_service> 
+  
+    
+</job>
+</jobs>

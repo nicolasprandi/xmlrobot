@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="file-read">
+<need>(prop,file_key)</need>
+<spirit act="open" missing_strategy="empty" id="files_spirit_tc" xml="(file,files)"/>
+<prop id="file_dt_upd">(f,spirit,files_spirit_tc,(prop,files_offset)file[@row=(f,xpath_string,(prop,file_key))],@dt_upd)</prop>
+<prop id="file_dt_add">(f,spirit,files_spirit_tc,(prop,files_offset)file[@row=(f,xpath_string,(prop,file_key))],@dt_add)</prop>
+<prop id="file_thefile">(f,spirit,files_spirit_tc,(prop,files_offset)file[@row=(f,xpath_string,(prop,file_key))],@thefile)</prop>
+<prop id="file_off">(f,spirit,files_spirit_tc,(prop,files_offset)file[@row=(f,xpath_string,(prop,file_key))],@off)</prop>
+<spirit act="close" id="files_spirit_tc"/>
+</job>

@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fields sheet_name="fields" sheet_index="2"><field id="url" label="Url" tip=" https://www.wikipedia.org/" type="textblock" add_edit="1" name_flag="1" nono="1" name_len="50" /><field label="Options" type="msg" /><field id="desc" label="Description" tip="What is this url about" type="textblock" tk_flag="big" view_len="40" flag_view="wrap" /><field id="history" label="History" tip="History of Downloads and your doings" type="textblock" tk_flag="big" /></fields>

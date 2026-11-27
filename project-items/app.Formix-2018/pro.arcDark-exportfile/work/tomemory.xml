@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><job role="hidden" id="exportfile-read">
+<need>(prop,exportfile_key)</need>
+<spirit act="open" missing_strategy="empty" id="exportfiles_spirit_tc" xml="(file,exportfiles)"/>
+<prop id="exportfile_dt_upd">(f,spirit,exportfiles_spirit_tc,(prop,exportfiles_offset)exportfile[@row=(f,xpath_string,(prop,exportfile_key))],@dt_upd)</prop>
+<prop id="exportfile_dt_add">(f,spirit,exportfiles_spirit_tc,(prop,exportfiles_offset)exportfile[@row=(f,xpath_string,(prop,exportfile_key))],@dt_add)</prop>
+<file id="exportfile_file">(f,spirit,exportfiles_spirit_tc,(prop,exportfiles_offset)exportfile[@row=(f,xpath_string,(prop,exportfile_key))],@file)</file>
+<unescape type="file" id="exportfile_file"/>
+<translate type="file" id="exportfile_file"/>
+<prop id="exportfile_desc">(f,spirit,exportfiles_spirit_tc,(prop,exportfiles_offset)exportfile[@row=(f,xpath_string,(prop,exportfile_key))],@desc)</prop>
+<spirit act="close" id="exportfiles_spirit_tc"/>
+</job>
